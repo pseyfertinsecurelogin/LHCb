@@ -14,13 +14,13 @@
 // FIXME RENAME THIS FILE!
 
 #include "Event/State.h"
+#include "Event/TrackHit.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include "SOAContainer/SOAField.h"
 #include "SOAContainer/SOAView.h"
 #include <boost/container/small_vector.hpp>
 #include <cstddef>
-#include "Event/TrackHit.h"
 
 /**
  * @brief Data classes for the Hlt1 with multiple usages
@@ -36,12 +36,12 @@
 namespace LHCb::Hlt1Event {
   inline namespace v1 {
     namespace VeloTESLocation {
-      inline const std::string ForwardHits    = "Rec/Velo/ForwardVertexing";
+      inline const std::string ForwardHits               = "Rec/Velo/ForwardVertexing";
       inline const std::string ForwardVertexingStates    = "Rec/Velo/ForwardVertexing";
       inline const std::string BackwardVertexingStates   = "Rec/Velo/BackwardVertexing";
       inline const std::string ForwardVertexingStateSel  = "Rec/Velo/ForwardVertexingSel";
       inline const std::string BackwardVertexingStateSel = "Rec/Velo/BackwardVertexingSel";
-    } // namespace TESLocation
+    } // namespace VeloTESLocation
     /**
      * @brief number of velo hits for track for which the class has been optimized
      *
@@ -69,19 +69,28 @@ namespace LHCb::Hlt1Event {
       using VeloHitContainer    = boost::container::small_vector<LHCb::TrackHit, maxNumberVeloHitsPerTrack()>;
       VeloLHCbIDContainer m_VeloLHCbIDContainer; ///< container of LHCb::LHCbID
       VeloHitContainer    m_VeloHitContainer;    ///< container of LHCb::TrackHit
-      std::size_t size() const { return m_VeloLHCbIDContainer.size(); }
-      void reserve(std::size_t s) {
-        m_VeloHitContainer.reserve(s);
-        m_VeloLHCbIDContainer.reserve(s);
+      std::size_t         size() const { return m_VeloLHCbIDContainer.size(); }
+      void                reserve( std::size_t s ) {
+        m_VeloHitContainer.reserve( s );
+        m_VeloLHCbIDContainer.reserve( s );
       }
-      void push_back(LHCb::LHCbID id, LHCb::TrackHit hit) {
-        m_VeloHitContainer.push_back(hit);
-        m_VeloLHCbIDContainer.push_back(id);
+      void push_back( LHCb::LHCbID id, LHCb::TrackHit hit ) {
+        m_VeloHitContainer.push_back( hit );
+        m_VeloLHCbIDContainer.push_back( id );
       }
-      const auto& lhcbIDs() const {
-        return m_VeloLHCbIDContainer;
-      }
+      const auto& lhcbIDs() const { return m_VeloLHCbIDContainer; }
     };
+    using ClosestToBeamState = LHCb::State;
+  } // namespace v1
+} // namespace LHCb::Hlt1Event
+
+/*
+ * and now the SOAContainer things
+ *
+ * probably almost unused by now
+ */
+namespace LHCb::Hlt1Event {
+  inline namespace v1 {
 
     /** @class VeloHitBlockField
      *
@@ -98,14 +107,14 @@ namespace LHCb::Hlt1Event {
     SOASKIN( VeloTrackHits, VeloHitBlockField ) {
       SOASKIN_INHERIT_DEFAULT_METHODS( VeloTrackHits );
 
-      void push_back(LHCb::LHCbID id, LHCb::TrackHit hit) {
-        this->veloHitBlock().m_VeloHitContainer.push_back(hit);
-        this->veloHitBlock().m_VeloLHCbIDContainer.push_back(id);
+      void push_back( LHCb::LHCbID id, LHCb::TrackHit hit ) {
+        this->veloHitBlock().m_VeloHitContainer.push_back( hit );
+        this->veloHitBlock().m_VeloLHCbIDContainer.push_back( id );
       }
 
-      void reserve(std::size_t s) {
-        this->veloHitBlock().m_VeloHitContainer.reserve(s);
-        this->veloHitBlock().m_VeloLHCbIDContainer.reserve(s);
+      void reserve( std::size_t s ) {
+        this->veloHitBlock().m_VeloHitContainer.reserve( s );
+        this->veloHitBlock().m_VeloLHCbIDContainer.reserve( s );
       }
 
       /**
@@ -117,57 +126,53 @@ namespace LHCb::Hlt1Event {
        *
        * @return a gsl::span<LHCb::TrackHit>
        */
-      auto trackHits() const {
-        return LHCb::span<const LHCb::TrackHit>( this->veloHitBlock().m_VeloHitContainer );
-      };
+      auto trackHits() const { return LHCb::span<const LHCb::TrackHit>( this->veloHitBlock().m_VeloHitContainer ); };
       /**
        * @brief access a track's Velo "hits" as LHCbIDs
        *
        * @return a gsl::span<LHCb::LHCbID>
        */
-      auto lhcbIDs() const {
-        return LHCb::span<const LHCb::LHCbID>( this->veloHitBlock().m_VeloLHCbIDContainer );
-      };
+      auto lhcbIDs() const { return LHCb::span<const LHCb::LHCbID>( this->veloHitBlock().m_VeloLHCbIDContainer ); };
     };
 
-    /**
-     * @brief Replacement of the Run1 ClosestToBeam state of a track
-     *
-     * Anticipated usage:
-     *  - Physics selections
-     *  - output of multiple tracking algorithms
-     *  - PV reconstruction
-     *  - IP filter
-     *
-     * Up for immediate redesign:
-     *  - Use a native SOA::Container architecture instead
-     */
-    struct ClosestToBeamState final {
-      LHCb::State m_state; ///< actual state
-      /// "copy construct" from an existing LHCb::State
-      ClosestToBeamState( const LHCb::State& s ) : m_state( s ) {
-        assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-      }
-      /// "move construct" from an existing LHCb::State
-      ClosestToBeamState( LHCb::State&& s ) : m_state( std::move( s ) ) {
-        assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-      }
+    // /**
+    //  * @brief Replacement of the Run1 ClosestToBeam state of a track
+    //  *
+    //  * Anticipated usage:
+    //  *  - Physics selections
+    //  *  - output of multiple tracking algorithms
+    //  *  - PV reconstruction
+    //  *  - IP filter
+    //  *
+    //  * Up for immediate redesign:
+    //  *  - Use a native SOA::Container architecture instead
+    //  */
+    // struct ClosestToBeamState final {
+    //   LHCb::State m_state; ///< actual state
+    //   /// "copy construct" from an existing LHCb::State
+    //   ClosestToBeamState( const LHCb::State& s ) : m_state( s ) {
+    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
+    //   }
+    //   /// "move construct" from an existing LHCb::State
+    //   ClosestToBeamState( LHCb::State&& s ) : m_state( std::move( s ) ) {
+    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
+    //   }
 
-      [[deprecated]] auto slopes() const { return m_state.slopes(); }
-      [[deprecated]] auto position() const { return m_state.position(); }
-      auto errX2() const { return m_state.errX2(); }
-      auto errY2() const { return m_state.errY2(); }
-      auto x() const { return m_state.x(); }
-      auto y() const { return m_state.y(); }
-      auto z() const { return m_state.z(); }
-      auto tx() const { return m_state.tx(); }
-      auto ty() const { return m_state.ty(); }
+    //   [[deprecated]] auto slopes() const { return m_state.slopes(); }
+    //   [[deprecated]] auto position() const { return m_state.position(); }
+    //   auto errX2() const { return m_state.errX2(); }
+    //   auto errY2() const { return m_state.errY2(); }
+    //   auto x() const { return m_state.x(); }
+    //   auto y() const { return m_state.y(); }
+    //   auto z() const { return m_state.z(); }
+    //   auto tx() const { return m_state.tx(); }
+    //   auto ty() const { return m_state.ty(); }
 
-      /// access as if it was a real LHCb::State (non-const)
-      operator LHCb::State&() { return m_state; }
-      /// access as if it was a real const LHCb::State
-      operator const LHCb::State&() const { return m_state; }
-    };
+    //   /// access as if it was a real LHCb::State (non-const)
+    //   operator LHCb::State&() { return m_state; }
+    //   /// access as if it was a real const LHCb::State
+    //   operator const LHCb::State&() const { return m_state; }
+    // };
 
     SOAFIELD_TRIVIAL( ClosestToBeamStateField, closestToBeamState, ClosestToBeamState );
     SOASKIN( AtVertexState, ClosestToBeamStateField ) {
