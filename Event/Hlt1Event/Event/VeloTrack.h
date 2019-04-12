@@ -70,6 +70,14 @@ namespace LHCb::Hlt1Event {
       VeloLHCbIDContainer m_VeloLHCbIDContainer; ///< container of LHCb::LHCbID
       VeloHitContainer    m_VeloHitContainer;    ///< container of LHCb::TrackHit
       std::size_t size() const { return m_VeloLHCbIDContainer.size(); }
+      void reserve(std::size_t s) {
+        m_VeloHitContainer.reserve(s);
+        m_VeloLHCbIDContainer.reserve(s);
+      }
+      void push_back(LHCb::LHCbID id, LHCb::TrackHit hit) {
+        m_VeloHitContainer.push_back(hit);
+        m_VeloLHCbIDContainer.push_back(id);
+      }
     };
 
     /** @class VeloHitBlockField
@@ -141,6 +149,17 @@ namespace LHCb::Hlt1Event {
       ClosestToBeamState( LHCb::State&& s ) : m_state( std::move( s ) ) {
         assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
       }
+
+      auto slopes() const { return m_state.slopes(); }
+      auto position() const { return m_state.position(); }
+      auto errX2() const { return m_state.errX2(); }
+      auto errY2() const { return m_state.errY2(); }
+      auto x() const { return m_state.x(); }
+      auto y() const { return m_state.y(); }
+      auto z() const { return m_state.z(); }
+      auto tx() const { return m_state.tx(); }
+      auto ty() const { return m_state.ty(); }
+
       /// access as if it was a real LHCb::State (non-const)
       operator LHCb::State&() { return m_state; }
       /// access as if it was a real const LHCb::State
