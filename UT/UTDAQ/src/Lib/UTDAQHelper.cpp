@@ -32,8 +32,8 @@ void LHCb::UTDAQ::findSectors( unsigned int layer, float x, float y, float xTol,
   xTol += 1; // mm
   auto localXmin = localX - xTol;
   auto localXmax = localX + xTol;
-  int  subcolmin = std::round( localXmin * info.invHalfSectorXSize - 0.5 ) + 2 * info.nColsPerSide;
-  int  subcolmax = std::round( localXmax * info.invHalfSectorXSize - 0.5 ) + 2 * info.nColsPerSide;
+  int  subcolmin = std::nearbyintf( localXmin * info.invHalfSectorXSize - 0.5 ) + 2 * info.nColsPerSide;
+  int  subcolmax = std::nearbyintf( localXmax * info.invHalfSectorXSize - 0.5 ) + 2 * info.nColsPerSide;
   if ( subcolmax < 0 || subcolmin >= (int)( 4 * info.nColsPerSide ) ) {
     // out of acceptance, return empty result
     return;
@@ -45,8 +45,8 @@ void LHCb::UTDAQ::findSectors( unsigned int layer, float x, float y, float xTol,
   yTol += ( layer == 1 || layer == 2 ) ? 8 : 1; //  mm
   auto localYmin = y - yTol;
   auto localYmax = y + yTol;
-  int  subrowmin = std::round( localYmin * info.invHalfSectorYSize - 0.5 ) + 2 * info.nRowsPerSide;
-  int  subrowmax = std::round( localYmax * info.invHalfSectorYSize - 0.5 ) + 2 * info.nRowsPerSide;
+  int  subrowmin = std::nearbyintf( localYmin * info.invHalfSectorYSize - 0.5 ) + 2 * info.nRowsPerSide;
+  int  subrowmax = std::nearbyintf( localYmax * info.invHalfSectorYSize - 0.5 ) + 2 * info.nRowsPerSide;
   if ( subrowmax < 0 || subrowmin >= (int)( 4 * info.nRowsPerSide ) ) {
     // out of acceptance, return empty result
     return;
