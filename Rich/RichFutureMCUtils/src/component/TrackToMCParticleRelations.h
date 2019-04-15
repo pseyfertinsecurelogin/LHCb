@@ -18,11 +18,9 @@
 #include "GaudiAlg/Transformer.h"
 
 // Event
+#include "Event/LinksByKey.h"
 #include "Event/MCParticle.h"
 #include "Event/Track.h"
-
-// Linkers
-#include "Linker/LinkedTo.h"
 
 // Relations
 #include "RichFutureMCUtils/RichMCRelations.h"
@@ -44,7 +42,8 @@ namespace Rich::Future::MC {
    *  @date   2016-12-07
    */
   class TrackToMCParticleRelations final
-      : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&, const LHCb::MCParticles& ),
+      : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&, const LHCb::MCParticles&,
+                                                   const LHCb::LinksByKey& ),
                            Traits::BaseClass_t<AlgBase>> {
 
   public:
@@ -52,8 +51,8 @@ namespace Rich::Future::MC {
     TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator );
 
     /// Algorithm execution via transform
-    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks&      tks,
-                                                         const LHCb::MCParticles& mcps ) const override;
+    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks& tks, const LHCb::MCParticles& mcps,
+                                                         const LHCb::LinksByKey& link ) const override;
 
   private:
     /// Allow more than one MCParticle per track ?
