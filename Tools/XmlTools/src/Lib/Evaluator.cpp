@@ -124,8 +124,8 @@ namespace {
   endp = POSITION;                                                                                                     \
   return STATUS
 
-static constexpr int MAX_N_PAR          = 5;
-static const char    sss[MAX_N_PAR + 2] = "012345";
+inline constexpr int MAX_N_PAR          = 5;
+inline const char    sss[MAX_N_PAR + 2] = "012345";
 
 enum { ENDL, LBRA, OR, AND, EQ, NE, GE, GT, LE, LT, PLUS, MINUS, MULT, DIV, POW, RBRA, VALUE };
 
