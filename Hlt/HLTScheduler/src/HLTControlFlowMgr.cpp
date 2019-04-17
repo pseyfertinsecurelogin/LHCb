@@ -244,19 +244,18 @@ StatusCode HLTControlFlowMgr::finalize() {
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
 }
 
-EventContext HLTControlFlowMgr::createEventContext() { 
-      //setup evtcontext
-      EventContext evtContext{};
-      evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
-      m_algExecStateSvc->reset( evtContext );
+EventContext HLTControlFlowMgr::createEventContext() {
+  // setup evtcontext
+  EventContext evtContext{};
+  evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
+  m_algExecStateSvc->reset( evtContext );
 
-      // giving the scheduler states to the evtContext, so that they are
-      // globally accessible within an event
-      // copy of states happens here!
-      evtContext.emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
-      return evtContext;
+  // giving the scheduler states to the evtContext, so that they are
+  // globally accessible within an event
+  // copy of states happens here!
+  evtContext.emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
+  return evtContext;
 }
-
 
 StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
@@ -270,7 +269,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   if ( m_evtSelector ) {
     StatusCode declEvtRootSc = declareEventRootAddress();
     if ( declEvtRootSc.isFailure() ) { // We ran out of events!
-      m_nextevt = -1;                // Set created event to a negative value: we finished!
+      m_nextevt = -1;                  // Set created event to a negative value: we finished!
       return StatusCode::SUCCESS;
     }
   } else {
@@ -279,7 +278,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   }
 
   // Now add event to the scheduler
-  if ( UNLIKELY(msgLevel( MSG::VERBOSE ) ))
+  if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
   enqueue( [evtContext = std::move( evtContext ), this]() mutable {
@@ -317,7 +316,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
     m_algExecStateSvc->updateEventStatus( false, evtContext );
 
     // printing
-    if ( UNLIKELY(msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0) ) {
+    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0 ) ) {
       verbose() << buildPrintableStateTree( NodeStates ).str() << endmsg;
       verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
     }
@@ -414,7 +413,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   auto okToStartNewEvt = [&] {
     return ( newEvtAllowed || m_nextevt == 0 ) && // Launch the first event alone
-                                                    // The events are not finished with an unlimited number of events
+                                                  // The events are not finished with an unlimited number of events
            m_nextevt >= 0 &&
            // The events are not finished with a limited number of events
            ( m_nextevt < maxevt || maxevt < 0 ) &&
@@ -438,8 +437,8 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
       }
       if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
 
-      auto evtContext = createEventContext();
-      StatusCode sc = executeEvent( std::move(evtContext) );
+      auto       evtContext = createEventContext();
+      StatusCode sc         = executeEvent( std::move( evtContext ) );
 
       if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
       if ( m_nextevt == -1 ) break;
@@ -513,8 +512,7 @@ StatusCode HLTControlFlowMgr::eventFailed( EventContext& eventContext ) const {
 
 void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
   // Check if the execution failed
-  if ( m_algExecStateSvc->eventStatus( eventContext ) != EventStatus::Success )
-    eventFailed( eventContext ).ignore();
+  if ( m_algExecStateSvc->eventStatus( eventContext ) != EventStatus::Success ) eventFailed( eventContext ).ignore();
   int si = eventContext.slot();
 
   // Schedule the cleanup of the event
