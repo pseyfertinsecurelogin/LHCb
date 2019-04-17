@@ -187,11 +187,10 @@ namespace LHCb::Event::v2 {
   //=============================================================================
   // Add LHCbIDs to track, specify Track::IDsSorted{} or Track::IDsUnordered{}
   //=============================================================================
-  template <typename S,
-            typename = std::enable_if_t<std::is_same_v<S, Tag::Sorted_tag> || std::is_same_v<S, Tag::Unordered_tag>>>
+  template <typename S, typename>
   bool Track::addToLhcbIDs( span<LHCbID const> ids, S /**/ ) {
     // check that original list is sorted and contained only unique elements
-    if constexpr ( std::is_same_v<S, Tag::Sorted_tag> ) {
+    if constexpr ( std::is_same_v<std::decay_t<S>, Tag::Sorted_tag> ) {
       assert( std::is_sorted( ids.begin(), ids.end() ) );
       assert( std::adjacent_find( ids.begin(), ids.end() ) == ids.end() );
     }
@@ -199,7 +198,7 @@ namespace LHCb::Event::v2 {
     auto pivot    = m_lhcbIDs.insert( end( m_lhcbIDs ), std::begin( ids ), std::end( ids ) );
     auto org_size = m_lhcbIDs.size();
 
-    if constexpr ( std::is_same_v<S, Tag::Unordered_tag> ) {
+    if constexpr ( std::is_same_v<std::decay_t<S>, Tag::Unordered_tag> ) {
       std::sort( pivot, end( m_lhcbIDs ) );
       // check that original list contained only unique elements
       assert( std::adjacent_find( pivot, end( m_lhcbIDs ) ) == end( m_lhcbIDs ) );

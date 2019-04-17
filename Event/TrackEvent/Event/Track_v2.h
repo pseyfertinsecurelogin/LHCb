@@ -318,10 +318,10 @@ namespace LHCb::Event {
       /// Sets the list of LHCbIDs associated to this track
       template <typename Range, typename Tg,
                 typename = std::enable_if_t<std::is_convertible_v<LHCbID, ranges::v3::range_value_type_t<Range>>>,
-                typename = std::enable_if_t<std::is_base_of_v<Tag::Unordered_tag, Tg>>>
+                typename = std::enable_if_t<std::is_base_of_v<Tag::Unordered_tag, std::decay_t<Tg>>>>
       Track& setLhcbIDs( const Range& ids, Tg = Tag::Unordered ) {
         m_lhcbIDs.assign( ids.begin(), ids.end() );
-        if constexpr ( !std::is_same_v<Tg, Tag::Sorted_tag> ) {
+        if constexpr ( !std::is_same_v<std::decay_t<Tg>, Tag::Sorted_tag> ) {
           std::sort( m_lhcbIDs.begin(), m_lhcbIDs.end() );
         } else {
           assert( std::is_sorted( m_lhcbIDs.begin(), m_lhcbIDs.end() ) );

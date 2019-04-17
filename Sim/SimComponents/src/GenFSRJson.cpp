@@ -25,7 +25,6 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
 #include <string>
 
 #include "boost/property_tree/json_parser.hpp"
@@ -361,18 +360,18 @@ void GenFSRJson::printFSR() {
       std::string decFiles    = genFSR->getSimulationInfo( "decFiles", "" );
       std::string evtType_str = std::to_string( evtType );
       std::string njobs_str   = std::to_string( njobs );
-      std::string time        = ::getCurrentTime();
+      std::string time        = getCurrentTime();
 
       // open the new file
       if ( msgLevel( MSG::DEBUG ) ) debug() << "write to file: " + m_jsonOutputName << endmsg;
-      std::ofstream jsonOutput( m_jsonOutputLocation + m_jsonOutputName, std::fstream::out );
+      std::ofstream jsonOutput( m_jsonOutputLocation.value() + m_jsonOutputName.value(), std::fstream::out );
 
       if ( jsonOutput.is_open() ) {
         if ( msgLevel( MSG::DEBUG ) )
-          debug() << "Json output: " + m_jsonOutputLocation + m_jsonOutputName + " created." << endmsg;
+          debug() << "Json output: " + m_jsonOutputLocation.value() + m_jsonOutputName.value() + " created." << endmsg;
 
         ptree       main_tree;
-        std::string evtDesc = ::getEvtTypeDesc( evtType );
+        std::string evtDesc = getEvtTypeDesc( evtType );
 
         main_tree.put( "APPCONFIG_file", m_appConfigFile );
         main_tree.put( "APPCONFIG_version", m_appConfigVersion );
@@ -385,11 +384,11 @@ void GenFSRJson::printFSR() {
         main_tree.put( "SIMCOND", m_simCond );
         main_tree.put( "genTimeStamp", time );
 
-        ptree gencounters_array    = ::writeGeneratorCounters( *genFSR );
-        ptree hadroncounters_array = ::writeHadronCounters( *genFSR );
-        ptree cross_array          = ::writeGeneratorCrossSections( *genFSR );
-        ptree efficiencies_array   = ::writeCutEfficiencies( *genFSR );
-        ptree stats_array          = ::writeGlobalStat( *genFSR );
+        ptree gencounters_array    = writeGeneratorCounters( *genFSR );
+        ptree hadroncounters_array = writeHadronCounters( *genFSR );
+        ptree cross_array          = writeGeneratorCrossSections( *genFSR );
+        ptree efficiencies_array   = writeCutEfficiencies( *genFSR );
+        ptree stats_array          = writeGlobalStat( *genFSR );
 
         main_tree.add_child( "InteractionCounters", gencounters_array );
         main_tree.add_child( "HadronCounters", hadroncounters_array );

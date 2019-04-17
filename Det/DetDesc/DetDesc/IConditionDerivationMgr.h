@@ -16,7 +16,7 @@
 #include <memory>
 #include <unordered_map>
 
-class Condition;
+struct Condition;
 class ParamValidDataObject;
 
 namespace LHCb::DetDesc {

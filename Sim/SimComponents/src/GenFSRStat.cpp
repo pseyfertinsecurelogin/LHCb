@@ -22,13 +22,11 @@
 
 // other libraries
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
-//#include <ctime>
-#include <stdio.h>
-//#include "TSystem.h"
-#include <cstdlib>
+namespace fs = std::filesystem;
 
 #define script_version "20181113"
 
@@ -539,7 +537,7 @@ void GenFSRStat::printFSR() {
     }
     LHCb::GenFSR* genFSR = dynamic_cast<LHCb::GenFSR*>( obj );
 
-    if ( genFSR == nullptr ) {
+    if ( !genFSR ) {
       warning() << "genFSR record was not found" << endmsg;
       if ( msgLevel( MSG::DEBUG ) ) debug() << genRecordAddress << " not found" << endmsg;
     } else {
@@ -549,9 +547,9 @@ void GenFSRStat::printFSR() {
       std::string genMethod  = genFSR->getSimulationInfo( "generationMethod", "" );
       std::string genName    = genFSR->getSimulationInfo( "hardGenerator", "" );
       std::string decFiles   = genFSR->getSimulationInfo( "decFiles", "" );
-      std::string evType_str = dynamic_cast<std::ostringstream*>( &( std::ostringstream() << evType ) )->str();
-      std::string njobs_str  = dynamic_cast<std::ostringstream*>( &( std::ostringstream() << njobs ) )->str();
-      std::string time       = ::getCurrentTime();
+      std::string evType_str = std::to_string( evType );
+      std::string njobs_str  = std::to_string( njobs );
+      std::string time       = getCurrentTime();
 
       int count1 = 0, count2 = 0, count3 = 0, count4 = 0, count5 = 0;
 
@@ -611,18 +609,18 @@ void GenFSRStat::printFSR() {
       }
 
       // read the already existing file
-      std::fstream readOutput( m_htmlOutputLocation + m_htmlOutputName, std::fstream::in );
+      std::fstream readOutput( m_htmlOutputLocation.value() + m_htmlOutputName.value(), std::fstream::in );
       // open the new file
       std::string   htmlTempName = "GenerationFSRTemp.html";
-      std::ofstream htmlOutput( m_htmlOutputLocation + htmlTempName, std::fstream::out );
+      std::ofstream htmlOutput( m_htmlOutputLocation.value() + htmlTempName, std::fstream::out );
 
       if ( htmlOutput.is_open() ) {
         if ( msgLevel( MSG::DEBUG ) )
-          debug() << "Html output: " + m_htmlOutputLocation + htmlTempName + " created." << endmsg;
+          debug() << "Html output: " + m_htmlOutputLocation.value() + htmlTempName + " created." << endmsg;
 
         if ( readOutput.is_open() ) {
           if ( msgLevel( MSG::DEBUG ) )
-            debug() << "Html input: " + m_htmlOutputLocation + m_htmlOutputName + "opened." << endmsg;
+            debug() << "Html input: " + m_htmlOutputLocation.value() + m_htmlOutputName + "opened." << endmsg;
 
           // hyper-link related to this simulation conditions
           std::string ref_evType =
@@ -640,7 +638,7 @@ void GenFSRStat::printFSR() {
             // look for the hyper-link in the current line
             if ( !flag_evType ) pos_ref = line.find( ref_evType );
 
-            if ( pos_ref != std::string::npos && flag_evType == false ) flag_evType = true;
+            if ( pos_ref != std::string::npos && !flag_evType ) flag_evType = true;
 
             // if there is not already a simulation for this production, here we need to add the hyperlink
             // to the table
@@ -656,7 +654,7 @@ void GenFSRStat::printFSR() {
               // but if we are here it's because we have to overwrite the previous results
               htmlOutput << link << std::endl; // write link
 
-              std::string evtDesc = ::getEvtTypeDesc( evType );
+              std::string evtDesc = getEvtTypeDesc( evType );
 
               // Write the tables
               htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc
@@ -670,11 +668,11 @@ void GenFSRStat::printFSR() {
               htmlOutput << "<font color=\"#FF0000\">" + m_appConfigFile + "</font><br>";
               htmlOutput << time << "</th>\n<tr>\n\n";
 
-              if ( count2 != 0 ) ::writeGeneratorCounters( *genFSR, count2, htmlOutput );
-              if ( count3 != 0 ) ::writeGenHadronCounters( *genFSR, count3, htmlOutput );
-              if ( count4 != 0 ) ::writeAccHadronCounters( *genFSR, count4, htmlOutput );
-              if ( count5 != 0 ) ::writeGeneratorCrossSections( *genFSR, count5, htmlOutput );
-              if ( count1 != 0 ) ::writeCutEfficiencies( *genFSR, count1, htmlOutput );
+              if ( count2 != 0 ) writeGeneratorCounters( *genFSR, count2, htmlOutput );
+              if ( count3 != 0 ) writeGenHadronCounters( *genFSR, count3, htmlOutput );
+              if ( count4 != 0 ) writeAccHadronCounters( *genFSR, count4, htmlOutput );
+              if ( count5 != 0 ) writeGeneratorCrossSections( *genFSR, count5, htmlOutput );
+              if ( count1 != 0 ) writeCutEfficiencies( *genFSR, count1, htmlOutput );
 
               htmlOutput << "</table>\n";
 
@@ -693,7 +691,7 @@ void GenFSRStat::printFSR() {
               if ( count1 == 0 )
                 htmlOutput << "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
 
-              ::writeGlobalStat( *genFSR, htmlOutput );
+              writeGlobalStat( *genFSR, htmlOutput );
 
               htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str
                          << " jobs from the following ProdID:<font color=\"#0000FF\">" + m_prodID + "</font></p>\n";
@@ -738,7 +736,7 @@ void GenFSRStat::printFSR() {
           // link
           htmlOutput << "<a name=\"" << evType_str << "\"></a>\n" << std::endl;
 
-          std::string evtDesc = ::getEvtTypeDesc( evType );
+          std::string evtDesc = getEvtTypeDesc( evType );
           // Write the tables
           htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc
                      << ")</font> ";
@@ -752,11 +750,11 @@ void GenFSRStat::printFSR() {
           htmlOutput << "<font color=\"#FF0000\">" + m_appConfigFile + "</font><br>";
           htmlOutput << time << "</th>\n<tr>\n\n";
 
-          if ( count2 != 0 ) ::writeGeneratorCounters( *genFSR, count2, htmlOutput );
-          if ( count3 != 0 ) ::writeGenHadronCounters( *genFSR, count3, htmlOutput );
-          if ( count4 != 0 ) ::writeAccHadronCounters( *genFSR, count4, htmlOutput );
-          if ( count5 != 0 ) ::writeGeneratorCrossSections( *genFSR, count5, htmlOutput );
-          if ( count1 != 0 ) ::writeCutEfficiencies( *genFSR, count1, htmlOutput );
+          if ( count2 != 0 ) writeGeneratorCounters( *genFSR, count2, htmlOutput );
+          if ( count3 != 0 ) writeGenHadronCounters( *genFSR, count3, htmlOutput );
+          if ( count4 != 0 ) writeAccHadronCounters( *genFSR, count4, htmlOutput );
+          if ( count5 != 0 ) writeGeneratorCrossSections( *genFSR, count5, htmlOutput );
+          if ( count1 != 0 ) writeCutEfficiencies( *genFSR, count1, htmlOutput );
 
           htmlOutput << "</table>\n";
 
@@ -773,7 +771,7 @@ void GenFSRStat::printFSR() {
           if ( count1 == 0 )
             htmlOutput << "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
 
-          ::writeGlobalStat( *genFSR, htmlOutput );
+          writeGlobalStat( *genFSR, htmlOutput );
 
           htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str
                      << " jobs from the following ProdID:<font color=\"#0000FF\">" + m_prodID + "</font></p>\n";
@@ -785,10 +783,11 @@ void GenFSRStat::printFSR() {
         // remove the old file
         if ( readOutput.is_open() ) {
           readOutput.close();
-          remove( ( m_htmlOutputLocation + m_htmlOutputName ).c_str() );
+          fs::remove( m_htmlOutputLocation.value() + m_htmlOutputName.value() );
         }
         // create the new .html file
-        rename( ( m_htmlOutputLocation + htmlTempName ).c_str(), ( m_htmlOutputLocation + m_htmlOutputName ).c_str() );
+        fs::rename( m_htmlOutputLocation.value() + htmlTempName,
+                    m_htmlOutputLocation.value() + m_htmlOutputName.value() );
       } else if ( msgLevel( MSG::DEBUG ) )
         debug() << "The output file was not opened correctly" << endmsg;
     }
