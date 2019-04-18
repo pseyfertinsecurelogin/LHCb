@@ -36,7 +36,8 @@
 namespace LHCb::Hlt1Event {
   inline namespace v1 {
     namespace VeloTESLocation {
-      inline const std::string ForwardHits               = "Rec/Velo/ForwardVertexing";
+      inline const std::string ForwardHits               = "Rec/Velo/ForwardHits";
+      inline const std::string BackwardHits              = "Rec/Velo/BackwardHits";
       inline const std::string ForwardVertexingStates    = "Rec/Velo/ForwardVertexing";
       inline const std::string BackwardVertexingStates   = "Rec/Velo/BackwardVertexing";
       inline const std::string ForwardVertexingStateSel  = "Rec/Velo/ForwardVertexingSel";
