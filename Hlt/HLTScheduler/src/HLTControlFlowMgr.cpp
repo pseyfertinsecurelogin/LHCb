@@ -12,11 +12,9 @@
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/SerializeSTL.h"
 
-
-namespace { 
+namespace {
   constexpr bool use_debuggable_threadpool = false;
 }
-
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
@@ -287,7 +285,6 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-
   auto event_task = [evtContext = std::move( evtContext ), this]() mutable {
     auto& [NodeStates, AlgStates] = evtContext.getExtension<SchedulerStates>();
 
@@ -343,11 +340,10 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   };
 
   if constexpr ( use_debuggable_threadpool ) {
-    m_debug_pool->enqueue( std::move(event_task) );
+    m_debug_pool->enqueue( std::move( event_task ) );
   } else {
-    enqueue( std::move(event_task) );
+    enqueue( std::move( event_task ) );
   }
-
 
   m_nextevt++;
   return StatusCode::SUCCESS;
@@ -382,13 +378,13 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   }
 
   if constexpr ( use_debuggable_threadpool ) {
-    m_debug_pool = std::make_unique<ThreadPool>(m_threadPoolSize.value());
+    m_debug_pool = std::make_unique<ThreadPool>( m_threadPoolSize.value() );
   }
   // create th tbb thread pool
   tbb::task_scheduler_init tbbSchedInit( m_threadPoolSize.value() + 1 );
   task_observer            taskObsv{};
 
-  //start with event 0
+  // start with event 0
   m_nextevt = 0;
   // Run the first event before spilling more than one
   bool newEvtAllowed = false;
