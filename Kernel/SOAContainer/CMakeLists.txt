@@ -22,6 +22,15 @@ set_property(DIRECTORY PROPERTY INSTALLS_LOCAL_HEADERS TRUE)
 # We do not want to automatically discover any of the other CMakeLists.txt
 # files in the subdirectories therein (therefore disabling in the first place).
 
-set(SOAContainer_disable_tests ON)
-set(SOAContainer_header_destination ${CMAKE_INSTALL_PREFIX}/include/SOAContainer)
-add_subdirectory(submodules/SOAContainer)
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/submodules/SOAContainer/CMakeLists.txt")
+  set(SOAContainer_disable_tests ON)
+  set(SOAContainer_header_destination ${CMAKE_INSTALL_PREFIX}/include/SOAContainer)
+  add_subdirectory(submodules/SOAContainer)
+else()
+  message(FATAL_ERROR
+"SOAContainer submodule file not found
+from the directory: ${CMAKE_SOURCE_DIR}
+you possibly need to run: `git submodule update --init --recursive`
+
+see also https://twiki.cern.ch/twiki/bin/view/LHCb/Git4LHCb#Dealing_with_submodules_when_cha")
+endif()
