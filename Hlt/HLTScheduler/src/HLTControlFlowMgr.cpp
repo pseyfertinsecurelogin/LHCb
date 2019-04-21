@@ -11,12 +11,28 @@
 #include "HLTControlFlowMgr.h"
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/SerializeSTL.h"
+#ifdef NDEBUG
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunused-parameter"
+#  define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
+#include <gsl/pointers>
+#ifdef NDEBUG
+#  pragma GCC diagnostic pop
+#endif
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
 namespace GaudiUtils {
+
   // operator<< overloads for variant nodes
   std::ostream& operator<<( std::ostream& os, VNode const& node ) { return os << getNameOfVNode( node ); }
+
+  // be able to print vectors of ordered nodes correctly
+  template <typename T>
+  std::ostream& operator<<( std::ostream& os, gsl::not_null<T*> const& ptr ) {
+    return os << *ptr;
+  }
 
   template <nodeType Type>
   std::ostream& operator<<( std::ostream& os, CompositeNode<Type> const& node ) {
@@ -26,9 +42,6 @@ namespace GaudiUtils {
   std::ostream& operator<<( std::ostream& os, NodeState const& state ) {
     return os << state.executionCtr << "|" << state.passed;
   }
-
-  // be able to print vectors of ordered nodes correctly
-  std::ostream& operator<<( std::ostream& os, VNode const* node ) { return os << getNameOfVNode( *node ); }
 
   template <typename Key, typename Compare, typename Allocator>
   std::ostream& operator<<( std::ostream& os, std::set<Key, Compare, Allocator> const& x ) {
@@ -301,7 +314,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
       }
     }
 
-    for ( VNode* execNode : m_orderedNodesVec ) {
+    for ( gsl::not_null<VNode*> execNode : m_orderedNodesVec ) {
       std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates )]( BasicNode& bNode ) {
                              if ( bNode.requested( ns.get() ) ) {
                                bNode.execute( ns.get(), as.get(), *evtContext, m_algExecStateSvc, appmgr );
@@ -604,16 +617,16 @@ void HLTControlFlowMgr::buildLines() { // here lines are configured, filled into
 void HLTControlFlowMgr::configureScheduling() {
 
   // find all basic nodes by traversing the tree recursively
-  std::set<VNode*>       allBasics{reachableBasics( m_motherOfAllNodes )};
-  std::set<VNode*> const allComposites{reachableComposites( m_motherOfAllNodes )};
+  auto       allBasics     = reachableBasics( gsl::not_null{m_motherOfAllNodes} );
+  auto const allComposites = reachableComposites( gsl::not_null{m_motherOfAllNodes} );
 
-  std::set<std::vector<VNode*>> additionalEdges;
+  std::set<std::vector<gsl::not_null<VNode*>>> additionalEdges;
 
   // translate user edges, defined only by names, to edges of pointers to VNodes
   for ( auto& edge : m_userDefinedEdges ) {
     assert( edge.size() == 2 );
-    additionalEdges.emplace( std::vector<VNode*>{findVNodeInContainer( edge[0], m_allVNodes ).value(),
-                                                 findVNodeInContainer( edge[1], m_allVNodes ).value()} );
+    additionalEdges.emplace( std::vector{gsl::not_null{findVNodeInContainer( edge[0], m_allVNodes )},
+                                         gsl::not_null{findVNodeInContainer( edge[1], m_allVNodes )}} );
   }
 
   using Algorithm = Gaudi::Algorithm;
@@ -626,7 +639,7 @@ void HLTControlFlowMgr::configureScheduling() {
                   [&]( auto const& name ) { return m_databroker->algorithmsRequiredFor( name ); } );
 
   // which ones are also explicit CF nodes?
-  std::vector<std::set<VNode*>> explicitDataDependencies{BarrierInputs.size()};
+  std::vector<std::set<gsl::not_null<VNode*>>> explicitDataDependencies{BarrierInputs.size()};
 
   for ( std::size_t i = 0; i != BarrierInputs.size(); ++i ) {
     for ( Algorithm const* alg : BarrierInputs[i] ) {
@@ -648,7 +661,7 @@ void HLTControlFlowMgr::configureScheduling() {
     }
   }
 
-  for ( VNode* vnode : allBasics ) {
+  for ( gsl::not_null<VNode*> vnode : allBasics ) {
     std::visit( overload{[&]( BasicNode& node ) {
                            // plug in data dependencies
                            auto reqAlgs = m_databroker->algorithmsRequiredFor( node.m_name, m_BarrierAlgNames );
@@ -667,8 +680,8 @@ void HLTControlFlowMgr::configureScheduling() {
                            for ( AlgWrapper const& reqAlg : node.m_RequiredAlgs ) {
                              for ( std::size_t i = 0; i != m_BarrierAlgNames.size(); ++i ) {
                                if ( reqAlg.name() == m_BarrierAlgNames[i] ) {
-                                 for ( VNode* explicitDD : explicitDataDependencies[i] ) {
-                                   additionalEdges.emplace( std::vector<VNode*>{explicitDD, vnode} );
+                                 for ( gsl::not_null<VNode*> explicitDD : explicitDataDependencies[i] ) {
+                                   additionalEdges.emplace( std::vector{explicitDD, vnode} );
                                  }
                                }
                              }
@@ -692,7 +705,7 @@ void HLTControlFlowMgr::configureScheduling() {
   addParentsToAllNodes( allComposites );
 
   // get all unwrapped control flow edges
-  std::set<std::vector<std::set<VNode*>>> allEdges{findAllEdges( m_motherOfAllNodes, additionalEdges )};
+  auto allEdges = findAllEdges( gsl::not_null{m_motherOfAllNodes}, additionalEdges );
 
   // print out the edges
   if ( msgLevel( MSG::DEBUG ) ) debug() << "edges: " << allEdges << endmsg;

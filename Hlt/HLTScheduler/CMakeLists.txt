@@ -22,12 +22,13 @@ gaudi_depends_on_subdirs(
 
 find_package(Boost)
 find_package(TBB)
+find_package(cppgsl)
 # hide warnings from some external projects
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${TBB_INCLUDE_DIRS})
 
 gaudi_add_module(HLTScheduler
                  src/*.cpp
-                 INCLUDE_DIRS Boost HLTScheduler
+                 INCLUDE_DIRS Boost HLTScheduler cppgsl
                  LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel)
 
 #gaudi_add_unit_test(utestTrackingCoder

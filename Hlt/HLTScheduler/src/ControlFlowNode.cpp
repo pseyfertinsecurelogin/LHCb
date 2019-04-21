@@ -8,7 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#ifdef NDEBUG
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunused-parameter"
+#  define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
 #include "ControlFlowNode.h"
+#ifdef NDEBUG
+#  pragma GCC diagnostic pop
+#endif
 
 // implements the updateState for the LAZY_AND CompositeNode type: If a child
 // did not select anything (did not pass), the LAZY_AND node sets its own
@@ -107,13 +115,12 @@ void childrenNamesToPointers( std::vector<VNode>& allNodes ) {
   for ( VNode& vnode : allNodes ) {
     std::visit( overload{[&]( auto& node ) {
                            for ( std::string_view name : node.m_childrenNames ) {
-                             auto OptPtr = findVNodeInContainer( name, allNodes );
-                             if ( OptPtr ) {
-                               node.m_children.push_back( OptPtr.value() );
-                             } else {
+                             auto ptr = findVNodeInContainer( name, allNodes );
+                             if ( UNLIKELY( !ptr ) ) {
                                throw GaudiException( "MissConfiguration in Children Names", __func__,
                                                      StatusCode::FAILURE );
                              }
+                             node.m_children.emplace_back( ptr );
                            }
                          },
                          []( BasicNode& ) {}},
@@ -122,50 +129,46 @@ void childrenNamesToPointers( std::vector<VNode>& allNodes ) {
 }
 
 namespace { // helper functions for reachableBasics, reachableComposites and findAllEdges
-  void appendBasics( std::set<VNode*>& children, VNode* vnode ) {
-    assert( vnode != nullptr );
+  void appendBasics( std::set<gsl::not_null<VNode*>>& children, gsl::not_null<VNode*> vnode ) {
     std::visit( overload{[&]( auto const& node ) {
-                           for ( VNode* child : node.m_children ) appendBasics( children, child );
+                           for ( gsl::not_null<VNode*> child : node.m_children ) appendBasics( children, child );
                          },
                          [&]( BasicNode const& ) { children.emplace( vnode ); }},
                 *vnode );
   }
 
-  void appendComposites( std::set<VNode*>& children, VNode* vnode ) {
-    assert( vnode != nullptr );
+  void appendComposites( std::set<gsl::not_null<VNode*>>& children, gsl::not_null<VNode*> vnode ) {
     std::visit( overload{[&]( auto const& node ) {
                            children.emplace( vnode );
-                           for ( VNode* child : node.m_children ) appendComposites( children, child );
+                           for ( gsl::not_null<VNode*> child : node.m_children ) appendComposites( children, child );
                          },
                          [&]( BasicNode const& ) {}},
                 *vnode );
   }
 
-  void appendEdges( std::set<std::vector<std::set<VNode*>>>& allEdges, VNode const* vnode ) {
-    assert( vnode != nullptr );
-    std::visit( overload{[&]( auto const& node ) {
-                           for ( auto const& edge : node.Edges() ) {
-                             allEdges.emplace( std::vector<std::set<VNode*>>{reachableBasics( edge[0] ),
-                                                                             reachableBasics( edge[1] )} );
-                           }
-                           for ( VNode const* child : node.m_children ) appendEdges( allEdges, child );
-                         },
-                         []( BasicNode const& ) {}},
-                *vnode );
+  void appendEdges( std::set<std::vector<std::set<gsl::not_null<VNode*>>>>& allEdges,
+                    gsl::not_null<VNode const*>                             vnode ) {
+    std::visit(
+        overload{[&]( auto const& node ) {
+                   for ( auto const& edge : node.Edges() ) {
+                     allEdges.emplace( std::vector{reachableBasics( edge.first ), reachableBasics( edge.second )} );
+                   }
+                   for ( auto const& child : node.m_children ) appendEdges( allEdges, child );
+                 },
+                 []( BasicNode const& ) {}},
+        *vnode );
   }
 } // namespace
 
 // function to get all basic grandchildren and children from a CompositeNode
-std::set<VNode*> reachableBasics( VNode* vnode ) {
-  assert( vnode != nullptr );
-  std::set<VNode*> children;
+std::set<gsl::not_null<VNode*>> reachableBasics( gsl::not_null<VNode*> vnode ) {
+  std::set<gsl::not_null<VNode*>> children;
   appendBasics( children, vnode );
   return children;
 }
 // same for composite
-std::set<VNode*> reachableComposites( VNode* vnode ) {
-  assert( vnode != nullptr );
-  std::set<VNode*> composites;
+std::set<gsl::not_null<VNode*>> reachableComposites( gsl::not_null<VNode*> vnode ) {
+  std::set<gsl::not_null<VNode*>> composites;
   appendComposites( composites, vnode );
   return composites;
 }
@@ -173,16 +176,15 @@ std::set<VNode*> reachableComposites( VNode* vnode ) {
 // this function shall be called to get a set of edges of structure vector(
 // VNode from , VNode to ) and and unwrap those edges to form
 // vector(set(BasicNode froms ...) , set(BasicNode tos ...) )
-std::set<std::vector<std::set<VNode*>>> findAllEdges( VNode const*                        vnode,
-                                                      std::set<std::vector<VNode*>> const custom_edges ) {
-  assert( vnode != nullptr );
+std::set<std::vector<std::set<gsl::not_null<VNode*>>>>
+findAllEdges( gsl::not_null<VNode const*> vnode, std::set<std::vector<gsl::not_null<VNode*>>> const custom_edges ) {
 
-  std::set<std::vector<std::set<VNode*>>> allEdges;
+  std::set<std::vector<std::set<gsl::not_null<VNode*>>>> allEdges;
 
   appendEdges( allEdges, vnode );
 
-  for ( std::vector<VNode*> const& edge : custom_edges ) {
-    allEdges.emplace( std::vector<std::set<VNode*>>{reachableBasics( edge[0] ), reachableBasics( edge[1] )} );
+  for ( auto const& edge : custom_edges ) {
+    allEdges.emplace( std::vector{reachableBasics( edge[0] ), reachableBasics( edge[1] )} );
   }
 
   return allEdges;
@@ -193,32 +195,32 @@ std::set<std::vector<std::set<VNode*>>> findAllEdges( VNode const*              
 // check the dependencies of in the right hand side of an edge, make sure
 // that all corresponding left hand sided nodes are already in the
 // alreadyOrdered vector. I know, unreadable AF
-bool CFDependenciesMet( VNode* nodeToCheck, std::set<std::vector<std::set<VNode*>>> const& setOfEdges,
-                        std::vector<VNode*>& alreadyOrdered ) {
-  assert( nodeToCheck != nullptr );
-  return std::all_of(
-      begin( setOfEdges ), end( setOfEdges ), [&]( std::vector<std::set<VNode*>> const& unwrappedEdge ) {
-        if ( unwrappedEdge[1].find( nodeToCheck ) == end( unwrappedEdge[1] ) )
-          return true;
-        else {
-          return std::all_of( begin( unwrappedEdge[0] ), end( unwrappedEdge[0] ), [&]( VNode const* node ) {
-            return std::find( begin( alreadyOrdered ), end( alreadyOrdered ), node ) != end( alreadyOrdered );
-          } );
-        }
+bool CFDependenciesMet( gsl::not_null<VNode*>                                         nodeToCheck,
+                        std::set<std::vector<std::set<gsl::not_null<VNode*>>>> const& setOfEdges,
+                        std::vector<gsl::not_null<VNode*>>&                           alreadyOrdered ) {
+  return std::all_of( begin( setOfEdges ), end( setOfEdges ), [&]( auto const& unwrappedEdge ) {
+    if ( unwrappedEdge[1].find( nodeToCheck ) == end( unwrappedEdge[1] ) )
+      return true;
+    else {
+      return std::all_of( begin( unwrappedEdge[0] ), end( unwrappedEdge[0] ), [&]( auto const& node ) {
+        return std::find( begin( alreadyOrdered ), end( alreadyOrdered ), node ) != end( alreadyOrdered );
       } );
+    }
+  } );
 }
 
 // this should resolve the CF and DD dependencies and return a ordered vector which meets
 // all dependencies. Pick from unordered, append to ordered and erase from unordered when dependencies met.
-std::vector<VNode*> resolveDependencies( std::set<VNode*>&                              unordered,
-                                         std::set<std::vector<std::set<VNode*>>> const& setOfEdges ) {
-  std::vector<VNode*> ordered;
+std::vector<gsl::not_null<VNode*>>
+resolveDependencies( std::set<gsl::not_null<VNode*>>&                              unordered,
+                     std::set<std::vector<std::set<gsl::not_null<VNode*>>>> const& setOfEdges ) {
+  std::vector<gsl::not_null<VNode*>> ordered;
   ordered.reserve( unordered.size() );
   // check for each loop over unordered, whether at least one node was put into ordered,
   // otherwise it is an infinite loop, which is bad
 
   for ( bool infiniteLoop = true; !unordered.empty(); ) {
-    for ( VNode* vnode : unordered ) {
+    for ( auto& vnode : unordered ) {
       if ( CFDependenciesMet( vnode, setOfEdges, ordered ) ) {
         infiniteLoop = false;
         ordered.emplace_back( vnode );
@@ -238,14 +240,14 @@ std::vector<VNode*> resolveDependencies( std::set<VNode*>&                      
 // fill the parents member of all nodes that are interconnected.
 // you can give a list of composite nodes, and all their children's parents-member will
 // be filled.
-void addParentsToAllNodes( std::set<VNode*> const& composites ) {
+void addParentsToAllNodes( std::set<gsl::not_null<VNode*>> const& composites ) {
   auto get_children = []( VNode const* n ) {
     return std::visit( overload{[]( auto const& node ) { return node.m_children; },
-                                []( BasicNode const& ) { return std::vector<VNode*>{}; }},
+                                []( BasicNode const& ) { return std::vector<gsl::not_null<VNode*>>{}; }},
                        *n );
   };
-  for ( VNode* composite : composites ) {
-    for ( VNode* node : get_children( composite ) ) {
+  for ( gsl::not_null<VNode*> composite : composites ) {
+    for ( gsl::not_null<VNode*> node : get_children( composite ) ) {
       std::visit( [&]( auto& toAppendTo ) { return toAppendTo.m_parents.emplace_back( composite ); }, *node );
     }
   }
