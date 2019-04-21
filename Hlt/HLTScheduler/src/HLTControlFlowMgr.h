@@ -151,9 +151,9 @@ private:
   // all controlflownodes
   std::vector<VNode> m_allVNodes;
   // all nodes to execute in ordered manner
-  std::vector<VNode*> m_orderedNodesVec;
+  std::vector<gsl::not_null<VNode*>> m_orderedNodesVec;
   // highest node
-  VNode* m_motherOfAllNodes;
+  VNode* m_motherOfAllNodes = nullptr;
 
   std::vector<AlgWrapper> m_definitlyRunTheseAlgs;
 

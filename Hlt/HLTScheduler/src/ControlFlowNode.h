@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <functional>
+#include <gsl/pointers>
 #include <iomanip>
 #include <iostream>
 #include <set>
@@ -91,9 +92,9 @@ public:
   std::string m_name;        // should be the same as the Gaudi::Algorithm name
   int         m_NodeID = -1; // this is the m_NodeID of the node in a list of all nodes that will be created,
                              // to correctly access a state vector
-  std::vector<VNode*>     m_parents;
-  std::vector<AlgWrapper> m_RequiredAlgs; // the last element in the vector is the TopAlg itself
-  MsgStream&              m_msg;
+  std::vector<gsl::not_null<VNode*>> m_parents;
+  std::vector<AlgWrapper>            m_RequiredAlgs; // the last element in the vector is the TopAlg itself
+  MsgStream&                         m_msg;
 
   BasicNode( std::string const& name, MsgStream& msg ) : m_name( name ), m_msg( msg ){};
 
@@ -140,12 +141,12 @@ public:
 template <nodeType nType>
 class CompositeNode final {
 public:
-  std::string              m_name;
-  std::vector<VNode*>      m_parents;
-  std::vector<std::string> m_childrenNames;
-  std::vector<VNode*>      m_children;
-  int                      m_NodeID = -1;
-  bool                     m_ordered; // do you care about the order of execution?
+  std::string                        m_name;
+  std::vector<gsl::not_null<VNode*>> m_parents;
+  std::vector<std::string>           m_childrenNames;
+  std::vector<gsl::not_null<VNode*>> m_children;
+  int                                m_NodeID = -1;
+  bool                               m_ordered; // do you care about the order of execution?
 
   CompositeNode( std::string const& name, std::vector<std::string> childrenNames, bool ordered = false )
       : m_name( name ), m_childrenNames( std::move( childrenNames ) ), m_ordered( ordered ) {
@@ -155,7 +156,7 @@ public:
   // this calls this->updateStateAndNotify on all parents of the ControlFlowNode that
   // calls this->notifyParents() and recursively notifyParents again
   void notifyParents( std::vector<NodeState>& NodeStates ) const {
-    for ( VNode* Vparent : m_parents ) {
+    for ( gsl::not_null<VNode*> Vparent : m_parents ) {
       std::visit( overload{[&]( auto& parent ) {
                              if ( NodeStates[parent.m_NodeID].executionCtr != 0 )
                                parent.updateStateAndNotify( m_NodeID, NodeStates );
@@ -191,16 +192,16 @@ public:
 
   // returns all edges, meaning control-flow dependencies of the
   // ControlFlowNode. This is needed to schedule execution in the right order...
-  std::vector<std::vector<VNode*>> Edges() const {
-    if ( !m_ordered ) {
+  std::vector<std::pair<gsl::not_null<VNode*>, gsl::not_null<VNode*>>> Edges() const {
+    if ( m_children.empty() || !m_ordered ) {
       return {};
     } else {
-      std::size_t                      size = m_children.size() - 1;
-      std::vector<std::vector<VNode*>> edges;
-      edges.reserve( size );
-      for ( std::size_t i = 0; i < size; ++i ) {
-        edges.emplace_back( std::initializer_list<VNode*>{m_children[i], m_children[i + 1]} );
-      }
+      std::vector<std::pair<gsl::not_null<VNode*>, gsl::not_null<VNode*>>> edges;
+      edges.reserve( m_children.size() - 1 );
+      std::transform( std::next( begin( m_children ) ), end( m_children ), begin( m_children ),
+                      std::back_inserter( edges ), []( const auto& second, const auto& first ) {
+                        return std::pair{first, second};
+                      } );
       return edges;
     }
   }
@@ -215,32 +216,29 @@ public:
 
 // ----------DEFINITION OF SCHEDULING UTILITIES---------------------------------------
 template <typename Container, typename = std::enable_if_t<std::is_same_v<typename Container::value_type, VNode>>>
-std::optional<VNode*> findVNodeInContainer( std::string_view name, Container& container ) {
+VNode* findVNodeInContainer( std::string_view name, Container& container ) {
   auto it = std::find_if( std::begin( container ), std::end( container ),
                           [name]( auto& cnode ) { return getNameOfVNode( cnode ) == name; } );
-  if ( it != std::end( container ) ) {
-    return ( &*it );
-  } else {
-    return {};
-  }
+  return it != std::end( container ) ? &*it : nullptr;
 }
 
 // returns all basic nodes reachable from vnode
-std::set<VNode*> reachableBasics( VNode* vnode );
+std::set<gsl::not_null<VNode*>> reachableBasics( gsl::not_null<VNode*> vnode );
 // returns all composite nodes reachable from vnode
-std::set<VNode*> reachableComposites( VNode* vnode );
+std::set<gsl::not_null<VNode*>> reachableComposites( gsl::not_null<VNode*> vnode );
 // returns all edges reachable from vnode
-std::set<std::vector<std::set<VNode*>>> findAllEdges( VNode const*                        vnode,
-                                                      std::set<std::vector<VNode*>> const custom_edges = {} );
+std::set<std::vector<std::set<gsl::not_null<VNode*>>>>
+findAllEdges( gsl::not_null<VNode const*> vnode, std::set<std::vector<gsl::not_null<VNode*>>> const custom_edges = {} );
 // converts the children given as strings to a node into pointers to the right instances
 void childrenNamesToPointers( std::vector<VNode>& allNodes );
 // checks whether all controlflowdependencies are met for a nodeToCheck
-bool CFDependenciesMet( VNode* nodeToCheck, std::set<std::vector<std::set<VNode*>>> const& setOfEdges,
-                        std::vector<VNode*>& alreadyOrdered );
+bool CFDependenciesMet( VNode* nodeToCheck, std::set<std::vector<std::set<gsl::not_null<VNode*>>>> const& setOfEdges,
+                        std::vector<gsl::not_null<VNode*>>& alreadyOrdered );
 // utiliizes CFDependenciesMet to create a ordered sequence of basic nodes respecting the edge constraints
-std::vector<VNode*> resolveDependencies( std::set<VNode*>&                              unordered,
-                                         std::set<std::vector<std::set<VNode*>>> const& setOfEdges );
+std::vector<gsl::not_null<VNode*>>
+resolveDependencies( std::set<gsl::not_null<VNode*>>&                              unordered,
+                     std::set<std::vector<std::set<gsl::not_null<VNode*>>>> const& setOfEdges );
 // based on the child-pointers in a composite node, supply the children with parent pointers
-void addParentsToAllNodes( std::set<VNode*> const& composites );
+void addParentsToAllNodes( std::set<gsl::not_null<VNode*>> const& composites );
 // utility to get the name of a node variant
 std::string getNameOfVNode( VNode const& node );
