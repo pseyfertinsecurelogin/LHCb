@@ -85,7 +85,7 @@ namespace LHCb {
   StatusCode encodeRawBanks( LHCb::span<const RawBank*> banks, char* const data, size_t size, bool skip_hdr_bank,
                              size_t* length );
   /// Conditional decoding of raw buffer from MDF to raw event object
-  StatusCode decodeRawBanks( const char* start, const char* end, RawEvent* raw, bool copy_banks );
+  StatusCode decodeRawBanks( const char* start, const char* end, RawEvent* raw );
 
   /// Return vector of TAE event names
   std::vector<std::string> buffersTAE( const char* start );
@@ -100,7 +100,7 @@ namespace LHCb {
   RawBank* getTAEBank( const char* start );
 
   /// Unpacks the buffer given by the start and end pointers, and fill the rawevent structure
-  StatusCode unpackTAE( const char* start, const char* end, const std::string& loc, RawEvent* raw, bool copy_banks );
+  StatusCode unpackTAE( const char* start, const char* end, const std::string& loc, RawEvent* raw );
 
   /// Check if a given RawEvent structure belongs to a TAE event
   bool isTAERawEvent( RawEvent* raw );

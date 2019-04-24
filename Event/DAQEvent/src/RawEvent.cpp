@@ -63,6 +63,7 @@ LHCb::RawBank* LHCb::RawEvent::createBank( int srcID, LHCb::RawBank::BankType ty
 }
 
 /// For offline use only: copy data into a bank, adding bank header internally.
+// TODO: remove all the calls to this function (in deepCopyRawEvent) and remove it
 void LHCb::RawEvent::addBank( const RawBank* data ) {
   size_t len  = data->totalSize();
   auto   bank = reinterpret_cast<LHCb::RawBank*>( new unsigned int[len / sizeof( unsigned int )] );

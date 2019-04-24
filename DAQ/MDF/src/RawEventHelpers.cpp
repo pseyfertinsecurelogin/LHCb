@@ -523,13 +523,13 @@ bool LHCb::checkMDFRecord( const MDFHeader* h, int opt_len, bool exc, bool prt )
 }
 
 /// Conditional decoding of raw buffer from MDF to raw event object
-StatusCode LHCb::decodeRawBanks( const char* start, const char* end, RawEvent* raw, bool copy_banks ) {
+StatusCode LHCb::decodeRawBanks( const char* start, const char* end, RawEvent* raw ) {
   const RawBank* prev = nullptr;
   try {
     while ( start < end ) {
       const RawBank* bank = reinterpret_cast<const RawBank*>( start );
       checkRawBank( bank, true, true ); // Check bank sanity
-      ( copy_banks ) ? raw->addBank( bank ) : raw->adoptBank( bank, false );
+      raw->adoptBank( bank, false );
       start += bank->totalSize();
       prev = bank;
     }
@@ -640,7 +640,7 @@ int LHCb::bxOffsetTAE( const string& root ) {
 }
 
 /// Unpacks the buffer given by the start and end pointers, and return a vector of Raw Events pointers
-StatusCode LHCb::unpackTAE( const char* start, const char* end, const string& loc, RawEvent* raw, bool copy_banks ) {
+StatusCode LHCb::unpackTAE( const char* start, const char* end, const string& loc, RawEvent* raw ) {
   RawBank* b = getTAEBank( start );
   // cout << "UnpackTAE:" << (void*)b << " " << (void*)start << " " << (void*)(*(int*)start) << endl;
   if ( b ) { // Is it the TAE bank?
@@ -653,13 +653,13 @@ StatusCode LHCb::unpackTAE( const char* start, const char* end, const string& lo
         if ( *block == bx ) {
           int off = *( ++block );
           int len = *( ++block );
-          return decodeRawBanks( start + off, start + off + len, raw, copy_banks );
+          return decodeRawBanks( start + off, start + off + len, raw );
         }
       }
     }
     return StatusCode::FAILURE;
   }
-  return decodeRawBanks( start, end, raw, copy_banks );
+  return decodeRawBanks( start, end, raw );
 }
 
 /// Check if a given RawEvent structure belongs to a TAE event

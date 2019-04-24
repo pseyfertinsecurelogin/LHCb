@@ -67,8 +67,6 @@ namespace LHCb {
     int m_genChecksum;
     /// Property: Properties for time alignment events
     int m_evtsBefore, m_evtsAfter;
-    /// Property: Flag to copy banks to the raw event (or only reference the banks)
-    int m_copyBanks;
     /// Property: Property to indicate input data type (RAW, RDST)
     std::string m_sourceType;
     /// Property: Location of RAW banks in the TES
