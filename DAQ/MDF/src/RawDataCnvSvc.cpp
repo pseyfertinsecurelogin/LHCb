@@ -41,7 +41,7 @@ using namespace LHCb;
 using namespace Gaudi;
 namespace LHCb {
   /// Unpacks the buffer given by the start and end pointers, and fill the rawevent structure
-  StatusCode unpackTAE( const char* start, const char* end, const std::string& loc, RawEvent* raw, bool c );
+  StatusCode unpackTAE( const char* start, const char* end, const std::string& loc, RawEvent* raw );
   /// Return vector of TAE event names
   std::vector<std::string> buffersTAE( const char* start );
 } // namespace LHCb
@@ -79,7 +79,6 @@ RawDataCnvSvc::RawDataCnvSvc( CSTR nam, ISvcLocator* loc )
   declareProperty( "DstLocation", m_dstLocation = "DAQ/DstEvent" );              // Location of DST banks in the TES
   declareProperty( "DataManager", m_ioMgrName = "Gaudi::IODataManager/IODataManager" );
   declareProperty( "SourceType", m_sourceType = RAWDATA_INPUT );
-  declareProperty( "CopyBanks", m_copyBanks = 1 );
 }
 
 /// Service initialization
@@ -201,8 +200,7 @@ StatusCode RawDataCnvSvc::createObj( IOpaqueAddress* pA, DataObject*& refpObj ) 
             std::unique_ptr<RawEvent> raw( new RawEvent() );
             MDFDescriptor             dat = accessRawData( pAddRaw );
             if ( dat.second > 0 ) {
-              StatusCode sc =
-                  unpackTAE( dat.first, dat.first + dat.second, pReg->identifier(), raw.get(), m_copyBanks != 0 );
+              StatusCode sc = unpackTAE( dat.first, dat.first + dat.second, pReg->identifier(), raw.get() );
               if ( sc.isSuccess() ) {
                 refpObj = raw.release();
                 return sc;
