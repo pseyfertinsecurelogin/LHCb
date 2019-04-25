@@ -13,24 +13,13 @@
 
 using namespace DataPacking;
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-template <class PACKER>
-Unpack<PACKER>::Unpack( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = PACKER::packedLocation() );
-  declareProperty( "OutputName", m_outputName = PACKER::unpackedLocation() );
-  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
-  // setProperty( "OutputLevel", MSG::VERBOSE );
-}
-
 template <class PACKER>
 StatusCode Unpack<PACKER>::initialize() {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Input '" << rootInTES() << m_inputName << "' Output '" << rootInTES() << m_outputName << "'" << endmsg;
+    debug() << "Input " << m_packedObjects.fullKey() << " Output " << m_objects.fullKey() << "" << endmsg;
 
   return sc;
 }
@@ -39,32 +28,31 @@ template <class PACKER>
 StatusCode Unpack<PACKER>::execute() {
 
   // Check to see if the output data already exists.
-  const bool outputOK = !exist<typename PACKER::DataVector>( m_outputName );
+  const bool outputOK = !m_objects.exist();
   if ( !outputOK && msgLevel( MSG::DEBUG ) ) {
-    debug() << "Output already exists at '" << m_outputName << "'" << endmsg;
+    debug() << "Output already exists at " << m_objects.fullKey() << "" << endmsg;
   }
 
   // Only proceed if output doesn't exist
   if ( outputOK ) {
 
     // Check to see if input exists
-    const bool inputOK = exist<typename PACKER::PackedDataVector>( m_inputName );
-    if ( !inputOK && msgLevel( MSG::DEBUG ) ) { debug() << "Input missing at '" << m_inputName << "'" << endmsg; }
+    const bool inputOK = m_packedObjects.exist();
+    if ( !inputOK && msgLevel( MSG::DEBUG ) ) {
+      debug() << "Input missing at " << m_packedObjects.fullKey() << "" << endmsg;
+    }
 
     // Pointer to packed data
     typename PACKER::DataVector* data = nullptr;
-    if ( inputOK || m_alwaysOutput ) {
-      // make new output data
-      data = new typename PACKER::DataVector();
-      // give new container to Gaudi
-      this->put( data, m_outputName );
+    if ( inputOK || m_alwaysOutput.value() ) {
+      data = m_objects.put( std::make_unique<typename PACKER::DataVector>() );
     }
 
     // Only fill if all input OK
     if ( inputOK ) {
 
       // Load the input data
-      const auto* pdata = this->get<typename PACKER::PackedDataVector>( m_inputName );
+      const auto* pdata = m_packedObjects.get();
 
       // set the data version
       data->setVersion( pdata->version() );
@@ -73,7 +61,7 @@ StatusCode Unpack<PACKER>::execute() {
       m_packer.unpack( *pdata, *data );
 
       if ( msgLevel( MSG::DEBUG ) ) {
-        debug() << "Created " << data->size() << " data objects at '" << m_outputName << endmsg;
+        debug() << "Created " << data->size() << " data objects at " << m_objects.fullKey() << endmsg;
         debug() << " Packed Data Version    = " << (unsigned int)pdata->version() << endmsg;
         debug() << " Packed Packing Version = " << (unsigned int)pdata->packingVersion() << endmsg;
         debug() << " Unpacked Data Version  = " << (unsigned int)data->version() << endmsg;
@@ -82,7 +70,7 @@ StatusCode Unpack<PACKER>::execute() {
     } // input OK
 
     // Count packed output
-    if ( inputOK || m_alwaysOutput ) counter( "# UnPackedData" ) += data->size();
+    if ( inputOK || m_alwaysOutput.value() ) counter( "# UnPackedData" ) += data->size();
 
   } // output OK
 

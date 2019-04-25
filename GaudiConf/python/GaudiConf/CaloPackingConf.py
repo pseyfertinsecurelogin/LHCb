@@ -210,7 +210,7 @@ def caloHypoDstUnPack(
             InputName=_input,
             OutputName=_output,
             OutputLevel=level)
-        onDemand(_alg.OutputName, _alg)
+        onDemand(str(_alg.OutputName), _alg)
         log.debug('CaloHypoDstUnPack: add %s ' % _alg.getFullName())
 
 

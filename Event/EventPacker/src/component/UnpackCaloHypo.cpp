@@ -9,8 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-#include "Event/CaloHypo.h"
-#include "Event/PackedCaloHypo.h"
 #include "Event/StandardPacker.h"
 
 // local
@@ -22,31 +20,17 @@
 // 2008-11-14 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-UnpackCaloHypo::UnpackCaloHypo( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = LHCb::PackedCaloHypoLocation::Electrons );
-  declareProperty( "OutputName", m_outputName = LHCb::CaloHypoLocation::Electrons );
-  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
 StatusCode UnpackCaloHypo::execute() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && !exist<LHCb::PackedCaloHypos>( m_inputName ) ) return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput.value() && !m_packedHypos.exist() ) return StatusCode::SUCCESS;
 
-  const auto* dst = getOrCreate<LHCb::PackedCaloHypos, LHCb::PackedCaloHypos>( m_inputName );
+  const auto* dst = m_packedHypos.getOrCreate();
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Size of PackedCaloHypos = " << dst->hypos().size() << endmsg;
 
-  auto* newCaloHypos = new LHCb::CaloHypos();
-  put( newCaloHypos, m_outputName );
+  auto* newCaloHypos = m_hypos.put( std::make_unique<LHCb::CaloHypos>() );
 
   // unpack
   const LHCb::CaloHypoPacker packer( this );
