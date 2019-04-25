@@ -21,7 +21,9 @@ gaudi_depends_on_subdirs(GaudiAlg
 find_package(Boost COMPONENTS system)
 find_package(ROOT)
 find_package(VDT)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+find_package(VectorClass)
+
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
 
 find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
 if(NOT CPP_GSL_INCLUDE_DIR)
@@ -37,7 +39,7 @@ god_build_headers(xml/*.xml
 gaudi_add_library(LHCbKernel
                   src/*.cpp
                   PUBLIC_HEADERS Kernel
-                  INCLUDE_DIRS ROOT Boost VDT
+                  INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
 set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 

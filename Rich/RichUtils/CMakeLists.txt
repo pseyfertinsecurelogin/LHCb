@@ -22,11 +22,12 @@ find_package(Boost)
 find_package(VDT)
 find_package(Eigen)
 find_package(Vc)
+find_package(VectorClass)
 
 find_path(RANGES_V3_INCLUDE_DIR NAMES range/v3/all.hpp)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
-                           ${EIGEN_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
+                           ${EIGEN_INCLUDE_DIRS} ${Vc_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR})
 
 gaudi_add_library(RichUtils
                   src/*.cpp

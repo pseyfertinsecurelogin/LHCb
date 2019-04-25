@@ -19,9 +19,7 @@
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
-
-// Vector Class
-#include "instrset.h"
+#include "GaudiKernel/System.h"
 
 namespace LHCb {
 
@@ -71,7 +69,7 @@ namespace LHCb {
       }
 
       // Get supported instruction set
-      const auto level = instrset_detect();
+      const auto level = System::instructionsetLevel();
 
       // find pointer to the appropriate version
       const auto impl = std::find_if( std::begin( vtbl ), std::end( vtbl ), [&level]( const auto& j ) {

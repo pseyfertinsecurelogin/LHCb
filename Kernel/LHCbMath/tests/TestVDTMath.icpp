@@ -8,19 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// STD & STL
-// ============================================================================
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <limits>
-#include <random>
-// ============================================================================
-// VDT
-// ============================================================================
+
+#include "LHCbMath/FastMaths.h"
+#include "LHCbMath/SIMDTypes.h"
+
+#include "GaudiKernel/System.h"
+
 #include "vdt/asin.h"
 #include "vdt/atan2.h"
 #include "vdt/exp.h"
@@ -28,14 +21,13 @@
 #include "vdt/sincos.h"
 #include "vdt/sqrt.h"
 #include "vdt/tan.h"
-// ============================================================================
-// Local SIMD maths
-// ============================================================================
-#include "LHCbMath/FastMaths.h"
-#include "LHCbMath/SIMDTypes.h"
-// ============================================================================
-// Vector Class
-#include "instrset.h"
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <random>
+
 // ============================================================================
 /** @file
  *  Test VDT Math Precision
@@ -52,7 +44,7 @@ inline TYPE tru( const TYPE x, const unsigned int p ) {
 // main program
 int main() {
   // get instruction set level of CPU
-  const int cpulevel = instrset_detect();
+  const int cpulevel = System::instructionsetLevel();
 
   // the compilation level
 #ifdef INSTRSET
