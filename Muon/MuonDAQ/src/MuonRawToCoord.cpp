@@ -119,7 +119,7 @@ namespace {
       }
       rawdata = rawdata.subspan( 1 + rawdata[0] );
     }
-    assert( rawdata.empty() );
+    assert( rawdata.size() < 2 );
     return out;
   }
 
@@ -258,6 +258,7 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const LHCb::RawEvent& r
                         },
                         std::back_inserter( decoding ) );
   }
+
   m_deltaEstimate += decoding.size() - est_nDigits;
   m_digits += decoding.size();
   if ( decoding.empty() ) {

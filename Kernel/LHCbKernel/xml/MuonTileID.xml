@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration
+         (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration
 
     This software is distributed under the terms of the GNU General Public
     Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
@@ -19,7 +19,6 @@
       virtual = 'FALSE'                                             
       final   = "TRUE"
       defaultdestructor = "FALSE" >
-
       <import name="Kernel/MuonBase"/>
       <import name="Kernel/MuonLayout"/>
       &StlVector;
@@ -163,6 +162,10 @@
         <code> return !(id == *this) ;</code>
       </method> 
       <method const="TRUE"  name="intercept" type="MuonTileID"
+        desc="Find the MuonTileID which is an interception of two MuonTileID&apos;s"
+        argList="const MuonTileID id">
+      </method>
+      <method const="TRUE"  name="interceptSameRegion" type="MuonTileID"
         desc="Find the MuonTileID which is an interception of two MuonTileID&apos;s"
         argList="const MuonTileID id">
       </method>
