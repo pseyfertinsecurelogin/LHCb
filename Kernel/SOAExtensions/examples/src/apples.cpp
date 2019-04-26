@@ -131,12 +131,10 @@ namespace LHCb {
 
         // There are multiple constructors for Selections. This one is the easiest select-everything.
         // It doesn't matter if part1, part2, or apples is used here - only the size is relevant.
-        Zipping::ExportedSelection<> trivial_selection{part1, Zipping::details::alwaysTrue{}};
+        auto trivial_selection = Zipping::ExportedSelection{part1, Zipping::details::alwaysTrue};
 
         // return the output to the main program
-        HarvesterOutput retval =
-            std::make_tuple( std::move( part1 ), std::move( part2 ), std::move( trivial_selection ) );
-        return retval;
+        return {std::move( part1 ), std::move( part2 ), std::move( trivial_selection )};
       }
     };
     DECLARE_COMPONENT( Harvester )
@@ -296,8 +294,8 @@ namespace LHCb {
         }
 
         // No meaningful selection here, just preparing output
-        Zipping::ExportedSelection<> trivial_selection( all_input, Zipping::details::alwaysTrue{} );
-        return std::make_tuple( std::move( retval ), std::move( trivial_selection ) );
+        Zipping::ExportedSelection<> trivial_selection( all_input, Zipping::details::alwaysTrue );
+        return {std::move( retval ), std::move( trivial_selection )};
       }
     };
     DECLARE_COMPONENT( Rater )
@@ -383,8 +381,8 @@ namespace LHCb {
         }
 
         // as before, a select-everyting selection goes along with every output
-        Zipping::ExportedSelection<> trivial_selection( out1, Zipping::details::alwaysTrue{} );
-        return std::make_tuple( std::move( out1 ), std::move( out2 ), std::move( trivial_selection ) );
+        Zipping::ExportedSelection<> trivial_selection( out1, Zipping::details::alwaysTrue );
+        return {std::move( out1 ), std::move( out2 ), std::move( trivial_selection )};
       }
     };
     DECLARE_COMPONENT( Cook )
