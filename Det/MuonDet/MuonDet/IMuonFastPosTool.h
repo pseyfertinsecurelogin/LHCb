@@ -33,6 +33,10 @@ public:
    *  this ignores gaps: these can never be read out independently
    */
   virtual StatusCode calcTilePos( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
-                                  double& z, double& deltaz ) const = 0;
+                                  double& z, double& deltaz ) const   = 0;
+  virtual StatusCode calcStripXPos( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
+                                    double& z, double& deltaz ) const = 0;
+  virtual StatusCode calcStripYPos( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
+                                    double& z, double& deltaz ) const = 0;
 };
 #endif // MUONDET_IMUONFASTPOSTOOL_H

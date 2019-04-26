@@ -104,6 +104,42 @@ LHCb::MuonTileID LHCb::MuonTileID::intercept( const LHCb::MuonTileID& otherID ) 
   return resultID;
 }
 
+LHCb::MuonTileID LHCb::MuonTileID::interceptSameRegion( const LHCb::MuonTileID& otherID ) const {
+
+  // check first that the two strips are really intercepting
+
+  if ( station() != otherID.station() || quarter() != otherID.quarter() ) return LHCb::MuonTileID();
+
+  int thisGridX = layout().xGrid();
+  int thisGridY = layout().yGrid();
+
+  int          otherGridX = otherID.layout().xGrid();
+  int          otherGridY = otherID.layout().yGrid();
+  unsigned int calcX      = nX() * otherGridX / thisGridX;
+  if ( calcX != otherID.nX() ) return LHCb::MuonTileID();
+  if ( thisGridY > otherGridY ) {
+    unsigned int calcY = nY() * otherGridY / thisGridY;
+    if ( calcY != otherID.nY() ) return LHCb::MuonTileID();
+  } else {
+    unsigned int calcY = otherID.nY() * thisGridY / otherGridY;
+    if ( calcY != nY() ) return LHCb::MuonTileID();
+  }
+
+  // Now the strips are intercepting - get it !
+
+  int indX = thisGridX < otherGridX ? otherID.nX() : nX();
+  int indY = thisGridY < otherGridY ? otherID.nY() : nY();
+
+  LHCb::MuonTileID resultID( *this );
+  resultID.setX( indX );
+  resultID.setY( indY );
+  int lx = std::max( thisGridX, otherGridX );
+  int ly = std::max( thisGridY, otherGridY );
+  resultID.setLayout( MuonLayout( lx, ly ) );
+
+  return resultID;
+}
+
 LHCb::MuonTileID LHCb::MuonTileID::containerID( const IMuonLayout& lay ) const {
 
   MuonLayout       containerLayout( lay.grid( *this ) );
