@@ -85,7 +85,7 @@ namespace GaudiAlg {
   class ID;
 }
 // ============================================================================
-class IDVAlgorithm;
+struct IDVAlgorithm;
 class GaudiAlgorithm;
 // ============================================================================
 namespace Gaudi {

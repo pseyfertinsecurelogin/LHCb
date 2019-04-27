@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -141,16 +141,9 @@ StatusCode MuonTAERec::execute() {
       }
       m_muonBuffer->forceReset();
     }
-    std::vector<std::pair<LHCb::MuonTileID, unsigned int>>::iterator itest;
 
-    // for(    itest=m_logChannels.begin();itest<m_logChannels.end();itest++){
-    // info()<<" lisat dei digit "<<(*itest).first<<endmsg;
-    //}
-    int station;
-
-    for ( station = 0; station < m_NStation; station++ ) {
-      int region;
-      for ( region = 0; region < m_NRegion; region++ ) {
+    for ( int station = 0; station < m_NStation; station++ ) {
+      for ( int region = 0; region < m_NRegion; region++ ) {
 
         // get mapping of input to output from region
         // in fact we are reversing the conversion done in the digitisation
