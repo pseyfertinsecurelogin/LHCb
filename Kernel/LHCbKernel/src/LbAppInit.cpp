@@ -19,12 +19,11 @@
 #include "GaudiKernel/Memory.h"
 #include "GaudiKernel/RndmGenerators.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/System.h"
 
 // local
 #include "Kernel/LbAppInit.h"
 #include "Kernel/PlatformInfo.h"
-
-#include "instrset.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LbAppInit
@@ -114,7 +113,7 @@ StatusCode LbAppInit::start() {
 
   // make sure PlatformInfo instances report the right instructions set level
   // (it may not be the same as during application start if we use checkpointing)
-  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( instrset_detect() );
+  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( System::instructionsetLevel() );
 
   return sc;
 }

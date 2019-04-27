@@ -17,13 +17,13 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/System.h"
 
 // Event
 #include "Event/HltDecReports.h"
 #include "Event/ODIN.h"
 
 #include "Kernel/PlatformInfo.h"
-#include "instrset.h"
 
 // Detector
 #include <DetDesc/Condition.h>
@@ -104,7 +104,7 @@ StatusCode HltConfigSvc::start() {
 
   // make sure PlatformInfo instances report the right instructions set level
   // (it may not be the same as during application start if we use checkpointing)
-  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( instrset_detect() );
+  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( System::instructionsetLevel() );
 
   LHCb::PlatformInfo platform;
   info() << "binaryId=" << platform.binaryId() << " binaryTag=" << platform.binaryTag() << endmsg;

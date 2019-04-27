@@ -10,11 +10,12 @@
 \*****************************************************************************/
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE test_PlatformInfo
-#include <boost/test/unit_test.hpp>
 
 #include "Kernel/PlatformInfo.h"
 
-#include "instrset.h"
+#include "GaudiKernel/System.h"
+
+#include <boost/test/unit_test.hpp>
 
 // special trick to add quotes around a macro value
 // see https://stackoverflow.com/a/20632065
@@ -33,7 +34,7 @@ BOOST_AUTO_TEST_CASE( constructor ) {
     PlatformInfo info;
 
     BOOST_CHECK( info.binaryTag() == STR( BINARY_TAG ) );
-    BOOST_CHECK( info.hostInstrSetLevel() == instrset_detect() );
+    BOOST_CHECK( info.hostInstrSetLevel() == System::instructionsetLevel() );
   }
 }
 
@@ -75,7 +76,7 @@ BOOST_AUTO_TEST_CASE( copy ) {
     Shadow*      s = reinterpret_cast<Shadow*>( &info );
 
     BOOST_CHECK( info.binaryTag() == STR( BINARY_TAG ) );
-    BOOST_CHECK( info.hostInstrSetLevel() == instrset_detect() );
+    BOOST_CHECK( info.hostInstrSetLevel() == System::instructionsetLevel() );
 
     s->id = ( s->id != 10 ) ? 10 : 11;
     s->instr++;
@@ -85,6 +86,6 @@ BOOST_AUTO_TEST_CASE( copy ) {
     BOOST_CHECK( copy.binaryId() == info.binaryId() );
     BOOST_CHECK( copy.hostInstrSetLevel() == info.hostInstrSetLevel() );
     BOOST_CHECK( copy.binaryTag() != STR( BINARY_TAG ) );
-    BOOST_CHECK( copy.hostInstrSetLevel() != instrset_detect() );
+    BOOST_CHECK( copy.hostInstrSetLevel() != System::instructionsetLevel() );
   }
 }

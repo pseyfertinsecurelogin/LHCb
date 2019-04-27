@@ -123,16 +123,9 @@ namespace LHCb {
   inline LineTraj<FTYPE>::LineTraj( const typename Trajectory<FTYPE>::Point& beg,
                                     const typename Trajectory<FTYPE>::Point& end )
       : m_dir( end - beg ), m_pos( beg + 0.5 * m_dir ) {
-    // Trajectory(-(Vector(endPoint-begPoint)).r()/2.,
-    //            (Vector(endPoint-begPoint)).r()/2.),
-    // can we use r() with VectorClass ? it seems to use std::sqrt
-    // temporarly use a raw r() impl. to be sure we use VectorClass sqrt when we manage with
-    // VectorClass types
     Vector p   = end - beg;
     FTYPE  val = sqrt( p.Mag2() ) / 2.;
     this->setRange( -1. * val, val );
-    // m_range.first  = -1.*val;
-    // m_range.second = val;
     m_dir = m_dir.Unit();
   }
 

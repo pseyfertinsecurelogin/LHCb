@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #include "Kernel/PlatformInfo.h"
 
-#include "instrset.h"
+#include "GaudiKernel/System.h"
 
 #include <algorithm>
 #include <vector>
@@ -122,7 +122,7 @@ namespace {
                                         begin( known_platforms ) );
 } // namespace
 namespace LHCb {
-  std::uint16_t PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( instrset_detect() );
+  std::uint16_t PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( System::instructionsetLevel() );
 
   PlatformInfo::PlatformInfo() : m_binaryId( binary_tag_id ), m_hostInstrSetLevel( s_hostInstrSetLevel ) {}
 

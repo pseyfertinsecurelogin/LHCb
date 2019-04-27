@@ -8,28 +8,16 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// STD & STL
-// ============================================================================
-#include <iostream>
-#include <map>
-// ============================================================================
-// VectorClass
-// ============================================================================
-#include "instrset.h"
-#include "vectorclass.h"
-// ============================================================================
-// Gaudi and ROOT types
-// ============================================================================
+
+#include "LHCbMath/Similarity.h"
+
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/System.h"
 #include "TRandom3.h"
-// ============================================================================
-// LHCbMath
-// ============================================================================
-#include "LHCbMath/Similarity.h"
+
+#include <iostream>
+#include <map>
 
 using LHCb::Math::detail::to_span;
 // ============================================================================
@@ -94,7 +82,7 @@ std::map<ISet, LHCb::Math::detail::similarity_t<2, 5>> vtbl_2_5 = {
  * Check whether the AVX instruction set is available
  */
 bool hasInstructionSet( ISet lvl ) {
-  const auto level = instrset_detect();
+  const auto level = System::instructionsetLevel();
   return ( level >= static_cast<int>( lvl ) );
 }
 

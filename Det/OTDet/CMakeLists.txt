@@ -15,20 +15,20 @@ gaudi_subdir(OTDet v9r0)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
                          Kernel/LHCbKernel
-                         Kernel/LHCbMath
-                         Kernel/VectorClass)
+                         Kernel/LHCbMath)
 
 find_package(Boost)
 find_package(ROOT)
 find_package(XercesC)
 find_package(VDT)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
-                                                 ${XERCESC_INCLUDE_DIRS})
+find_package(VectorClass)
+
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
 
 gaudi_add_library(OTDetLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS OTDet
-                  INCLUDE_DIRS Boost VDT
+                  INCLUDE_DIRS Boost VDT ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES Boost DetDescCnvLib LHCbKernel LHCbMathLib)
 
 gaudi_add_module(OTDet

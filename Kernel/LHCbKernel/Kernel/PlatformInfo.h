@@ -21,7 +21,7 @@ class HltConfigSvc;
 namespace LHCb {
   /**
    Simple class to record binary (`BINARY_TAG`, AKA `CMTCONFIG`) and host
-   information (instruction set as defined in `VectorClass/instrset.h`).
+   information (instruction set)
 
    The default contructor initializes the data member to the correct values for
    the binary tag used at build time and for the instructions set of the CPU
@@ -37,7 +37,7 @@ namespace LHCb {
   class PlatformInfo final {
   public:
     /// Initialize the instance with build time `BINARY_TAG` and run time CPU
-    /// instructions set level (`VectorClass/instrset.h`).
+    /// instructions set level
     PlatformInfo();
     /// Copy infos from an existing instance (thay may not match the current
     /// run time info).

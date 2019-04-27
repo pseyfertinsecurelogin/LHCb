@@ -8,11 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// STD & STL
-// ============================================================================
+
+#include "LHCbMath/Similarity.h"
+using LHCb::Math::detail::to_span;
+
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/System.h"
+
+#include "Math/SMatrix.h"
+#include "TRandom3.h"
+#include <TH1D.h>
+
 #include <array>
 #include <chrono>
 #include <iostream>
@@ -23,25 +30,6 @@ using std::chrono::high_resolution_clock;
 using std::chrono::microseconds;
 using std::chrono::nanoseconds;
 using std::chrono::time_point;
-
-// ============================================================================
-// VectorClass
-// ============================================================================
-#include "instrset.h"
-// ============================================================================
-// Gaudi and ROOT types
-// ============================================================================
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "Math/SMatrix.h"
-#include "TRandom3.h"
-// ============================================================================
-// LHCbMath
-// ============================================================================
-#include "LHCbMath/Similarity.h"
-using LHCb::Math::detail::to_span;
-
-#include <TH1D.h>
 
 // ============================================================================
 // Advance declaration for similarity methods
@@ -113,7 +101,7 @@ struct TestResults {
  * Check whether the AVX instruction set is available
  */
 bool hasInstructionSet( ISet lvl ) {
-  const auto level = instrset_detect();
+  const auto level = System::instructionsetLevel();
   return ( level >= static_cast<int>( lvl ) );
 }
 

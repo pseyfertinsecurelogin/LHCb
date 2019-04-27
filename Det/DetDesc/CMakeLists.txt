@@ -15,14 +15,14 @@ gaudi_subdir(DetDesc v19r1)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          GaudiUtils
-                         Kernel/LHCbMath
-                         Kernel/VectorClass)
+                         Kernel/LHCbMath)
 
 find_package(Boost)
 find_package(VDT)
+find_package(VectorClass)
 
 find_package(ROOT COMPONENTS MathCore GenVector)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
 
 find_path(RANGES_V3_INCLUDE_DIR NAMES range/v3/all.hpp)
 if(NOT RANGES_V3_INCLUDE_DIR)

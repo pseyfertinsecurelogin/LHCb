@@ -15,8 +15,7 @@ gaudi_subdir(LHCbMath v3r62)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
-                         GaudiPython
-                         Kernel/VectorClass)
+                         GaudiPython)
 
 find_package(Boost)
 find_package(CLHEP)
@@ -26,11 +25,12 @@ find_package(VDT)
 find_package(Eigen)
 find_package(pyanalysis)
 find_package(Vc)
+find_package(VectorClass)
 
 # hide warnings from some external projects
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS}
-                           ${Vc_INCLUDE_DIR})
+                           ${Vc_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR})
 
 find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
 if(NOT CPP_GSL_INCLUDE_DIR)
@@ -46,8 +46,8 @@ gaudi_export(LIBRARY LHCbFastMath)
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
-                  LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel LHCbFastMath)
+                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
+                  LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiGSLLib GaudiKernel LHCbFastMath)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
 
@@ -55,7 +55,7 @@ gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.h
                      dict/LHCbMathDict.xml
                      INCLUDE_DIRS VDT Vc Boost GSL ROOT
-                     LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
+                     LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiKernel LHCbMathLib
                      OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
@@ -183,22 +183,22 @@ if(GAUDI_BUILD_TESTS)
   set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
-                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX
                        tests/TestVDTMathAVX.cpp
-                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2
                        tests/TestVDTMathAVX2.cpp
-                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2FMA.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2FMA
                        tests/TestVDTMathAVX2FMA.cpp
-                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
 
   gaudi_add_executable(TestMathSpeedSSE4
