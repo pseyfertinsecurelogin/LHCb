@@ -281,7 +281,9 @@ class TurboConf(LHCbConfigurableUser):
 
         datatype = int(self.getProp('DataType'))
         simulation = self.getProp('Simulation')
-        rootintes = self.getProp('RootInTES')
+        # For consistency elsewhere in this class, make sure TES prefixes don't
+        # end with a forward slash
+        rootintes = self.getProp('RootInTES').rstrip('/')
         persistreco = self.getProp('PersistReco')
         decode = self.getProp('RunPackedDataDecoder')
         unpack = self.getProp('RunPersistRecoUnpacking')
