@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -14,10 +14,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
-// forward delcaration
+// forward declarations
 // ============================================================================
 class GaudiAlgorithm; // from GaudiKernel
-class IDVAlgorithm;   // from DaVinciInterfaces
+struct IDVAlgorithm;  // from DaVinciInterfaces
 // ============================================================================
 namespace LoKi {
   // ==========================================================================

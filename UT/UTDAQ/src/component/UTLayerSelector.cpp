@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -12,12 +12,10 @@
 // local
 #include "UTDAQ/UTLayerSelector.h"
 // kernel
-#include "Kernel/STLExtensions.h"
 #include "Kernel/UTChannelID.h"
 
 // ====================================================================
 namespace {
-  auto              mp = []( const char* p, unsigned int i ) { return std::make_pair( p, i ); };
   static const auto s_layerMap =
       std::array{std::pair{"UTaX", 9}, std::pair{"UTaU", 10}, std::pair{"UTbV", 17}, std::pair{"UTbX", 18}};
 

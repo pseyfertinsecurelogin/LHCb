@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
 # Package: MuonDAQ
-################################################################################
+###############################################################################
 gaudi_subdir(MuonDAQ v4r22)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
@@ -21,6 +20,10 @@ gaudi_depends_on_subdirs(DAQ/DAQUtils
                          GaudiAlg
                          DAQ/DAQKernel
                          Muon/MuonKernel)
+
+find_package(Boost)
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 gaudi_add_module(MuonDAQ
                  src/*.cpp

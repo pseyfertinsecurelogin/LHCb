@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+* (c) Copyright 2018-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -62,10 +62,8 @@ private:
 
   Gaudi::Property<bool> m_extraHeader{this, "DetectorSpecificHeader", false};
   Gaudi::Property<bool> m_cleanCorrupted{this, "CleanWhenCorruption", false};
-  // bool m_packed = false;
-  std::vector<int> m_readSources;
-  bool             m_ok            = false;
-  int              m_numberOfCells = 0; ///< Number of cells of this detector.
+  std::vector<int>      m_readSources;
+  int                   m_numberOfCells = 0; ///< Number of cells of this detector.
 
   mutable Gaudi::Accumulators::BinomialCounter<> m_noBanksCounter{this, "No bank found"};
   mutable Gaudi::Accumulators::Counter<>         m_duplicateADCDigits{this, "# duplicate ADC/Digits"};
