@@ -201,11 +201,11 @@ StatusCode HLTControlFlowMgr::finalize() {
   StatusCode sc;
 
   // print the counters
-  debug() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count\n"};
+  info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count\n"};
   for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_AlgExecCounters, m_AlgNames ) ) {
-    ctr.print( debug(), name ) << '\n';
+    ctr.print( info(), name ) << '\n';
   }
-  debug() << endmsg;
+  info() << endmsg;
 
   // print the counters
   info() << buildPrintableStateTree( m_NodeStateCounters ).str() << endmsg;
