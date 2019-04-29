@@ -14,7 +14,15 @@
 #include <Kernel/VPConstants.h>
 #include <VPDet/DeVP.h>
 #include <array>
-
+/** @class VPGeometry VPGeometry.h VPDet/VPGeometry.h
+ *
+ *  Provides derived geometry information to Pixel pattern recognition
+ *  algorithms and allows registration of a ConditionsDerivation to
+ *  update itself
+ *
+ *  @author Marco Clemencic marco.clemencic@cern.ch
+ *  @date 27/01/2019
+ */
 struct VPGeometry {
   VPGeometry() = default;
   VPGeometry( const DeVP& vp );
