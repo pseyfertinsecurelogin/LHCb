@@ -71,12 +71,4 @@ VPGeometry::VPGeometry( const DeVP& vp ) {
     m_ltg[idx++] = ltg_trans.Y();
     m_ltg[idx++] = ltg_trans.Z();
   }
-  // if ( msgLevel( MSG::DEBUG ) ) {
-  //   debug() << "Found modules from " << m_firstModule << " to " << m_lastModule << endmsg;
-  //   for ( const auto& module : m_modules ) {
-  //     if ( module ) {
-  //       debug() << "  Module " << module->number() << " prev " << module->previous() << endmsg;
-  //     }
-  //   }
-  // }
 }
