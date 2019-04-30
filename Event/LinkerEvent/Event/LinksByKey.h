@@ -13,10 +13,13 @@
 
 // Include files
 #include "Event/LinkReference.h"
+#include "Kernel/STLExtensions.h"
+
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/KeyedObject.h"
 #include "GaudiKernel/SerializeSTL.h"
+
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -129,6 +132,48 @@ namespace LHCb {
     template <typename Function>
     void applyToLinks( unsigned int srcIndex, Function&& func ) const;
 
+    /**
+     * returns the first object linked to given srcIndex
+     * @param srcIndex the index of the source object considered
+     * @param container the container of target objects
+     * Note that this function returns the first object linked to
+     * the given srcIndex and thus relies on the ordering in the
+     * LinksByKey object
+     */
+    template <typename T>
+    T* getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const;
+
+    /**
+     * returns the first object linked to given srcIndex
+     * @param srcIndex the index of the source object considered
+     * @param container the container of target objects
+     * Note that this function returns the first object linked to
+     * the given srcIndex and thus relies on the ordering in the
+     * LinksByKey object
+     */
+    template <typename T>
+    T* getFirstLink( unsigned int srcIndex, KeyedContainer<T>& container ) const;
+
+    /**
+     * returns the list of objects linked to given srcIndex
+     * @param srcIndex the index of the source object considered
+     * @param container the container of target objects
+     * Note that it's adviced to rather use applyToLinks than this method
+     * as you pay here additional allocations
+     */
+    template <typename T>
+    std::vector<T*> getAllLinks( unsigned int srcIndex, LHCb::span<const T> container ) const;
+
+    /**
+     * returns the list of objects linked to given srcIndex
+     * @param srcIndex the index of the source object considered
+     * @param container the container of target objects
+     * Note that it's adviced to rather use applyToLinks than this method
+     * as you pay here additional allocations
+     */
+    template <typename T>
+    std::vector<T*> getAllLinks( unsigned int srcIndex, KeyedContainer<T>& container ) const;
+
   protected:
     /// Returns the index of the key in m_keyIndex. True if key exist, else inserting position
     bool findIndex( int key, int& index ) const;
@@ -222,6 +267,52 @@ template <typename Function>
 void LHCb::LinksByKey::applyToLinks( unsigned int srcIndex, Function&& func ) const {
   int key;
   if ( findIndex( srcIndex, key ) ) { internalApply( srcIndex, m_keyIndex[key].second, func ); }
+}
+
+template <typename T>
+T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const {
+  int key;
+  findIndex( srcIndex, key );
+  int refIndex = m_keyIndex[key].second;
+  if ( 0 <= refIndex ) {
+    return &container[m_linkReference[refIndex].objectKey()];
+  } else {
+    return nullptr;
+  }
+}
+
+template <typename T>
+T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, KeyedContainer<T>& container ) const {
+  int key;
+  findIndex( srcIndex, key );
+  int refIndex = m_keyIndex[key].second;
+  if ( 0 <= refIndex ) {
+    return static_cast<T*>( container.containedObject( m_linkReference[refIndex].objectKey() ) );
+  } else {
+    return nullptr;
+  }
+}
+
+template <typename T>
+std::vector<T*> LHCb::LinksByKey::getAllLinks( unsigned int srcIndex, LHCb::span<const T> container ) const {
+  std::vector<T*> res;
+  applyToLinks( srcIndex, [&res, &container]( unsigned int, unsigned int tgtIndex, float ) {
+    res.push_back( &container[tgtIndex] );
+  } );
+  return res;
+}
+
+template <typename T>
+std::vector<T*> LHCb::LinksByKey::getAllLinks( unsigned int srcIndex, KeyedContainer<T>& container ) const {
+  std::vector<T*> res;
+  applyToLinks( srcIndex, [&res, &container]( unsigned int, unsigned int tgtIndex, float ) {
+    const T* tgtObj = static_cast<T*>( container.containedObject( tgtIndex ) );
+    if ( tgtObj != nullptr ) {
+      // update the auxillary container
+      res.push_back( tgtObj );
+    }
+  } );
+  return res;
 }
 
 #endif /// LinkerEvent_LinksByKey_H
