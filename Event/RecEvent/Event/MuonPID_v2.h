@@ -13,6 +13,8 @@
 
 // Include files
 #include "Event/Track.h"
+#include "SOAContainer/SOAField.h"
+#include "SOAContainer/SOASkin.h"
 #include <ostream>
 #include <vector>
 
@@ -188,6 +190,9 @@ namespace LHCb::Event {
       //      SmartRef<LHCb::Track> m_muonTrack;
 
     }; // class MuonPID
+
+    SOAFIELD_TRIVIAL( MuonPIDField, muonPID, MuonPID );
+    SOASKIN_TRIVIAL( MuonID, MuonPIDField );
 
   } // namespace v2
 } // namespace LHCb::Event
