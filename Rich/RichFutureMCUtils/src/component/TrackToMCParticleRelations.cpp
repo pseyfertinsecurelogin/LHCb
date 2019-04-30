@@ -40,7 +40,7 @@ Rich::Future::MC::Relations::TkToMCPRels TrackToMCParticleRelations::
     if ( m_allowMultMPs ) {
       // Save all the MCPs for each track
       links.applyToLinks( tk->key(), [&rels, &tk, &mcParts]( unsigned int, unsigned int tgtKey, float weight ) {
-        rels.i_push( tk, static_cast<LHCb::MCParticle*>( mcParts.containedObject( tgtKey ) ),
+        rels.i_push( tk, static_cast<const LHCb::MCParticle*>( mcParts.containedObject( tgtKey ) ),
                      weight ); // NB! i_push is used!
       } );
     } else {
