@@ -517,7 +517,6 @@ namespace LHCb::Event {
       static_assert( flagsMasks::specificMask == 0xf0000000L );
 
     }; // class Track
-
   } // namespace v2
 } // namespace LHCb::Event
 
