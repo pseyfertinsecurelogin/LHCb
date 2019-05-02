@@ -53,7 +53,7 @@ namespace DetCond::Examples {
 
     /// Function converting raw information into a derived condition.
     // In this example it's a static member of the algorithm, but it can live
-    // in another library, to be shared with other conditon derivation backends
+    // in another library, to be shared with other condition derivation backends
     // (e.g. DD4hep).
     static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
 

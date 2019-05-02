@@ -14,6 +14,7 @@
 #include <DetDesc/ConditionKey.h>
 #include <DetDesc/ParamValidDataObject.h>
 
+#include <GaudiKernel/EventContext.h>
 #include <GaudiKernel/Property.h>
 
 #include <string>
@@ -25,13 +26,13 @@ namespace LHCb::DetDesc {
 
   namespace details {
     template <typename T>
-    inline constexpr bool is_conditon_type_v = std::is_convertible<T*, ParamValidDataObject*>::value;
+    inline constexpr bool is_condition_type_v = std::is_convertible<T*, ParamValidDataObject*>::value;
 
     template <typename T>
-    using is_conditon_type_t = std::conditional_t<is_conditon_type_v<T>, std::true_type, std::false_type>;
+    using is_condition_type_t = std::conditional_t<is_condition_type_v<T>, std::true_type, std::false_type>;
 
     template <typename T>
-    using accessor_storage_t = std::conditional_t<is_conditon_type_v<T>, T*, ParamValidDataObject*>;
+    using accessor_storage_t = std::conditional_t<is_condition_type_v<T>, T*, ParamValidDataObject*>;
 
     template <typename T>
     const T& do_extract_payload( std::true_type, const accessor_storage_t<T> ptr ) {
@@ -44,7 +45,7 @@ namespace LHCb::DetDesc {
 
     template <typename T>
     const T& extract_payload( const accessor_storage_t<T> ptr ) {
-      return do_extract_payload<T>( is_conditon_type_t<T>{}, ptr );
+      return do_extract_payload<T>( is_condition_type_t<T>{}, ptr );
     }
   } // namespace details
 
@@ -59,6 +60,11 @@ namespace LHCb::DetDesc {
   //
   template <typename T>
   class ConditionAccessor {
+
+    template <typename... Args, std::size_t... Is>
+    ConditionAccessor( const std::tuple<Args...>& args, std::index_sequence<Is...> )
+        : ConditionAccessor( std::get<Is>( args )... ) {}
+
   public:
     // Constructor takes the "this" pointer of the owner and the usual triplet
     // of values needed to declare a property (in this case the condition's key)
@@ -68,6 +74,10 @@ namespace LHCb::DetDesc {
         : m_key{owner, keyName, keyDefault, keyDoc} {
       owner->registerConditionAccessor( *this );
     }
+
+    template <typename... Args>
+    ConditionAccessor( const std::tuple<Args...>& args )
+        : ConditionAccessor( args, std::index_sequence_for<Args...>{} ) {}
 
     // Condition accessors can neither be moved nor copied
     ConditionAccessor( const ConditionAccessor& ) = delete;
@@ -92,4 +102,22 @@ namespace LHCb::DetDesc {
     // Pointer to the condition in the Detector Transien Store
     details::accessor_storage_t<T> m_ptr;
   };
+
+  template <typename C, typename A>
+  const C& get( const ConditionAccessor<C>& handle, const ConditionAccessorHolder<A>& algo, const EventContext& ctx ) {
+    return handle.get( algo.getConditionContext( ctx ) );
+  }
+
+  template <typename C>
+  const ConditionKey& getKey( const ConditionAccessor<C>& handle ) {
+    return handle.key();
+  }
+
+  template <typename... C>
+  struct useConditionHandleFor {
+    template <typename T>
+    using InputHandle = std::enable_if_t<std::disjunction_v<std::is_same<std::decay_t<T>, std::decay_t<C>>...>,
+                                         ConditionAccessor<std::decay_t<T>>>;
+  };
+
 } // namespace LHCb::DetDesc
