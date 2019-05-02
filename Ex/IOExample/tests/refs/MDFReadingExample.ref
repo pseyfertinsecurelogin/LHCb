@@ -1,0 +1,71 @@
+# setting LC_ALL to "C"
+# --> Including file '/pool/sponce/master/LHCb/Ex/IOExample/tests/options/MDFReadingExample.py'
+# <-- End of file '/pool/sponce/master/LHCb/Ex/IOExample/tests/options/MDFReadingExample.py'
+# applying configuration of DDDBConf
+# /***** User DDDBConf/DDDBConf **********************************************************************
+# |-IgnoreHeartBeat     = True
+# |-EnableRunStampCheck = False
+# |-InitialTime         = 'Safe'
+# |-Simulation          = True  (default: False)
+# |-DataType            = 'Upgrade'  (default: '2012')
+# |-DbRoot              = 'git:/lhcb.xml'
+# |-OnlineMode          = False
+# \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
+# applying configuration of CondDB
+# /***** User CondDB/CondDB **************************************************************************
+# |-EnableRunChangeHandler     = False
+# |-LocalTags                  = {}  (default: {})
+# |-IgnoreHeartBeat            = False
+# |-Tags                       = {'DDDB': 'dddb-20171010', 'SIMCOND': 'sim-20180530-vc-md100'}  (default: {})
+# |-EnableRunStampCheck        = False
+# |-Simulation                 = True  (default: False)
+# |-Upgrade                    = True  (default: False)
+# |-AllLocalTagsByDataType     = []  (default: [])
+# |-Online                     = False
+# |-QueryGranularity           = 0
+# |-Overlays                   = []  (default: [])
+# |-LatestGlobalTagByDataTypes = []  (default: [])
+# |-LatestGlobalTagByDataType  = ''
+# |-RunChangeHandlerConditions = {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']}
+# |                            (default: {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']})
+# \----- (End of User CondDB/CondDB) -----------------------------------------------------------------
+ApplicationMgr    SUCCESS
+====================================================================================================================================
+                                                   Welcome to LHCb version v50r3
+                                          running on lblhcbpr4.cern.ch on Thu May  9 11:30:59 2019
+====================================================================================================================================
+ApplicationMgr       INFO Application Manager Configured successfully
+ToolSvc.GitDDDB      INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DDDB.git'
+ToolSvc.GitDDDB      INFO using commit 'upgrade/dddb-20171010' corresponding to 323d59e7a33cceb53ed75f33bcff0381d1c43578
+ToolSvc.GitSIMCOND   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/SIMCOND.git'
+ToolSvc.GitSIMCOND   INFO using commit 'upgrade/sim-20180530-vc-md100' corresponding to 7db2a32a63761eda1338a12fc643c76a22f55a62
+DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc
+DetectorDataSvc   SUCCESS Detector description database: git:/lhcb.xml
+HLTControlFlowMgr    INFO Start initialization
+HLTControlFlowMgr WARNING Unable to locate service "EventSelector"
+HLTControlFlowMgr WARNING No events will be processed from external input.
+HistogramPersis...WARNING Histograms saving not required.
+HLTControlFlowMgr    INFO Concurrency level information:
+HLTControlFlowMgr    INFO  o Number of events slots: 5
+HLTControlFlowMgr    INFO  o TBB thread pool size:  'ThreadPoolSize':5
+HLTControlFlowMgr    INFO ---> End of Initialization. This took 11 ms
+ApplicationMgr       INFO Application Manager Initialized successfully
+ApplicationMgr       INFO Application Manager Started successfully
+HLTControlFlowMgr    INFO Will measure time between events 1000 and 9000 (stop might be some events later)
+HLTControlFlowMgr    INFO Starting loop on events
+IODataManager       ERROR Referring to existing dataset mdf:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/MiniBrunel/00067189.mdf by its physical name.
+IODataManager       ERROR You may not be able to navigate back to the input file -- processing continues
+HLTControlFlowMgr    INFO ---> Loop over 10000 Events Finished -  WSS 926.309, timed 8001 Events: 42574 ms, Evts/s = 187.932
+ApplicationMgr       INFO Application Manager Stopped successfully
+HLTControlFlowMgr    INFO
+ | Name of Algorithm                               | Execution Count
+ | "ReadMDFInput"                                  |     10000 |
+
+HLTControlFlowMgr    INFO
+LAZY_AND: moore  #=10000   Sum=10000       Eff=|( 100.0000 +- 0.00000 )%|
+ ReadMDFInput    #=10000   Sum=10000       Eff=|( 100.0000 +- 0.00000 )%|
+
+HLTControlFlowMgr    INFO Histograms converted successfully according to request.
+ToolSvc              INFO Removing all tools created by ToolSvc
+ApplicationMgr       INFO Application Manager Finalized successfully
+ApplicationMgr       INFO Application Manager Terminated successfully

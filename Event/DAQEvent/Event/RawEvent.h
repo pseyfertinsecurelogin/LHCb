@@ -130,6 +130,12 @@ namespace LHCb {
       return m_mapped ? m_eventMap[bankType] : mapBanks( bankType );
     }
 
+    /// allows to reserve space for future banks
+    void reserve( unsigned int n ) { m_banks.reserve( n ); }
+
+    /// returns size of the RawEvent, aka number of banks it contains
+    unsigned int size() { return m_banks.size(); }
+
     /// For offline use only: copy data into a set of banks, adding bank header internally.
     void addBank( int sourceID, RawBank::BankType bankType, int version, const std::vector<unsigned int>& data );
 
