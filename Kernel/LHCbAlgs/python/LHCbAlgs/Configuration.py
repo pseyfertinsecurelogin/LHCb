@@ -250,7 +250,6 @@ class LHCbApp(LHCbConfigurableUser):
             # Information to be kept
             getConfigurable("EventSelector").OutputLevel = INFO
             getConfigurable("TimingAuditor").OutputLevel = INFO
-            getConfigurable("EventLoopMgr").OutputLevel = INFO
 
         if self.getProp("TimeStamp"):
             # add a time stamp to remaining messages
