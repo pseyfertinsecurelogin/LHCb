@@ -214,7 +214,25 @@ namespace LHCb::Hlt1Event {
     SOAFIELD_TRIVIAL( EndOfVeloStateField, endOfVeloState, EndOfVeloState );
 
     SOASKIN_TRIVIAL( VeloTrack, ClosestToBeamStateField, VeloHitBlockField );
-    SOASKIN_TRIVIAL( ForwardVeloTrack, ClosestToBeamStateField, EndOfVeloStateField, VeloHitBlockField );
+
+    SOASKIN( ForwardVeloTrack, ClosestToBeamStateField, EndOfVeloStateField, VeloHitBlockField ) {
+      SOASKIN_INHERIT_DEFAULT_METHODS( ForwardVeloTrack );
+
+      std::size_t nLHCbIDs() const { return this->veloHitBlock().size(); }
+      /**
+       * @brief access a track's Velo "hits" as TrackHit
+       *
+       * @return a gsl::span<LHCb::TrackHit>
+       */
+      auto trackHits() const { return LHCb::span<const LHCb::TrackHit>( this->veloHitBlock().m_VeloHitContainer ); };
+
+      /**
+       * @brief access a track's Velo "hits" as LHCbIDs
+       *
+       * @return a gsl::span<LHCb::LHCbID>
+       */
+      auto lhcbIDs() const { return LHCb::span<const LHCb::LHCbID>( this->veloHitBlock().m_VeloLHCbIDContainer ); };
+    };
   } // namespace v1
 } // namespace LHCb::Hlt1Event
 
