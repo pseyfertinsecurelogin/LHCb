@@ -81,7 +81,10 @@ namespace LHCb::Hlt1Event {
       }
       const auto& lhcbIDs() const { return m_VeloLHCbIDContainer; }
     };
+
+    // FIXME would be good to tag these somehow to stop them being convertible to each other
     using ClosestToBeamState = LHCb::State;
+    using EndOfVeloState     = LHCb::State;
   } // namespace v1
 } // namespace LHCb::Hlt1Event
 
@@ -183,8 +186,35 @@ namespace LHCb::Hlt1Event {
       operator LHCb::State&() { return this->closestToBeamState(); }
     };
 
-    SOASKIN_TRIVIAL( VeloTrack, ClosestToBeamStateField, VeloHitBlockField );
+    // /**
+    //  * @brief Replacement of the Run1 EndOfVelo state of a track
+    //  *
+    //  * Anticipated usage:
+    //  *  - exchange purely between PrPixelTracking and VeloUT
+    //  *  - design independent of the LHCb::Hlt1Event::v1::EndOfVeloState
+    //  *
+    //  * Up for immediate redesign:
+    //  *  - Use a native SOA::Container architecture instead
+    //  */
+    // struct EndOfVeloState final {
+    //   LHCb::State m_state; ///< actual state
+    //   /// "copy construct" from an existing LHCb::State
+    //   EndOfVeloState( const LHCb::State& s ) : m_state( s ) {
+    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
+    //   }
+    //   /// "move construct" from an existing LHCb::State
+    //   EndOfVeloState( LHCb::State&& s ) : m_state( std::move( s ) ) {
+    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
+    //   }
+    //   /// access as if it was a real LHCb::State (non-const)
+    //   [[deprecated]] operator LHCb::State&() { return m_state; }
+    //   /// access as if it was a real const LHCb::State
+    //   [[deprecated]] operator const LHCb::State&() const { return m_state; }
+    // };
+    SOAFIELD_TRIVIAL( EndOfVeloStateField, endOfVeloState, EndOfVeloState );
 
+    SOASKIN_TRIVIAL( VeloTrack, ClosestToBeamStateField, VeloHitBlockField );
+    SOASKIN_TRIVIAL( ForwardVeloTrack, ClosestToBeamStateField, EndOfVeloStateField, VeloHitBlockField );
   } // namespace v1
 } // namespace LHCb::Hlt1Event
 
