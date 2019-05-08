@@ -81,6 +81,8 @@ namespace Zipping {
     };
   } // namespace details
 
+  inline ZipFamilyNumber startNewContainerFamily() { return details::ZipFamilyNumberGenerator::generate(); }
+
   /**
    * @brief Helper function to obtain the family number from a set of (assumed semantically compatible) zip'able
    * containers.
