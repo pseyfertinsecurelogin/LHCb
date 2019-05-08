@@ -25,8 +25,8 @@ namespace LHCb::Event::v3 {
 
   // Namespace for locations in TDS
   namespace RecVertexLocation {
-    inline const std::string Velo3D          = "Hlt/Vertex/PV3D";
-    inline const std::string Primary         = "Rec/Vertex/Primary";
+    inline const std::string Velo3D  = "Hlt/Vertex/PV3D";
+    inline const std::string Primary = "Rec/Vertex/Primary";
   } // namespace RecVertexLocation
 
   namespace Enum::RecVertex {
@@ -39,8 +39,8 @@ namespace LHCb::Event::v3 {
   /// helper class to bundle a Track and its weight
   struct WeightedTrack {
     WeightedTrack( std::size_t t, float w ) : track( t ), weight( w ){};
-    std::size_t  track;
-    float        weight;
+    std::size_t track;
+    float       weight;
   };
 
   /// Reconstructed Vertices class

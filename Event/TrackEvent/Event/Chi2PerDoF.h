@@ -11,13 +11,12 @@
 
 #pragma once
 
-
 namespace LHCb {
 
-    struct Chi2PerDoF {
-        double chi2PerDoF = 0.0; ///< Total chi2 divided by the number of degrees of freedom.
-        int nDoF = 0; ///< Number of degrees of freedom.
-        double chi2() const { return chi2PerDoF*nDoF; }
-    };
+  struct Chi2PerDoF {
+    double chi2PerDoF = 0.0; ///< Total chi2 divided by the number of degrees of freedom.
+    int    nDoF       = 0;   ///< Number of degrees of freedom.
+    double chi2() const { return chi2PerDoF * nDoF; }
+  };
 
 } // namespace LHCb
