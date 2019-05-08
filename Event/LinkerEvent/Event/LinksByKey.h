@@ -141,7 +141,7 @@ namespace LHCb {
      * LinksByKey object
      */
     template <typename T>
-    T* getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const;
+    T const* getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const;
 
     /**
      * returns the first object linked to given srcIndex
@@ -152,7 +152,7 @@ namespace LHCb {
      * LinksByKey object
      */
     template <typename T>
-    T* getFirstLink( unsigned int srcIndex, KeyedContainer<T>& container ) const;
+    T const* getFirstLink( unsigned int srcIndex, KeyedContainer<T> const& container ) const;
 
     /**
      * returns the list of objects linked to given srcIndex
@@ -162,7 +162,7 @@ namespace LHCb {
      * as you pay here additional allocations
      */
     template <typename T>
-    std::vector<T*> getAllLinks( unsigned int srcIndex, LHCb::span<const T> container ) const;
+    std::vector<T const*> const getAllLinks( unsigned int srcIndex, LHCb::span<const T> container ) const;
 
     /**
      * returns the list of objects linked to given srcIndex
@@ -172,7 +172,7 @@ namespace LHCb {
      * as you pay here additional allocations
      */
     template <typename T>
-    std::vector<T*> getAllLinks( unsigned int srcIndex, KeyedContainer<T>& container ) const;
+    std::vector<T const*> const getAllLinks( unsigned int srcIndex, KeyedContainer<T> const& container ) const;
 
   protected:
     /// Returns the index of the key in m_keyIndex. True if key exist, else inserting position
@@ -270,7 +270,7 @@ void LHCb::LinksByKey::applyToLinks( unsigned int srcIndex, Function&& func ) co
 }
 
 template <typename T>
-T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const {
+T const* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, LHCb::span<const T> container ) const {
   int key;
   findIndex( srcIndex, key );
   int refIndex = m_keyIndex[key].second;
@@ -282,7 +282,7 @@ T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, LHCb::span<const T> co
 }
 
 template <typename T>
-T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, KeyedContainer<T>& container ) const {
+T const* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, KeyedContainer<T> const& container ) const {
   int key;
   findIndex( srcIndex, key );
   int refIndex = m_keyIndex[key].second;
@@ -294,8 +294,9 @@ T* LHCb::LinksByKey::getFirstLink( unsigned int srcIndex, KeyedContainer<T>& con
 }
 
 template <typename T>
-std::vector<T*> LHCb::LinksByKey::getAllLinks( unsigned int srcIndex, LHCb::span<const T> container ) const {
-  std::vector<T*> res;
+std::vector<T const*> const LHCb::LinksByKey::getAllLinks( unsigned int        srcIndex,
+                                                           LHCb::span<const T> container ) const {
+  std::vector<T const*> res;
   applyToLinks( srcIndex, [&res, &container]( unsigned int, unsigned int tgtIndex, float ) {
     res.push_back( &container[tgtIndex] );
   } );
@@ -303,8 +304,9 @@ std::vector<T*> LHCb::LinksByKey::getAllLinks( unsigned int srcIndex, LHCb::span
 }
 
 template <typename T>
-std::vector<T*> LHCb::LinksByKey::getAllLinks( unsigned int srcIndex, KeyedContainer<T>& container ) const {
-  std::vector<T*> res;
+std::vector<T const*> const LHCb::LinksByKey::getAllLinks( unsigned int             srcIndex,
+                                                           KeyedContainer<T> const& container ) const {
+  std::vector<T const*> res;
   applyToLinks( srcIndex, [&res, &container]( unsigned int, unsigned int tgtIndex, float ) {
     const T* tgtObj = static_cast<T*>( container.containedObject( tgtIndex ) );
     if ( tgtObj != nullptr ) {
