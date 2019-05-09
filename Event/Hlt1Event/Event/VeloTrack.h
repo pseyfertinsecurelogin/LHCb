@@ -36,15 +36,11 @@
 namespace LHCb::Hlt1Event {
   inline namespace v1 {
     namespace VeloTESLocation {
-      inline const std::string ForwardVeloTracks         = "Rec/Track/VeloForward";
-      inline const std::string BackwardVeloTracks        = "Rec/Track/VeloBackward";
-      inline const std::string ForwardHits               = "Rec/Velo/ForwardHits";
-      inline const std::string BackwardHits              = "Rec/Velo/BackwardHits";
-      inline const std::string ForwardVertexingStates    = "Rec/Velo/ForwardVertexing";
-      inline const std::string BackwardVertexingStates   = "Rec/Velo/BackwardVertexing";
-      inline const std::string ForwardVertexingStateSel  = "Rec/Velo/ForwardVertexingSel";
-      inline const std::string BackwardVertexingStateSel = "Rec/Velo/BackwardVertexingSel";
+      inline const std::string ForwardVeloTracks    = "Rec/Track/VeloForward";
+      inline const std::string BackwardVeloTracks   = "Rec/Track/VeloBackward";
+      inline const std::string ForwardVeloTracksSel = "Rec/Track/VeloForwardSel";
     } // namespace VeloTESLocation
+
     /**
      * @brief number of velo hits for track for which the class has been optimized
      *
@@ -106,121 +102,48 @@ namespace LHCb::Hlt1Event {
      */
     SOAFIELD_TRIVIAL( VeloHitBlockField, veloHitBlock, VeloHitBlock );
 
-    /** @class VeloTrackHits
+    /** @class ClosestToBeamStateField
      *
-     * @brief SOA::Skin for a VeloHitBlock.
+     * @brief SOA::Field for a ClosestToBeamState.
+     *
      */
-    SOASKIN( VeloTrackHits, VeloHitBlockField ) {
-      SOASKIN_INHERIT_DEFAULT_METHODS( VeloTrackHits );
-
-      void push_back( LHCb::LHCbID id, LHCb::TrackHit hit ) {
-        this->veloHitBlock().m_VeloHitContainer.push_back( hit );
-        this->veloHitBlock().m_VeloLHCbIDContainer.push_back( id );
-      }
-
-      void reserve( std::size_t s ) {
-        this->veloHitBlock().m_VeloHitContainer.reserve( s );
-        this->veloHitBlock().m_VeloLHCbIDContainer.reserve( s );
-      }
-
-      /**
-       * @brief Number of Velo hits on the track
-       */
-      auto size() const { return this->veloHitBlock().m_VeloHitContainer.size(); }
-      /**
-       * @brief access a track's Velo "hits" as TrackHit
-       *
-       * @return a gsl::span<LHCb::TrackHit>
-       */
-      auto trackHits() const { return LHCb::span<const LHCb::TrackHit>( this->veloHitBlock().m_VeloHitContainer ); };
-      /**
-       * @brief access a track's Velo "hits" as LHCbIDs
-       *
-       * @return a gsl::span<LHCb::LHCbID>
-       */
-      auto lhcbIDs() const { return LHCb::span<const LHCb::LHCbID>( this->veloHitBlock().m_VeloLHCbIDContainer ); };
-    };
-
-    // /**
-    //  * @brief Replacement of the Run1 ClosestToBeam state of a track
-    //  *
-    //  * Anticipated usage:
-    //  *  - Physics selections
-    //  *  - output of multiple tracking algorithms
-    //  *  - PV reconstruction
-    //  *  - IP filter
-    //  *
-    //  * Up for immediate redesign:
-    //  *  - Use a native SOA::Container architecture instead
-    //  */
-    // struct ClosestToBeamState final {
-    //   LHCb::State m_state; ///< actual state
-    //   /// "copy construct" from an existing LHCb::State
-    //   ClosestToBeamState( const LHCb::State& s ) : m_state( s ) {
-    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-    //   }
-    //   /// "move construct" from an existing LHCb::State
-    //   ClosestToBeamState( LHCb::State&& s ) : m_state( std::move( s ) ) {
-    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-    //   }
-
-    //   [[deprecated]] auto slopes() const { return m_state.slopes(); }
-    //   [[deprecated]] auto position() const { return m_state.position(); }
-    //   auto errX2() const { return m_state.errX2(); }
-    //   auto errY2() const { return m_state.errY2(); }
-    //   auto x() const { return m_state.x(); }
-    //   auto y() const { return m_state.y(); }
-    //   auto z() const { return m_state.z(); }
-    //   auto tx() const { return m_state.tx(); }
-    //   auto ty() const { return m_state.ty(); }
-
-    //   /// access as if it was a real LHCb::State (non-const)
-    //   operator LHCb::State&() { return m_state; }
-    //   /// access as if it was a real const LHCb::State
-    //   operator const LHCb::State&() const { return m_state; }
-    // };
-
     SOAFIELD_TRIVIAL( ClosestToBeamStateField, closestToBeamState, ClosestToBeamState );
-    SOASKIN( AtVertexState, ClosestToBeamStateField ) {
-      SOASKIN_INHERIT_DEFAULT_METHODS( AtVertexState );
 
-      operator const LHCb::State&() const { return this->closestToBeamState(); }
-      operator LHCb::State&() { return this->closestToBeamState(); }
-    };
-
-    // /**
-    //  * @brief Replacement of the Run1 EndOfVelo state of a track
-    //  *
-    //  * Anticipated usage:
-    //  *  - exchange purely between PrPixelTracking and VeloUT
-    //  *  - design independent of the LHCb::Hlt1Event::v1::EndOfVeloState
-    //  *
-    //  * Up for immediate redesign:
-    //  *  - Use a native SOA::Container architecture instead
-    //  */
-    // struct EndOfVeloState final {
-    //   LHCb::State m_state; ///< actual state
-    //   /// "copy construct" from an existing LHCb::State
-    //   EndOfVeloState( const LHCb::State& s ) : m_state( s ) {
-    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-    //   }
-    //   /// "move construct" from an existing LHCb::State
-    //   EndOfVeloState( LHCb::State&& s ) : m_state( std::move( s ) ) {
-    //     assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
-    //   }
-    //   /// access as if it was a real LHCb::State (non-const)
-    //   [[deprecated]] operator LHCb::State&() { return m_state; }
-    //   /// access as if it was a real const LHCb::State
-    //   [[deprecated]] operator const LHCb::State&() const { return m_state; }
-    // };
+    /** @class EndOfVeloStateField
+     *
+     * @brief SOA::Field for a EndOfVeloState.
+     *
+     */
     SOAFIELD_TRIVIAL( EndOfVeloStateField, endOfVeloState, EndOfVeloState );
 
+    /** @class VeloTrack
+     *
+     * @brief SOA::Skin for a backwards velo track.
+     *
+     * This is a simple skin for the minimal backwards velo track object we can exchange
+     * between the VP tracking and the PV reconstruction.
+     *
+     * NOTE: this additionally includes the hits, which are not really needed for the PV
+     *       reconstruction, but *are* needed if we want to configure the MC checking.
+     */
     SOASKIN_TRIVIAL( VeloTrack, ClosestToBeamStateField, VeloHitBlockField );
 
+    /** @class ForwardVeloTrack
+     *
+     * @brief SOA::Skin for a forward velo track.
+     *
+     * This is similar to VeloTrack, but also includes a second state at the end of the velo,
+     * which is used by the VeloUT tracking. Note also that the comment about the hits for
+     * VeloTrack does not apply here.
+     */
     SOASKIN( ForwardVeloTrack, ClosestToBeamStateField, EndOfVeloStateField, VeloHitBlockField ) {
       SOASKIN_INHERIT_DEFAULT_METHODS( ForwardVeloTrack );
 
+      /**
+       * @brief access the number of Velo hits/LHCbIDs
+       */
       std::size_t nLHCbIDs() const { return this->veloHitBlock().size(); }
+
       /**
        * @brief access a track's Velo "hits" as TrackHit
        *
