@@ -39,6 +39,7 @@
 #ifndef ZipContainer_h
 #define ZipContainer_h
 #include "IncompatibleZipException.h"
+#include "SOAContainer/SOAContainer.h"
 #include "SOAContainer/SOASkin.h"
 #include "SOAContainer/SOAUtils.h"
 #include "SOAContainer/SOAView.h"
@@ -190,6 +191,12 @@ namespace Zipping {
 
     return ZipContainer{familyNumber( views... ), zip( std::forward<ZIPCONTAINER>( views )... )};
   }
+
+  /**
+   * @brief Shorthand for the common case of making an owning container with std::vector backend.
+   */
+  template <template <typename> typename SKIN>
+  using ZipVector = ZipContainer<SOA::Container<std::vector, SKIN>>;
 } // namespace Zipping
 
 #endif

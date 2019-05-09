@@ -81,6 +81,9 @@ namespace Zipping {
     };
   } // namespace details
 
+  /**
+   * @brief Helper function to generate unique family IDs.
+   */
   inline ZipFamilyNumber startNewContainerFamily() { return details::ZipFamilyNumberGenerator::generate(); }
 
   /**
