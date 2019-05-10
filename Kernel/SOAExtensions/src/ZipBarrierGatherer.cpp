@@ -23,18 +23,18 @@
 
 struct ZipBarrierGatherer final
     : Gaudi::Functional::MergingTransformer<
-          Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*>(
-              Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )> {
+          Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*>(
+              Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& )> {
 
   ZipBarrierGatherer( std::string const& name, ISvcLocator* pSvcLocator )
       : Gaudi::Functional::MergingTransformer<
-            Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*>(
-                Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )>(
+            Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*>(
+                Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& )>(
             name, pSvcLocator, {"InputSelections", {"/Event/SelectAll"}},
             {"OutputSelection", {"/Event/GatheredSelects"}} ) {}
 
-  Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> operator()(
-      Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& vec ) const override {
+  Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> operator()(
+      Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& vec ) const override {
     return vec;
   }
 };

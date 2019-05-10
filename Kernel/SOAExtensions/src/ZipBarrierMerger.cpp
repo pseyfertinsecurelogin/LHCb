@@ -35,16 +35,16 @@
 
 struct ZipBarrierMerger final
     : public Gaudi::Functional::Transformer<Zipping::ExportedSelection<>(
-          Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )> {
+          Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& )> {
 
   ZipBarrierMerger( std::string const& name, ISvcLocator* pSvcLocator )
       : Gaudi::Functional::Transformer<Zipping::ExportedSelection<>(
-            Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )>(
+            Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& )>(
             name, pSvcLocator, {"InputSelection", "/Event/GatheredSelects"},
             {"OutputSelection", "/Event/MergedSelects"} ) {}
 
   Zipping::ExportedSelection<> operator()(
-      Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& vec ) const override {
+      Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& vec ) const override {
     // this only works thanks to the above iterator_traits
     auto iter = std::find_if( vec.begin(), vec.end(), []( auto* entry ) { return entry; } );
 
