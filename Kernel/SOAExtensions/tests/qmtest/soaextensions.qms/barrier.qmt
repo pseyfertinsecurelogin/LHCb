@@ -1,0 +1,28 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!--
+#######################################################
+# SUMMARY OF THIS TEST
+# Author: pseyfert
+# Purpose: Test the barrier with ZipSelections
+# Prerequisites: Working AnyData and MergingTransformer framework from Gaudi and set operations on ZipSelections
+#######################################################
+-->
+<extension class="SOAExtensions.apples_example" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set><text>$SOAEXTENSIONSROOT/examples/options/BarrierExamples.py</text></set></argument>
+<argument name="use_temp_dir"><enumeral>true</enumeral></argument>
+<argument name="validator"><text>
+countErrorLines()
+</text></argument>
+</extension>
+
