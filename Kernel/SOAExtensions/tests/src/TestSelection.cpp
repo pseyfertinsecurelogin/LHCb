@@ -14,11 +14,12 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE utestSelection
-#include "SOAContainer/SOAContainer.h"  // for Container
-#include "SOAContainer/SOASkin.h"       // for SOASkinCreatorSimple<>::type
-#include "SOAContainer/SOAView.h"       // for _View<>::reference, _View
-#include "SOAExtensions/ZipContainer.h" // for ZipContainer, semantic_zip
-#include "SOAExtensions/ZipSelection.h" // for SelectionView, SelectionVi...
+#include "SOAContainer/SOAContainer.h"   // for Container
+#include "SOAContainer/SOASkin.h"        // for SOASkinCreatorSimple<>::type
+#include "SOAContainer/SOAView.h"        // for _View<>::reference, _View
+#include "SOAExtensions/ZipAlgorithms.h" // for transform
+#include "SOAExtensions/ZipContainer.h"  // for ZipContainer, semantic_zip
+#include "SOAExtensions/ZipSelection.h"  // for SelectionView, SelectionVi...
 #include <boost/test/unit_test.hpp>
 // #include <boost/test/execution_monitor.hpp>
 #include <memory>  // for allocator, allocator_trait...
@@ -234,4 +235,59 @@ BOOST_AUTO_TEST_CASE( set_operations ) {
 
   BOOST_CHECK_THROW( commahider2(), GaudiException );
   BOOST_CHECK( includes( sel1, intersection ) );
+}
+
+BOOST_AUTO_TEST_CASE( transform ) {
+  Zipping::ZipContainer<SOA::Container<std::vector, s_track>> foo1;
+  for ( auto i : range( 42 ) ) {
+    track t{i * 100.f, i * 2.f, ( 42 - i ) * 100.f, 0.f, 0.f};
+    foo1.push_back( t );
+  }
+  Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo2 = Zipping::transform<s_fitres>(
+      foo1, []( Zipping::ZipContainer<SOA::Container<std::vector, s_track>>::proxy track ) {
+        return fitres{track.accessor_track().x, track.accessor_track().y, track.accessor_track().z,
+                      (int)track.accessor_track().y};
+      } );
+
+  auto zip = Zipping::semantic_zip( foo1, foo2 );
+
+  auto foo3 = Zipping::transform<s_fitqual, std::vector>( zip, []( auto proxy ) {
+    return fitqual{proxy.accessor_track().x, proxy.accessor_fitres().q};
+  } );
+
+  BOOST_CHECK( areSemanticallyCompatible( foo1, foo2, foo3 ) );
+  BOOST_CHECK_EQUAL( foo1.size(), foo2.size() );
+  BOOST_CHECK_EQUAL( foo1.size(), foo3.size() );
+
+  auto exported_selection =
+      Zipping::makeSelection( &foo1, []( auto i ) -> bool { return i.accessor_track().x < 550.f; } );
+
+  Zipping::SelectionView view1{&foo1, exported_selection};
+
+  [[maybe_unused]] Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo4 =
+      Zipping::transform<s_fitres>( foo1,
+                                    []( Zipping::ZipContainer<SOA::Container<std::vector, s_track>>::proxy track ) {
+                                      return fitres{track.accessor_track().x, track.accessor_track().y,
+                                                    track.accessor_track().z, (int)track.accessor_track().y};
+                                    },
+                                    exported_selection );
+
+  [[maybe_unused]] Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo5 =
+      Zipping::transform<s_fitres, std::vector>( zip,
+                                                 []( auto track ) {
+                                                   return fitres{track.accessor_track().x, track.accessor_track().y,
+                                                                 track.accessor_track().z,
+                                                                 (int)track.accessor_track().y};
+                                                 },
+                                                 exported_selection );
+
+  [[maybe_unused]] auto foo6 = Zipping::transform<s_fitres, std::vector>( view1, []( auto track ) {
+    return fitres{track.accessor_track().x, track.accessor_track().y, track.accessor_track().z,
+                  (int)track.accessor_track().y};
+  } );
+
+  auto                   zip2 = Zipping::semantic_zip( foo1, foo6 );
+  Zipping::SelectionView view2{&zip2, exported_selection};
+
+  for ( auto element : view2 ) { BOOST_CHECK_EQUAL( (int)element.accessor_track().y, element.accessor_fitres().q ); }
 }

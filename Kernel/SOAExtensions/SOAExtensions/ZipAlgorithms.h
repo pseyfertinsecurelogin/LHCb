@@ -68,7 +68,8 @@ namespace Zipping {
    * Zipping::ZipContainer<SOA::Container<std::vector, MuonPIDSkin>> muonids = ...
    * auto proto_particles = Zipping::semantic_zip<ProtoParticleSkin>( tracks, muonids );
    *
-   * auto muon_isolations = Zipping::transform<MuonIsolationSkin, std::vector>( proto_particles, [](auto protop) { MuonIsolation iso = ... ; return iso; } );
+   * auto muon_isolations = Zipping::transform<MuonIsolationSkin, std::vector>( proto_particles, [](auto protop) {
+   * MuonIsolation iso = ... ; return iso; } );
    * @endcode
    *
    * @tparam OUTSKIN    SOA-skin for the output container
@@ -91,6 +92,30 @@ namespace Zipping {
     return retval;
   }
 
+  namespace details {
+    template <typename IndexSize, typename INPUT, typename OUTPUT, typename Operation, typename SELECTION>
+    auto transform( const INPUT& input, Operation&& operation, const SELECTION& sel, OUTPUT& retval ) {
+      retval.reserve( input.size() );
+      assert( std::is_sorted( sel.begin(), sel.end() ) );
+
+      IndexSize i                 = 0;
+      auto      selectionIterator = sel.begin();
+      for ( ; i < input.size(); ++i ) {
+        if ( selectionIterator != sel.end() && *selectionIterator == i ) {
+          retval.emplace_back( std::invoke( operation, input[i] ) );
+          ++selectionIterator;
+        } else {
+          retval.emplace_back(); // default / invalid construction
+        }
+      }
+
+      assert( retval.size() == input.size() );
+      assert( Zipping::areSemanticallyCompatible( retval, input ) );
+
+      return retval;
+    }
+  } // namespace details
+
   /**
    * @brief Create a new container that can be zipped to an input container with a per-element operation
    *
@@ -103,7 +128,8 @@ namespace Zipping {
    * @code
    * Zipping::ZipContainer<SOA::Container<std::vector, TrackSkin>> tracks = ...
    * ExportedSelection<> large_ip_selection = ...
-   * auto muonids = Zipping::transform<MuonPIDSkin>( tracks, [](auto track) { MuonPID pid = ... ; return pid; }, large_ip_selection );
+   * auto muonids = Zipping::transform<MuonPIDSkin>( tracks, [](auto track) { MuonPID pid = ... ; return pid; },
+   * large_ip_selection );
    * @endcode
    *
    * @tparam OUTSKIN    SOA-skin for the output container
@@ -122,24 +148,25 @@ namespace Zipping {
   auto transform( const Zipping::ZipContainer<SOA::Container<CONTAINER, INSKIN>>& input, Operation&& operation,
                   const ExportedSelection<IndexSize>& sel ) {
     Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.zipIdentifier() );
-    retval.reserve( input.size() );
-    assert( std::is_sorted( sel.m_indices.begin(), sel.m_indices.end() ) );
+    return details::transform<IndexSize>( input, operation, sel.m_indices, retval );
+  }
 
-    IndexSize i                 = 0;
-    auto      selectionIterator = sel.m_indices.begin();
-    for ( ; i < input.size(); ++i ) {
-      if ( selectionIterator != sel.m_indices.end() && *selectionIterator == i ) {
-        retval.emplace_back( std::invoke( operation, input[i] ) );
-        ++selectionIterator;
-      } else {
-        retval.emplace_back(); // default / invalid construction
-      }
-    }
+  template <template <typename> typename OUTSKIN, template <typename...> class CONTAINER,
+            template <typename> typename INSKIN, typename Operation, typename IndexSize>
+  auto
+  transform( const Zipping::SelectionView<Zipping::ZipContainer<SOA::Container<CONTAINER, INSKIN>>, IndexSize>& input,
+             Operation&& operation ) {
+    Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.m_container->zipIdentifier() );
+    return details::transform<IndexSize>( *input.m_container, operation, *input.m_indices, retval );
+  }
 
-    assert( retval.size() == input.size() );
-    assert( Zipping::areSemanticallyCompatible( retval, input ) );
-
-    return retval;
+  template <template <typename> typename OUTSKIN, template <typename...> class CONTAINER,
+            template <typename> typename INSKIN, typename Operation, typename IndexSize>
+  auto transform(
+      const Zipping::SelectionView<const Zipping::ZipContainer<SOA::Container<CONTAINER, INSKIN>>, IndexSize>& input,
+      Operation&& operation ) {
+    Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.m_container->zipIdentifier() );
+    return details::transform<IndexSize>( *input.m_container, operation, *input.m_indices, retval );
   }
 
   /**
@@ -157,7 +184,8 @@ namespace Zipping {
    * auto proto_particles = Zipping::semantic_zip<ProtoParticleSkin>( tracks, muonids );
    * ExportedSelection<> large_ip_selection = ...
    *
-   * auto muon_isolations = Zipping::transform<MuonIsolationSkin, std::vector>( proto_particles, [](auto protop) { MuonIsolation iso = ... ; return iso; }, large_ip_selection );
+   * auto muon_isolations = Zipping::transform<MuonIsolationSkin, std::vector>( proto_particles, [](auto protop) {
+   * MuonIsolation iso = ... ; return iso; }, large_ip_selection );
    * @endcode
    *
    * @tparam OUTSKIN    SOA-skin for the output container
@@ -177,24 +205,25 @@ namespace Zipping {
   auto transform( const Zipping::ZipContainer<INVIEW>& input, Operation&& operation,
                   const ExportedSelection<IndexSize>& sel ) {
     Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.zipIdentifier() );
-    retval.reserve( input.size() );
-    assert( std::is_sorted( sel.m_indices.begin(), sel.m_indices.end() ) );
+    return details::transform<IndexSize>( input, operation, sel.m_indices, retval );
+  }
 
-    IndexSize i                 = 0;
-    auto      selectionIterator = sel.m_indices.begin();
-    for ( ; i < input.size(); ++i ) {
-      if ( selectionIterator != sel.m_indices.end() && *selectionIterator == i ) {
-        retval.emplace_back( std::invoke( operation, input[i] ) );
-        ++selectionIterator;
-      } else {
-        retval.emplace_back(); // default / invalid construction
-      }
-    }
+  template <template <typename> typename OUTSKIN, template <typename...> class CONTAINER, typename INVIEW,
+            typename Operation, typename = std::enable_if_t<!SOA::Utils::is_container<INVIEW>::value>,
+            typename IndexSize>
+  auto transform( const Zipping::SelectionView<Zipping::ZipContainer<INVIEW>, IndexSize>& input,
+                  Operation&&                                                             operation ) {
+    Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.m_container->zipIdentifier() );
+    return details::transform<IndexSize>( input, operation, *input.m_indices, retval );
+  }
 
-    assert( retval.size() == input.size() );
-    assert( Zipping::areSemanticallyCompatible( retval, input ) );
-
-    return retval;
+  template <template <typename> typename OUTSKIN, template <typename...> class CONTAINER, typename INVIEW,
+            typename Operation, typename = std::enable_if_t<!SOA::Utils::is_container<INVIEW>::value>,
+            typename IndexSize>
+  auto transform( const Zipping::SelectionView<const Zipping::ZipContainer<INVIEW>, IndexSize>& input,
+                  Operation&&                                                                   operation ) {
+    Zipping::ZipContainer<SOA::Container<CONTAINER, OUTSKIN>> retval( input.m_container->zipIdentifier() );
+    return details::transform<IndexSize>( input, operation, *input.m_indices, retval );
   }
 } // namespace Zipping
 
