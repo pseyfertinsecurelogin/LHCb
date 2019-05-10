@@ -44,6 +44,11 @@ gaudi_add_module( SOAExtensionExamples examples/src/*.cpp
   LINK_LIBRARIES GaudiAlgLib
   )
 
+gaudi_add_module( ZipBarrier src/*.cpp
+  INCLUDE_DIRS Kernel/SOAContainer Kernel/SOAExtensions GaudiAlg
+  LINK_LIBRARIES GaudiAlgLib
+  )
+
 
 
 gaudi_add_test(QMTest QMTEST
