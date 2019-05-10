@@ -33,7 +33,7 @@ namespace Examples {
                                              const Zipping::ExportedSelection<>& sel ) const override {
       Zipping::SelectionView input{&data, sel};
 
-      return input.select( [this]( int i ) { return ( i % m_divisor ) == 0; } );
+      return input.select( [this]( NumberContainer::proxy i ) { return ( i.number() % m_divisor ) == 0; } );
     }
   };
 

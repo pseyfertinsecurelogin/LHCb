@@ -21,23 +21,22 @@
  *    vector
  */
 
-template <typename T>
-using VOC = Gaudi::Functional::details::vector_of_const_<T>;
-template <typename T>
-using SEL      = Zipping::ExportedSelection<>;
-using KeyValue = std::pair<std::string, std::string>;
-
-template <typename T>
-struct warner;
-
-struct ZipBarrierGatherer final : Gaudi::Functional::MergingTransformer<VOC<SEL*>( VOC<SEL*> const& )> {
+struct ZipBarrierGatherer final
+    : Gaudi::Functional::MergingTransformer<
+          Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*>(
+              Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )> {
 
   ZipBarrierGatherer( std::string const& name, ISvcLocator* pSvcLocator )
-      : Gaudi::Functional::MergingTransformer<VOC<SEL*>( VOC<SEL*> const& )>(
+      : Gaudi::Functional::MergingTransformer<
+            Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*>(
+                Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& )>(
             name, pSvcLocator, {"InputSelections", {"/Event/SelectAll"}},
             {"OutputSelection", {"/Event/GatheredSelects"}} ) {}
 
-  VOC<SEL*> operator()( VOC<SEL*> const& vec ) const override { return vec; }
+  Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> operator()(
+      Gaudi::Functional::details::vector_of_const_<const Zipping::ExportedSelection<>*> const& vec ) const override {
+    return vec;
+  }
 };
 
 DECLARE_COMPONENT( ZipBarrierGatherer )

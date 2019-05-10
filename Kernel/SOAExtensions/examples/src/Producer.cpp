@@ -25,7 +25,8 @@ namespace Examples {
               {KeyValue( "OutputLocation", "/Event/MyVector" ), KeyValue( "OutputSelection", "/Event/SelectAll" )} ) {}
 
     std::tuple<NumberContainer, Zipping::ExportedSelection<>> operator()() const override {
-      NumberContainer              retval = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+      NumberContainer retval;
+      for ( int i = 1; i < 14; ++i ) retval.push_back( i );
       Zipping::ExportedSelection<> trivial_selection( retval, Zipping::details::alwaysTrue );
       return {std::move( retval ), std::move( trivial_selection )};
     }

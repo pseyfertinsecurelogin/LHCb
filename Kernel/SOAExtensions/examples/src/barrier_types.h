@@ -15,6 +15,7 @@
 
 #include "SOAContainer/SOAField.h"
 #include "SOAContainer/SOASkin.h"
+#include "SOAContainer/SOAContainer.h"
 #include "SOAExtensions/ZipContainer.h"
 #include "SOAExtensions/ZipSelection.h"
 #include <vector>
