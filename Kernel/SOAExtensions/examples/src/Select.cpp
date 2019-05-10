@@ -25,7 +25,7 @@ namespace Examples {
                            KeyValue( "InputLocation", "/Event/MyInt" ),
                            KeyValue( "InputSelection", "/Event/SelectAll" ),
                        },
-                       KeyValue( "OutputLocation", "/Event/MySelection" ) ) {}
+                       KeyValue( "OutputSelection", "/Event/MySelection" ) ) {}
 
     Gaudi::Property<int> m_divisor{this, "Divisor", 2};
 

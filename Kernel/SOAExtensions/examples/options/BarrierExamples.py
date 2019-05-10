@@ -8,7 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from Configurables import ZipBarrierExampleSelector, ZipBarrierExampleProducer, PrintInts
+from Configurables import Examples__ZipBarrierExampleSelector as ZipBarrierExampleSelector
+from Configurables import Examples__PrintInts as PrintInts
+from Configurables import Examples__ZipBarrierExampleProducer as ZipBarrierExampleProducer
 from Configurables import ZipBarrierGatherer, ZipBarrierMerger
 from Gaudi.Configuration import *
 
@@ -21,19 +23,19 @@ prod.OutputSelection = "/Event/AllSelection"
 
 sel1 = ZipBarrierExampleSelector("selectall")
 sel1.Divisor = 1
-sel1.OutputLocation = "/Event/Select_1"
+sel1.OutputSelection = "/Event/Select_1"
 
 sel2 = ZipBarrierExampleSelector("selecteven")
 sel2.Divisor = 2
-sel2.OutputLocation = "/Event/Select_2"
+sel2.OutputSelection = "/Event/Select_2"
 
 sel3 = ZipBarrierExampleSelector("select_every_third")
 sel3.Divisor = 3
-sel3.OutputLocation = "/Event/Select_3"
+sel3.OutputSelection = "/Event/Select_3"
 
 sel4 = ZipBarrierExampleSelector("select_every_fourth")
 sel4.Divisor = 4
-sel4.OutputLocation = "/Event/Select_4"
+sel4.OutputSelection = "/Event/Select_4"
 
 sels = [sel1, sel2, sel3, sel4]
 for sel in sels:
