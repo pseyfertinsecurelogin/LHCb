@@ -43,8 +43,8 @@ struct ZipBarrierMerger final
             name, pSvcLocator, {"InputSelection", "/Event/GatheredSelects"},
             {"OutputSelection", "/Event/MergedSelects"} ) {}
 
-  Zipping::ExportedSelection<> operator()(
-      Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& vec ) const override {
+  Zipping::ExportedSelection<>
+  operator()( Gaudi::Functional::details::vector_of_const_<Zipping::ExportedSelection<>*> const& vec ) const override {
     // this only works thanks to the above iterator_traits
     auto iter = std::find_if( vec.begin(), vec.end(), []( auto* entry ) { return entry; } );
 

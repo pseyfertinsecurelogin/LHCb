@@ -13,9 +13,9 @@
 #ifndef BARRIER_EXAMPLE_TYPES
 #define BARRIER_EXAMPLE_TYPES
 
+#include "SOAContainer/SOAContainer.h"
 #include "SOAContainer/SOAField.h"
 #include "SOAContainer/SOASkin.h"
-#include "SOAContainer/SOAContainer.h"
 #include "SOAExtensions/ZipContainer.h"
 #include "SOAExtensions/ZipSelection.h"
 #include <vector>
