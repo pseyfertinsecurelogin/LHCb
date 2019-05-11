@@ -87,6 +87,8 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::stri
   } else {
     if ( type == "EcalRaw" ) {
       clusters = EcalRaw;
+    } else if ( type == "EcalOverlap" ) {
+      clusters = EcalOverlap;
     } else {
       clusters = Ecal;
     }
