@@ -34,7 +34,6 @@ namespace @@@classNamespace@@@
    * @@@desc@@@
    *
    * @author @@@author@@@
-   * created @@@today@@@
    *
    */
 

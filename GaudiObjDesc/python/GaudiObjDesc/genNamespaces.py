@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import time, os
+import os
 import genSrcUtils, tools, gparser, genClasses
 import logging
 
@@ -98,7 +98,6 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             namespaceDict['namespacename'] = namespacename
             namespaceDict['desc'] = self.genDesc(godNamespace)
             namespaceDict['author'] = self.genAuthor(godNamespace)
-            namespaceDict['today'] = time.ctime()
             namespaceDict['namespaceScope'] = scope
             namespaceDict['inline']           = 'inline ' if\
                                                 godNamespace['attrs']['inline']\
