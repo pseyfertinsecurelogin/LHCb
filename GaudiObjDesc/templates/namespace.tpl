@@ -25,7 +25,6 @@
  * @@@desc@@@ 
  *
  * @author @@@author@@@
- * created @@@today@@@
  * 
  */
 

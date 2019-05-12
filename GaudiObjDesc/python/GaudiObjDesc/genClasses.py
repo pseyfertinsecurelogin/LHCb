@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import time, os, sys, string
+import os, sys, string
 import genSrcUtils, gparser
 import logging
 
@@ -999,7 +999,6 @@ namespace {
             classDict['locations'] = self.genLocations(godClass)
             classDict['desc'] = self.genDesc(godClass)
             classDict['author'] = godClass['attrs']['author']
-            classDict['today'] = time.ctime()
             classDict['classNamespace'] = namespace
             classDict['inheritance'] = self.genInheritance(godClass)
             classDict['final'] = self.genFinal(godClass)
