@@ -182,19 +182,11 @@ int main( int /*argc*/, char** /*argv*/ ) {
 
       std::cout << "STD  sqrt(" << d.absxs << ") = " << std::sqrt( d.absxs ) << std::endl;
       std::cout << "STD  sqrt(" << d.absxv << ") = " << std::sqrt( d.absxv ) << std::endl;
-      std::cout << "FAST sqrt(" << d.absxs << ") = " << fast_sqrt( d.absxs ) << std::endl;
-      std::cout << "FAST sqrt(" << d.absxv << ") = " << fast_sqrt( d.absxv ) << std::endl;
       std::cout << "APX  sqrt(" << d.absxs << ") = " << approx_sqrt( d.absxs ) << std::endl;
       std::cout << "APX  sqrt(" << d.absxv << ") = " << approx_sqrt( d.absxv ) << std::endl;
       std::cout << "VAPX sqrt(" << d.absxs << ") = " << vapprox_sqrt( d.absxs ) << std::endl;
       std::cout << "VAPX sqrt(" << d.absxv << ") = " << vapprox_sqrt( d.absxv ) << std::endl;
       std::cout << std::endl;
-
-      // std::cout << "STD isqrt(" << d.absxs << ") = " << 1.0f / std::sqrt( d.absxs ) << std::endl;
-      // std::cout << "VDT isqrt(" << d.absxs << ") = " << vdt::fast_isqrtf( d.absxs ) << std::endl;
-      // std::cout << "STD isqrt(" << d.absxv << ") = " << FloatV::One() / std::sqrt( d.absxv ) << std::endl;
-      // std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt( d.absxv ) << std::endl;
-      // std::cout << std::endl;
 
       std::cout << "STD  atan2(" << d.xs << "," << d.ys << ") = " << std::atan2( d.xs, d.ys ) << std::endl;
       std::cout << "VDT  atan2(" << d.xs << "," << d.ys << ") = " << fast_atan2( d.xs, d.ys ) << std::endl;
@@ -327,10 +319,6 @@ int main( int /*argc*/, char** /*argv*/ ) {
     auto timeScSTDSqrt = solve<float>( data, []( const auto& d ) { return std::sqrt( d.absxs ); } );
     std::cout << "Scalar STD  sqrt " << timeScSTDSqrt << std::endl;
 
-    // fast scalar sqrt
-    auto timeScFSTSqrt = solve<float>( data, []( const auto& d ) { return fast_sqrt( d.absxs ); } );
-    std::cout << "Scalar FST  sqrt " << timeScFSTSqrt << std::endl;
-
     // approx scalar sqrt
     auto timeScAPXSqrt = solve<float>( data, []( const auto& d ) { return approx_sqrt( d.absxs ); } );
     std::cout << "Scalar APX  sqrt " << timeScAPXSqrt << std::endl;
@@ -345,11 +333,6 @@ int main( int /*argc*/, char** /*argv*/ ) {
               << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDSqrt / timeVcSTDSqrt << " )" << std::endl;
 
     // STD(Vc) SIMD apx sqrt
-    auto timeVcFSTSqrt = solve<FloatV>( data, []( const auto& d ) { return fast_sqrt( d.absxv ); } );
-    std::cout << "SIMD   FST  sqrt " << timeVcFSTSqrt << " ( " << timeVcFSTSqrt / FloatV::Size
-              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScFSTSqrt / timeVcFSTSqrt << " )" << std::endl;
-
-    // STD(Vc) SIMD apx sqrt
     auto timeVcAPXSqrt = solve<FloatV>( data, []( const auto& d ) { return approx_sqrt( d.absxv ); } );
     std::cout << "SIMD   APX  sqrt " << timeVcAPXSqrt << " ( " << timeVcAPXSqrt / FloatV::Size
               << " per scalar, SpeedUp " << (double)FloatV::Size * timeScAPXSqrt / timeVcAPXSqrt << " )" << std::endl;
@@ -361,39 +344,11 @@ int main( int /*argc*/, char** /*argv*/ ) {
 
     // make sure we are not optimized away
     asm volatile( "" : "+x"( timeScSTDSqrt ) );
+    asm volatile( "" : "+x"( timeScAPXSqrt ) );
     asm volatile( "" : "+x"( timeScVAPXSqrt ) );
     asm volatile( "" : "+x"( timeVcSTDSqrt ) );
+    asm volatile( "" : "+x"( timeVcAPXSqrt ) );
     asm volatile( "" : "+x"( timeVcVAPXSqrt ) );
-
-    // ---------------------------------------------------------------------------------------------------------------------
-
-    // std::cout << "testing 1/sqrt functions..." << std::endl;
-
-    // // STD scalar isqrt
-    // auto timeScSTDIsqrt = solve<float>( data, []( const auto& d ) { return d.xs / std::sqrt( d.absxs ); } );
-    // std::cout << "Scalar STD isqrt " << timeScSTDIsqrt << std::endl;
-
-    // // VDT scalar log
-    // auto timeScVDTIsqrt = solve<float>( data, []( const auto& d ) { return d.xs * vdt::fast_isqrtf( d.absxs ); } );
-    // std::cout << "Scalar VDT isqrt " << timeScVDTIsqrt << std::endl;
-
-    // // STD(Vc) SIMD log
-    // auto timeVcSTDIsqrt = solve<FloatV>( data, []( const auto& d ) { return d.xv / std::sqrt( d.absxv ); } );
-    // std::cout << "SIMD   STD isqrt " << timeVcSTDIsqrt << " ( " << timeVcSTDIsqrt / FloatV::Size
-    //           << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDIsqrt / timeVcSTDIsqrt << " )" <<
-    //           std::endl;
-
-    // // STD(Vc) SIMD log
-    // auto timeVcVDTIsqrt = solve<FloatV>( data, []( const auto& d ) { return d.xv * fast_isqrt( d.absxv ); } );
-    // std::cout << "SIMD   VDT isqrt " << timeVcVDTIsqrt << " ( " << timeVcVDTIsqrt / FloatV::Size
-    //           << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVDTIsqrt / timeVcVDTIsqrt << " )" <<
-    //           std::endl;
-
-    // // make sure we are not optimized away
-    // asm volatile( "" : "+x"( timeScSTDIsqrt ) );
-    // asm volatile( "" : "+x"( timeScVDTIsqrt ) );
-    // asm volatile( "" : "+x"( timeVcSTDIsqrt ) );
-    // asm volatile( "" : "+x"( timeVcVDTIsqrt ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
 

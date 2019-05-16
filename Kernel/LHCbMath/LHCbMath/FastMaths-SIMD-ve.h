@@ -449,30 +449,6 @@ namespace LHCb::Math {
 
   //------------------------------------------------------------------------------
 
-  /// Approx sqrt
-  inline LHCb::SIMD::VE::FPF fast_sqrt( const LHCb::SIMD::VE::FPF x ) noexcept {
-
-    using namespace details::VE;
-
-    union {
-      FPF   x;
-      Int32 i;
-    } u = {x};
-
-    // method 1
-    u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
-    // Two Babylonian Steps
-    u.x = HALF * ( u.x + ( x / u.x ) );
-    u.x = HALF * ( u.x + ( x / u.x ) );
-    return u.x;
-
-    // u.i            = Int32( 0x5f3759df ) - ( u.i >> 1 ); // gives initial guess y0
-    // const auto xux = x * u.x;
-    // return xux * ( FPF( 1.5f ) - ( HALF * xux * u.x ) ); // Newton step, repeating increases accuracy
-  }
-
-  //------------------------------------------------------------------------------
-
   namespace Approx {
 
     //------------------------------------------------------------------------------

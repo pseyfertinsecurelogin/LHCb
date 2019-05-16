@@ -108,26 +108,6 @@ namespace LHCb::Math {
   /// Fast asin
   inline float fast_asin( const double x ) noexcept { return vdt::fast_asin( x ); }
 
-  /// Fast sqrt
-  inline float fast_sqrt( const float x ) noexcept {
-
-    union {
-      float        x;
-      std::int32_t i;
-    } u = {x};
-
-    // method 1
-    u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
-    // Two Babylonian Steps
-    u.x = 0.5f * ( u.x + ( x / u.x ) );
-    u.x = 0.5f * ( u.x + ( x / u.x ) );
-    return u.x;
-
-    // u.i            = std::int32_t( 0x5f3759df ) - ( u.i >> 1 ); // gives initial guess y0
-    // const auto xux = x * u.x;
-    // return xux * ( 1.5f - ( 0.5f * xux * u.x ) ); // Newton step, repeating increases accuracy
-  }
-
   //------------------------------------------------------------------------------
   namespace Approx {
 
