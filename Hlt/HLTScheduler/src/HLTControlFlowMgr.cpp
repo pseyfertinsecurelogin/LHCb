@@ -99,7 +99,6 @@ StatusCode HLTControlFlowMgr::initialize() {
     return StatusCode::FAILURE;
   }
 
-  // FIXME why EventDataSvc? rather give a proper name
   // Setup access to event data services
   m_evtDataMgrSvc = serviceLocator()->service<IDataManagerSvc>( "EventDataSvc" );
   if ( !m_evtDataMgrSvc ) {
@@ -265,8 +264,7 @@ EventContext HLTControlFlowMgr::createEventContext() {
   // setup evtcontext
   EventContext evtContext{};
   evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
-  m_algExecStateSvc->reset( evtContext );
-
+  m_nextevt++;
   // giving the scheduler states to the evtContext, so that they are
   // globally accessible within an event
   // copy of states happens here!
@@ -276,29 +274,41 @@ EventContext HLTControlFlowMgr::createEventContext() {
 
 StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
-  StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
-  if ( sc.isFailure() ) {
-    fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
-            << "Impossible to create event context" << endmsg;
-    return StatusCode::FAILURE;
-  }
-
+  IOpaqueAddress* evt_root_ptr = nullptr;
   if ( m_evtSelector ) {
-    StatusCode declEvtRootSc = declareEventRootAddress();
-    if ( declEvtRootSc.isFailure() ) { // We ran out of events!
-      m_nextevt = -1;                  // Set created event to a negative value: we finished!
+    auto addr = declareEventRootAddress();
+    if ( addr.has_value() and not addr.value() ) { // We ran out of events!
+      m_nextevt = -1;                              // Set created event to a negative value: we finished!
       return StatusCode::SUCCESS;
+    } else if ( not addr.has_value() ) {
+      error() << "something went wrong getting the next event root address" << endmsg;
+      return StatusCode::FAILURE;
     }
-  } else {
-    sc = m_evtDataMgrSvc->setRoot( "/Event", new DataObject() );
-    if ( !sc.isSuccess() ) { warning() << "Error declaring event root DataObject" << endmsg; }
+    evt_root_ptr = addr.value();
   }
 
-  // Now add event to the scheduler
+  // Now add event to the task pool
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-  auto event_task = [evtContext = std::move( evtContext ), this]() mutable {
+  auto event_task = [evt_root_ptr, evtContext = std::move( evtContext ), this]() mutable {
+    StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
+    if ( sc.isFailure() ) {
+      fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
+              << "Impossible to create event context" << endmsg;
+      throw GaudiException( "Slot " + std::to_string( evtContext.slot() ) + " could not be selected for the WhiteBoard",
+                            name(), sc );
+    }
+
+    // set event root
+    if ( not evt_root_ptr ) { // there is no data, we set an empty TES
+      auto sc = m_evtDataMgrSvc->setRoot( "/Event", new DataObject() );
+      if ( !sc.isSuccess() ) error() << "Error declaring event root DataObject" << endmsg;
+    } else {
+      auto sc = m_evtDataMgrSvc->setRoot( "/Event", evt_root_ptr );
+      if ( !sc.isSuccess() ) error() << "Error setting event root address." << endmsg;
+    }
+
     auto& [NodeStates, AlgStates] = evtContext.getExtension<SchedulerStates>();
 
     Gaudi::Hive::setCurrentContext( evtContext );
@@ -358,7 +368,6 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
     enqueue( std::move( event_task ) );
   }
 
-  m_nextevt++;
   return StatusCode::SUCCESS;
 }
 
@@ -403,14 +412,14 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   bool newEvtAllowed = false;
 
   // adjust timing start counter
-  if ( m_startTimeAtEvt < 0 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+  if ( m_startTimeAtEvt < 0 || m_startTimeAtEvt > m_stopTimeAtEvt ) {
     if ( maxevt > 0 ) {
-      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAtEvt ) {
         warning() << "StartTimeAtEvt set faulty, changing to .1*maxevt" << endmsg;
       }
       m_startTimeAtEvt = static_cast<int>( .1 * maxevt );
     } else {
-      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAtEvt ) {
         warning() << "StartTimeAtEvt set faulty, changing to 10*evtslots" << endmsg;
       }
       m_startTimeAtEvt = 10 * m_whiteboard->getNumberOfStores();
@@ -419,21 +428,21 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   // adjust timing stop counter
   if ( maxevt > 0 ) {
-    if ( m_stopTimeAfterEvt < 0 ) { // default
-      if ( m_stopTimeAfterEvt < -1 ) { warning() << "StopTimeAfterEvt set faulty, changing to .9*maxevt" << endmsg; }
-      m_stopTimeAfterEvt = static_cast<int>( .9 * maxevt );
-    } else if ( m_stopTimeAfterEvt > maxevt - 1 ) {
-      warning() << "StopTimeAfterEvt too big, changing to last event (maxevt - 1)" << endmsg;
-      m_stopTimeAfterEvt = maxevt - 1;
+    if ( m_stopTimeAtEvt < 0 ) { // default
+      if ( m_stopTimeAtEvt < -1 ) { warning() << "StopTimeAtEvt set faulty, changing to .9*maxevt" << endmsg; }
+      m_stopTimeAtEvt = static_cast<int>( .9 * maxevt );
+    } else if ( m_stopTimeAtEvt > maxevt - 1 ) {
+      warning() << "StopTimeAtEvt too big, changing to last event (maxevt - 1)" << endmsg;
+      m_stopTimeAtEvt = maxevt - 1;
     }
   } else {
-    if ( m_stopTimeAfterEvt < 0 ) { // default
-      if ( m_stopTimeAfterEvt < -1 ) { warning() << "StopTimeAfterEvt set faulty, changing to last element" << endmsg; }
-      m_stopTimeAfterEvt = std::numeric_limits<int>::max();
+    if ( m_stopTimeAtEvt < 0 ) { // default
+      if ( m_stopTimeAtEvt < -1 ) { warning() << "StopTimeAtEvt set faulty, changing to last element" << endmsg; }
+      m_stopTimeAtEvt = std::numeric_limits<int>::max();
     }
   }
 
-  info() << "Will measure time between events " << m_startTimeAtEvt.value() << " and " << m_stopTimeAfterEvt.value()
+  info() << "Will measure time between events " << m_startTimeAtEvt.value() << " and " << m_stopTimeAtEvt.value()
          << " (stop might be some events later)" << endmsg;
 
   auto okToStartNewEvt = [&] {
@@ -457,25 +466,24 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
     std::unique_lock<std::mutex> lock{m_createEventMutex};
     if ( m_createEventCond.wait_for( lock, 2ms, okToStartNewEvt ) ) {
       // in some cases, due to concurrency, we do not stop exactly at the given value.
-      if ( UNLIKELY( static_cast<unsigned int>( m_stopTimeAfterEvt ) <= m_finishedEvt - 1 && !endTime &&
-                     m_finishedEvt > 0 ) ) {
-        m_stopTimeAfterEvt = m_finishedEvt - 1;
-        endTime            = Clock::now();
+      if ( UNLIKELY( static_cast<unsigned int>( m_stopTimeAtEvt ) < m_finishedEvt && !endTime && m_finishedEvt > 0 ) ) {
+        m_stopTimeAtEvt = m_finishedEvt;
+        endTime         = Clock::now();
       }
       if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
 
       auto       evtContext = createEventContext();
       StatusCode sc         = executeEvent( std::move( evtContext ) );
+      if ( m_nextevt == -1 ) break;
 
       if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
-      if ( m_nextevt == -1 ) break;
       newEvtAllowed = true;
     }
   } // end main loop on finished events
 
   if ( !endTime ) {
-    endTime            = Clock::now();
-    m_stopTimeAfterEvt = m_finishedEvt - 1;
+    endTime         = Clock::now();
+    m_stopTimeAtEvt = m_finishedEvt;
   }
 
   if constexpr ( !use_debuggable_threadpool ) {
@@ -496,34 +504,30 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
            << " WSS " << System::mappedMemory( System::MemoryUnit::kByte ) * 1. / 1024. << ", timed "
-           << m_stopTimeAfterEvt.value() - m_startTimeAtEvt.value() + 1 << " Events: " << totalTime << " ms"
-           << ", Evts/s = " << ( m_stopTimeAfterEvt.value() - m_startTimeAtEvt.value() + 1 ) * 1. / totalTime * 1e3
-           << endmsg;
+           << m_stopTimeAtEvt.value() - m_startTimeAtEvt.value() << " Events: " << totalTime << " ms"
+           << ", Evts/s = " << ( m_stopTimeAtEvt.value() - m_startTimeAtEvt.value() ) * 1. / totalTime * 1e3 << endmsg;
   }
   return StatusCode::SUCCESS;
 }
 
-StatusCode HLTControlFlowMgr::declareEventRootAddress() {
+std::optional<IOpaqueAddress*> HLTControlFlowMgr::declareEventRootAddress() {
+
   IOpaqueAddress* pAddr = nullptr;
   StatusCode      sc    = m_evtSelector->next( *m_evtSelContext );
+  // TODO make a difference between finished and read error in the eventselector
   if ( sc.isSuccess() ) {
     // Create root address and assign address to data service
     sc = m_evtSelector->createAddress( *m_evtSelContext, pAddr );
     if ( !sc.isSuccess() ) {
-      sc = m_evtSelector->next( *m_evtSelContext );
-      if ( sc.isSuccess() ) {
-        sc = m_evtSelector->createAddress( *m_evtSelContext, pAddr );
-        if ( !sc.isSuccess() ) warning() << "Error creating IOpaqueAddress." << endmsg;
-      }
+      error() << "Error creating IOpaqueAddress." << endmsg;
+      return {};
     }
   }
   if ( !sc.isSuccess() ) {
     info() << "No more events in event selection " << endmsg;
-    return StatusCode::FAILURE;
+    return nullptr;
   }
-  sc = m_evtDataMgrSvc->setRoot( "/Event", pAddr );
-  if ( !sc.isSuccess() ) { warning() << "Error declaring event root address." << endmsg; }
-  return StatusCode::SUCCESS;
+  return pAddr;
 }
 
 /**

@@ -40,6 +40,7 @@
 #include <iomanip>
 #include <map>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -79,7 +80,7 @@ public:
 private:
   int m_nextevt = 0;
   /// Declare the root address of the event
-  StatusCode declareEventRootAddress();
+  std::optional<IOpaqueAddress*> declareEventRootAddress();
 
   /// Method to check if an event failed and take appropriate actions
   StatusCode eventFailed( EventContext& eventContext ) const;
@@ -113,10 +114,10 @@ private:
 
   Gaudi::Property<int> m_startTimeAtEvt{this, "StartTimeAtEvt", -1, "start timing at this event. Counting from 0. \
                                         Default choice is deduced from #slots and #evts \
-                                        to be reasonably far away from the beginning"};
-  Gaudi::Property<int> m_stopTimeAfterEvt{this, "StopTimeAfterEvt", -1, "stop timing at this event. Counting from 0. \
+                                        to be reasonably far away from the beginning of processing"};
+  Gaudi::Property<int> m_stopTimeAtEvt{this, "StopTimeAtEvt", -1, "stop timing at this event. Counting from 0. \
                                           Default choice is deduced from #slots and #evts \
-                                          to be reasonably far away from the end"};
+                                          to be reasonably far away from the end of processing"};
 
   /// Reference to the Event Data Service's IDataManagerSvc interface
   IDataManagerSvc* m_evtDataMgrSvc = nullptr;
