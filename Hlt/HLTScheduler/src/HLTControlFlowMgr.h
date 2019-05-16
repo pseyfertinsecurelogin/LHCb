@@ -68,21 +68,24 @@ public:
   /// implementation of IEventProcessor::nextEvent
   StatusCode nextEvent( int maxevt ) override;
   /// implementation of IEventProcessor::executeEvent(void* par)
-  StatusCode executeEvent( void* par ) override;
+  StatusCode executeEvent( EventContext&& evtContext ) override;
   /// implementation of IEventProcessor::executeRun()
   StatusCode executeRun( int maxevt ) override { return nextEvent( maxevt ); }
   /// implementation of IEventProcessor::stopRun()
   StatusCode stopRun() override;
+  /// implementation of IEventProcessor::createEventContext
+  EventContext createEventContext() override;
 
 private:
+  int m_nextevt = 0;
   /// Declare the root address of the event
   StatusCode declareEventRootAddress();
 
   /// Method to check if an event failed and take appropriate actions
-  StatusCode eventFailed( EventContext* eventContext ) const;
+  StatusCode eventFailed( EventContext& eventContext ) const;
 
   /// Algorithm promotion
-  void promoteToExecuted( std::unique_ptr<EventContext> eventContext ) const;
+  void promoteToExecuted( EventContext&& eventContext ) const;
 
   void buildLines();
   // configuring the execution order

@@ -257,22 +257,24 @@ StatusCode HLTControlFlowMgr::finalize() {
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
 }
 
-StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
-  // Leave the interface intact and swallow this C trick.
-  int& createdEvts = *reinterpret_cast<int*>( createdEvts_IntPtr );
-
-  auto evtContext = std::make_unique<EventContext>();
-  evtContext->set( createdEvts, m_whiteboard->allocateStore( createdEvts ) );
-  m_algExecStateSvc->reset( *evtContext );
+EventContext HLTControlFlowMgr::createEventContext() {
+  // setup evtcontext
+  EventContext evtContext{};
+  evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
+  m_algExecStateSvc->reset( evtContext );
 
   // giving the scheduler states to the evtContext, so that they are
   // globally accessible within an event
   // copy of states happens here!
-  evtContext->emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
+  evtContext.emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
+  return evtContext;
+}
 
-  StatusCode sc = m_whiteboard->selectStore( evtContext->slot() );
+StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
+
+  StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
   if ( sc.isFailure() ) {
-    fatal() << "Slot " << evtContext->slot() << " could not be selected for the WhiteBoard\n"
+    fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
             << "Impossible to create event context" << endmsg;
     return StatusCode::FAILURE;
   }
@@ -280,7 +282,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
   if ( m_evtSelector ) {
     StatusCode declEvtRootSc = declareEventRootAddress();
     if ( declEvtRootSc.isFailure() ) { // We ran out of events!
-      createdEvts = -1;                // Set created event to a negative value: we finished!
+      m_nextevt = -1;                  // Set created event to a negative value: we finished!
       return StatusCode::SUCCESS;
     }
   } else {
@@ -289,25 +291,25 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
   }
 
   // Now add event to the scheduler
-  if ( msgLevel( MSG::VERBOSE ) )
-    verbose() << "Event " << evtContext->evt() << " submitting in slot " << evtContext->slot() << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
+    verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-  enqueue( [evtContext = std::move( evtContext ), createdEvts, this]() mutable {
-    auto& [NodeStates, AlgStates] = evtContext->getExtension<SchedulerStates>();
+  enqueue( [evtContext = std::move( evtContext ), this]() mutable {
+    auto& [NodeStates, AlgStates] = evtContext.getExtension<SchedulerStates>();
 
-    Gaudi::Hive::setCurrentContext( evtContext.get() );
+    Gaudi::Hive::setCurrentContext( evtContext );
 
     SmartIF<IProperty> appmgr( serviceLocator() );
 
     for ( AlgWrapper& toBeRun : m_definitlyRunTheseAlgs ) {
       try {
-        auto sc = toBeRun.execute( *evtContext, AlgStates );
+        auto sc = toBeRun.execute( evtContext, AlgStates );
         if ( UNLIKELY( !sc.isSuccess() ) ) {
-          m_algExecStateSvc->updateEventStatus( true, *evtContext );
+          m_algExecStateSvc->updateEventStatus( true, evtContext );
           break;
         }
       } catch ( ... ) {
-        m_algExecStateSvc->updateEventStatus( true, *evtContext );
+        m_algExecStateSvc->updateEventStatus( true, evtContext );
         fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
         Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::UnhandledException );
         break;
@@ -317,17 +319,17 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
     for ( gsl::not_null<VNode*> execNode : m_orderedNodesVec ) {
       std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates )]( BasicNode& bNode ) {
                              if ( bNode.requested( ns.get() ) ) {
-                               bNode.execute( ns.get(), as.get(), *evtContext, m_algExecStateSvc, appmgr );
+                               bNode.execute( ns.get(), as.get(), evtContext, m_algExecStateSvc, appmgr );
                                bNode.notifyParents( ns.get() );
                              }
                            },
                            []( ... ) {}},
                   *execNode );
     }
-    m_algExecStateSvc->updateEventStatus( false, *evtContext );
+    m_algExecStateSvc->updateEventStatus( false, evtContext );
 
     // printing
-    if ( msgLevel( MSG::VERBOSE ) && createdEvts % m_printFreq == 0 ) {
+    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0 ) ) {
       verbose() << buildPrintableStateTree( NodeStates ).str() << endmsg;
       verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
     }
@@ -342,12 +344,11 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
 
     // update scheduler state
     promoteToExecuted( std::move( evtContext ) );
-    // Gaudi::Hive::setCurrentContextEvt( -1 );
 
     return nullptr;
   } );
 
-  createdEvts++;
+  m_nextevt++;
   return StatusCode::SUCCESS;
 }
 
@@ -385,7 +386,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   using namespace std::chrono_literals;
 
-  int createdEvts = 0;
+  m_nextevt = 0;
   // Run the first event before spilling more than one
   bool newEvtAllowed = false;
 
@@ -424,11 +425,11 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
          << " (stop might be some events later)" << endmsg;
 
   auto okToStartNewEvt = [&] {
-    return ( newEvtAllowed || createdEvts == 0 ) && // Launch the first event alone
-                                                    // The events are not finished with an unlimited number of events
-           createdEvts >= 0 &&
+    return ( newEvtAllowed || m_nextevt == 0 ) && // Launch the first event alone
+                                                  // The events are not finished with an unlimited number of events
+           m_nextevt >= 0 &&
            // The events are not finished with a limited number of events
-           ( createdEvts < maxevt || maxevt < 0 ) &&
+           ( m_nextevt < maxevt || maxevt < 0 ) &&
            // There are still free slots in the whiteboard
            m_whiteboard->freeSlots() > 0;
   };
@@ -447,10 +448,13 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
         m_stopTimeAfterEvt = m_finishedEvt - 1;
         endTime            = Clock::now();
       }
-      if ( UNLIKELY( m_startTimeAtEvt == createdEvts ) ) startTime = Clock::now();
-      StatusCode sc = executeEvent( &createdEvts );
+      if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
+
+      auto       evtContext = createEventContext();
+      StatusCode sc         = executeEvent( std::move( evtContext ) );
+
       if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
-      if ( createdEvts == -1 ) break;
+      if ( m_nextevt == -1 ) break;
       newEvtAllowed = true;
     }
   } // end main loop on finished events
@@ -511,35 +515,34 @@ StatusCode HLTControlFlowMgr::declareEventRootAddress() {
  * It dumps the state of the scheduler, drains the actions (without executing
  * them) and events in the queues and returns a failure.
  */
-StatusCode HLTControlFlowMgr::eventFailed( EventContext* eventContext ) const {
-  fatal() << "*** Event " << eventContext->evt() << " on slot " << eventContext->slot() << " failed! ***" << endmsg;
+StatusCode HLTControlFlowMgr::eventFailed( EventContext& eventContext ) const {
+  fatal() << "*** Event " << eventContext.evt() << " on slot " << eventContext.slot() << " failed! ***" << endmsg;
   std::ostringstream ost;
-  m_algExecStateSvc->dump( ost, *eventContext );
-  info() << "Dumping Alg Exec State for slot " << eventContext->slot() << ":\n" << ost.str() << endmsg;
+  m_algExecStateSvc->dump( ost, eventContext );
+  info() << "Dumping Alg Exec State for slot " << eventContext.slot() << ":\n" << ost.str() << endmsg;
   return StatusCode::FAILURE;
 }
 
-void HLTControlFlowMgr::promoteToExecuted( std::unique_ptr<EventContext> eventContext ) const {
+void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
   // Check if the execution failed
-  if ( m_algExecStateSvc->eventStatus( *eventContext ) != EventStatus::Success )
-    eventFailed( eventContext.get() ).ignore();
-  int si = eventContext->slot();
+  if ( m_algExecStateSvc->eventStatus( eventContext ) != EventStatus::Success ) eventFailed( eventContext ).ignore();
+  int si = eventContext.slot();
 
   // Schedule the cleanup of the event
-  if ( m_algExecStateSvc->eventStatus( *eventContext ) == EventStatus::Success ) {
+  if ( m_algExecStateSvc->eventStatus( eventContext ) == EventStatus::Success ) {
     if ( msgLevel( MSG::VERBOSE ) )
-      verbose() << "Event " << eventContext->evt() << " finished (slot " << si << ")." << endmsg;
+      verbose() << "Event " << eventContext.evt() << " finished (slot " << si << ")." << endmsg;
   } else {
-    fatal() << "Failed event detected on " << *eventContext << endmsg;
+    fatal() << "Failed event detected on " << eventContext << endmsg;
   }
 
   if ( msgLevel( MSG::VERBOSE ) )
-    verbose() << "Clearing slot " << si << " (event " << eventContext->evt() << ") of the whiteboard" << endmsg;
+    verbose() << "Clearing slot " << si << " (event " << eventContext.evt() << ") of the whiteboard" << endmsg;
 
   StatusCode sc = m_whiteboard->clearStore( si );
   if ( !sc.isSuccess() ) warning() << "Clear of Event data store failed" << endmsg;
   sc = m_whiteboard->freeStore( si );
-  if ( !sc.isSuccess() ) error() << "Whiteboard slot " << eventContext->slot() << " could not be properly cleared";
+  if ( !sc.isSuccess() ) error() << "Whiteboard slot " << eventContext.slot() << " could not be properly cleared";
   ++m_finishedEvt;
   m_createEventCond.notify_all();
 }
