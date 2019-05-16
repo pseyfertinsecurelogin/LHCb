@@ -35,55 +35,55 @@ namespace LHCb::Math {
   //------------------------------------------------------------------------------
 
   /// Hidden(ish) details
-  namespace details::VC {
+  namespace details::VE {
 
     // import some types
-    using namespace LHCb::SIMD::VC;
+    using namespace LHCb::SIMD::VE;
 
     // Some SIMD constants
 
-    static const FPF MAXNUMF( 3.4028234663852885981170418348451692544e38f );
-    static const FPF HALF( 0.5f );                        ///< 1/2
-    static const FPF QUATER( 0.25f );                     ///< 1/4
-    static const FPF TWO( 2.0f );                         ///< 2
-    static const FPF THREEHALVES( 1.5f );                 ///< 3/2
-    static const FPF TAN_PIO8F( 0.4142135623730950f );    ///< tan(pi/8)
-    static const FPF PIO4F( float( M_PI_4 ) );            ///< pi/4
-    static const FPF PIO2F( float( M_PI_2 ) );            ///< pi/2
-    static const FPF PIF( float( M_PI ) );                ///< pi
-    static const FPF ONEOPIO4F( 4.0f / float( M_PI ) );   ///< 4/pi
-    static const FPF THREEPIO4( 3.0f * float( M_PI_4 ) ); ///< 3*pi/4
+    static constexpr FPF MAXNUMF( 3.4028234663852885981170418348451692544e38f );
+    static constexpr FPF HALF( 0.5f );                        ///< 1/2
+    static constexpr FPF QUATER( 0.25f );                     ///< 1/4
+    static constexpr FPF TWO( 2.0f );                         ///< 2
+    static constexpr FPF THREEHALVES( 1.5f );                 ///< 3/2
+    static constexpr FPF TAN_PIO8F( 0.4142135623730950f );    ///< tan(pi/8)
+    static constexpr FPF PIO4F( float( M_PI_4 ) );            ///< pi/4
+    static constexpr FPF PIO2F( float( M_PI_2 ) );            ///< pi/2
+    static constexpr FPF PIF( float( M_PI ) );                ///< pi
+    static constexpr FPF ONEOPIO4F( 4.0f / float( M_PI ) );   ///< 4/pi
+    static constexpr FPF THREEPIO4( 3.0f * float( M_PI_4 ) ); ///< 3*pi/4
     // For exp
-    static const FPF LOG2EF( 1.44269504088896341f ); ///< log2(e)
-    static const FPF C1F( 0.693359375f );
-    static const FPF C2F( -2.12194440e-4f );
-    static const FPF C1PC2F( C1F + C2F );
-    static const FPF PX1expf( 1.9875691500E-4f );
-    static const FPF PX2expf( 1.3981999507E-3f );
-    static const FPF PX3expf( 8.3334519073E-3f );
-    static const FPF PX4expf( 4.1665795894E-2f );
-    static const FPF PX5expf( 1.6666665459E-1f );
-    static const FPF PX6expf( 5.0000001201E-1f );
-    static const FPF MAXLOGF( 88.72283905206835f );
-    static const FPF MINLOGF( -88.0f );
-    static const FPF INFF( std::numeric_limits<float>::infinity() );
+    static constexpr FPF LOG2EF( 1.44269504088896341f ); ///< log2(e)
+    static constexpr FPF C1F( 0.693359375f );
+    static constexpr FPF C2F( -2.12194440e-4f );
+    static const FPF     C1PC2F( C1F + C2F );
+    static constexpr FPF PX1expf( 1.9875691500E-4f );
+    static constexpr FPF PX2expf( 1.3981999507E-3f );
+    static constexpr FPF PX3expf( 8.3334519073E-3f );
+    static constexpr FPF PX4expf( 4.1665795894E-2f );
+    static constexpr FPF PX5expf( 1.6666665459E-1f );
+    static constexpr FPF PX6expf( 5.0000001201E-1f );
+    static constexpr FPF MAXLOGF( 88.72283905206835f );
+    static constexpr FPF MINLOGF( -88.0f );
+    static constexpr FPF INFF( std::numeric_limits<float>::infinity() );
     // for log
-    static const FPF SQRTHF( 0.707106781186547524f );
-    static const FPF PX1logf( 7.0376836292E-2f );
-    static const FPF PX2logf( -1.1514610310E-1f );
-    static const FPF PX3logf( 1.1676998740E-1f );
-    static const FPF PX4logf( -1.2420140846E-1f );
-    static const FPF PX5logf( 1.4249322787E-1f );
-    static const FPF PX6logf( -1.6668057665E-1f );
-    static const FPF PX7logf( 2.0000714765E-1f );
-    static const FPF PX8logf( -2.4999993993E-1f );
-    static const FPF PX9logf( 3.3333331174E-1f );
-    static const FPF LOGF_UPPER_LIMIT( MAXNUMF );
-    static const FPF LOGF_LOWER_LIMIT( 0 );
+    static constexpr FPF SQRTHF( 0.707106781186547524f );
+    static constexpr FPF PX1logf( 7.0376836292E-2f );
+    static constexpr FPF PX2logf( -1.1514610310E-1f );
+    static constexpr FPF PX3logf( 1.1676998740E-1f );
+    static constexpr FPF PX4logf( -1.2420140846E-1f );
+    static constexpr FPF PX5logf( 1.4249322787E-1f );
+    static constexpr FPF PX6logf( -1.6668057665E-1f );
+    static constexpr FPF PX7logf( 2.0000714765E-1f );
+    static constexpr FPF PX8logf( -2.4999993993E-1f );
+    static constexpr FPF PX9logf( 3.3333331174E-1f );
+    static constexpr FPF LOGF_UPPER_LIMIT( MAXNUMF );
+    static constexpr FPF LOGF_LOWER_LIMIT( 0 );
     // for sin cos tan
-    static const FPF DP1F( 0.78515625f );
-    static const FPF DP2F( 2.4187564849853515625e-4f );
-    static const FPF DP3F( 3.77489497744594108e-8f );
+    static constexpr FPF DP1F( 0.78515625f );
+    static constexpr FPF DP2F( 2.4187564849853515625e-4f );
+    static constexpr FPF DP3F( 3.77489497744594108e-8f );
 
     /// Converts a float to an int
     inline UInt32 float2uint32( const FPF x ) noexcept {
@@ -105,10 +105,9 @@ namespace LHCb::Math {
 
     /// floor implementation
     inline FPF fpfloor( const FPF x ) noexcept {
-      // return std::floor(x); // Vc implementation
       auto       ret = simd_cast<Int32>( x );
       const auto m   = ( float2uint32( x ) >> 31 );
-      ret -= m;
+      ret -= simd_cast<Int32>( m );
       return simd_cast<FPF>( ret );
     }
 
@@ -119,7 +118,7 @@ namespace LHCb::Math {
         UInt32 n;
       } v = {x};
 
-      const Int32 e = ( v.n >> 23 ) - Int32( 127 );
+      const Int32 e = simd_cast<Int32>( v.n >> 23 ) - Int32( 127 );
 
       // fractional part
       const UInt32 p05f( 0x3f000000 ); // float2uint32(0.5);
@@ -162,7 +161,7 @@ namespace LHCb::Math {
       // integer part of x/PIO4
       auto quad = simd_cast<Int32>( ONEOPIO4F * x );
 
-      quad = ( quad + Int32::One() ) & ( ~1 );
+      quad = simd_cast<Int32>( ( quad + Int32::One() ) & ( ~1 ) );
 
       const auto y = simd_cast<FPF>( quad );
 
@@ -173,14 +172,14 @@ namespace LHCb::Math {
     inline void fast_sincosf_m45_45( const FPF x, FPF& s, FPF& c ) noexcept {
 
       // sin constants
-      static const FPF sa( -1.9515295891E-4f );
-      static const FPF sb( 8.3321608736E-3f );
-      static const FPF sc( -1.6666654611E-1f );
+      static constexpr FPF sa( -1.9515295891E-4f );
+      static constexpr FPF sb( 8.3321608736E-3f );
+      static constexpr FPF sc( -1.6666654611E-1f );
 
       // cos constants
-      static const FPF ca( 2.443315711809948E-005f );
-      static const FPF cb( -1.388731625493765E-003f );
-      static const FPF cc( 4.166664568298827E-002f );
+      static constexpr FPF ca( 2.443315711809948E-005f );
+      static constexpr FPF cb( -1.388731625493765E-003f );
+      static constexpr FPF cc( 4.166664568298827E-002f );
 
       auto z = x * x;
 
@@ -217,32 +216,32 @@ namespace LHCb::Math {
       return z.y;
     }
 
-  } // namespace details::VC
+  } // namespace details::VE
 
   //------------------------------------------------------------------------------
 
   /** fast asin for SIMD float type
    *  Based on VDT fast_asinf */
-  inline LHCb::SIMD::VC::FPF fast_asin( LHCb::SIMD::VC::FPF x ) noexcept {
-    using namespace details::VC;
+  inline LHCb::SIMD::VE::FPF fast_asin( LHCb::SIMD::VE::FPF x ) noexcept {
+    using namespace details::VE;
 
     const auto sign_mask = getSignMask( x );
     const auto abs_x     = abs( x );
 
     const auto m = ( abs_x > HALF );
 
-    x      = abs_x;
-    auto z = x * x;
+    x     = abs_x;
+    FPF z = x * x;
     if ( any_of( m ) ) {
       z( m ) = HALF * ( FPF::One() - abs_x );
-      x( m ) = std::sqrt( z );
+      x( m ) = sqrt( z );
     }
 
-    static const FPF a( 4.2163199048E-2f );
-    static const FPF b( 2.4181311049E-2f );
-    static const FPF c( 4.5470025998E-2f );
-    static const FPF d( 7.4953002686E-2f );
-    static const FPF e( 1.6666752422E-1f );
+    static constexpr FPF a( 4.2163199048E-2f );
+    static constexpr FPF b( 2.4181311049E-2f );
+    static constexpr FPF c( 4.5470025998E-2f );
+    static constexpr FPF d( 7.4953002686E-2f );
+    static constexpr FPF e( 1.6666752422E-1f );
 
     z = ( ( ( ( a * z + b ) * z + c ) * z + d ) * z + e ) * z * x + x;
 
@@ -255,45 +254,45 @@ namespace LHCb::Math {
 
   /** fast acos for SIMD float type
    *  Based on VDT fast_acosf */
-  inline LHCb::SIMD::VC::FPF fast_acos( const LHCb::SIMD::VC::FPF x ) noexcept {
-    return details::VC::PIO2F - fast_asin( x );
+  inline LHCb::SIMD::VE::FPF fast_acos( const LHCb::SIMD::VE::FPF x ) noexcept {
+    return details::VE::PIO2F - fast_asin( x );
   }
 
   //------------------------------------------------------------------------------
 
   /** fast sincos for SIMD float type
    *  Based on VDT fast_sincosf */
-  inline void fast_sincos( const LHCb::SIMD::VC::FPF xx, LHCb::SIMD::VC::FPF& s, LHCb::SIMD::VC::FPF& c ) noexcept {
-    using namespace details::VC;
+  inline void fast_sincos( const LHCb::SIMD::VE::FPF xx, LHCb::SIMD::VE::FPF& s, LHCb::SIMD::VE::FPF& c ) noexcept {
+    using namespace details::VE;
 
     auto xj = reduce2quadrant( xx );
 
-    const Int32 signS = ( xj.second & Int32( 4 ) );
+    const auto signS = simd_cast<Int32>( xj.second & Int32( 4 ) );
 
     xj.second -= Int32( 2 );
 
-    const Int32 signC = ( xj.second & Int32( 4 ) );
-    const Int32 poly  = ( xj.second & Int32( 2 ) );
+    const auto signC = simd_cast<Int32>( xj.second & Int32( 4 ) );
+    const auto poly  = simd_cast<Int32>( xj.second & Int32( 2 ) );
 
     fast_sincosf_m45_45( xj.first, s, c );
 
     // swap
-    const auto swap = simd_cast<FPF::MaskType>( poly == Int32::Zero() );
+    const auto swap = simd_cast<FPF::mask_type>( poly == Int32::Zero() );
     const auto tmp  = c;
     c( swap )       = s;
     s( swap )       = tmp;
 
-    c( simd_cast<FPF::MaskType>( signC == Int32::Zero() ) ) = -c;
-    s( simd_cast<FPF::MaskType>( signS != Int32::Zero() ) ) = -s;
-    s( xx < FPF::Zero() )                                   = -s;
+    c( simd_cast<FPF::mask_type>( signC == Int32::Zero() ) ) = -c;
+    s( simd_cast<FPF::mask_type>( signS != Int32::Zero() ) ) = -s;
+    s( xx < FPF::Zero() )                                    = -s;
   }
 
   //------------------------------------------------------------------------------
 
   /** fast log for SIMD float type
    *  Based on VDT fast_logf */
-  inline LHCb::SIMD::VC::FPF fast_log( const LHCb::SIMD::VC::FPF initial_x ) noexcept {
-    using namespace details::VC;
+  inline LHCb::SIMD::VE::FPF fast_log( const LHCb::SIMD::VE::FPF initial_x ) noexcept {
+    using namespace details::VE;
 
     auto x_fe = getMantExponent( initial_x );
 
@@ -318,6 +317,7 @@ namespace LHCb::Math {
     res += FPF( 0.693359375f ) * fe;
 
     res( initial_x > LOGF_UPPER_LIMIT ) = INFF;
+
     res.setQnan( initial_x < LOGF_LOWER_LIMIT );
 
     return res;
@@ -327,9 +327,9 @@ namespace LHCb::Math {
 
   /** fast exp for SIMD float type
    *  Based on VDT fast_expf */
-  inline LHCb::SIMD::VC::FPF fast_exp( const LHCb::SIMD::VC::FPF initial_x ) noexcept {
+  inline LHCb::SIMD::VE::FPF fast_exp( const LHCb::SIMD::VE::FPF initial_x ) noexcept {
 
-    using namespace details::VC;
+    using namespace details::VE;
 
     FPF x = initial_x;
 
@@ -366,9 +366,9 @@ namespace LHCb::Math {
 
   /** fast atan2 for SIMD float type
    *  Based on VDT fast_atan2f */
-  inline LHCb::SIMD::VC::FPF fast_atan2( const LHCb::SIMD::VC::FPF y, //
-                                         const LHCb::SIMD::VC::FPF x ) noexcept {
-    using namespace details::VC;
+  inline LHCb::SIMD::VE::FPF fast_atan2( const LHCb::SIMD::VE::FPF y, //
+                                         const LHCb::SIMD::VE::FPF x ) noexcept {
+    using namespace details::VE;
 
     // move in first octant
     auto       xx = abs( x );
@@ -387,15 +387,17 @@ namespace LHCb::Math {
 
     const auto z2 = z * z;
 
-    static const FPF a( 8.05374449538e-2f );
-    static const FPF b( -1.38776856032E-1f );
-    static const FPF c( 1.99777106478E-1f );
-    static const FPF d( -3.33329491539E-1f );
+    static constexpr FPF a( 8.05374449538e-2f );
+    static constexpr FPF b( -1.38776856032E-1f );
+    static constexpr FPF c( 1.99777106478E-1f );
+    static constexpr FPF d( -3.33329491539E-1f );
 
     auto ret = ( ( ( ( a * z2 + b ) * z2 + c ) * z2 + d ) * z2 * z + z );
 
     // move back in place
-    ret.setZero( xx == FPF::Zero() || y == FPF::Zero() );
+    const auto xZero = xx == FPF::Zero();
+    const auto yZero = y == FPF::Zero();
+    ret.setZero( xZero || yZero );
     ret( m2 ) += PIO4F;
     ret( m1 )              = PIO2F - ret;
     ret( x < FPF::Zero() ) = PIF - ret;
@@ -408,20 +410,20 @@ namespace LHCb::Math {
 
   /** fast tan for SIMD float type
    *  Based on VDT fast_tanf */
-  inline LHCb::SIMD::VC::FPF fast_tan( const LHCb::SIMD::VC::FPF x ) noexcept {
+  inline LHCb::SIMD::VE::FPF fast_tan( const LHCb::SIMD::VE::FPF x ) noexcept {
 
-    using namespace details::VC;
+    using namespace details::VE;
 
     auto z = reduce2quadrant( x );
 
     const auto zz = z.first * z.first;
 
-    static const FPF a( 9.38540185543E-3f );
-    static const FPF b( 3.11992232697E-3f );
-    static const FPF c( 2.44301354525E-2f );
-    static const FPF d( 5.34112807005E-2f );
-    static const FPF e( 1.33387994085E-1f );
-    static const FPF f( 3.33331568548E-1f );
+    static constexpr FPF a( 9.38540185543E-3f );
+    static constexpr FPF b( 3.11992232697E-3f );
+    static constexpr FPF c( 2.44301354525E-2f );
+    static constexpr FPF d( 5.34112807005E-2f );
+    static constexpr FPF e( 1.33387994085E-1f );
+    static constexpr FPF f( 3.33331568548E-1f );
 
     FPF res = ( ( ( ( ( ( a * zz + b ) * zz + c ) * zz + d ) * zz + e ) * zz + f ) * zz * z.first + z.first );
     res( zz < FPF( 1.0e-14f ) ) = z.first;
@@ -448,9 +450,9 @@ namespace LHCb::Math {
   //------------------------------------------------------------------------------
 
   /// Approx sqrt
-  inline LHCb::SIMD::VC::FPF fast_sqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
+  inline LHCb::SIMD::VE::FPF fast_sqrt( const LHCb::SIMD::VE::FPF x ) noexcept {
 
-    using namespace details::VC;
+    using namespace details::VE;
 
     union {
       FPF   x;
@@ -478,8 +480,10 @@ namespace LHCb::Math {
     // SIMD versions
 
     /// Fast log2 approximation
-    inline LHCb::SIMD::VC::FPF approx_log2( const LHCb::SIMD::VC::FPF x ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF approx_log2( const LHCb::SIMD::VE::FPF x ) noexcept {
+
+      using namespace details::VE;
+
       const union {
         FPF    f;
         UInt32 i;
@@ -494,14 +498,14 @@ namespace LHCb::Math {
     }
 
     /// Fast log approximation
-    inline LHCb::SIMD::VC::FPF approx_log( const LHCb::SIMD::VC::FPF x ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF approx_log( const LHCb::SIMD::VE::FPF x ) noexcept {
+      using namespace details::VE;
       return FPF( 0.69314718f ) * approx_log2( x );
     }
 
     /// Very fast log approximation
-    inline LHCb::SIMD::VC::FPF vapprox_log( const LHCb::SIMD::VC::FPF x ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF vapprox_log( const LHCb::SIMD::VE::FPF x ) noexcept {
+      using namespace details::VE;
       const union {
         FPF    f;
         UInt32 i;
@@ -510,8 +514,8 @@ namespace LHCb::Math {
     }
 
     /// Fast pow2 approximation
-    inline LHCb::SIMD::VC::FPF approx_pow2( const LHCb::SIMD::VC::FPF p ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF approx_pow2( const LHCb::SIMD::VE::FPF p ) noexcept {
+      using namespace details::VE;
       auto      clipp = p;
       const FPF A( -126.0f );
       clipp( p < A ) = A;
@@ -528,14 +532,14 @@ namespace LHCb::Math {
     }
 
     /// Fast exp approximation
-    inline LHCb::SIMD::VC::FPF approx_exp( const LHCb::SIMD::VC::FPF p ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF approx_exp( const LHCb::SIMD::VE::FPF p ) noexcept {
+      using namespace details::VE;
       return approx_pow2( LOG2EF * p );
     }
 
     /// Very fast pow2 approximation
-    inline LHCb::SIMD::VC::FPF vapprox_pow2( const LHCb::SIMD::VC::FPF p ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF vapprox_pow2( const LHCb::SIMD::VE::FPF p ) noexcept {
+      using namespace details::VE;
       auto      clipp = p;
       const FPF A( -126.0f );
       clipp( p < A ) = A;
@@ -547,14 +551,14 @@ namespace LHCb::Math {
     }
 
     /// Very fast exp approximation
-    inline LHCb::SIMD::VC::FPF vapprox_exp( const LHCb::SIMD::VC::FPF p ) noexcept {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF vapprox_exp( const LHCb::SIMD::VE::FPF p ) noexcept {
+      using namespace details::VE;
       return vapprox_pow2( LOG2EF * p );
     }
 
     /// very fast approximate atan2
-    inline LHCb::SIMD::VC::FPF vapprox_atan2( const LHCb::SIMD::VC::FPF y, const LHCb::SIMD::VC::FPF x ) {
-      using namespace details::VC;
+    inline LHCb::SIMD::VE::FPF vapprox_atan2( const LHCb::SIMD::VE::FPF y, const LHCb::SIMD::VE::FPF x ) {
+      using namespace details::VE;
 
       const auto abs_y = abs( y ) + FPF( 1e-10f );
 
@@ -569,13 +573,15 @@ namespace LHCb::Math {
 
       // opposite sign if in quad III or IV
       angle( y < FPF::Zero() ) *= -FPF::One();
+
+      // return
       return angle;
     }
 
     /// Approx sqrt
-    inline LHCb::SIMD::VC::FPF approx_sqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
+    inline LHCb::SIMD::VE::FPF approx_sqrt( const LHCb::SIMD::VE::FPF x ) noexcept {
 
-      using namespace details::VC;
+      using namespace details::VE;
 
       union {
         FPF   x;
@@ -591,9 +597,9 @@ namespace LHCb::Math {
     }
 
     /// Very approx sqrt
-    inline LHCb::SIMD::VC::FPF vapprox_sqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
+    inline LHCb::SIMD::VE::FPF vapprox_sqrt( const LHCb::SIMD::VE::FPF x ) noexcept {
 
-      using namespace details::VC;
+      using namespace details::VE;
 
       union {
         FPF   x;
@@ -610,3 +616,31 @@ namespace LHCb::Math {
   } // namespace Approx
 
 } // namespace LHCb::Math
+
+//------------------------------------------------------------------------------
+
+// make some methods available as `std` versions
+namespace std {
+
+  inline decltype( auto ) log( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_log( x ); }
+  inline decltype( auto ) exp( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_exp( x ); }
+  inline decltype( auto ) atan2( const LHCb::SIMD::VE::FPF y, //
+                                 const LHCb::SIMD::VE::FPF x ) noexcept {
+    return LHCb::Math::fast_atan2( y, x );
+  }
+  inline decltype( auto ) sin( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return s;
+  }
+  inline decltype( auto ) cos( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return c;
+  }
+  inline decltype( auto ) asin( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_asin( x ); }
+  inline decltype( auto ) acos( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_acos( x ); }
+
+} // namespace std
+
+//------------------------------------------------------------------------------

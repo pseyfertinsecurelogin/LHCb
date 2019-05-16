@@ -29,6 +29,7 @@
 #include <utility>
 
 // Local
+#include "LHCbMath/FastMaths-SIMD-ve.h"
 #include "LHCbMath/FastMaths-SIMD-Vc.h"
 #include "LHCbMath/FastMaths-Scalar.h"
 
@@ -47,6 +48,8 @@
  *  http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
  *
  *  http://pubs.opengroup.org/onlinepubs/009695399/functions/atan2.html
+ *
+ * https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   30/11/2017
@@ -233,14 +236,14 @@ namespace LHCb::Math {
 
   /** fast inverse sqrt for SIMD float type
    *  call rsqrt */
-  inline LHCb::SIMD::FPF fast_isqrt( const LHCb::SIMD::FPF x ) noexcept {
+  inline LHCb::SIMD::VC::FPF fast_isqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
     // Qualified Lookup is mandatory for Vc types (ADL would find Vc::rsqrt)
     return LHCb::Math::rsqrt<fast>( x );
   }
 
   /** fast approximate inverse sqrt for SIMD float type
    *  call rsqrt */
-  inline LHCb::SIMD::FPF fast_approx_isqrt( const LHCb::SIMD::FPF x ) noexcept {
+  inline LHCb::SIMD::VC::FPF fast_approx_isqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
     // Qualified Lookup is mandatory for Vc types (ADL would find Vc::rsqrt)
     return LHCb::Math::rsqrt<fastest>( x );
   }

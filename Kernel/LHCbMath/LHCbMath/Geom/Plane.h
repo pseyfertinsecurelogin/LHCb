@@ -56,7 +56,7 @@ namespace LHCb::Geom {
     inline const Vector<TYPE>& Normal() const noexcept { return m_normal; }
     /// Distance to a point
     template <typename POINT>
-    inline decltype( auto ) Distance( const POINT& p ) const noexcept {
+    inline TYPE Distance( const POINT& p ) const noexcept {
       return ( ( m_normal.X() * p.X() ) + ( m_normal.Y() * p.Y() ) + ( m_normal.Z() * p.Z() ) + D() );
     }
 
@@ -80,7 +80,7 @@ namespace LHCb::Geom {
       auto C = m_normal.Z();
       if constexpr ( std::is_arithmetic<TYPE>::value ) {
         // normalize the plane
-        const auto s = sqrt( ( A * A ) + ( B * B ) + ( C * C ) );
+        const auto s = std::sqrt( ( A * A ) + ( B * B ) + ( C * C ) );
         // what to do if s = 0 ?
         if ( s == TYPE( 0 ) ) {
           m_D = TYPE( 0 );
