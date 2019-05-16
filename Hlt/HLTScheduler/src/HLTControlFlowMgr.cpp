@@ -21,6 +21,10 @@
 #  pragma GCC diagnostic pop
 #endif
 
+namespace {
+  constexpr bool use_debuggable_threadpool = false;
+}
+
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
 namespace GaudiUtils {
@@ -294,7 +298,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-  enqueue( [evtContext = std::move( evtContext ), this]() mutable {
+  auto event_task = [evtContext = std::move( evtContext ), this]() mutable {
     auto& [NodeStates, AlgStates] = evtContext.getExtension<SchedulerStates>();
 
     Gaudi::Hive::setCurrentContext( evtContext );
@@ -346,7 +350,13 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
     promoteToExecuted( std::move( evtContext ) );
 
     return nullptr;
-  } );
+  };
+
+  if constexpr ( use_debuggable_threadpool ) {
+    m_debug_pool->enqueue( std::move( event_task ) );
+  } else {
+    enqueue( std::move( event_task ) );
+  }
 
   m_nextevt++;
   return StatusCode::SUCCESS;
@@ -380,12 +390,14 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
     }
   }
 
+  if constexpr ( use_debuggable_threadpool ) {
+    m_debug_pool = std::make_unique<ThreadPool>( m_threadPoolSize.value() );
+  }
   // create th tbb thread pool
   tbb::task_scheduler_init tbbSchedInit( m_threadPoolSize.value() + 1 );
   task_observer            taskObsv{};
 
-  using namespace std::chrono_literals;
-
+  // start with event 0
   m_nextevt = 0;
   // Run the first event before spilling more than one
   bool newEvtAllowed = false;
@@ -439,6 +451,8 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   info() << "Starting loop on events" << endmsg;
   std::optional<decltype( Clock::now() )> startTime, endTime;
 
+  using namespace std::chrono_literals;
+
   while ( maxEvtNotReached() ) {
     std::unique_lock<std::mutex> lock{m_createEventMutex};
     if ( m_createEventCond.wait_for( lock, 2ms, okToStartNewEvt ) ) {
@@ -464,9 +478,11 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
     m_stopTimeAfterEvt = m_finishedEvt - 1;
   }
 
-  tbbSchedInit.terminate();             // non blocking
-  while ( taskObsv.m_thread_count > 0 ) // this is our "threads.join()" alternative
-    std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+  if constexpr ( !use_debuggable_threadpool ) {
+    tbbSchedInit.terminate();             // non blocking
+    while ( taskObsv.m_thread_count > 0 ) // this is our "threads.join()" alternative
+      std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+  }
 
   delete m_evtSelContext;
   m_evtSelContext = nullptr;

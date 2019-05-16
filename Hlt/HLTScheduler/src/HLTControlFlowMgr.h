@@ -15,7 +15,7 @@
 // The following MUST be included before GaudiKernel/Parsers.h,
 // which means very early on in the compilation unit.
 #include "CFNodePropertiesParse.h"
-
+#include "ThreadPool.h"
 // FW includes
 #include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
@@ -92,6 +92,8 @@ private:
   void configureScheduling();
   // build per-thread state-vector
   void buildNodeStates();
+
+  std::unique_ptr<ThreadPool> m_debug_pool = nullptr;
 
 private:
   Gaudi::Property<std::string> m_histPersName{this, "HistogramPersistency", "", ""};
