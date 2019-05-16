@@ -57,7 +57,7 @@ namespace LHCb::Geom {
     /// Distance to a point
     template <typename POINT>
     inline TYPE Distance( const POINT& p ) const noexcept {
-      return ( ( m_normal.X() * p.X() ) + ( m_normal.Y() * p.Y() ) + ( m_normal.Z() * p.Z() ) + D() );
+      return m_normal.Dot( p ) + D();
     }
 
   public:
