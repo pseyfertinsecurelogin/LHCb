@@ -746,10 +746,10 @@ bool DeRichHPD::detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint
 //=========================================================================
 // (SIMD) Converts a RichSmartID to a point in global coordinates.
 //=========================================================================
-DeRichPD::SIMDFP::MaskType DeRichHPD::detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                                      bool photoCathodeSide ) const {
+DeRichPD::SIMDFP::mask_type DeRichHPD::detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
+                                                       bool photoCathodeSide ) const {
   // return status
-  SIMDFP::MaskType ok( false );
+  SIMDFP::mask_type ok( false );
 
   // Just use a scalar loop here...
   // No need to optimise performance for HPDs...

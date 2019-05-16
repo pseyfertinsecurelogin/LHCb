@@ -18,6 +18,9 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
 
+// maths
+#include "LHCbMath/FastMaths.h"
+
 namespace Rich {
 
   /** @namespace Rich::SIMD

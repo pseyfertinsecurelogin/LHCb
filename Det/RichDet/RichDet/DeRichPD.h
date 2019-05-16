@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+
 //=============================================================================
 /** @file DeRichPD.h
  *
@@ -106,8 +107,8 @@ public: // virtual methods to be implemented by derived classes
    *
    *  @return Mask indicating if the conversion was successful or not for each scalar entry
    */
-  virtual SIMDFP::MaskType detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                           bool photoCathodeSide = false ) const = 0;
+  virtual SIMDFP::mask_type detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
+                                            bool photoCathodeSide = false ) const = 0;
 
 public:
   /// Access the RICH

@@ -171,8 +171,10 @@ StatusCode DeRichPMT::getPMTParameters() {
     double xx{0}, xy{0}, xz{0}, dx{0}, yx{0}, yy{0};
     double yz{0}, dy{0}, zx{0}, zy{0}, zz{0}, dz{0};
     // and to global
+    using FP = Rich::SIMD::DefaultScalarFP;
     toGlobalMatrix().GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_toGlobalMatrixSIMD.SetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
+    m_toGlobalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy, (FP)zx, (FP)zy,
+                                        (FP)zz, (FP)dz );
   }
 
   return sc;
@@ -234,10 +236,10 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint
 
 //===============================================================================================
 
-DeRichPD::SIMDFP::MaskType DeRichPMT::detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                                      bool photoCathodeSide ) const {
+DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
+                                                       bool photoCathodeSide ) const {
   // return status
-  SIMDFP::MaskType ok( true );
+  SIMDFP::mask_type ok( true );
 
   // // Just use a scalar loop here...
   // SIMDFP X(0), Y(0), Z(0);

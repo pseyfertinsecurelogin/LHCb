@@ -34,6 +34,9 @@
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
 
+// LHCbMath
+#include "LHCbMath/FastMaths.h"
+
 // Local
 #include "RichDet/DeRichBase.h"
 #include "RichDet/DeRichLocations.h"
@@ -109,7 +112,7 @@ public:
   inline Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> nominalCentreOfCurvature( const Rich::SIMD::Sides& sides ) const
       noexcept {
     using namespace Rich::SIMD;
-    using MaskType = Point<DefaultScalarFP>::Scalar::MaskType;
+    using mask_type = Point<DefaultScalarFP>::Scalar::mask_type;
     // Start by making CoCs for each side
     const auto& CoC1( nominalCentreOfCurvatureSIMD( Rich::firstSide ) );
     const auto& CoC2( nominalCentreOfCurvatureSIMD( Rich::secondSide ) );
@@ -118,7 +121,7 @@ public:
     auto Y = CoC1.Y();
     auto Z = CoC1.Z();
     // mask for side 2
-    const auto m = LHCb::SIMD::simd_cast<MaskType>( sides == Sides( Rich::secondSide ) );
+    const auto m = LHCb::SIMD::simd_cast<mask_type>( sides == Sides( (int)Rich::secondSide ) );
     // update values for side 2
     X( m ) = CoC2.X();
     Y( m ) = CoC2.Y();
@@ -176,7 +179,7 @@ public:
   inline const Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> nominalPlane( const Rich::SIMD::Sides& sides ) const
       noexcept {
     using namespace Rich::SIMD;
-    using MaskType = Point<DefaultScalarFP>::Scalar::MaskType;
+    using mask_type = Point<DefaultScalarFP>::Scalar::mask_type;
     // start with the SIMD planes for each side
     const auto& P1( nominalPlaneSIMD( Rich::firstSide ) );
     const auto& P2( nominalPlaneSIMD( Rich::secondSide ) );
@@ -186,7 +189,7 @@ public:
     auto C = P1.C();
     auto D = P1.D();
     // mask for side 2
-    const auto m = LHCb::SIMD::simd_cast<MaskType>( sides == Sides( Rich::secondSide ) );
+    const auto m = LHCb::SIMD::simd_cast<mask_type>( sides == Sides( (int)Rich::secondSide ) );
     // update values for side 2
     A( m ) = P2.A();
     B( m ) = P2.B();
@@ -221,13 +224,13 @@ public:
     } else {
       // SIMD
       using namespace Rich::SIMD;
-      Sides sides( Rich::firstSide ); // R1 top or R2 left
+      Sides sides( (int)Rich::firstSide ); // R1 top or R2 left
       // update as needed to R1 bottom or R2 right
       // Is there a better way to do ??
       if ( Rich::Rich1 == rich() ) {
-        sides( LHCb::SIMD::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+        sides( LHCb::SIMD::simd_cast<Sides::mask_type>( y < TYPE::Zero() ) ) = Sides( (int)Rich::secondSide );
       } else {
-        sides( LHCb::SIMD::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+        sides( LHCb::SIMD::simd_cast<Sides::mask_type>( x < TYPE::Zero() ) ) = Sides( (int)Rich::secondSide );
       }
       return sides;
     }
@@ -252,7 +255,7 @@ public:
    *
    * @return The nominal spherical mirror radius
    */
-  inline double sphMirrorRadius() const noexcept { return m_sphMirrorRadius; }
+  inline decltype( auto ) sphMirrorRadius() const noexcept { return m_sphMirrorRadius; }
 
   /**
    * Returns the nominal spherical mirror radius for this Rich

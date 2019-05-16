@@ -338,18 +338,19 @@ private:
     nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[0] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m1         = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] );
+    const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] );
     nums.aModuleRow( m1 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[1] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( y >= abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
+    const auto m2 =
+        LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( y >= abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
     nums.aModuleRow( m2 ) =
         LHCb::SIMD::simd_cast<SIMDINT32>(
             abs( ( y - ( abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) ) ) * m_GrandPmtModulePitchInvSIMD ) ) +
         m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
     const auto m3 =
-        LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
+        LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
     nums.aModuleCol( m3 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow( m3 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
@@ -364,17 +365,17 @@ private:
     nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[2] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m1         = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
     nums.aModuleRow( m1 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
     nums.aModuleRow( m2 ) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( ( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) *
                                                                    m_GrandPmtModulePitchInvSIMD ) ) +
                             m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
     const auto m3 =
-        LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) );
+        LHCb::SIMD::simd_cast<SIMDINT32::mask_type>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) );
     nums.aModuleCol( m3 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
         abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow( m3 ) = LHCb::SIMD::simd_cast<SIMDINT32>(
@@ -430,7 +431,7 @@ private:
   }
 
   inline decltype( auto ) isInPmtAnodeLateralAcc( const SIMDFP X, const SIMDFP Y,
-                                                  const SIMDFP::MaskType aFlagGrandPMT ) const noexcept {
+                                                  const SIMDFP::mask_type aFlagGrandPMT ) const noexcept {
     SIMDFP gxe( m_PmtAnodeXEdge );
     SIMDFP gye( m_PmtAnodeYEdge );
     gxe( aFlagGrandPMT ) = SIMDFP( m_GrandPmtAnodeXEdge );
@@ -445,7 +446,7 @@ private:
     return ( fabs( aPointInPmt.x() ) < aPmtH && fabs( aPointInPmt.y() ) < aPmtH );
   }
 
-  inline decltype( auto ) isInPmt( const SIMDFP X, const SIMDFP Y, const SIMDFP::MaskType aFlagGrandPMT ) const
+  inline decltype( auto ) isInPmt( const SIMDFP X, const SIMDFP Y, const SIMDFP::mask_type aFlagGrandPMT ) const
       noexcept {
     SIMDFP aPmtH( m_PmtMasterLateralSize * 0.5 );
     aPmtH( aFlagGrandPMT ) = SIMDFP( m_GrandPmtMasterLateralSize * 0.5 );
@@ -456,7 +457,8 @@ private:
     return ( abs( aPointInPanel.x() ) < m_xyHalfSizeSIMD[0] && abs( aPointInPanel.y() ) < m_xyHalfSizeSIMD[1] );
   }
 
-  inline decltype( auto ) checkPDAcceptance( SIMDFP X, SIMDFP Y, const SIMDFP::MaskType aFlagGrandPMT ) const noexcept {
+  inline decltype( auto ) checkPDAcceptance( SIMDFP X, SIMDFP Y, const SIMDFP::mask_type aFlagGrandPMT ) const
+      noexcept {
     X = abs( X );
     Y = abs( Y );
     return ( isInPmt( X, Y, aFlagGrandPMT ) && isInPmtAnodeLateralAcc( X, Y, aFlagGrandPMT ) );
@@ -480,8 +482,8 @@ private:
     scalar( !sc ) = SIMDFP::One();
 
     // get panel intersection point
-    const auto distance = -m_detectionPlaneSIMD.Distance( pGlobal ) / scalar;
-    panelIntersection   = pGlobal + ( distance * vGlobal );
+    const auto distance = m_detectionPlaneSIMD.Distance( pGlobal ) / scalar;
+    panelIntersection   = pGlobal - ( distance * vGlobal );
 
     // return
     return sc;
@@ -511,7 +513,7 @@ private:
                                                                                 : false );
   }
 
-  inline SIMDINT32::MaskType ModuleIsWithGrandPMT( const SIMDINT32& aModuleNum ) const noexcept {
+  inline SIMDINT32::mask_type ModuleIsWithGrandPMT( const SIMDINT32& aModuleNum ) const noexcept {
     auto m = ( aModuleNum >= SIMDINT32::Zero() && aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
     for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
       if ( m[i] ) { m[i] = m_ModuleIsWithGrandPMT[aModuleNum[i]]; }

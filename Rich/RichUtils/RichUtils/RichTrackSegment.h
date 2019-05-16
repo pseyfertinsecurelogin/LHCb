@@ -1,3 +1,4 @@
+
 /*****************************************************************************\
 * (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
@@ -75,14 +76,17 @@ namespace LHCb {
     /// Vector of track segments
     using Vector = Rich::SIMD::STDVector<RichTrackSegment>;
 
+    /// Scalar float type
+    using FP = Rich::SIMD::DefaultScalarFP;
+
     /// SIMD Float Type
-    using SIMDFP = Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>;
+    using SIMDFP = Rich::SIMD::FP<FP>;
 
     /// SIMD Point Type
-    using SIMDPoint = Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>;
+    using SIMDPoint = Rich::SIMD::Point<FP>;
 
     /// SIMD Vector Type
-    using SIMDVector = Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP>;
+    using SIMDVector = Rich::SIMD::Vector<FP>;
 
   private:
     /** Add two points together
@@ -193,13 +197,15 @@ namespace LHCb {
       SIMDRotation3D( const Gaudi::Rotation3D& rot ) {
         std::array<Gaudi::Rotation3D::Scalar, 9> m;
         rot.GetComponents( m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8] );
-        for ( int i = 0; i < 9; ++i ) { fM[i] = m[i]; }
+        for ( int i = 0; i < 9; ++i ) { fM[i] = FP( m[i] ); }
       }
       /// Vector rotation operator
       template <typename VECTOR>
       inline VECTOR operator*( const VECTOR& v ) const noexcept {
-        return VECTOR( fM[0] * v.X() + fM[1] * v.Y() + fM[2] * v.Z(), fM[3] * v.X() + fM[4] * v.Y() + fM[5] * v.Z(),
-                       fM[6] * v.X() + fM[7] * v.Y() + fM[8] * v.Z() );
+        return VECTOR( fM[0] * v.X() + fM[1] * v.Y() + fM[2] * v.Z(), // x
+                       fM[3] * v.X() + fM[4] * v.Y() + fM[5] * v.Z(), // y
+                       fM[6] * v.X() + fM[7] * v.Y() + fM[8] * v.Z()  // z
+        );
       }
     };
 
@@ -418,6 +424,7 @@ namespace LHCb {
                      : middlePoint() + ( m_exitMidV * ( ( fractDist - m_midFrac2 ) / m_midFrac2 ) ) );
       } else {
         // SIMD version
+        using namespace LHCb::SIMD;
         auto       p    = middlePointSIMD() + ( m_exitMidVSIMD * ( ( fractDist - m_midFrac2SIMD ) / m_midFrac2SIMD ) );
         const auto mask = zCoordAt( fractDist ) < middlePointSIMD().z();
         if ( any_of( mask ) ) // need to decide if it helps to do this

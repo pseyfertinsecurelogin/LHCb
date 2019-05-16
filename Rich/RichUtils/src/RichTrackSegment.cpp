@@ -73,8 +73,8 @@ void LHCb::RichTrackSegment::updateCachedInfo() {
   m_exitPointSIMD   = exitPoint();
   m_midEntryVSIMD   = m_midEntryV;
   m_exitMidVSIMD    = m_exitMidV;
-  m_invMidFrac1SIMD = m_invMidFrac1;
-  m_midFrac2SIMD    = m_midFrac2;
+  m_invMidFrac1SIMD = FP(m_invMidFrac1);
+  m_midFrac2SIMD    = FP(m_midFrac2);
   m_rotationSIMD    = SIMDRotation3D( m_rotation );
   m_rotation2SIMD   = SIMDRotation3D( m_rotation2 );
 }
