@@ -66,11 +66,14 @@ set(NO_AVX512_FLAGS     "-mno-avx512bw -mno-avx512cd -mno-avx512dq -mno-avx512er
 if( BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_GREATER "7.99")
   set(NO_AVX512_FLAGS "${NO_AVX512_FLAGS} -mno-avx512vbmi2 -mno-avx512vnni ")
 endif()
+
 # Determine compiler flags for each build target
 set(SSE_BUILD_FLAGS     " -msse4.2 -mno-avx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
 set(AVX_BUILD_FLAGS     " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
-set(AVX2_BUILD_FLAGS    " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
-set(AVX2FMA_BUILD_FLAGS " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+set(AVX2_BUILD_FLAGS    " -mavx2 -mno-fma ${NO_AVX512_FLAGS}")
+set(AVX2FMA_BUILD_FLAGS " -mavx2 -mfma ${NO_AVX512_FLAGS}")
+# only use 'basic' avx512 options here..
+set(AVX512_BUILD_FLAGS  " -mavx512f -mavx512cd -mavx512dq ")
 exec_program(${CMAKE_CXX_COMPILER} ARGS -print-prog-name=as OUTPUT_VARIABLE _as)
 if(NOT _as)
   message(ERROR "Could not find the 'as' assembler...")
@@ -80,20 +83,19 @@ else()
   string(REGEX MATCH "[1-9]\\.[0-9]+(\\.[0-9]+)?" _as_version "${_as_version}")
   if(_as_version VERSION_LESS "2.21.0")
      message(WARNING "binutils is too old to support AVX2+FMA... Falling back to AVX only.")
-  else()
-     set(AVX2_BUILD_FLAGS " -mavx2 -mno-fma ${NO_AVX512_FLAGS}")
-     set(AVX2FMA_BUILD_FLAGS " -mavx2 -mfma ${NO_AVX512_FLAGS}")
+     set(AVX2_BUILD_FLAGS    " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+     set(AVX2FMA_BUILD_FLAGS " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+     set(AVX512_BUILD_FLAGS  " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
   endif()
 endif()
-#message(STATUS "AVX2FMA build flags = " ${AVX2FMA_BUILD_FLAGS})
+
+# suppress AVX512 warnings from vectorclass
+# to be removed when vectorclass updated (currently 1.30) and fixes it.
+set(AVX512_BUILD_FLAGS " -Wno-strict-aliasing ${AVX512_BUILD_FLAGS}" )
+
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
-set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
+set_property(SOURCE src/Similarity_AVX.cpp  APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
 set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
-if(LCG_COMP STREQUAL "gcc" OR
-    (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
-  set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
-  set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
-endif()
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPow
@@ -200,6 +202,11 @@ if(GAUDI_BUILD_TESTS)
                        tests/TestVDTMathAVX2FMA.cpp
                        INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+  set_property(SOURCE tests/TestVDTMathAVX512.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX512_BUILD_FLAGS} )
+  gaudi_add_executable(TestVDTMathAVX512
+                       tests/TestVDTMathAVX512.cpp
+                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
 
   gaudi_add_executable(TestMathSpeedSSE4
                        tests/MathSpeedTests/main_sse4.cpp
@@ -228,6 +235,13 @@ if(GAUDI_BUILD_TESTS)
                        LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
   target_link_libraries( TestMathSpeedAVX2FMA -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_avx2fma.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
+
+  gaudi_add_executable(TestMathSpeedAVX512
+                       tests/MathSpeedTests/main_avx512.cpp
+                       INCLUDE_DIRS ROOT Vc GSL VDT src
+                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+  target_link_libraries( TestMathSpeedAVX512 -lrt )
+  set_property(SOURCE tests/MathSpeedTests/main_avx512.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX512_BUILD_FLAGS} )
 
 
   # Fixes for GCC7.

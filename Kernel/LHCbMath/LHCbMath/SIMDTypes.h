@@ -482,8 +482,8 @@ namespace LHCb {
     } // namespace VE
 
     /// The default underlying SIMD abstraction layer to use
-    using namespace LHCb::SIMD::VC;
-    //using namespace LHCb::SIMD::VE;
+    //using namespace LHCb::SIMD::VC;
+    using namespace LHCb::SIMD::VE;
 
   } // namespace SIMD
 } // namespace LHCb
