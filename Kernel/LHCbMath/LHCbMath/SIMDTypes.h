@@ -44,9 +44,6 @@
 #include "GaudiKernel/Transform3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 
-// exception (temporary)
-#include "GaudiKernel/GaudiException.h"
-
 // geometry (LHCbMath)
 #include "LHCbMath/Geom/Plane.h"
 #include "LHCbMath/Geom/Point.h"
@@ -236,6 +233,9 @@ namespace LHCb {
 
       //------------------------------------------------------------------------------------------------
 
+      /// tag class
+      class VETAG {};
+
       /// minimal wrapper class around underlying ve type.
       template <typename TYPE,
 // what list to use here ... ?
@@ -246,7 +246,7 @@ namespace LHCb {
                 std::size_t SIZE = LHCb::SIMD::VC::FP<TYPE>::Size
 #endif
                 >
-      class SIMDV : public ve::simdv<TYPE, SIZE> {
+      class SIMDV : public VETAG, public ve::simdv<TYPE, SIZE> {
 
       public:
         using mask_type = SIMDV<typename ve::simdv<TYPE, SIZE>::mask_type::value_type, SIZE>;
@@ -342,13 +342,15 @@ namespace LHCb {
         }
       };
 
-      template <typename V>
+      template <typename V, typename = typename std::enable_if<std::is_base_of<VETAG, V>::value>::type>
       constexpr decltype( auto ) isnegative( const V& v ) {
         return ( v < V::Zero() );
       }
 
       /// SIMD cast
-      template <typename TO, typename FROM, std::size_t SIZE = TO::size()>
+      template <typename TO, typename FROM, std::size_t SIZE = TO::size(),
+                typename = typename std::enable_if<std::is_base_of<VETAG, FROM>::value &&
+                                                   std::is_base_of<VETAG, TO>::value>::type>
       TO simd_cast( FROM x ) noexcept {
         static_assert( FROM::size() == TO::size(), "size mismatch" );
         return SIMDV<typename TO::value_type, SIZE>( x.begin(), x.end() );
@@ -481,9 +483,23 @@ namespace LHCb {
 
     } // namespace VE
 
+    // scalar/SIMD supporting cast
+    template <typename TO, typename FROM>
+    TO lb_cast( FROM x ) noexcept {
+      if constexpr ( std::is_arithmetic<FROM>::value && std::is_arithmetic<TO>::value ) {
+        return ( TO )( x );
+      } else {
+        return simd_cast<TO>( x );
+      }
+    }
+
+    //------------------------------------------------------------------------------------------------
+
     /// The default underlying SIMD abstraction layer to use
-    //using namespace LHCb::SIMD::VC;
-    using namespace LHCb::SIMD::VE;
+    using namespace LHCb::SIMD::VC;
+    // using namespace LHCb::SIMD::VE;
+
+    //------------------------------------------------------------------------------------------------
 
   } // namespace SIMD
 } // namespace LHCb

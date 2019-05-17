@@ -29,9 +29,7 @@
 #include <utility>
 
 // Local
-#include "LHCbMath/FastMaths-SIMD-ve.h"
-#include "LHCbMath/FastMaths-SIMD-Vc.h"
-#include "LHCbMath/FastMaths-Scalar.h"
+#include "LHCbMath/FastMaths-Core.h"
 
 // namespace documentation
 
@@ -261,3 +259,27 @@ namespace LHCb::Math {
 #endif
 
 } // namespace LHCb::Math
+
+// make some methods for ve SIMD types available as `std` versions
+namespace std {
+
+  inline decltype( auto ) log( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_log( x ); }
+  inline decltype( auto ) exp( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_exp( x ); }
+  inline decltype( auto ) atan2( const LHCb::SIMD::VE::FPF y, //
+                                 const LHCb::SIMD::VE::FPF x ) noexcept {
+    return LHCb::Math::fast_atan2( y, x );
+  }
+  inline decltype( auto ) sin( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return s;
+  }
+  inline decltype( auto ) cos( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return c;
+  }
+  inline decltype( auto ) asin( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_asin( x ); }
+  inline decltype( auto ) acos( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_acos( x ); }
+
+} // namespace std
