@@ -19,6 +19,7 @@
 from Gaudi.Configuration import *
 
 from Configurables import LHCbAlgsTests__TestEventCounter as EC
+from Configurables import LHCbAlgsTests__ForceEventCounter as FC
 from Configurables import EvtCounter
 
 app = ApplicationMgr(EvtSel = 'NONE',
@@ -31,31 +32,10 @@ counters = [EvtCounter("NotFromOne", InitialCount=123),
 
 # algorithms
 default = EC("Test-Default")
-algs = [default]
+algs = [FC("ForceCounter"), default]
 algs += [EC("Test-%s" % cnt.name().replace("ToolSvc.",""), EvtCounter=cnt) for cnt in counters]
 
 app.TopAlg = algs
-
-
-def customLoop(app, nevt):
-    from GaudiPython import gbl
-    from GaudiPython.Bindings import InterfaceCast
-
-    sc = app.initialize()
-
-    # get the right interface of the tool
-    tool = app.tool("ToolSvc.Forcing")
-    cntr = InterfaceCast(gbl.IEventCounter)(tool.getInterface())
-
-    for i in range(5):
-        cntr.setEventCounter(i * 10)
-        sc = app.run(1)
-        if sc.isFailure():
-            break
-
-    return sc
-
-setCustomMainLoop(customLoop)
 </text></argument>
 <argument name="validator"><text>
 findReferenceBlock("""

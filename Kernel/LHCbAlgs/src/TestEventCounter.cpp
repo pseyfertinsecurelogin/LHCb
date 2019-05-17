@@ -67,4 +67,17 @@ StatusCode TestEventCounter::finalize() {
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 
+namespace LHCbAlgsTests {
+  struct ForceEventCounter : Gaudi::Algorithm {
+    using Gaudi::Algorithm::Algorithm;
+    StatusCode execute( const EventContext& ctx ) const override {
+      m_cntr->setEventCounter( ctx.evt() * 10 );
+      return StatusCode::SUCCESS;
+    }
+
+  private:
+    mutable PublicToolHandle<IEventCounter> m_cntr{this, "Counter", "EvtCounter/Forcing"};
+  };
+  DECLARE_COMPONENT( ForceEventCounter )
+} // namespace LHCbAlgsTests
 // ============================================================================
