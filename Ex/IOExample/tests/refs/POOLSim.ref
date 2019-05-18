@@ -49,7 +49,6 @@
 # |-InitialTime         = 'Safe'
 # |-Simulation          = True  (default: False)
 # |-DataType            = '2009'  (default: '2012')
-# |-AutoTags            = False
 # |-DbRoot              = 'git:/lhcb.xml'
 # |-OnlineMode          = False
 # \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
@@ -92,39 +91,26 @@
 # skipping configuration of CaloDstUnPackConf
 # applying configuration of CondDB
 # /***** User CondDB/CondDB **************************************************************************
-# |-Upgrade                    = False
-# |-EnableRunStampCheck        = False
-# |-DBSnapshotDirectory        = '/group/online/hlt/conditions'
-# |-LatestLocalTagsByDataType  = []  (default: [])
-# |-Online                     = False
-# |-LogFile                    = ''
-# |-SQLiteLocalCopiesDir       = ''
 # |-EnableRunChangeHandler     = False
+# |-LocalTags                  = {}  (default: {})
+# |-IgnoreHeartBeat            = False
+# |-Tags                       = {'DDDB': 'head-20090330', 'SIMCOND': 'sim-20090402-vc-mu100'}  (default: {})
+# |-EnableRunStampCheck        = False
+# |-Simulation                 = True  (default: False)
+# |-Upgrade                    = False
+# |-AllLocalTagsByDataType     = []  (default: [])
+# |-Online                     = False
+# |-QueryGranularity           = 0
+# |-Overlays                   = []  (default: [])
+# |-LatestGlobalTagByDataTypes = []  (default: [])
+# |-LatestGlobalTagByDataType  = ''
 # |-RunChangeHandlerConditions = {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']}
 # |                            (default: {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']})
-# |-Tags                       = {'DDDB': 'head-20090330', 'SIMCOND': 'sim-20090402-vc-mu100'}  (default: {})
-# |-LoadCALIBDB                = 'HLT1'
-# |-AllLocalTagsByDataType     = []  (default: [])
-# |-UseOracle                  = False
-# |-RunStampCondition          = ''
-# |-PartitionConnectionString  = {}  (default: {})
-# |-LocalTags                  = {}  (default: {})
-# |-IgnoreHeartBeat            = True
-# |-Overrides                  = []  (default: [])
-# |-Simulation                 = True  (default: False)
-# |-QueryGranularity           = 0
-# |-LatestGlobalTagByDataType  = ''
-# |-UseDBSnapshot              = False
-# |-DisableLFC                 = False
-# |-HeartBeatCondition         = '/Conditions/Online/LHCb/Tick'
-# |-LatestGlobalTagByDataTypes = []  (default: [])
-# |-UseLatestTags              = []  (default: [])
-# |-OverwriteSQLiteLocalCopy   = False
 # \----- (End of User CondDB/CondDB) -----------------------------------------------------------------
 ApplicationMgr    SUCCESS
 ====================================================================================================================================
                                                    Welcome to LHCb version HEAD
-                                          running on lbbuild34.cern.ch on Fri Oct 12 06:27:40 2018
+                                          running on lbbuild21.cern.ch on Thu May 16 04:29:56 2019
 ====================================================================================================================================
 ApplicationMgr       INFO Application Manager Configured successfully
 ToolSvc.GitDDDB      INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DDDB.git'
@@ -137,6 +123,7 @@ TESFingerPrint      DEBUG Property update for OutputLevel : new value = 1
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service AlgContextSvc
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service EventDataSvc
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service TimelineSvc
+TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service EventDataSvc
 TESFingerPrint      DEBUG Initialize base class GaudiCommon<Algorithm>
 TESFingerPrint      DEBUG could not locate CounterSummarySvc, no counter summary will be made
 TESFingerPrint      DEBUG List of ALL properties of TESFingerPrint/TESFingerPrint  #properties = 39
@@ -150,13 +137,13 @@ TESFingerPrint      DEBUG Property ['Name': Value] =  'UseEfficiencyRowFormat':T
 TESFingerPrint      DEBUG Property ['Name': Value] =  'EfficiencyRowFormat': |*%|-48.48s|%|50t||%|10d| |%|11.5g| |(%|#9.6g| +- %|-#9.6g|)%%|   -------   |   -------   |
 TESFingerPrint      DEBUG Property ['Name': Value] =  'RegularRowFormat': | %|-48.48s|%|50t||%|10d| |%|11.7g| |%|#11.5g| |%|#11.5g| |%|#12.5g| |%|#12.5g| |
 TESFingerPrint      DEBUG Property ['Name': Value] =  'StatTableHeader': |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
-TESFingerPrint      DEBUG Property ['Name': Value] =  'RootInTES':
 TESFingerPrint      DEBUG Property ['Name': Value] =  'Context':
 TESFingerPrint      DEBUG Property ['Name': Value] =  'TypePrint':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'PrintEmptyCounters':False
 TESFingerPrint      DEBUG Property ['Name': Value] =  'StatPrint':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'PropertiesPrint':False
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ErrorsPrint':True
+TESFingerPrint      DEBUG Property ['Name': Value] =  'RootInTES':
 TESFingerPrint      DEBUG Property ['Name': Value] =  'FilterCircularDependencies':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'IsIOBound':False
 TESFingerPrint      DEBUG Property ['Name': Value] =  'NeededResources':[  ]
@@ -179,7 +166,6 @@ TESFingerPrint      DEBUG Property ['Name': Value] =  'Enable':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputLevel':1
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraOutputs':[]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraInputs':[]
-TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service EventDataSvc
 TESFingerPrint      DEBUG ==> Initialize
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service ToolSvc
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc
@@ -196,7 +182,7 @@ ApplicationMgr       INFO Application Manager Initialized successfully
 ApplicationMgr       INFO Application Manager Started successfully
 EventSelector     SUCCESS Reading Event record 1. Record number within stream 1: 1
 PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
-StoreExplorerAlg     INFO ========= /Event[0x80000a0@EventDataSvc]:
+StoreExplorerAlg     INFO ========= /Event[0x500a440@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Gen [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | | +--> /Header [Address: CLID=0x66 Type=0x2]  LHCb::GenHeader
@@ -243,7 +229,7 @@ DumpMCEventAlg       INFO ++++++++++++++++++++++++++++++++++++++++++++++++++++
 applicationVersion :	v36r3
 runNumber :	1082
 condDBTags :	[(DDDB, head-20090330), (SIMCOND, sim-20090402-vc-mu100)]
-platformInfo :	x86_64-centos7-gcc7-opt:AVX2
+platformInfo :	x86_64-centos7-gcc8-opt:AVX2
  }{ evtNumber :	72
 evtTime :	212000
  }
@@ -959,10 +945,10 @@ Vertex:     -106 ID:    1 (X,cT)=+6.88e-03,-5.01e-02,-7.72e+01,+0.00e+00
           10184       22 -8.33e-05,+3.70e-05,-5.31e-05,+1.05e-04 999
 ________________________________________________________________________________
 
-IODataManager        INFO Referring to dataset ROOT.sim by its file ID:B22D7930-D7CD-E811-897A-02163E01BA24
+IODataManager        INFO Referring to dataset ROOT.sim by its file ID:E0B71982-8277-E911-8D56-02163E01B1D5
 EventSelector     SUCCESS Reading Event record 2. Record number within stream 1: 2
 PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
-StoreExplorerAlg     INFO ========= /Event[0x9fbdcf0@EventDataSvc]:
+StoreExplorerAlg     INFO ========= /Event[0x72192d0@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Gen [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | | +--> /Header [Address: CLID=0x66 Type=0x2]  LHCb::GenHeader
@@ -1009,7 +995,7 @@ DumpMCEventAlg       INFO ++++++++++++++++++++++++++++++++++++++++++++++++++++
 applicationVersion :	v36r3
 runNumber :	1082
 condDBTags :	[(DDDB, head-20090330), (SIMCOND, sim-20090402-vc-mu100)]
-platformInfo :	x86_64-centos7-gcc7-opt:AVX2
+platformInfo :	x86_64-centos7-gcc8-opt:AVX2
  }{ evtNumber :	73
 evtTime :	212025
  }
@@ -2487,7 +2473,7 @@ ________________________________________________________________________________
 
 EventSelector     SUCCESS Reading Event record 3. Record number within stream 1: 3
 PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
-StoreExplorerAlg     INFO ========= /Event[0xafb20d0@EventDataSvc]:
+StoreExplorerAlg     INFO ========= /Event[0x785ac10@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Gen [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | | +--> /Header [Address: CLID=0x66 Type=0x2]  LHCb::GenHeader
@@ -2534,7 +2520,7 @@ DumpMCEventAlg       INFO ++++++++++++++++++++++++++++++++++++++++++++++++++++
 applicationVersion :	v36r3
 runNumber :	1082
 condDBTags :	[(DDDB, head-20090330), (SIMCOND, sim-20090402-vc-mu100)]
-platformInfo :	x86_64-centos7-gcc7-opt:AVX2
+platformInfo :	x86_64-centos7-gcc8-opt:AVX2
  }{ evtNumber :	74
 evtTime :	212050
  }
@@ -3424,7 +3410,7 @@ ________________________________________________________________________________
 
 EventSelector     SUCCESS Reading Event record 4. Record number within stream 1: 4
 PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
-StoreExplorerAlg     INFO ========= /Event[0xa784260@EventDataSvc]:
+StoreExplorerAlg     INFO ========= /Event[0x8c7d6c0@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Gen [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | | +--> /Header [Address: CLID=0x66 Type=0x2]  LHCb::GenHeader
@@ -3471,7 +3457,7 @@ DumpMCEventAlg       INFO ++++++++++++++++++++++++++++++++++++++++++++++++++++
 applicationVersion :	v36r3
 runNumber :	1082
 condDBTags :	[(DDDB, head-20090330), (SIMCOND, sim-20090402-vc-mu100)]
-platformInfo :	x86_64-centos7-gcc7-opt:AVX2
+platformInfo :	x86_64-centos7-gcc8-opt:AVX2
  }{ evtNumber :	75
 evtTime :	212075
  }
@@ -3976,7 +3962,7 @@ ________________________________________________________________________________
 
 EventSelector     SUCCESS Reading Event record 5. Record number within stream 1: 5
 PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
-StoreExplorerAlg     INFO ========= /Event[0xb1b24b0@EventDataSvc]:
+StoreExplorerAlg     INFO ========= /Event[0x8c56a80@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Gen [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | | +--> /Header [Address: CLID=0x66 Type=0x2]  LHCb::GenHeader
@@ -4023,7 +4009,7 @@ DumpMCEventAlg       INFO ++++++++++++++++++++++++++++++++++++++++++++++++++++
 applicationVersion :	v36r3
 runNumber :	1082
 condDBTags :	[(DDDB, head-20090330), (SIMCOND, sim-20090402-vc-mu100)]
-platformInfo :	x86_64-centos7-gcc7-opt:AVX2
+platformInfo :	x86_64-centos7-gcc8-opt:AVX2
  }{ evtNumber :	76
 evtTime :	212100
  }
@@ -4160,6 +4146,6 @@ EventLoopMgr         INFO Histograms converted successfully according to request
 DataOnDemandSvc      INFO Handled "DataFault" incidents: 10/0/15(Alg/Node/Total).
 ToolSvc              INFO Removing all tools created by ToolSvc
 RootCnvSvc           INFO Disconnected data IO:4298ECD3-A723-DE11-BD72-000CF1F44509 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/MC09-pool-sim/30000000-100ev-20090407-MC09.sim]
-RootCnvSvc           INFO Disconnected data IO:B22D7930-D7CD-E811-897A-02163E01BA24 [ROOT.sim]
+RootCnvSvc           INFO Disconnected data IO:E0B71982-8277-E911-8D56-02163E01B1D5 [ROOT.sim]
 ApplicationMgr       INFO Application Manager Finalized successfully
 ApplicationMgr       INFO Application Manager Terminated successfully

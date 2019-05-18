@@ -16,7 +16,7 @@
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 preprocessor = (LHCbPreprocessor +
-  RegexpReplacer(r'x86_64-centos7-gcc7-opt:.*', '{0}:AVX2'.format(os.environ.get('CMTCONFIG')), 'platformInfo')
+  RegexpReplacer(r'x86_64-centos7-gcc8-opt:.*', '{0}:AVX2'.format(os.environ.get('CMTCONFIG')), 'platformInfo')
 )
 validateWithReference(preproc = preprocessor)
 </text></argument>
