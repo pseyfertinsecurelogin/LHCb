@@ -14,6 +14,8 @@
 gaudi_subdir(SimComponents v4r0)
 
 gaudi_depends_on_subdirs(Det/CaloDet
+			 Event/EventBase
+			 Event/DAQEvent
                          Event/GenEvent
                          Event/MCEvent
 			 Event/RecEvent
@@ -30,6 +32,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 gaudi_add_module(SimComponents
                  src/*.cpp
-                 INCLUDE_DIRS Boost AIDA Kernel/MCInterfaces
-                 LINK_LIBRARIES Boost CaloDetLib GenEvent MCEvent RecEvent TrackEvent GaudiAlgLib)
+                 INCLUDE_DIRS Boost AIDA Kernel/MCInterfaces Event/EventBase
+                 LINK_LIBRARIES Boost CaloDetLib DAQEventLib GenEvent MCEvent RecEvent TrackEvent GaudiAlgLib)
 
