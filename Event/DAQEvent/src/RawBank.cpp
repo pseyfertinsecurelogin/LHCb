@@ -173,6 +173,12 @@ std::string LHCb::RawBank::typeName( LHCb::RawBank::BankType e ) {
     return "HCError";
   case LHCb::RawBank::VPRetinaCluster:
     return "VPRetinaCluster";
+  case LHCb::RawBank::FTGeneric:
+    return "FTGeneric";
+  case LHCb::RawBank::FTCalibration:
+    return "FTCalibration";
+  case LHCb::RawBank::FTNZS:
+    return "FTNZS";
   default:
     return "Undefined_name";
   };
