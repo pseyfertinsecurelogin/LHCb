@@ -158,6 +158,11 @@ StatusCode HLTControlFlowMgr::initialize() {
     fatal() << "Error retrieving HiveDataBrokerSvc" << endmsg;
     return StatusCode::FAILURE;
   }
+  // to finalize algorithms at the right time, which is taken care of by the
+  // hivedatabroker. it is the one that should be finalized first, thus high
+  // priority (10*default_svc_priority is the next highest)
+  auto svcMgr = serviceLocator().as<ISvcManager>();
+  svcMgr->addService( "HiveDataBrokerSvc", ISvcManager::DEFAULT_SVC_PRIORITY * 11 ).ignore();
 
   // Clearly inform about the level of concurrency
   info() << "Concurrency level information:" << endmsg;
