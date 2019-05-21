@@ -11,13 +11,15 @@
 // Include files
 // local
 #include "Gaudi/Algorithm.h"
+#include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/Transformer.h"
 
+#include "DetDesc/Condition.h"
+#include "DetDesc/ConditionAccessorHolder.h"
 #include "Event/MuonCoord.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
 #include "MuonDet/DeMuonDetector.h"
-
 #include "MuonDet/MuonBasicGeometry.h"
 
 #include "range/v3/view/drop_exactly.hpp"
@@ -189,20 +191,26 @@ namespace {
  *  This is the muon reconstruction algorithm
  *  This just crosses the logical strips back into pads
  */
-using BaseClass_t = Gaudi::Functional::Traits::BaseClass_t<Gaudi::Algorithm>;
+namespace details {
 
-class MuonRawToCoord final
-    : public Gaudi::Functional::Transformer<std::vector<LHCb::MuonCoord>( const LHCb::RawEvent& ) /* ,BaseClass_t*/> {
+  using AlgorithmWithCondition = LHCb::DetDesc::ConditionAccessorHolder<FixTESPath<Gaudi::Algorithm>>;
+
+  template <typename... C>
+  using usesConditions =
+      Gaudi::Functional::Traits::use_<LHCb::DetDesc::useConditionHandleFor<C...>,
+                                      Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition>>;
+} // namespace details
+
+class MuonRawToCoord final : public Gaudi::Functional::Transformer<std::vector<LHCb::MuonCoord>(
+                                                                       const DeMuonDetector&, const LHCb::RawEvent& ),
+                                                                   details::usesConditions<DeMuonDetector>> {
 public:
   /// Standard constructor
   MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode                   initialize() override; ///< Algorithm initialization
-  std::vector<LHCb::MuonCoord> operator()( const LHCb::RawEvent& event ) const override;
+  std::vector<LHCb::MuonCoord> operator()( const DeMuonDetector&, const LHCb::RawEvent& ) const override;
 
 private:
-  DeMuonDetector* m_muonDetector = nullptr;
-
   mutable Gaudi::Accumulators::BinomialCounter<>  m_invalid_add{this, "invalid add"};
   mutable Gaudi::Accumulators::AveragingCounter<> m_digits{this, "#digits"};
   mutable Gaudi::Accumulators::AveragingCounter<> m_coords{this, "#coords"};
@@ -216,27 +224,17 @@ DECLARE_COMPONENT( MuonRawToCoord )
 // Standard constructor, initializes variables
 //=============================================================================
 MuonRawToCoord::MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator )
-    : Transformer{
-          name, pSvcLocator, KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
-          KeyValue{"MuonCoordLocation", LHCb::MuonCoordLocation::MuonCoords}
-          // , KeyValue{"MuonDetectorPath",  DeMuonLocation::Default}
-      } {}
-
-//=============================================================================
-// Initialisation. Check parameters
-//=============================================================================
-StatusCode MuonRawToCoord::initialize() {
-  auto sc = Transformer::initialize();
-  if ( sc.isSuccess() ) m_muonDetector = getDet<DeMuonDetector>( DeMuonLocation::Default );
-  if ( !m_muonDetector )
-    throw GaudiException( "Could not read " + DeMuonLocation::Default, __func__, StatusCode::FAILURE );
-  return sc;
-}
+    : Transformer{name,
+                  pSvcLocator,
+                  {KeyValue{"MuonDetectorPath", DeMuonLocation::Default},
+                   KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default}},
+                  KeyValue{"MuonCoordLocation", LHCb::MuonCoordLocation::MuonCoords}} {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const LHCb::RawEvent& raw ) const {
+std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const DeMuonDetector& muonDet,
+                                                         const LHCb::RawEvent& raw ) const {
 
   std::vector<LHCb::MuonCoord> coords;
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
@@ -250,7 +248,7 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const LHCb::RawEvent& r
     unsigned int tell1 = r->sourceID();
     if ( tell1 >= MuonDAQHelper_maxTell1Number ) OOPS( MuonRaw::ErrorCode::INVALID_TELL1 );
     decodeTileAndTDCV1( r->range<unsigned short>(),
-                        [& di        = m_muonDetector->getDAQInfo()->getADDInTell1( tell1 ),
+                        [& di        = muonDet.getDAQInfo()->getADDInTell1( tell1 ),
                          invalid_add = m_invalid_add.buffer()]( unsigned int add ) mutable {
                           bool valid = add < di.size();
                           invalid_add += !valid;
@@ -270,7 +268,7 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const LHCb::RawEvent& r
   while ( first != last ) {
     std::nth_element( first, first, last, orderByProjection( stationRegion ) );
     auto next = std::partition( std::next( first ), last, hasEqualProjection( stationRegion, *first ) );
-    first     = addCoordsCrossingMap( *m_muonDetector, first, next, coords );
+    first     = addCoordsCrossingMap( muonDet, first, next, coords );
   }
   m_coords += coords.size();
   return coords;

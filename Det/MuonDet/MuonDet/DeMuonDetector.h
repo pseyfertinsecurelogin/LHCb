@@ -201,7 +201,8 @@ public:
   // Returns the chamber (as DetectorElement pointer) from a Hit
   DeMuonChamber* Hit2Chamber( const Gaudi::XYZPoint myPoint );
 
-  inline MuonDAQHelper* getDAQInfo() { return &( m_daqHelper ); };
+  MuonDAQHelper*       getDAQInfo() { return &( m_daqHelper ); };
+  const MuonDAQHelper* getDAQInfo() const { return &( m_daqHelper ); };
 
 private:
   // Useful constants
