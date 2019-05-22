@@ -21,16 +21,15 @@ DECLARE_COMPONENT( CaloFutureRawToDigits )
 CaloFutureRawToDigits::CaloFutureRawToDigits( const std::string& name, ISvcLocator* pSvcLocator )
     : MultiTransformer(
           name, pSvcLocator,
-          KeyValue{"InputData", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Calo,
-                                                                        LHCb::RawEventLocation::Default )},
+          KeyValue{"RawEventLocation", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Calo,
+                                                                               LHCb::RawEventLocation::Default )},
           {KeyValue{"OutputAdcData", {}}, KeyValue{"OutputDigitData", {}}, KeyValue{"OutputReadoutStatusData", {}}} ) {
   updateHandleLocation( *this, "OutputAdcData",
-                        LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( name.substr( 6, 4 ), context() ) );
+                        LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( name.substr( 6, 4 ) ) );
   updateHandleLocation( *this, "OutputDigitData",
-                        LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( name.substr( 6, 4 ), context() ) );
-  updateHandleLocation(
-      *this, "OutputReadoutStatusData",
-      LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( name.substr( 6, 4 ), context() ) );
+                        LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( name.substr( 6, 4 ) ) );
+  updateHandleLocation( *this, "OutputReadoutStatusData",
+                        LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( name.substr( 6, 4 ) ) );
 }
 
 //=============================================================================

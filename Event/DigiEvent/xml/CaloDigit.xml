@@ -73,6 +73,8 @@
 <location name = "Prs"  place = "Raw/Prs/Digits"  />
 <location name = "Ecal" place = "Raw/Ecal/Digits" />
 <location name = "Hcal" place = "Raw/Hcal/Digits" />
+<location name = "UnfilteredEcal" place = "Raw/Ecal/UnfilteredDigits" />
+<location name = "UnfilteredHcal" place = "Raw/Hcal/UnfilteredDigits" />
 <location name = "FullSpd"  place = "Raw/Spd/AllDigits"  />
 <location name = "FullPrs"  place = "Raw/Prs/AllDigits"  />
 <location name = "FullEcal" place = "Raw/Ecal/AllDigits" />

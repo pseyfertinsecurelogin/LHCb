@@ -13,8 +13,12 @@
 
 // Include files
 // from Gaudi
-#include "CaloFutureDAQ/ICaloFutureDigitFilterTool.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/CaloDigit.h"
+#include "Event/RecVertex.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/Transformer.h"
+#include "GaudiKernel/Counters.h"
 
 /** @class CaloFutureDigitFilterAlg CaloFutureDigitFilterAlg.h
  *
@@ -22,20 +26,47 @@
  *  @date   2010-12-21
  */
 
-class CaloFutureDigitFilterAlg : public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  using GaudiAlgorithm::GaudiAlgorithm;
+class CaloFutureDigitFilterAlg : public Gaudi::Functional::Transformer<LHCb::CaloDigits(
+                                     const LHCb::CaloDigits& caloDigits, const LHCb::RecVertices& recVertices )> {
 
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
+public:
+  CaloFutureDigitFilterAlg( const std::string& name, ISvcLocator* pSvcLocator );
+  StatusCode       initialize() override;
+  LHCb::CaloDigits operator()( const LHCb::CaloDigits&  caloDigits,
+                               const LHCb::RecVertices& recVertices ) const override;
+
+  struct CondValue {
+    double offset, offsetRMS;
+  };
+  using Offsets  = std::map<LHCb::CaloCellID, double>;
+  using CondMaps = std::map<LHCb::CaloCellID, CondValue>;
+
+  bool cleanDigits( const LHCb::CaloDigits& digits, const LHCb::RecVertices& verts, const std::string& det,
+                    bool substr = true, bool mask = true ) const; // override;
 
 private:
-  Gaudi::Property<int>        m_ecal{this, "EcalFilter", 0x3}; // 1 = Mask , 2=Offset , 3 = both, 0 = none
-  Gaudi::Property<int>        m_hcal{this, "HcalFilter", 0x3}; // 1 = Mask , 2=Offset , 3 = both, 0 = none
-  Gaudi::Property<int>        m_prs{this, "PrsFilter", 0x3};   // 1 = Mask , 2=Offset , 3 = both, 0 = none
-  Gaudi::Property<int>        m_spd{this, "SpdFilter", 0x1};   // 1 = Mask , 2=Offset , 3 = both, 0 = none
-  ICaloFutureDigitFilterTool* m_filter = nullptr;
+  Gaudi::Property<std::string> m_detectorName{this, "DetectorName", "Ecal", "Detector element name"};
+
+  Gaudi::Property<int> m_ecal{this, "EcalFilter", 0x3}; // 1 = Mask , 2=Offset , 3 = both, 0 = none
+  Gaudi::Property<int> m_hcal{this, "HcalFilter", 0x3}; // 1 = Mask , 2=Offset , 3 = both, 0 = none
+  DeCalorimeter*       m_calo = nullptr;                ///< Detector element pointer
+
+  Gaudi::Property<std::map<std::string, int>> m_maskMap{this, "MaskMap"};
+  Gaudi::Property<bool>                       m_useCondDB{this, "UseCondDB", true};
+  Gaudi::Property<int>    m_scalingMethod{this, "ScalingMethod", 1}; // 0 : SpdMult ; 1 = nPV  (+10 for clusters)
+  Gaudi::Property<int>    m_scalingBin{this, "ScalingBin", 50};
+  Gaudi::Property<double> m_scalingMin{this, "ScalingMin", 150};
+  Gaudi::Property<bool>   m_usePV3D{this, "UsePV3D", false};
+  Gaudi::Property<int>    m_setCounters{this, "SetCounterLevel", 1};
+
+  //  m_maskMap["Default"]= CaloCellQuality::OfflineMask;
+
+  mutable Gaudi::Accumulators::AveragingCounter<> m_offsetScaleCounter{this, "Offset scale"};
+  mutable Gaudi::Accumulators::AveragingCounter<> m_maskedDigitsCounter{this, "Masked digits"};
+  mutable Gaudi::Accumulators::AveragingCounter<> m_avgOffsetCounter{this, "Average offset in ADC"};
+
+protected:
+  void cleanDigit( LHCb::CaloDigit& digit, bool substr = true, int scale = -1, bool mask = true );
 };
 
 #endif // CALOFUTUREDIGITFILTERALG_H
