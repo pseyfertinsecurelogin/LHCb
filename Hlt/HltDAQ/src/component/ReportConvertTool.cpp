@@ -10,7 +10,7 @@
 \*****************************************************************************/
 // local
 #include "HltDAQ/ReportConvertTool.h"
-#include "pun.h"
+#include "Kernel/pun.h"
 
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;

@@ -17,7 +17,7 @@
 // local
 #include "HltVertexReportsDecoder.h"
 #include "HltVertexReportsWriter.h"
-#include "pun.h"
+#include "Kernel/pun.h"
 
 namespace {
   static const std::vector<std::string> DefaultLabels = {"PV3D", "ProtoPV3D"};

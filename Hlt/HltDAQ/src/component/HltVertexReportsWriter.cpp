@@ -15,7 +15,7 @@
 
 // local
 #include "HltVertexReportsWriter.h"
-#include "pun.h"
+#include "Kernel/pun.h"
 
 using namespace LHCb;
 

@@ -33,7 +33,7 @@
 #include "Event/Particle.h"
 #include "Event/RecVertex.h"
 #include "Event/Track.h"
-#include "pun.h"
+#include "Kernel/pun.h"
 
 using namespace LHCb;
 
