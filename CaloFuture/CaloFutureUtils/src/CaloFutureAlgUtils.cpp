@@ -57,12 +57,20 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( const std::string& 
 }
 
 // Digit location from name (CaloDigits are context independent so far)
-std::string LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( const std::string& name, const std::string& ) {
+std::string LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( const std::string& name ) {
   std::string det = CaloFutureNameFromAlg( name );
   using namespace LHCb::CaloDigitLocation;
   return det == "Ecal"
              ? Ecal
              : det == "Hcal" ? Hcal : det == "Prs" ? Prs : det == "Spd" ? Spd : Ecal; // default is Ecal in offline mode
+}
+
+// Digit location from name (CaloDigits are context independent so far)
+std::string LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( const std::string& name ) {
+  std::string det = CaloFutureNameFromAlg( name );
+  using namespace LHCb::CaloDigitLocation;
+  return det == "Ecal" ? UnfilteredEcal
+                       : det == "Hcal" ? UnfilteredHcal : UnfilteredEcal; // default is Ecal in offline mode
 }
 
 // Cluster location from context

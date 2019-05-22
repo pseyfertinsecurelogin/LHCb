@@ -76,7 +76,8 @@ namespace LHCb {
     std::string DeCaloFutureLocation( const std::string& name );
     std::string CaloFutureRawBankReadoutStatusLocation( const std::string& name, const std::string& context = "" );
     std::string CaloFutureAdcLocation( const std::string& name, const std::string& context = "" );
-    std::string CaloFutureDigitLocation( const std::string& name, const std::string& context = "" );
+    std::string CaloFutureUnfilteredDigitLocation( const std::string& name );
+    std::string CaloFutureDigitLocation( const std::string& name );
     std::string CaloFutureClusterLocation( const std::string& name, const std::string& context = "",
                                            const std::string& type = "" );
     std::string CaloFutureSplitClusterLocation( const std::string& context = "" );
