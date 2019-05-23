@@ -160,6 +160,8 @@ public:
   inline decltype( auto ) testForIntersection( const POINT& start, const POINT& end,
                                                typename POINT::Scalar::mask_type mask ) const {
 
+    using namespace LHCb::SIMD;
+
     // fast test on if the start and end points are close enough to the
     // the beam axis in global coords
     mask &= isCloseBy( start, end );
@@ -191,7 +193,7 @@ private:
   /// Returns the 'average' of two points
   template <typename POINT>
   inline POINT average( const POINT& p1, const POINT& p2 ) const {
-    return POINT( 0.5 * ( p1.x() + p2.x() ), 0.5 * ( p1.y() + p2.y() ), 0.5 * ( p1.z() + p2.z() ) );
+    return POINT( 0.5f * ( p1.x() + p2.x() ), 0.5f * ( p1.y() + p2.y() ), 0.5f * ( p1.z() + p2.z() ) );
   }
 
   /// Test if the given start and end points are 'close' to the beampipe or not
@@ -202,6 +204,7 @@ private:
       return ( isCloseBy( start ) || isCloseBy( end ) );
     } else {
       // SIMD
+      using namespace LHCb::SIMD;
       auto mask = isCloseBy( start );
       if ( !all_of( mask ) ) { mask |= isCloseBy( end ); }
       return mask;

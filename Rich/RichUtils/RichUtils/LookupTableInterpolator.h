@@ -1,3 +1,4 @@
+
 /*****************************************************************************\
 * (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
@@ -116,7 +117,7 @@ namespace Rich {
 
     /** Returns the SIMD value for the given SIMD index and x value.
      *  Assumes range checking if required is already done. */
-    inline SIMDFP value( const SIMDFP::IndexType& index, const SIMDFP& x ) const noexcept {
+    inline SIMDFP value( const SIMDFP::index_type& index, const SIMDFP& x ) const noexcept {
 #ifndef __clang__
       // gather the m and c parameters for f(x) = m.x + c
       const SIMDFP m = m_data[index][&Bin::m];
@@ -174,7 +175,7 @@ namespace Rich {
     /// SIMD FP type
     using SIMDFP = typename BaseLookupTableInterpolator<TYPE, NBINS>::SIMDFP;
     /// SIMD Index type
-    using SIMDIn = typename SIMDFP::IndexType;
+    using SIMDIn = typename SIMDFP::index_type;
 
   private:
     /// Get the look up index for a given scalar x (no range checks)
@@ -249,7 +250,7 @@ namespace Rich {
     /// SIMD FP type
     using SIMDFP = typename BaseLookupTableInterpolator<TYPE, NBINS>::SIMDFP;
     /// SIMD Index type
-    using SIMDIn = typename SIMDFP::IndexType;
+    using SIMDIn = typename SIMDFP::index_type;
 
   private:
     /// Get the look up index for a given scalar x (no range checks)

@@ -73,8 +73,8 @@ public:
                        bool photoCathodeSide = false ) const override final;
 
   // (SIMD) Converts RichSmartIDs to an SIMD point in global coordinates.
-  DeRichPD::SIMDFP::MaskType detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                             bool photoCathodeSide = false ) const override final;
+  DeRichPD::SIMDFP::mask_type detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
+                                              bool photoCathodeSide = false ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
@@ -150,14 +150,13 @@ private:
 
   inline SIMDPoint getAnodeHitCoordFromGrandPixelNum( const SIMDUINT& fracPixelCol, const SIMDUINT& fracPixelRow ) const
       noexcept {
-    const auto xmask      = simd_cast<SIMDFP::MaskType>( fracPixelCol == SIMDUINT::Zero() ||
-                                                    fracPixelCol == SIMDUINT( m_PmtNumPixCol - 1 ) );
-    const auto ymask      = simd_cast<SIMDFP::MaskType>( fracPixelRow == SIMDUINT::Zero() ||
-                                                    fracPixelRow == SIMDUINT( m_PmtNumPixRow - 1 ) );
+    using namespace LHCb::SIMD;
+    const auto xmask      = ( fracPixelCol == SIMDUINT::Zero() ) || ( fracPixelCol == SIMDUINT( m_PmtNumPixCol - 1 ) );
+    const auto ymask      = ( fracPixelRow == SIMDUINT::Zero() ) || ( fracPixelRow == SIMDUINT( m_PmtNumPixRow - 1 ) );
     auto       aXEffPixel = SIMDFP( m_GrandPmtEffectivePixelXSize );
-    aXEffPixel( xmask )   = SIMDFP( m_GrandPmtEdgePixelXSize );
-    auto aYEffPixel       = SIMDFP( m_GrandPmtEffectivePixelYSize );
-    aYEffPixel( ymask )   = SIMDFP( m_GrandPmtEdgePixelYSize );
+    aXEffPixel( simd_cast<SIMDFP::mask_type>( xmask ) ) = SIMDFP( m_GrandPmtEdgePixelXSize );
+    auto aYEffPixel                                     = SIMDFP( m_GrandPmtEffectivePixelYSize );
+    aYEffPixel( simd_cast<SIMDFP::mask_type>( ymask ) ) = SIMDFP( m_GrandPmtEdgePixelYSize );
 
     const auto xh = ( simd_cast<SIMDFP>( fracPixelCol ) - SIMDFP( m_PmtNumPixColFrac ) ) * aXEffPixel;
     const auto yh = ( simd_cast<SIMDFP>( fracPixelRow ) - SIMDFP( m_PmtNumPixRowFrac ) ) * aYEffPixel;

@@ -55,8 +55,8 @@ namespace LHCb::Geom {
   public:
     /// Dot product with arbitrary (x,y,z) type
     template <typename AltVect>
-    decltype( auto ) Dot( const AltVect& v ) const noexcept {
-      return ( this->X() * v.X() ) + ( this->Y() * v.Y() ) + ( this->Z() * v.Z() );
+    TYPE Dot( const AltVect& v ) const noexcept {
+      return TYPE( this->X() * v.X() ) + ( this->Y() * v.Y() ) + ( this->Z() * v.Z() );
     }
 
     /// Cross product with arbitrary (x,y,z) type

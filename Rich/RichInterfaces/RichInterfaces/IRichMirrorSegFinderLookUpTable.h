@@ -94,13 +94,15 @@ namespace Rich::Future {
     //-----------------------------------------------------------------------------
     template <typename FPTYPE, std::uint32_t NXBINS, std::uint32_t NYBINS, typename SIMDTYPE = SIMD::DefaultScalarFP>
     class LookupTableFinder {
+
     private:
       /// Type for Mirror Number. Small to minimise LUT size.
       using MirrorNum = std::uint8_t;
-      /// Type for SIMD array of indices
-      using SIMDIndices = SIMD::UInt32;
       /// Type for Scalar index
       using ScalarIndex = std::uint32_t;
+      //using ScalarIndex = typename SIMD::FP<SIMDTYPE>::index_type;
+      /// Type for SIMD array of indices
+      using SIMDIndices = LHCb::SIMD::INT<ScalarIndex>;
 
     public:
       /// Constructor from extra size
@@ -200,7 +202,7 @@ namespace Rich::Future {
             // just load the mirror using the number
             // mirrs[i] = mirrors[ xyi[i] ];
             // Revert to scalar lookup
-            mirrs[i] = mirrors[m_lookupTable.get( xyi[i] )];
+            mirrs[i] = mirrors[m_lookupTable.get( (ScalarIndex)xyi[i] )];
           }
           // return the filled mirrors
           return mirrs;
@@ -247,8 +249,8 @@ namespace Rich::Future {
           return ( NYBINS * ix ) + iy;
         }
         /// Combine two (SIMD) x,y indices in a single one
-        inline SIMDIndices::IndexType xyIndex( const SIMDIndices::IndexType& ix,
-                                               const SIMDIndices::IndexType& iy ) const noexcept {
+        inline typename SIMDIndices::IndexType xyIndex( const typename SIMDIndices::IndexType& ix,
+                                                         const typename SIMDIndices::IndexType& iy ) const noexcept {
           return ( SIMDIndices::IndexType( NYBINS ) * ix ) + iy;
         }
 
@@ -263,13 +265,14 @@ namespace Rich::Future {
       public:
 #ifndef __clang__
         /// Access the mirror for a given xy index (SIMD)
-        inline SIMDIndices get( const SIMDIndices::IndexType& ixy ) const noexcept {
+        inline SIMDIndices get( const typename SIMDIndices::IndexType& ixy ) const noexcept {
           // gather SIMD lookup
           return ( *this )[ixy];
         }
 #endif
         /// Access the mirror for a given set of (x,y) indices (SIMD)
-        inline SIMDIndices get( const SIMDIndices::IndexType& ix, const SIMDIndices::IndexType& iy ) const noexcept {
+        inline SIMDIndices get( const typename SIMDIndices::IndexType& ix,
+                                const typename SIMDIndices::IndexType& iy ) const noexcept {
           // Make '1D' indices from X and Y
           return get( xyIndex( ix, iy ) );
         }
@@ -506,9 +509,10 @@ namespace Rich::Future {
       template <typename TYPE, typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type* = nullptr>
       inline decltype( auto ) find( const Rich::DetectorType rich, const Rich::SIMD::Sides& sides, const TYPE x,
                                     const TYPE y ) const noexcept {
+        using namespace LHCb::SIMD;
         // Side masks
-        const auto m1 = ( sides == Rich::SIMD::Sides( Rich::firstSide ) );
-        const auto m2 = ( sides == Rich::SIMD::Sides( Rich::secondSide ) );
+        const auto m1 = ( sides == Rich::SIMD::Sides( (int)Rich::firstSide ) );
+        const auto m2 = ( sides == Rich::SIMD::Sides( (int)Rich::secondSide ) );
         // return the right ones
         if ( all_of( m1 ) ) {
           return find( rich, Rich::firstSide, x, y );

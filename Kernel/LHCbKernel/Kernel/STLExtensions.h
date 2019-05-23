@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef LHCBKERNEL_STLExtensions
-#define LHCBKERNEL_STLExtensions
+
+#pragma once
 
 // This header contains methods that are likely to become parts of the STL
 // at some point in the future, but currently are not available.
@@ -21,6 +21,9 @@
 #include <utility>
 
 // add a macro state assumptions
+#if defined(ASSUME)
+#  undef ASSUME
+#endif
 #ifdef NDEBUG
 #  define ASSUME( COND ) static_cast<void>( ( COND ) ? void( 0 ) : __builtin_unreachable() )
 #else
@@ -201,5 +204,3 @@ namespace gsl {
     return *s.rbegin();
   }
 } // namespace gsl
-
-#endif // LHCBKERNEL_STLExtensions

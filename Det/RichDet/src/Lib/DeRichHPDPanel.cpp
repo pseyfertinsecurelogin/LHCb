@@ -684,7 +684,8 @@ StatusCode DeRichHPDPanel::geometryUpdate() {
 
     // panel
     m_globalToPDPanelTransform.GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_globalToPDPanelTransformSIMD.SetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
+    m_globalToPDPanelTransformSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy,
+                                                  (FP)zx, (FP)zy, (FP)zz, (FP)dz );
   }
 
   return StatusCode::SUCCESS;

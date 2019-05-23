@@ -43,7 +43,7 @@ namespace Rich::RayTracingUtils {
     /// Type for Point
     using Point = Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>;
     /// Type for validity mask
-    using Mask = Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>::MaskType;
+    using Mask = Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>::mask_type;
 
   public:
     /// Default constructor

@@ -178,10 +178,10 @@ namespace Rich::SIMD::Future {
     SIMDFP m_actSegF{SIMDFP::One()};
 
     /// Flag to indicate if unambiguous photons or not
-    SIMDFP::MaskType m_unambigPhot{SIMDFP::MaskType::Zero()};
+    SIMDFP::mask_type m_unambigPhot{SIMDFP::mask_type( false )};
 
     /// Validity mask
-    SIMDFP::MaskType m_valid{SIMDFP::MaskType::Zero()};
+    SIMDFP::mask_type m_valid{SIMDFP::mask_type( false )};
 
     /// RICH
     Rich::DetectorType m_rich{Rich::InvalidDetector};

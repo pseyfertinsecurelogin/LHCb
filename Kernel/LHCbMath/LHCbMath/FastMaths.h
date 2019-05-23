@@ -29,8 +29,7 @@
 #include <utility>
 
 // Local
-#include "LHCbMath/FastMaths-SIMD-Vc.h"
-#include "LHCbMath/FastMaths-Scalar.h"
+#include "LHCbMath/FastMaths-Core.h"
 
 // namespace documentation
 
@@ -47,6 +46,8 @@
  *  http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
  *
  *  http://pubs.opengroup.org/onlinepubs/009695399/functions/atan2.html
+ *
+ * https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   30/11/2017
@@ -233,14 +234,14 @@ namespace LHCb::Math {
 
   /** fast inverse sqrt for SIMD float type
    *  call rsqrt */
-  inline LHCb::SIMD::FPF fast_isqrt( const LHCb::SIMD::FPF x ) noexcept {
+  inline LHCb::SIMD::VC::FPF fast_isqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
     // Qualified Lookup is mandatory for Vc types (ADL would find Vc::rsqrt)
     return LHCb::Math::rsqrt<fast>( x );
   }
 
   /** fast approximate inverse sqrt for SIMD float type
    *  call rsqrt */
-  inline LHCb::SIMD::FPF fast_approx_isqrt( const LHCb::SIMD::FPF x ) noexcept {
+  inline LHCb::SIMD::VC::FPF fast_approx_isqrt( const LHCb::SIMD::VC::FPF x ) noexcept {
     // Qualified Lookup is mandatory for Vc types (ADL would find Vc::rsqrt)
     return LHCb::Math::rsqrt<fastest>( x );
   }
@@ -258,3 +259,27 @@ namespace LHCb::Math {
 #endif
 
 } // namespace LHCb::Math
+
+// make some methods for ve SIMD types available as `std` versions
+namespace std {
+
+  inline decltype( auto ) log( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_log( x ); }
+  inline decltype( auto ) exp( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_exp( x ); }
+  inline decltype( auto ) atan2( const LHCb::SIMD::VE::FPF y, //
+                                 const LHCb::SIMD::VE::FPF x ) noexcept {
+    return LHCb::Math::fast_atan2( y, x );
+  }
+  inline decltype( auto ) sin( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return s;
+  }
+  inline decltype( auto ) cos( const LHCb::SIMD::VE::FPF x ) noexcept {
+    LHCb::SIMD::VE::FPF c{0}, s{0};
+    LHCb::Math::fast_sincos( x, s, c );
+    return c;
+  }
+  inline decltype( auto ) asin( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_asin( x ); }
+  inline decltype( auto ) acos( const LHCb::SIMD::VE::FPF x ) noexcept { return LHCb::Math::fast_acos( x ); }
+
+} // namespace std

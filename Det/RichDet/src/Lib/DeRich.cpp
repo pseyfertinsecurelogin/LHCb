@@ -250,9 +250,10 @@ void DeRich::loadPDPanels() {
 void DeRich::fillSIMDTypes() {
   // this loop also does RICH1 Up and down as enums have same numerical value
   for ( const Rich::Side side : {Rich::firstSide, Rich::secondSide} ) {
-    const auto& p              = m_nominalPlanes[side];
-    m_nominalPlanesSIMD[side]  = Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( p.A(), p.B(), p.C(), p.D() );
-    m_nominalNormalsSIMD[side] = m_nominalNormals[side];
+    const auto& p = m_nominalPlanes[side];
+    m_nominalPlanesSIMD[side] =
+        Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( (FP)p.A(), (FP)p.B(), (FP)p.C(), (FP)p.D() );
+    m_nominalNormalsSIMD[side]            = m_nominalNormals[side];
     m_nominalCentresOfCurvatureSIMD[side] = m_nominalCentresOfCurvature[side];
     m_sphMirrorRadiusSIMD                 = m_sphMirrorRadius;
   }
@@ -299,15 +300,17 @@ DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides& sides
                                                   const Rich::SIMD::Vector<FP>& vGlobal,
                                                   Rich::SIMD::Point<FP>& hitPosition, SIMDRayTResult::SmartIDs& smartID,
                                                   SIMDRayTResult::PDs& PDs, const LHCb::RichTraceMode mode ) const {
+  using namespace LHCb::SIMD;
+
   // If all sides are the same, shortcut to a single call
   // hopefully the most common situation ...
 
   // side 1 mask
-  const auto m1 = ( sides == Rich::SIMD::Sides( Rich::firstSide ) );
+  const auto m1 = ( sides == Rich::SIMD::Sides( (int)Rich::firstSide ) );
   if ( all_of( m1 ) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal, hitPosition, smartID, PDs, mode ); }
 
   // side 2 mask
-  const auto m2 = ( sides == Rich::SIMD::Sides( Rich::secondSide ) );
+  const auto m2 = ( sides == Rich::SIMD::Sides( (int)Rich::secondSide ) );
   if ( all_of( m2 ) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal, hitPosition, smartID, PDs, mode ); }
 
   // we have a mixture... So must run both and merge..
@@ -325,17 +328,20 @@ DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides& sides
 
   // merge results2 into the returned results
 
-  const auto fm2 = LHCb::SIMD::simd_cast<SIMDFP::MaskType>( m2 );
+  const auto fm2 = LHCb::SIMD::simd_cast<SIMDFP::mask_type>( m2 );
   SIMDFP     hx( hitPosition.x() ), hy( hitPosition.y() ), hz( hitPosition.z() );
   hx( fm2 )   = hitPosition2.x();
   hy( fm2 )   = hitPosition2.y();
   hz( fm2 )   = hitPosition2.z();
   hitPosition = {hx, hy, hz};
 
+  // copy m2 values from res2 to res1
+  res1(m2) = res2;
+
   // scalar loop for non-Vc types
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
     if ( m2[i] ) {
-      res1[i]    = res2[i];
+      //res1[i]    = res2[i];
       smartID[i] = smartID2[i];
       PDs[i]     = PDs2[i];
     }
