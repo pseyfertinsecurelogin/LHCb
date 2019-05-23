@@ -191,9 +191,12 @@ namespace LHCb::Event {
 
     }; // class MuonPID
 
-    SOAFIELD_TRIVIAL( MuonPIDField, muonPID, MuonPID );
+    // clang-format off
+    SOAFIELD( MuonPIDField, MuonPID, SOAFIELD_ACCESSORS( muonPID )
+              auto IsMuon() const { return muonPID().IsMuon(); }
+              );
+    // clang-format on
     SOASKIN_TRIVIAL( MuonID, MuonPIDField );
-
   } // namespace v2
 } // namespace LHCb::Event
 
