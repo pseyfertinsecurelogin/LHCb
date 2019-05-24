@@ -418,7 +418,7 @@ namespace Zipping {
      * @brief Compares two selection views (requires the *same* backing container)
      *
      * The comparison falls back to equality of the selected indices and falls back to the == operator of the underlying
-     * SOA::View.
+     * Zipping::ZipContainer<SOA::View ...
      *
      * @return true if the SelectionViews are equal
      */
