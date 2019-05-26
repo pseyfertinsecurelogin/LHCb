@@ -34,7 +34,7 @@ find_path(GOD_DATA_DIR templates/header.tpl
 get_filename_component(_dep_script_loc ${CMAKE_CURRENT_LIST_FILE} PATH)
 set(god_gen_deps_cmd ${PYTHON_EXECUTABLE} ${_dep_script_loc}/god_generate_deps.py)
 
-find_program(GOD_FORMATTING_COMMAND NAMES clang-format-7 lcg-clang-format-7.0.0)
+find_program(GOD_FORMATTING_COMMAND NAMES clang-format-8 lcg-clang-format-8.0.0)
 if(GOD_FORMATTING_COMMAND)
   set(GOD_FORMATTING_FLAG --formatter ${GOD_FORMATTING_COMMAND})
   set(GOD_CLANG_FORMAT_STYLE_URL "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/data/default.clang-format?inline=false"
