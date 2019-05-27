@@ -13,6 +13,7 @@
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
     <text>$HLTSERVICESROOT/tests/options/make_tck.py</text>
+    <text>--clear</text>
     <text>0.1</text>
   </set></argument>
   <argument name="use_temp_dir">

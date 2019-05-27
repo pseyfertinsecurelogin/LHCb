@@ -22,6 +22,10 @@ from Configurables import HltLinePersistenceSvc
 parser = argparse.ArgumentParser(usage='usage: %(prog)s prescale')
 
 parser.add_argument("prescale", type=float, help="what prescale")
+parser.add_argument(
+    "--clear",
+    action='store_true',
+    help='remove TCK db before creating the TCK')
 
 args = parser.parse_args()
 
@@ -35,11 +39,15 @@ CondDB().LatestGlobalTagByDataTypes = [app.DataType]
 
 # Location of TCK database
 TCKData = 'TCKData'
+filename = os.path.join(TCKData, 'config.cdb')
 if not os.path.exists(TCKData):
     os.makedirs(TCKData)
+elif args.clear and os.path.exists(filename):
+    # remove the target file if requested
+    os.remove(filename)
 
 # TCK access service
-accessSvc = ConfigCDBAccessSvc(File=TCKData + '/config.cdb', Mode='ReadWrite')
+accessSvc = ConfigCDBAccessSvc(File=filename, Mode='ReadWrite')
 
 # Sequence, actually only a prescaler
 seq = GaudiSequencer("TestSequence")
