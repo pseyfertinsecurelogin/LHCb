@@ -26,7 +26,7 @@
 
 // local
 #include "HltSelReportsWriter.h"
-#include "pun.h"
+#include "Kernel/pun.h"
 
 using namespace LHCb;
 
