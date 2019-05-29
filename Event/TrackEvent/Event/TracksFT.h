@@ -23,7 +23,7 @@
 namespace LHCb::Event {
   class TracksFT {
     constexpr static int max_tracks = align_size( 1024 );
-    constexpr static int max_hits   = 12;
+    constexpr static int max_hits   = 20;
 
   public:
     TracksFT() {
@@ -51,7 +51,7 @@ namespace LHCb::Event {
     // QoP estimate from FT
     SOA_ACCESSOR( stateQoP, (float*)&m_data[2 * max_tracks] )
 
-    // Hits (for now LHCBid) in FT
+    // Hits (for now LHCBid) in FT (or UT)
     // TODO: replace LHCbids by index in FT hit container
     SOA_ACCESSOR( nHits, &m_data[3 * max_tracks] )
     SOA_ACCESSOR_VAR( hit, &m_data[( hit + 4 ) * max_tracks], int hit )
