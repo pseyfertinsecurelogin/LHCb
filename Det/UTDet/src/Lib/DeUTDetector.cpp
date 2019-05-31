@@ -124,19 +124,19 @@ DeUTLayer* DeUTDetector::findLayer( const Gaudi::XYZPoint& point ) const {
 
 DeUTSector* DeUTDetector::findSector( const std::string& nickname ) const {
   // return pointer to the sector from the nickname
-  auto iter = std::find_if( m_sectors.begin(), m_sectors.end(), UTDetFun::equal_by_name<DeUTSector*>( nickname ) );
+  auto iter = std::find_if( m_sectors.begin(), m_sectors.end(), UTDetFun::equal_by_name( nickname ) );
   return iter != m_sectors.end() ? *iter : nullptr;
 }
 
 DeUTLayer* DeUTDetector::findLayer( const std::string& nickname ) const {
   // return pointer to the sector from the nickname
-  auto iter = std::find_if( m_layers.begin(), m_layers.end(), UTDetFun::equal_by_name<DeUTLayer*>( nickname ) );
+  auto iter = std::find_if( m_layers.begin(), m_layers.end(), UTDetFun::equal_by_name( nickname ) );
   return iter != m_layers.end() ? *iter : nullptr;
 }
 
 DeUTStation* DeUTDetector::findStation( const std::string& nickname ) const {
   // return pointer to the sector from the nickname
-  auto iter = std::find_if( m_stations.begin(), m_stations.end(), UTDetFun::equal_by_name<DeUTStation*>( nickname ) );
+  auto iter = std::find_if( m_stations.begin(), m_stations.end(), UTDetFun::equal_by_name( nickname ) );
   return iter != m_stations.end() ? *iter : nullptr;
 }
 
@@ -276,7 +276,7 @@ DeUTSector* DeUTDetector::getSector( LHCb::UTChannelID chan ) const {
 }
 
 DeUTSector* DeUTDetector::getSector( unsigned int station, unsigned int layer, unsigned int region, unsigned int sector,
-                                     unsigned int uniqueSector ) const {
+                                     [[maybe_unused]] unsigned int uniqueSector ) const {
 
   // helper to get index according to station/layer/region
   constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset{
@@ -292,8 +292,6 @@ DeUTSector* DeUTDetector::getSector( unsigned int station, unsigned int layer, u
     auto goodsector = m_sMap.find( uniqueSector )->second;
     return goodsector == res;
   }() && "getSector was not able to find the same UT Sector as findSector" );
-  // avoid warning in non debug mode
-  (void)uniqueSector;
 
   return res;
 }

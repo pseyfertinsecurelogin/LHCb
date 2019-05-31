@@ -47,21 +47,19 @@ std::ostream& DeUTSensor::printOut( std::ostream& os ) const {
   const ILVolume* lv      = this->geometry()->lvolume();
   const SolidBox* mainBox = dynamic_cast<const SolidBox*>( lv->solid() );
 
-  os << " Sensor :  " << name() << "\n ID " << id() << "\n pitch " << m_pitch << "\n strip " << m_nStrip
-     << "\n active width" << m_uMaxLocal - m_uMinLocal << "\n total width " << mainBox->xsize() << "\n active height"
-     << m_vMaxLocal - m_vMinLocal << "\n total height " << mainBox->ysize() << "\n dead width " << m_deadWidth
-     << "\n center " << globalCentre() << std::endl;
-  return os;
+  return os << " Sensor :  " << name() << "\n ID " << id() << "\n pitch " << m_pitch << "\n strip " << m_nStrip
+            << "\n active width" << m_uMaxLocal - m_uMinLocal << "\n total width " << mainBox->xsize()
+            << "\n active height" << m_vMaxLocal - m_vMinLocal << "\n total height " << mainBox->ysize()
+            << "\n dead width " << m_deadWidth << "\n center " << globalCentre() << '\n';
 }
 
 MsgStream& DeUTSensor::printOut( MsgStream& os ) const {
 
   // stream to Msg service
-  os << " Sensor : \n " << name() << "\n ID " << id() << " pitch \n " << m_pitch << "n strip \n " << m_nStrip
-     << " u min \n " << m_uMinLocal << " u max \n " << m_uMaxLocal << " v min \n " << m_vMinLocal << " v max  \n "
-     << m_vMaxLocal << "dead width \n " << m_deadWidth << "\n center " << globalCentre() << std::endl;
-
-  return os;
+  return os << " Sensor : \n " << name() << "\n ID " << id() << " pitch \n " << m_pitch << "n strip \n " << m_nStrip
+            << " u min \n " << m_uMinLocal << " u max \n " << m_uMaxLocal << " v min \n " << m_vMinLocal
+            << " v max  \n " << m_vMaxLocal << "dead width \n " << m_deadWidth << "\n center " << globalCentre()
+            << '\n';
 }
 
 const CLID& DeUTSensor::clID() const { return DeUTSensor::classID(); }

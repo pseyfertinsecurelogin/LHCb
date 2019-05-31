@@ -16,20 +16,13 @@
 
 namespace UTDetFun {
 
-  struct SortByY {
-    inline bool operator()( DeUTBaseElement* obj1, DeUTBaseElement* obj2 ) const {
-      return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->globalCentre().y() < obj2->globalCentre().y();
-    }
+  inline const auto SortByY = []( const DeUTBaseElement* obj1, const DeUTBaseElement* obj2 ) {
+    return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->globalCentre().y() < obj2->globalCentre().y();
   };
 
   /// equal by (nick)name
-  template <class TYPE>
-  class equal_by_name {
-    std::string name;
-
-  public:
-    explicit equal_by_name( std::string testname ) : name( std::move( testname ) ) {}
-    inline bool operator()( const TYPE& obj ) const { return obj->nickname() == name; }
+  inline const auto equal_by_name = []( std::string testname ) {
+    return [n = std::move( testname )]( const auto& obj ) { return obj->nickname() == n; };
   };
 
 } // namespace UTDetFun

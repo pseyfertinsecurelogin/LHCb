@@ -26,43 +26,34 @@ class DeUTSector;
 class DeUTSensor;
 
 template <typename TYPE>
-class UTDetTraits {
-public:
-  typedef TYPE parent;
-  typedef TYPE child;
-};
+struct UTDetTraits;
 
 template <>
-class UTDetTraits<DeUTStation> {
-public:
+struct UTDetTraits<DeUTStation> {
   typedef DeUTDetector parent;
   typedef DeUTLayer    child;
 };
 
 template <>
-class UTDetTraits<DeUTLayer> {
-public:
+struct UTDetTraits<DeUTLayer> {
   typedef DeUTStation parent;
   typedef DeUTModule  child;
 };
 
 template <>
-class UTDetTraits<DeUTModule> {
-public:
+struct UTDetTraits<DeUTModule> {
   typedef DeUTLayer  parent;
   typedef DeUTSector child;
 };
 
 template <>
-class UTDetTraits<DeUTSector> {
-public:
+struct UTDetTraits<DeUTSector> {
   typedef DeUTModule parent;
   typedef DeUTSensor child;
 };
 
 template <>
-class UTDetTraits<DeUTSensor> {
-public:
+struct UTDetTraits<DeUTSensor> {
   typedef DeUTSector parent;
   typedef DeUTSensor child;
 };
