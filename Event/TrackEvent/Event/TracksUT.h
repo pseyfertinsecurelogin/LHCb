@@ -26,7 +26,7 @@
 namespace LHCb::Event {
   class TracksUT {
     constexpr static int max_tracks = align_size(1024);
-    constexpr static int max_hits   = 8;
+    constexpr static int max_hits   = 30;
   public:
     TracksUT() {
       const size_t size = max_tracks * (max_hits + 8);

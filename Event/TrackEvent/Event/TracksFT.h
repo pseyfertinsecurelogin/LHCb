@@ -23,7 +23,7 @@
 namespace LHCb::Event {
   class TracksFT {
     constexpr static int max_tracks = align_size( 1024 );
-    constexpr static int max_hits   = 20;
+    constexpr static int max_hits   = 40;
 
   public:
     TracksFT() {
