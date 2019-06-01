@@ -14,6 +14,7 @@
 #include "Kernel/STLExtensions.h"
 #include "UTDet/DeUTDetector.h"
 #include "UTDet/DeUTSector.h"
+#include "UTInfo.h"
 #include <array>
 #include <boost/container/small_vector.hpp>
 #include <optional>
@@ -39,9 +40,9 @@ namespace LHCb {
       float        invHalfSectorXSize;
       float        dxDy;
     };
-    using SectorsInRegionZ  = std::array<float, 98>;
-    using SectorsInLayerZ   = std::array<SectorsInRegionZ, 3>;
-    using SectorsInStationZ = std::array<SectorsInLayerZ, 2>;
+    using SectorsInRegionZ  = std::array<float, UTInfo::Sectors>;
+    using SectorsInLayerZ   = std::array<SectorsInRegionZ, UTInfo::Regions>;
+    using SectorsInStationZ = std::array<SectorsInLayerZ, UTInfo::Layers>;
 
     constexpr static const auto mapQuarterSectorToSectorCentralRegion =
         std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 25, 25, 26, 28, 31, 33,
@@ -59,8 +60,8 @@ namespace LHCb {
     void findSectors( unsigned int layer, float x, float y, float xTol, float yTol, const LayerInfo& info,
                       boost::container::small_vector_base<std::pair<int, int>>& sectors );
 
-    void computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, 4>& layers,
-                          std::array<SectorsInStationZ, 2>& sectorsZ );
+    void computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, UTInfo::TotalLayers>& layers,
+                          std::array<SectorsInStationZ, UTInfo::Stations>& sectorsZ );
 
   } // namespace UTDAQ
 
