@@ -45,18 +45,16 @@ public:
   bool   setDet( const std::string& det );
   void   getOffsetMap( const std::string& det );
   int    getMask( const std::string& det );
-  double getOffset( LHCb::CaloCellID id, int scale, bool spd = false );
+  double getOffset( LHCb::CaloCellID id, int scale );
   void   setMaskMap( const std::map<std::string, int>& maskMap );
   int    getScale() override;
-  bool   cleanDigits( const std::string& det, bool substr = true, bool mask = true, bool spd = false ) override;
   int    method( const std::string& det ) override {
     if ( det != m_caloName ) { setDet( det ); }
     return m_scalingMethod;
   }
   unsigned int nVertices();
-  unsigned int nSpd();
-  double       offset( LHCb::CaloCellID id, bool spd = false ) override;
-  double       offsetRMS( LHCb::CaloCellID id, bool spd = false ) override;
+  double       offset( LHCb::CaloCellID id ) override;
+  double       offsetRMS( LHCb::CaloCellID id ) override;
   /// Triggered by calo updates
   StatusCode caloUpdate();
 
@@ -69,30 +67,21 @@ private:
   using Offsets = std::map<LHCb::CaloCellID, double>;
   inline const Offsets& offsets() const noexcept { return *m_offsets; }
   inline const Offsets& offsetsRMS() const noexcept { return *m_offsetsRMS; }
-  inline const Offsets& offsetsSPD() const noexcept { return *m_offsetsSPD; }
-  inline const Offsets& offsetsSPDRMS() const noexcept { return *m_offsetsSPDRMS; }
   struct CondMaps {
-    Offsets offsets, offsetsRMS, offsetsSPD, offsetsSPDRMS;
+    Offsets offsets, offsetsRMS;
   };
   const CondMaps& createMaps( DeCalorimeter* calo, const bool regUpdate = true );
   inline void     setMaps( const CondMaps& maps ) const {
-    m_offsets       = &maps.offsets;
-    m_offsetsRMS    = &maps.offsetsRMS;
-    m_offsetsSPD    = &maps.offsetsSPD;
-    m_offsetsSPDRMS = &maps.offsetsSPDRMS;
+    m_offsets    = &maps.offsets;
+    m_offsetsRMS = &maps.offsetsRMS;
   }
-
-protected:
-  void cleanDigit( LHCb::CaloDigit& digit, bool substr = true, int scale = -1, bool mask = true, bool spd = false );
 
 private:
   std::map<std::string, int>                          m_maskMap;
   int                                                 m_mask{0};
   std::map<DeCalorimeter*, std::unique_ptr<CondMaps>> m_offsetMap;
-  mutable const Offsets*                              m_offsets       = nullptr;
-  mutable const Offsets*                              m_offsetsRMS    = nullptr;
-  mutable const Offsets*                              m_offsetsSPD    = nullptr;
-  mutable const Offsets*                              m_offsetsSPDRMS = nullptr;
+  mutable const Offsets*                              m_offsets    = nullptr;
+  mutable const Offsets*                              m_offsetsRMS = nullptr;
 
   LHCb::CaloDigits* m_digits = nullptr;
   DeCalorimeter*    m_calo   = nullptr;

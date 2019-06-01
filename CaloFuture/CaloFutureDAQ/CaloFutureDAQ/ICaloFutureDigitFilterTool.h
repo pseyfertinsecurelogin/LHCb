@@ -30,11 +30,10 @@ struct ICaloFutureDigitFilterTool : extend_interfaces<IAlgTool> {
   // Return the interface ID
   DeclareInterfaceID( ICaloFutureDigitFilterTool, 3, 0 );
 
-  virtual int    getScale()                                                                                    = 0;
-  virtual bool   cleanDigits( const std::string& det, bool substr = true, bool mask = true, bool spd = false ) = 0;
-  virtual int    method( const std::string& det )                                                              = 0;
-  virtual double offset( LHCb::CaloCellID id, bool spd = false )                                               = 0;
-  virtual double offsetRMS( LHCb::CaloCellID id, bool spd = false )                                            = 0;
+  virtual int    getScale()                       = 0;
+  virtual int    method( const std::string& det ) = 0;
+  virtual double offset( LHCb::CaloCellID id )    = 0;
+  virtual double offsetRMS( LHCb::CaloCellID id ) = 0;
 };
 
 #endif // ICALOFUTUREDIGITFILTERTOOL_H

@@ -21,15 +21,15 @@
 using LHCb::CaloFutureAlgUtils::futuredetails::contains_ci;
 namespace {
   std::string pathFromContext( const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>>& table,
-                               boost::string_ref val, boost::string_ref context ) {
+                               boost::string_ref                                                             val ) {
     auto i = std::find_if(
         std::begin( table ), std::end( table ),
         [&]( const std::pair<boost::string_ref, boost::string_ref>& item ) { return contains_ci( val, item.first ); } );
-    return i != std::end( table ) ? LHCb::CaloFutureAlgUtils::PathFromContext( context, i->second ) : std::string{};
+    return i != std::end( table ) ? LHCb::CaloFutureAlgUtils::futuredetails::to_string( i->second ) : std::string{};
   }
 } // namespace
 
-// Default location for CaloFutureObject as function of detector and possibly context
+// Default location for CaloFutureObject as function of detector
 
 // DetectorElement location from name
 std::string LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( const std::string& name ) {
@@ -40,23 +40,22 @@ std::string LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( const std::string& n
                                                       : det == "Spd" ? DeCalorimeterLocation::Spd : "";
 }
 
-// ADC location from name (CaloAdcs are context independent so far)
-std::string LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( const std::string& name,
-                                                                              const std::string& ) {
+// ADC location from name
+std::string LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( const std::string& name ) {
   std::string det = CaloFutureNameFromAlg( name );
   using namespace LHCb::RawBankReadoutStatusLocation;
   return det == "Ecal" ? LHCb::RawBankReadoutStatusLocation::Ecal
                        : det == "Hcal" ? LHCb::RawBankReadoutStatusLocation::Hcal : "";
 }
 
-// ADC location from name (CaloAdcs are context independent so far)
-std::string LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( const std::string& name, const std::string& ) {
+// ADC location from name
+std::string LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( const std::string& name ) {
   std::string det = CaloFutureNameFromAlg( name );
   using namespace LHCb::CaloAdcLocation;
   return det == "Ecal" ? Ecal : det == "Hcal" ? Hcal : "";
 }
 
-// Digit location from name (CaloDigits are context independent so far)
+// Digit location from name
 std::string LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( const std::string& name ) {
   std::string det = CaloFutureNameFromAlg( name );
   using namespace LHCb::CaloDigitLocation;
@@ -65,7 +64,7 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( const std::string
              : det == "Hcal" ? Hcal : det == "Prs" ? Prs : det == "Spd" ? Spd : Ecal; // default is Ecal in offline mode
 }
 
-// Digit location from name (CaloDigits are context independent so far)
+// Digit location from name
 std::string LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( const std::string& name ) {
   std::string det = CaloFutureNameFromAlg( name );
   using namespace LHCb::CaloDigitLocation;
@@ -74,20 +73,15 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( const s
 }
 
 // Cluster location from context
-std::string LHCb::CaloFutureAlgUtils::CaloFutureSplitClusterLocation( const std::string& context ) {
-  return PathFromContext( context, LHCb::CaloClusterLocation::EcalSplit );
-}
+std::string LHCb::CaloFutureAlgUtils::CaloFutureSplitClusterLocation() { return LHCb::CaloClusterLocation::EcalSplit; }
 
-std::string LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::string& name, const std::string& context,
-                                                                 const std::string& type ) {
+std::string LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::string& name, const std::string& type ) {
   //##  splitClusters
-  if ( contains_ci( name, "SPLITCLUSTER" ) ) return CaloFutureSplitClusterLocation( context );
+  if ( contains_ci( name, "SPLITCLUSTER" ) ) return CaloFutureSplitClusterLocation();
 
   // ## standard clusters
   std::string det = CaloFutureNameFromAlg( name );
 
-  // caloClusters are almost context-independent : either Offline type or HLT-type!
-  // MUST be synchronous with CaloFutureRecoConf
   using namespace LHCb::CaloClusterLocation;
   std::string clusters;
   if ( det == "Hcal" ) {
@@ -101,11 +95,11 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::stri
       clusters = Ecal;
     }
   }
-  return PathFromContext( contains_ci( context, "HLT" ) ? "Hlt" : "", clusters );
+  return clusters;
 }
 
-// Hypo location from type/context
-std::string LHCb::CaloFutureAlgUtils::CaloFutureHypoLocation( const std::string& type, const std::string& context ) {
+// Hypo location from type
+std::string LHCb::CaloFutureAlgUtils::CaloFutureHypoLocation( const std::string& type ) {
   using namespace LHCb::CaloHypoLocation;
   static const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>> table = {
       {"ELECTRON", Electrons},
@@ -113,11 +107,11 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureHypoLocation( const std::string&
       {"BREM", Photons},   // Brem=photon
       {"PHOTON", Photons}, // after split
       {"MERGED", MergedPi0s}};
-  return pathFromContext( table, type, context );
+  return pathFromContext( table, type );
 }
 
-// CaloFutureId location from type/context
-std::string LHCb::CaloFutureAlgUtils::CaloFutureIdLocation( const std::string& type, const std::string& context ) {
+// CaloFutureId location from type
+std::string LHCb::CaloFutureAlgUtils::CaloFutureIdLocation( const std::string& type ) {
   using namespace LHCb::CaloFutureIdLocation;
   static const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>> table = {
       {"BREMMATCH", BremMatch},
@@ -147,19 +141,14 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureIdLocation( const std::string& t
       {"PHOTONID", PhotonID},                // after SplitPhotonID
       {"MERGEDID", MergedID},                // after PhotonFromMerged
   };
-  return pathFromContext( table, type, context );
+  return pathFromContext( table, type );
 }
 
-// Track location from context - specific path
-std::vector<std::string> LHCb::CaloFutureAlgUtils::TrackLocations( const std::string& context ) {
+// Track location
+std::vector<std::string> LHCb::CaloFutureAlgUtils::TrackLocations() {
   std::vector<std::string> locs;
   using namespace LHCb::TrackLocation;
-
-  if ( hltContext( context ) )
-    locs.push_back( "Hlt2/Track/Forward" );
-  else
-    locs.push_back( Default ); // default is offline
-
+  locs.push_back( Default ); // default is offline
   return locs;
 }
 
