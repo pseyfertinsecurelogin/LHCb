@@ -27,7 +27,7 @@ __all__ = ('CaloFutureDigitConf', )
 from Gaudi.Configuration import *
 from LHCbKernel.Configuration import *
 
-from CaloKernel.ConfUtils import (addAlgs, printOnDemand, prntCmp, hltContext,
+from CaloKernel.ConfUtils import (addAlgs, printOnDemand, prntCmp,
                                   setTheProperty)
 import logging
 _log = logging.getLogger('CaloFutureDAQ')
@@ -46,9 +46,6 @@ class CaloFutureDigitConf(LHCbConfigurableUser):
     ## define the slots
     __slots__ = {
         ##
-        "Context":
-        "Offline"  # The context to run
-        ,
         "MeasureTime":
         False  # Measure the time for sequencers
         ,
@@ -75,8 +72,6 @@ class CaloFutureDigitConf(LHCbConfigurableUser):
     ## documentation lines
     _propertyDocDct = {
         ##
-        "Context":
-        """ The context to run """,
         "MeasureTime":
         """ Measure the time for sequencers """,
         "OutputLevel":
@@ -107,7 +102,6 @@ class CaloFutureDigitConf(LHCbConfigurableUser):
         from CaloFutureDAQ.CaloFutureDigits import caloDigits
 
         cmp = caloDigits(
-            self.getProp('Context'), self.getProp('EnableDigitsOnDemand'),
             self.getProp('CreateADCs'), self.getProp('Detectors'),
             self.getProp('ReadoutStatusConvert'))
 
@@ -129,7 +123,6 @@ class CaloFutureDigitConf(LHCbConfigurableUser):
         self.printConf()
 
         cmp = self.digits()
-        setTheProperty(cmp, 'Context', self.getProp('Context'))
         setTheProperty(cmp, 'MeasureTime', self.getProp('MeasureTime'))
         if self.isPropertySet("OutputLevel"):
             setTheProperty(cmp, 'OutputLevel', self.getProp('OutputLevel'))

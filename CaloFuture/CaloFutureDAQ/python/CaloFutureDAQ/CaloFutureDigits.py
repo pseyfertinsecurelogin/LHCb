@@ -24,25 +24,19 @@ __version__ = '1.2'
 # =============================================================================
 from Gaudi.Configuration import *
 
-from CaloKernel.ConfUtils import getAlgo
-
 import logging
 _log = logging.getLogger('CaloFutureDAQ')
 
 
 # =============================================================================
 ## the digits
-def caloDigits(context,
-               enableOnDemand,
-               createADCs=False,
-               detectors=['Ecal', 'Hcal', 'Prs', 'Spd'],
+def caloDigits(createADCs=False,
+               detectors=['Ecal', 'Hcal'],
                ReadoutStatusConvert=False):
     """
     Decoding of CaloFuture-Digits
     """
     _cntx = 'Offline'
-    if context != _cntx:
-        _log.warning('CaloFutureDigit: Context is redefined to be Offline')
 
     from Configurables import (CaloFutureRawToDigits,
                                RawBankReadoutStatusConverter, GaudiSequencer)
@@ -53,8 +47,7 @@ def caloDigits(context,
     if 'Ecal' in detectors:
         _log.debug('caloDigits : Ecal is added to the detector list')
         ecalSeq = GaudiSequencer('FutureEcalDigitsSeq', Context=_cntx)
-        ecal = getAlgo(CaloFutureRawToDigits, "FutureEcalZSup", _cntx,
-                       "Raw/Ecal/Digits", enableOnDemand)
+        ecal = CaloFutureRawToDigits("FutureEcalZSup")
         ecal.DetectorName = "Ecal"
         ecal.ZSupMethod = "2D"
         ecal.ZSupThreshold = 20
@@ -62,8 +55,7 @@ def caloDigits(context,
 
         conflist.append(ecal)
         if ReadoutStatusConvert:
-            ecalCnv = getAlgo(RawBankReadoutStatusConverter, "EcalProcStatus",
-                              _cntx)
+            ecalCnv = RawBankReadoutStatusConverter("EcalProcStatus")
             ecalCnv.System = 'Ecal'
             ecalCnv.BankTypes = ['EcalPacked']
             ecalSeq.Members = [ecal, ecalCnv]
@@ -74,16 +66,14 @@ def caloDigits(context,
     if 'Hcal' in detectors:
         _log.debug('caloDigits : Hcal is added to the detector list')
         hcalSeq = GaudiSequencer('FutureHcalDigitsSeq', Context=_cntx)
-        hcal = getAlgo(CaloFutureRawToDigits, "FutureHcalZSup", _cntx,
-                       "Raw/Hcal/Digits", enableOnDemand)
+        hcal = CaloFutureRawToDigits("FutureHcalZSup")
         hcal.DetectorName = "Hcal"
         hcal.ZSupMethod = "1D"
         hcal.ZSupThreshold = 4
 
         conflist.append(hcal)
         if ReadoutStatusConvert:
-            hcalCnv = getAlgo(RawBankReadoutStatusConverter, "HcalProcStatus",
-                              _cntx)
+            hcalCnv = RawBankReadoutStatusConverter("HcalProcStatus")
             hcalCnv.System = 'Hcal'
             hcalCnv.BankTypes = ['HcalPacked']
             hcalSeq.Members = [hcal, hcalCnv]
@@ -110,7 +100,7 @@ def caloDigits(context,
     ## combine them into sequence
     alg = GaudiSequencer(
         'CaloFutureDigits',
-        Context=context,
+        Context=_cntx,
         IgnoreFilterPassed=True,
         Members=alglist)
     return alg

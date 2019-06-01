@@ -36,12 +36,6 @@ CaloFutureDigitFilterTool::CaloFutureDigitFilterTool( const std::string& type, c
   declareProperty( "EcalOffsetRMS", m_ecalMaps.offsetsRMS );
   declareProperty( "HcalOffsetRMS", m_hcalMaps.offsetsRMS );
   declareProperty( "PrsOffsetRMS", m_prsMaps.offsetsRMS );
-  declareProperty( "EcalOffsetSPD", m_ecalMaps.offsetsSPD );
-  declareProperty( "HcalOffsetSPD", m_hcalMaps.offsetsSPD );
-  declareProperty( "PrsOffsetSPD", m_prsMaps.offsetsSPD );
-  declareProperty( "EcalOffsetSPDRMS", m_ecalMaps.offsetsSPDRMS );
-  declareProperty( "HcalOffsetSPDRMS", m_hcalMaps.offsetsSPDRMS );
-  declareProperty( "PrsOffsetSPDRMS", m_prsMaps.offsetsSPDRMS );
   declareProperty( "ScalingMethod", m_scalingMethod = 0 ); // 0 : SpdMult ; 1 = nPV  (+10 for clusters)
   declareProperty( "ScalingBin", m_scalingBin = 50 );
   declareProperty( "ScalingMin", m_scalingMin = 150. );
@@ -88,16 +82,12 @@ const CaloFutureDigitFilterTool::CondMaps& CaloFutureDigitFilterTool::createMaps
   // clear, just in case..
   maps->offsets.clear();
   maps->offsetsRMS.clear();
-  maps->offsetsSPD.clear();
-  maps->offsetsSPDRMS.clear();
   // fill the maps from the CaloFuture DetElem
   for ( const auto& c : calo->cellParams() ) {
     const auto id = c.cellID();
     if ( !calo->valid( id ) || id.isPin() ) continue;
-    maps->offsets[id]       = c.pileUpOffset();
-    maps->offsetsRMS[id]    = c.pileUpOffsetRMS();
-    maps->offsetsSPD[id]    = c.pileUpOffsetSPD();
-    maps->offsetsSPDRMS[id] = c.pileUpOffsetSPDRMS();
+    maps->offsets[id]    = c.pileUpOffset();
+    maps->offsetsRMS[id] = c.pileUpOffsetRMS();
   }
   // if first time, register callback for future updates
   if ( regUpdate ) { updMgrSvc()->registerCondition( this, calo, &CaloFutureDigitFilterTool::caloUpdate ); }
@@ -134,10 +124,10 @@ void CaloFutureDigitFilterTool::getOffsetMap( const std::string& det ) {
 }
 
 //-----------------------
-double CaloFutureDigitFilterTool::getOffset( LHCb::CaloCellID id, int scale, bool spd ) {
+double CaloFutureDigitFilterTool::getOffset( LHCb::CaloCellID id, int scale ) {
   if ( 0 == scale ) return 0;
   if ( scale <= m_scalingMin ) return 0;
-  const auto& table = ( spd ) ? offsetsSPD() : offsets();
+  const auto& table = offsets();
   const auto  it    = table.find( id );
   if ( it == table.end() ) return 0.;
   const auto& ref = it->second;
@@ -171,80 +161,24 @@ int CaloFutureDigitFilterTool::getScale() {
   m_reset   = false;
   m_scale   = 0;
   m_scaling = "None";
-  if ( m_scalingMethod == 0 || m_scalingMethod == 10 ) { // SpdMult
-    m_scaling = "SpdMult";
-    m_scale   = nSpd();
-  } else if ( m_scalingMethod == 1 || m_scalingMethod == 11 ) { // nPV
+  if ( m_scalingMethod == 1 || m_scalingMethod == 11 ) { // nPV
     m_scaling = "nPV";
     m_scale   = nVertices();
   }
   return m_scale;
 }
 
-double CaloFutureDigitFilterTool::offset( LHCb::CaloCellID id, bool spd ) {
+double CaloFutureDigitFilterTool::offset( LHCb::CaloCellID id ) {
   if ( id.caloName() != m_caloName ) {
     if ( !setDet( id.caloName() ) ) return 0.;
   }
   int scale = getScale();
-  return getOffset( id, scale, spd );
+  return getOffset( id, scale );
 }
 
-double CaloFutureDigitFilterTool::offsetRMS( LHCb::CaloCellID id, bool spd ) {
-  offset( id, spd );
+double CaloFutureDigitFilterTool::offsetRMS( LHCb::CaloCellID id ) {
+  offset( id );
   return m_offsetRMS;
-}
-
-//-----------------------
-bool CaloFutureDigitFilterTool::cleanDigits( const std::string& det, bool substr, bool mask, bool spd ) {
-  if ( !setDet( det ) ) return false;
-
-  std::string container = LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( det );
-  m_digits              = getIfExists<LHCb::CaloDigits>( evtSvc(), container );
-  if ( !m_digits ) return false;
-
-  //
-  int scale = getScale();
-  if ( m_setCounters > 0 ) counter( "offset scale (" + m_scaling + ")" ) += scale;
-  m_nMask   = 0;
-  m_mOffs   = 0.;
-  int nOffs = 0;
-  for ( LHCb::CaloDigit* digit : *m_digits ) {
-    if ( digit ) cleanDigit( *digit, substr, scale, mask, spd );
-    nOffs++;
-  }
-
-  if ( m_setCounters > 0 ) {
-    if ( m_nMask != 0 ) counter( "Masked " + m_caloName + " digits" ) += m_nMask;
-    double ave = ( nOffs != 0 ) ? m_mOffs / double( nOffs ) : 0;
-    if ( m_scalingMethod < 10 && substr && offsets().size() != 0 )
-      counter( m_caloName + " average offset in ADC (method = " + Gaudi::Utils::toString( m_scalingMethod ) + ")" ) -=
-          ave;
-  }
-  return true;
-}
-
-//-----------------------
-void CaloFutureDigitFilterTool::cleanDigit( LHCb::CaloDigit& digit, bool substr, int scale, bool mask, bool spd ) {
-  LHCb::CaloCellID id = digit.cellID();
-
-  // apply mask
-  if ( mask && m_mask != 0 && m_calo->hasQuality( id, (CaloCellQuality::Flag)m_mask ) ) {
-    digit.setE( 0. );
-    m_nMask++;
-  }
-
-  // apply offset to channel (method < 10)
-  if ( m_scalingMethod < 10 && substr && offsets().size() != 0 ) {
-    if ( m_caloName == "Spd" ) return;
-    if ( scale < 0 ) scale = getScale();
-    double offset = getOffset( id, scale, spd );
-    if ( 0. != offset ) {
-      double e = digit.e() - offset;
-      if ( e < 0. ) e = 0.;
-      digit.setE( e );
-      m_mOffs += offset / m_calo->cellGain( id ); // offset (in ADC)
-    }
-  }
 }
 
 //================= Scale accessors
@@ -260,12 +194,6 @@ unsigned int CaloFutureDigitFilterTool::nVertices() {
   LHCb::VertexBases* verts = getIfExists<LHCb::VertexBases>( m_vertLoc );
   if ( verts ) nVert = verts->size();
   return nVert;
-}
-
-unsigned int CaloFutureDigitFilterTool::nSpd() {
-  const auto  loc    = LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( "SPD" );
-  const auto* digits = getIfExists<LHCb::CaloDigits>( evtSvc(), loc );
-  return digits ? digits->size() : 0;
 }
 
 StatusCode CaloFutureDigitFilterTool::finalize() {
