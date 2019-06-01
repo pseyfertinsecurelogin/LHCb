@@ -80,10 +80,12 @@ void LHCb::UTDAQ::findSectors( unsigned int layer, float x, float y, float xTol,
   }
 }
 
-void LHCb::UTDAQ::computeGeometry( const DeUTDetector& utDet, std::array<LHCb::UTDAQ::LayerInfo, 4>& layers,
-                                   std::array<SectorsInStationZ, 2>& sectorsZ ) {
-  for ( int iStation = 0; iStation < 2; ++iStation ) {
-    for ( int iLayer = 0; iLayer < 2; ++iLayer ) {
+void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                                      utDet,
+                                   std::array<LHCb::UTDAQ::LayerInfo, UTInfo::TotalLayers>& layers,
+                                   std::array<SectorsInStationZ, UTInfo::Stations>&         sectorsZ ) {
+
+  for ( int iStation = 0; iStation < UTInfo::Stations; ++iStation ) {
+    for ( int iLayer = 0; iLayer < UTInfo::Layers; ++iLayer ) {
       // get layer
       unsigned int layerIndex = 2 * iStation + iLayer;
       DeUTLayer*   layer      = utDet.layers()[layerIndex];
