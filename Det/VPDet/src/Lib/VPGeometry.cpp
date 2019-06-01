@@ -45,7 +45,6 @@ VPGeometry::VPGeometry( const DeVP& vp ) {
   std::copy( sensors.front()->xPitch().begin(), sensors.front()->xPitch().end(), m_x_pitch.begin() );
   m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
-  float ltg_rot_components[9];
   for ( unsigned i = 0; i < 208; ++i ) {
     // TODO:
     // if (!sensor->isReadOut()) continue;
@@ -56,19 +55,10 @@ VPGeometry::VPGeometry( const DeVP& vp ) {
     Gaudi::Rotation3D     ltg_rot;
     Gaudi::TranslationXYZ ltg_trans;
     sensor->geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
-    ltg_rot.GetComponents( ltg_rot_components );
-    unsigned idx = 16 * sensor->sensorNumber();
-    m_ltg[idx++] = ltg_rot_components[0];
-    m_ltg[idx++] = ltg_rot_components[1];
-    m_ltg[idx++] = ltg_rot_components[2];
-    m_ltg[idx++] = ltg_rot_components[3];
-    m_ltg[idx++] = ltg_rot_components[4];
-    m_ltg[idx++] = ltg_rot_components[5];
-    m_ltg[idx++] = ltg_rot_components[6];
-    m_ltg[idx++] = ltg_rot_components[7];
-    m_ltg[idx++] = ltg_rot_components[8];
-    m_ltg[idx++] = ltg_trans.X();
-    m_ltg[idx++] = ltg_trans.Y();
-    m_ltg[idx++] = ltg_trans.Z();
+    auto& ltg = m_ltg[sensor->sensorNumber()];
+    ltg_rot.GetComponents( ltg.data() ); // writes to [ ltg[0], ltg[8] ]
+    ltg[9]  = ltg_trans.X();
+    ltg[10] = ltg_trans.Y();
+    ltg[11] = ltg_trans.Z();
   }
 }

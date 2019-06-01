@@ -30,10 +30,10 @@ struct VPGeometry {
   inline static const LHCb::DetDesc::ConditionKey CondKey = DeVPLocation::Default + "/VPGeometry";
 
   //@{
-  float                                 m_ltg[16 * VP::NSensors]; // 16*208 = 16*number of sensors
-  std::array<float, VP::NSensorColumns> m_local_x{};
-  std::array<float, VP::NSensorColumns> m_x_pitch{};
-  float                                 m_pixel_size = 0;
+  std::array<std::array<float, 12>, VP::NSensors> m_ltg{{}};
+  std::array<float, VP::NSensorColumns>           m_local_x{};
+  std::array<float, VP::NSensorColumns>           m_x_pitch{};
+  float                                           m_pixel_size = 0;
   //@}
 
   static LHCb::DetDesc::IConditionDerivationMgr::DerivationId
