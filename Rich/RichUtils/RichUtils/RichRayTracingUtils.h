@@ -45,29 +45,43 @@ namespace Rich {
      *  @param[in] radius         The radius of curvature of the spherical mirror
      *  @param[out] intersection  The intersection point of the direction with the plane
      *
-     *  @return Boolean indicating the status of the ray tracing
+     *  @return Boolean/mask indicating the status of the ray tracing
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template <typename POINT, typename VECTOR, typename FTYPE,
-              typename = typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value &&
-                                                 std::is_arithmetic<typename VECTOR::Scalar>::value &&
-                                                 std::is_arithmetic<FTYPE>::value>::type>
-    inline bool intersectSpherical( const POINT& position, const VECTOR& direction, const POINT& CoC,
-                                    const FTYPE radius, POINT& intersection ) {
-      constexpr FTYPE zero( 0 ), two( 2.0 ), four( 4.0 ), half( 0.5 );
+    template <typename POSITION, typename DIRECTION, typename COC, typename FTYPE>
+    inline decltype( auto )                               //
+        __attribute__( ( always_inline ) )                //
+        intersectSpherical( const POSITION&  position,    //
+                            const DIRECTION& direction,   //
+                            const COC&       CoC,         //
+                            const FTYPE      radius,      //
+                            POSITION&        intersection //
+                            ) noexcept {
+      const FTYPE zero( 0.0f ), two( 2.0f );
       // for line sphere intersection look at http://www.realtimerendering.com/int/
-      const FTYPE  a     = direction.Mag2();
-      const VECTOR delta = position - CoC;
-      const FTYPE  b     = two * direction.Dot( delta );
-      const FTYPE  c     = delta.Mag2() - radius * radius;
-      const FTYPE  discr = b * b - four * a * c;
-      const bool   OK    = discr > zero;
-      if ( OK ) {
-        const FTYPE dist = half * ( std::sqrt( discr ) - b ) / a;
-        // set intersection point
-        intersection = position + ( dist * direction );
+      const FTYPE a     = direction.Mag2();
+      const auto  delta = position - CoC;
+      const FTYPE b     = two * direction.Dot( delta );
+      const FTYPE c     = delta.Mag2() - radius * radius;
+      FTYPE       discr = ( b * b ) - ( FTYPE( 4.0f ) * a * c );
+      const auto  OK    = discr > zero;
+      // Zero out the negative values in discr, to prevent sqrt(-ve)
+      if constexpr ( std::is_arithmetic<typename POSITION::Scalar>::value &&  //
+                     std::is_arithmetic<typename DIRECTION::Scalar>::value && //
+                     std::is_arithmetic<typename COC::Scalar>::value &&       //
+                     std::is_arithmetic<FTYPE>::value ) {
+        // scalar
+        if ( UNLIKELY( !OK ) ) { discr = zero; }
+      } else {
+        // SIMD
+        if ( UNLIKELY( !all_of( OK ) ) ) { discr.setZeroInverted( OK ); }
       }
+      // distance
+      const auto dist = FTYPE( 0.5f ) * ( std::sqrt( discr ) - b ) / a;
+      // set intersection point
+      intersection = position + ( dist * direction );
+      // return the mask
       return OK;
     }
 
@@ -86,31 +100,47 @@ namespace Rich {
      *  @param[in] CoC        The centre of curvature of the spherical mirror
      *  @param[in] radius     The radius of curvature of the spherical mirror
      *
-     *  @return Boolean indicating if the ray tracing was succesful
+     *  @return Boolean/mask indicating if the ray tracing was succesful
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template <typename POINT, typename VECTOR, typename FTYPE,
-              typename = typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value &&
-                                                 std::is_arithmetic<typename VECTOR::Scalar>::value &&
-                                                 std::is_arithmetic<FTYPE>::value>::type>
-    inline bool reflectSpherical( POINT& position, VECTOR& direction, const POINT& CoC, const FTYPE radius ) {
-      constexpr FTYPE zero( 0 ), two( 2.0 ), four( 4.0 ), half( 0.5 );
-      const FTYPE     a     = direction.Mag2();
-      const VECTOR    delta = position - CoC;
-      const FTYPE     b     = two * direction.Dot( delta );
-      const FTYPE     c     = delta.Mag2() - radius * radius;
-      const FTYPE     discr = b * b - four * a * c;
-      const bool      OK    = discr > zero;
-      if ( OK ) {
-        const FTYPE dist = half * ( std::sqrt( discr ) - b ) / a;
-        // change position to the intersection point
-        position += dist * direction;
-        // reflect the vector
-        // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
-        const VECTOR normal = position - CoC;
-        direction -= ( two * normal.Dot( direction ) / normal.Mag2() ) * normal;
+    template <typename POSITION, typename DIRECTION, typename COC, typename FTYPE>
+    inline decltype( auto )                      //
+        __attribute__( ( always_inline ) )       //
+        reflectSpherical( POSITION&   position,  //
+                          DIRECTION&  direction, //
+                          const COC&  CoC,       //
+                          const FTYPE radius     //
+                          ) noexcept {
+      // constants
+      const FTYPE zero( 0.0f ), two( 2.0f );
+      // for line sphere intersection look at http://www.realtimerendering.com/int/
+      const FTYPE a     = direction.Mag2();
+      const auto  delta = position - CoC;
+      const FTYPE b     = two * direction.Dot( delta );
+      const FTYPE c     = delta.Mag2() - ( radius * radius );
+      FTYPE       discr = ( b * b ) - ( FTYPE( 4.0f ) * a * c );
+      const auto  OK    = discr > zero;
+      if constexpr ( std::is_arithmetic<typename POSITION::Scalar>::value &&  //
+                     std::is_arithmetic<typename DIRECTION::Scalar>::value && //
+                     std::is_arithmetic<typename COC::Scalar>::value &&       //
+                     std::is_arithmetic<FTYPE>::value ) {
+        // scalar
+        if ( UNLIKELY( !OK ) ) { discr = zero; }
+      } else {
+        // SIMD
+        // Zero out the negative values in discr, to prevent sqrt(-ve)
+        if ( UNLIKELY( !all_of( OK ) ) ) { discr.setZeroInverted( OK ); }
       }
+      // compute the distance
+      const auto dist = FTYPE( 0.5f ) * ( std::sqrt( discr ) - b ) / a;
+      // change position to the intersection point
+      position += dist * direction;
+      // reflect the vector
+      // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
+      const auto normal = position - CoC;
+      direction -= ( two * normal.Dot( direction ) / normal.Mag2() ) * normal;
+      // return the mask indicating which results should be used
       return OK;
     }
 
@@ -120,22 +150,21 @@ namespace Rich {
      *  @param[in]  direction     The direction to ray trace from the start point
      *  @param[in]  plane         The plane to intersect
      *  @param[out] intersection  The intersection point of the direction with the plane
-     *
-     *  @return Boolean indicating the status of the ray tracing
-     *  @retval true  Ray tracing was successful
-     *  @retval false Ray tracing was unsuccessful
      */
-    template <typename POINT, typename VECTOR, typename PLANE,
-              typename = typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value &&
-                                                 std::is_arithmetic<typename VECTOR::Scalar>::value &&
-                                                 std::is_arithmetic<typename PLANE::Scalar>::value>::type>
-    inline bool intersectPlane( const POINT& position, const VECTOR& direction, const PLANE& plane,
-                                POINT& intersection ) {
-      const bool OK       = true;
-      const auto scalar   = direction.Dot( plane.Normal() );
-      const auto distance = -( plane.Distance( position ) ) / scalar;
-      intersection        = position + ( distance * direction );
-      return OK;
+    template <typename POINT, typename VECTOR, typename PLANE, //
+              typename FTYPE = typename POINT::Scalar>
+    inline void                                    //
+        __attribute__( ( always_inline ) )         //
+        intersectPlane( const POINT&  position,    //
+                        const VECTOR& direction,   //
+                        const PLANE&  plane,       //
+                        POINT&        intersection //
+                        ) noexcept {
+      // compute -1*distance to the plane
+      const FTYPE scalar   = direction.Dot( plane.Normal() );
+      const FTYPE distance = plane.Distance( position ) / scalar;
+      // compute plane intersection
+      intersection = position - ( distance * direction );
     }
 
     /** Ray trace from given position in given direction off flat mirrors
@@ -145,32 +174,25 @@ namespace Rich {
      *  @param[in,out] direction On input the starting direction.
      *                           On output the reflected direction.
      *  @param[in]     plane     The plane to reflect off
-     *
-     *  @return Boolean indicating if the ray tracing was succesful
-     *  @retval true  Ray tracing was successful
-     *  @retval false Ray tracing was unsuccessful
      */
-    template <typename POINT, typename VECTOR, typename PLANE,
-              typename = typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value &&
-                                                 std::is_arithmetic<typename VECTOR::Scalar>::value &&
-                                                 std::is_arithmetic<typename PLANE::Scalar>::value>::type>
-    inline bool reflectPlane( POINT& position, VECTOR& direction, const PLANE& plane ) {
-      constexpr typename POINT::Scalar two( 2.0 );
-      const bool                       OK = true;
-      // Plane normal
-      const auto& normal = plane.Normal();
-      // compute distance to the plane
-      const auto scalar   = direction.Dot( normal );
-      const auto distance = -( plane.Distance( position ) ) / scalar;
+    template <typename POINT, typename VECTOR, typename PLANE, //
+              typename FTYPE = typename POINT::Scalar>
+    inline void                               //
+        __attribute__( ( always_inline ) )    //
+        reflectPlane( POINT&       position,  //
+                      VECTOR&      direction, //
+                      const PLANE& plane      //
+                      ) noexcept {
+      // plane normal
+      const VECTOR normal( plane.Normal() );
+      // compute -1*distance to the plane
+      const FTYPE scalar   = direction.Dot( normal );
+      const FTYPE distance = plane.Distance( position ) / scalar;
       // change position to reflection point and update direction
-      position += distance * direction;
-      direction -= two * scalar * normal;
-      return OK;
+      position -= distance * direction;
+      direction -= FTYPE( 2.0f ) * scalar * normal;
     }
 
   } // namespace RayTracingUtils
 
 } // namespace Rich
-
-// Now also include the vector versions...
-#include "RichUtils/RichVectorRayTracingUtils.h"
