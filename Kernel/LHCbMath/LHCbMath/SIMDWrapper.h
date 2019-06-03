@@ -12,10 +12,11 @@
 #pragma once
 
 #include <immintrin.h>
+#include <limits>
 
 #include <cstdint>
 #include <cmath>
-#include <climits>
+//#include <climits>
 #include <algorithm>
 
 namespace SIMDWrapper {
@@ -44,6 +45,8 @@ namespace scalar {
       int data;
   };
 
+  class int_v;
+
   class float_v {
     public:
       float_v();
@@ -55,7 +58,9 @@ namespace scalar {
         return *this;
       }
 
-      inline float cast() const { return data; } 
+      inline operator int_v() const;
+
+      inline float cast() const { return data; }
 
       inline void store( float* ptr ) const {
         *ptr = data;
@@ -64,6 +69,13 @@ namespace scalar {
       inline void compressstore( int mask, float* ptr ) const {
         if (mask) *ptr = data;
       }
+
+      inline float hmax() const { return data; }
+      inline float hmin() const { return data; }
+      inline float hadd() const { return data; }
+      inline float hmax(float mask) const { return (mask) ? data : std::numeric_limits<float>::min(); }
+      inline float hmin(float mask) const { return (mask) ? data : std::numeric_limits<float>::max(); }
+      inline float hadd(float mask) const { return (mask) ? data : 0; }
 
       friend inline float_v operator+(const float_v& lhs, const float_v& rhs) { return (lhs.data + rhs.data); }
       friend inline float_v operator-(const float_v& lhs, const float_v& rhs) { return (lhs.data - rhs.data); }
@@ -92,8 +104,9 @@ namespace scalar {
 
   class int_v {
     public:
-      int_v();
-      int_v( int  f ) : data( f ) { }
+      template<int d = 0>
+      constexpr int_v() : data ( d ) { }
+      constexpr int_v( int  f ) : data( f ) { }
       int_v( const int* f ) : data( *f ) { }
 
       inline int_v& operator=( const int& f ) {
@@ -115,8 +128,8 @@ namespace scalar {
       inline int hmax() const { return data; }
       inline int hmin() const { return data; }
       inline int hadd() const { return data; }
-      inline int hmax(int mask) const { return (mask) ? data : INT_MIN; }
-      inline int hmin(int mask) const { return (mask) ? data : INT_MAX; }
+      inline int hmax(int mask) const { return (mask) ? data : std::numeric_limits<int>::min(); }
+      inline int hmin(int mask) const { return (mask) ? data : std::numeric_limits<int>::max(); }
       inline int hadd(int mask) const { return (mask) ? data : 0; }
 
       friend inline int_v operator+(const int_v& lhs, const int_v& rhs) { return lhs.data + rhs.data; }
@@ -140,6 +153,9 @@ namespace scalar {
       int data;
   };
 
+
+  inline float_v::operator int_v() const { return int_v(int(data)); }
+
   inline int_v castToInt(const float_v& x) {
     union {
         float f;
@@ -161,16 +177,19 @@ namespace scalar {
   inline int_v gather(const int*base, const int_v& idx) {
     return base[idx.cast()];
   }
-  
+
   inline float_v gather(const float*base, const int_v& idx) {
     return base[idx.cast()];
   }
+
 
   struct types {
     static const size_t size = 1;
     using int_v = scalar::int_v;
     using float_v = scalar::float_v;
     using mask_v = scalar::mask_v;
+    constexpr static int_v indices() { return 0; }
+    constexpr static int_v indices(int start) { return start; }
     template<typename T>
     static int popcount(  T mask ) {
       return (int) mask;
@@ -246,6 +265,8 @@ namespace avx2 {
     3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+  class int_v;
+
   class float_v {
     public:
       float_v() {}
@@ -259,7 +280,14 @@ namespace avx2 {
         return *this;
       }
 
+      inline float_v& operator=( const float_v& f ) {
+        data = f.data;
+        return *this;
+      }
+
       inline operator __m256() const { return data; }
+
+      inline operator int_v() const;
 
       inline void store(float* ptr) const {
         _mm256_storeu_ps(ptr, data);
@@ -302,16 +330,39 @@ namespace avx2 {
       friend inline bool none(const float_v& mask) { return _mm256_movemask_ps(mask)==0x00; }
       friend inline bool any(const float_v& mask) { return _mm256_movemask_ps(mask)!=0x00; }
 
+      inline float hmax() const { 
+        __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
+        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        return _mm_cvtss_f32( r );
+      }
+      inline float hmin() const {
+        __m128 r = _mm_min_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
+        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        return _mm_cvtss_f32( r );
+      }
+      inline float hadd() const {
+        __m128 r = _mm_add_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
+        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        return _mm_cvtss_f32( r );
+      }
+      inline float hmax(const __m256 mask) const { return select(mask, *this, std::numeric_limits<float>::min()).hmax(); }
+      inline float hmin(const __m256 mask) const { return select(mask, *this, std::numeric_limits<float>::max()).hmin(); }
+      inline float hadd(const __m256 mask) const { return select(mask, *this, 0.f).hadd(); }
+
       private:
       __m256 data;
   };
 
   class int_v {
     public:
-      int_v() {}
+      template<int d = 0>
+      constexpr int_v() : data(_mm256_set1_epi32(d))  {}
       int_v( int  f ) : data( _mm256_set1_epi32(f) ) { }
       int_v( const int* f ) : data( _mm256_loadu_si256((__m256i*)f) ) { }
-      int_v( __m256i f ) : data( f ) { }
+      constexpr int_v( __m256i f ) : data( f ) { }
 
       inline int_v& operator=( const __m256i& f ) {
           data = f;
@@ -330,7 +381,7 @@ namespace avx2 {
         _mm256_storeu_si256( (__m256i*)ptr, _mm256_permutevar8x32_epi32( data, perm ) );
       }
 
-      inline int hmax() const { 
+      inline int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
@@ -348,8 +399,8 @@ namespace avx2 {
         r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      inline int hmax(const __m256 mask) const { return select(mask, *this, INT_MIN).hmax(); }
-      inline int hmin(const __m256 mask) const { return select(mask, *this, INT_MAX).hmin(); }
+      inline int hmax(const __m256 mask) const { return select(mask, *this, std::numeric_limits<int>::min()).hmax(); }
+      inline int hmin(const __m256 mask) const { return select(mask, *this, std::numeric_limits<int>::max()).hmin(); }
       inline int hadd(const __m256 mask) const { return select(mask, *this, 0).hadd(); }
 
       friend inline int_v operator+(const int_v& lhs, const int_v& rhs) { return _mm256_add_epi32(lhs,rhs); }
@@ -377,6 +428,9 @@ namespace avx2 {
       __m256i data;
   };
 
+  inline float_v::operator int_v() const { return int_v(_mm256_cvttps_epi32(data)); }
+
+
   inline int_v castToInt(const float_v& x) {
     return int_v(_mm256_castps_si256(x));
   }
@@ -388,23 +442,26 @@ namespace avx2 {
   inline int_v gather(const int*base, const int_v& idx) {
     return _mm256_i32gather_epi32(base, idx, sizeof(int));
   }
-  
+
   inline float_v gather(const float*base, const int_v& idx) {
     return _mm256_i32gather_ps(base, idx, sizeof(float));
   }
+
 
   struct types {
     static const size_t size = 8;
     using int_v = avx2::int_v;
     using float_v = avx2::float_v;
     using mask_v = avx2::float_v;
+    static int_v indices() { return _mm256_setr_epi32(0,1,2,3,4,5,6,7); }
+    static int_v indices(int start) { return indices() + start; }
     static int popcount( __m256 mask )  {
       return _mm_popcnt_u32( _mm256_movemask_ps( mask ) );
     }
     static float_v loop_mask( int i, int n ) {
       return _mm256_cmp_ps( _mm256_setr_ps(0,1,2,3,4,5,6,7), _mm256_set1_ps( n - i ), _CMP_LT_OS );
     }
-  };    
+  };
 }
 #endif
 
@@ -439,6 +496,8 @@ namespace avx512 {
       __mmask16 data;
   };
 
+  class int_v;
+
   class float_v {
     public:
       float_v();
@@ -453,6 +512,7 @@ namespace avx512 {
       }
 
       inline operator __m512() const { return data; }
+      inline operator int_v() const;
 
       inline void store(float* ptr) const {
         _mm512_storeu_ps(ptr, data);
@@ -461,6 +521,13 @@ namespace avx512 {
       inline void compressstore(const mask_v& mask, float* ptr) const {
         _mm512_mask_compressstoreu_ps(ptr, mask, data);
       }
+
+      inline float hmax() const { return _mm512_reduce_max_ps(data); }
+      inline float hmin() const { return _mm512_reduce_min_ps(data); }
+      inline float hadd() const { return _mm512_reduce_add_ps(data); }
+      inline float hmax(const mask_v& mask) const { return _mm512_mask_reduce_max_ps(mask, data); }
+      inline float hmin(const mask_v& mask) const { return _mm512_mask_reduce_min_ps(mask, data); }
+      inline float hadd(const mask_v& mask) const { return _mm512_mask_reduce_add_ps(mask, data); }
 
       friend inline float_v operator+(const float_v& lhs, const float_v& rhs) { return _mm512_add_ps(lhs,rhs); }
       friend inline float_v operator-(const float_v& lhs, const float_v& rhs) { return _mm512_sub_ps(lhs,rhs); }
@@ -482,7 +549,7 @@ namespace avx512 {
       friend inline float_v copysign(const float_v& x, const float_v& y) { return x ^ ( y & _mm512_castsi512_ps( _mm512_set1_epi32( 0x80000000 ) ) ); }
 
       friend inline auto signselect(const float_v& s, const float_v& a, const float_v&b) { return _mm512_mask_mov_ps( a, s < float_v(0.f), b ); }
-      friend inline auto select(const mask_v& mask, const float_v& a, const float_v&b) { return _mm512_mask_mov_ps( a, mask, b ); }
+      friend inline auto select(const mask_v& mask, const float_v& a, const float_v&b) { return _mm512_mask_mov_ps( b, mask, a ); }
 
       friend inline float_v sqrt(const float_v& v) { return _mm512_sqrt_ps(v); }
 
@@ -495,10 +562,11 @@ namespace avx512 {
 
   class int_v {
     public:
-      int_v();
+      template<int d = 0>
+      constexpr int_v() : data(_mm512_set1_epi32(d))  {}
       int_v( int  f ) : data( _mm512_set1_epi32(f) ) { }
       int_v( const int* f ) : data( _mm512_load_si512((__m512i*)f) ) { }
-      int_v( __m512i f ) : data( f ) { }
+      constexpr int_v( __m512i f ) : data( f ) { }
 
       inline int_v& operator=( const __m512i& f ) {
         data = f;
@@ -531,7 +599,7 @@ namespace avx512 {
       friend inline int_v operator|(const int_v& lhs, const int_v& rhs) { return _mm512_or_si512(lhs,rhs); }
 
       friend inline int_v signselect(const float_v& s, const int_v& a, const int_v&b) { return _mm512_mask_mov_epi32( a, s < float_v(0.f), b ); }
-      friend inline int_v select(const mask_v& mask, const int_v& a, const int_v&b) { return _mm512_mask_mov_epi32( a, mask, b ); }
+      friend inline int_v select(const mask_v& mask, const int_v& a, const int_v&b) { return _mm512_mask_mov_epi32( b, mask, a ); }
 
       friend inline mask_v operator<(const int_v& lhs, const int_v& rhs) { return _mm512_cmplt_epi32_mask(rhs, lhs); }
       friend inline mask_v operator>(const int_v& lhs, const int_v& rhs) { return _mm512_cmpgt_epi32_mask(lhs, rhs); }
@@ -540,6 +608,8 @@ namespace avx512 {
       private:
       __m512i data;
   };
+
+  inline float_v::operator int_v() const { return int_v(_mm512_cvttps_epi32(data)); }
 
   inline int_v castToInt(const float_v& x) {
     return int_v(_mm512_castps_si512(x));
@@ -552,21 +622,24 @@ namespace avx512 {
   inline int_v gather(const int*base, const int_v& idx) {
     return _mm512_i32gather_epi32(idx, base, sizeof(int));
   }
-  
+
   inline float_v gather(const float*base, const int_v& idx) {
     return _mm512_i32gather_ps(idx, base, sizeof(float));
   }
+
 
   struct types {
     static const size_t size = 16;
     using int_v = avx512::int_v;
     using float_v = avx512::float_v;
     using mask_v = avx512::mask_v;
+    static int_v indices() { return _mm512_setr_epi32(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15); }
+    static int_v indices(int start) { return indices() + start; }
     static int popcount(mask_v mask)  {
       return _mm_popcnt_u32(mask);
     }
     static mask_v loop_mask(int i, int n) { return ( ( i + 16 ) > n ) ? ~(0xFFFF << ( n & 15 )) : 0xFFFF; }
-  };    
+  };
 }
 #endif
 }
