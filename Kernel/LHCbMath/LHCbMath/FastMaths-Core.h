@@ -100,10 +100,10 @@ namespace LHCb::Math {
       using namespace LHCb::SIMD;
 
       // constants
-      static const FP ONEOPIO4F( 4.0f / float( M_PI ) ); ///< 4/pi
-      static const FP DP1F( 0.78515625f );
-      static const FP DP2F( 2.4187564849853515625e-4f );
-      static const FP DP3F( 3.77489497744594108e-8f );
+      const FP ONEOPIO4F( 4.0f / float( M_PI ) ); ///< 4/pi
+      const FP DP1F( 0.78515625f );
+      const FP DP2F( 2.4187564849853515625e-4f );
+      const FP DP3F( 3.77489497744594108e-8f );
 
       // make argument positive
       x = abs( x );
@@ -123,19 +123,19 @@ namespace LHCb::Math {
     inline void fast_sincosf_m45_45( const FP x, FP& s, FP& c ) noexcept {
 
       // sin constants
-      static const FP sa( -1.9515295891E-4f );
-      static const FP sb( 8.3321608736E-3f );
-      static const FP sc( -1.6666654611E-1f );
+      const FP sa( -1.9515295891E-4f );
+      const FP sb( 8.3321608736E-3f );
+      const FP sc( -1.6666654611E-1f );
 
       // cos constants
-      static const FP ca( 2.443315711809948E-005f );
-      static const FP cb( -1.388731625493765E-003f );
-      static const FP cc( 4.166664568298827E-002f );
+      const FP ca( 2.443315711809948E-005f );
+      const FP cb( -1.388731625493765E-003f );
+      const FP cc( 4.166664568298827E-002f );
 
       auto z = x * x;
 
       s = ( ( ( sa * z + sb ) * z + sc ) * z * x ) + x;
-      c = ( ( ca * z + cb ) * z + cc ) * z * z - FP( 0.5f ) * z + FP( 1 );
+      c = ( ( ca * z + cb ) * z + cc ) * z * z - FP( 0.5f ) * z + FP( 1.0f );
     }
 
     // Like frexp but vectorising and the exponent is a float.
@@ -165,15 +165,15 @@ namespace LHCb::Math {
     inline FP get_log_poly( const FP x ) noexcept {
 
       // constants...
-      static const FP PX1logf( 7.0376836292E-2f );
-      static const FP PX2logf( -1.1514610310E-1f );
-      static const FP PX3logf( 1.1676998740E-1f );
-      static const FP PX4logf( -1.2420140846E-1f );
-      static const FP PX5logf( 1.4249322787E-1f );
-      static const FP PX6logf( -1.6668057665E-1f );
-      static const FP PX7logf( 2.0000714765E-1f );
-      static const FP PX8logf( -2.4999993993E-1f );
-      static const FP PX9logf( 3.3333331174E-1f );
+      const FP PX1logf( 7.0376836292E-2f );
+      const FP PX2logf( -1.1514610310E-1f );
+      const FP PX3logf( 1.1676998740E-1f );
+      const FP PX4logf( -1.2420140846E-1f );
+      const FP PX5logf( 1.4249322787E-1f );
+      const FP PX6logf( -1.6668057665E-1f );
+      const FP PX7logf( 2.0000714765E-1f );
+      const FP PX8logf( -2.4999993993E-1f );
+      const FP PX9logf( 3.3333331174E-1f );
 
       auto y = x * PX1logf;
       y += PX2logf;
@@ -216,12 +216,12 @@ namespace LHCb::Math {
     }
 
     // constants.
-    static constexpr float INFF( std::numeric_limits<float>::infinity() );
-    static constexpr float MAXNUMF( 3.4028234663852885981170418348451692544e38f );
-    static constexpr float PIO2F( M_PI_2 );                     ///< pi/2
-    static constexpr float LOG2EF( 1.44269504088896341f );      ///< log2(e)
-    static constexpr float THREEPIO4( 3.0f * float( M_PI_4 ) ); ///< 3*pi/4
-    static constexpr float PIO4F( M_PI_4 );                     ///< pi/4
+    constexpr float INFF( std::numeric_limits<float>::infinity() );
+    constexpr float MAXNUMF( 3.4028234663852885981170418348451692544e38f );
+    constexpr float PIO2F( M_PI_2 );                     ///< pi/2
+    constexpr float LOG2EF( 1.44269504088896341f );      ///< log2(e)
+    constexpr float THREEPIO4( 3.0f * float( M_PI_4 ) ); ///< 3*pi/4
+    constexpr float PIO4F( M_PI_4 );                     ///< pi/4
 
   } // namespace impl
 
@@ -252,11 +252,11 @@ namespace LHCb::Math {
         x( m ) = std::sqrt( z );
       }
 
-      static const FP a( 4.2163199048E-2f );
-      static const FP b( 2.4181311049E-2f );
-      static const FP c( 4.5470025998E-2f );
-      static const FP d( 7.4953002686E-2f );
-      static const FP e( 1.6666752422E-1f );
+      const FP a( 4.2163199048E-2f );
+      const FP b( 2.4181311049E-2f );
+      const FP c( 4.5470025998E-2f );
+      const FP d( 7.4953002686E-2f );
+      const FP e( 1.6666752422E-1f );
 
       z = ( ( ( ( a * z + b ) * z + c ) * z + d ) * z + e ) * z * x + x;
 
@@ -287,7 +287,7 @@ namespace LHCb::Math {
 
   /// fast sincos
   template <typename FP>
-  inline void fast_sincos( const FP& xx, FP& s, FP& c ) noexcept {
+  inline void fast_sincos( const FP xx, FP& s, FP& c ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same<FP, float>::value ) {
       vdt::fast_sincosf( xx, s, c );
@@ -314,9 +314,11 @@ namespace LHCb::Math {
 
       // swap
       const auto swap = simd_cast<mtype>( poly == Int32<FP>::Zero() );
-      const auto tmp  = c;
-      c( swap )       = s;
-      s( swap )       = tmp;
+      if ( UNLIKELY( any_of( swap ) ) ) {
+        const auto tmp = c;
+        c( swap )      = s;
+        s( swap )      = tmp;
+      }
 
       c( simd_cast<mtype>( signC == Int32<FP>::Zero() ) ) = -c;
       s( simd_cast<mtype>( signS != Int32<FP>::Zero() ) ) = -s;
@@ -346,8 +348,8 @@ namespace LHCb::Math {
       auto& x  = x_fe.first;
       auto& fe = x_fe.second;
 
-      static const FP SQRTHF( 0.707106781186547524f );
-      const auto      m = x > SQRTHF;
+      const FP   SQRTHF( 0.707106781186547524f );
+      const auto m = x > SQRTHF;
       fe( m ) += FP::One();
       x( !m ) += x;
       x -= FP::One();
@@ -364,8 +366,8 @@ namespace LHCb::Math {
 
       res += FP( 0.693359375f ) * fe;
 
-      static const FP LOGF_UPPER_LIMIT( MAXNUMF );
-      static const FP LOGF_LOWER_LIMIT( 0 );
+      const FP LOGF_UPPER_LIMIT( MAXNUMF );
+      const FP LOGF_LOWER_LIMIT( 0 );
       res( initial_x > LOGF_UPPER_LIMIT ) = FP( INFF );
       res.setQnan( initial_x < LOGF_LOWER_LIMIT );
 
@@ -395,15 +397,15 @@ namespace LHCb::Math {
       // floor() truncates toward -infinity.
       FP z = fpfloor( FP( LOG2EF ) * x + FP( 0.5f ) );
 
-      static const FP C1F( 0.693359375f );
-      static const FP C2F( -2.12194440e-4f );
-      static const FP C1PC2F( C1F + C2F );
-      static const FP PX1expf( 1.9875691500E-4f );
-      static const FP PX2expf( 1.3981999507E-3f );
-      static const FP PX3expf( 8.3334519073E-3f );
-      static const FP PX4expf( 4.1665795894E-2f );
-      static const FP PX5expf( 1.6666665459E-1f );
-      static const FP PX6expf( 5.0000001201E-1f );
+      const FP C1F( 0.693359375f );
+      const FP C2F( -2.12194440e-4f );
+      const FP C1PC2F( C1F + C2F );
+      const FP PX1expf( 1.9875691500E-4f );
+      const FP PX2expf( 1.3981999507E-3f );
+      const FP PX3expf( 8.3334519073E-3f );
+      const FP PX4expf( 4.1665795894E-2f );
+      const FP PX5expf( 1.6666665459E-1f );
+      const FP PX6expf( 5.0000001201E-1f );
 
       x -= z * C1PC2F;
 
@@ -428,9 +430,8 @@ namespace LHCb::Math {
         FP         f;
       } vp = {( ( n + Int32<FP>( 0x7f ) ) << 23 )};
       z *= vp.f;
-
-      static const FP MAXLOGF( 88.72283905206835f );
-      static const FP MINLOGF( -88.0f );
+      const FP MAXLOGF( 88.72283905206835f );
+      const FP MINLOGF( -88.0f );
       z( initial_x > MAXLOGF ) = FP( INFF );
       z.setZero( initial_x < MINLOGF );
 
@@ -459,12 +460,12 @@ namespace LHCb::Math {
 
       const auto zz = z.first * z.first;
 
-      static const FP a( 9.38540185543E-3f );
-      static const FP b( 3.11992232697E-3f );
-      static const FP c( 2.44301354525E-2f );
-      static const FP d( 5.34112807005E-2f );
-      static const FP e( 1.33387994085E-1f );
-      static const FP f( 3.33331568548E-1f );
+      const FP a( 9.38540185543E-3f );
+      const FP b( 3.11992232697E-3f );
+      const FP c( 2.44301354525E-2f );
+      const FP d( 5.34112807005E-2f );
+      const FP e( 1.33387994085E-1f );
+      const FP f( 3.33331568548E-1f );
 
       FP res = ( ( ( ( ( ( a * zz + b ) * zz + c ) * zz + d ) * zz + e ) * zz + f ) * zz * z.first + z.first );
       res( zz < FP( 1.0e-14f ) ) = z.first;
@@ -506,8 +507,8 @@ namespace LHCb::Math {
 
       using namespace impl;
 
-      static const FP TAN_PIO8F( 0.4142135623730950f ); ///< tan(pi/8)
-      static const FP PIF( float( M_PI ) );             ///< pi
+      const FP TAN_PIO8F( 0.4142135623730950f ); ///< tan(pi/8)
+      const FP PIF( float( M_PI ) );             ///< pi
 
       // move in first octant
       auto       xx = abs( x );
@@ -526,10 +527,10 @@ namespace LHCb::Math {
 
       const auto z2 = z * z;
 
-      static const FP a( 8.05374449538e-2f );
-      static const FP b( -1.38776856032E-1f );
-      static const FP c( 1.99777106478E-1f );
-      static const FP d( -3.33329491539E-1f );
+      const FP a( 8.05374449538e-2f );
+      const FP b( -1.38776856032E-1f );
+      const FP c( 1.99777106478E-1f );
+      const FP d( -3.33329491539E-1f );
 
       auto ret = ( ( ( ( a * z2 + b ) * z2 + c ) * z2 + d ) * z2 * z + z );
 
@@ -608,12 +609,12 @@ namespace LHCb::Math {
         // SIMD
         using namespace impl;
         using namespace LHCb::SIMD;
-        auto     clipp = p;
         const FP A( -126.0f );
+        auto     clipp = p;
         clipp( p < A ) = A;
         const auto w   = lb_cast<Int32<FP>>( clipp );
         auto       z   = clipp - lb_cast<FP>( w );
-        z( p < FP( 0 ) ) += FP( 1 );
+        z( p < FP::Zero() ) += FP::One();
         const union {
           UInt32<FP> i;
           FP         f;
