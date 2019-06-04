@@ -90,8 +90,8 @@ namespace LHCb::DetDesc {
 
   private:
     // This block of private declarations is an implementation detail of accessors
-    template <typename T>
-    friend class ConditionAccessor;
+    template <typename>
+    friend class LHCb::DetDesc::ConditionAccessor;
 
     // Track that a new ConditionAccessor has been declared
     template <typename T>
