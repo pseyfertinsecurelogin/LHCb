@@ -9,45 +9,57 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDet/StatusMap.h"
+#if !( defined( __GXX_EXPERIMENTAL_CXX0X__ ) || __cplusplus >= 201103L )
+#  include <boost/assign/list_of.hpp>
+#endif
 
-namespace {
-  static const Status::StatusToStringMap s_statusDescription = {{DeUTSector::OK, "OK"},
-                                                                {DeUTSector::Open, "Open"},
-                                                                {DeUTSector::Short, "Short"},
-                                                                {DeUTSector::Pinhole, "Pinhole"},
-                                                                {DeUTSector::NotBonded, "NotBonded"},
-                                                                {DeUTSector::LowGain, "LowGain"},
-                                                                {DeUTSector::Noisy, "Noisy"},
-                                                                {DeUTSector::ReadoutProblems, "ReadoutProblems"},
-                                                                {DeUTSector::OtherFault, "OtherFault"},
-                                                                {DeUTSector::Dead, "Dead"},
-                                                                {DeUTSector::UnknownStatus, "Unknown"}};
-  static const Status::StatusVector      s_validBeetleStates = {DeUTSector::OK, DeUTSector::ReadoutProblems,
-                                                           DeUTSector::Dead, DeUTSector::OtherFault};
-  static const Status::StatusVector      s_protectedStates   = {DeUTSector::NotBonded};
-} // namespace
-
-const Status::StatusToStringMap& Status::statusDescription() { return s_statusDescription; }
+const Status::StatusToStringMap& Status::statusDescription() {
+  static const Status::StatusToStringMap s_map = {{DeUTSector::OK, "OK"},
+                                                  {DeUTSector::Open, "Open"},
+                                                  {DeUTSector::Short, "Short"},
+                                                  {DeUTSector::Pinhole, "Pinhole"},
+                                                  {DeUTSector::NotBonded, "NotBonded"},
+                                                  {DeUTSector::LowGain, "LowGain"},
+                                                  {DeUTSector::Noisy, "Noisy"},
+                                                  {DeUTSector::ReadoutProblems, "ReadoutProblems"},
+                                                  {DeUTSector::OtherFault, "OtherFault"},
+                                                  {DeUTSector::Dead, "Dead"},
+                                                  {DeUTSector::UnknownStatus, "Unknown"}};
+  return s_map;
+}
 
 DeUTSector::Status Status::toStatus( const std::string& str ) {
-  const auto& statusMap = ::Status::statusDescription();
-  auto        i = std::find_if( statusMap.begin(), statusMap.end(), [&]( const auto& v ) { return v.second == str; } );
-  return i == statusMap.end() ? DeUTSector::UnknownStatus : i->first;
+
+  const ::Status::StatusToStringMap&          statusMap = ::Status::statusDescription();
+  ::Status::StatusToStringMap::const_iterator iterMap   = statusMap.begin();
+  while ( iterMap != statusMap.end() ) {
+    if ( iterMap->second == str ) break;
+    ++iterMap;
+  } // iterMap
+  return ( iterMap == statusMap.end() ? DeUTSector::UnknownStatus : iterMap->first );
 }
 
 std::string Status::toString( const DeUTSector::Status& tstatus ) {
-  const auto& statusMap = ::Status::statusDescription();
-  auto        i         = statusMap.find( tstatus );
-  return i == statusMap.end() ? "UnknownStatus" : i->second;
+
+  const ::Status::StatusToStringMap&          statusMap = ::Status::statusDescription();
+  ::Status::StatusToStringMap::const_iterator iterMap   = statusMap.find( tstatus );
+  return ( iterMap == statusMap.end() ? "UnknownStatus" : iterMap->second );
 }
 
-const Status::StatusVector& Status::validBeetleStates() { return s_validBeetleStates; }
+const Status::StatusVector& Status::validBeetleStates() {
+  static const StatusVector s_vec = {DeUTSector::OK, DeUTSector::ReadoutProblems, DeUTSector::Dead,
+                                     DeUTSector::OtherFault};
+  return s_vec;
+}
 
-const Status::StatusVector& Status::protectedStates() { return s_protectedStates; }
+const Status::StatusVector& Status::protectedStates() {
+  static const StatusVector s_vec = {DeUTSector::NotBonded};
+  return s_vec;
+}
 
 /** stream operator for status */
 std::ostream& operator<<( std::ostream& s, DeUTSector::Status e ) {
-  const auto& theMap = Status::statusDescription();
-  auto        i      = theMap.find( e );
-  return i == theMap.end() ? s << "Unknown" : s << i->second;
+  const Status::StatusToStringMap&          theMap = Status::statusDescription();
+  Status::StatusToStringMap::const_iterator iter   = theMap.find( e );
+  return ( iter == theMap.end() ? s << "Unknown" : s << iter->second );
 }

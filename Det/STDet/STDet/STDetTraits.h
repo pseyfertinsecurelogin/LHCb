@@ -34,70 +34,85 @@ class DeTTSector;
 class DeTTSensor;
 
 template <typename TYPE>
-struct STDetTraits;
+class STDetTraits {
+public:
+  typedef TYPE parent;
+  typedef TYPE child;
+};
 
 template <>
-struct STDetTraits<DeITStation> {
+class STDetTraits<DeITStation> {
+public:
   typedef DeITDetector parent;
   typedef DeITBox      child;
 };
 
 template <>
-struct STDetTraits<DeTTStation> {
+class STDetTraits<DeTTStation> {
+public:
   typedef DeTTDetector parent;
   typedef DeTTLayer    child;
 };
 
 template <>
-struct STDetTraits<DeITBox> {
+class STDetTraits<DeITBox> {
+public:
   typedef DeITStation parent;
   typedef DeITLayer   child;
 };
 
 template <>
-struct STDetTraits<DeITLayer> {
+class STDetTraits<DeITLayer> {
+public:
   typedef DeITBox    parent;
   typedef DeITLadder child;
 };
 
 template <>
-struct STDetTraits<DeTTLayer> {
+class STDetTraits<DeTTLayer> {
+public:
   typedef DeTTStation    parent;
   typedef DeTTHalfModule child;
 };
 
 template <>
-struct STDetTraits<DeITLadder> {
+class STDetTraits<DeITLadder> {
+public:
   typedef DeITLayer  parent;
   typedef DeITSector child;
 };
 
 template <>
-struct STDetTraits<DeTTHalfModule> {
+class STDetTraits<DeTTHalfModule> {
+public:
   typedef DeTTLayer  parent;
   typedef DeTTSector child;
 };
 
 template <>
-struct STDetTraits<DeITSector> {
+class STDetTraits<DeITSector> {
+public:
   typedef DeITLadder parent;
   typedef DeITSensor child;
 };
 
 template <>
-struct STDetTraits<DeTTSector> {
+class STDetTraits<DeTTSector> {
+public:
   typedef DeTTHalfModule parent;
   typedef DeTTSensor     child;
 };
 
 template <>
-struct STDetTraits<DeITSensor> {
+class STDetTraits<DeITSensor> {
+public:
   typedef DeITSector parent;
   typedef DeITSensor child;
 };
 
 template <>
-struct STDetTraits<DeTTSensor> {
+class STDetTraits<DeTTSensor> {
+public:
   typedef DeTTSector parent;
   typedef DeTTSensor child;
 };

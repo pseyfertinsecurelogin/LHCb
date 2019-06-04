@@ -81,26 +81,33 @@ StatusCode DeUTModule::updateProdIDCondition() {
 }
 
 std::ostream& DeUTModule::printOut( std::ostream& os ) const {
-  return os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
-            << '\n';
+  // stream to cout
+  os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
+     << std::endl;
+
+  return os;
 }
 
 MsgStream& DeUTModule::printOut( MsgStream& os ) const {
-  return os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
-            << '\n';
+
+  // stream to Msg service
+  os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
+     << std::endl;
+
+  return os;
 }
 
 DeUTSector* DeUTModule::findSector( const UTChannelID aChannel ) {
   auto iter = std::find_if( m_sectors.begin(), m_sectors.end(),
                             [&]( const DeUTSector* s ) { return s->contains( aChannel ); } );
 
-  return iter != m_sectors.end() ? *iter : nullptr;
+  return ( iter != m_sectors.end() ? *iter : nullptr );
 }
 
 DeUTSector* DeUTModule::findSector( const Gaudi::XYZPoint& point ) {
   auto iter =
       std::find_if( m_sectors.begin(), m_sectors.end(), [&]( const DeUTSector* s ) { return s->isInside( point ); } );
-  return iter != m_sectors.end() ? *iter : nullptr;
+  return ( iter != m_sectors.end() ? *iter : nullptr );
 }
 
 double DeUTModule::fractionActive() const {
