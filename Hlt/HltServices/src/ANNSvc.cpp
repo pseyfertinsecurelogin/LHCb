@@ -8,20 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/VectorMap.h"
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
-
-// declaration of the parser
-namespace Gaudi {
-  namespace Parsers {
-    StatusCode parse( GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std::string& input );
-    StatusCode parse( std::map<Gaudi::StringKey, int>& result, const std::string& input );
-  } // namespace Parsers
-} // namespace Gaudi
 
 #include "ANNSvc.h"
 #include "GaudiKernel/Property.h"
@@ -33,50 +24,10 @@ using std::map;
 using std::string;
 using std::vector;
 
-namespace ANNSvcUtilities {
+namespace details::ANNSvc {
 
   template <typename KEY, typename VALUE>
-  class bimap_t {
-  public:
-    typedef KEY                   key_type;
-    typedef VALUE                 value_type;
-    typedef std::pair<KEY, VALUE> mapped_type;
-
-    typedef GaudiUtils::VectorMap<KEY, VALUE>        k2v_type;
-    typedef GaudiUtils::VectorMap<VALUE, KEY>        v2k_type;
-    typedef SimpleProperty<std::map<KEY, VALUE>>     property_type;
-    typedef std::optional<IANNSvc::minor_value_type> result_type;
-
-    bimap_t( const ANNSvc* parent );
-
-    property_type& property() { return m_property; }
-
-    result_type value( const key_type& key ) const {
-      auto i = m_map.find( key );
-      return i == m_map.end() ? result_type() : result_type( *i );
-    }
-
-    result_type key( const value_type& value ) const {
-      auto i = m_invmap.find( value );
-      return i == m_invmap.end() ? result_type{} : result_type{std::pair{i->second, i->first}};
-    }
-
-    const k2v_type& mapping() const { return m_map; }
-
-    void insert( const mapped_type& value );
-
-  private:
-    bimap_t( const bimap_t& rhs );
-    void updateHandler( Property& prop );
-
-    property_type m_property;
-    k2v_type      m_map;
-    v2k_type      m_invmap;
-    const ANNSvc* m_parent;
-  };
-
-  template <typename KEY, typename VALUE>
-  bimap_t<KEY, VALUE>::bimap_t( const ANNSvc* parent ) : m_parent( parent ) {
+  bimap_t<KEY, VALUE>::bimap_t( const ::ANNSvc* parent ) : m_parent( parent ) {
     m_property.declareUpdateHandler( &bimap_t<KEY, VALUE>::updateHandler, this );
   }
 
@@ -108,7 +59,7 @@ namespace ANNSvcUtilities {
     for ( const auto& i : m_property.value() ) insert( i );
   }
 
-} // namespace ANNSvcUtilities
+} // namespace details::ANNSvc
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -116,7 +67,7 @@ namespace ANNSvcUtilities {
 ANNSvc::ANNSvc( const string& name, ISvcLocator* pSvcLocator, const vector<IANNSvc::major_key_type>& majors )
     : base_class( name, pSvcLocator ) {
   for ( const auto& i : majors ) {
-    auto r = m_maps.insert( i, new bimap_type( this ) );
+    auto r = m_maps.insert( maps_type::value_type{i, std::make_unique<bimap_type>( this )} );
     declareProperty( r.first->first, const_cast<maps_type::mapped_type&>( r.first->second )->property() );
   }
 }
@@ -125,7 +76,7 @@ ANNSvc::ANNSvc( const string& name, ISvcLocator* pSvcLocator, const vector<IANNS
 // finalize
 //=============================================================================
 StatusCode ANNSvc::finalize() {
-  for ( auto i : m_maps ) {
+  for ( const auto& i : m_maps ) {
     const auto& prop = i.second->property().value();
     for ( const auto& j : i.second->mapping() ) {
       if ( prop.find( j.first ) != prop.end() ) continue;
@@ -225,9 +176,6 @@ std::vector<IANNSvc::major_key_type> ANNSvc::majors() const {
 // ============================================================================
 namespace Gaudi {
   namespace Parsers {
-    StatusCode parse( GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std::string& input ) {
-      return Gaudi::Parsers::parse_( result, input );
-    }
     StatusCode parse( std::map<Gaudi::StringKey, int>& result, const std::string& input ) {
       return Gaudi::Parsers::parse_( result, input );
     }
