@@ -54,7 +54,9 @@ namespace Rich::Future {
   template <typename TYPE>
   class HypoData : public Vc::AlignedBase<Vc::VectorAlignment> {
 
-  public: // definitions
+  public:
+    // definitions
+
     /// Data Type
     using Type = TYPE;
 
@@ -64,7 +66,9 @@ namespace Rich::Future {
     /// Type for vector
     using Vector = Rich::SIMD::STDVector<HypoData>;
 
-  public: // constructors and destructors
+  public:
+    // constructors and destructors
+
     /// Default Constructor
     HypoData() = default;
 
@@ -74,7 +78,16 @@ namespace Rich::Future {
      */
     explicit HypoData( const TYPE value ) { resetData( value ); }
 
-  public: // methods
+    /// 'Copy' constructor from another templated type
+    template <typename OTYPE>
+    explicit HypoData( const HypoData<OTYPE>& data ) {
+      std::size_t i = 0;
+      for ( const auto& d : data.dataArray() ) { m_data[i++] = TYPE( d ); }
+    }
+
+  public:
+    // methods
+
     /** Read/Write access operator
      *
      *  @param type  The mass hypothesis for which the data is requested
@@ -109,7 +122,7 @@ namespace Rich::Future {
      *  @attention The data values themselves are unaffected
      */
     inline void resetData() noexcept {
-      if constexpr ( std::is_pointer<TYPE>::value ) {
+      if constexpr ( std::is_pointer_v<TYPE> ) {
         resetData( nullptr );
       } else {
         resetData( TYPE( 0 ) );
@@ -132,7 +145,7 @@ namespace Rich::Future {
      *  @param type  The mass hypothesis to reset
      */
     inline void resetData( const Rich::ParticleIDType type ) noexcept {
-      if constexpr ( std::is_pointer<TYPE>::value ) {
+      if constexpr ( std::is_pointer_v<TYPE> ) {
         resetData( type, nullptr );
       } else {
         resetData( type, TYPE( 0 ) );
@@ -145,7 +158,6 @@ namespace Rich::Future {
      */
     inline const DataArray& dataArray() const& noexcept { return m_data; }
 
-  public:
     /// Implement textual ostream << method
     friend inline std::ostream& operator<<( std::ostream& os, const HypoData<TYPE>& data ) {
       os << "[ ";
@@ -153,7 +165,9 @@ namespace Rich::Future {
       return os << "]";
     }
 
-  private: // data
+  private:
+    // data
+
     /// The internal representation of the data
     DataArray m_data = {{}};
   };
