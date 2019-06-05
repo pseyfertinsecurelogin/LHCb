@@ -249,10 +249,8 @@ namespace LHCb {
       class SIMDV : public VETAG, public ve::simdv<TYPE, SIZE> {
 
       public:
-        using mask_type = SIMDV<typename ve::simdv<TYPE, SIZE>::mask_type::value_type, SIZE>;
         static constexpr typename ve::simdv<TYPE, SIZE>::size_type Size = SIZE;
-
-        // using index_type = typename ve::simdv<TYPE, SIZE>::mask_type;
+        using mask_type  = SIMDV<typename ve::simdv<TYPE, SIZE>::mask_type::value_type, SIZE>;
         using index_type = SIMDV<std::uint32_t, SIZE>;
         using IndexType  = index_type;
 
@@ -268,7 +266,6 @@ namespace LHCb {
         using ve::simdv<TYPE, SIZE>::operator=;
         constexpr SIMDV( const ve::simdv<TYPE, SIZE>& other ) noexcept : ve::simdv<TYPE, SIZE>( other ) {}
         constexpr SIMDV( ve::simdv<TYPE, SIZE>&& other ) noexcept : ve::simdv<TYPE, SIZE>( std::move( other ) ) {}
-
         SIMDV() = default;
 
       public:
@@ -353,7 +350,7 @@ namespace LHCb {
                                                    std::is_base_of<VETAG, TO>::value>::type>
       TO simd_cast( FROM x ) noexcept {
         static_assert( FROM::size() == TO::size(), "size mismatch" );
-        return SIMDV<typename TO::value_type, SIZE>( x.begin(), x.end() );
+        return SIMDV<typename TO::value_type, SIZE>( x );
       }
 
       //------------------------------------------------------------------------------------------------
