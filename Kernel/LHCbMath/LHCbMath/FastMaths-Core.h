@@ -48,18 +48,18 @@ namespace LHCb::Math {
     /// Selects the correct unsigned int type based on floating point type...
     template <typename FP>
     using UInt32 = std::conditional_t<
-        std::is_same<FP, LHCb::SIMD::VC::FPF>::value,
-        LHCb::SIMD::VC::UInt32,                                                                       // VC
-        std::conditional_t<std::is_same<FP, LHCb::SIMD::VE::FPF>::value, LHCb::SIMD::VE::UInt32,      // VE
-                           std::conditional_t<std::is_same<FP, float>::value, std::uint32_t, void>>>; // float
+        std::is_same_v<FP, LHCb::SIMD::VC::FPF>,
+        LHCb::SIMD::VC::UInt32,                                                                  // VC
+        std::conditional_t<std::is_same_v<FP, LHCb::SIMD::VE::FPF>, LHCb::SIMD::VE::UInt32,      // VE
+                           std::conditional_t<std::is_same_v<FP, float>, std::uint32_t, void>>>; // float
 
     /// Selects the correct signed int type based on floating point type...
     template <typename FP>
     using Int32 = std::conditional_t<
-        std::is_same<FP, LHCb::SIMD::VC::FPF>::value,
-        LHCb::SIMD::VC::Int32,                                                                       // VC
-        std::conditional_t<std::is_same<FP, LHCb::SIMD::VE::FPF>::value, LHCb::SIMD::VE::Int32,      // VE
-                           std::conditional_t<std::is_same<FP, float>::value, std::int32_t, void>>>; // float
+        std::is_same_v<FP, LHCb::SIMD::VC::FPF>,
+        LHCb::SIMD::VC::Int32,                                                                  // VC
+        std::conditional_t<std::is_same_v<FP, LHCb::SIMD::VE::FPF>, LHCb::SIMD::VE::Int32,      // VE
+                           std::conditional_t<std::is_same_v<FP, float>, std::int32_t, void>>>; // float
 
     /// Get the sign mask
     template <typename FP>
@@ -231,13 +231,13 @@ namespace LHCb::Math {
   template <typename FP>
   inline FP fast_asin( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_asinf( x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_asin( x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
       using namespace impl;
 
       const auto sign_mask = getSignMask( x );
@@ -272,13 +272,13 @@ namespace LHCb::Math {
   template <typename FP>
   inline FP fast_acos( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_acosf( x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_acos( x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
       return FP( impl::PIO2F ) - fast_asin( x );
     }
   }
@@ -289,13 +289,13 @@ namespace LHCb::Math {
   template <typename FP>
   inline void fast_sincos( const FP xx, FP& s, FP& c ) noexcept {
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       vdt::fast_sincosf( xx, s, c );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       vdt::fast_sincos( xx, s, c );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
       using namespace impl;
 
@@ -333,13 +333,13 @@ namespace LHCb::Math {
   inline FP fast_log( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_logf( initial_x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_log( initial_x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
       using namespace impl;
 
@@ -382,13 +382,13 @@ namespace LHCb::Math {
   inline FP fast_exp( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_expf( initial_x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_exp( initial_x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
       using namespace impl;
 
@@ -400,16 +400,17 @@ namespace LHCb::Math {
       const FP C1F( 0.693359375f );
       const FP C2F( -2.12194440e-4f );
       const FP C1PC2F( C1F + C2F );
+
+      x -= z * C1PC2F;
+
+      const auto n = simd_cast<Int32<FP>>( z );
+
       const FP PX1expf( 1.9875691500E-4f );
       const FP PX2expf( 1.3981999507E-3f );
       const FP PX3expf( 8.3334519073E-3f );
       const FP PX4expf( 4.1665795894E-2f );
       const FP PX5expf( 1.6666665459E-1f );
       const FP PX6expf( 5.0000001201E-1f );
-
-      x -= z * C1PC2F;
-
-      const auto n = simd_cast<Int32<FP>>( z );
 
       z = PX1expf * x;
       z += PX2expf;
@@ -446,13 +447,13 @@ namespace LHCb::Math {
   inline FP fast_tan( const FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_tanf( x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_tan( x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
       using namespace impl;
 
@@ -497,13 +498,13 @@ namespace LHCb::Math {
   inline FP fast_atan2( const FP y, const FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
-    if constexpr ( std::is_same<FP, float>::value ) {
+    if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_atan2f( y, x );
-    } else if constexpr ( std::is_same<FP, double>::value ) {
+    } else if constexpr ( std::is_same_v<FP, double> ) {
       return vdt::fast_atan2( y, x );
     }
     // SIMD version
-    else if constexpr ( !std::is_arithmetic<FP>::value ) {
+    else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
       using namespace impl;
 
@@ -593,7 +594,7 @@ namespace LHCb::Math {
     /// Fast pow2 approximation
     template <typename FP>
     inline FP approx_pow2( const FP p ) noexcept {
-      if constexpr ( std::is_arithmetic<FP>::value ) {
+      if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
         const float        offset = ( p < 0 ? 1.0f : 0.0f );
         const float        clipp  = ( p < -126 ? -126.0f : p );
@@ -605,7 +606,7 @@ namespace LHCb::Math {
         } v = {static_cast<std::uint32_t>(
             ( 1 << 23 ) * ( clipp + 121.2740575f + 27.7280233f / ( 4.84252568f - z ) - 1.49012907f * z ) )};
         return v.f;
-      } else {
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         // SIMD
         using namespace impl;
         using namespace LHCb::SIMD;
@@ -635,7 +636,7 @@ namespace LHCb::Math {
     template <typename FP>
     inline FP vapprox_pow2( const FP p ) noexcept {
       using namespace impl;
-      if constexpr ( std::is_arithmetic<FP>::value ) {
+      if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
         const float clipp = ( p < -126 ? -126.0f : p );
         const union {
@@ -643,7 +644,7 @@ namespace LHCb::Math {
           FP         f;
         } v = {static_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + 126.94269504f ) )};
         return v.f;
-      } else {
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         // SIMD
         using namespace LHCb::SIMD;
         auto     clipp = p;
@@ -667,7 +668,7 @@ namespace LHCb::Math {
     template <typename FP>
     inline FP vapprox_atan2( const FP y, const FP x ) {
       using namespace impl;
-      if constexpr ( std::is_arithmetic<FP>::value ) {
+      if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
         const auto abs_y = std::fabs( y ) + 1e-10f;
         const auto neg_x = ( x < 0.0f );
@@ -675,7 +676,7 @@ namespace LHCb::Math {
         const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + ( ( 0.1963f * r * r - 0.9817f ) * r ) );
         // opposite sign if in quad III or IV
         return ( y < 0.0f ? -angle : angle );
-      } else {
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         const auto abs_y = abs( y ) + FP( 1e-10f );
         const auto neg_x = ( x < FP::Zero() );
         auto       r     = ( x - abs_y ) / ( x + abs_y );

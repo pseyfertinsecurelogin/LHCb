@@ -11,13 +11,16 @@
 
 #pragma once
 
-// Gaudi
-#include "GaudiKernel/Kernel.h"
-
 // STL
 #include <cmath>
 #include <iostream>
 #include <type_traits>
+
+// Gaudi
+#include "GaudiKernel/Kernel.h"
+
+// LHCbMath
+#include "LHCbMath/SIMDTypes.h"
 
 namespace Rich {
 
@@ -41,8 +44,8 @@ namespace Rich {
      *
      *  @param[in]  position      The start point to use for the ray tracing
      *  @param[in]  direction     The direction to ray trace from the start point
-     *  @param[in] CoC            The centre of curvature of the spherical mirror
-     *  @param[in] radius         The radius of curvature of the spherical mirror
+     *  @param[in]  CoC           The centre of curvature of the spherical mirror
+     *  @param[in]  radius        The radius of curvature of the spherical mirror
      *  @param[out] intersection  The intersection point of the direction with the plane
      *
      *  @return Boolean/mask indicating the status of the ray tracing
@@ -58,6 +61,7 @@ namespace Rich {
                             const FTYPE      radius,      //
                             POSITION&        intersection //
                             ) noexcept {
+      using namespace LHCb::SIMD;
       const FTYPE zero( 0.0f ), two( 2.0f );
       // for line sphere intersection look at http://www.realtimerendering.com/int/
       const FTYPE a     = direction.Mag2();
@@ -67,15 +71,23 @@ namespace Rich {
       FTYPE       discr = ( b * b ) - ( FTYPE( 4.0f ) * a * c );
       const auto  OK    = discr > zero;
       // Zero out the negative values in discr, to prevent sqrt(-ve)
-      if constexpr ( std::is_arithmetic<typename POSITION::Scalar>::value &&  //
-                     std::is_arithmetic<typename DIRECTION::Scalar>::value && //
-                     std::is_arithmetic<typename COC::Scalar>::value &&       //
-                     std::is_arithmetic<FTYPE>::value ) {
+      if constexpr ( all_arithmetic_v<typename POSITION::Scalar,  //
+                                      typename DIRECTION::Scalar, //
+                                      typename COC::Scalar,       //
+                                      FTYPE> ) {
         // scalar
         if ( UNLIKELY( !OK ) ) { discr = zero; }
-      } else {
+      } else if constexpr ( all_SIMD_v<typename POSITION::Scalar,  //
+                                       typename DIRECTION::Scalar, //
+                                       typename COC::Scalar,       //
+                                       FTYPE> ) {
         // SIMD
         if ( UNLIKELY( !all_of( OK ) ) ) { discr.setZeroInverted( OK ); }
+      } else {
+        // If get here we don't know how to handle the types, so cause compilation failure.
+        // Note, cannot use static_assert here as needs to be parsable (if not compilable).
+        // https://stackoverflow.com/questions/38304847/constexpr-if-and-static-assert
+        FTYPE::WillFail();
       }
       // distance
       const auto dist = FTYPE( 0.5f ) * ( std::sqrt( discr ) - b ) / a;
@@ -97,8 +109,8 @@ namespace Rich {
      *  @param[in,out] direction  The direction to ray trace from the start point.
      *                            Afterwards represents the reflection direction
      *                            from the spherical mirror.
-     *  @param[in] CoC        The centre of curvature of the spherical mirror
-     *  @param[in] radius     The radius of curvature of the spherical mirror
+     *  @param[in] CoC            The centre of curvature of the spherical mirror
+     *  @param[in] radius         The radius of curvature of the spherical mirror
      *
      *  @return Boolean/mask indicating if the ray tracing was succesful
      *  @retval true  Ray tracing was successful
@@ -112,6 +124,7 @@ namespace Rich {
                           const COC&  CoC,       //
                           const FTYPE radius     //
                           ) noexcept {
+      using namespace LHCb::SIMD;
       // constants
       const FTYPE zero( 0.0f ), two( 2.0f );
       // for line sphere intersection look at http://www.realtimerendering.com/int/
@@ -121,16 +134,24 @@ namespace Rich {
       const FTYPE c     = delta.Mag2() - ( radius * radius );
       FTYPE       discr = ( b * b ) - ( FTYPE( 4.0f ) * a * c );
       const auto  OK    = discr > zero;
-      if constexpr ( std::is_arithmetic<typename POSITION::Scalar>::value &&  //
-                     std::is_arithmetic<typename DIRECTION::Scalar>::value && //
-                     std::is_arithmetic<typename COC::Scalar>::value &&       //
-                     std::is_arithmetic<FTYPE>::value ) {
+      // Zero out the negative values in discr, to prevent sqrt(-ve)
+      if constexpr ( all_arithmetic_v<typename POSITION::Scalar,  //
+                                      typename DIRECTION::Scalar, //
+                                      typename COC::Scalar,       //
+                                      FTYPE> ) {
         // scalar
         if ( UNLIKELY( !OK ) ) { discr = zero; }
-      } else {
+      } else if constexpr ( all_SIMD_v<typename POSITION::Scalar,  //
+                                       typename DIRECTION::Scalar, //
+                                       typename COC::Scalar,       //
+                                       FTYPE> ) {
         // SIMD
-        // Zero out the negative values in discr, to prevent sqrt(-ve)
         if ( UNLIKELY( !all_of( OK ) ) ) { discr.setZeroInverted( OK ); }
+      } else {
+        // If get here we don't know how to handle the types, so cause compilation failure.
+        // Note, cannot use static_assert here as needs to be parsable (if not compilable).
+        // https://stackoverflow.com/questions/38304847/constexpr-if-and-static-assert
+        FTYPE::WillFail();
       }
       // compute the distance
       const auto dist = FTYPE( 0.5f ) * ( std::sqrt( discr ) - b ) / a;
