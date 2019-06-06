@@ -50,22 +50,22 @@ std::string DeUTSector::hybridType() const { return m_hybridType; }
 std::ostream& DeUTSector::printOut( std::ostream& os ) const {
 
   // stream to cout
-  os << " Sector :  " << name() << '\n';
+  os << " Sector :  " << name() << std::endl;
   os << " Nickname: " << m_nickname << "\n ID " << id() << "\n type  " << type() << "\n pitch " << m_pitch
      << "\n strip " << m_nStrip << "\n capacitance " << m_capacitance / Gaudi::Units::picofarad << "\n dead width "
      << m_deadWidth << "\n center " << globalCentre() << "\n Sector status " << sectorStatus() << "\n fraction active "
-     << fractionActive() << "\n version " << m_versionString << '\n';
+     << fractionActive() << "\n version " << m_versionString << std::endl;
   return os;
 }
 
 MsgStream& DeUTSector::printOut( MsgStream& os ) const {
 
   // stream to Msg service
-  os << " Sector : \n " << name() << '\n';
+  os << " Sector : \n " << name() << std::endl;
   os << " Nickname: " << m_nickname << "\n ID " << id() << "type \n " << type() << " pitch \n " << m_pitch
      << "n strip \n " << m_nStrip << " capacitance \n " << m_capacitance / Gaudi::Units::picofarad << "dead width \n "
      << m_deadWidth << "\n center " << globalCentre() << "\n fraction active " << fractionActive() << "\n version "
-     << m_versionString << '\n';
+     << m_versionString << std::endl;
 
   return os;
 }
@@ -150,7 +150,7 @@ StatusCode DeUTSector::initialize() {
 
     // get the attached sensors
     std::vector<DeUTSensor*> sensors = getChildren<DeUTSector>();
-    std::sort( sensors.begin(), sensors.end(), UTDetFun::SortByY );
+    std::sort( sensors.begin(), sensors.end(), UTDetFun::SortByY() );
     m_sensors.reserve( sensors.size() );
     m_sensors.insert( m_sensors.begin(), sensors.begin(), sensors.end() );
     m_thickness = m_sensors.front()->thickness();
@@ -198,7 +198,7 @@ StatusCode DeUTSector::initialize() {
   //             << "\n prodID " << prodID()
   //             << "\n conditionsPath " << conditionsPathName()
   //             << "\n moduleType " << moduleType()
-  //             << '\n';
+  //             << std::endl;
 
   return StatusCode::SUCCESS;
 }

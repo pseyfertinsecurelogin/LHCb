@@ -44,7 +44,7 @@ StatusCode DeUTStation::initialize() {
   } else {
     // and the parent
     m_id     = (unsigned int)param<int>( "stationID" );
-    m_parent = getParent<DeUTStation>();
+    m_parent = getParent<parent_type>();
 
     UTChannelID aChan( UTChannelID::detType::typeUT, this->id(), 0, 0, 0, 0 );
     setElementID( aChan );
@@ -60,7 +60,10 @@ StatusCode DeUTStation::initialize() {
 std::ostream& DeUTStation::printOut( std::ostream& os ) const {
 
   // stream to cout
-  return os << " Station: " << m_id << '\n' << " Nickname: " << m_nickname << '\n';
+  os << " Station: " << m_id << std::endl;
+  os << " Nickname: " << m_nickname << std::endl;
+
+  return os;
 }
 
 MsgStream& DeUTStation::printOut( MsgStream& os ) const {
@@ -68,19 +71,20 @@ MsgStream& DeUTStation::printOut( MsgStream& os ) const {
   // stream to Msg service
   os << " Station : " << m_id << endmsg;
   os << " Nickname: " << m_nickname << endmsg;
+
   return os;
 }
 
 DeUTLayer* DeUTStation::findLayer( const UTChannelID aChannel ) {
   auto iter =
       std::find_if( m_layers.begin(), m_layers.end(), [&]( const DeUTLayer* l ) { return l->contains( aChannel ); } );
-  return iter != m_layers.end() ? *iter : nullptr;
+  return ( iter != m_layers.end() ? *iter : nullptr );
 }
 
 DeUTLayer* DeUTStation::findLayer( const Gaudi::XYZPoint& point ) {
   auto iter =
       std::find_if( m_layers.begin(), m_layers.end(), [&]( const DeUTLayer* l ) { return l->isInside( point ); } );
-  return iter != m_layers.end() ? *iter : nullptr;
+  return ( iter != m_layers.end() ? *iter : nullptr );
 }
 
 double DeUTStation::fractionActive() const {

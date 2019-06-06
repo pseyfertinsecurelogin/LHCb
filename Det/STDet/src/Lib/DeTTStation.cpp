@@ -45,7 +45,7 @@ StatusCode DeTTStation::initialize() {
   } else {
 
     // and the parent
-    m_parent = getParent<DeTTStation>();
+    m_parent = getParent<parent_type>();
 
     STChannelID aChan( STChannelID::detType::typeTT, this->id(), 0, 0, 0, 0 );
     setElementID( aChan );
