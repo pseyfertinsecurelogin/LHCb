@@ -16,43 +16,39 @@
 
 /**
  * Hits in VP
- * 
+ *
  * @author: Arthur Hennequin
  */
 
-namespace LHCb::Event {
-  class HitsVP {
-    constexpr static int max_hits = align_size(10000);
+namespace LHCb::Pr::Velo {
+  class Hits {
+    constexpr static int max_hits = align_size( 10000 );
+
   public:
-    HitsVP() {
+    Hits() {
       const size_t size = max_hits * 4;
-      m_data = static_cast<int*>(std::aligned_alloc(64, size*sizeof(int)));
+      m_data            = static_cast<int*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
-    HitsVP(const HitsVP&) = delete;
+    Hits( const Hits& ) = delete;
 
-    HitsVP(HitsVP&& other) {
-      m_data = other.m_data;
+    Hits( Hits&& other ) {
+      m_data       = other.m_data;
       other.m_data = nullptr;
-      m_size = other.m_size;
+      m_size       = other.m_size;
     }
 
-    inline int size() const { return m_size; }
+    inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
 
-    VEC3_SOA_ACCESSOR(pos,
-                    (float*)m_data,
-                    (float*)&m_data[max_hits],
-                    (float*)&m_data[2*max_hits])
+    VEC3_SOA_ACCESSOR( pos, (float*)m_data, (float*)&m_data[max_hits], (float*)&m_data[2 * max_hits] )
 
-    SOA_ACCESSOR(LHCbId, &m_data[3*max_hits])
+    SOA_ACCESSOR( LHCbId, &m_data[3 * max_hits] )
 
-    ~HitsVP() {
-      std::free(m_data);
-    }
+    ~Hits() { std::free( m_data ); }
 
   private:
-    alignas(64) int* m_data;
+    alignas( 64 ) int* m_data;
     int m_size = 0;
   };
-}
+} // namespace LHCb::Pr::Velo
