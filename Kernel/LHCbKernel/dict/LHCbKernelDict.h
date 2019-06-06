@@ -43,7 +43,6 @@
 #include "Kernel/IAccept.h"
 #include "Kernel/IAlgorithmCorrelations.h"
 #include "Kernel/IBIntegrator.h"
-#include "Kernel/IBdlTool.h"
 #include "Kernel/ICheckTool.h"
 #include "Kernel/ICondDBInfo.h"
 #include "Kernel/ICountContainedObjects.h"

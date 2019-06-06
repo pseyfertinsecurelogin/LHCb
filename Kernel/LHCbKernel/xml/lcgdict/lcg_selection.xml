@@ -40,7 +40,6 @@
   <class name ="std::map<std::pair<int,unsigned int>,unsigned int>"/>
 <!--- Add here all interfaces from Kernel directory -->
   <class name = "IAlgorithmCorrelations" />
-  <class name = "IBdlTool"             />
   <class name = "IBIntegrator"         />
   <class name = "ICheckTool"           />
   <class name = "ICondDBInfo"          />
