@@ -27,31 +27,30 @@ namespace {
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
-namespace GaudiUtils {
 
-  // operator<< overloads for variant nodes
-  std::ostream& operator<<( std::ostream& os, VNode const& node ) { return os << getNameOfVNode( node ); }
+// operator<< overloads for variant nodes
+std::ostream& operator<<( std::ostream& os, VNode const& node ) { return os << getNameOfVNode( node ); }
 
-  // be able to print vectors of ordered nodes correctly
-  template <typename T>
-  std::ostream& operator<<( std::ostream& os, gsl::not_null<T*> const& ptr ) {
-    return os << *ptr;
-  }
+// be able to print vectors of ordered nodes correctly
+template <typename T>
+std::ostream& operator<<( std::ostream& os, gsl::not_null<T*> const& ptr ) {
+  return os << *ptr;
+}
 
-  template <nodeType Type>
-  std::ostream& operator<<( std::ostream& os, CompositeNode<Type> const& node ) {
-    return os << node.m_name;
-  }
+template <nodeType Type>
+std::ostream& operator<<( std::ostream& os, CompositeNode<Type> const& node ) {
+  return os << node.m_name;
+}
 
-  std::ostream& operator<<( std::ostream& os, NodeState const& state ) {
-    return os << state.executionCtr << "|" << state.passed;
-  }
+std::ostream& operator<<( std::ostream& os, NodeState const& state ) {
+  return os << state.executionCtr << "|" << state.passed;
+}
 
-  template <typename Key, typename Compare, typename Allocator>
-  std::ostream& operator<<( std::ostream& os, std::set<Key, Compare, Allocator> const& x ) {
-    return GaudiUtils::details::ostream_joiner( os << "{", x, ", " ) << "}";
-  }
-} // namespace GaudiUtils
+template <typename Key, typename Compare, typename Allocator>
+std::ostream& operator<<( std::ostream& os, std::set<Key, Compare, Allocator> const& x ) {
+  return GaudiUtils::details::ostream_joiner( os << "{", x, ", " ) << "}";
+}
+
 namespace {
 
   using GaudiUtils::operator<<;

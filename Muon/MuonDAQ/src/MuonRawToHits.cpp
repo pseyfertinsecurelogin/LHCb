@@ -197,8 +197,9 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
 
   // partition into the two directions of digits
   // vertical and horizontal stripes
-  const auto mid = std::partition( digits.begin(), digits.end(),
-                                   [&layoutOne]( const Digit& digit ) { return digit.tile.layout() == layoutOne; } );
+  const auto mid = std::partition( digits.begin(), digits.end(), [l = std::cref( layoutOne )]( const Digit& digit ) {
+    return digit.tile.layout() == l.get();
+  } );
 
   auto digitsOne = boost::make_iterator_range( digits.begin(), mid );
   auto digitsTwo = boost::make_iterator_range( mid, digits.end() );
