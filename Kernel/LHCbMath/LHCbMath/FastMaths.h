@@ -215,6 +215,19 @@ namespace LHCb::Math {
       return lb_cast<FP>( ret );
     }
 
+    /// Sqrt implmentation from Quake3
+    template <std::size_t ITERATIONS, typename FP>
+    inline FP fast_isqrtf_general( const FP x ) {
+      const auto x2 = x * FP( 0.5f );
+      union {
+        FP         f;
+        UInt32<FP> i;
+      } z = {x};
+      z.i = UInt32<FP>( 0x5f3759df ) - ( z.i >> 1 );
+      for ( std::size_t j = 0; j < ITERATIONS; ++j ) { z.f *= ( FP( 1.5f ) - ( x2 * z.f * z.f ) ); }
+      return z.f;
+    }
+
     // constants.
     constexpr float INFF( std::numeric_limits<float>::infinity() );
     constexpr float MAXNUMF( 3.4028234663852885981170418348451692544e38f );
@@ -550,6 +563,24 @@ namespace LHCb::Math {
 
   //------------------------------------------------------------------------------
 
+  /// fast 1/sqrt
+  template <typename FP>
+  inline FP fast_rsqrt( const FP x ) noexcept {
+    using namespace LHCb::SIMD;
+    // For scalars, use VDT-like methods as they seems fastest
+    if constexpr ( std::is_same_v<FP, float> ) {
+      return impl::fast_isqrtf_general<2>( x );
+    } else if constexpr ( std::is_same_v<FP, double> ) {
+      return vdt::fast_isqrt( x );
+    }
+    // For SIMD rely on abstraction layer rsqrt, as it appears better
+    else if constexpr ( is_SIMD_v<FP> ) {
+      return rsqrt( x );
+    }
+  }
+
+  //------------------------------------------------------------------------------
+
   //------------------------------------------------------------------------------
 
   /** @namespace Approx
@@ -590,8 +621,8 @@ namespace LHCb::Math {
         FP         f;
       } mx         = {( vx.i & UInt32<FP>( 0x007FFFFF ) ) | UInt32<FP>( 0x3f000000 )};
       const auto y = lb_cast<FP>( vx.i ) * FP( 1.1920928955078125e-7f );
-      return ( y - FP( 124.22551499f ) - FP( 1.498030302f ) * mx.f -
-               FP( 1.72587999f ) / ( FP( 0.3520887068f ) + mx.f ) );
+      return ( y - FP( 124.22551499f ) - ( FP( 1.498030302f ) * mx.f ) -
+               ( FP( 1.72587999f ) / ( FP( 0.3520887068f ) + mx.f ) ) );
     }
 
     /// Fast log approximation
@@ -615,34 +646,33 @@ namespace LHCb::Math {
     /// Fast pow2 approximation
     template <typename FP>
     inline FP approx_pow2( const FP p ) noexcept {
+      using namespace LHCb::SIMD;
+      using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
         const float        offset = ( p < 0 ? 1.0f : 0.0f );
-        const float        clipp  = ( p < -126 ? -126.0f : p );
+        const float        clipp  = ( p < -126.0f ? -126.0f : p );
         const std::int32_t w      = clipp;
         const float        z      = clipp - w + offset;
         const union {
           std::uint32_t i;
           float         f;
         } v = {static_cast<std::uint32_t>(
-            ( 1 << 23 ) * ( clipp + 121.2740575f + 27.7280233f / ( 4.84252568f - z ) - 1.49012907f * z ) )};
+            ( 1 << 23 ) * ( clipp + 121.2740575f + ( 27.7280233f / ( 4.84252568f - z ) ) - ( 1.49012907f * z ) ) )};
         return v.f;
-      } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
+      } else if constexpr ( is_SIMD_v<FP> ) {
         // SIMD
-        using namespace impl;
-        using namespace LHCb::SIMD;
-        const FP A( -126.0f );
-        auto     clipp = p;
-        clipp( p < A ) = A;
-        const auto w   = lb_cast<Int32<FP>>( clipp );
-        auto       z   = clipp - lb_cast<FP>( w );
+        const FP   A( -126.0f );
+        const auto clipp = iif( p < A, A, p );
+        const auto w     = lb_cast<Int32<FP>>( clipp );
+        auto       z     = clipp - lb_cast<FP>( w );
         z( p < FP::Zero() ) += FP::One();
         const union {
           UInt32<FP> i;
           FP         f;
-        } v = {lb_cast<UInt32<FP>>(
-            ( 1 << 23 ) *
-            ( clipp + FP( 121.2740575f ) + FP( 27.7280233f ) / ( FP( 4.84252568f ) - z ) - FP( 1.49012907f ) * z ) )};
+        } v = {lb_cast<UInt32<FP>>( ( 1 << 23 ) *
+                                    ( clipp + FP( 121.2740575f ) + ( FP( 27.7280233f ) / ( FP( 4.84252568f ) - z ) ) -
+                                      ( FP( 1.49012907f ) * z ) ) )};
         return v.f;
       }
     }
@@ -656,6 +686,7 @@ namespace LHCb::Math {
     /// Very fast pow2 approximation
     template <typename FP>
     inline FP vapprox_pow2( const FP p ) noexcept {
+      using namespace LHCb::SIMD;
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
@@ -667,7 +698,6 @@ namespace LHCb::Math {
         return v.f;
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         // SIMD
-        using namespace LHCb::SIMD;
         auto     clipp = p;
         const FP A( -126.0f );
         clipp( p < A ) = A;
@@ -694,7 +724,7 @@ namespace LHCb::Math {
         const auto abs_y = std::fabs( y ) + 1e-10f;
         const auto neg_x = ( x < 0.0f );
         const auto r     = ( neg_x ? ( x + abs_y ) / ( abs_y - x ) : ( x - abs_y ) / ( x + abs_y ) );
-        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + ( ( 0.1963f * r * r - 0.9817f ) * r ) );
+        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + ( ( ( 0.1963f * r * r ) - 0.9817f ) * r ) );
         // opposite sign if in quad III or IV
         return ( y < 0.0f ? -angle : angle );
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
@@ -703,7 +733,7 @@ namespace LHCb::Math {
         const auto neg_x = ( x < FP::Zero() );
         auto       r     = ( x - abs_y ) / ( x + abs_y );
         r( neg_x )       = -FP::One() / r;
-        auto angle       = ( ( FP( 0.1963f ) * r * r - FP( 0.9817f ) ) * r );
+        auto angle       = ( ( ( FP( 0.1963f ) * r * r ) - FP( 0.9817f ) ) * r );
         angle += iif( neg_x, FP( THREEPIO4 ), FP( PIO4F ) );
         // opposite sign if in quad III or IV
         angle( y < FP::Zero() ) *= -FP::One();
@@ -712,39 +742,38 @@ namespace LHCb::Math {
       }
     }
 
+    namespace details {
+
+      /// Implements the fast sqrt method.
+      /// Template parameter STEPS indicates the number of Babylonian steps to use.
+      template <std::size_t STEPS, typename FP>
+      inline FP _impl_approx_sqrt( const FP x ) noexcept {
+        using namespace impl;
+        union {
+          FP        x;
+          Int32<FP> i;
+        } u = {x};
+        u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
+        // One Babylonian Steps
+        if ( STEPS >= 3 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        if ( STEPS >= 2 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        if ( STEPS >= 1 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        // return
+        return u.x;
+      }
+
+    } // namespace details
+
     /// Approx sqrt
     template <typename FP>
     inline FP approx_sqrt( const FP x ) noexcept {
-
-      using namespace impl;
-
-      union {
-        FP        x;
-        Int32<FP> i;
-      } u = {x};
-
-      u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
-
-      // One Babylonian Step
-      u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) );
-
-      return u.x;
+      return details::_impl_approx_sqrt<1>( x );
     }
 
-    /// Approx sqrt
+    /// Very approx sqrt
     template <typename FP>
     inline FP vapprox_sqrt( const FP x ) noexcept {
-
-      using namespace impl;
-
-      union {
-        FP        x;
-        Int32<FP> i;
-      } u = {x};
-
-      u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
-
-      return u.x;
+      return details::_impl_approx_sqrt<0>( x );
     }
 
     //----------------------------------------------------------------------------
