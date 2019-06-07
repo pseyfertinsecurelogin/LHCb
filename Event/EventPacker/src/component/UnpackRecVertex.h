@@ -15,8 +15,10 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-/** @class UnpackRecVertex UnpackRecVertex.h
- *  Unpack a RecVertex
+#include "Event/PackedRecVertex.h"
+#include "Event/RecVertex.h"
+
+/** @brief Unpack a PackedRecVertex container to RecVertices.
  *
  *  @author Olivier Callot
  *  @date   2008-11-17
@@ -24,16 +26,15 @@
 class UnpackRecVertex : public GaudiAlgorithm {
 
 public:
-  /// Standard constructor
-  UnpackRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode execute() override; ///< Algorithm execution
+  using GaudiAlgorithm::GaudiAlgorithm;
+  StatusCode execute() override;
 
 private:
-  std::string m_inputName;
-  std::string m_outputName;
-  bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
-  std::string m_weightsLoc;   ///< Location of the weights vector
+  DataObjectReadHandle<LHCb::PackedRecVertices> m_packedVertices{this, "InputName",
+                                                                 LHCb::PackedRecVertexLocation::Primary};
+  DataObjectWriteHandle<LHCb::RecVertices>      m_vertices{this, "OutputName", LHCb::RecVertexLocation::Primary};
+  Gaudi::Property<bool>                         m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                       "Flag to turn on the creation of output, even when input is missing"};
 };
 
 #endif // UNPACKRECVERTEX_H

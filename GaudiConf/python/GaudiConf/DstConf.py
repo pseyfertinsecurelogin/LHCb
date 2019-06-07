@@ -421,7 +421,8 @@ class DstConf(LHCbConfigurableUser):
         tempLoc = "Test"
         unpackVertex = UnpackRecVertex("UnpackVertexTest")
         unpackV0 = UnpackTwoProngVertex("UnpackV0Test")
-        unpackVertex.OutputName = unpackVertex.getProp("OutputName") + tempLoc
+        unpackVertex.OutputName = str(
+            unpackVertex.getProp("OutputName")) + tempLoc
         unpackV0.OutputName = unpackV0.getProp("OutputName") + tempLoc
 
         checks.Members += [unpackVertex, unpackV0]

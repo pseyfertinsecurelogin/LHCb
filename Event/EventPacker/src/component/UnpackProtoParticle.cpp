@@ -22,39 +22,24 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( UnpackProtoParticle )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-UnpackProtoParticle::UnpackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = LHCb::PackedProtoParticleLocation::Charged );
-  declareProperty( "OutputName", m_outputName = LHCb::ProtoParticleLocation::Charged );
-  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
-  // setProperty( "OutputLevel", 1 );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
 StatusCode UnpackProtoParticle::execute() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && !exist<LHCb::PackedProtoParticles>( m_inputName ) ) return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput.value() && !m_packedProtos.exist() ) return StatusCode::SUCCESS;
 
-  const auto* dst = getOrCreate<LHCb::PackedProtoParticles, LHCb::PackedProtoParticles>( m_inputName );
+  const auto* dst = m_packedProtos.getOrCreate();
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Found " << dst->protos().size() << " PackedProtoParticles at '" << m_inputName << "'" << endmsg;
+    debug() << "Found " << dst->protos().size() << " PackedProtoParticles at " << m_packedProtos.fullKey() << endmsg;
 
-  auto* newProtoParticles = new LHCb::ProtoParticles();
-  put( newProtoParticles, m_outputName );
+  auto* newProtoParticles = m_protos.put( std::make_unique<LHCb::ProtoParticles>() );
 
   // unpack
   const LHCb::ProtoParticlePacker packer( this );
   packer.unpack( *dst, *newProtoParticles );
 
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Created " << newProtoParticles->size() << " ProtoParticles at '" << m_outputName << "'" << endmsg;
+    debug() << "Created " << newProtoParticles->size() << " ProtoParticles at " << m_protos.fullKey() << endmsg;
 
   return StatusCode::SUCCESS;
 }

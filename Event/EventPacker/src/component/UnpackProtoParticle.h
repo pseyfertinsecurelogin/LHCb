@@ -17,8 +17,7 @@
 #include "Event/PackedProtoParticle.h"
 #include "Event/ProtoParticle.h"
 
-/** @class UnpackProtoParticle UnpackProtoParticle.h
- *  Unpack a ProtoParticle
+/** @brief Unpack a PackedProtoParticle container to ProtoParticles.
  *
  *  @author Olivier Callot
  *  @date   2008-11-14
@@ -26,15 +25,15 @@
 class UnpackProtoParticle : public GaudiAlgorithm {
 
 public:
-  /// Standard constructor
-  UnpackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode execute() override; ///< Algorithm execution
+  using GaudiAlgorithm::GaudiAlgorithm;
+  StatusCode execute() override;
 
 private:
-  std::string m_inputName;
-  std::string m_outputName;
-  bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
+  DataObjectReadHandle<LHCb::PackedProtoParticles> m_packedProtos{this, "InputName",
+                                                                  LHCb::PackedProtoParticleLocation::Charged};
+  DataObjectWriteHandle<LHCb::ProtoParticles>      m_protos{this, "OutputName", LHCb::ProtoParticleLocation::Charged};
+  Gaudi::Property<bool>                            m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                       "Flag to turn on the creation of output, even when input is missing"};
 };
 
 #endif // UNPACKPROTOPARTICLE_H

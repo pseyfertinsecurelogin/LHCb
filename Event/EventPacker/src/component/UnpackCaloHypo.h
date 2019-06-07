@@ -14,11 +14,10 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+#include "Event/CaloHypo.h"
 #include "Event/PackedCaloHypo.h"
 
-/** @class UnpackCaloHypo UnpackCaloHypo.h
- *
- *  Unpack CaloHypos
+/** @brief Unpack a PackedCaloHypo container to CaloHypos.
  *
  *  @author Olivier Callot
  *  @date   2008-11-14
@@ -26,15 +25,14 @@
 class UnpackCaloHypo : public GaudiAlgorithm {
 
 public:
-  /// Standard constructor
-  UnpackCaloHypo( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode execute() override; ///< Algorithm execution
+  using GaudiAlgorithm::GaudiAlgorithm;
+  StatusCode execute() override;
 
 private:
-  std::string m_inputName;
-  std::string m_outputName;
-  bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
+  DataObjectReadHandle<LHCb::PackedCaloHypos> m_packedHypos{this, "InputName", LHCb::PackedCaloHypoLocation::Electrons};
+  DataObjectWriteHandle<LHCb::CaloHypos>      m_hypos{this, "OutputName", LHCb::CaloHypoLocation::Electrons};
+  Gaudi::Property<bool>                       m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                       "Flag to turn on the creation of output, even when input is missing"};
 };
 
 #endif // UNPACKCALOHYPO_H

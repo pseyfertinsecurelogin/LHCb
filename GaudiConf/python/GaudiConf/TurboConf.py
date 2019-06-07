@@ -82,12 +82,12 @@ class TurboConf(LHCbConfigurableUser):
             InputName="/Event/Turbo/pRec/neutral/Hypos",
             OutputName="Turbo/CaloHypos")
         for alg in [clustersRep, hyposRep]:
-            DataOnDemandSvc().AlgMap[alg.OutputName] = alg
+            DataOnDemandSvc().AlgMap[str(alg.OutputName)] = alg
 
     def _register_pr_unpackers(self, packing):
         """Set up DataOnDemandSvc to unpack reconstruction information."""
         for alg in packing.unpackers():
-            DataOnDemandSvc().AlgMap[alg.OutputName] = alg
+            DataOnDemandSvc().AlgMap[str(alg.OutputName)] = alg
 
     def _register_pr_links(self, packing, rootintes, datatype, simulation):
         """Set up DataOnDemandSvc to create links to standard rec locations."""

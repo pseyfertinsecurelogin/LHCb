@@ -27,16 +27,16 @@ namespace DataPacking {
   class Unpack : public GaudiAlgorithm {
 
   public:
-    /// Standard constructor
-    Unpack( const std::string& name, ISvcLocator* pSvcLocator );
-
+    using GaudiAlgorithm::GaudiAlgorithm;
     StatusCode initialize() override; ///< Algorithm initialize
     StatusCode execute() override;    ///< Algorithm execution
 
   private:
-    std::string m_inputName;    ///< Input location
-    std::string m_outputName;   ///< Output location
-    bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
+    DataObjectReadHandle<typename PACKER::PackedDataVector> m_packedObjects{this, "InputName",
+                                                                            PACKER::packedLocation()};
+    DataObjectWriteHandle<typename PACKER::DataVector>      m_objects{this, "OutputName", PACKER::unpackedLocation()};
+    Gaudi::Property<bool>                                   m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                         "Flag to turn on the creation of output, even when input is missing"};
 
     /// Packer object
     const PACKER m_packer{this};
