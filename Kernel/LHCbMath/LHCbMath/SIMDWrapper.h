@@ -24,7 +24,7 @@ namespace SIMDWrapper {
 
     class mask_v {
     public:
-      mask_v();
+      mask_v() {};
       mask_v( int m ) : data( m ) {}
 
       inline mask_v& operator=( const int& m ) {
@@ -50,7 +50,7 @@ namespace SIMDWrapper {
 
     class float_v {
     public:
-      float_v();
+      float_v() {};
       float_v( float f ) : data( f ) {}
       float_v( const float* f ) : data( *f ) {}
 
@@ -183,6 +183,8 @@ namespace SIMDWrapper {
       using int_v              = scalar::int_v;
       using float_v            = scalar::float_v;
       using mask_v             = scalar::mask_v;
+      static mask_v mask_true() { return true; }
+      static mask_v mask_false() { return false; }
       constexpr static int_v indices() { return 0; }
       constexpr static int_v indices( int start ) { return start; }
       template <typename T>
@@ -468,6 +470,8 @@ namespace SIMDWrapper {
       using int_v              = avx2::int_v;
       using float_v            = avx2::float_v;
       using mask_v             = avx2::float_v;
+      static mask_v  mask_true()  { return mask_v( -1.f ); }
+      static mask_v  mask_false() { return mask_v( 0.f ); }
       static int_v   indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
       static int_v   indices( int start ) { return indices() + start; }
       static int     popcount( __m256 mask ) { return _mm_popcnt_u32( _mm256_movemask_ps( mask ) ); }
@@ -658,6 +662,8 @@ namespace SIMDWrapper {
       using int_v              = avx512::int_v;
       using float_v            = avx512::float_v;
       using mask_v             = avx512::mask_v;
+      static mask_v mask_true() { return 0xFFFF; }
+      static mask_v mask_false() { return 0; }
       static int_v  indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
       static int_v  indices( int start ) { return indices() + start; }
       static int    popcount( mask_v mask ) { return _mm_popcnt_u32( mask ); }
