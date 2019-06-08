@@ -21,19 +21,32 @@
  *  @author Mostafa HOBALLAH --
  *  @date   2013-07-25
  */
-struct IFutureNeutralIDTool : extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  DeclareInterfaceID( IFutureNeutralIDTool, 3, 0 );
+namespace Calo::Future::Interfaces {
+  struct INeutralID : extend_interfaces<IAlgTool> {
 
-  virtual double isNotE( const LHCb::CaloHypo* hypo, ICaloFutureHypoEstimator* e = nullptr ) = 0;
-  virtual double isNotH( const LHCb::CaloHypo* hypo, ICaloFutureHypoEstimator* e = nullptr ) = 0;
+    // Return the interface ID
+    DeclareInterfaceID( INeutralID, 1, 0 );
 
-  virtual double isNotE( const double* v ) = 0;
-  virtual double isNotH( const double* v ) = 0;
+    virtual double isNotE( const LHCb::CaloHypo& hypo, ICaloFutureHypoEstimator* e = nullptr ) const = 0;
+    virtual double isNotH( const LHCb::CaloHypo& hypo, ICaloFutureHypoEstimator* e = nullptr ) const = 0;
 
-  virtual void Variables( const LHCb::CaloHypo* hypo, double& clmatch, double& prse, double& e19, double& hclecl,
-                          double& prse19, double& prse49, double& sprd, double& prse4mx, double& prsm,
-                          double& spdm ) = 0;
-};
+    struct Observables {
+      double clmatch = std::numeric_limits<double>::quiet_NaN();
+      double prse    = std::numeric_limits<double>::quiet_NaN();
+      double e19     = std::numeric_limits<double>::quiet_NaN();
+      double hclecl  = std::numeric_limits<double>::quiet_NaN();
+      double prse19  = std::numeric_limits<double>::quiet_NaN();
+      double prse49  = std::numeric_limits<double>::quiet_NaN();
+      double sprd    = std::numeric_limits<double>::quiet_NaN();
+      double prse4mx = std::numeric_limits<double>::quiet_NaN();
+      double prsm    = std::numeric_limits<double>::quiet_NaN();
+      double spdm    = std::numeric_limits<double>::quiet_NaN();
+    };
+    virtual Observables observables( const LHCb::CaloHypo& hypo ) const = 0;
+
+    virtual double isNotE( const Observables& v ) const = 0;
+    virtual double isNotH( const Observables& v ) const = 0;
+  };
+} // namespace Calo::Future::Interfaces
 #endif // IFUTURENEUTRALIDTOOL_H
