@@ -206,6 +206,9 @@ namespace LHCb {
       /// inline if '( a ? x : y )'
       using Vc::iif;
 
+      /// 1 / sqrt
+      using Vc::rsqrt;
+
     } // namespace VC
 
     /** @namespace LHCb::SIMD::VE
@@ -465,6 +468,16 @@ namespace LHCb {
       /// local double sqrt implementation
       inline FPD sqrt( const FPD& x ) noexcept {
         return ve::sqrt<1>( x ); // ~O(1e-8) precision
+      }
+
+      /// local float 1/sqrt implementation
+      inline FPF rsqrt( const FPF& x ) noexcept {
+        return ve::invsqrt<1>( x ); // ~O(1e-6) precision
+      }
+
+      /// local double 1/sqrt implementation
+      inline FPD rsqrt( const FPD& x ) noexcept {
+        return ve::invsqrt<1>( x ); // ~O(1e-8) precision
       }
 
     } // namespace VE

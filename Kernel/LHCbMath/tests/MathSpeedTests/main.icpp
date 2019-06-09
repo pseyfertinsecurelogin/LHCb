@@ -121,23 +121,23 @@ const FloatV simdSum( 0 );
 
 int main( int /*argc*/, char** /*argv*/ ) {
 
-//   // get instruction set level of CPU
-//   const int cpulevel = instrset_detect();
+  //   // get instruction set level of CPU
+  //   const int cpulevel = instrset_detect();
 
-//   // the compilation level
-// #ifdef INSTRSET
-//   const int complevel = INSTRSET;
-// #else
-//   const int complevel = 999;
-// #endif
+  //   // the compilation level
+  // #ifdef INSTRSET
+  //   const int complevel = INSTRSET;
+  // #else
+  //   const int complevel = 999;
+  // #endif
 
-//   // test if the CPU supports the compiled level
-//   // if not, return the code that informs Gaudi the test was not run.
-//   if ( cpulevel < complevel ) {
-//     std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel
-//               << ". Test will not be run." << std::endl;
-//     return 77;
-//   }
+  //   // test if the CPU supports the compiled level
+  //   // if not, return the code that informs Gaudi the test was not run.
+  //   if ( cpulevel < complevel ) {
+  //     std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel
+  //               << ". Test will not be run." << std::endl;
+  //     return 77;
+  //   }
 
   using namespace LHCb::Math;
   using namespace LHCb::Math::Approx;
@@ -178,6 +178,15 @@ int main( int /*argc*/, char** /*argv*/ ) {
       std::cout << "VDT  exp(" << d.xv << ") = " << fast_exp( d.xv ) << std::endl;
       std::cout << "APX  exp(" << d.xv << ") = " << approx_exp( d.xv ) << std::endl;
       std::cout << "VAPX exp(" << d.xv << ") = " << vapprox_exp( d.xv ) << std::endl;
+      std::cout << std::endl;
+
+      std::cout << "STD  isqrt(" << d.absxs << ") = " << decltype( d.absxs )( 1.0f ) / std::sqrt( d.absxs )
+                << std::endl;
+      std::cout << "STD  isqrt(" << d.absxv << ") = " << decltype( d.absxv )( 1.0f ) / std::sqrt( d.absxv )
+                << std::endl;
+      std::cout << "VDT  isqrt(" << d.absxs << ") = " << fast_rsqrt( d.absxs ) << std::endl;
+      std::cout << "VDT  isqrt(" << d.absxv << ") = " << fast_rsqrt( d.absxv ) << std::endl;
+
       std::cout << std::endl;
 
       std::cout << "STD  sqrt(" << d.absxs << ") = " << std::sqrt( d.absxs ) << std::endl;
@@ -310,6 +319,35 @@ int main( int /*argc*/, char** /*argv*/ ) {
     asm volatile( "" : "+x"( timeVcVDTLog ) );
     asm volatile( "" : "+x"( timeVcAPXLog ) );
     asm volatile( "" : "+x"( timeVcVAPXLog ) );
+
+    // ---------------------------------------------------------------------------------------------------------------------
+
+    std::cout << "testing isqrt functions..." << std::endl;
+
+    // STD scalar sqrt
+    auto timeScSTDiSqrt = solve<float>( data, []( const auto& d ) { return 1.0f / std::sqrt( d.absxs ); } );
+    std::cout << "Scalar STD  isqrt " << timeScSTDiSqrt << std::endl;
+
+    // VDT scalar sqrt
+    auto timeScVDTiSqrt = solve<float>( data, []( const auto& d ) { return fast_rsqrt( d.absxs ); } );
+    std::cout << "Scalar VDT  isqrt " << timeScVDTiSqrt << std::endl;
+
+    // STD(Vc) SIMD sqrt
+    auto timeVcSTDiSqrt =
+        solve<FloatV>( data, []( const auto& d ) { return decltype( d.absxv )( 1.0f ) / std::sqrt( d.absxv ); } );
+    std::cout << "SIMD   STD  isqrt " << timeVcSTDiSqrt << " ( " << timeVcSTDiSqrt / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDiSqrt / timeVcSTDiSqrt << " )" << std::endl;
+
+    // VDT SIMD sqrt
+    auto timeVcVDTiSqrt = solve<FloatV>( data, []( const auto& d ) { return fast_rsqrt( d.absxv ); } );
+    std::cout << "SIMD   VDT  isqrt " << timeVcVDTiSqrt << " ( " << timeVcVDTiSqrt / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVDTiSqrt / timeVcVDTiSqrt << " )" << std::endl;
+
+    // make sure we are not optimized away
+    asm volatile( "" : "+x"( timeScSTDiSqrt ) );
+    asm volatile( "" : "+x"( timeScVDTiSqrt ) );
+    asm volatile( "" : "+x"( timeVcSTDiSqrt ) );
+    asm volatile( "" : "+x"( timeVcVDTiSqrt ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
 
