@@ -27,14 +27,14 @@ def _parse_metadata(s):
     multiline string.
     '''
     from itertools import dropwhile, takewhile, islice
-    from yaml import load
+    from yaml import safe_load
     skipone = lambda iterable: islice(iterable, 1, None)
     not_marker = lambda l: l.rstrip() != '---'
     data = '\n'.join(
         takewhile(not_marker, skipone(dropwhile(not_marker, s.splitlines()))))
     if not data:
         return {}
-    return load(data)
+    return safe_load(data)
 
 
 def getTagsInfos(repository):
