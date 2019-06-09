@@ -15,6 +15,7 @@
 // STL
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -155,12 +156,6 @@ namespace LHCb {
 
 #endif
 
-      /// SIMD Int8
-      using Int8 = INT<std::int8_t>;
-
-      /// SIMD UInt8
-      using UInt8 = INT<std::uint8_t>;
-
       /// SIMD Int16
       using Int16 = INT<std::int16_t>;
 
@@ -172,12 +167,6 @@ namespace LHCb {
 
       /// SIMD UInt32
       using UInt32 = INT<std::uint32_t>;
-
-      /// SIMD Int64
-      using Int64 = INT<std::int64_t>;
-
-      /// SIMD UInt64
-      using UInt64 = INT<std::uint64_t>;
 
       //------------------------------------------------------------------------------------------------
       // Default scalar types
@@ -210,8 +199,12 @@ namespace LHCb {
 
       /// SIMD cast
       using Vc::simd_cast;
+
       /// is negative
       using Vc::isnegative;
+
+      /// inline if '( a ? x : y )'
+      using Vc::iif;
 
     } // namespace VC
 
@@ -339,18 +332,26 @@ namespace LHCb {
         }
       };
 
-      template <typename V, typename = typename std::enable_if<std::is_base_of<VETAG, V>::value>::type>
+      template <typename V, typename = typename std::enable_if_t<std::is_base_of_v<VETAG, V>>>
       constexpr decltype( auto ) isnegative( const V& v ) {
         return ( v < V::Zero() );
       }
 
       /// SIMD cast
-      template <typename TO, typename FROM, std::size_t SIZE = TO::size(),
-                typename = typename std::enable_if<std::is_base_of<VETAG, FROM>::value &&
-                                                   std::is_base_of<VETAG, TO>::value>::type>
+      template <typename TO, typename FROM,                                            //
+                typename = typename std::enable_if_t<std::is_base_of_v<VETAG, FROM> && //
+                                                     std::is_base_of_v<VETAG, TO>>>
       TO simd_cast( FROM x ) noexcept {
-        static_assert( FROM::size() == TO::size(), "size mismatch" );
-        return SIMDV<typename TO::value_type, SIZE>( x );
+        static_assert( FROM::Size == TO::Size, "size mismatch" );
+        return SIMDV<typename TO::value_type, FROM::Size>( x );
+      }
+
+      /// inline if '( m ? a : b )'
+      template <typename MASK, typename VTRUE, typename VFALSE,                         //
+                typename = typename std::enable_if_t<std::is_base_of_v<VETAG, VTRUE> && //
+                                                     std::is_base_of_v<VETAG, VFALSE>>>
+      decltype( auto ) iif( MASK m, VTRUE a, VFALSE b ) noexcept {
+        return sel( m, a, b );
       }
 
       //------------------------------------------------------------------------------------------------
@@ -415,12 +416,6 @@ namespace LHCb {
       template <typename ITYPE>
       using INT = SIMDV<ITYPE, VE::FPF::Size>;
 
-      /// SIMD Int8
-      using Int8 = INT<std::int8_t>;
-
-      /// SIMD UInt8
-      using UInt8 = INT<std::uint8_t>;
-
       /// SIMD Int16
       using Int16 = INT<std::int16_t>;
 
@@ -432,12 +427,6 @@ namespace LHCb {
 
       /// SIMD UInt32
       using UInt32 = INT<std::uint32_t>;
-
-      /// SIMD Int32
-      using Int64 = INT<std::int64_t>;
-
-      /// SIMD UInt32
-      using UInt64 = INT<std::uint64_t>;
 
       //------------------------------------------------------------------------------------------------
       // Default scalar types
@@ -462,7 +451,7 @@ namespace LHCb {
 
       /// SIMD 'Array' (always same size as VE vectors)
       template <typename TYPE, typename FPTYPE = FP<DefaultScalarFP>>
-      using STDArray = std::array<TYPE, FPF::Size>;
+      using STDArray = std::array<TYPE, FPTYPE::Size>;
 
       //------------------------------------------------------------------------------------------------
       // Utility methods
@@ -480,14 +469,91 @@ namespace LHCb {
 
     } // namespace VE
 
+    //------------------------------------------------------------------------------------------------
+    // type traits
+    //------------------------------------------------------------------------------------------------
+
+    namespace details {
+
+      /// Check if a given type is one of a given list.
+      template <typename T, typename... Types>
+      using _is_one_of = std::disjunction<std::is_base_of<T, Types>...>;
+
+      /// Checks if the given type is a SIMD type.
+      template <typename T>
+      using _check_SIMD = _is_one_of<T,                      // test type
+                                     VC::FPD, VC::FPF,       // VC floats
+                                     VC::Int16, VC::Int32,   // VC ints
+                                     VC::UInt16, VC::UInt32, // VC unsigned ints
+                                     VE::FPD, VE::FPF,       // VE floats
+                                     VE::Int16, VE::Int32,   // VE ints
+                                     VE::UInt16, VE::UInt32, // VE unsigned ints
+                                     VE::VETAG>;             // VE tag
+
+    } // namespace details
+
+    /// Checks if given TYPE is SIMD
+    template <typename Type>
+    using is_SIMD = details::_check_SIMD<Type>;
+    template <typename Type>
+    inline constexpr bool is_SIMD_v = is_SIMD<Type>::value;
+
+    /// Checks if a given list of types are all SIMD types
+    template <typename... Types>
+    using all_SIMD = std::conjunction<details::_check_SIMD<Types>...>;
+    template <typename... Types>
+    inline constexpr bool all_SIMD_v = all_SIMD<Types...>::value;
+
+    /// Checks if at least one type in a given list of types is SIMD
+    template <typename... Types>
+    using any_SIMD = std::disjunction<details::_check_SIMD<Types>...>;
+    template <typename... Types>
+    inline constexpr bool any_SIMD_v = any_SIMD<Types...>::value;
+
+    /// Checks if a given list of types are all arithmetic types
+    template <typename... Types>
+    using all_arithmetic = std::conjunction<std::is_arithmetic<Types>...>;
+    template <typename... Types>
+    inline constexpr bool all_arithmetic_v = all_arithmetic<Types...>::value;
+
+    /// Checks if at least one type in a given list of types is arithmetic
+    template <typename... Types>
+    using any_arithmetic = std::disjunction<std::is_arithmetic<Types>...>;
+    template <typename... Types>
+    inline constexpr bool any_arithmetic_v = any_arithmetic<Types...>::value;
+
+    //------------------------------------------------------------------------------------------------
     // scalar/SIMD supporting cast
+    //------------------------------------------------------------------------------------------------
+
     template <typename TO, typename FROM>
     TO lb_cast( FROM x ) noexcept {
-      if constexpr ( std::is_arithmetic<FROM>::value && std::is_arithmetic<TO>::value ) {
+      if constexpr ( all_arithmetic_v<TO, FROM> ) {
         return ( TO )( x );
       } else {
+        // Note we are just assuming TO and FROM are SIMD types at
+        // this point and call simd_cast on them. If they aren't, this will fail,
+        // as simd_cast will not be defined for them.
         return simd_cast<TO>( x );
       }
+    }
+
+    //------------------------------------------------------------------------------------------------
+    // scalar fallback implementations. Helps make templated scalar/SIMD code easier.
+    //------------------------------------------------------------------------------------------------
+
+    /// inline if '( m ? a : b )'
+    template <typename VTRUE, typename VFALSE, //
+              typename = typename std::enable_if_t<all_arithmetic_v<VTRUE, VFALSE>>>
+    decltype( auto ) iif( const bool m, VTRUE a, VFALSE b ) noexcept {
+      return ( m ? a : b );
+    }
+
+    /// isnegative
+    template <typename TYPE, //
+              typename = typename std::enable_if_t<all_arithmetic_v<TYPE>>>
+    decltype( auto ) isnegative( const TYPE x ) noexcept {
+      return std::signbit( x );
     }
 
     //------------------------------------------------------------------------------------------------
