@@ -12,20 +12,22 @@
 #include "CaloDet/DeCalorimeter.h"
 #include "CaloFutureUtils/CaloFuture2Track.h"
 #include "Event/CaloAdc.h"
+#include "Event/CaloCluster.h"
 #include "Event/CaloDigit.h"
+#include "Event/CaloHypo.h"
 #include "Event/ProtoParticle.h"
 #include "Event/RawBankReadoutStatus.h"
 #include "GaudiKernel/IRegistry.h"
 #include <algorithm>
 
-using LHCb::CaloFutureAlgUtils::futuredetails::contains_ci;
+using LHCb::CaloFutureAlgUtils::details::contains_ci;
 namespace {
-  std::string pathFromContext( const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>>& table,
-                               boost::string_ref                                                             val ) {
+  std::string pathFromContext( const std::initializer_list<std::pair<std::string_view, std::string_view>>& table,
+                               std::string_view                                                            val ) {
     auto i = std::find_if(
         std::begin( table ), std::end( table ),
-        [&]( const std::pair<boost::string_ref, boost::string_ref>& item ) { return contains_ci( val, item.first ); } );
-    return i != std::end( table ) ? LHCb::CaloFutureAlgUtils::futuredetails::to_string( i->second ) : std::string{};
+        [&]( const std::pair<std::string_view, std::string_view>& item ) { return contains_ci( val, item.first ); } );
+    return i != std::end( table ) ? LHCb::CaloFutureAlgUtils::details::to_string( i->second ) : std::string{};
   }
 } // namespace
 
@@ -101,7 +103,7 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::stri
 // Hypo location from type
 std::string LHCb::CaloFutureAlgUtils::CaloFutureHypoLocation( const std::string& type ) {
   using namespace LHCb::CaloHypoLocation;
-  static const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>> table = {
+  static const std::initializer_list<std::pair<std::string_view, std::string_view>> table = {
       {"ELECTRON", Electrons},
       {"SPLITPHOTON", SplitPhotons},
       {"BREM", Photons},   // Brem=photon
@@ -113,7 +115,7 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureHypoLocation( const std::string&
 // CaloFutureId location from type
 std::string LHCb::CaloFutureAlgUtils::CaloFutureIdLocation( const std::string& type ) {
   using namespace LHCb::CaloFutureIdLocation;
-  static const std::initializer_list<std::pair<boost::string_ref, boost::string_ref>> table = {
+  static const std::initializer_list<std::pair<std::string_view, std::string_view>> table = {
       {"BREMMATCH", BremMatch},
       {"ELECTRONMATCH", ElectronMatch},
       {"PHOTONMATCH", ClusterMatch}, //=ClusterMatch
@@ -146,10 +148,7 @@ std::string LHCb::CaloFutureAlgUtils::CaloFutureIdLocation( const std::string& t
 
 // Track location
 std::vector<std::string> LHCb::CaloFutureAlgUtils::TrackLocations() {
-  std::vector<std::string> locs;
-  using namespace LHCb::TrackLocation;
-  locs.push_back( Default ); // default is offline
-  return locs;
+  return {LHCb::TrackLocation::Default}; // default is offline
 }
 
 const LHCb::CaloCluster* LHCb::CaloFutureAlgUtils::ClusterFromHypo( const LHCb::CaloHypo* hypo, bool split ) {

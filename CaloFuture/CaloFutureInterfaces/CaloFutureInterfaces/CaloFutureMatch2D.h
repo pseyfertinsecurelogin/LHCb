@@ -14,49 +14,29 @@
 #include <Math/SMatrix.h>
 #include <Math/SVector.h>
 
-class CaloFutureMatch2D {
-public:
-  using Vector = ROOT::Math::SVector<double, 2>;
-  using Matrix = ROOT::Math::SMatrix<double, 2, 2, ROOT::Math::MatRepSym<double, 2>>;
+namespace Calo::Future {
 
-  /// constructor
-  CaloFutureMatch2D( const Vector& params, const Matrix& matrix );
-  CaloFutureMatch2D() = default;
+  class Match2D {
+  public:
+    using Vector = ROOT::Math::SVector<double, 2>;
+    using Matrix = ROOT::Math::SMatrix<double, 2, 2, ROOT::Math::MatRepSym<double, 2>>;
 
-  const Vector& params() const;
-  const Matrix& matrix() const;
-  bool          ok() const;
-  bool          inverted() const;
+    /// constructor
+    Match2D() = default;
 
-  // invert the matrix
-  bool invert();
+    Match2D( const Vector& params, const Matrix& matrix )
+        : m_params( params ), m_matrix( matrix ), m_ok( m_matrix.Invert() ) {}
 
-private:
-  // the vector of parameters x,y(,e)
-  Vector m_params;
-  // the (inverse) covariance matrix of parameters
-  Matrix m_matrix;
-  // flag for errors
-  bool m_ok = true;
-  // flag to indicate that matrix is already inverted
-  bool m_inverted = false;
-};
+    const Vector& params() const { return m_params; }
+    const Matrix& matrix() const { return m_matrix; }
+    explicit      operator bool() const { return m_ok; }
 
-inline CaloFutureMatch2D::CaloFutureMatch2D( const Vector& params, const Matrix& matrix )
-    : m_params( params ), m_matrix( matrix ), m_ok( true ), m_inverted( false ) {}
+  private:
+    Vector m_params;     // the vector of parameters x,y(,e)
+    Matrix m_matrix;     // the inverse covariance matrix of parameters
+    bool   m_ok = false; // flag for errors
+  };
 
-inline const CaloFutureMatch2D::Vector& CaloFutureMatch2D::params() const { return m_params; }
-
-inline const CaloFutureMatch2D::Matrix& CaloFutureMatch2D::matrix() const { return m_matrix; }
-
-inline bool CaloFutureMatch2D::ok() const { return m_ok; }
-
-inline bool CaloFutureMatch2D::inverted() const { return m_inverted; }
-
-// invert the matrix
-inline bool CaloFutureMatch2D::invert() {
-  if ( !m_inverted ) m_inverted = m_ok = m_matrix.Invert();
-  return m_ok;
-}
+} // namespace Calo::Future
 
 #endif
