@@ -20,18 +20,42 @@
 
 namespace SIMDWrapper {
 namespace scalar {
+
+  class mask_v {
+    public:
+      mask_v();
+      mask_v(int m) : data(m) {}
+
+      inline mask_v& operator=( const int& m) {
+        data = m;
+        return *this;
+      }
+
+      inline operator int() const { return data; }
+
+      friend inline mask_v operator&&(const mask_v& lhs, const mask_v& rhs) { return lhs.data & rhs.data; }
+      friend inline mask_v operator||(const mask_v& lhs, const mask_v& rhs) { return lhs.data | rhs.data; }
+      friend inline mask_v operator!(const mask_v& x) { return ~x.data; }
+
+      friend inline bool all(const mask_v& mask) { return mask==1; }
+      friend inline bool none(const mask_v& mask) { return mask==0; }
+      friend inline bool any(const mask_v& mask) { return mask!=0; }
+    private:
+      int data;
+  };
+
   class float_v {
     public:
       float_v();
       float_v( float  f ) : data( f ) { }
-      float_v( float* f ) : data( *f ) { }
+      float_v( const float* f ) : data( *f ) { }
 
       inline float_v& operator=( const float& f ) {
         data = f;
         return *this;
       }
 
-      inline operator float() const { return data; } 
+      inline float cast() const { return data; } 
 
       inline void store( float* ptr ) const {
         *ptr = data;
@@ -41,11 +65,26 @@ namespace scalar {
         if (mask) *ptr = data;
       }
 
+      friend inline float_v operator+(const float_v& lhs, const float_v& rhs) { return (lhs.data + rhs.data); }
+      friend inline float_v operator-(const float_v& lhs, const float_v& rhs) { return (lhs.data - rhs.data); }
+      friend inline float_v operator*(const float_v& lhs, const float_v& rhs) { return (lhs.data * rhs.data); }
+      friend inline float_v operator/(const float_v& lhs, const float_v& rhs) { return (lhs.data / rhs.data); }
+      friend inline float_v operator-(const float_v& x) { return -1.f * x; }
+
+      friend inline float_v abs(const float_v& v) { return std::abs(v.data); }
+      friend inline float_v copysign(const float_v& x, const float_v& y) { return std::copysign(x.data, y.data) ; }
+
+      friend inline float_v sqrt(const float_v& v) { return std::sqrt(v.data); }
+
       friend inline float_v min(const float_v& lhs, const float_v& rhs) { return std::min(lhs, rhs); }
       friend inline float_v max(const float_v& lhs, const float_v& rhs) { return std::max(lhs, rhs); }
 
-      friend inline float_v signselect(const float_v& s, const float_v& a, const float_v&b) { return (s>0)?a:b; }
-      friend inline float_v select(int mask, const float_v& a, const float_v&b) { return (mask)?b:a; }
+      friend inline float_v signselect(const float_v& s, const float_v& a, const float_v&b) { return (s.data>0)?a:b; }
+      friend inline float_v select(int mask, const float_v& a, const float_v&b) { return (mask)?a:b; }
+
+      friend inline mask_v operator<(const float_v& lhs, const float_v& rhs) { return lhs.data < rhs.data; }
+      friend inline mask_v operator>(const float_v& lhs, const float_v& rhs) { return lhs.data > rhs.data; }
+      friend inline mask_v operator==(const float_v& lhs, const float_v& rhs) { return lhs.data == rhs.data; }
 
     private:
       float data;
@@ -55,7 +94,7 @@ namespace scalar {
     public:
       int_v();
       int_v( int  f ) : data( f ) { }
-      int_v( int* f ) : data( *f ) { }
+      int_v( const int* f ) : data( *f ) { }
 
       inline int_v& operator=( const int& f ) {
         data = f;
@@ -87,8 +126,15 @@ namespace scalar {
       friend inline int_v operator&(const int_v& lhs, const int_v& rhs) { return lhs.data & rhs.data; }
       friend inline int_v operator|(const int_v& lhs, const int_v& rhs) { return lhs.data | rhs.data; }
 
-      friend inline int_v signselect(const float_v& s, const int_v& a, const int_v&b) { return (s>0)?a:b; }
+      friend inline int_v operator<<(const int_v& lhs, const int_v& rhs) { return lhs.data << rhs.data; }
+      friend inline int_v operator>>(const int_v& lhs, const int_v& rhs) { return lhs.data >> rhs.data; }
+
+      friend inline int_v signselect(const float_v& s, const int_v& a, const int_v&b) { return (s>float_v(0.f))?a:b; }
       friend inline int_v select(int mask, const int_v& a, const int_v&b) { return (mask)?a:b; }
+
+      friend inline mask_v operator<(const int_v& lhs, const int_v& rhs) { return lhs.data < rhs.data; }
+      friend inline mask_v operator>(const int_v& lhs, const int_v& rhs) { return lhs.data > rhs.data; }
+      friend inline mask_v operator==(const int_v& lhs, const int_v& rhs) { return lhs.data == rhs.data; }
 
     private:
       int data;
@@ -99,7 +145,7 @@ namespace scalar {
         float f;
         int i;
     } v;
-    v.f = x;
+    v.f = x.cast();
     return v.i;
   }
 
@@ -124,11 +170,12 @@ namespace scalar {
     static const size_t size = 1;
     using int_v = scalar::int_v;
     using float_v = scalar::float_v;
+    using mask_v = scalar::mask_v;
     template<typename T>
     static int popcount(  T mask ) {
       return (int) mask;
     }
-    static int loop_mask( int, int ) {
+    static mask_v loop_mask( int, int ) {
       return true;
     }
   };
@@ -201,9 +248,10 @@ namespace avx2 {
 
   class float_v {
     public:
-      float_v();
+      float_v() {}
+      float_v( scalar::float_v& f) : data(  _mm256_set1_ps( f.cast() ) ) {}
       float_v( float  f ) : data( _mm256_set1_ps(f) ) { }
-      float_v( float* f ) : data( _mm256_loadu_ps(f) ) { }
+      float_v( const float* f ) : data( _mm256_loadu_ps(f) ) { }
       float_v( __m256 f ) : data( f ) { }
 
       inline float_v& operator=( const __m256& f ) {
@@ -218,7 +266,7 @@ namespace avx2 {
       }
 
       inline void compressstore( __m256 mask, float* ptr ) const {
-        __m256i perm = _mm256_load_si256( (const __m256i*)compress_mask256_epi32 + ( _mm256_movemask_ps(mask) ^ 0xFF ) );
+        __m256i perm = _mm256_load_si256( (const __m256i *)compress_mask256_epi32 + ( _mm256_movemask_ps(mask) ^ 0xFF ) );
         _mm256_storeu_ps( ptr, _mm256_permutevar8x32_ps( data, perm ) );
       }
 
@@ -242,12 +290,17 @@ namespace avx2 {
       friend inline float_v copysign(const float_v& x, const float_v& y) { return x ^ ( y & _mm256_castsi256_ps( _mm256_set1_epi32( 0x80000000 ) ) ) ; }
 
       friend inline float_v signselect(const float_v& s, const float_v& a, const float_v&b) { return _mm256_blendv_ps( a, b, s ); }
-      friend inline float_v select(__m256 mask, const float_v& a, const float_v&b) { return _mm256_blendv_ps( a, b, mask ); }
+      friend inline float_v select(__m256 mask, const float_v& a, const float_v&b) { return _mm256_blendv_ps( b, a, mask ); }
 
       friend inline float_v sqrt(const float_v& v) { return _mm256_sqrt_ps(v); }
 
       friend inline float_v operator<(const float_v& lhs, const float_v& rhs) { return _mm256_cmp_ps(lhs, rhs, _CMP_LT_OS); }
       friend inline float_v operator>(const float_v& lhs, const float_v& rhs) { return _mm256_cmp_ps(lhs, rhs, _CMP_GT_OS); }
+      friend inline float_v operator==(const float_v& lhs, const float_v& rhs) { return _mm256_cmp_ps(lhs, rhs, _CMP_EQ_OS); }
+
+      friend inline bool all(const float_v& mask) { return _mm256_movemask_ps(mask)==0xFF; }
+      friend inline bool none(const float_v& mask) { return _mm256_movemask_ps(mask)==0x00; }
+      friend inline bool any(const float_v& mask) { return _mm256_movemask_ps(mask)!=0x00; }
 
       private:
       __m256 data;
@@ -255,9 +308,9 @@ namespace avx2 {
 
   class int_v {
     public:
-      int_v();
+      int_v() {}
       int_v( int  f ) : data( _mm256_set1_epi32(f) ) { }
-      int_v( int* f ) : data( _mm256_loadu_si256((__m256i*)f) ) { }
+      int_v( const int* f ) : data( _mm256_loadu_si256((__m256i*)f) ) { }
       int_v( __m256i f ) : data( f ) { }
 
       inline int_v& operator=( const __m256i& f ) {
@@ -295,9 +348,9 @@ namespace avx2 {
         r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      inline int hmax(const __m256 mask) const { return select(mask, INT_MIN, *this).hmax(); }
-      inline int hmin(const __m256 mask) const { return select(mask, INT_MAX, *this).hmin(); }
-      inline int hadd(const __m256 mask) const { return select(mask, 0,       *this).hadd(); }
+      inline int hmax(const __m256 mask) const { return select(mask, *this, INT_MIN).hmax(); }
+      inline int hmin(const __m256 mask) const { return select(mask, *this, INT_MAX).hmin(); }
+      inline int hadd(const __m256 mask) const { return select(mask, *this, 0).hadd(); }
 
       friend inline int_v operator+(const int_v& lhs, const int_v& rhs) { return _mm256_add_epi32(lhs,rhs); }
       friend inline int_v operator-(const int_v& lhs, const int_v& rhs) { return _mm256_sub_epi32(lhs,rhs); }
@@ -306,12 +359,19 @@ namespace avx2 {
       friend inline int_v operator&(const int_v& lhs, const int_v& rhs) { return _mm256_and_si256(lhs,rhs); }
       friend inline int_v operator|(const int_v& lhs, const int_v& rhs) { return _mm256_or_si256(lhs,rhs); }
 
+      friend inline int_v operator<<(const int_v& lhs, const int_v& rhs) { return _mm256_sllv_epi32(lhs, rhs); }
+      friend inline int_v operator>>(const int_v& lhs, const int_v& rhs) { return _mm256_srlv_epi32(lhs, rhs); }
+
       friend inline int_v signselect(const float_v& s, const int_v& a, const int_v&b) {
           return _mm256_castps_si256(_mm256_blendv_ps( _mm256_castsi256_ps(a), _mm256_castsi256_ps(b), s ));
       }
       friend inline int_v select(const __m256 mask, const int_v& a, const int_v&b) {
-          return _mm256_castps_si256(_mm256_blendv_ps( _mm256_castsi256_ps(a), _mm256_castsi256_ps(b), mask ));
+          return _mm256_castps_si256(_mm256_blendv_ps( _mm256_castsi256_ps(b), _mm256_castsi256_ps(a), mask ));
       }
+
+      friend inline float_v operator<(const int_v& lhs, const int_v& rhs) { return _mm256_castsi256_ps(_mm256_cmpgt_epi32(rhs, lhs)); }
+      friend inline float_v operator>(const int_v& lhs, const int_v& rhs) { return _mm256_castsi256_ps(_mm256_cmpgt_epi32(lhs, rhs)); }
+      friend inline float_v operator==(const int_v& lhs, const int_v& rhs) { return _mm256_castsi256_ps(_mm256_cmpeq_epi32(lhs, rhs)); }
 
       private:
       __m256i data;
@@ -337,6 +397,7 @@ namespace avx2 {
     static const size_t size = 8;
     using int_v = avx2::int_v;
     using float_v = avx2::float_v;
+    using mask_v = avx2::float_v;
     static int popcount( __m256 mask )  {
       return _mm_popcnt_u32( _mm256_movemask_ps( mask ) );
     }
@@ -370,6 +431,10 @@ namespace avx512 {
       friend inline mask_v operator&&(const mask_v& lhs, const mask_v& rhs) { return lhs & rhs; }
       friend inline mask_v operator||(const mask_v& lhs, const mask_v& rhs) { return lhs | rhs; }
       friend inline mask_v operator!(const mask_v& x) { return ~x; }
+
+      friend inline bool all(const mask_v& mask) { return mask==0xFFFF; }
+      friend inline bool none(const mask_v& mask) { return mask==0x0000; }
+      friend inline bool any(const mask_v& mask) { return mask!=0x0000; }
     private:
       __mmask16 data;
   };
@@ -377,8 +442,9 @@ namespace avx512 {
   class float_v {
     public:
       float_v();
+      float_v( scalar::float_v& f) : data(  _mm512_set1_ps( f.cast() ) ) {}
       float_v( float  f ) : data( _mm512_set1_ps(f) ) { }
-      float_v( float* f ) : data( _mm512_load_ps(f) ) { }
+      float_v( const float* f ) : data( _mm512_load_ps(f) ) { }
       float_v( __m512 f ) : data( f ) { }
 
       inline float_v& operator=( const __m512& f ) {
@@ -431,7 +497,7 @@ namespace avx512 {
     public:
       int_v();
       int_v( int  f ) : data( _mm512_set1_epi32(f) ) { }
-      int_v( int* f ) : data( _mm512_load_si512((__m512i*)f) ) { }
+      int_v( const int* f ) : data( _mm512_load_si512((__m512i*)f) ) { }
       int_v( __m512i f ) : data( f ) { }
 
       inline int_v& operator=( const __m512i& f ) {
@@ -464,6 +530,13 @@ namespace avx512 {
       friend inline int_v operator&(const int_v& lhs, const int_v& rhs) { return _mm512_and_si512(lhs,rhs); }
       friend inline int_v operator|(const int_v& lhs, const int_v& rhs) { return _mm512_or_si512(lhs,rhs); }
 
+      friend inline int_v signselect(const float_v& s, const int_v& a, const int_v&b) { return _mm512_mask_mov_epi32( a, s < float_v(0.f), b ); }
+      friend inline int_v select(const mask_v& mask, const int_v& a, const int_v&b) { return _mm512_mask_mov_epi32( a, mask, b ); }
+
+      friend inline mask_v operator<(const int_v& lhs, const int_v& rhs) { return _mm512_cmplt_epi32_mask(rhs, lhs); }
+      friend inline mask_v operator>(const int_v& lhs, const int_v& rhs) { return _mm512_cmpgt_epi32_mask(lhs, rhs); }
+      friend inline mask_v operator==(const int_v& lhs, const int_v& rhs) { return _mm512_cmpeq_epi32_mask(lhs, rhs); }
+
       private:
       __m512i data;
   };
@@ -488,6 +561,7 @@ namespace avx512 {
     static const size_t size = 16;
     using int_v = avx512::int_v;
     using float_v = avx512::float_v;
+    using mask_v = avx512::mask_v;
     static int popcount(mask_v mask)  {
       return _mm_popcnt_u32(mask);
     }
@@ -562,3 +636,11 @@ template<typename T>
 inline T vapprox_log(const T& x) {
   return castToInt(x) * 8.2629582881927490e-8f - 87.989971088f;
 }
+
+template<typename M, typename T>
+inline void swap(const M& mask, T& a, T& b) {
+  T tmp = select(mask, b, a);
+  b     = select(mask, a, b);
+  a     = tmp;
+}
+

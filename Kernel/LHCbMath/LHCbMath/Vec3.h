@@ -31,7 +31,7 @@ class Vec3 {
   public:
     T x, y, z;
 
-    Vec3();
+    Vec3() {}
 
     template<typename Tx, typename Ty, typename Tz>
     Vec3(Tx x, Ty y, Tz z) : x( x ), y( y ), z( z ) { }
