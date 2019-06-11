@@ -540,7 +540,7 @@ namespace LHCb {
     //------------------------------------------------------------------------------------------------
 
     template <typename TO, typename FROM>
-    TO lb_cast( FROM x ) noexcept {
+    inline TO lb_cast( FROM x ) noexcept {
       if constexpr ( all_arithmetic_v<TO, FROM> ) {
         return ( TO )( x );
       } else {
@@ -558,16 +558,21 @@ namespace LHCb {
     /// inline if '( m ? a : b )'
     template <typename VTRUE, typename VFALSE, //
               typename = typename std::enable_if_t<all_arithmetic_v<VTRUE, VFALSE>>>
-    decltype( auto ) iif( const bool m, VTRUE a, VFALSE b ) noexcept {
+    inline decltype( auto ) iif( const bool m, VTRUE a, VFALSE b ) noexcept {
       return ( m ? a : b );
     }
 
     /// isnegative
     template <typename TYPE, //
               typename = typename std::enable_if_t<all_arithmetic_v<TYPE>>>
-    decltype( auto ) isnegative( const TYPE x ) noexcept {
+    inline decltype( auto ) isnegative( const TYPE x ) noexcept {
       return std::signbit( x );
     }
+
+    // mimic selection mask helpers for booleans
+    inline bool any_of( const bool m ) noexcept { return m; }
+    inline bool all_of( const bool m ) noexcept { return m; }
+    inline bool none_of( const bool m ) noexcept { return !m; }
 
     //------------------------------------------------------------------------------------------------
 
