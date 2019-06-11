@@ -9,9 +9,11 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 from Gaudi.Configuration import ApplicationMgr
-from Configurables import LHCb__MDFIOSvc, HiveWhiteBoard, HLTControlFlowMgr, UpdateManagerSvc, HiveDataBrokerSvc, DDDBConf, CondDB, IOAlg
+from Configurables import LHCb__MDF__IOSvcMM, HiveWhiteBoard, HLTControlFlowMgr, UpdateManagerSvc, HiveDataBrokerSvc, DDDBConf, CondDB, LHCb__MDF__IOAlg
 from PRConfig.TestFileDB import test_file_db
 from GaudiConf import IOHelper
+import os.path
+import shutil
 
 # setup core Gaudi
 whiteboard = HiveWhiteBoard("EventDataSvc", EventSlots=5, ForceLeaves=True)
@@ -42,10 +44,15 @@ conddb = CondDB(
         "DDDB": qualifiers['DDDB'],
         "SIMCOND": qualifiers['CondDB']
     })
+    
+path = "/dev/shm/00067189.mdf"
+if not os.path.isfile(path):
+    shutil.copy("/eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/MiniBrunel/00067189.mdf", path)
+files = [path] * 10
 
 # define algorithms and service we will use for that example
-mdfioSvc = LHCb__MDFIOSvc('LHCb::MDFIOSvc', Input=fileDbEntry.filenames)
-fetchData = IOAlg('ReadMDFInput', RawEventLocation="/Event/DAQ/RawEvent")
+mdfioSvc = LHCb__MDF__IOSvcMM('LHCb::MDF::IOSvcMM', Input=files)
+fetchData = LHCb__MDF__IOAlg('ReadMDFInput', RawEventLocation="/Event/DAQ/RawEvent", IOSvc="LHCb::MDF::IOSvcMM")
 hiveDataBroker.DataProducers.append(fetchData)
 appMgr.TopAlg.append(fetchData)
 
