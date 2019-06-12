@@ -12,8 +12,7 @@ from Gaudi.Configuration import ApplicationMgr
 from Configurables import LHCb__MDF__IOSvcMM, HiveWhiteBoard, HLTControlFlowMgr, UpdateManagerSvc, HiveDataBrokerSvc, DDDBConf, CondDB, LHCb__MDF__IOAlg
 from PRConfig.TestFileDB import test_file_db
 from GaudiConf import IOHelper
-import os.path
-import shutil
+import os
 
 # setup core Gaudi
 whiteboard = HiveWhiteBoard("EventDataSvc", EventSlots=5, ForceLeaves=True)
@@ -23,7 +22,7 @@ eventloopmgr = HLTControlFlowMgr(
                        True)],  #sequence to be filled by defineSequence
     ThreadPoolSize=5)
 appMgr = ApplicationMgr(
-    'ApplicationMgr', EventLoop=eventloopmgr, EvtMax=10000, EvtSel='NONE')
+    'ApplicationMgr', EventLoop=eventloopmgr, EvtMax=1000, EvtSel='NONE')
 appMgr.ExtSvc.insert(0, whiteboard)
 uptMgr = UpdateManagerSvc('UpdateManagerSvc', WithoutBeginEvent=True)
 hiveDataBroker = HiveDataBrokerSvc('HiveDataBrokerSvc')
@@ -44,15 +43,20 @@ conddb = CondDB(
         "DDDB": qualifiers['DDDB'],
         "SIMCOND": qualifiers['CondDB']
     })
-    
-path = "/dev/shm/00067189.mdf"
+
+path = "/tmp/00067189.mdf"
 if not os.path.isfile(path):
-    shutil.copy("/eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/MiniBrunel/00067189.mdf", path)
+    os.system(
+        "xrdcp -s root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/MiniBrunel/00067189.mdf %s"
+        % path)
 files = [path] * 10
 
 # define algorithms and service we will use for that example
 mdfioSvc = LHCb__MDF__IOSvcMM('LHCb::MDF::IOSvcMM', Input=files)
-fetchData = LHCb__MDF__IOAlg('ReadMDFInput', RawEventLocation="/Event/DAQ/RawEvent", IOSvc="LHCb::MDF::IOSvcMM")
+fetchData = LHCb__MDF__IOAlg(
+    'ReadMDFInput',
+    RawEventLocation="/Event/DAQ/RawEvent",
+    IOSvc="LHCb::MDF::IOSvcMM")
 hiveDataBroker.DataProducers.append(fetchData)
 appMgr.TopAlg.append(fetchData)
 
