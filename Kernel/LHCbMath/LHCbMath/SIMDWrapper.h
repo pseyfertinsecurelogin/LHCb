@@ -27,20 +27,20 @@ namespace SIMDWrapper {
       mask_v(){};
       mask_v( int m ) : data( m ) {}
 
-      inline mask_v& operator=( const int& m ) {
+      mask_v& operator=( const int& m ) {
         data = m;
         return *this;
       }
 
-      inline operator int() const { return data; }
+      operator int() const { return data; }
 
-      friend inline mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
-      friend inline mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
-      friend inline mask_v operator!( const mask_v& x ) { return ~x.data; }
+      friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
+      friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
+      friend mask_v operator!( const mask_v& x ) { return ~x.data; }
 
-      friend inline bool all( const mask_v& mask ) { return mask == 1; }
-      friend inline bool none( const mask_v& mask ) { return mask == 0; }
-      friend inline bool any( const mask_v& mask ) { return mask != 0; }
+      friend bool all( const mask_v& mask ) { return mask == 1; }
+      friend bool none( const mask_v& mask ) { return mask == 0; }
+      friend bool any( const mask_v& mask ) { return mask != 0; }
 
     private:
       int data;
@@ -54,50 +54,50 @@ namespace SIMDWrapper {
       float_v( float f ) : data( f ) {}
       float_v( const float* f ) : data( *f ) {}
 
-      inline float_v& operator=( const float& f ) {
+      float_v& operator=( const float& f ) {
         data = f;
         return *this;
       }
 
       inline operator int_v() const;
 
-      inline float cast() const { return data; }
+      float cast() const { return data; }
 
-      inline void store( float* ptr ) const { *ptr = data; }
+      void store( float* ptr ) const { *ptr = data; }
 
-      inline void compressstore( int mask, float* ptr ) const {
+      void compressstore( int mask, float* ptr ) const {
         if ( mask ) *ptr = data;
       }
 
-      inline float hmax() const { return data; }
-      inline float hmin() const { return data; }
-      inline float hadd() const { return data; }
-      inline float hmax( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::min(); }
-      inline float hmin( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::max(); }
-      inline float hadd( float mask ) const { return ( mask ) ? data : 0; }
+      float hmax() const { return data; }
+      float hmin() const { return data; }
+      float hadd() const { return data; }
+      float hmax( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::min(); }
+      float hmin( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::max(); }
+      float hadd( float mask ) const { return ( mask ) ? data : 0; }
 
-      friend inline float_v operator+( const float_v& lhs, const float_v& rhs ) { return ( lhs.data + rhs.data ); }
-      friend inline float_v operator-( const float_v& lhs, const float_v& rhs ) { return ( lhs.data - rhs.data ); }
-      friend inline float_v operator*( const float_v& lhs, const float_v& rhs ) { return ( lhs.data * rhs.data ); }
-      friend inline float_v operator/( const float_v& lhs, const float_v& rhs ) { return ( lhs.data / rhs.data ); }
-      friend inline float_v operator-( const float_v& x ) { return -1.f * x; }
+      friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return ( lhs.data + rhs.data ); }
+      friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return ( lhs.data - rhs.data ); }
+      friend float_v operator*( const float_v& lhs, const float_v& rhs ) { return ( lhs.data * rhs.data ); }
+      friend float_v operator/( const float_v& lhs, const float_v& rhs ) { return ( lhs.data / rhs.data ); }
+      friend float_v operator-( const float_v& x ) { return -1.f * x; }
 
-      friend inline float_v abs( const float_v& v ) { return std::abs( v.data ); }
-      friend inline float_v copysign( const float_v& x, const float_v& y ) { return std::copysign( x.data, y.data ); }
+      friend float_v abs( const float_v& v ) { return std::abs( v.data ); }
+      friend float_v copysign( const float_v& x, const float_v& y ) { return std::copysign( x.data, y.data ); }
 
-      friend inline float_v sqrt( const float_v& v ) { return std::sqrt( v.data ); }
+      friend float_v sqrt( const float_v& v ) { return std::sqrt( v.data ); }
 
-      friend inline float_v min( const float_v& lhs, const float_v& rhs ) { return std::min( lhs, rhs ); }
-      friend inline float_v max( const float_v& lhs, const float_v& rhs ) { return std::max( lhs, rhs ); }
+      friend float_v min( const float_v& lhs, const float_v& rhs ) { return std::min( lhs, rhs ); }
+      friend float_v max( const float_v& lhs, const float_v& rhs ) { return std::max( lhs, rhs ); }
 
-      friend inline float_v signselect( const float_v& s, const float_v& a, const float_v& b ) {
+      friend float_v signselect( const float_v& s, const float_v& a, const float_v& b ) {
         return ( s.data > 0 ) ? a : b;
       }
-      friend inline float_v select( int mask, const float_v& a, const float_v& b ) { return ( mask ) ? a : b; }
+      friend float_v select( int mask, const float_v& a, const float_v& b ) { return ( mask ) ? a : b; }
 
-      friend inline mask_v operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
-      friend inline mask_v operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
-      friend inline mask_v operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
+      friend mask_v operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
+      friend mask_v operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
+      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
 
     private:
       float data;
@@ -110,45 +110,45 @@ namespace SIMDWrapper {
       constexpr int_v( int f ) : data( f ) {}
       int_v( const int* f ) : data( *f ) {}
 
-      inline int_v& operator=( const int& f ) {
+      int_v& operator=( const int& f ) {
         data = f;
         return *this;
       }
 
-      inline     operator float_v() const { return float_v( float( data ) ); }
-      inline int cast() const { return data; } // don't cast directly to avoid conflict
+          operator float_v() const { return float_v( float( data ) ); }
+      int cast() const { return data; } // don't cast directly to avoid conflict
 
-      inline void store( int* ptr ) const { *ptr = data; }
+      void store( int* ptr ) const { *ptr = data; }
 
-      inline void compressstore( int mask, int* ptr ) const {
+      void compressstore( int mask, int* ptr ) const {
         if ( mask ) *ptr = data;
       }
 
-      inline int hmax() const { return data; }
-      inline int hmin() const { return data; }
-      inline int hadd() const { return data; }
-      inline int hmax( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::min(); }
-      inline int hmin( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::max(); }
-      inline int hadd( int mask ) const { return ( mask ) ? data : 0; }
+      int hmax() const { return data; }
+      int hmin() const { return data; }
+      int hadd() const { return data; }
+      int hmax( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::min(); }
+      int hmin( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::max(); }
+      int hadd( int mask ) const { return ( mask ) ? data : 0; }
 
-      friend inline int_v operator+( const int_v& lhs, const int_v& rhs ) { return lhs.data + rhs.data; }
-      friend inline int_v operator-( const int_v& lhs, const int_v& rhs ) { return lhs.data - rhs.data; }
-      friend inline int_v operator*( const int_v& lhs, const int_v& rhs ) { return lhs.data * rhs.data; }
+      friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return lhs.data + rhs.data; }
+      friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return lhs.data - rhs.data; }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return lhs.data * rhs.data; }
 
-      friend inline int_v operator&( const int_v& lhs, const int_v& rhs ) { return lhs.data & rhs.data; }
-      friend inline int_v operator|( const int_v& lhs, const int_v& rhs ) { return lhs.data | rhs.data; }
+      friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return lhs.data & rhs.data; }
+      friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return lhs.data | rhs.data; }
 
-      friend inline int_v operator<<( const int_v& lhs, const int_v& rhs ) { return lhs.data << rhs.data; }
-      friend inline int_v operator>>( const int_v& lhs, const int_v& rhs ) { return lhs.data >> rhs.data; }
+      friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return lhs.data << rhs.data; }
+      friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return lhs.data >> rhs.data; }
 
-      friend inline int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
+      friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return ( s > float_v( 0.f ) ) ? a : b;
       }
-      friend inline int_v select( int mask, const int_v& a, const int_v& b ) { return ( mask ) ? a : b; }
+      friend int_v select( int mask, const int_v& a, const int_v& b ) { return ( mask ) ? a : b; }
 
-      friend inline mask_v operator<( const int_v& lhs, const int_v& rhs ) { return lhs.data < rhs.data; }
-      friend inline mask_v operator>( const int_v& lhs, const int_v& rhs ) { return lhs.data > rhs.data; }
-      friend inline mask_v operator==( const int_v& lhs, const int_v& rhs ) { return lhs.data == rhs.data; }
+      friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return lhs.data < rhs.data; }
+      friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return lhs.data > rhs.data; }
+      friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return lhs.data == rhs.data; }
 
     private:
       int data;
@@ -272,99 +272,93 @@ namespace SIMDWrapper {
       float_v( const float* f ) : data( _mm256_loadu_ps( f ) ) {}
       float_v( __m256 f ) : data( f ) {}
 
-      inline float_v& operator=( const __m256& f ) {
+      float_v& operator=( const __m256& f ) {
         data = f;
         return *this;
       }
 
-      inline float_v& operator=( const float_v& f ) {
+      float_v& operator=( const float_v& f ) {
         data = f.data;
         return *this;
       }
 
-      inline operator __m256() const { return data; }
+      operator __m256() const { return data; }
 
       inline operator int_v() const;
 
-      inline void store( float* ptr ) const { _mm256_storeu_ps( ptr, data ); }
+      void store( float* ptr ) const { _mm256_storeu_ps( ptr, data ); }
 
-      inline void compressstore( __m256 mask, float* ptr ) const {
+      void compressstore( __m256 mask, float* ptr ) const {
         __m256i perm =
             _mm256_load_si256( (const __m256i*)compress_mask256_epi32 + ( _mm256_movemask_ps( mask ) ^ 0xFF ) );
         _mm256_storeu_ps( ptr, _mm256_permutevar8x32_ps( data, perm ) );
       }
 
-      friend inline float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm256_add_ps( lhs, rhs ); }
-      friend inline float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm256_sub_ps( lhs, rhs ); }
-      friend inline float_v operator*( const float_v& lhs, const float_v& rhs ) { return _mm256_mul_ps( lhs, rhs ); }
-      friend inline float_v operator/( const float_v& lhs, const float_v& rhs ) { return _mm256_div_ps( lhs, rhs ); }
-      friend inline float_v operator-( const float_v& x ) { return -1.f * x; }
+      friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm256_add_ps( lhs, rhs ); }
+      friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm256_sub_ps( lhs, rhs ); }
+      friend float_v operator*( const float_v& lhs, const float_v& rhs ) { return _mm256_mul_ps( lhs, rhs ); }
+      friend float_v operator/( const float_v& lhs, const float_v& rhs ) { return _mm256_div_ps( lhs, rhs ); }
+      friend float_v operator-( const float_v& x ) { return -1.f * x; }
 
-      friend inline float_v operator&( const float_v& lhs, const float_v& rhs ) { return _mm256_and_ps( lhs, rhs ); }
-      friend inline float_v operator|( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
-      friend inline float_v operator^( const float_v& lhs, const float_v& rhs ) { return _mm256_xor_ps( lhs, rhs ); }
+      friend float_v operator&( const float_v& lhs, const float_v& rhs ) { return _mm256_and_ps( lhs, rhs ); }
+      friend float_v operator|( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
+      friend float_v operator^( const float_v& lhs, const float_v& rhs ) { return _mm256_xor_ps( lhs, rhs ); }
 
-      friend inline float_v operator&&( const float_v& lhs, const float_v& rhs ) { return _mm256_and_ps( lhs, rhs ); }
-      friend inline float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
-      friend inline float_v operator!( const float_v& x ) { return x ^ _mm256_castsi256_ps( _mm256_set1_epi32( -1 ) ); }
+      friend float_v operator&&( const float_v& lhs, const float_v& rhs ) { return _mm256_and_ps( lhs, rhs ); }
+      friend float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
+      friend float_v operator!( const float_v& x ) { return x ^ _mm256_castsi256_ps( _mm256_set1_epi32( -1 ) ); }
 
-      friend inline float_v min( const float_v& lhs, const float_v& rhs ) { return _mm256_min_ps( lhs, rhs ); }
-      friend inline float_v max( const float_v& lhs, const float_v& rhs ) { return _mm256_max_ps( lhs, rhs ); }
-      friend inline float_v abs( const float_v& v ) {
-        return v & _mm256_castsi256_ps( _mm256_set1_epi32( 0x7FFFFFFF ) );
-      }
-      friend inline float_v copysign( const float_v& x, const float_v& y ) {
+      friend float_v min( const float_v& lhs, const float_v& rhs ) { return _mm256_min_ps( lhs, rhs ); }
+      friend float_v max( const float_v& lhs, const float_v& rhs ) { return _mm256_max_ps( lhs, rhs ); }
+      friend float_v abs( const float_v& v ) { return v & _mm256_castsi256_ps( _mm256_set1_epi32( 0x7FFFFFFF ) ); }
+      friend float_v copysign( const float_v& x, const float_v& y ) {
         return x ^ ( y & _mm256_castsi256_ps( _mm256_set1_epi32( 0x80000000 ) ) );
       }
 
-      friend inline float_v signselect( const float_v& s, const float_v& a, const float_v& b ) {
+      friend float_v signselect( const float_v& s, const float_v& a, const float_v& b ) {
         return _mm256_blendv_ps( a, b, s );
       }
-      friend inline float_v select( __m256 mask, const float_v& a, const float_v& b ) {
+      friend float_v select( __m256 mask, const float_v& a, const float_v& b ) {
         return _mm256_blendv_ps( b, a, mask );
       }
 
-      friend inline float_v sqrt( const float_v& v ) { return _mm256_sqrt_ps( v ); }
+      friend float_v sqrt( const float_v& v ) { return _mm256_sqrt_ps( v ); }
 
-      friend inline float_v operator<( const float_v& lhs, const float_v& rhs ) {
+      friend float_v operator<( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps( lhs, rhs, _CMP_LT_OS );
       }
-      friend inline float_v operator>( const float_v& lhs, const float_v& rhs ) {
+      friend float_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps( lhs, rhs, _CMP_GT_OS );
       }
-      friend inline float_v operator==( const float_v& lhs, const float_v& rhs ) {
+      friend float_v operator==( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps( lhs, rhs, _CMP_EQ_OS );
       }
 
-      friend inline bool all( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0xFF; }
-      friend inline bool none( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0x00; }
-      friend inline bool any( const float_v& mask ) { return _mm256_movemask_ps( mask ) != 0x00; }
+      friend bool all( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0xFF; }
+      friend bool none( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0x00; }
+      friend bool any( const float_v& mask ) { return _mm256_movemask_ps( mask ) != 0x00; }
 
-      inline float hmax() const {
+      float hmax() const {
         __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
         r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      inline float hmin() const {
+      float hmin() const {
         __m128 r = _mm_min_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
         r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      inline float hadd() const {
+      float hadd() const {
         __m128 r = _mm_add_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
         r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      inline float hmax( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<float>::min() ).hmax();
-      }
-      inline float hmin( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<float>::max() ).hmin();
-      }
-      inline float hadd( const __m256 mask ) const { return select( mask, *this, 0.f ).hadd(); }
+      float hmax( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
+      float hmin( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
+      float hadd( const __m256 mask ) const { return select( mask, *this, 0.f ).hadd(); }
 
     private:
       __m256 data;
@@ -378,72 +372,68 @@ namespace SIMDWrapper {
       int_v( const int* f ) : data( _mm256_loadu_si256( (__m256i*)f ) ) {}
       constexpr int_v( __m256i f ) : data( f ) {}
 
-      inline int_v& operator=( const __m256i& f ) {
+      int_v& operator=( const __m256i& f ) {
         data = f;
         return *this;
       }
 
-      inline operator __m256i() const { return data; }
-      inline operator float_v() const { return float_v( _mm256_cvtepi32_ps( data ) ); }
+      operator __m256i() const { return data; }
+      operator float_v() const { return float_v( _mm256_cvtepi32_ps( data ) ); }
 
-      inline void store( int* ptr ) const { _mm256_storeu_si256( (__m256i*)ptr, data ); }
+      void store( int* ptr ) const { _mm256_storeu_si256( (__m256i*)ptr, data ); }
 
-      inline void compressstore( __m256 mask, int* ptr ) const {
+      void compressstore( __m256 mask, int* ptr ) const {
         __m256i perm =
             _mm256_load_si256( (const __m256i*)compress_mask256_epi32 + ( _mm256_movemask_ps( mask ) ^ 0xFF ) );
         _mm256_storeu_si256( (__m256i*)ptr, _mm256_permutevar8x32_epi32( data, perm ) );
       }
 
-      inline int hmax() const {
+      int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      inline int hmin() const {
+      int hmin() const {
         __m128i r = _mm_min_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      inline int hadd() const {
+      int hadd() const {
         __m128i r = _mm_add_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
         r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      inline int hmax( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<int>::min() ).hmax();
-      }
-      inline int hmin( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<int>::max() ).hmin();
-      }
-      inline int hadd( const __m256 mask ) const { return select( mask, *this, 0 ).hadd(); }
+      int hmax( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
+      int hmin( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
+      int hadd( const __m256 mask ) const { return select( mask, *this, 0 ).hadd(); }
 
-      friend inline int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
-      friend inline int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
-      friend inline int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mul_epi32( lhs, rhs ); }
+      friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
+      friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mul_epi32( lhs, rhs ); }
 
-      friend inline int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
-      friend inline int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
+      friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
+      friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
 
-      friend inline int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm256_sllv_epi32( lhs, rhs ); }
-      friend inline int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
+      friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm256_sllv_epi32( lhs, rhs ); }
+      friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
 
-      friend inline int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
+      friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( a ), _mm256_castsi256_ps( b ), s ) );
       }
-      friend inline int_v select( const __m256 mask, const int_v& a, const int_v& b ) {
+      friend int_v select( const __m256 mask, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( b ), _mm256_castsi256_ps( a ), mask ) );
       }
 
-      friend inline float_v operator<( const int_v& lhs, const int_v& rhs ) {
+      friend float_v operator<( const int_v& lhs, const int_v& rhs ) {
         return _mm256_castsi256_ps( _mm256_cmpgt_epi32( rhs, lhs ) );
       }
-      friend inline float_v operator>( const int_v& lhs, const int_v& rhs ) {
+      friend float_v operator>( const int_v& lhs, const int_v& rhs ) {
         return _mm256_castsi256_ps( _mm256_cmpgt_epi32( lhs, rhs ) );
       }
-      friend inline float_v operator==( const int_v& lhs, const int_v& rhs ) {
+      friend float_v operator==( const int_v& lhs, const int_v& rhs ) {
         return _mm256_castsi256_ps( _mm256_cmpeq_epi32( lhs, rhs ) );
       }
 
@@ -457,13 +447,9 @@ namespace SIMDWrapper {
 
     inline float_v castToFloat( const int_v& x ) { return float_v( _mm256_castsi256_ps( x ) ); }
 
-    inline int_v gather( const int* base, const int_v& idx ) {
-      return _mm256_i32gather_epi32( base, idx, sizeof( int ) );
-    }
+    inline int_v gather( const int* base, const int_v& idx ) { return _mm256_i32gather_epi32( base, idx, sizeof( int ) ); }
 
-    inline float_v gather( const float* base, const int_v& idx ) {
-      return _mm256_i32gather_ps( base, idx, sizeof( float ) );
-    }
+    inline float_v gather( const float* base, const int_v& idx ) { return _mm256_i32gather_ps( base, idx, sizeof( float ) ); }
 
     struct types {
       static const size_t size = 8;
@@ -495,20 +481,20 @@ namespace SIMDWrapper {
       mask_v();
       mask_v( __mmask16 m ) : data( m ) {}
 
-      inline mask_v& operator=( const __mmask16& m ) {
+      mask_v& operator=( const __mmask16& m ) {
         data = m;
         return *this;
       }
 
-      inline operator __mmask16() const { return data; }
+      operator __mmask16() const { return data; }
 
-      friend inline mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs & rhs; }
-      friend inline mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs | rhs; }
-      friend inline mask_v operator!( const mask_v& x ) { return ~x; }
+      friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs & rhs; }
+      friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs | rhs; }
+      friend mask_v operator!( const mask_v& x ) { return ~x; }
 
-      friend inline bool all( const mask_v& mask ) { return mask == 0xFFFF; }
-      friend inline bool none( const mask_v& mask ) { return mask == 0x0000; }
-      friend inline bool any( const mask_v& mask ) { return mask != 0x0000; }
+      friend bool all( const mask_v& mask ) { return mask == 0xFFFF; }
+      friend bool none( const mask_v& mask ) { return mask == 0x0000; }
+      friend bool any( const mask_v& mask ) { return mask != 0x0000; }
 
     private:
       __mmask16 data;
@@ -524,61 +510,59 @@ namespace SIMDWrapper {
       float_v( const float* f ) : data( _mm512_load_ps( f ) ) {}
       float_v( __m512 f ) : data( f ) {}
 
-      inline float_v& operator=( const __m512& f ) {
+      float_v& operator=( const __m512& f ) {
         data = f;
         return *this;
       }
 
-      inline operator __m512() const { return data; }
+             operator __m512() const { return data; }
       inline operator int_v() const;
 
-      inline void store( float* ptr ) const { _mm512_storeu_ps( ptr, data ); }
+      void store( float* ptr ) const { _mm512_storeu_ps( ptr, data ); }
 
-      inline void compressstore( const mask_v& mask, float* ptr ) const {
-        _mm512_mask_compressstoreu_ps( ptr, mask, data );
-      }
+      void compressstore( const mask_v& mask, float* ptr ) const { _mm512_mask_compressstoreu_ps( ptr, mask, data ); }
 
-      inline float hmax() const { return _mm512_reduce_max_ps( data ); }
-      inline float hmin() const { return _mm512_reduce_min_ps( data ); }
-      inline float hadd() const { return _mm512_reduce_add_ps( data ); }
-      inline float hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_ps( mask, data ); }
-      inline float hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_ps( mask, data ); }
-      inline float hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_ps( mask, data ); }
+      float hmax() const { return _mm512_reduce_max_ps( data ); }
+      float hmin() const { return _mm512_reduce_min_ps( data ); }
+      float hadd() const { return _mm512_reduce_add_ps( data ); }
+      float hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_ps( mask, data ); }
+      float hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_ps( mask, data ); }
+      float hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_ps( mask, data ); }
 
-      friend inline float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm512_add_ps( lhs, rhs ); }
-      friend inline float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm512_sub_ps( lhs, rhs ); }
-      friend inline float_v operator*( const float_v& lhs, const float_v& rhs ) { return _mm512_mul_ps( lhs, rhs ); }
-      friend inline float_v operator/( const float_v& lhs, const float_v& rhs ) { return _mm512_div_ps( lhs, rhs ); }
-      friend inline float_v operator-( const float_v& x ) { return -1.f * x; }
+      friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm512_add_ps( lhs, rhs ); }
+      friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm512_sub_ps( lhs, rhs ); }
+      friend float_v operator*( const float_v& lhs, const float_v& rhs ) { return _mm512_mul_ps( lhs, rhs ); }
+      friend float_v operator/( const float_v& lhs, const float_v& rhs ) { return _mm512_div_ps( lhs, rhs ); }
+      friend float_v operator-( const float_v& x ) { return -1.f * x; }
 
-      friend inline float_v operator&( const float_v& lhs, const float_v& rhs ) { return _mm512_and_ps( lhs, rhs ); }
-      friend inline float_v operator|( const float_v& lhs, const float_v& rhs ) { return _mm512_or_ps( lhs, rhs ); }
-      friend inline float_v operator^( const float_v& lhs, const float_v& rhs ) { return _mm512_xor_ps( lhs, rhs ); }
+      friend float_v operator&( const float_v& lhs, const float_v& rhs ) { return _mm512_and_ps( lhs, rhs ); }
+      friend float_v operator|( const float_v& lhs, const float_v& rhs ) { return _mm512_or_ps( lhs, rhs ); }
+      friend float_v operator^( const float_v& lhs, const float_v& rhs ) { return _mm512_xor_ps( lhs, rhs ); }
 
-      friend inline float_v operator&&( const float_v& lhs, const float_v& rhs ) { return _mm512_and_ps( lhs, rhs ); }
-      friend inline float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm512_or_ps( lhs, rhs ); }
-      friend inline float_v operator!( const float_v& x ) { return x ^ _mm512_castsi512_ps( _mm512_set1_epi32( -1 ) ); }
+      friend float_v operator&&( const float_v& lhs, const float_v& rhs ) { return _mm512_and_ps( lhs, rhs ); }
+      friend float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm512_or_ps( lhs, rhs ); }
+      friend float_v operator!( const float_v& x ) { return x ^ _mm512_castsi512_ps( _mm512_set1_epi32( -1 ) ); }
 
-      friend inline float_v min( const float_v& lhs, const float_v& rhs ) { return _mm512_min_ps( lhs, rhs ); }
-      friend inline float_v max( const float_v& lhs, const float_v& rhs ) { return _mm512_max_ps( lhs, rhs ); }
-      friend inline float_v abs( const float_v& v ) { return _mm512_abs_ps( v ); }
-      friend inline float_v copysign( const float_v& x, const float_v& y ) {
+      friend float_v min( const float_v& lhs, const float_v& rhs ) { return _mm512_min_ps( lhs, rhs ); }
+      friend float_v max( const float_v& lhs, const float_v& rhs ) { return _mm512_max_ps( lhs, rhs ); }
+      friend float_v abs( const float_v& v ) { return _mm512_abs_ps( v ); }
+      friend float_v copysign( const float_v& x, const float_v& y ) {
         return x ^ ( y & _mm512_castsi512_ps( _mm512_set1_epi32( 0x80000000 ) ) );
       }
 
-      friend inline auto signselect( const float_v& s, const float_v& a, const float_v& b ) {
+      friend auto signselect( const float_v& s, const float_v& a, const float_v& b ) {
         return _mm512_mask_mov_ps( a, s < float_v( 0.f ), b );
       }
-      friend inline auto select( const mask_v& mask, const float_v& a, const float_v& b ) {
+      friend auto select( const mask_v& mask, const float_v& a, const float_v& b ) {
         return _mm512_mask_mov_ps( b, mask, a );
       }
 
-      friend inline float_v sqrt( const float_v& v ) { return _mm512_sqrt_ps( v ); }
+      friend float_v sqrt( const float_v& v ) { return _mm512_sqrt_ps( v ); }
 
-      friend inline mask_v operator<( const float_v& lhs, const float_v& rhs ) {
+      friend mask_v operator<( const float_v& lhs, const float_v& rhs ) {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_LT_OS );
       }
-      friend inline mask_v operator>( const float_v& lhs, const float_v& rhs ) {
+      friend mask_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_GT_OS );
       }
 
@@ -594,50 +578,42 @@ namespace SIMDWrapper {
       int_v( const int* f ) : data( _mm512_load_si512( (__m512i*)f ) ) {}
       constexpr int_v( __m512i f ) : data( f ) {}
 
-      inline int_v& operator=( const __m512i& f ) {
+      int_v& operator=( const __m512i& f ) {
         data = f;
         return *this;
       }
 
-      inline operator __m512i() const { return data; }
-      inline operator float_v() const { return float_v( _mm512_cvtepi32_ps( data ) ); }
+      operator __m512i() const { return data; }
+      operator float_v() const { return float_v( _mm512_cvtepi32_ps( data ) ); }
 
-      inline void store( int* ptr ) const { _mm512_storeu_si512( ptr, data ); }
+      void store( int* ptr ) const { _mm512_storeu_si512( ptr, data ); }
 
-      inline void compressstore( const mask_v& mask, int* ptr ) const {
-        _mm512_mask_compressstoreu_epi32( ptr, mask, data );
-      }
+      void compressstore( const mask_v& mask, int* ptr ) const { _mm512_mask_compressstoreu_epi32( ptr, mask, data ); }
 
-      inline int hmax() const { return _mm512_reduce_max_epi32( data ); }
-      inline int hmin() const { return _mm512_reduce_min_epi32( data ); }
-      inline int hadd() const { return _mm512_reduce_add_epi32( data ); }
-      inline int hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_epi32( mask, data ); }
-      inline int hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_epi32( mask, data ); }
-      inline int hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_epi32( mask, data ); }
+      int hmax() const { return _mm512_reduce_max_epi32( data ); }
+      int hmin() const { return _mm512_reduce_min_epi32( data ); }
+      int hadd() const { return _mm512_reduce_add_epi32( data ); }
+      int hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_epi32( mask, data ); }
+      int hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_epi32( mask, data ); }
+      int hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_epi32( mask, data ); }
 
-      friend inline int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm512_add_epi32( lhs, rhs ); }
-      friend inline int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm512_sub_epi32( lhs, rhs ); }
-      friend inline int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm512_mul_epi32( lhs, rhs ); }
+      friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm512_add_epi32( lhs, rhs ); }
+      friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm512_sub_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm512_mul_epi32( lhs, rhs ); }
 
-      friend inline int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm512_and_si512( lhs, rhs ); }
-      friend inline int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm512_or_si512( lhs, rhs ); }
+      friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm512_and_si512( lhs, rhs ); }
+      friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm512_or_si512( lhs, rhs ); }
 
-      friend inline int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
+      friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm512_mask_mov_epi32( a, s < float_v( 0.f ), b );
       }
-      friend inline int_v select( const mask_v& mask, const int_v& a, const int_v& b ) {
+      friend int_v select( const mask_v& mask, const int_v& a, const int_v& b ) {
         return _mm512_mask_mov_epi32( b, mask, a );
       }
 
-      friend inline mask_v operator<( const int_v& lhs, const int_v& rhs ) {
-        return _mm512_cmplt_epi32_mask( rhs, lhs );
-      }
-      friend inline mask_v operator>( const int_v& lhs, const int_v& rhs ) {
-        return _mm512_cmpgt_epi32_mask( lhs, rhs );
-      }
-      friend inline mask_v operator==( const int_v& lhs, const int_v& rhs ) {
-        return _mm512_cmpeq_epi32_mask( lhs, rhs );
-      }
+      friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm512_cmplt_epi32_mask( rhs, lhs ); }
+      friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpgt_epi32_mask( lhs, rhs ); }
+      friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpeq_epi32_mask( lhs, rhs ); }
 
     private:
       __m512i data;
@@ -649,13 +625,9 @@ namespace SIMDWrapper {
 
     inline float_v castToFloat( const int_v& x ) { return float_v( _mm512_castsi512_ps( x ) ); }
 
-    inline int_v gather( const int* base, const int_v& idx ) {
-      return _mm512_i32gather_epi32( idx, base, sizeof( int ) );
-    }
+    inline int_v gather( const int* base, const int_v& idx ) { return _mm512_i32gather_epi32( idx, base, sizeof( int ) ); }
 
-    inline float_v gather( const float* base, const int_v& idx ) {
-      return _mm512_i32gather_ps( idx, base, sizeof( float ) );
-    }
+    inline float_v gather( const float* base, const int_v& idx ) { return _mm512_i32gather_ps( idx, base, sizeof( float ) ); }
 
     struct types {
       static const size_t size = 16;
