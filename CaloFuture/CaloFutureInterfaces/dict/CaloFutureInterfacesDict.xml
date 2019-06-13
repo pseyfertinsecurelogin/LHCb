@@ -32,7 +32,7 @@
   <class name    = "ICaloFutureHypoEstimator"       />
   <class name    = "IFutureGammaPi0SeparationTool"  />
   <class name    = "ICaloFutureRelationsGetter"     />
-  <class name    = "IFutureNeutralIDTool"           />
+  <class name    = "Calo::Future::Interfaces::INeutralID"           />
   <class name    = "ICaloFutureShowerOverlapTool"   />
 </lcgdict>
 
