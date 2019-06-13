@@ -28,7 +28,7 @@ namespace LHCb::Pr::Forward {
   public:
     Tracks() {
       const size_t size = max_tracks * ( max_hits + 9 );
-      m_data            = static_cast<int*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
     Tracks( const Tracks& ) = delete;
@@ -43,25 +43,25 @@ namespace LHCb::Pr::Forward {
     inline int& size() { return m_size; }
 
     // Index in TracksVP container of the track's ancestor
-    SOA_ACCESSOR( trackVP, m_data )
+    SOA_ACCESSOR( trackVP, &( m_data->i ) )
 
     // Index in TracksUT container of the track's ancestor
-    SOA_ACCESSOR( trackUT, &m_data[max_tracks] )
+    SOA_ACCESSOR( trackUT, &( m_data[max_tracks].i ) )
 
     // QoP estimate from FT
-    SOA_ACCESSOR( stateQoP, (float*)&m_data[2 * max_tracks] )
+    SOA_ACCESSOR( stateQoP, &( m_data[2 * max_tracks].f ) )
 
     // Hits (for now LHCBid) in FT (or UT)
     // TODO: replace LHCbids by index in FT hit container
-    SOA_ACCESSOR( nHits, &m_data[3 * max_tracks] )
-    SOA_ACCESSOR_VAR( hit, &m_data[( hit + 4 ) * max_tracks], int hit )
+    SOA_ACCESSOR( nHits, &( m_data[3 * max_tracks].i ) )
+    SOA_ACCESSOR_VAR( hit, &( m_data[( hit + 4 ) * max_tracks].i ), int hit )
 
-    VEC3_SOA_ACCESSOR( statePos, (float*)&m_data[( max_hits + 4 ) * max_tracks],
-                       (float*)&m_data[( max_hits + 4 + 1 ) * max_tracks],
-                       (float*)&m_data[( max_hits + 4 + 2 ) * max_tracks] )
+    VEC3_SOA_ACCESSOR( statePos, &( m_data[( max_hits + 4 ) * max_tracks].f ),
+                       &( m_data[( max_hits + 4 + 1 ) * max_tracks].f ),
+                       &( m_data[( max_hits + 4 + 2 ) * max_tracks].f ) )
 
-    VEC3_XY_SOA_ACCESSOR( stateDir, (float*)&m_data[( max_hits + 4 + 3 ) * max_tracks],
-                          (float*)&m_data[( max_hits + 4 + 4 ) * max_tracks], 1.f )
+    VEC3_XY_SOA_ACCESSOR( stateDir, &( m_data[( max_hits + 4 + 3 ) * max_tracks].f ),
+                          &( m_data[( max_hits + 4 + 4 ) * max_tracks].f ), 1.f )
 
     /// Retrieve the momentum
     template <typename T>
@@ -74,7 +74,7 @@ namespace LHCb::Pr::Forward {
     inline void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < ( max_hits + 9 ); i++ ) {
-        intT( &from.m_data[i * max_tracks + at] ).compressstore( mask, &m_data[i * max_tracks + m_size] );
+        intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
       }
       m_size += simd::popcount( mask );
     }
@@ -82,7 +82,11 @@ namespace LHCb::Pr::Forward {
     ~Tracks() { std::free( m_data ); }
 
   private:
-    alignas( 64 ) int* m_data;
+    using data_t = union {
+      float f;
+      int   i;
+    };
+    alignas( 64 ) data_t* m_data;
     int m_size = 0;
   };
 } // namespace LHCb::Pr::Forward

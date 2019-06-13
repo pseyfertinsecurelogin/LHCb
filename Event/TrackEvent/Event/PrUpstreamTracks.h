@@ -31,7 +31,7 @@ namespace LHCb::Pr::Upstream {
   public:
     Tracks() {
       const size_t size = max_tracks * ( max_hits + 11 );
-      m_data            = static_cast<int*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
     Tracks( const Tracks& ) = delete;
@@ -46,24 +46,24 @@ namespace LHCb::Pr::Upstream {
     inline int& size() { return m_size; }
 
     // Index in TracksVP container of the track's ancestor
-    SOA_ACCESSOR( trackVP, m_data )
+    SOA_ACCESSOR( trackVP, &m_data->i )
 
     // Refined Velo state
-    VEC3_SOA_ACCESSOR( statePos, (float*)&m_data[1 * max_tracks], (float*)&m_data[2 * max_tracks],
-                       (float*)&m_data[3 * max_tracks] )
+    VEC3_SOA_ACCESSOR( statePos, &( m_data[1 * max_tracks].f ), &( m_data[2 * max_tracks].f ),
+                       &( m_data[3 * max_tracks].f ) )
 
-    VEC3_XY_SOA_ACCESSOR( stateDir, (float*)&m_data[4 * max_tracks], (float*)&m_data[5 * max_tracks], 1.f )
+    VEC3_XY_SOA_ACCESSOR( stateDir, &( m_data[4 * max_tracks].f ), &( m_data[5 * max_tracks].f ), 1.f )
 
-    VEC3_SOA_ACCESSOR( stateCov, (float*)&m_data[6 * max_tracks], (float*)&m_data[7 * max_tracks],
-                       (float*)&m_data[8 * max_tracks] )
+    VEC3_SOA_ACCESSOR( stateCov, &( m_data[6 * max_tracks].f ), &( m_data[7 * max_tracks].f ),
+                       &( m_data[8 * max_tracks].f ) )
 
     // QoP estimate from UT
-    SOA_ACCESSOR( stateQoP, (float*)&m_data[9 * max_tracks] )
+    SOA_ACCESSOR( stateQoP, &( m_data[9 * max_tracks].f ) )
 
     // Hits (for now LHCBid) in UT
     // TODO: replace LHCbids by index in UT hit container
-    SOA_ACCESSOR( nHits, &m_data[10 * max_tracks] )
-    SOA_ACCESSOR_VAR( hit, &m_data[( hit + 11 ) * max_tracks], int hit )
+    SOA_ACCESSOR( nHits, &( m_data[10 * max_tracks].i ) )
+    SOA_ACCESSOR_VAR( hit, &( m_data[( hit + 11 ) * max_tracks].i ), int hit )
 
     /// Retrieve the momentum
     template <typename T>
@@ -97,7 +97,7 @@ namespace LHCb::Pr::Upstream {
     inline void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < max_hits + 11; i++ ) {
-        intT( &from.m_data[i * max_tracks + at] ).compressstore( mask, &m_data[i * max_tracks + m_size] );
+        intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
       }
       m_size += simd::popcount( mask );
     }
@@ -105,7 +105,11 @@ namespace LHCb::Pr::Upstream {
     ~Tracks() { std::free( m_data ); }
 
   private:
-    alignas( 64 ) int* m_data;
+    using data_t = union {
+      float f;
+      int   i;
+    };
+    alignas( 64 ) data_t* m_data;
     int m_size = 0;
   };
 } // namespace LHCb::Pr::Upstream

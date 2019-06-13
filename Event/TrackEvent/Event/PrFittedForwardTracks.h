@@ -27,7 +27,7 @@ namespace LHCb::Pr::Fitted::Forward {
   public:
     Tracks() {
       const size_t size = max_tracks * 15;
-      m_data            = static_cast<int*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
     Tracks( const Tracks& ) = delete;
@@ -42,29 +42,29 @@ namespace LHCb::Pr::Fitted::Forward {
     inline int& size() { return m_size; }
 
     // Index in TracksFT container of the track's ancestor
-    SOA_ACCESSOR( trackFT, m_data )
+    SOA_ACCESSOR( trackFT, &( m_data->i ) )
 
     // QoP estimate from FT
-    SOA_ACCESSOR( QoP, (float*)&m_data[max_tracks] )
+    SOA_ACCESSOR( QoP, &( m_data[max_tracks].f ) )
 
     // Closest to beam state after after fit
-    VEC3_SOA_ACCESSOR( beamStatePos, (float*)&m_data[2 * max_tracks], (float*)&m_data[3 * max_tracks],
-                       (float*)&m_data[4 * max_tracks] )
+    VEC3_SOA_ACCESSOR( beamStatePos, &( m_data[2 * max_tracks].f ), &( m_data[3 * max_tracks].f ),
+                       &( m_data[4 * max_tracks].f ) )
 
-    VEC3_XY_SOA_ACCESSOR( beamStateDir, (float*)&m_data[5 * max_tracks], (float*)&m_data[6 * max_tracks], 1.f )
+    VEC3_XY_SOA_ACCESSOR( beamStateDir, &( m_data[5 * max_tracks].f ), &( m_data[6 * max_tracks].f ), 1.f )
 
     // Chi2 from fit
-    SOA_ACCESSOR( chi2, (float*)&m_data[7 * max_tracks] )
+    SOA_ACCESSOR( chi2, &( m_data[7 * max_tracks].f ) )
 
     // Chi2 degrees of freedom
-    SOA_ACCESSOR( chi2nDof, &m_data[8 * max_tracks] )
+    SOA_ACCESSOR( chi2nDof, &( m_data[8 * max_tracks].i ) )
 
     // Covariances matrix for X and Y (can be merged if wx=wy)
-    VEC3_SOA_ACCESSOR( covX, (float*)&m_data[9 * max_tracks], (float*)&m_data[10 * max_tracks],
-                       (float*)&m_data[11 * max_tracks] )
+    VEC3_SOA_ACCESSOR( covX, &( m_data[9 * max_tracks].f ), &( m_data[10 * max_tracks].f ),
+                       &( m_data[11 * max_tracks].f ) )
 
-    VEC3_SOA_ACCESSOR( covY, (float*)&m_data[12 * max_tracks], (float*)&m_data[13 * max_tracks],
-                       (float*)&m_data[14 * max_tracks] )
+    VEC3_SOA_ACCESSOR( covY, &( m_data[12 * max_tracks].f ), &( m_data[13 * max_tracks].f ),
+                       &( m_data[14 * max_tracks].f ) )
 
     /// Retrieve the momentum
     template <typename T>
@@ -77,7 +77,7 @@ namespace LHCb::Pr::Fitted::Forward {
     inline void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < 15; i++ ) {
-        intT( &from.m_data[i * max_tracks + at] ).compressstore( mask, &m_data[i * max_tracks + m_size] );
+        intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
       }
       m_size += simd::popcount( mask );
     }
@@ -85,7 +85,11 @@ namespace LHCb::Pr::Fitted::Forward {
     ~Tracks() { std::free( m_data ); }
 
   private:
-    alignas( 64 ) int* m_data;
+    using data_t = union {
+      float f;
+      int   i;
+    };
+    alignas( 64 ) data_t* m_data;
     int m_size = 0;
   };
 } // namespace LHCb::Pr::Fitted::Forward

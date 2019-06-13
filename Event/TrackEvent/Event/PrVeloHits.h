@@ -27,7 +27,7 @@ namespace LHCb::Pr::Velo {
   public:
     Hits() {
       const size_t size = max_hits * 4;
-      m_data            = static_cast<int*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
     Hits( const Hits& ) = delete;
@@ -41,14 +41,18 @@ namespace LHCb::Pr::Velo {
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
 
-    VEC3_SOA_ACCESSOR( pos, (float*)m_data, (float*)&m_data[max_hits], (float*)&m_data[2 * max_hits] )
+    VEC3_SOA_ACCESSOR( pos, &( m_data->f ), &( m_data[max_hits].f ), &( m_data[2 * max_hits].f ) )
 
-    SOA_ACCESSOR( LHCbId, &m_data[3 * max_hits] )
+    SOA_ACCESSOR( LHCbId, &m_data[3 * max_hits].i )
 
     ~Hits() { std::free( m_data ); }
 
   private:
-    alignas( 64 ) int* m_data;
+    using data_t = union {
+      float f;
+      int   i;
+    };
+    alignas( 64 ) data_t* m_data;
     int m_size = 0;
   };
 } // namespace LHCb::Pr::Velo
