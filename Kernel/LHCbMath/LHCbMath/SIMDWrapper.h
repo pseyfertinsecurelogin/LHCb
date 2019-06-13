@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Kernel/pun.h"
+
 #include <immintrin.h>
 #include <limits>
 
@@ -156,23 +158,9 @@ namespace SIMDWrapper {
 
     inline float_v::operator int_v() const { return int_v( int( data ) ); }
 
-    inline int_v castToInt( const float_v& x ) {
-      union {
-        float f;
-        int   i;
-      } v;
-      v.f = x.cast();
-      return v.i;
-    }
+    inline int_v castToInt( const float_v& x ) { return pun_to<int, float>( x.cast() ); }
 
-    inline float_v castToFloat( const int_v& x ) {
-      union {
-        float f;
-        int   i;
-      } v;
-      v.i = x.cast();
-      return v.f;
-    }
+    inline float_v castToFloat( const int_v& x ) { return pun_to<float, int>( x.cast() ); }
 
     inline int_v gather( const int* base, const int_v& idx ) { return base[idx.cast()]; }
 
@@ -447,9 +435,13 @@ namespace SIMDWrapper {
 
     inline float_v castToFloat( const int_v& x ) { return float_v( _mm256_castsi256_ps( x ) ); }
 
-    inline int_v gather( const int* base, const int_v& idx ) { return _mm256_i32gather_epi32( base, idx, sizeof( int ) ); }
+    inline int_v gather( const int* base, const int_v& idx ) {
+      return _mm256_i32gather_epi32( base, idx, sizeof( int ) );
+    }
 
-    inline float_v gather( const float* base, const int_v& idx ) { return _mm256_i32gather_ps( base, idx, sizeof( float ) ); }
+    inline float_v gather( const float* base, const int_v& idx ) {
+      return _mm256_i32gather_ps( base, idx, sizeof( float ) );
+    }
 
     struct types {
       static const size_t size = 8;
@@ -625,9 +617,13 @@ namespace SIMDWrapper {
 
     inline float_v castToFloat( const int_v& x ) { return float_v( _mm512_castsi512_ps( x ) ); }
 
-    inline int_v gather( const int* base, const int_v& idx ) { return _mm512_i32gather_epi32( idx, base, sizeof( int ) ); }
+    inline int_v gather( const int* base, const int_v& idx ) {
+      return _mm512_i32gather_epi32( idx, base, sizeof( int ) );
+    }
 
-    inline float_v gather( const float* base, const int_v& idx ) { return _mm512_i32gather_ps( idx, base, sizeof( float ) ); }
+    inline float_v gather( const float* base, const int_v& idx ) {
+      return _mm512_i32gather_ps( idx, base, sizeof( float ) );
+    }
 
     struct types {
       static const size_t size = 16;
