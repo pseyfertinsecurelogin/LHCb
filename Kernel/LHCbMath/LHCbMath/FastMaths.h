@@ -519,25 +519,24 @@ namespace LHCb::Math {
     // SIMD version
     else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
-      using namespace impl;
-
-      const FP TAN_PIO8F( 0.4142135623730950f ); ///< tan(pi/8)
-      const FP PIF( float( M_PI ) );             ///< pi
-
       // move in first octant
-      auto       xx = abs( x );
-      auto       yy = abs( y );
-      const auto m1 = ( yy > xx );
-      if ( any_of( m1 ) ) {
+      auto       xx     = abs( x );
+      auto       yy     = abs( y );
+      const auto m1     = ( yy > xx );
+      const auto any_m1 = any_of( m1 );
+      if ( any_m1 ) {
         const auto tmp = yy;
         yy( m1 )       = xx;
         xx( m1 )       = tmp;
       }
 
-      const auto t  = yy / xx;
-      auto       z  = t;
-      const auto m2 = t > TAN_PIO8F;
-      if ( any_of( m2 ) ) { z( m2 ) = ( t - FP::One() ) / ( t + FP::One() ); }
+      const FP TAN_PIO8F( 0.4142135623730950f ); // tan(pi/8)
+
+      const auto t      = yy / xx;
+      auto       z      = t;
+      const auto m2     = t > TAN_PIO8F;
+      const auto any_m2 = any_of( m2 );
+      if ( any_m2 ) { z( m2 ) = ( t - FP::One() ) / ( t + FP::One() ); }
 
       const auto z2 = z * z;
 
@@ -546,14 +545,19 @@ namespace LHCb::Math {
       const FP c( 1.99777106478E-1f );
       const FP d( -3.33329491539E-1f );
 
-      auto ret = ( ( ( ( a * z2 + b ) * z2 + c ) * z2 + d ) * z2 * z + z );
+      auto ret = ( ( ( ( ( ( ( ( a * z2 ) + b ) * z2 ) + c ) * z2 ) + d ) * z2 * z ) + z );
 
       // move back in place
       const auto xZero = xx == FP::Zero();
       const auto yZero = y == FP::Zero();
       ret.setZero( xZero || yZero );
-      ret( m2 ) += FP( PIO4F );
-      ret( m1 )             = PIO2F - ret;
+
+      const FP PIO4( impl::PIO4F );
+      const FP PIO2( impl::PIO2F );
+      const FP PIF( float( M_PI ) );
+
+      if ( any_m2 ) { ret( m2 ) += PIO4; }
+      if ( any_m1 ) { ret( m1 ) = PIO2 - ret; }
       ret( x < FP::Zero() ) = PIF - ret;
       ret( y < FP::Zero() ) = -ret;
 
