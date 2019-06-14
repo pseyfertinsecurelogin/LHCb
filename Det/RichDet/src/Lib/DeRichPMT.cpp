@@ -44,6 +44,10 @@ const CLID& DeRichPMT::classID() { return CLID_DeRichPMT; }
 
 //=============================================================================
 
+DeRichPMT::PMTData DeRichPMT::m_pddata;
+
+//=============================================================================
+
 StatusCode DeRichPMT::initialize() {
   MsgStream msg( msgSvc(), "DeRichPMT" );
 
@@ -108,55 +112,63 @@ DetectorElement* DeRichPMT::getFirstRich() {
 
 //=============================================================================
 
-StatusCode DeRichPMT::getPMTParameters() {
-  StatusCode sc = StatusCode::SUCCESS;
+void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
 
-  const auto* deRich = getFirstRich();
-  if ( !deRich ) { return StatusCode::FAILURE; }
+  using namespace LHCb::SIMD;
 
-  {
-    const std::string effnumPixCond = "RichPmtTotNumPixel";
-    const auto        cExists       = deRich->exists( effnumPixCond );
-    m_effNumActivePixs              = ( cExists ? (FType)deRich->param<int>( effnumPixCond ) : 64.0 );
-    _ri_debug << "EffNumPixs = " << cExists << " | " << m_effNumActivePixs << endmsg;
-  }
-
-  // CRJ - To reduce PMT memory size do not load parameters not used yet ...
+  if ( !deRich || m_initialised ) return;
 
   const auto PmtAnodeZSize         = deRich->param<double>( "RichPmtAnodeZSize" );
   const auto PmtAnodeLocationInPmt = deRich->param<double>( "RichPmtSiliconDetectorLocalZlocation" );
   const auto PmtPixelXSize         = deRich->param<double>( "RichPmtPixelXSize" );
   const auto PmtPixelYSize         = deRich->param<double>( "RichPmtPixelYSize" );
   const auto PmtPixelGap           = deRich->param<double>( "RichPmtPixelGap" );
-  m_PmtEffectivePixelXSize         = PmtPixelXSize + PmtPixelGap;
-  m_PmtEffectivePixelYSize         = PmtPixelYSize + PmtPixelGap;
-  m_PmtAnodeHalfThickness          = PmtAnodeZSize * 0.5;
-  m_PmtNumPixCol                   = deRich->param<int>( "RichPmtNumPixelCol" );
-  m_PmtNumPixRow                   = deRich->param<int>( "RichPmtNumPixelRow" );
-  m_PmtNumPixColFrac               = ( m_PmtNumPixCol - 1 ) * 0.5;
-  m_PmtNumPixRowFrac               = ( m_PmtNumPixRow - 1 ) * 0.5;
+  PmtEffectivePixelXSize           = SIMDFP( PmtPixelXSize + PmtPixelGap );
+  PmtEffectivePixelYSize           = SIMDFP( PmtPixelYSize + PmtPixelGap );
+  PmtAnodeHalfThickness            = SIMDFP( PmtAnodeZSize * 0.5f );
+  PmtNumPixCol                     = SIMDUINT( deRich->param<int>( "RichPmtNumPixelCol" ) );
+  PmtNumPixRow                     = SIMDUINT( deRich->param<int>( "RichPmtNumPixelRow" ) );
+  PmtNumPixColFrac                 = simd_cast<SIMDFP>( PmtNumPixCol - SIMDUINT::One() ) * SIMDFP( 0.5f );
+  PmtNumPixRowFrac                 = simd_cast<SIMDFP>( PmtNumPixRow - SIMDUINT::One() ) * SIMDFP( 0.5f );
 
-  m_PmtQwZSize              = deRich->param<double>( "RichPmtQuartzZSize" );
+  PmtQwZSize                = SIMDFP( deRich->param<double>( "RichPmtQuartzZSize" ) );
   const auto QwToAnodeZDist = deRich->param<double>( "RichPmtQWToSiMaxDist" );
 
-  m_zShift = QwToAnodeZDist + PmtAnodeLocationInPmt;
-
-  // int Rich2PmtArrayConfig = 0;
+  zShift = SIMDFP( QwToAnodeZDist + PmtAnodeLocationInPmt );
 
   if ( deRich->exists( "Rich2PMTArrayConfig" ) ) {
-    // Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
     if ( deRich->exists( "RichGrandPmtAnodeXSize" ) ) {
       const auto GrandPmtAnodeZSize = deRich->param<double>( "RichGrandPmtAnodeZSize" );
       const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
       const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
       const auto GrandPmtPixelGap   = deRich->param<double>( "RichGrandPmtPixelGap" );
-      m_GrandPmtEdgePixelXSize      = deRich->param<double>( "RichGrandPmtEdgePixelXSize" );
-      m_GrandPmtEdgePixelYSize      = deRich->param<double>( "RichGrandPmtEdgePixelYSize" );
-      m_GrandPmtEffectivePixelXSize = GrandPmtPixelXSize + GrandPmtPixelGap;
-      m_GrandPmtEffectivePixelYSize = GrandPmtPixelYSize + GrandPmtPixelGap;
-      m_GrandPmtAnodeHalfThickness  = GrandPmtAnodeZSize * 0.5;
+      GrandPmtEdgePixelXSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelXSize" ) );
+      GrandPmtEdgePixelYSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelYSize" ) );
+      GrandPmtEffectivePixelXSize   = SIMDFP( GrandPmtPixelXSize + GrandPmtPixelGap );
+      GrandPmtEffectivePixelYSize   = SIMDFP( GrandPmtPixelYSize + GrandPmtPixelGap );
+      GrandPmtAnodeHalfThickness    = SIMDFP( GrandPmtAnodeZSize * 0.5f );
     }
   }
+
+  m_initialised = true;
+}
+
+//=============================================================================
+
+StatusCode DeRichPMT::getPMTParameters() {
+
+  const auto deRich = getFirstRich();
+  if ( !deRich ) { return StatusCode::FAILURE; }
+
+  {
+    const std::string effnumPixCond = "RichPmtTotNumPixel";
+    const auto        cExists       = deRich->exists( effnumPixCond );
+    m_effNumActivePixs              = ( cExists ? (FP)deRich->param<int>( effnumPixCond ) : 64.0 );
+    _ri_debug << "EffNumPixs = " << cExists << " | " << m_effNumActivePixs << endmsg;
+  }
+
+  // shared PD data
+  m_pddata.initialise( deRich );
 
   // Default initialise some DePD base parameters
   setPmtIsGrandFlag( PmtIsGrand() );
@@ -173,11 +185,12 @@ StatusCode DeRichPMT::getPMTParameters() {
     // and to global
     using FP = Rich::SIMD::DefaultScalarFP;
     toGlobalMatrix().GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_toGlobalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy, (FP)zx, (FP)zy,
-                                        (FP)zz, (FP)dz );
+    m_toGlobalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, //
+                                        (FP)yx, (FP)yy, (FP)yz, (FP)dy, //
+                                        (FP)zx, (FP)zy, (FP)zz, (FP)dz );
   }
 
-  return sc;
+  return StatusCode::SUCCESS;
 }
 
 //=============================================================================
@@ -220,14 +233,17 @@ StatusCode DeRichPMT::updateGeometry() { return getPMTParameters(); }
 
 //=============================================================================
 
-bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint& detectPoint,
-                                bool photoCathodeSide ) const {
+bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,         //
+                                Gaudi::XYZPoint&        detectPoint,     //
+                                bool                    photoCathodeSide //
+                                ) const {
+
   auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), smartID.pixelRow() );
-  aLocalHit.SetZ( aLocalHit.Z() + m_zShift );
+  aLocalHit.SetZ( aLocalHit.Z() + scalar( m_pddata.zShift ) );
 
   // for now assume negligible refraction effect at the QW.
 
-  if ( !photoCathodeSide ) { aLocalHit.SetZ( m_PmtQwZSize + aLocalHit.Z() ); }
+  if ( !photoCathodeSide ) { aLocalHit.SetZ( scalar( m_pddata.PmtQwZSize ) + aLocalHit.Z() ); }
 
   detectPoint = ( toGlobalMatrix() * aLocalHit );
 
@@ -236,8 +252,11 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint
 
 //===============================================================================================
 
-DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                                       bool photoCathodeSide ) const {
+DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID,         //
+                                                       SIMDPoint&      detectPoint,     //
+                                                       bool            photoCathodeSide //
+                                                       ) const {
+
   // return status
   SIMDFP::mask_type ok( true );
 
@@ -267,11 +286,11 @@ DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID, 
 
   // make local hit
   auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( col, row );
-  aLocalHit.SetZ( SIMDFP( m_zShift ) + aLocalHit.Z() );
+  aLocalHit.SetZ( m_pddata.zShift + aLocalHit.Z() );
 
   // for now assume negligible refraction effect at the QW.
 
-  if ( !photoCathodeSide ) { aLocalHit.SetZ( SIMDFP( m_PmtQwZSize ) + aLocalHit.Z() ); }
+  if ( !photoCathodeSide ) { aLocalHit.SetZ( m_pddata.PmtQwZSize + aLocalHit.Z() ); }
 
   detectPoint = m_toGlobalMatrixSIMD * aLocalHit;
 
