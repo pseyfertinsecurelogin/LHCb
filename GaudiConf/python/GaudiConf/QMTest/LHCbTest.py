@@ -19,14 +19,14 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
     # default values found in the ref for old counters
     oldCountersDefaults = ["", "", "1.0000", "0.0000", "1.0000", "1.0000"]
 
-    def _floatDiffer(self, ref, val, sensibility):
-        '''Compares 2 floats according to sensibility'''
+    def _floatDiffer(self, ref, val, sensitivity):
+        '''Compares 2 floats according to sensitivity'''
         val = float(val)
         ref = float(ref)
         if ref == 0.0:
-            return abs(val) > sensibility
+            return abs(val) > sensitivity
         else:
-            return abs(ref - val) / max(abs(ref), abs(val)) > sensibility
+            return abs(ref - val) / max(abs(ref), abs(val)) > sensitivity
 
     def validateWithReference(self,
                               stdout=None,
@@ -34,17 +34,24 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                               result=None,
                               causes=None,
                               preproc=None,
-                              counter_preproc=None):
-        '''Overwrite of the base class method by adding extra checks for counters'''
+                              counter_preproc=None,
+                              sensitivities={}):
+        '''Overwrite of the base class method by adding extra checks for counters.
+           sensitivities allows to overwrite the default sensitivity of the counter checking (0.0001).
+           It is containing a dictionnary with Algorithm name as key and a dictionnary as value
+           having counter name a key and sensitivity for that counter as value'''
         # call upper class method
         super(LHCbTest, self).validateWithReference(stdout, stderr, result,
                                                     causes, preproc)
         # check the counters
-        self._compare(stdout, causes, result, counter_preproc, 'Counters')
+        self._compare(stdout, causes, result, counter_preproc, 'Counters',
+                      sensitivities)
         # check the 1D histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DHistograms')
+        self._compare(stdout, causes, result, counter_preproc, '1DHistograms',
+                      sensitivities)
         # check the 1D profile histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DProfiles')
+        self._compare(stdout, causes, result, counter_preproc, '1DProfiles',
+                      sensitivities)
 
     def _extract(self, s, counter_preproc=None, comp_type='Counters'):
         """
@@ -96,19 +103,17 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                                    1].strip().replace('/Event/', '').split('|')
                     if v.strip() != ""
                 ]
-                counters[algoName][items[0]] = items[firstValueIndex:]
+                counters[algoName][items[0].strip(
+                    '"*')] = items[firstValueIndex:]
             n += i + 1
         return counters
 
-    def _compareCounterLine(self, ref, value, comp_type):
+    def _compareCounterLine(self, ref, value, comp_type, sensitivity):
         '''Compares 2 lines of a counter/histogram and check whether numbers are "close enough"'''
 
         # rough check
         if (ref == value):
             return True
-
-        # floating point comparison precision
-        sensibility = 0.0001
 
         # Handle counters
         if comp_type == "Counters":
@@ -122,7 +127,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 if ref[1] != value[1]: return False
                 return True
             else:
-                # first check count. No sensibility there and it's always present
+                # first check count. No sensitivity there and it's always present
                 if ref[0] != value[0]: return False
                 # now check number of values present
                 if len(ref) != len(value):
@@ -139,9 +144,9 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                                 return False
                     else:
                         return False
-                # and finally the rest of the values, with sensibility
+                # and finally the rest of the values, with sensitivity
                 for n in range(1, len(value)):
-                    if self._floatDiffer(ref[n], value[n], sensibility):
+                    if self._floatDiffer(ref[n], value[n], sensitivity):
                         return False
 
         # Handle 1D Histos and Profiles
@@ -151,7 +156,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             if ref[0] != value[0]: return False
             # Check rest with given precision
             for n in range(1, len(value)):
-                if self._floatDiffer(ref[n], value[n], sensibility):
+                if self._floatDiffer(ref[n], value[n], sensitivity):
                     return False
 
         # If get here return OK
@@ -190,7 +195,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 onlyref.add(refName)
         return onlyref, stdoutCounters - donestdout, counterPairs
 
-    def _compare(self, stdout, causes, result, counter_preproc, comp_type):
+    def _compare(self, stdout, causes, result, counter_preproc, comp_type,
+                 sensitivities):
         """
         Compares values of counters/histograms to the reference file
         stdout: the test output
@@ -237,9 +243,15 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                         sorted(list(onlystdout)))
             headerPrinted = False
             for counterNameRef, counterNameStdout in counterPairs:
+                # floating point comparison precision
+                sensitivity = 0.0001
+                if algoName in sensitivities and counterNameRef in sensitivities[
+                        algoName]:
+                    sensitivity = sensitivities[algoName][counterNameRef]
                 if not self._compareCounterLine(
                         refCounters[algoName][counterNameRef],
-                        newCounters[algoName][counterNameStdout], comp_type):
+                        newCounters[algoName][counterNameStdout], comp_type,
+                        sensitivity):
                     if not headerPrinted:
                         msg += 'Different content of ' + comp_type + ' for algo %s\n' % algoName
                         headerPrinted = True
