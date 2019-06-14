@@ -191,19 +191,10 @@ namespace {
  *  This is the muon reconstruction algorithm
  *  This just crosses the logical strips back into pads
  */
-namespace details {
-
-  using AlgorithmWithCondition = LHCb::DetDesc::ConditionAccessorHolder<FixTESPath<Gaudi::Algorithm>>;
-
-  template <typename... C>
-  using usesConditions =
-      Gaudi::Functional::Traits::use_<LHCb::DetDesc::useConditionHandleFor<C...>,
-                                      Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition>>;
-} // namespace details
 
 class MuonRawToCoord final : public Gaudi::Functional::Transformer<std::vector<LHCb::MuonCoord>(
                                                                        const DeMuonDetector&, const LHCb::RawEvent& ),
-                                                                   details::usesConditions<DeMuonDetector>> {
+                                                                   LHCb::DetDesc::usesConditions<DeMuonDetector>> {
 public:
   /// Standard constructor
   MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
@@ -247,14 +238,15 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const DeMuonDetector& m
     if ( LHCb::RawBank::MagicPattern != r->magic() ) OOPS( MuonRaw::ErrorCode::BAD_MAGIC );
     unsigned int tell1 = r->sourceID();
     if ( tell1 >= MuonDAQHelper_maxTell1Number ) OOPS( MuonRaw::ErrorCode::INVALID_TELL1 );
-    decodeTileAndTDCV1( r->range<unsigned short>(),
-                        [& di        = muonDet.getDAQInfo()->getADDInTell1( tell1 ),
-                         invalid_add = m_invalid_add.buffer()]( unsigned int add ) mutable {
-                          bool valid = add < di.size();
-                          invalid_add += !valid;
-                          return valid ? std::optional{di[add]} : std::nullopt;
-                        },
-                        std::back_inserter( decoding ) );
+    decodeTileAndTDCV1(
+        r->range<unsigned short>(),
+        [& di        = muonDet.getDAQInfo()->getADDInTell1( tell1 ),
+         invalid_add = m_invalid_add.buffer()]( unsigned int add ) mutable {
+          bool valid = add < di.size();
+          invalid_add += !valid;
+          return valid ? std::optional{di[add]} : std::nullopt;
+        },
+        std::back_inserter( decoding ) );
   }
 
   m_deltaEstimate += decoding.size() - est_nDigits;
