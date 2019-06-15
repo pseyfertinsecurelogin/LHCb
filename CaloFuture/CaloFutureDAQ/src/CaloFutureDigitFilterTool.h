@@ -83,11 +83,10 @@ private:
   mutable const Offsets*                              m_offsets    = nullptr;
   mutable const Offsets*                              m_offsetsRMS = nullptr;
 
-  LHCb::CaloDigits* m_digits = nullptr;
-  DeCalorimeter*    m_calo   = nullptr;
-  std::string       m_caloName{"None"};
-  int               m_scalingMethod{0};
-  bool              m_useCondDB{true};
+  DeCalorimeter* m_calo = nullptr;
+  std::string    m_caloName{"None"};
+  int            m_scalingMethod{0};
+  bool           m_useCondDB{true};
 
   CondMaps m_ecalMaps;
   CondMaps m_hcalMaps;
@@ -96,8 +95,6 @@ private:
 
   int         m_scalingBin;
   double      m_scalingMin;
-  double      m_mOffs{0.0};
-  int         m_nMask{0};
   std::string m_vertLoc;
   bool        m_usePV3D;
   std::string m_scaling{"None"};
