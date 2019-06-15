@@ -534,11 +534,7 @@ private:
     } else {
       auto m = ( aModuleNum >= SIMDINT32::Zero() && //
                  aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
-#if defined( __clang__ )
-#  pragma clang loop unroll_count( SIMDINT32::Size )
-#elif defined( __GNUC__ )
-#  pragma GCC unroll SIMDINT32::Size
-#endif
+      LHCB_LOOP_UNROLL( SIMDINT32::Size )
       for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
         // if ( m[i] )
         m[i] = m_ModuleIsWithGrandPMT[aModuleNum[i]];
