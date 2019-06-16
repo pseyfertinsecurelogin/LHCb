@@ -263,6 +263,16 @@ void DeUTDetector::setOffset() {
           ir++;
         }
 
+        for ( auto& sector : vecptrsectors ) {
+          const int idx =
+              ( ( ( ptrstation->id() - 1 ) * NBLAYER + ptrlayer->id() - 1 ) * NBREGION + ptrmodule->detRegion() - 1 ) *
+                  NBSECTOR +
+              sector->id() - 1;
+          m_sectors_direct[idx] = sector;
+          // printf("i=%4d sector=%3d ir=%3d stat=%d, layer=%d, region=%d\n", idx, sector->id(), ir, ptrstation->id(),
+          // ptrlayer->id(), curr_region);
+        }
+
         // move the total to the last offset
         topoffset += vecptrsectors.size();
       }

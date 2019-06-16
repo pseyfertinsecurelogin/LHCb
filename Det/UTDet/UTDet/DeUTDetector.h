@@ -55,8 +55,9 @@ constexpr CLID CLID_DeUTDetector = 9301;
 
 namespace {
   constexpr int NBSTATION = 2;
-  constexpr int NBLAYER   = 2; // nbr layers per station
-  constexpr int NBREGION  = 3; // nbr regions per layer
+  constexpr int NBLAYER   = 2;  // nbr layers per station
+  constexpr int NBREGION  = 3;  // nbr regions per layer
+  constexpr int NBSECTOR  = 98; // nbr sectors per region
 } // namespace
 
 class DeUTDetector : public DetectorElement {
@@ -235,6 +236,8 @@ public:
   DeUTSector* getSector( unsigned int station, unsigned int layer, unsigned int region, unsigned int sector,
                          unsigned int uniqueSector ) const;
 
+  inline DeUTSector* getSectorDirect( const int fullChanIdx ) const { return m_sectors_direct[fullChanIdx]; }
+
   void setOffset();
 
   /** find a list of sectors from channelIDs **/
@@ -259,6 +262,9 @@ protected:
   Stations m_stations;
 
   Sectors m_sectors;
+
+  /** Faster access to sectors (no offsets) **/
+  std::array<DeUTSector*, NBSTATION * NBLAYER * NBREGION * NBSECTOR> m_sectors_direct;
 
   Layers m_layers;
 
