@@ -16,6 +16,7 @@
 #include <functional>
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
+#include "Kernel/STLExtensions.h"
 namespace LHCb {
   class CaloHypo;
 }
@@ -31,27 +32,31 @@ namespace LHCb {
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   30/10/2001
  */
+namespace Calo::Future::Interfaces {
+  struct IProcessHypos : extend_interfaces<IAlgTool> {
 
-struct ICaloFutureHypoTool : extend_interfaces<IAlgTool> {
+    /** static interface identification
+     *  @see IInterface
+     *  @return unique interface identifier
+     */
+    DeclareInterfaceID( IProcessHypos, 1, 0 );
 
-  /** static interface identification
-   *  @see IInterface
-   *  @return unique interface identifier
-   */
-  DeclareInterfaceID( ICaloFutureHypoTool, 3, 0 );
+    /** The main processing method
+     *  @param  hypos  range of pointers to CaloHypo objects to be processed
+     *  @return status code
+     */
+    // FIXME: the use of `LHCb::CaloHypo*` is temporary, waiting for a migration
+    //       from KeyedContainer to a plain vector. At that point this should
+    //       become LHCb::span<LHCb::CaloHypo> hypos...
+    virtual StatusCode process( LHCb::span<LHCb::CaloHypo* const> hypos ) const = 0;
 
-  /** The main processing method
-   *  @param  hypo  pointer to CaloHypo object to be processed
-   *  @return status code
-   */
-  virtual StatusCode process( LHCb::CaloHypo& hypo ) const = 0;
-
-  /** The main processing method (functor interface)
-   *  @param  hypo  pointer to CaloHypo object to be processed
-   *  @return status code
-   */
-  virtual StatusCode operator()( LHCb::CaloHypo& hypo ) const = 0;
-};
+    /** The main processing method -- backwards compatibility for callers
+     *  @param  hypo  reference to CaloHypo object to be processed
+     *  @return status code
+     */
+    StatusCode process( LHCb::CaloHypo& hypo ) const { return process( LHCb::range::single{&hypo} ); }
+  };
+} // namespace Calo::Future::Interfaces
 
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURECLUSTERTOOL_H
