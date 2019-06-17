@@ -23,8 +23,8 @@
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "ICaloFutureSplitTool"           />
   <class name    = "ICaloFutureSubClusterTag"       />
-  <class name    = "ICaloFutureTrackIdEval"         />
-  <class name    = "ICaloFutureTrackMatch"          />
+  <class name    = "Calo::Future::Interfaces::ITrackIdEval"         />
+  <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
   <class name    = "IPart2CaloFuture"               />
   <class name    = "ITrack2CaloFuture"              />
   <class name    = "ICaloFutureHypo2CaloFuture"           />

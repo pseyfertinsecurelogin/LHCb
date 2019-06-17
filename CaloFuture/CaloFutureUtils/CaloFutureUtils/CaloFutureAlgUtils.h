@@ -11,48 +11,49 @@
 // ============================================================================
 #ifndef CALOFUTUREUTILS_CALOFUTUREALGUTILS_H
 #define CALOFUTUREUTILS_CALOFUTUREALGUTILS_H 1
-#include "Event/CaloCluster.h"
 #include "Event/CaloHypo.h"
 #include <algorithm>
-#include <boost/utility/string_ref.hpp>
 #include <cctype>
 #include <string>
+#include <string_view>
+#include <vector>
 
 namespace LHCb {
+  class CaloCluster;
   namespace CaloFutureAlgUtils {
 
-    namespace futuredetails {
+    namespace details {
       // Try to find in the Haystack the Needle - ignore case
-      inline bool contains_ci( boost::string_ref haystack, boost::string_ref needle ) {
+      inline bool contains_ci( std::string_view haystack, std::string_view needle ) {
         auto it = std::search( std::begin( haystack ), std::end( haystack ), std::begin( needle ), std::end( needle ),
                                []( char ch1, char ch2 ) { return std::toupper( ch1 ) == std::toupper( ch2 ); } );
         return it != std::end( haystack );
       }
 
-      inline std::string to_string( boost::string_ref sr ) { return {sr.data(), sr.size()}; }
+      inline std::string to_string( std::string_view sr ) { return std::string{sr}; }
 
-      inline std::string toUpper( boost::string_ref str ) {
+      inline std::string toUpper( std::string_view str ) {
         auto uStr = to_string( str );
         std::transform( uStr.begin(), uStr.end(), uStr.begin(), ::toupper );
         return uStr;
       }
 
-      inline std::string operator+( const std::string& lhs, boost::string_ref rhs ) { return lhs + to_string( rhs ); }
+      inline std::string operator+( const std::string& lhs, std::string_view rhs ) { return lhs + to_string( rhs ); }
 
-    } // namespace futuredetails
-    using futuredetails::toUpper;
+    } // namespace details
+    using details::toUpper;
 
-    inline std::string CaloFutureNameFromAlg( boost::string_ref algName ) {
+    inline std::string CaloFutureNameFromAlg( std::string_view algName ) {
       // find tool name separator if any
       int  index = algName.find_last_of( "." ) + 1; // return 0 if '.' not found --> OK !!
       auto inst  = algName.substr( index );
-      return futuredetails::contains_ci( inst, "ECAL" )
+      return details::contains_ci( inst, "ECAL" )
                  ? "Ecal"
-                 : futuredetails::contains_ci( inst, "HCAL" )
+                 : details::contains_ci( inst, "HCAL" )
                        ? "Hcal"
-                       : futuredetails::contains_ci( inst, "PRS" )
+                       : details::contains_ci( inst, "PRS" )
                              ? "Prs"
-                             : futuredetails::contains_ci( inst, "SPD" ) ? "Spd" : "Ecal"; // return Ecal as default
+                             : details::contains_ci( inst, "SPD" ) ? "Spd" : "Ecal"; // return Ecal as default
     }
 
     // Default location for CaloFutureObject as function of detector
@@ -71,4 +72,6 @@ namespace LHCb {
     bool                     StringMatcher( const std::string& ref, const std::string& name );
   } // namespace CaloFutureAlgUtils
 } // end of namespace LHCb
+
+namespace Calo::Future::Utilities {}
 #endif // CALOFUTUREUTILS_CALOFUTUREALGUTILS_H

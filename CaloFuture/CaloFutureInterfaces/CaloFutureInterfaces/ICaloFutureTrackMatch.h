@@ -53,38 +53,41 @@ namespace LHCb {
  *  @date   30/10/2001
  */
 
-struct ICaloFutureTrackMatch : extend_interfaces<IAlgTool> {
+namespace Calo::Future::Interfaces {
 
-  struct MatchResults {
-    // this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
-    Gaudi::Plane3D plane = Gaudi::Plane3D();
-    // matching state - can be the same like "match_state" or different
-    LHCb::State state;
-    // when true this means there is no point to check another tracks for this calo object
-    bool skip_this_calo  = false;
-    bool is_new_calo_obj = false;
-    // when equal true means that the whole matching process finished with successful ( no fails )
-    bool match_successful = false;
-    // calculated chi2 value - if something goes bad this value is bad()
-    double chi2_value = -1;
-    // Match matrix used by match method - contains only state of matricies calulated for calo object
-    std::variant<CaloFutureMatch2D, CaloFutureMatch3D> matrix;
+  struct ITrackMatch : extend_interfaces<IAlgTool> {
+
+    struct MatchResults {
+      // this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
+      Gaudi::Plane3D plane = Gaudi::Plane3D();
+      // matching state - can be the same like "match_state" or different
+      LHCb::State state;
+      // when true this means there is no point to check another tracks for this calo object
+      bool skip_this_calo  = false;
+      bool is_new_calo_obj = false;
+      // when equal true means that the whole matching process finished with successful ( no fails )
+      bool match_successful = false;
+      // calculated chi2 value - if something goes bad this value is bad()
+      double chi2_value = -1;
+      // Match matrix used by match method - contains only state of matrices calulated for calo object
+      std::variant<Match2D, Match3D> matrix;
+    };
+
+    /** interface identification
+     *  @return unique interface identifier
+     */
+    DeclareInterfaceID( ITrackMatch, 1, 0 );
+
+    /** the main matching method
+     *  @see ICaloFutureTrackMatch
+     *  @param calo_obj "calorimeter" object (position)
+     *  @param track_obj tracking object (track)
+     *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
+     *  @param old_match_results match results from last iteration step
+     */
+    virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj,
+                                const MatchResults& old_match_results ) const = 0;
   };
-
-  /** interface identification
-   *  @return unique interface identifier
-   */
-  DeclareInterfaceID( ICaloFutureTrackMatch, 5, 0 );
-
-  /** the main matching method
-   *  @see ICaloFutureTrackMatch
-   *  @param calo_obj "calorimeter" object (position)
-   *  @param track_obj tracking object (track)
-   *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
-   *  @param old_match_results match results from last iteration step
-   */
-  virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj,
-                              const MatchResults& old_match_results ) const = 0;
-};
+} // namespace Calo::Future::Interfaces
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRMATCH_H
