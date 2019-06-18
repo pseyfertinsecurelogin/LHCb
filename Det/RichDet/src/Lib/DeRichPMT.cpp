@@ -116,7 +116,13 @@ void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
 
   using namespace LHCb::SIMD;
 
+  // check if already initialised
   if ( !deRich || m_initialised ) return;
+
+  // lock update, just in case
+  std::lock_guard lock( m_initLock );
+
+  m_initialised = true;
 
   const auto PmtAnodeZSize         = deRich->param<double>( "RichPmtAnodeZSize" );
   const auto PmtAnodeLocationInPmt = deRich->param<double>( "RichPmtSiliconDetectorLocalZlocation" );
@@ -136,21 +142,18 @@ void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
 
   zShift = SIMDFP( QwToAnodeZDist + PmtAnodeLocationInPmt );
 
-  if ( deRich->exists( "Rich2PMTArrayConfig" ) ) {
-    if ( deRich->exists( "RichGrandPmtAnodeXSize" ) ) {
-      const auto GrandPmtAnodeZSize = deRich->param<double>( "RichGrandPmtAnodeZSize" );
-      const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
-      const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
-      const auto GrandPmtPixelGap   = deRich->param<double>( "RichGrandPmtPixelGap" );
-      GrandPmtEdgePixelXSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelXSize" ) );
-      GrandPmtEdgePixelYSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelYSize" ) );
-      GrandPmtEffectivePixelXSize   = SIMDFP( GrandPmtPixelXSize + GrandPmtPixelGap );
-      GrandPmtEffectivePixelYSize   = SIMDFP( GrandPmtPixelYSize + GrandPmtPixelGap );
-      GrandPmtAnodeHalfThickness    = SIMDFP( GrandPmtAnodeZSize * 0.5f );
-    }
+  if ( deRich->exists( "Rich2PMTArrayConfig" ) && //
+       deRich->exists( "RichGrandPmtAnodeXSize" ) ) {
+    const auto GrandPmtAnodeZSize = deRich->param<double>( "RichGrandPmtAnodeZSize" );
+    const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
+    const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
+    const auto GrandPmtPixelGap   = deRich->param<double>( "RichGrandPmtPixelGap" );
+    GrandPmtEdgePixelXSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelXSize" ) );
+    GrandPmtEdgePixelYSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelYSize" ) );
+    GrandPmtEffectivePixelXSize   = SIMDFP( GrandPmtPixelXSize + GrandPmtPixelGap );
+    GrandPmtEffectivePixelYSize   = SIMDFP( GrandPmtPixelYSize + GrandPmtPixelGap );
+    GrandPmtAnodeHalfThickness    = SIMDFP( GrandPmtAnodeZSize * 0.5f );
   }
-
-  m_initialised = true;
 }
 
 //=============================================================================

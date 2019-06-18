@@ -15,6 +15,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <mutex>
 
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
@@ -197,14 +198,11 @@ private:
   /// PMT data storage
   class PMTData {
 
-  private:
-    bool m_initialised{false};
-
   public:
     void initialise( const DetectorElement* deRich );
 
   public:
-    // data
+    // parameter data
 
     SIMDFP PmtEffectivePixelXSize = SIMDFP::Zero();
     SIMDFP PmtEffectivePixelYSize = SIMDFP::Zero();
@@ -228,6 +226,12 @@ private:
     SIMDFP GrandPmtEffectivePixelYSize = SIMDFP::Zero();
 
     SIMDFP GrandPmtAnodeHalfThickness = SIMDFP::Zero();
+
+  private:
+    // implementation data
+
+    std::mutex m_initLock;
+    bool       m_initialised{false};
   };
 
 private:
