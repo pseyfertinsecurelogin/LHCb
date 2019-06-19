@@ -14,21 +14,11 @@
 #include <Gaudi/Algorithm.h>
 #include <type_traits>
 
-namespace details {
-
-  using AlgorithmWithCondition = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>;
-
-  template <typename... C>
-  using usesConditions =
-      Gaudi::Functional::Traits::use_<LHCb::DetDesc::useConditionHandleFor<C...>,
-                                      Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition>>;
-} // namespace details
-
 namespace DetCond::Examples::Functional {
 
   // Example of algorithm accessing conditions
   struct CondAccessExample
-      : Gaudi::Functional::Consumer<void( const Condition&, const int& ), details::usesConditions<Condition>> {
+      : Gaudi::Functional::Consumer<void( const Condition&, const int& ), LHCb::DetDesc::usesConditions<Condition>> {
     // constructor
     CondAccessExample( const std::string& name, ISvcLocator* loc )
         : Consumer{name, loc, {KeyValue{"CondPath", "TestCondition"}, KeyValue{"IntPath", "IntFromTES"}}} {}
@@ -52,7 +42,7 @@ namespace DetCond::Examples::Functional {
   static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
 
   struct CondAccessExampleWithDerivation
-      : Gaudi::Functional::Consumer<void( const MyData& ), details::usesConditions<MyData>> {
+      : Gaudi::Functional::Consumer<void( const MyData& ), LHCb::DetDesc::usesConditions<MyData>> {
     // costructor
     CondAccessExampleWithDerivation( const std::string& name, ISvcLocator* loc )
         : Consumer{name, loc, {KeyValue{"Target", "DerivedCondition"}}} {}

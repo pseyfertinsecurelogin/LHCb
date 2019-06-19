@@ -10,12 +10,15 @@
 \*****************************************************************************/
 #pragma once
 
-#include <DetDesc/ConditionContext.h>
-#include <DetDesc/ConditionKey.h>
-#include <DetDesc/ParamValidDataObject.h>
+#include "DetDesc/ConditionContext.h"
+#include "DetDesc/ConditionKey.h"
+#include "DetDesc/ParamValidDataObject.h"
 
-#include <GaudiKernel/EventContext.h>
-#include <GaudiKernel/Property.h>
+#include "GaudiKernel/EventContext.h"
+#include "GaudiKernel/Property.h"
+
+#include "GaudiAlg/FixTESPath.h"
+#include "GaudiAlg/FunctionalUtilities.h"
 
 #include <string>
 #include <type_traits>
@@ -119,5 +122,13 @@ namespace LHCb::DetDesc {
     using InputHandle = std::enable_if_t<std::disjunction_v<std::is_same<std::decay_t<T>, std::decay_t<C>>...>,
                                          ConditionAccessor<std::decay_t<T>>>;
   };
+
+  template <typename Algorithm = FixTESPath<Gaudi::Algorithm>>
+  using AlgorithmWithCondition = ConditionAccessorHolder<Algorithm>;
+
+  template <typename... C>
+  using usesConditions =
+      Gaudi::Functional::Traits::use_<useConditionHandleFor<C...>,
+                                      Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition<>>>;
 
 } // namespace LHCb::DetDesc
