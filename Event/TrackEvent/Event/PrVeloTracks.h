@@ -44,6 +44,7 @@ namespace LHCb::Pr::Velo {
 
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
+    bool        empty() const { return m_size == 0; }
 
     SOA_ACCESSOR( nHits, &( m_data->i ) )
     SOA_ACCESSOR_VAR( hit, &( m_data[( hit + 1 ) * max_tracks].i ), int hit )
