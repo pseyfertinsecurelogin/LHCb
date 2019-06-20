@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
 # Package: LHCbMath
-################################################################################
-gaudi_subdir(LHCbMath v3r62)
+###############################################################################
+gaudi_subdir(LHCbMath)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
@@ -26,6 +25,10 @@ find_package(Eigen)
 find_package(pyanalysis)
 find_package(Vc)
 find_package(VectorClass)
+
+# Runtime requirement since LCG_96 (no longer bundled with ROOT)
+find_package(BLAS)
+
 
 # hide warnings from some external projects
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
