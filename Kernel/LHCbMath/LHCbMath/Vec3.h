@@ -48,6 +48,12 @@ public:
   inline T       theta() const { return faster_atan2( rho(), z ); }
   inline T       phi() const { return faster_atan2( y, x ); }
 
+  // Compatibility with ROOT::Math::XYZVector and friends
+  T       X() const { return x; }
+  T       Y() const { return y; }
+  T       Z() const { return z; }
+  Vec3<T> Cross( Vec3<T> const& b ) const { return cross( b ); }
+
   inline T eta() const {
     auto zs = z / rho();
     return approx_log<T>( zs + sqrt( zs * zs + 1 ) );
