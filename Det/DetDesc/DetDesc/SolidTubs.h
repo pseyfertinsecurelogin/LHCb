@@ -9,8 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifndef DETDESC_SOLIDTUBS_H
-#define DETDESC_SOLIDTUBS_H 1
+
+#pragma once
+
 // STD and STL includes
 #include <cmath>
 #include <iostream>
@@ -49,9 +50,13 @@ public:
    *  @param CoverModel     covering model
    *  @exception SolidException wrong parameter range
    */
-  SolidTubs( const std::string& name, const double ZHalfLength, const double OuterRadius,
-             const double InnerRadius = 0.0, const double StartPhiAngle = 0.0 * Gaudi::Units::degree,
-             const double DeltaPhiAngle = 360.0 * Gaudi::Units::degree, const int CoverModel = 0 );
+  SolidTubs( const std::string& name,                                         //
+             const double       ZHalfLength,                                  //
+             const double       OuterRadius,                                  //
+             const double       InnerRadius   = 0.0,                          //
+             const double       StartPhiAngle = 0.0 * Gaudi::Units::degree,   //
+             const double       DeltaPhiAngle = 360.0 * Gaudi::Units::degree, //
+             const int          CoverModel    = 0 );
 
   /** - retrieve the tubs type
    *  - implementation of ISolid abstract interface
@@ -126,14 +131,17 @@ public:
    *  @return the number of intersection points
    */
 
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   /** calculate the intersection points("ticks") of the solid objects
    *  with given line.
@@ -157,29 +165,37 @@ public:
    *  @return the number of intersection points
    */
 
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                  const Gaudi::XYZVector& Vector,  //
+                                  const ISolid::Tick&     tickMin, //
+                                  const ISolid::Tick&     tickMax, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                  const Gaudi::Polar3DVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                  const Gaudi::RhoZPhiVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   ///@{
   /** accessors to the tube segment parameters */
-  inline double innerRadius() const { return m_tubs_innerRadius; }
-  inline double outerRadius() const { return m_tubs_outerRadius; }
-  inline double zHalfLength() const { return m_tubs_zHalfLength; }
-  inline double startPhiAngle() const { return m_tubs_startPhiAngle; }
-  inline double deltaPhiAngle() const { return m_tubs_deltaPhiAngle; }
-  inline double innerDiameter() const { return m_tubs_innerRadius * 2; }
-  inline double outerDiameter() const { return m_tubs_outerRadius * 2; }
-  inline double zLength() const { return m_tubs_zHalfLength * 2; }
-  inline double endPhiAngle() const { return m_tubs_startPhiAngle + m_tubs_deltaPhiAngle; }
+  inline double innerRadius() const noexcept { return m_tubs_innerRadius; }
+  inline double innerRadiusSq() const noexcept { return m_tubs_innerRadius_Sq; }
+  inline double outerRadius() const noexcept { return m_tubs_outerRadius; }
+  inline double outerRadiusSq() const noexcept { return m_tubs_outerRadius_Sq; }
+  inline double zHalfLength() const noexcept { return m_tubs_zHalfLength; }
+  inline double startPhiAngle() const noexcept { return m_tubs_startPhiAngle; }
+  inline double deltaPhiAngle() const noexcept { return m_tubs_deltaPhiAngle; }
+  inline double innerDiameter() const noexcept { return m_tubs_innerRadius * 2; }
+  inline double outerDiameter() const noexcept { return m_tubs_outerRadius * 2; }
+  inline double zLength() const noexcept { return m_tubs_zHalfLength * 2; }
+  inline double endPhiAngle() const noexcept { return m_tubs_startPhiAngle + m_tubs_deltaPhiAngle; }
   ///@}
 
   /** Calculate the maximum number of ticks that a straight line could
@@ -229,28 +245,40 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
+  inline bool isInsideImpl( const aPoint& point ) const {
+    return ( !isOutBBox( point ) && // check Z
+             insideRho( point ) &&  // check for rho
+             insidePhi( point ) );  //  check for phi
+  }
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                      const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( const aPoint&       Point,   //
+                                      const aVector&      Vector,  //
+                                      const ISolid::Tick& tickMin, //
+                                      const ISolid::Tick& tickMax, //
+                                      ISolid::Ticks&      ticks ) const;
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( const aPoint&  Point,  //
+                                      const aVector& Vector, //
+                                      ISolid::Ticks& ticks ) const;
+
   /// fills m_cover member
   void createCover();
 
 private:
   // parameters of tube segment
-  double m_tubs_zHalfLength;
-  double m_tubs_outerRadius;
-  double m_tubs_innerRadius;
-  double m_tubs_startPhiAngle;
-  double m_tubs_deltaPhiAngle;
+  double m_tubs_zHalfLength{1e7};
+  double m_tubs_outerRadius{1e7};
+  double m_tubs_outerRadius_Sq{1e14};
+  double m_tubs_innerRadius{0};
+  double m_tubs_innerRadius_Sq{0};
+  double m_tubs_startPhiAngle{0};
+  double m_tubs_deltaPhiAngle{360 * Gaudi::Units::degree};
   // model for constructing the cover solid
-  int m_tubs_coverModel;
+  int m_tubs_coverModel{0};
   //
-  bool m_noPhiGap;
+  bool m_noPhiGap{true};
   // cover
   std::unique_ptr<ISolid> m_cover;
 };
@@ -263,11 +291,9 @@ private:
 // ===========================================================================
 template <class aPoint>
 inline bool SolidTubs::insideRho( const aPoint& point ) const {
-  const double rho2 = point.perp2();
-  if ( rho2 > outerRadius() * outerRadius() ) { return false; }
-  if ( 0 < innerRadius() && rho2 < innerRadius() * innerRadius() ) { return false; }
-  // inside!
-  return true;
+  const auto rho2 = point.perp2();
+  return ( !( ( rho2 > outerRadiusSq() ) || //
+              ( 0 < innerRadius() && rho2 < innerRadiusSq() ) ) );
 }
 // ===========================================================================
 
@@ -278,8 +304,9 @@ inline bool SolidTubs::insideRho( const aPoint& point ) const {
  */
 // ===========================================================================
 inline bool SolidTubs::insidePhi( const double phi /* [-pi,pi] */ ) const {
-  return noPhiGap() || ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) ||
-         ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI );
+  return ( noPhiGap() ||                                                             //
+           ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) || //
+           ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI ) );
 }
 
 // ===========================================================================
@@ -295,4 +322,3 @@ inline bool SolidTubs::insidePhi( const aPoint& point ) const {
 // ===========================================================================
 // The END
 // ===========================================================================
-#endif ///<   DETDESC_SOLIDTUBS_H

@@ -12,13 +12,18 @@
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
 #include "boost/container/static_vector.hpp"
+
 // DetDesc includes
 #include "DetDesc/DetDesc.h"
 #include "DetDesc/SolidBox.h"
 #include "DetDesc/SolidException.h"
 #include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidTubs.h"
-//
+
+// LHCbMaths
+#include "LHCbMath/FastMaths.h"
+
+// STL
 #include <memory>
 
 // ============================================================================
@@ -42,13 +47,19 @@
  *  @exception SolidException wrong parameter range
  */
 // ============================================================================
-SolidTubs::SolidTubs( const std::string& name, const double ZHalfLength, const double OuterRadius,
-                      const double InnerRadius, const double StartPhiAngle, const double DeltaPhiAngle,
-                      const int CoverModel )
+SolidTubs::SolidTubs( const std::string& name,          //
+                      const double       ZHalfLength,   //
+                      const double       OuterRadius,   //
+                      const double       InnerRadius,   //
+                      const double       StartPhiAngle, //
+                      const double       DeltaPhiAngle, //
+                      const int          CoverModel )
     : SolidBase( name )
     , m_tubs_zHalfLength( ZHalfLength )
     , m_tubs_outerRadius( OuterRadius )
+    , m_tubs_outerRadius_Sq( OuterRadius * OuterRadius )
     , m_tubs_innerRadius( InnerRadius )
+    , m_tubs_innerRadius_Sq( InnerRadius * InnerRadius )
     , m_tubs_startPhiAngle( StartPhiAngle )
     , m_tubs_deltaPhiAngle( DeltaPhiAngle )
     , m_tubs_coverModel( CoverModel )
@@ -176,17 +187,7 @@ void SolidTubs::setBP() {
  *  @param name name of tube segment
  */
 // ============================================================================
-SolidTubs::SolidTubs( const std::string& name )
-    : SolidBase( name )
-    , m_tubs_zHalfLength( 10000000 )
-    , m_tubs_outerRadius( 10000000 )
-    , m_tubs_innerRadius( 0 )
-    , m_tubs_startPhiAngle( 0 )
-    , m_tubs_deltaPhiAngle( 360 * Gaudi::Units::degree )
-    , m_tubs_coverModel( 0 )
-    , m_noPhiGap( true ) {
-  createCover();
-}
+SolidTubs::SolidTubs( const std::string& name ) : SolidBase( name ) { createCover(); }
 
 // ============================================================================
 /** - check for the given 3D-point.
@@ -204,22 +205,12 @@ bool SolidTubs::isInside( const Gaudi::Polar3DPoint& point ) const { return isIn
 // ============================================================================
 bool SolidTubs::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidTubs::isInsideImpl( const aPoint& point ) const {
-  // check Z
-  if ( isOutBBox( point ) ) { return false; }
-  // check for rho Rho
-  if ( !insideRho( point ) ) { return false; }
-  //  check for phi
-  if ( !insidePhi( point ) ) { return false; }
-  //
-  return true;
-}
 
 // ============================================================================
 void SolidTubs::createCover() {
   if ( 0 == m_tubs_coverModel ) {
-    if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || 360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
+    if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || //
+         360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
       m_cover = std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius(), innerRadius() );
     } else if ( 0.0 != innerRadius() ) {
       m_cover = std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius() );
@@ -261,44 +252,43 @@ void SolidTubs::createCover() {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, ticks );
-}
-// ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, ticks );
-}
-// ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, ticks );
-}
-// ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
-                                               ISolid::Ticks& ticks ) const {
+unsigned int SolidTubs::intersectionTicksImpl( const aPoint&  Point,  //
+                                               const aVector& Vector, //
+                                               ISolid::Ticks& ticks   //
+                                               ) const {
+
+  using namespace LHCb::Math;
+
   /// clear the container
   ticks.clear();
+
   /// line with null direction vector is not able to intersect any solid.
-  if ( Vector.mag2() == 0 ) { return 0; } ///< RETURN!
+  if ( UNLIKELY( Vector.mag2() == 0 ) ) { return 0; } ///< RETURN!
 
   // need to optimize these
   // if( !crossBSphere  ( point , vect ) )   { return 0 ; }
-  if ( !crossBCylinder( Point, Vector ) ) { return 0; }
+  if ( UNLIKELY( !crossBCylinder( Point, Vector ) ) ) { return 0; }
 
   // first the cylinders
   ISolid::Ticks tmpticks;
+  // tmpticks.reserve(2);
   SolidTicks::LineIntersectsTheCylinder( Point, Vector, outerRadius(), std::back_inserter( tmpticks ) );
-  if ( innerRadius() > 0 )
+  if ( innerRadius() > 0 ) {
     SolidTicks::LineIntersectsTheCylinder( Point, Vector, innerRadius(), std::back_inserter( tmpticks ) );
+  }
+
+  // current number of ticks, + some for below...
+  // ticks.reserve( tmpticks.size() + 2 );
 
   // check that ticks are actually inside z-range and phi-range
-  for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it )
-    if ( fabs( Point.z() + *it * Vector.z() ) <= zHalfLength() &&
-         ( noPhiGap() || insidePhi( atan2( Point.y() + *it * Vector.y(), Point.x() + *it * Vector.x() ) ) ) )
-      ticks.push_back( *it );
+  for ( const auto& tick : tmpticks ) {
+    if ( fabs( Point.z() + tick * Vector.z() ) <= zHalfLength() &&
+         ( noPhiGap() || insidePhi( fast_atan2( Point.y() + tick * Vector.y(), //
+                                                Point.x() + tick * Vector.x() ) ) ) ) {
+      ticks.push_back( tick );
+    }
+  }
 
   // find intersection points("ticks") with z-planes
   tmpticks.clear();
@@ -306,15 +296,18 @@ unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVecto
   SolidTicks::LineIntersectsTheZ( Point, Vector, zHalfLength(), std::back_inserter( tmpticks ) );
 
   // check that ticks are actually inside radial range and phi
-  for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
-    double x = Point.x() + *it * Vector.x();
-    double y = Point.y() + *it * Vector.y();
-    double r = sqrt( x * x + y * y );
-    if ( innerRadius() <= r && r <= outerRadius() && ( noPhiGap() || insidePhi( atan2( y, x ) ) ) )
-      ticks.push_back( *it );
+  for ( const auto& tick : tmpticks ) {
+    const auto x   = Point.x() + ( tick * Vector.x() );
+    const auto y   = Point.y() + ( tick * Vector.y() );
+    const auto rSq = ( ( x * x ) + ( y * y ) );
+    if ( innerRadiusSq() <= rSq && //
+         rSq <= outerRadiusSq() && //
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
+      ticks.push_back( tick );
+    }
   }
 
-  if ( !noPhiGap() ) {
+  if ( UNLIKELY( !noPhiGap() ) ) {
     tmpticks.clear();
     SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( tmpticks ) );
     // if( deltaPhiAngle() != M_PI )
@@ -322,18 +315,43 @@ unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVecto
                                       std::back_inserter( tmpticks ) );
 
     // check that we are anywhere inside this cylinder
-    for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
-      if ( fabs( Point.z() + *it * Vector.z() ) < zHalfLength() ) {
-        double x = Point.x() + *it * Vector.x();
-        double y = Point.y() + *it * Vector.y();
-        double r = sqrt( x * x + y * y );
-        if ( innerRadius() <= r && r <= outerRadius() ) ticks.push_back( *it );
+    for ( const auto& tick : tmpticks ) {
+      if ( fabs( Point.z() + tick * Vector.z() ) < zHalfLength() ) {
+        const auto x   = Point.x() + ( tick * Vector.x() );
+        const auto y   = Point.y() + ( tick * Vector.y() );
+        const auto rSq = ( ( x * x ) + ( y * y ) );
+        if ( innerRadiusSq() <= rSq && //
+             rSq <= outerRadiusSq() ) {
+          ticks.push_back( tick );
+        }
       }
     }
   }
 
   std::sort( ticks.begin(), ticks.end() );
+
   return SolidTicks::RemoveAdjacentTicksFast( ticks, Point, Vector, *this );
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                           const Gaudi::XYZVector& Vector, //
+                                           ISolid::Ticks&          ticks   //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                           const Gaudi::Polar3DVector& Vector, //
+                                           ISolid::Ticks&              ticks   //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                           const Gaudi::RhoZPhiVector& Vector, //
+                                           ISolid::Ticks&              ticks   //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 
 // ============================================================================
@@ -407,35 +425,50 @@ MsgStream& SolidTubs::printOut( MsgStream& os ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
-}
-// ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
-}
-// ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
-  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
-}
-// ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                               const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const {
+inline unsigned int __attribute__( ( always_inline ) )         //
+SolidTubs::intersectionTicksImpl( const aPoint&       Point,   //
+                                  const aVector&      Vector,  //
+                                  const ISolid::Tick& tickMin, //
+                                  const ISolid::Tick& tickMax, //
+                                  ISolid::Ticks&      ticks ) const {
   // don't call down to SolidBase because it performs more complicated
   // tick operations than we need
-  if ( isOutBBox( Point, Vector, tickMin, tickMax ) ) {
+  unsigned int ret = 0;
+  if ( UNLIKELY( isOutBBox( Point, Vector, tickMin, tickMax ) ) ) {
     ticks.clear();
-    return 0;
+  } else {
+    SolidTubs::intersectionTicksImpl( Point, Vector, ticks );
+    ret = SolidTicks::adjustToTickRange( ticks, tickMin, tickMax );
   }
-  SolidTubs::intersectionTicksImpl( Point, Vector, ticks );
-  return SolidTicks::adjustToTickRange( ticks, tickMin, tickMax );
+  return ret;
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                           const Gaudi::XYZVector& Vector,  //
+                                           const ISolid::Tick&     tickMin, //
+                                           const ISolid::Tick&     tickMax, //
+                                           ISolid::Ticks&          ticks    //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                           const Gaudi::Polar3DVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks    //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
+}
+// ============================================================================
+unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                           const Gaudi::RhoZPhiVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks    //
+                                           ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
 

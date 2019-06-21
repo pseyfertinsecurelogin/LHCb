@@ -78,15 +78,6 @@ bool SolidPolyHedronHelper::isInside( const Gaudi::Polar3DPoint& point ) const {
 // ============================================================================
 bool SolidPolyHedronHelper::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidPolyHedronHelper::isInsideImpl( const aPoint& point ) const {
-  if ( planes().empty() ) { return false; }
-  /// check for bounding box
-  if ( isOutBBox( point ) ) { return false; }
-  /// loop over faces
-  return std::all_of( planes().begin(), planes().end(),
-                      [&]( const auto& plane ) { return this->inside( point, plane ); } );
-}
 
 // ============================================================================
 /** - calculate the intersection points("ticks") of the solid objects
@@ -108,44 +99,27 @@ bool SolidPolyHedronHelper::isInsideImpl( const aPoint& point ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                                       ISolid::Ticks& ticks ) const {
+unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                                       const Gaudi::XYZVector& Vector, //
+                                                       ISolid::Ticks&          ticks   //
+                                                       ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::Polar3DPoint&  Point,
-                                                       const Gaudi::Polar3DVector& Vector,
-                                                       ISolid::Ticks&              ticks ) const {
+unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                                       const Gaudi::Polar3DVector& Vector, //
+                                                       ISolid::Ticks&              ticks   //
+                                                       ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,
-                                                       const Gaudi::RhoZPhiVector& Vector,
-                                                       ISolid::Ticks&              ticks ) const {
+unsigned int SolidPolyHedronHelper::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                                       const Gaudi::RhoZPhiVector& Vector, //
+                                                       ISolid::Ticks&              ticks   //
+                                                       ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
-// ============================================================================
-template <class aPoint, class aVector>
-unsigned int SolidPolyHedronHelper::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
-                                                           ISolid::Ticks& ticks ) const {
-  // clear the output container
-  ticks.clear();
-  // check for valid arguments
-  if ( 0 == Vector.mag2() ) { return 0; }
-  // line touches the bounding sphere?
-  if ( !crossBSphere( Point, Vector ) ) { return 0; }
-  // loop over all faces
-  ticks.reserve( planes().size() );
-  for ( const auto& plane : planes() ) {
-    double vn = Vector.Dot( plane.Normal() );
-    if ( 0 == vn ) { continue; }
-    ISolid::Tick tick = -1. * ( plane.Distance( Point ) / vn );
-    ticks.push_back( tick );
-  };
-  ///
-  return SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, *this );
-}
-// ============================================================================
+
 // ============================================================================
 /** Calculate the maximum number of ticks that a straight line could make with this solid
  *  @return maximum number of ticks
@@ -165,11 +139,17 @@ ISolid::Ticks::size_type SolidPolyHedronHelper::maxNumberOfTicks() const {
  *  @return "false" if 3 points belongs to one line
  */
 // ============================================================================
-bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1, const Gaudi::XYZPoint& Point2,
-                                     const Gaudi::XYZPoint& Point3 ) {
+bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1, //
+                                     const Gaudi::XYZPoint& Point2, //
+                                     const Gaudi::XYZPoint& Point3  //
+) {
   /// check for 3 points on the same line
   Gaudi::XYZVector v1( Point1 ), v2( Point2 - Point1 ), v3( Point3 - Point1 );
-  if ( 0 == v1.Cross( v2 ).mag2() || 0 == v1.Cross( v3 ).mag2() || 0 == v2.Cross( v3 ).mag2() ) { return false; }
+  if ( 0 == v1.Cross( v2 ).mag2() || //
+       0 == v1.Cross( v3 ).mag2() || //
+       0 == v2.Cross( v3 ).mag2() ) {
+    return false;
+  }
   ///
   Gaudi::Plane3D Plane( Point1, Point2, Point3 );
   /// invert face orientation if needed
@@ -196,8 +176,11 @@ bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1, const Gaudi:
  *  @return "false" if 3 points belongs to one line
  */
 // ============================================================================
-bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1, const Gaudi::XYZPoint& Point2,
-                                     const Gaudi::XYZPoint& Point3, const Gaudi::XYZPoint& Point4 ) {
+bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1, //
+                                     const Gaudi::XYZPoint& Point2, //
+                                     const Gaudi::XYZPoint& Point3, //
+                                     const Gaudi::XYZPoint& Point4  //
+) {
   ///
   const Gaudi::XYZPoint cPoint( 0.25 * ( Point1.x() + Point2.x() + Point3.x() + Point4.x() ),
                                 0.25 * ( Point1.y() + Point2.y() + Point3.y() + Point4.y() ),

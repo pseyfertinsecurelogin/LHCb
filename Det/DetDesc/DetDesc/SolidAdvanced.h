@@ -8,14 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef __DETDESC_SOLID_SOLIDADVANCED_H__
-#define __DETDESC_SOLID_SOLIDADVANCED_H__
-
+#pragma once
 //
 // boolean solids
 //
 #include "DetDesc/SolidIntersection.h"
 #include "DetDesc/SolidSubtraction.h"
 #include "DetDesc/SolidUnion.h"
-
-#endif //  __DETDESC_SOLID_SOLIDADVANCED_H__

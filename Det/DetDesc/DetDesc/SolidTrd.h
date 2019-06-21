@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifndef DETDESC_SOLIDTRD_H
-#define DETDESC_SOLIDTRD_H 1
+#pragma once
 /// STD and STL
 #include <cmath>
 #include <iostream>
@@ -43,8 +42,12 @@ public:
    *  @param YHalfLength2 half-length in y-direction at z2
    *  @exception SolidException wrong parameter range
    */
-  SolidTrd( const std::string& name, const double zHalfLength, const double XHalfLength1, const double YHalfLength1,
-            const double XHalfLength2, const double YHalfLength2 );
+  SolidTrd( const std::string& name,         //
+            const double       zHalfLength,  //
+            const double       XHalfLength1, //
+            const double       YHalfLength1, //
+            const double       XHalfLength2, //
+            const double       YHalfLength2 );
 
   /** - retrieve the TRD type
    *  - implementation of ISolid abstract interface
@@ -85,52 +88,52 @@ public:
   /**  half size in x at point 1
    *  @return half size in x at point 1
    */
-  inline double xHalfLength1() const { return m_trd_xHalfLength1; }
+  inline double xHalfLength1() const noexcept { return m_trd_xHalfLength1; }
 
   /**  half size in x at point 2
    *  @return  half size in x at point 2
    */
-  inline double xHalfLength2() const { return m_trd_xHalfLength2; }
+  inline double xHalfLength2() const noexcept { return m_trd_xHalfLength2; }
 
   /**  half size in y at point 1
    *  @return half size in y at point 1
    */
-  inline double yHalfLength1() const { return m_trd_yHalfLength1; }
+  inline double yHalfLength1() const noexcept { return m_trd_yHalfLength1; }
 
   /**  half size in y at point 2
    *  @return half size in y at point 2
    */
-  inline double yHalfLength2() const { return m_trd_yHalfLength2; }
+  inline double yHalfLength2() const noexcept { return m_trd_yHalfLength2; }
 
   /**  half size in z
    *  @return  half size in z
    */
-  inline double zHalfLength() const { return m_trd_zHalfLength; }
+  inline double zHalfLength() const noexcept { return m_trd_zHalfLength; }
 
   /**  full size in x at point 1
    *  @return full size in x at point 1
    */
-  inline double xLength1() const { return m_trd_xHalfLength1 * 2; }
+  inline double xLength1() const noexcept { return m_trd_xHalfLength1 * 2; }
 
   /**  full size in x at point 2
    *  @return full size in x at point 2
    */
-  inline double xLength2() const { return m_trd_xHalfLength2 * 2; }
+  inline double xLength2() const noexcept { return m_trd_xHalfLength2 * 2; }
 
   /**  full size in y at point 1
    *  @return full size in y at point 1
    */
-  inline double yLength1() const { return m_trd_yHalfLength1 * 2; }
+  inline double yLength1() const noexcept { return m_trd_yHalfLength1 * 2; }
 
   /**  full size in y at point 2
    *  @return full size in y at point 2
    */
-  inline double yLength2() const { return m_trd_yHalfLength2 * 2; }
+  inline double yLength2() const noexcept { return m_trd_yHalfLength2 * 2; }
 
   /**  full size in z
    *  @return full size in z
    */
-  inline double zLength() const { return m_trd_zHalfLength * 2; }
+  inline double zLength() const noexcept { return m_trd_zHalfLength * 2; }
 
   //
 protected:
@@ -153,17 +156,14 @@ private:
   SolidTrd& operator=( const SolidTrd& ); // no assignment
 
 private:
-  ///@{
   /** data members - TRD parameters  */
-  double m_trd_zHalfLength;
-  double m_trd_xHalfLength1;
-  double m_trd_xHalfLength2;
-  double m_trd_yHalfLength1;
-  double m_trd_yHalfLength2;
+  double m_trd_zHalfLength{10000000};
+  double m_trd_xHalfLength1{10000};
+  double m_trd_xHalfLength2{10000};
+  double m_trd_yHalfLength1{10000};
+  double m_trd_yHalfLength2{10000};
   /// cover
   std::unique_ptr<ISolid> m_cover;
-  ///@}
 };
 
 /// ===========================================================================
-#endif ///<   DETDESC_SOLIDTRD_H

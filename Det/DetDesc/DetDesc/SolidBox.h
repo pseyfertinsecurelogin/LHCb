@@ -8,9 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_SOLIDBOX_H
-#define DETDESC_SOLIDBOX_H
+#pragma once
 /// STD and STL
+#include <array>
 #include <cmath>
 #include <iostream>
 /// Geometry Definitions
@@ -42,7 +42,8 @@ public:
    *  @param      zHalf half-size of the box in z-direction
    *  @exception  SolidException wrong parameters range
    */
-  SolidBox( const std::string& Name, const double xHalf, const double yHalf, const double zHalf );
+  SolidBox( const std::string& Name, const double xHalf, //
+            const double yHalf, const double zHalf );
 
   SolidBox( const SolidBox& ) = delete;            ///< no copy-constructor
   SolidBox& operator=( const SolidBox& ) = delete; ///< no assignment
@@ -121,12 +122,15 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
   /** calculate the intersection points("ticks") of the solid objects
    *  with given line.
    *  - Line is parametrized with parameter \a t :
@@ -148,47 +152,53 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                  const Gaudi::XYZVector& Vector,  //
+                                  const ISolid::Tick&     tickMin, //
+                                  const ISolid::Tick&     tickMax, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                  const Gaudi::Polar3DVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                  const Gaudi::RhoZPhiVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   /**  return the full x-size of the box
    *  @return the full x-size of the box
    */
-  inline double xsize() const { return m_box_xHalfLength * 2; }
+  inline double xsize() const noexcept { return m_box_xHalfLength * 2; }
 
   /**  return the full y-size of the box
    *  @return the full y-size of the box
    */
-  inline double ysize() const { return m_box_yHalfLength * 2; }
+  inline double ysize() const noexcept { return m_box_yHalfLength * 2; }
 
   /**  return the full z-size of the box
    *  @return the full z-size of the box
    */
-  inline double zsize() const { return m_box_zHalfLength * 2; }
+  inline double zsize() const noexcept { return m_box_zHalfLength * 2; }
 
   /**  return the half x-size of the box
    *  @return the half x-size of the box
    */
-  inline double xHalfLength() const { return m_box_xHalfLength; }
+  inline double xHalfLength() const noexcept { return m_box_xHalfLength; }
 
   /**  return the half y-size of the box
    *  @return the half y-size of the box
    */
-  inline double yHalfLength() const { return m_box_yHalfLength; }
+  inline double yHalfLength() const noexcept { return m_box_yHalfLength; }
 
   /**  return the half z-size of the box
    *  @return the half z-size of the box
    */
-  inline double zHalfLength() const { return m_box_zHalfLength; }
+  inline double zHalfLength() const noexcept { return m_box_zHalfLength; }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
@@ -208,20 +218,47 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
-  template <class aPoint, class aVector>
+  inline bool isInsideImpl( const aPoint& point ) const {
+    return ( fabs( point.z() ) < zHalfLength() && //
+             fabs( point.y() ) < yHalfLength() && //
+             fabs( point.x() ) < xHalfLength() );
+  }
 
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                      const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const;
+  template <class aPoint, class aVector>
+  inline unsigned int intersectionTicksImpl( const aPoint&       Point,   //
+                                             const aVector&      Vector,  //
+                                             const ISolid::Tick& tickMin, //
+                                             const ISolid::Tick& tickMax, //
+                                             ISolid::Ticks&      ticks ) const {
+    unsigned int rc = 0;
+    if ( !isOutBBox( Point, Vector, tickMin, tickMax ) ) {
+      rc = SolidBox::intersectionTicksImpl( Point, Vector, ticks );
+      // we can optimize this because in a box there are at 0 or 2 ticks.
+      if ( rc != 0 ) {
+        // assert( rc==2 ) ;
+        auto& first  = ticks[0];
+        auto& second = ticks[1];
+        if ( first > tickMax || second < tickMin ) {
+          ticks.clear();
+          rc = 0;
+        } else {
+          if ( first < tickMin ) { first = tickMin; }
+          if ( second > tickMax ) { second = tickMax; }
+        }
+      }
+    }
+    return rc;
+  }
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( const aPoint&  Point,  //
+                                      const aVector& Vector, //
+                                      ISolid::Ticks& ticks ) const;
 
 private:
-  double m_box_xHalfLength; ///< x/2
-  double m_box_yHalfLength; ///< y/2
-  double m_box_zHalfLength; ///< z/2
+  double m_box_xHalfLength{0}; ///< x/2
+  double m_box_yHalfLength{0}; ///< y/2
+  double m_box_zHalfLength{0}; ///< z/2
 };
 
 /// ===========================================================================
-#endif ///<  DETDESC_SOLIDBOX_H

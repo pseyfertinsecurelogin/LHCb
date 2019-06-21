@@ -20,6 +20,7 @@
 #include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidTrd.h"
 
+// STL
 #include <memory>
 
 // ============================================================================
@@ -43,8 +44,12 @@
  *  @exception SolidException wrong parameter range
  */
 // ============================================================================
-SolidTrd::SolidTrd( const std::string& name, const double ZHalfLength, const double XHalfLength1,
-                    const double YHalfLength1, const double XHalfLength2, const double YHalfLength2 )
+SolidTrd::SolidTrd( const std::string& name,         //
+                    const double       ZHalfLength,  //
+                    const double       XHalfLength1, //
+                    const double       YHalfLength1, //
+                    const double       XHalfLength2, //
+                    const double       YHalfLength2 )
     : SolidBase( name )
     , SolidPolyHedronHelper( name )
     , m_trd_zHalfLength( ZHalfLength )
@@ -74,14 +79,7 @@ SolidTrd::SolidTrd( const std::string& name, const double ZHalfLength, const dou
  *  @param name name of trd object
  */
 // ============================================================================
-SolidTrd::SolidTrd( const std::string& name )
-    : SolidBase( name )
-    , SolidPolyHedronHelper( name )
-    , m_trd_zHalfLength( 10000000 )
-    , m_trd_xHalfLength1( 10000 )
-    , m_trd_xHalfLength2( 10000 )
-    , m_trd_yHalfLength1( 10000 )
-    , m_trd_yHalfLength2( 10000 ) {
+SolidTrd::SolidTrd( const std::string& name ) : SolidBase( name ), SolidPolyHedronHelper( name ) {
   ///
   makeAll();
   ///

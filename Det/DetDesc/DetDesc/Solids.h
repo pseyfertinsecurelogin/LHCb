@@ -8,15 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef __DETDESC_SOLID_SOLIDS_H__
-#define __DETDESC_SOLID_SOLIDS_H__
 
-//
+#pragma once
+
 // primitive solids
 #include "DetDesc/SolidPrimitives.h"
 
-//
 // advanced solids
 #include "DetDesc/SolidAdvanced.h"
-
-#endif //  __DETDESC_SOLID_SOLIDS_H__

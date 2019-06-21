@@ -9,13 +9,13 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 /// ==========================================================================
-#ifndef DETDESC_SOLIDINTERSECTION_H
-#define DETDESC_SOLIDINTERSECTION_H 1
+#pragma once
 // STD & STL
 #include <algorithm>
 #include <functional>
 /// DetDesc
 #include "DetDesc/ISolid.h"
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidBoolean.h"
 #include "DetDesc/SolidChild.h"
 /// Forward declarations
@@ -58,7 +58,7 @@ public:
    *  @param "" point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside( const Gaudi::XYZPoint& ) const override;
+  bool isInside( const Gaudi::XYZPoint& point ) const override;
   bool isInside( const Gaudi::Polar3DPoint& point ) const override;
   bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
   /** add intersections
@@ -74,7 +74,8 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode intersect( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+  StatusCode intersect( std::unique_ptr<ISolid>  child,    //
+                        const Gaudi::XYZPoint&   position, //
                         const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
 
 protected:
@@ -90,8 +91,15 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
+  inline bool isInsideImpl( const aPoint& point ) const {
+    ///  is point inside the "main" volume?
+    bool rc = first()->isInside( point );
+    if ( rc ) {
+      const auto c = children();
+      rc           = std::all_of( begin( c ), end( c ), Solid::isInside( point ) );
+    }
+    return rc;
+  }
 };
 
 /// ===========================================================================
-#endif ///< DETDESC_SOLIDINTERSECTION_H

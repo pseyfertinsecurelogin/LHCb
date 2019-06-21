@@ -36,8 +36,12 @@
  *  @exception  SolidException wrong parameters range
  */
 // ============================================================================
-SolidBox::SolidBox( const std::string& Name, const double xHalf, const double yHalf, const double zHalf )
-    : SolidBase( Name ), m_box_xHalfLength( xHalf ), m_box_yHalfLength( yHalf ), m_box_zHalfLength( zHalf ) {
+SolidBox::SolidBox( const std::string& Name, const double xHalf, //
+                    const double yHalf, const double zHalf )
+    : SolidBase( Name )          //
+    , m_box_xHalfLength( xHalf ) //
+    , m_box_yHalfLength( yHalf ) //
+    , m_box_zHalfLength( zHalf ) {
   if ( 0 >= xHalfLength() ) { throw SolidException( "SolidBox(): XHalfLength is non positive! " ); }
   if ( 0 >= yHalfLength() ) { throw SolidException( "SolidBox(): YHalfLength is non positive! " ); }
   if ( 0 >= zHalfLength() ) { throw SolidException( "SolidBox(): ZHalfLength is non positive! " ); }
@@ -57,8 +61,8 @@ void SolidBox::setBP() {
   setYMax( yHalfLength() );
   setZMin( -zHalfLength() );
   setZMax( zHalfLength() );
-  setRMax( sqrt( xMax() * xMax() + yMax() * yMax() + zMax() * zMax() ) );
-  setRhoMax( sqrt( xMax() * xMax() + yMax() * yMax() ) );
+  setRMax( std::sqrt( xMax() * xMax() + yMax() * yMax() + zMax() * zMax() ) );
+  setRhoMax( std::sqrt( xMax() * xMax() + yMax() * yMax() ) );
   //
   checkBP();
 }
@@ -74,77 +78,94 @@ void SolidBox::setBP() {
  *  @return the number of intersection points (=size of Ticks container)
  */
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                          const Gaudi::XYZVector& Vector, //
+                                          ISolid::Ticks&          ticks   //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                          const Gaudi::Polar3DVector& Vector, //
+                                          ISolid::Ticks&              ticks   //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                          const Gaudi::RhoZPhiVector& Vector, //
+                                          ISolid::Ticks&              ticks   //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 
 // ============================================================================
-inline bool inrange( const double x, const double xmin, const double xmax ) {
+inline bool inrange( const double x, const double xmin, const double xmax ) noexcept {
   // local helper function. is there a gsl/std solution for this?
-  return xmin <= x && x <= xmax;
+  return ( xmin <= x && x <= xmax );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidBox::intersectionTicksImpl( const aPoint& point, const aVector& vect, ISolid::Ticks& ticks ) const {
-  ///
+unsigned int SolidBox::intersectionTicksImpl( const aPoint&  point, //
+                                              const aVector& vect,  //
+                                              ISolid::Ticks& ticks  //
+                                              ) const {
   ticks.clear();
-  Tick tick = 0;
   // use temporary static array, because push_backs are slow
-  double theticks[6];
-  int    ntick( 0u );
+  std::array<double, 6> theticks;
+  unsigned int          ntick( 0u );
 
   // find intersection ticks with z-planes
   if ( vect.z() != 0 ) {
-    tick = ( -zHalfLength() - point.z() ) / vect.z();
+    const auto z_inv = 1.0 / vect.z();
+    auto       tick  = ( -zHalfLength() - point.z() ) * z_inv;
     if ( inrange( point.x() + tick * vect.x(), xMin(), xMax() ) &&
-         inrange( point.y() + tick * vect.y(), yMin(), yMax() ) )
+         inrange( point.y() + tick * vect.y(), yMin(), yMax() ) ) {
       theticks[ntick++] = tick;
-    tick = ( zHalfLength() - point.z() ) / vect.z();
+    }
+    tick = ( zHalfLength() - point.z() ) * z_inv;
     if ( inrange( point.x() + tick * vect.x(), xMin(), xMax() ) &&
-         inrange( point.y() + tick * vect.y(), yMin(), yMax() ) )
+         inrange( point.y() + tick * vect.y(), yMin(), yMax() ) ) {
       theticks[ntick++] = tick;
+    }
   }
 
   if ( ntick != 2 ) {
     // find intersection ticks with x-planes
     if ( vect.x() != 0 ) {
-      tick = ( -xHalfLength() - point.x() ) / vect.x();
+      const auto x_inv = 1.0 / vect.x();
+      auto       tick  = ( -xHalfLength() - point.x() ) * x_inv;
       if ( inrange( point.z() + tick * vect.z(), zMin(), zMax() ) &&
-           inrange( point.y() + tick * vect.y(), yMin(), yMax() ) )
+           inrange( point.y() + tick * vect.y(), yMin(), yMax() ) ) {
         theticks[ntick++] = tick;
-      tick = ( xHalfLength() - point.x() ) / vect.x();
+      }
+      tick = ( xHalfLength() - point.x() ) * x_inv;
       if ( inrange( point.z() + tick * vect.z(), zMin(), zMax() ) &&
-           inrange( point.y() + tick * vect.y(), yMin(), yMax() ) )
+           inrange( point.y() + tick * vect.y(), yMin(), yMax() ) ) {
         theticks[ntick++] = tick;
+      }
     }
 
     if ( ntick != 2 ) {
       // find intersection ticks with y-planes
       if ( vect.y() != 0 ) {
-        tick = ( -yHalfLength() - point.y() ) / vect.y();
+        const auto y_inv = 1.0 / vect.y();
+        auto       tick  = ( -yHalfLength() - point.y() ) * y_inv;
         if ( inrange( point.z() + tick * vect.z(), zMin(), zMax() ) &&
-             inrange( point.x() + tick * vect.x(), xMin(), xMax() ) )
+             inrange( point.x() + tick * vect.x(), xMin(), xMax() ) ) {
           theticks[ntick++] = tick;
-        tick = ( yHalfLength() - point.y() ) / vect.y();
+        }
+        tick = ( yHalfLength() - point.y() ) * y_inv;
         if ( inrange( point.z() + tick * vect.z(), zMin(), zMax() ) &&
-             inrange( point.x() + tick * vect.x(), xMin(), xMax() ) )
+             inrange( point.x() + tick * vect.x(), xMin(), xMax() ) ) {
           theticks[ntick++] = tick;
+        }
       }
     }
   }
 
   if ( ntick == 2 ) {
+    ticks.reserve( 2 );
     if ( theticks[0] < theticks[1] ) {
       ticks.push_back( theticks[0] );
       ticks.push_back( theticks[1] );
@@ -175,11 +196,7 @@ bool SolidBox::isInside( const Gaudi::Polar3DPoint& point ) const { return isIns
 // ============================================================================
 bool SolidBox::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidBox::isInsideImpl( const aPoint& point ) const {
-  return ( fabs( point.z() ) < zHalfLength() && fabs( point.y() ) < yHalfLength() &&
-           fabs( point.x() ) < xHalfLength() );
-}
+
 // ============================================================================
 /** calculate the intersection points("ticks") of the solid objects
  *  with given line.
@@ -203,45 +220,32 @@ bool SolidBox::isInsideImpl( const aPoint& point ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                          const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                          const Gaudi::XYZVector& Vector,  //
+                                          const ISolid::Tick&     tickMin, //
+                                          const ISolid::Tick&     tickMax, //
+                                          ISolid::Ticks&          ticks    //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                          const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                          const Gaudi::Polar3DVector& Vector,  //
+                                          const ISolid::Tick&         tickMin, //
+                                          const ISolid::Tick&         tickMax, //
+                                          ISolid::Ticks&              ticks    //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBox::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                          const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks ) const {
+unsigned int SolidBox::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                          const Gaudi::RhoZPhiVector& Vector,  //
+                                          const ISolid::Tick&         tickMin, //
+                                          const ISolid::Tick&         tickMax, //
+                                          ISolid::Ticks&              ticks    //
+                                          ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
-// ============================================================================
-template <class aPoint, class aVector>
-unsigned int SolidBox::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const Tick& tickMin,
-                                              const Tick& tickMax, Ticks& ticks ) const {
-  if ( isOutBBox( Point, Vector, tickMin, tickMax ) ) { return 0; }
-  unsigned int rc = SolidBox::intersectionTicksImpl( Point, Vector, ticks );
-  // we can optimize this because in a box there are at 0 or 2 ticks.
-  if ( rc != 0 ) {
-    // assert( rc==2 ) ;
-    Tick& first  = ticks[0];
-    Tick& second = ticks[1];
-    if ( first > tickMax || second < tickMin ) {
-      ticks.clear();
-      rc = 0;
-    } else {
-      if ( first < tickMin ) first = tickMin;
-      if ( second > tickMax ) second = tickMax;
-    }
-  }
-  return rc;
-}
-
 // ============================================================================
 
 // ============================================================================
