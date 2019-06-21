@@ -154,6 +154,13 @@ protected:
   /// Access DeRichSystem on demand
   DeRichSystem* deRichSys();
 
+protected:
+  /// Get a scalar parameter value from an SIMD parameter
+  template <typename TYPE>
+  inline decltype( auto ) scalar( const TYPE& t ) const noexcept {
+    return typename TYPE::value_type( t[0] );
+  }
+
 private:
   std::string                m_myname = "";       ///< The name of this detector element
   std::unique_ptr<MsgStream> m_msgStream;         ///< Message Stream Object

@@ -15,6 +15,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <mutex>
 
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
@@ -69,12 +70,16 @@ public:
   StatusCode initialize() override final;
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  bool detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint& detectPoint,
-                       bool photoCathodeSide = false ) const override final;
+  bool detectionPoint( const LHCb::RichSmartID smartID,                 //
+                       Gaudi::XYZPoint&        detectPoint,             //
+                       bool                    photoCathodeSide = false //
+                       ) const override final;
 
   // (SIMD) Converts RichSmartIDs to an SIMD point in global coordinates.
-  DeRichPD::SIMDFP::mask_type detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                              bool photoCathodeSide = false ) const override final;
+  DeRichPD::SIMDFP::mask_type detectionPoint( const SmartIDs& smartID,                 //
+                                              SIMDPoint&      detectPoint,             //
+                                              bool            photoCathodeSide = false //
+                                              ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
@@ -105,12 +110,14 @@ public:
   inline const Gaudi::XYZPoint& zeroInPanelLocal() const noexcept { return m_zeroInPanelLocal; }
 
 private:
-  /// Floating point to use internal. Use float for reduced memory footprint.
-  using FType = float;
+  // definitions
+
   /// int type
   using IPix = LHCb::RichSmartID::DataType;
 
 private:
+  // initialisation
+
   DetectorElement* getFirstRich();
 
   StatusCode getPMTParameters();
@@ -118,68 +125,123 @@ private:
   StatusCode updateGeometry();
 
 private:
-  inline Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const IPix fracPixelCol, const IPix fracPixelRow ) const
-      noexcept {
-    const auto xh = ( (FType)fracPixelCol - m_PmtNumPixColFrac ) * m_PmtEffectivePixelXSize;
-    const auto yh = ( (FType)fracPixelRow - m_PmtNumPixRowFrac ) * m_PmtEffectivePixelYSize;
-    return {xh, yh, m_PmtAnodeHalfThickness};
-  }
-
-  inline SIMDPoint getAnodeHitCoordFromPixelNum( const SIMDUINT& fracPixelCol, const SIMDUINT& fracPixelRow ) const
-      noexcept {
-    using namespace LHCb::SIMD;
+  inline Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const IPix fracPixelCol, //
+                                                       const IPix fracPixelRow  //
+                                                       ) const noexcept {
     const auto xh =
-        ( simd_cast<SIMDFP>( fracPixelCol ) - SIMDFP( m_PmtNumPixColFrac ) ) * SIMDFP( m_PmtEffectivePixelXSize );
+        ( (FP)fracPixelCol - scalar( m_pddata.PmtNumPixColFrac ) ) * scalar( m_pddata.PmtEffectivePixelXSize );
     const auto yh =
-        ( simd_cast<SIMDFP>( fracPixelRow ) - SIMDFP( m_PmtNumPixRowFrac ) ) * SIMDFP( m_PmtEffectivePixelYSize );
-    return {xh, yh, SIMDFP( m_PmtAnodeHalfThickness )};
+        ( (FP)fracPixelRow - scalar( m_pddata.PmtNumPixRowFrac ) ) * scalar( m_pddata.PmtEffectivePixelYSize );
+    return {xh, yh, scalar( m_pddata.PmtAnodeHalfThickness )};
   }
 
-  inline Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const IPix fracPixelCol, const IPix fracPixelRow ) const
-      noexcept {
-    const auto aXEffPixel =
-        ( fracPixelCol == 0 || fracPixelCol == ( m_PmtNumPixCol - 1 ) ? m_GrandPmtEdgePixelXSize
-                                                                      : m_GrandPmtEffectivePixelXSize );
-    const auto aYEffPixel =
-        ( fracPixelRow == 0 || fracPixelRow == ( m_PmtNumPixRow - 1 ) ? m_GrandPmtEdgePixelYSize
-                                                                      : m_GrandPmtEffectivePixelYSize );
-    const auto xh = ( (FType)fracPixelCol - m_PmtNumPixColFrac ) * aXEffPixel;
-    const auto yh = ( (FType)fracPixelRow - m_PmtNumPixRowFrac ) * aYEffPixel;
-    return {xh, yh, m_GrandPmtAnodeHalfThickness};
-  }
-
-  inline SIMDPoint getAnodeHitCoordFromGrandPixelNum( const SIMDUINT& fracPixelCol, const SIMDUINT& fracPixelRow ) const
-      noexcept {
+  inline SIMDPoint getAnodeHitCoordFromPixelNum( const SIMDUINT& fracPixelCol, //
+                                                 const SIMDUINT& fracPixelRow  //
+                                                 ) const noexcept {
     using namespace LHCb::SIMD;
-    const auto xmask      = ( fracPixelCol == SIMDUINT::Zero() ) || ( fracPixelCol == SIMDUINT( m_PmtNumPixCol - 1 ) );
-    const auto ymask      = ( fracPixelRow == SIMDUINT::Zero() ) || ( fracPixelRow == SIMDUINT( m_PmtNumPixRow - 1 ) );
-    auto       aXEffPixel = SIMDFP( m_GrandPmtEffectivePixelXSize );
-    aXEffPixel( simd_cast<SIMDFP::mask_type>( xmask ) ) = SIMDFP( m_GrandPmtEdgePixelXSize );
-    auto aYEffPixel                                     = SIMDFP( m_GrandPmtEffectivePixelYSize );
-    aYEffPixel( simd_cast<SIMDFP::mask_type>( ymask ) ) = SIMDFP( m_GrandPmtEdgePixelYSize );
-
-    const auto xh = ( simd_cast<SIMDFP>( fracPixelCol ) - SIMDFP( m_PmtNumPixColFrac ) ) * aXEffPixel;
-    const auto yh = ( simd_cast<SIMDFP>( fracPixelRow ) - SIMDFP( m_PmtNumPixRowFrac ) ) * aYEffPixel;
-    return {xh, yh, SIMDFP( m_GrandPmtAnodeHalfThickness )};
+    const auto xh = ( simd_cast<SIMDFP>( fracPixelCol ) - m_pddata.PmtNumPixColFrac ) * m_pddata.PmtEffectivePixelXSize;
+    const auto yh = ( simd_cast<SIMDFP>( fracPixelRow ) - m_pddata.PmtNumPixRowFrac ) * m_pddata.PmtEffectivePixelYSize;
+    return {xh, yh, m_pddata.PmtAnodeHalfThickness};
   }
 
-  inline Gaudi::XYZPoint getAnodeHitCoordFromMultTypePixelNum( const IPix fracPixelCol, const IPix fracPixelRow ) const
-      noexcept {
+  inline Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const IPix fracPixelCol, //
+                                                            const IPix fracPixelRow  //
+                                                            ) const noexcept {
+    const auto aXEffPixel = ( fracPixelCol == 0 || fracPixelCol == ( scalar( m_pddata.PmtNumPixCol ) - 1 )
+                                  ? scalar( m_pddata.GrandPmtEdgePixelXSize )
+                                  : scalar( m_pddata.GrandPmtEffectivePixelXSize ) );
+    const auto aYEffPixel = ( fracPixelRow == 0 || fracPixelRow == ( scalar( m_pddata.PmtNumPixRow ) - 1 )
+                                  ? scalar( m_pddata.GrandPmtEdgePixelYSize )
+                                  : scalar( m_pddata.GrandPmtEffectivePixelYSize ) );
+    const auto xh         = ( (FP)fracPixelCol - scalar( m_pddata.PmtNumPixColFrac ) ) * aXEffPixel;
+    const auto yh         = ( (FP)fracPixelRow - scalar( m_pddata.PmtNumPixRowFrac ) ) * aYEffPixel;
+    return {xh, yh, scalar( m_pddata.GrandPmtAnodeHalfThickness )};
+  }
+
+  inline SIMDPoint getAnodeHitCoordFromGrandPixelNum( const SIMDUINT& fracPixelCol, //
+                                                      const SIMDUINT& fracPixelRow  //
+                                                      ) const noexcept {
+    using namespace LHCb::SIMD;
+
+    const auto xmask =
+        ( fracPixelCol == SIMDUINT::Zero() ) || ( fracPixelCol == ( m_pddata.PmtNumPixCol - SIMDUINT::One() ) );
+    const auto ymask =
+        ( fracPixelRow == SIMDUINT::Zero() ) || ( fracPixelRow == ( m_pddata.PmtNumPixRow - SIMDUINT::One() ) );
+
+    auto aXEffPixel                                     = m_pddata.GrandPmtEffectivePixelXSize;
+    aXEffPixel( simd_cast<SIMDFP::mask_type>( xmask ) ) = m_pddata.GrandPmtEdgePixelXSize;
+    auto aYEffPixel                                     = m_pddata.GrandPmtEffectivePixelYSize;
+    aYEffPixel( simd_cast<SIMDFP::mask_type>( ymask ) ) = m_pddata.GrandPmtEdgePixelYSize;
+
+    const auto xh = ( simd_cast<SIMDFP>( fracPixelCol ) - m_pddata.PmtNumPixColFrac ) * aXEffPixel;
+    const auto yh = ( simd_cast<SIMDFP>( fracPixelRow ) - m_pddata.PmtNumPixRowFrac ) * aYEffPixel;
+    return {xh, yh, m_pddata.GrandPmtAnodeHalfThickness};
+  }
+
+  inline Gaudi::XYZPoint getAnodeHitCoordFromMultTypePixelNum( const IPix fracPixelCol, //
+                                                               const IPix fracPixelRow  //
+                                                               ) const noexcept {
     return ( PmtIsGrand() ? getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow )
                           : getAnodeHitCoordFromPixelNum( fracPixelCol, fracPixelRow ) );
   }
 
-  inline SIMDPoint getAnodeHitCoordFromMultTypePixelNum( const SIMDUINT& fracPixelCol,
-                                                         const SIMDUINT& fracPixelRow ) const noexcept {
+  inline SIMDPoint getAnodeHitCoordFromMultTypePixelNum( const SIMDUINT& fracPixelCol, //
+                                                         const SIMDUINT& fracPixelRow  //
+                                                         ) const noexcept {
     return ( PmtIsGrand() ? getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow )
                           : getAnodeHitCoordFromPixelNum( fracPixelCol, fracPixelRow ) );
   }
+
+private:
+  // definitions
+
+  /// PMT data storage
+  class PMTData {
+
+  public:
+    void initialise( const DetectorElement* deRich );
+
+  public:
+    // parameter data
+
+    SIMDFP PmtEffectivePixelXSize = SIMDFP::Zero();
+    SIMDFP PmtEffectivePixelYSize = SIMDFP::Zero();
+
+    SIMDFP PmtAnodeHalfThickness = SIMDFP::Zero();
+
+    SIMDUINT PmtNumPixCol = SIMDUINT::Zero();
+    SIMDUINT PmtNumPixRow = SIMDUINT::Zero();
+
+    SIMDFP PmtNumPixColFrac = SIMDFP::Zero();
+    SIMDFP PmtNumPixRowFrac = SIMDFP::Zero();
+
+    SIMDFP PmtQwZSize = SIMDFP::Zero();
+
+    SIMDFP zShift = SIMDFP::Zero();
+
+    SIMDFP GrandPmtEdgePixelXSize = SIMDFP::Zero();
+    SIMDFP GrandPmtEdgePixelYSize = SIMDFP::Zero();
+
+    SIMDFP GrandPmtEffectivePixelXSize = SIMDFP::Zero();
+    SIMDFP GrandPmtEffectivePixelYSize = SIMDFP::Zero();
+
+    SIMDFP GrandPmtAnodeHalfThickness = SIMDFP::Zero();
+
+  private:
+    // implementation data
+
+    std::mutex m_initLock;
+    bool       m_initialised{false};
+  };
 
 private:
   // CRJ - To minimise memory footprint do not define data members
   //       that are not needed (outside of getPMTParameters() setup)
   //       Also, data members should be arranged so most commonly
   //       accessed are listed first.
+
+  // shared PD data. Same for every PMT.
+  static PMTData m_pddata;
 
   /// PD SmartID
   LHCb::RichSmartID m_pdSmartID;
@@ -194,24 +256,7 @@ private:
    * in the local frame of its parent PD panel */
   Gaudi::XYZPoint m_zeroInPanelLocal;
 
-  FType m_zShift{0};
-
-  FType m_PmtQwZSize{0};
-
-  FType        m_PmtEffectivePixelXSize{0};
-  FType        m_PmtEffectivePixelYSize{0};
-  FType        m_PmtAnodeHalfThickness{0};
-  unsigned int m_PmtNumPixCol{0};
-  unsigned int m_PmtNumPixRow{0};
-  FType        m_PmtNumPixColFrac{0};
-  FType        m_PmtNumPixRowFrac{0};
-
-  FType m_GrandPmtEdgePixelXSize{0};
-  FType m_GrandPmtEdgePixelYSize{0};
-  FType m_GrandPmtEffectivePixelXSize{0};
-  FType m_GrandPmtEffectivePixelYSize{0};
-  FType m_GrandPmtAnodeHalfThickness{0};
-
+  /// Flag to say if this is a large or small PMT
   bool m_PmtIsGrand{false};
 
   /// The PMT Anode detector element
