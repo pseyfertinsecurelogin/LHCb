@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 #include <immintrin.h>
 #include <limits>
@@ -158,9 +158,9 @@ namespace SIMDWrapper {
 
     inline float_v::operator int_v() const { return int_v( int( data ) ); }
 
-    inline int_v castToInt( const float_v& x ) { return pun_to<int, float>( x.cast() ); }
+    inline int_v castToInt( const float_v& x ) { return bit_cast<int>( x.cast() ); }
 
-    inline float_v castToFloat( const int_v& x ) { return pun_to<float, int>( x.cast() ); }
+    inline float_v castToFloat( const int_v& x ) { return bit_cast<float>( x.cast() ); }
 
     inline int_v gather( const int* base, const int_v& idx ) { return base[idx.cast()]; }
 

@@ -10,7 +10,7 @@
 \*****************************************************************************/
 // local
 #include "HltDAQ/ReportConvertTool.h"
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
@@ -1127,7 +1127,7 @@ void ReportConvertTool::SummaryFromRaw( HltObjectSummary::Info* info, HltSelRepR
   } break;
   case 40: // This is a special number to deal with the holder of related info, contains only the location enum
   {
-    info->insert( "0#LocationID", pun_to<float>( ( *subbank )[0] ) );
+    info->insert( "0#LocationID", bit_cast<float>( ( *subbank )[0] ) );
     return;
   } break;
   case 41: // This is a special number to deal with the actual related info
@@ -1140,7 +1140,7 @@ void ReportConvertTool::SummaryFromRaw( HltObjectSummary::Info* info, HltSelRepR
       int               padding = 4 - len;
       for ( int m = 0; m < padding; m++ ) key << "0";
       key << n << "#GenericKey";
-      info->insert( key.str().c_str(), pun_to<float>( ( *subbank )[n] ) );
+      info->insert( key.str().c_str(), bit_cast<float>( ( *subbank )[n] ) );
       n++;
 
       // Then do the same for the value
@@ -1149,7 +1149,7 @@ void ReportConvertTool::SummaryFromRaw( HltObjectSummary::Info* info, HltSelRepR
       int               padding2 = 4 - len2;
       for ( int m = 0; m < padding2; m++ ) keykey << "0";
       keykey << n << "#GenericValue";
-      info->insert( keykey.str().c_str(), pun_to<float>( ( *subbank )[n] ) );
+      info->insert( keykey.str().c_str(), bit_cast<float>( ( *subbank )[n] ) );
       n++;
     } while ( n < subbank->size() );
     return;
@@ -1174,7 +1174,7 @@ void ReportConvertTool::SummaryFromRaw( HltObjectSummary::Info* info, HltSelRepR
         .ignore();
     int e = 0;
     for ( const auto& i : ( *subbank ) ) {
-      info->insert( std::string{"z#Unknown.unknown"} + std::to_string( e++ ), pun_to<float>( i ) );
+      info->insert( std::string{"z#Unknown.unknown"} + std::to_string( e++ ), bit_cast<float>( i ) );
     }
     return;
   }
@@ -1191,7 +1191,7 @@ void ReportConvertTool::SummaryFromRaw( HltObjectSummary::Info* info, HltSelRepR
              " in subbank of size " + std::to_string( subbank->size() ) )
           .ignore();
     }
-    auto float_value = pun_to<float>( ( *subbank )[object.second.first] );
+    auto float_value = bit_cast<float>( ( *subbank )[object.second.first] );
     info->insert( object.first, float_value );
   }
 }
