@@ -14,7 +14,8 @@
 gaudi_subdir(TrackEvent v6r7)
 
 gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel)
+                         Kernel/LHCbKernel
+                         Kernel/SOAContainer)
 
 find_package(Boost)
 find_package(GSL)
@@ -37,7 +38,7 @@ gaudi_add_unit_test(test_track_v2 tests/src/test_track_v2.cpp
 gaudi_add_library(TrackEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS GSL Boost ${RANGEV3_INCLUDE_DIR}
+                  INCLUDE_DIRS GSL Boost ${RANGEV3_INCLUDE_DIR} Kernel/SOAContainer
                   LINK_LIBRARIES GSL Boost LHCbKernel )
 
 god_build_dictionary(xml/*.xml
