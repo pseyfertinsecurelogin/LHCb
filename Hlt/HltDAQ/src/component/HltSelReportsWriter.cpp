@@ -26,7 +26,7 @@
 
 // local
 #include "HltSelReportsWriter.h"
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 using namespace LHCb;
 
@@ -307,7 +307,7 @@ StatusCode HltSelReportsWriter::execute() {
 
         if ( saveStdInfo || ( hos->summarizedObjectCLID() == 1 ) ) {
           // push floats as ints (allows for possible compression in future versions)
-          stdInfo.push_back( pun_to<unsigned int>( i.second ) );
+          stdInfo.push_back( bit_cast<unsigned int>( i.second ) );
         }
 
       } else if ( saveExtraInfo ) {

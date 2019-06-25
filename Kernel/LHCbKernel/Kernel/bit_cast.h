@@ -21,20 +21,17 @@
 // [ note: gcc explicitly supports the use of a union for type-punning
 // as an extension -- and generates the same code as the std::memcpy version ]
 //
+// TODO: C++20: replace with std::bit_cast
 
 template <typename Out, typename In>
-constexpr Out pun_to( In src ) {
-  static_assert( sizeof( In ) == sizeof( Out ), "In and Out types must have same size" );
+constexpr std::enable_if_t<
+    ( sizeof( Out ) == sizeof( In ) ) && std::is_trivially_copyable_v<In> && std::is_trivial_v<Out>, Out>
+bit_cast( In src ) {
   static_assert( !std::is_same_v<std::decay_t<Out>, std::decay_t<In>>,
                  "Identity punning not allowed -- just remove the punning!" );
   Out dest{0}; // constexpr forbids uninitialized variables....
   std::memcpy( &dest, &src, sizeof( Out ) );
   return dest;
-}
-
-template <>
-constexpr unsigned int pun_to<unsigned int, double>( double in ) {
-  return pun_to<unsigned int>( static_cast<float>( in ) );
 }
 
 #endif

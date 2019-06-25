@@ -17,7 +17,7 @@
 // local
 #include "HltVertexReportsDecoder.h"
 #include "HltVertexReportsWriter.h"
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 namespace {
   static const std::vector<std::string> DefaultLabels = {"PV3D", "ProtoPV3D"};
@@ -136,20 +136,20 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
 
     for ( unsigned int j = 0; j != nVert; ++j ) {
       auto   pVtx = std::make_unique<VertexBase>();
-      double x    = pun_to<float>( *i++ );
-      double y    = pun_to<float>( *i++ );
-      double z    = pun_to<float>( *i++ );
+      double x    = bit_cast<float>( *i++ );
+      double y    = bit_cast<float>( *i++ );
+      double z    = bit_cast<float>( *i++ );
       pVtx->setPosition( {x, y, z} );
-      pVtx->setChi2( pun_to<float>( *i++ ) );
+      pVtx->setChi2( bit_cast<float>( *i++ ) );
       pVtx->setNDoF( *i++ );
       if ( bankVersionNumber > 0 ) {
         Gaudi::SymMatrix3x3 cov;
-        cov[0][0] = pun_to<float>( *i++ );
-        cov[1][1] = pun_to<float>( *i++ );
-        cov[2][2] = pun_to<float>( *i++ );
-        cov[0][1] = pun_to<float>( *i++ );
-        cov[0][2] = pun_to<float>( *i++ );
-        cov[1][2] = pun_to<float>( *i++ );
+        cov[0][0] = bit_cast<float>( *i++ );
+        cov[1][1] = bit_cast<float>( *i++ );
+        cov[2][2] = bit_cast<float>( *i++ );
+        cov[0][1] = bit_cast<float>( *i++ );
+        cov[0][2] = bit_cast<float>( *i++ );
+        cov[1][2] = bit_cast<float>( *i++ );
         pVtx->setCovMatrix( cov );
       }
 

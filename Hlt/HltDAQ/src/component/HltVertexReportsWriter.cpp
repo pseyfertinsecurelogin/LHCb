@@ -15,7 +15,7 @@
 
 // local
 #include "HltVertexReportsWriter.h"
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 using namespace LHCb;
 
@@ -97,18 +97,18 @@ StatusCode HltVertexReportsWriter::execute() {
 
     for ( const auto& vtx : s.second ) {
       // now push vertex info
-      *out++          = pun_to<unsigned int>( vtx->position().x() );
-      *out++          = pun_to<unsigned int>( vtx->position().y() );
-      *out++          = pun_to<unsigned int>( vtx->position().z() );
-      *out++          = pun_to<unsigned int>( vtx->chi2() );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( vtx->position().x() ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( vtx->position().y() ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( vtx->position().z() ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( vtx->chi2() ) );
       *out++          = std::max( vtx->nDoF(), 0 );
       const auto& cov = vtx->covMatrix();
-      *out++          = pun_to<unsigned int>( cov[0][0] );
-      *out++          = pun_to<unsigned int>( cov[1][1] );
-      *out++          = pun_to<unsigned int>( cov[2][2] );
-      *out++          = pun_to<unsigned int>( cov[0][1] );
-      *out++          = pun_to<unsigned int>( cov[0][2] );
-      *out++          = pun_to<unsigned int>( cov[1][2] );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[0][0] ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[1][1] ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[2][2] ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[0][1] ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[0][2] ) );
+      *out++          = bit_cast<unsigned int>( static_cast<float>( cov[1][2] ) );
     }
   }
 
@@ -135,17 +135,17 @@ StatusCode HltVertexReportsWriter::execute() {
                 << n << endmsg;
       ++iWord;
       for ( unsigned int j = 0; j != n; ++j ) {
-        verbose() << " " << j << " x " << pun_to<float>( hltVertexReportsRawBank[iWord] ) << " y "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 1] ) << " z "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 2] ) << " chi2 "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 3] ) << " nDoF "
+        verbose() << " " << j << " x " << bit_cast<float>( hltVertexReportsRawBank[iWord] ) << " y "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 1] ) << " z "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 2] ) << " chi2 "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 3] ) << " nDoF "
                   << hltVertexReportsRawBank[iWord + 4] << " cov(x,x) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 5] ) << " cov(y,y) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 6] ) << " cov(z,z) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 7] ) << " cov(x,y) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 8] ) << " cov(x,z) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 9] ) << " cov(y,z) "
-                  << pun_to<float>( hltVertexReportsRawBank[iWord + 10] ) << endmsg;
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 5] ) << " cov(y,y) "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 6] ) << " cov(z,z) "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 7] ) << " cov(x,y) "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 8] ) << " cov(x,z) "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 9] ) << " cov(y,z) "
+                  << bit_cast<float>( hltVertexReportsRawBank[iWord + 10] ) << endmsg;
         iWord += 11;
       }
     }

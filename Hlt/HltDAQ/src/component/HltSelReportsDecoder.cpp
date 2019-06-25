@@ -33,7 +33,7 @@
 #include "Event/Particle.h"
 #include "Event/RecVertex.h"
 #include "Event/Track.h"
-#include "Kernel/pun.h"
+#include "Kernel/bit_cast.h"
 
 using namespace LHCb;
 
@@ -373,22 +373,22 @@ std::tuple<LHCb::HltSelReports, LHCb::HltObjectSummary::Container> HltSelReports
         m_conv->SummaryFromRaw( &infoPersistent, &stdInfo, 41 );
         break;
       case 1: {
-        infoPersistent.insert( "0#SelectionID", pun_to<float>( stdInfo[0] ) );
+        infoPersistent.insert( "0#SelectionID", bit_cast<float>( stdInfo[0] ) );
         if ( stdInfo.size() > 1 ) {
-          int  id = (int)( pun_to<float>( stdInfo[1] ) + 0.1 );
+          int  id = (int)( bit_cast<float>( stdInfo[1] ) + 0.1 );
           auto iselName = idmap.find( id );
           if ( iselName == std::end( idmap ) ) {
             Error( " Did not find string key for PV-selection-ID in trigger selection in storage id=" +
                        std::to_string( id ),
                    StatusCode::SUCCESS, 10 )
                 .ignore();
-            infoPersistent.insert( "10#Unknown", pun_to<float, unsigned int>( id ) );
+            infoPersistent.insert( "10#Unknown", bit_cast<float, unsigned int>( id ) );
           } else
-            infoPersistent.insert( "10#" + iselName->second.str(), pun_to<float>( stdInfo[1] ) );
+            infoPersistent.insert( "10#" + iselName->second.str(), bit_cast<float>( stdInfo[1] ) );
         }
         for ( unsigned int ipvkeys = 2; ipvkeys < stdInfo.size(); ++ipvkeys ) {
           infoPersistent.insert( "11#" + boost::str( boost::format( "%1$=08X" ) % ( ipvkeys - 2 ) ),
-                                 pun_to<float>( stdInfo[ipvkeys] ) );
+                                 bit_cast<float>( stdInfo[ipvkeys] ) );
         }
 
       } break;
@@ -399,7 +399,7 @@ std::tuple<LHCb::HltSelReports, LHCb::HltObjectSummary::Container> HltSelReports
             .ignore();
         int e = 0;
         for ( const auto& i : stdInfo ) {
-          infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), pun_to<float>( i ) );
+          infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), bit_cast<float>( i ) );
         }
       }
       }
