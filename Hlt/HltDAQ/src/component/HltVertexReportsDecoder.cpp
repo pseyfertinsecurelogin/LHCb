@@ -17,7 +17,7 @@
 // local
 #include "HltVertexReportsDecoder.h"
 #include "HltVertexReportsWriter.h"
-#include "Kernel/bit_cast.h"
+#include "LHCbMath/bit_cast.h"
 
 namespace {
   static const std::vector<std::string> DefaultLabels = {"PV3D", "ProtoPV3D"};

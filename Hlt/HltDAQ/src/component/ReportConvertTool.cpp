@@ -10,7 +10,7 @@
 \*****************************************************************************/
 // local
 #include "HltDAQ/ReportConvertTool.h"
-#include "Kernel/bit_cast.h"
+#include "LHCbMath/bit_cast.h"
 
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;

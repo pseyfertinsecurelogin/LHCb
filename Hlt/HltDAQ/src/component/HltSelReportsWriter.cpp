@@ -26,7 +26,7 @@
 
 // local
 #include "HltSelReportsWriter.h"
-#include "Kernel/bit_cast.h"
+#include "LHCbMath/bit_cast.h"
 
 using namespace LHCb;
 

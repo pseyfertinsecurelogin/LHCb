@@ -22,6 +22,7 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          GaudiKernel
                          GaudiObjDesc
                          Hlt/HltServices
+                         Kernel/LHCbMath
                          Kernel/HltInterfaces
                          Phys/LoKiHlt
                          DAQ/DAQKernel)
