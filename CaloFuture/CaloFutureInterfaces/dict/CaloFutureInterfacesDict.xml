@@ -19,7 +19,7 @@
   <class name    = "ICaloFutureCorrection"          />
   <class name    = "ICaloFutureDigitTool"           />
   <class name    = "ICaloFutureHypoLikelihood"      /> 
-  <class name    = "ICaloFutureHypoTool"            />
+  <class name    = "Calo::Future::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "ICaloFutureSplitTool"           />
   <class name    = "ICaloFutureSubClusterTag"       />
