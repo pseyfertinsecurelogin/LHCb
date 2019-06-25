@@ -19,10 +19,41 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <string>
 
 namespace SIMDWrapper {
-  namespace scalar {
+  enum InstructionSet { Scalar = 0, AVX2, AVX256, AVX512, EndOfList };
+  inline std::string instructionSetName( InstructionSet set ) {
+    switch ( set ) {
+    case Scalar:
+      return "Scalar";
+    case AVX2:
+      return "AVX2";
+    case AVX256:
+      return "AVX256";
+    case AVX512:
+      return "AVX512";
+    default:
+      return "Unknown";
+    }
+  }
+  // Define some helper functions that will always return which instruction set
+  // was used for the types in a given namespace when the stack was built.
+  namespace avx2 {
+    InstructionSet stackInstructionSet();
+  } // namespace avx2
+  namespace avx256 {
+    InstructionSet stackInstructionSet();
+  } // namespace avx256
+  namespace avx512 {
+    InstructionSet stackInstructionSet();
+  } // namespace avx512
+  namespace best {
+    InstructionSet stackInstructionSet();
+  } // namespace best
 
+  namespace scalar {
+    constexpr InstructionSet instructionSet() { return Scalar; }
     class mask_v {
     public:
       mask_v() {} // Constructor must be empty
@@ -191,12 +222,14 @@ namespace SIMDWrapper {
 
 #ifndef __AVX2__
   namespace avx2 {
+    constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
     using float_v = scalar::float_v;
     using int_v   = scalar::int_v;
     using types   = scalar::types;
   } // namespace avx2
 #else
   namespace avx2 {
+    constexpr InstructionSet instructionSet() { return AVX2; }
     // Permutation for avx2 compress, from https://github.com/lemire/simdprune
     alignas( 32 ) const uint32_t compress_mask256_epi32[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 7, 0, 2, 3, 4, 5, 6, 7, 7, 2, 3, 4, 5, 6, 7, 7, 7, 0, 1, 3, 4, 5,
@@ -475,18 +508,21 @@ namespace SIMDWrapper {
 
 #ifndef __AVX512F__
   namespace avx512 {
+    constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
     using float_v = avx2::float_v;
     using int_v   = avx2::int_v;
     using types   = avx2::types;
   } // namespace avx512
 
   namespace avx256 {
+    constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
     using float_v = avx2::float_v;
     using int_v   = avx2::int_v;
     using types   = avx2::types;
   } // namespace avx256
 #else
   namespace avx256 {
+    constexpr InstructionSet instructionSet() { return AVX256; }
     class mask_v {
     public:
       mask_v() {} // Constructor must be empty
@@ -696,6 +732,7 @@ namespace SIMDWrapper {
   } // namespace avx256
 
   namespace avx512 {
+    constexpr InstructionSet instructionSet() { return AVX512; }
     class mask_v {
     public:
       mask_v() {} // Constructor must be empty
@@ -879,6 +916,7 @@ namespace SIMDWrapper {
     using float_v = avx256::float_v;
     using int_v   = avx256::int_v;
     using types   = avx256::types;
+    constexpr InstructionSet instructionSet() { return avx256::instructionSet(); }
   } // namespace best
 } // namespace SIMDWrapper
 
