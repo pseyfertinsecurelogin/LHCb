@@ -8,18 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-/// ===========================================================================
-#ifndef DETDESC_SOLIDSUBTRACTION_H
-#define DETDESC_SOLIDSUBTRACTION_H 1
 
-/** STD & STL */
+#pragma once
+
+// STD & STL
 #include <algorithm>
 #include <functional>
 
-/** DetDesc package */
+// DetDesc package
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidBoolean.h"
 
-/** forward declarations from GaudiKernel and DetDesc */
+// forward declarations from GaudiKernel and DetDesc
 class StatusCode;
 template <class TYPE>
 class SolidFactory;
@@ -79,7 +79,8 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode subtract( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+  StatusCode subtract( std::unique_ptr<ISolid>  child,    //
+                       const Gaudi::XYZPoint&   position, //
                        const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
 
 protected:
@@ -95,8 +96,16 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
+  inline bool isInsideImpl( const aPoint& point ) const {
+    bool isIn = ( !isOutBBox( point ) &&        // check bounding box
+                  first()->isInside( point ) ); //  is point inside the "main" volume?
+    if ( isIn ) {
+      // find a daughter in which the given point is placed
+      const auto c = children();
+      isIn         = std::none_of( begin( c ), end( c ), Solid::isInside( point ) );
+    }
+    return isIn;
+  }
 };
 
-/// ===========================================================================
-#endif ///<   DETDESC_SOLIDSUBTRACTION_H
+//  ===========================================================================

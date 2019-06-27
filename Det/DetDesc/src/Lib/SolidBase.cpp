@@ -132,17 +132,20 @@ MsgStream& SolidBase::printOut( MsgStream& st ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector ) const {
+bool SolidBase::testForIntersection( const Gaudi::XYZPoint&  Point, //
+                                     const Gaudi::XYZVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector ) const {
+bool SolidBase::testForIntersection( const Gaudi::Polar3DPoint&  Point, //
+                                     const Gaudi::Polar3DVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector ) const {
+bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint&  Point, //
+                                     const Gaudi::RhoZPhiVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
@@ -170,27 +173,36 @@ bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint& Point, const Gau
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                           const Gaudi::XYZVector& Vector,  //
+                                           const ISolid::Tick&     tickMin, //
+                                           const ISolid::Tick&     tickMax, //
+                                           ISolid::Ticks&          ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                           const Gaudi::Polar3DVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                           const Gaudi::RhoZPhiVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidBase::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                               const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const {
+unsigned int SolidBase::intersectionTicksImpl( const aPoint&       Point,   //
+                                               const aVector&      Vector,  //
+                                               const ISolid::Tick& tickMin, //
+                                               const ISolid::Tick& tickMax, //
+                                               ISolid::Ticks&      ticks ) const {
   // check for bounding box
   if ( isOutBBox( Point, Vector, tickMin, tickMax ) ) {
     ticks.clear();
@@ -222,17 +234,20 @@ unsigned int SolidBase::intersectionTicksImpl( const aPoint& Point, const aVecto
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint&, const Gaudi::XYZVector&,
+unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint&,  //
+                                           const Gaudi::XYZVector&, //
                                            ISolid::Ticks& ticks ) const {
   return intersectionTicksImpl( ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint&, const Gaudi::Polar3DVector&,
+unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint&,  //
+                                           const Gaudi::Polar3DVector&, //
                                            ISolid::Ticks& ticks ) const {
   return intersectionTicksImpl( ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint&, const Gaudi::RhoZPhiVector&,
+unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint&,  //
+                                           const Gaudi::RhoZPhiVector&, //
                                            ISolid::Ticks& ticks ) const {
   return intersectionTicksImpl( ticks );
 }

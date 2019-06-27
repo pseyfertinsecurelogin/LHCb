@@ -14,7 +14,6 @@
 #ifdef __INTEL_COMPILER             // Disable ICC remark
 #  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
-#include "DetDesc/Solid.h"
 #include "DetDesc/SolidException.h"
 #include "DetDesc/SolidIntersection.h"
 
@@ -53,35 +52,29 @@ bool SolidIntersection::isInside( const Gaudi::Polar3DPoint& point ) const { ret
 // ============================================================================
 bool SolidIntersection::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidIntersection::isInsideImpl( const aPoint& point ) const {
-  ///  is point inside the "main" volume?
-  if ( !first()->isInside( point ) ) { return false; }
-  /// return the 'and' of all children
-  auto c = children();
-  return std::all_of( begin( c ), end( c ), Solid::isInside( point ) );
-}
 
 // ============================================================================
 /** add intersections
- *  @param solid pointer         to new solid
+ *  @param solid pointer to new solid
  *  @param mtrx  pointer transformation
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx ) {
+StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid>   solid, //
+                                         const Gaudi::Transform3D* mtrx ) {
   return addChild( std::move( solid ), mtrx );
 }
 
 // ============================================================================
 /** add intersections
- *  @param solid pointer         to new solid
+ *  @param solid pointer to new solid
  *  @param position position
  *  @param rotation rotation
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid> solid, const Gaudi::XYZPoint& position,
+StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid>  solid,    //
+                                         const Gaudi::XYZPoint&   position, //
                                          const Gaudi::Rotation3D& rotation ) {
   return addChild( std::move( solid ), position, rotation );
 }

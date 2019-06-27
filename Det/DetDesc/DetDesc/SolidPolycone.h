@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef DETDESC_SOLIDPOLYCONE_H
-#define DETDESC_SOLIDPOLYCONE_H 1
+#pragma once
 // Include files
 // STD and STL
 #include <algorithm>
@@ -57,8 +56,10 @@ public:
    *  @param StartPhiAngle the azimuthal angle phi at which polycone "begins"
    *  @param DeltaPhiAngle the opening angle
    */
-  SolidPolycone( const std::string& Name, const Triplets& Params, const double StartPhiAngle = 0,
-                 const double DeltaPhiAngle = 360 * Gaudi::Units::degree );
+  SolidPolycone( const std::string& Name,              //
+                 const Triplets&    Params,            //
+                 const double       StartPhiAngle = 0, //
+                 const double       DeltaPhiAngle = 360 * Gaudi::Units::degree );
 
   /** - retrieve the polycone  type
    *  - implementation of ISolid abstract interface
@@ -125,14 +126,17 @@ public:
    *  @return the number of intersection points
    */
   using SolidBase::intersectionTicks;
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   /** specific for polycone
    */
@@ -140,50 +144,50 @@ public:
   /** accessor to number of triplets
    *  @return number of z-planes
    */
-  inline unsigned int number() const { return triplets().size(); }
+  inline unsigned int number() const noexcept { return triplets().size(); }
 
   /** accessor to all triplets
    *  @return reference to all triplets
    */
-  inline const Triplets& triplets() const { return m_triplets; }
+  inline const Triplets& triplets() const noexcept { return m_triplets; }
 
   /** accessor to triplets begin iterator
    *  @return begin iterator to triplets comntainer
    */
-  inline Triplets::const_iterator begin() const { return triplets().begin(); }
+  inline Triplets::const_iterator begin() const noexcept { return triplets().begin(); }
 
   /** accessor to triplets end iterator
    *  @return end iterator to triplets container
    */
-  inline Triplets::const_iterator end() const { return triplets().end(); }
+  inline Triplets::const_iterator end() const noexcept { return triplets().end(); }
 
   /** accessor to z-position of plane indexed with some index
    *  @param index   plane index
    *  @return z-position
    */
-  inline double z( Triplets::size_type index ) const { return ( begin() + index )->first; }
+  inline double z( Triplets::size_type index ) const noexcept { return ( begin() + index )->first; }
 
   /** accessor to rMax of plane indexed with some index
    *  @param index   plane index
    *  @return rMax
    */
-  inline double RMax( Triplets::size_type index ) const { return ( begin() + index )->second.first; }
+  inline double RMax( Triplets::size_type index ) const noexcept { return ( begin() + index )->second.first; }
 
   /** accessor to rMin of plane indexed with some index
    *  @param index   plane index
    *  @return rMin
    */
-  inline double RMin( Triplets::size_type index ) const { return ( begin() + index )->second.second; }
+  inline double RMin( Triplets::size_type index ) const noexcept { return ( begin() + index )->second.second; }
 
   /** accessor to start phi angle
    *  @return start phi angle
    */
-  inline double startPhiAngle() const { return m_startPhiAngle; }
+  inline double startPhiAngle() const noexcept { return m_startPhiAngle; }
 
   /** accessor to delta phi angle
    *  @return delta phi angle
    */
-  inline double deltaPhiAngle() const { return m_deltaPhiAngle; }
+  inline double deltaPhiAngle() const noexcept { return m_deltaPhiAngle; }
 
   /** find the index from the z position
    *  @param thisz z-position
@@ -203,11 +207,16 @@ public:
 
 protected:
   /** static function to generate triplets for a cone */
-  static Triplets makeTriplets( double ZHalfLength, double OuterRadiusMinusZ, double OuterRadiusPlusZ,
-                                double InnerRadiusMinusZ, double InnerRadiusPlusZ );
+  static Triplets makeTriplets( const double ZHalfLength,       //
+                                const double OuterRadiusMinusZ, //
+                                const double OuterRadiusPlusZ,  //
+                                const double InnerRadiusMinusZ, //
+                                const double InnerRadiusPlusZ );
 
   /** static function to generate triplets for a tubs */
-  static Triplets makeTriplets( double ZHalfLength, double OuterRadius, double InnerRadius ) {
+  static Triplets makeTriplets( const double ZHalfLength, //
+                                const double OuterRadius, //
+                                const double InnerRadius ) {
     return makeTriplets( ZHalfLength, OuterRadius, OuterRadius, InnerRadius, InnerRadius );
   }
 
@@ -229,12 +238,15 @@ private:
   bool isInsideImpl( const aPoint& point ) const;
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( const aPoint&  Point,  //
+                                      const aVector& Vector, //
+                                      ISolid::Ticks& ticks ) const;
 
   /// check if phi is in phi range
   inline bool insidePhi( const double phi /* [-pi,pi] */ ) const {
-    return noPhiGap() || ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) ||
-           ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI );
+    return ( noPhiGap() ||                                                             //
+             ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) || //
+             ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI ) );
   }
 
   /// gap in phi ?
@@ -255,4 +267,3 @@ private:
 // ============================================================================
 // The END
 // ============================================================================
-#endif ///< DETDESC_SOLIDPOLYCONE_H

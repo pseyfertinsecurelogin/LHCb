@@ -22,8 +22,8 @@
 #include "DetDesc/SolidTubs.h"
 // boost
 #include "boost/container/static_vector.hpp"
-// VDT
-#include "vdt/atan2.h"
+// LHCbMath
+#include "LHCbMath/FastMaths.h"
 // ============================================================================
 /** @file SolidCons.cpp
  *
@@ -48,9 +48,15 @@
  *  @exception SolidException    wrong parameters range
  */
 // ============================================================================
-SolidCons::SolidCons( const std::string& name, double ZHalfLength, double OuterRadiusMinusZ, double OuterRadiusPlusZ,
-                      double InnerRadiusMinusZ, double InnerRadiusPlusZ, double StartPhiAngle, double DeltaPhiAngle,
-                      int CoverModel )
+SolidCons::SolidCons( const std::string& name,              //
+                      double             ZHalfLength,       //
+                      double             OuterRadiusMinusZ, //
+                      double             OuterRadiusPlusZ,  //
+                      double             InnerRadiusMinusZ, //
+                      double             InnerRadiusPlusZ,  //
+                      double             StartPhiAngle,     //
+                      double             DeltaPhiAngle,     //
+                      int                CoverModel )
     : SolidBase( name )
     , m_cons_zHalfLength( ZHalfLength )
     , m_cons_outerRadiusMinusZ( OuterRadiusMinusZ )
@@ -197,21 +203,6 @@ bool SolidCons::isInside( const Gaudi::Polar3DPoint& point ) const { return isIn
 // ============================================================================
 bool SolidCons::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidCons::isInsideImpl( const aPoint& point ) const {
-  if ( isOutBBox( point ) ) { return false; }
-  // check for phi
-  if ( !insidePhi( point ) ) { return false; }
-  // check for radius
-  const double rho2 = point.perp2();
-  const double oR   = oR_z( point.z() );
-  if ( rho2 > oR * oR ) { return false; }
-  const double iR = iR_z( point.z() );
-  if ( rho2 < iR * iR ) { return false; }
-  //
-  return true;
-}
-// ============================================================================
 
 // ============================================================================/
 /** -# retrieve the pointer to "simplified" solid - "cover"
@@ -281,6 +272,9 @@ bool SolidCons::testForIntersection( const Gaudi::RhoZPhiPoint& Point, const Gau
 // ============================================================================
 template <class aPoint, class aVector>
 bool SolidCons::testForIntersectionImpl( const aPoint& Point, const aVector& Vector ) const {
+
+  using namespace LHCb::Math;
+
   // line with null direction vector is not able to intersect any solid
   if ( Vector.mag2() <= 0 ) { return false; }
 
@@ -294,7 +288,7 @@ bool SolidCons::testForIntersectionImpl( const aPoint& Point, const aVector& Vec
     const auto y  = Point.y() + interZ.second * Vector.y();
     const auto r2 = ( ( x * x ) + ( y * y ) );
     if ( innerRadiusSqrAtMinusZ() <= r2 && outerRadiusSqrAtMinusZ() >= r2 &&
-         ( noPhiGap() || insidePhi( std::atan2( y, x ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
       return true;
     }
   }
@@ -306,7 +300,7 @@ bool SolidCons::testForIntersectionImpl( const aPoint& Point, const aVector& Vec
     const auto y  = Point.y() + interZ.second * Vector.y();
     const auto r2 = ( ( x * x ) + ( y * y ) );
     if ( innerRadiusSqrAtPlusZ() <= r2 && outerRadiusSqrAtPlusZ() >= r2 &&
-         ( noPhiGap() || insidePhi( std::atan2( y, x ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
       return true;
     }
   }
@@ -348,7 +342,7 @@ bool SolidCons::testForIntersectionImpl( const aPoint& Point, const aVector& Vec
   // check that we are in the right z and phi range
   for ( const auto& tick : tmpticks ) {
     if ( fabs( Point.z() + tick * Vector.z() ) <= zHalfLength() &&
-         ( noPhiGap() || insidePhi( std::atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) ) {
       return true;
     }
   }
@@ -367,24 +361,31 @@ bool SolidCons::testForIntersectionImpl( const aPoint& Point, const aVector& Vec
  *  @return the number of intersection points (=size of Ticks container)
  */
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                           const Gaudi::XYZVector& Vector, //
+                                           ISolid::Ticks&          ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                           const Gaudi::Polar3DVector& Vector, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                           const Gaudi::RhoZPhiVector& Vector, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidCons::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
+unsigned int SolidCons::intersectionTicksImpl( const aPoint&  Point,  //
+                                               const aVector& Vector, //
                                                ISolid::Ticks& ticks ) const {
+
+  using namespace LHCb::Math;
+
   // Clear the tick vector
   ticks.clear();
 
@@ -403,7 +404,7 @@ unsigned int SolidCons::intersectionTicksImpl( const aPoint& Point, const aVecto
     const auto y    = Point.y() + tick * Vector.y();
     const auto r2   = ( ( x * x ) + ( y * y ) );
     if ( innerRadiusSqrAtMinusZ() <= r2 && outerRadiusSqrAtMinusZ() >= r2 &&
-         ( noPhiGap() || insidePhi( std::atan2( y, x ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
       ticks.emplace_back( tick );
     }
   }
@@ -416,7 +417,7 @@ unsigned int SolidCons::intersectionTicksImpl( const aPoint& Point, const aVecto
     const auto y    = Point.y() + tick * Vector.y();
     const auto r2   = ( ( x * x ) + ( y * y ) );
     if ( innerRadiusSqrAtPlusZ() <= r2 && outerRadiusSqrAtPlusZ() >= r2 &&
-         ( noPhiGap() || insidePhi( std::atan2( y, x ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
       ticks.emplace_back( tick );
     }
   }
@@ -456,7 +457,7 @@ unsigned int SolidCons::intersectionTicksImpl( const aPoint& Point, const aVecto
   // check that we are in the right z and phi range
   for ( const auto& tick : tmpticks ) {
     if ( fabs( Point.z() + tick * Vector.z() ) <= zHalfLength() &&
-         ( noPhiGap() || insidePhi( std::atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) ) {
+         ( noPhiGap() || insidePhi( fast_atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) ) {
       ticks.emplace_back( tick );
     }
   }
@@ -543,27 +544,36 @@ MsgStream& SolidCons::printOut( MsgStream& os ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                           const Gaudi::XYZVector& Vector,  //
+                                           const ISolid::Tick&     tickMin, //
+                                           const ISolid::Tick&     tickMax, //
+                                           ISolid::Ticks&          ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                           const Gaudi::Polar3DVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidCons::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                           ISolid::Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                           const Gaudi::RhoZPhiVector& Vector,  //
+                                           const ISolid::Tick&         tickMin, //
+                                           const ISolid::Tick&         tickMax, //
+                                           ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidCons::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const Tick& tickMin,
-                                               const Tick& tickMax, Ticks& ticks ) const {
+unsigned int SolidCons::intersectionTicksImpl( const aPoint&  Point,   //
+                                               const aVector& Vector,  //
+                                               const Tick&    tickMin, //
+                                               const Tick&    tickMax, //
+                                               Ticks&         ticks ) const {
   return SolidBase::intersectionTicks( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================

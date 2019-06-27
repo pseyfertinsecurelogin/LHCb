@@ -17,7 +17,7 @@
 #ifdef __INTEL_COMPILER             // Disable ICC remark
 #  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
-#include "DetDesc/Solid.h"
+
 #include "DetDesc/SolidException.h"
 #include "DetDesc/SolidSubtraction.h"
 
@@ -67,16 +67,6 @@ bool SolidSubtraction::isInside( const Gaudi::Polar3DPoint& point ) const { retu
 // ============================================================================
 bool SolidSubtraction::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidSubtraction::isInsideImpl( const aPoint& point ) const {
-  /// check bounding box
-  if ( isOutBBox( point ) ) { return false; }
-  ///  is point inside the "main" volume?
-  if ( !first()->isInside( point ) ) { return false; }
-  /// find a daughter in which the given point is placed
-  auto c = children();
-  return std::none_of( begin( c ), end( c ), Solid::isInside( point ) );
-}
 
 // ============================================================================
 /** subtract child solid to the solid
@@ -85,7 +75,9 @@ bool SolidSubtraction::isInsideImpl( const aPoint& point ) const {
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidSubtraction::subtract( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx ) {
+StatusCode SolidSubtraction::subtract( std::unique_ptr<ISolid>   solid, //
+                                       const Gaudi::Transform3D* mtrx   //
+) {
   return addChild( std::move( solid ), mtrx );
 }
 
@@ -97,8 +89,10 @@ StatusCode SolidSubtraction::subtract( std::unique_ptr<ISolid> solid, const Gaud
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidSubtraction::subtract( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
-                                       const Gaudi::Rotation3D& rotation ) {
+StatusCode SolidSubtraction::subtract( std::unique_ptr<ISolid>  child,    //
+                                       const Gaudi::XYZPoint&   position, //
+                                       const Gaudi::Rotation3D& rotation  //
+) {
   return addChild( std::move( child ), position, rotation );
 }
 // ============================================================================

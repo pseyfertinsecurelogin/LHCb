@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef __DETDESC_SOLID_SOLIDPRIMITIVES_H__
-#define __DETDESC_SOLID_SOLIDPRIMITIVES_H__
+
+#pragma once
 
 #include "DetDesc/SolidBox.h"
 #include "DetDesc/SolidCons.h"
@@ -18,5 +18,3 @@
 #include "DetDesc/SolidTrap.h"
 #include "DetDesc/SolidTrd.h"
 #include "DetDesc/SolidTubs.h"
-
-#endif //  __DETDESC_SOLID_SOLIDPRIMITIVES_H__

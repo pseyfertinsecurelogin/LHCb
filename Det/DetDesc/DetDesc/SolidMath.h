@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef DETDESC_SOLIDMATH_H
-#define DETDESC_SOLIDMATH_H 1
+#pragma once
 // Include files
 #include "GaudiKernel/Kernel.h" // (UN)LIKELY
 #include <algorithm>            // std::min, std::max
@@ -339,4 +338,3 @@ namespace SolidTicks {
 // ============================================================================
 // The END
 // ============================================================================
-#endif // DETDESC_SOLIDMATH_H

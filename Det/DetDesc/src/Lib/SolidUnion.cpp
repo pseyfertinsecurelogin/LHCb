@@ -64,16 +64,6 @@ bool SolidUnion::isInside( const Gaudi::Polar3DPoint& point ) const { return isI
 // ============================================================================
 bool SolidUnion::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidUnion::isInsideImpl( const aPoint& point ) const {
-  /// check bounding box
-  if ( isOutBBox( point ) ) { return false; }
-  ///  is point inside the "main" volume?
-  if ( first()->isInside( point ) ) { return true; }
-  /// find the first daughter in which the given point is placed
-  auto c = children();
-  return std::any_of( begin( c ), end( c ), Solid::isInside( point ) );
-}
 
 // ============================================================================
 /** add child solid to the solid union
@@ -82,7 +72,8 @@ bool SolidUnion::isInsideImpl( const aPoint& point ) const {
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidUnion::unite( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx ) {
+StatusCode SolidUnion::unite( std::unique_ptr<ISolid>   solid, //
+                              const Gaudi::Transform3D* mtrx ) {
   auto sc = addChild( std::move( solid ), mtrx );
   return sc.isSuccess() ? updateBP() : sc;
 }
@@ -94,7 +85,8 @@ StatusCode SolidUnion::unite( std::unique_ptr<ISolid> solid, const Gaudi::Transf
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidUnion::unite( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+StatusCode SolidUnion::unite( std::unique_ptr<ISolid>  child,    //
+                              const Gaudi::XYZPoint&   position, //
                               const Gaudi::Rotation3D& rotation ) {
   auto sc = addChild( std::move( child ), position, rotation );
   return sc.isSuccess() ? updateBP() : sc;
@@ -106,10 +98,10 @@ StatusCode SolidUnion::unite( std::unique_ptr<ISolid> child, const Gaudi::XYZPoi
  */
 // ============================================================================
 void SolidUnion::createCoverTop() {
-  const double x = std::max( std::abs( xMin() ), std::abs( xMax() ) );
-  const double y = std::max( std::abs( yMin() ), std::abs( yMax() ) );
-  const double z = std::max( std::abs( zMin() ), std::abs( zMax() ) );
-  m_coverTop     = std::make_unique<SolidBox>( "CoverTop for " + name(), x, y, z );
+  const auto x = std::max( std::abs( xMin() ), std::abs( xMax() ) );
+  const auto y = std::max( std::abs( yMin() ), std::abs( yMax() ) );
+  const auto z = std::max( std::abs( zMin() ), std::abs( zMax() ) );
+  m_coverTop   = std::make_unique<SolidBox>( "CoverTop for " + name(), x, y, z );
 }
 // ============================================================================
 

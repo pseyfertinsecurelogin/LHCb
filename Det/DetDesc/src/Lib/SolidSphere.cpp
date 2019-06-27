@@ -46,12 +46,15 @@
  *  @param CoverModel       covering model
  */
 // ============================================================================
-SolidSphere::SolidSphere( const std::string& name, const double OuterRadius, const double InsideRadius,
-                          const double StartPhiAngle, const double DeltaPhiAngle, const double StartThetaAngle,
-                          const double DeltaThetaAngle, const int CoverModel )
+SolidSphere::SolidSphere( const std::string& name,            //
+                          const double       OuterRadius,     //
+                          const double       InsideRadius,    //
+                          const double       StartPhiAngle,   //
+                          const double       DeltaPhiAngle,   //
+                          const double       StartThetaAngle, //
+                          const double       DeltaThetaAngle, //
+                          const int          CoverModel )
     : SolidBase( name )
-    , m_sphere_outerR2( 0 )
-    , m_sphere_insideR2( 0 )
     , m_sphere_startPhiAngle( StartPhiAngle )
     , m_sphere_deltaPhiAngle( DeltaPhiAngle )
     , m_sphere_startThetaAngle( StartThetaAngle )
@@ -235,19 +238,6 @@ bool SolidSphere::isInside( const Gaudi::Polar3DPoint& point ) const { return is
 // ============================================================================
 bool SolidSphere::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template <class aPoint>
-bool SolidSphere::isInsideImpl( const aPoint& point ) const {
-  // check bounding box
-  if ( isOutBBox( point ) ) { return false; }
-  // check for radius
-  if ( !insideR( point ) ) { return false; }
-  // check for theta
-  if ( !insideTheta( point ) ) { return false; }
-  // check for phi
-  if ( !insidePhi( point ) ) { return false; }
-  //
-  return true;
-}
 
 // ===========================================================================
 /** -# retrieve the pointer to "simplified" solid - "cover"
@@ -348,47 +338,59 @@ void SolidSphere::createCover() {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidSphere::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                             ISolid::Ticks& ticks ) const {
+unsigned int SolidSphere::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                             const Gaudi::XYZVector& Vector, //
+                                             ISolid::Ticks&          ticks   //
+                                             ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidSphere::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                             ISolid::Ticks& ticks ) const {
+unsigned int SolidSphere::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                             const Gaudi::Polar3DVector& Vector, //
+                                             ISolid::Ticks&              ticks   //
+                                             ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidSphere::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                             ISolid::Ticks& ticks ) const {
+unsigned int SolidSphere::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                             const Gaudi::RhoZPhiVector& Vector, //
+                                             ISolid::Ticks&              ticks   //
+                                             ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidSphere::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
-                                                 ISolid::Ticks& ticks ) const {
+unsigned int SolidSphere::intersectionTicksImpl( const aPoint&  Point,  //
+                                                 const aVector& Vector, //
+                                                 ISolid::Ticks& ticks   //
+                                                 ) const {
+  unsigned int rc = 0;
   ticks.clear();
   /// line with null direction vector in not able to intersect something
-  if ( Vector.mag2() <= 0 ) { return 0; } ///<  RETURN !!!
-  ///  try to intersect with sphere outer radius
-  if ( 0 == SolidTicks::LineIntersectsTheSphere( Point, Vector, outerRadius(), std::back_inserter( ticks ) ) ) {
-    return 0;
-  } ///< RETURN !!!
-  /// check for intersection with inner radius
-  if ( insideRadius() > 0 ) {
-    SolidTicks::LineIntersectsTheSphere( Point, Vector, insideRadius(), std::back_inserter( ticks ) );
+  if ( Vector.mag2() > 0 ) {
+    ///  try to intersect with sphere outer radius
+    if ( 0 != SolidTicks::LineIntersectsTheSphere( Point, Vector, outerRadius(), std::back_inserter( ticks ) ) ) {
+      /// check for intersection with inner radius
+      if ( insideRadius() > 0 ) {
+        SolidTicks::LineIntersectsTheSphere( Point, Vector, insideRadius(), std::back_inserter( ticks ) );
+      }
+      // check for phi angle
+      if ( 0 * Gaudi::Units::degree != startPhiAngle() || //
+           360 * Gaudi::Units::degree != deltaPhiAngle() ) {
+        SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( ticks ) );
+        SolidTicks::LineIntersectsThePhi( Point, Vector, endPhiAngle(), std::back_inserter( ticks ) );
+      }
+      /// check for theta angle
+      if ( 0 * Gaudi::Units::degree != startThetaAngle() || //
+           180 * Gaudi::Units::degree != deltaThetaAngle() ) {
+        SolidTicks::LineIntersectsTheTheta( Point, Vector, startThetaAngle(), std::back_inserter( ticks ) );
+        SolidTicks::LineIntersectsTheTheta( Point, Vector, endThetaAngle(), std::back_inserter( ticks ) );
+      }
+      /// sort and remove adjancent and some EXTRA ticks
+      rc = SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, *this );
+    }
   }
-  // check for phi angle
-  if ( 0 * Gaudi::Units::degree != startPhiAngle() || 360 * Gaudi::Units::degree != deltaPhiAngle() ) {
-    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( ticks ) );
-    SolidTicks::LineIntersectsThePhi( Point, Vector, endPhiAngle(), std::back_inserter( ticks ) );
-  }
-  /// check for theta angle
-  if ( 0 * Gaudi::Units::degree != startThetaAngle() || 180 * Gaudi::Units::degree != deltaThetaAngle() ) {
-    SolidTicks::LineIntersectsTheTheta( Point, Vector, startThetaAngle(), std::back_inserter( ticks ) );
-    SolidTicks::LineIntersectsTheTheta( Point, Vector, endThetaAngle(), std::back_inserter( ticks ) );
-  }
-  /// sort and remove adjancent and some EXTRA ticks and return
-  return SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, *this );
+  return rc;
 }
 
 // ============================================================================

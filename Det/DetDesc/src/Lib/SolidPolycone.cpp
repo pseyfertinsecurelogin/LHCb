@@ -20,6 +20,8 @@
 #include "DetDesc/SolidException.h"
 #include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidTubs.h"
+// LHCbMath
+#include "LHCbMath/FastMaths.h"
 
 //=============================================================================
 /** @file SolidPolycone.cpp
@@ -40,8 +42,10 @@
  *  @param DeltaPhiAngle the opening angle
  */
 //=============================================================================
-SolidPolycone::SolidPolycone( const std::string& Name, const SolidPolycone::Triplets& Params,
-                              const double StartPhiAngle, const double DeltaPhiAngle )
+SolidPolycone::SolidPolycone( const std::string&             Name,          //
+                              const SolidPolycone::Triplets& Params,        //
+                              const double                   StartPhiAngle, //
+                              const double                   DeltaPhiAngle )
     : SolidBase( Name ), m_triplets( Params ), m_startPhiAngle( StartPhiAngle ), m_deltaPhiAngle( DeltaPhiAngle ) {
   /// check for parameters
   if ( number() < 2 ) { throw SolidException( "SolidPolycone:: wrong number of sections!" ); }
@@ -194,21 +198,21 @@ bool SolidPolycone::isInsideImpl( const aPoint& point ) const {
   if ( !insidePhi( point.phi() ) ) { return false; }
 
   /// check radius
-  Iterator it = std::find_if( begin(), end(), [&]( const Triplet& i ) { return i.first >= point.z(); } );
+  auto it = std::find_if( begin(), end(), [&]( const Triplet& i ) { return i.first >= point.z(); } );
 
   /// outside!
   if ( begin() == it || end() == it ) { return false; }
 
-  const double rho = std::sqrt( point.perp2() );
-
   const unsigned int i2    = it - begin();
   const unsigned int i1    = i2 - 1;
-  const double       zfrac = ( point.z() - z( i1 ) ) / ( z( i2 ) - z( i1 ) );
-  const double       rmax  = ( 1 - zfrac ) * RMax( i1 ) + zfrac * RMax( i2 );
-  const double       rmin  = ( 1 - zfrac ) * RMin( i1 ) + zfrac * RMin( i2 );
-  if ( rho > rmax || rho < rmin ) return false;
+  const auto         zfrac = ( point.z() - z( i1 ) ) / ( z( i2 ) - z( i1 ) );
+  const auto         rmax  = ( 1 - zfrac ) * RMax( i1 ) + zfrac * RMax( i2 );
+  const auto         rmin  = ( 1 - zfrac ) * RMin( i1 ) + zfrac * RMin( i2 );
 
-  return true;
+  // const auto rho = std::sqrt( point.perp2() );
+  // return !( rho > rmax || rho < rmin );
+  const auto rho2 = point.perp2();
+  return !( rho2 > ( rmax * rmax ) || rho2 < ( rmin * rmin ) );
 }
 
 // ============================================================================/
@@ -222,10 +226,9 @@ void SolidPolycone::createCover() {
   if ( 0.0 != startPhiAngle() || 360 * Gaudi::Units::degree != deltaPhiAngle() ) {
     m_cover = std::make_unique<SolidPolycone>( "Cover for " + name(), triplets() );
   } else {
-    double rmxmx = RMin( 0 );
-    double rmnmn = RMax( 0 );
-    double zmxmx = std::abs( z( 0 ) );
-    ///
+    auto rmxmx = RMin( 0 );
+    auto rmnmn = RMax( 0 );
+    auto zmxmx = std::abs( z( 0 ) );
     for ( unsigned int i = 1; i < number(); ++i ) {
       if ( RMax( i ) > rmxmx ) { rmxmx = RMax( i ); }
       if ( RMin( i ) < rmnmn ) { rmnmn = RMin( i ); }
@@ -311,24 +314,30 @@ MsgStream& SolidPolycone::printOut( MsgStream& os ) const {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidPolycone::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                               ISolid::Ticks& ticks ) const {
+unsigned int SolidPolycone::intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                               const Gaudi::XYZVector& Vector, //
+                                               ISolid::Ticks&          ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidPolycone::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                               ISolid::Ticks& ticks ) const {
+unsigned int SolidPolycone::intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                               const Gaudi::Polar3DVector& Vector, //
+                                               ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidPolycone::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                               ISolid::Ticks& ticks ) const {
+unsigned int SolidPolycone::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                               const Gaudi::RhoZPhiVector& Vector, //
+                                               ISolid::Ticks&              ticks ) const {
   return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidPolycone::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
+unsigned int SolidPolycone::intersectionTicksImpl( const aPoint&  Point,  //
+                                                   const aVector& Vector, //
                                                    ISolid::Ticks& ticks ) const {
+  using namespace LHCb::Math;
+
   // check tick capacity
   checkTickContainerCapacity();
 
@@ -345,22 +354,27 @@ unsigned int SolidPolycone::intersectionTicksImpl( const aPoint& Point, const aV
   ISolid::Ticks tmpticks;
   tmpticks.clear();
   if ( SolidTicks::LineIntersectsTheZ( Point, Vector, z( 0 ), std::back_inserter( tmpticks ) ) ) {
-    double tick = tmpticks.front();
-    double x    = Point.x() + tick * Vector.x();
-    double y    = Point.y() + tick * Vector.y();
-    double r    = sqrt( x * x + y * y );
-    if ( RMin( 0 ) <= r && r <= RMax( 0 ) && ( noPhiGap() || insidePhi( atan2( y, x ) ) ) ) ticks.push_back( tick );
+    const auto tick = tmpticks.front();
+    const auto x    = Point.x() + tick * Vector.x();
+    const auto y    = Point.y() + tick * Vector.y();
+    const auto r    = std::sqrt( x * x + y * y );
+    if ( RMin( 0 ) <= r && r <= RMax( 0 ) && //
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
+      ticks.push_back( tick );
+    }
   }
 
   // intersect with last z-plane
   tmpticks.clear();
   if ( SolidTicks::LineIntersectsTheZ( Point, Vector, z( number() - 1 ), std::back_inserter( tmpticks ) ) ) {
-    double tick = tmpticks.front();
-    double x    = Point.x() + tick * Vector.x();
-    double y    = Point.y() + tick * Vector.y();
-    double r    = sqrt( x * x + y * y );
-    if ( RMin( number() - 1 ) <= r && r <= RMax( number() - 1 ) && ( noPhiGap() || insidePhi( atan2( y, x ) ) ) )
+    const auto tick = tmpticks.front();
+    const auto x    = Point.x() + tick * Vector.x();
+    const auto y    = Point.y() + tick * Vector.y();
+    const auto r    = std::sqrt( x * x + y * y );
+    if ( RMin( number() - 1 ) <= r && r <= RMax( number() - 1 ) && //
+         ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) ) {
       ticks.push_back( tick );
+    }
   }
 
   if ( !noPhiGap() ) {
@@ -372,19 +386,18 @@ unsigned int SolidPolycone::intersectionTicksImpl( const aPoint& Point, const aV
                                       std::back_inserter( tmpticks ) );
 
     // check that we are anywhere inside this cylinder
-    for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
-      double thisz = Point.z() + *it * Vector.z();
+    for ( const auto& tick : tmpticks ) {
+      const auto thisz = Point.z() + tick * Vector.z();
       if ( z( 0 ) <= thisz && thisz <= z( number() - 1 ) ) {
-        Triplets::size_type i = index( thisz );
-        // std::cout << "in phi: " << thisz << " " << z(i) << " " << z(i+1) << std::endl ;
+        const auto i = index( thisz );
         assert( i < number() - 1 );
-        double zfrac = ( thisz - z( i ) ) / ( z( i + 1 ) - z( i ) );
-        double x     = Point.x() + *it * Vector.x();
-        double y     = Point.y() + *it * Vector.y();
-        double r     = sqrt( x * x + y * y );
+        const auto zfrac = ( thisz - z( i ) ) / ( z( i + 1 ) - z( i ) );
+        const auto x     = Point.x() + tick * Vector.x();
+        const auto y     = Point.y() + tick * Vector.y();
+        const auto r     = std::sqrt( x * x + y * y );
         if ( r >= ( ( 1 - zfrac ) * RMin( i ) + zfrac * RMin( i + 1 ) ) &&
              r <= ( ( 1 - zfrac ) * RMax( i ) + zfrac * RMax( i + 1 ) ) )
-          ticks.push_back( *it );
+          ticks.push_back( tick );
       }
     }
   }
@@ -401,21 +414,21 @@ unsigned int SolidPolycone::intersectionTicksImpl( const aPoint& Point, const aV
         SolidTicks::LineIntersectsTheCone( Point, Vector, RMin( i - 1 ), RMin( i ), z( i - 1 ), z( i ),
                                            std::back_inserter( tmpticks ) );
       // check that we are in the right z and phi range
-      for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
-        double thisz = Point.z() + *it * Vector.z();
+      for ( const auto& tick : tmpticks ) {
+        const auto thisz = Point.z() + tick * Vector.z();
         if ( z( i - 1 ) <= thisz && thisz <= z( i ) &&
-             ( noPhiGap() || insidePhi( atan2( Point.y() + *it * Vector.y(), Point.x() + *it * Vector.x() ) ) ) )
-          ticks.push_back( *it );
+             ( noPhiGap() || insidePhi( fast_atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) )
+          ticks.push_back( tick );
       }
     } else {
       // double z-plane: intersect with this z-plane
       tmpticks.clear();
       if ( SolidTicks::LineIntersectsTheZ( Point, Vector, z( i ), std::back_inserter( tmpticks ) ) ) {
-        double tick = tmpticks.front();
-        double x    = Point.x() + tick * Vector.x();
-        double y    = Point.y() + tick * Vector.y();
-        double r    = sqrt( x * x + y * y );
-        if ( noPhiGap() || insidePhi( atan2( y, x ) ) ) {
+        const auto tick = tmpticks.front();
+        const auto x    = Point.x() + tick * Vector.x();
+        const auto y    = Point.y() + tick * Vector.y();
+        const auto r    = sqrt( x * x + y * y );
+        if ( noPhiGap() || insidePhi( fast_atan2( y, x ) ) ) {
           // take an excusive-OR
           bool insideFirst  = RMin( i - 1 ) <= r && r <= RMax( i - 1 );
           bool insideSecond = RMin( i ) <= r && r <= RMax( i );
@@ -431,9 +444,11 @@ unsigned int SolidPolycone::intersectionTicksImpl( const aPoint& Point, const aV
 
 //=============================================================================
 /** static function to generate triplets for a cone */
-SolidPolycone::Triplets SolidPolycone::makeTriplets( double ZHalfLength, double OuterRadiusMinusZ,
-                                                     double OuterRadiusPlusZ, double InnerRadiusMinusZ,
-                                                     double InnerRadiusPlusZ ) {
+SolidPolycone::Triplets SolidPolycone::makeTriplets( const double ZHalfLength,       //
+                                                     const double OuterRadiusMinusZ, //
+                                                     const double OuterRadiusPlusZ,  //
+                                                     const double InnerRadiusMinusZ, //
+                                                     const double InnerRadiusPlusZ ) {
   return {{-ZHalfLength, std::pair{InnerRadiusMinusZ, OuterRadiusMinusZ}},
           {ZHalfLength, std::pair{InnerRadiusPlusZ, OuterRadiusPlusZ}}};
 }

@@ -9,8 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifndef DETDESC_SOLIDPOLYHEDRONHELPER_H
-#define DETDESC_SOLIDPOLYHEDRONHELPER_H 1
+
+#pragma once
+
 /// STD & STL
 #include "boost/container/static_vector.hpp"
 #include <vector>
@@ -68,14 +69,17 @@ public:
    */
 
   using SolidBase::intersectionTicks;
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
@@ -96,7 +100,9 @@ protected:
    *  @param Point3  the third  3D-point of the plane
    *  @return "false" if 3 points belongs to one line
    */
-  bool addFace( const Gaudi::XYZPoint& Point1, const Gaudi::XYZPoint& Point2, const Gaudi::XYZPoint& Point3 );
+  bool addFace( const Gaudi::XYZPoint& Point1, //
+                const Gaudi::XYZPoint& Point2, //
+                const Gaudi::XYZPoint& Point3 );
 
   /**  add a face/plane given with 4 points
    *  @see addFace( const Gaudi::XYZPoint& , const Gaudi::XYZPoint& ,
@@ -105,23 +111,26 @@ protected:
    *  @param Point2  the second 3D-point of the plane
    *  @param Point3  the third  3D-point of the plane
    *  @param Point4  the fourth 3D-point of the plane
-   *  @exception SolidException  if 4 pointd do not define the place
+   *  @exception SolidException  if 4 points do not define the place
    *  @return "false" if 3 points belongs to one line
    */
-  bool addFace( const Gaudi::XYZPoint& Point1, const Gaudi::XYZPoint& Point2, const Gaudi::XYZPoint& Point3,
+  bool addFace( const Gaudi::XYZPoint& Point1, //
+                const Gaudi::XYZPoint& Point2, //
+                const Gaudi::XYZPoint& Point3, //
                 const Gaudi::XYZPoint& Point4 );
 
   /**  return vector of faces/planes
    *  @return vector of faces/planes
    */
-  inline const auto& planes() const { return m_ph_planes; }
+  inline const auto& planes() const noexcept { return m_ph_planes; }
 
   /** define "inside" method for the plane.
    *  Assume that normal direction is EXTERNAL!!!
    *  @return "true" if point is "inside"
    */
   template <class aPoint>
-  inline bool inside( const aPoint& Point, const Gaudi::Plane3D& Plane ) const {
+  inline bool inside( const aPoint&         Point, //
+                      const Gaudi::Plane3D& Plane ) const noexcept {
     return 0 >= Plane.Distance( Point );
   }
 
@@ -136,10 +145,37 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
+  inline bool isInsideImpl( const aPoint& point ) const noexcept {
+    return ( !planes().empty() && !isOutBBox( point ) &&
+             std::all_of( planes().begin(), planes().end(),
+                          [&]( const auto& plane ) //
+                          { return this->inside( point, plane ); } ) );
+  }
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  inline unsigned int __attribute__( ( always_inline ) ) //
+  intersectionTicksImpl( const aPoint&  Point,           //
+                         const aVector& Vector,          //
+                         ISolid::Ticks& ticks            //
+                         ) const {
+    // clear the output container
+    ticks.clear();
+    unsigned int ret = 0;
+    // check for valid arguments
+    if ( LIKELY( 0 != Vector.mag2() ) ) {
+      // line touches the bounding sphere?
+      if ( LIKELY( crossBSphere( Point, Vector ) ) ) {
+        // loop over all faces
+        ticks.reserve( planes().size() );
+        for ( const auto& plane : planes() ) {
+          const auto vn = Vector.Dot( plane.Normal() );
+          if ( LIKELY( 0 != vn ) ) { ticks.emplace_back( -1.0 * ( plane.Distance( Point ) / vn ) ); }
+        }
+        ret = SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, *this );
+      }
+    }
+    return ret;
+  }
 
 protected:
   /// vector of faces/planes
@@ -150,4 +186,3 @@ protected:
 // ===========================================================================
 // The END
 // ===========================================================================
-#endif ///<  DETDESC_SOLIDPOLYHEDRONHELPER_H

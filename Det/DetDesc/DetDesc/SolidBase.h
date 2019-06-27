@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_SOLIDBASE_H
-#define DETDESC_SOLIDBASE_H 1
+#pragma once
 
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
@@ -80,12 +79,15 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -109,17 +111,23 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                  const Gaudi::XYZVector& Vector,  //
+                                  const ISolid::Tick&     tickMin, //
+                                  const ISolid::Tick&     tickMax, //
+                                  ISolid::Ticks&          ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                  const Gaudi::Polar3DVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                  const Gaudi::RhoZPhiVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks ) const override;
 
   /** - query the interface
    *  - implementation of IInterface abstract interface
@@ -171,10 +179,10 @@ public:
 
 public:
   /// accessor to "maximal r" value of the solid("bounding sphere")
-  inline double rMax() const { return m_rmax; }
+  inline double rMax() const noexcept { return m_rmax; }
 
   /// accessor to "maximal rho" value of the solid("bounding sphere")
-  inline double rhoMax() const { return m_rhomax; }
+  inline double rhoMax() const noexcept { return m_rhomax; }
 
 protected:
   /** Fast check if the point is outside the bounding box of the solid
@@ -183,18 +191,26 @@ protected:
    *  @return true of point is outside the bounding box
    */
   template <class aPoint>
-  inline bool isOutBBox( const aPoint& point, const double tolerance ) const {
-    return point.z() < zMin() - tolerance || point.z() > zMax() + tolerance || point.x() < xMin() - tolerance ||
-           point.x() > xMax() + tolerance || point.y() < yMin() - tolerance || point.y() > yMax() + tolerance;
+  inline bool isOutBBox( const aPoint& point, const double tolerance ) const noexcept {
+    return ( point.z() < zMin() - tolerance || //
+             point.z() > zMax() + tolerance || //
+             point.x() < xMin() - tolerance || //
+             point.x() > xMax() + tolerance || //
+             point.y() < yMin() - tolerance || //
+             point.y() > yMax() + tolerance );
   }
   /** Fast check if the point is outside the bounding box of the solid
    *  @param point     point to be checked
    *  @return true of point is outside the bounding box
    */
   template <class aPoint>
-  inline bool isOutBBox( const aPoint& point ) const {
-    return point.z() < zMin() || point.z() > zMax() || point.x() < xMin() || point.x() > xMax() || point.y() < yMin() ||
-           point.y() > yMax();
+  inline bool isOutBBox( const aPoint& point ) const noexcept {
+    return ( point.z() < zMin() || //
+             point.z() > zMax() || //
+             point.x() < xMin() || //
+             point.x() > xMax() || //
+             point.y() < yMin() || //
+             point.y() > yMax() );
   }
 
   /** Fast check if the point is outside the bounding sphere of the solid
@@ -203,8 +219,8 @@ protected:
    *  @return true of point is outside the bounding sphere
    */
   template <class aPoint>
-  inline bool isOutBSphere( const aPoint& point, const double tolerance ) const {
-    const double rmax = rMax() + tolerance;
+  inline bool isOutBSphere( const aPoint& point, const double tolerance ) const noexcept {
+    const auto rmax = rMax() + tolerance;
     return rmax <= 0 || point.mag2() > rmax * rmax;
   }
 
@@ -224,12 +240,15 @@ protected:
    *  @return true of point is outside the bounding cylinder
    */
   template <class aPoint>
-  inline bool isOutBCylinder( const aPoint& point, const double tolerance ) const {
-    const double rhomax = rhoMax() + tolerance;
-    return rhomax <= 0 ? true
-                       : point.z() < zMin() - tolerance
+  inline bool isOutBCylinder( const aPoint& point, const double tolerance ) const noexcept {
+    const auto rhomax = rhoMax() + tolerance;
+    return ( rhomax <= 0 //
+                 ? true
+                 : point.z() < zMin() - tolerance //
+                       ? true
+                       : point.z() > zMax() + tolerance //
                              ? true
-                             : point.z() > zMax() + tolerance ? true : point.perp2() > rhomax * rhomax ? true : false;
+                             : point.perp2() > rhomax * rhomax ? true : false );
   }
 
   /** Fast check if the point is outside the bounding cylinder
@@ -239,7 +258,9 @@ protected:
    */
   template <class aPoint>
   inline bool isOutBCylinder( const aPoint& point ) const {
-    return point.z() < zMin() || point.z() > zMax() || point.perp2() > rhoMax() * rhoMax();
+    return ( point.z() < zMin() || //
+             point.z() > zMax() || //
+             point.perp2() > rhoMax() * rhoMax() );
   }
 
   /** Fast check if the segment of the line between two points
@@ -251,11 +272,11 @@ protected:
    */
   template <class aPointA, class aPointB>
   inline bool isOutBBox( const aPointA& p1, const aPointB& p2, const double tolerance ) const {
-    return ( ( p1.z() < zMin() - tolerance && p2.z() < zMin() - tolerance ) ||
-             ( p1.z() > zMax() + tolerance && p2.z() > zMax() + tolerance ) ||
-             ( p1.x() < xMin() - tolerance && p2.x() < xMin() - tolerance ) ||
-             ( p1.x() > xMax() + tolerance && p2.x() > xMax() + tolerance ) ||
-             ( p1.y() < yMin() - tolerance && p2.y() < yMin() - tolerance ) ||
+    return ( ( p1.z() < zMin() - tolerance && p2.z() < zMin() - tolerance ) || //
+             ( p1.z() > zMax() + tolerance && p2.z() > zMax() + tolerance ) || //
+             ( p1.x() < xMin() - tolerance && p2.x() < xMin() - tolerance ) || //
+             ( p1.x() > xMax() + tolerance && p2.x() > xMax() + tolerance ) || //
+             ( p1.y() < yMin() - tolerance && p2.y() < yMin() - tolerance ) || //
              ( p1.y() > yMax() + tolerance && p2.y() > yMax() + tolerance ) );
   }
 
@@ -267,9 +288,12 @@ protected:
    */
   template <class aPointA, class aPointB>
   inline bool isOutBBox( const aPointA& p1, const aPointB& p2 ) const {
-    return ( p1.z() < zMin() && p2.z() < zMin() ) || ( p1.z() > zMax() && p2.z() > zMax() ) ||
-           ( p1.x() < xMin() && p2.x() < xMin() ) || ( p1.x() > xMax() && p2.x() > xMax() ) ||
-           ( p1.y() < yMin() && p2.y() < yMin() ) || ( p1.y() > yMax() && p2.y() > yMax() );
+    return ( ( p1.z() < zMin() && p2.z() < zMin() ) || //
+             ( p1.z() > zMax() && p2.z() > zMax() ) || //
+             ( p1.x() < xMin() && p2.x() < xMin() ) || //
+             ( p1.x() > xMax() && p2.x() > xMax() ) || //
+             ( p1.y() < yMin() && p2.y() < yMin() ) || //
+             ( p1.y() > yMax() && p2.y() > yMax() ) );
   }
 
   /** Fast check if the segment of the line between two points
@@ -282,8 +306,11 @@ protected:
    *  @return true if the whole segment is "outside" of the bounding box
    */
   template <class aPoint, class aVector>
-  inline bool isOutBBox( const aPoint& p, const aVector& v, const ISolid::Tick& tmin, const ISolid::Tick& tmax,
-                         const double tolerance ) const {
+  inline bool isOutBBox( const aPoint&       p,    //
+                         const aVector&      v,    //
+                         const ISolid::Tick& tmin, //
+                         const ISolid::Tick& tmax, //
+                         const double        tolerance ) const {
     return isOutBBox( p + tmin * v, p + tmax * v, tolerance );
   }
 
@@ -296,7 +323,10 @@ protected:
    *  @return true if the whole segment is "outside" of the bounding box
    */
   template <class aPoint, class aVector>
-  inline bool isOutBBox( const aPoint& p, const aVector& v, const ISolid::Tick& tmin, const ISolid::Tick& tmax ) const {
+  inline bool isOutBBox( const aPoint&       p,    //
+                         const aVector&      v,    //
+                         const ISolid::Tick& tmin, //
+                         const ISolid::Tick& tmax ) const {
     return isOutBBox( p + tmin * v, p + tmax * v );
   }
 
@@ -307,12 +337,14 @@ protected:
    *  @return true if line do not cross the bounding sphere
    */
   template <class aPoint, class aVector>
-  inline bool crossBSphere( const aPoint& p, const aVector& v, const double tolerance = 0 ) const {
-    const double pp   = p.mag2();
-    const double vv   = v.mag2();
-    const double pv   = p.Dot( v );
-    const double rmax = rMax() + tolerance;
-    const double dd   = rmax * rmax;
+  inline bool crossBSphere( const aPoint&  p, //
+                            const aVector& v, //
+                            const double   tolerance = 0 ) const {
+    const auto pp   = p.mag2();
+    const auto vv   = v.mag2();
+    const auto pv   = p.Dot( v );
+    const auto rmax = rMax() + tolerance;
+    const auto dd   = rmax * rmax;
     return ( rmax > 0 && !( 0 == vv && pp > dd ) && !( ( vv * pp ) - ( pv * pv ) > vv * dd ) );
   }
 
@@ -323,20 +355,22 @@ protected:
    *  @return true if line do not cross the surface of bounding cylinder
    */
   template <class aPoint, class aVector>
-  inline bool crossBCylinder( const aPoint& p, const aVector& v, const double tolerance = 0 ) const {
-    const double pp     = p.perp2();
-    const double vv     = v.perp2();
-    const double pv     = p.Dot( v ) - p.z() * v.z();
-    const double rhomax = rhoMax() + tolerance;
-    const double dd     = rhomax * rhomax;
+  inline bool crossBCylinder( const aPoint&  p, //
+                              const aVector& v, //
+                              const double   tolerance = 0 ) const {
+    const auto pp     = p.perp2();
+    const auto vv     = v.perp2();
+    const auto pv     = p.Dot( v ) - p.z() * v.z();
+    const auto rhomax = rhoMax() + tolerance;
+    const auto dd     = rhomax * rhomax;
     return ( rhomax > 0 && !( 0 == vv && pp > dd ) && !( ( vv * pp ) - ( pv * pv ) > vv * dd ) );
   }
 
 protected:
   /// set "maximal r" for the solid
-  inline void setRMax( const double value ) { m_rmax = value; }
+  inline void setRMax( const double value ) noexcept { m_rmax = value; }
   /// set "maximal r" for the solid
-  inline void setRhoMax( const double value ) { m_rhomax = value; }
+  inline void setRhoMax( const double value ) noexcept { m_rhomax = value; }
 
   /** check bounding parameters
    *  @exception SolidException
@@ -374,8 +408,11 @@ private:
   SolidBase( const SolidBase& )            = delete;
 
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                      const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( const aPoint&       Point,   //
+                                      const aVector&      Vector,  //
+                                      const ISolid::Tick& tickMin, //
+                                      const ISolid::Tick& tickMax, //
+                                      ISolid::Ticks&      ticks ) const;
 
   unsigned int intersectionTicksImpl( ISolid::Ticks& ticks ) const;
 
@@ -392,4 +429,3 @@ protected:
 // ===========================================================================
 // The End
 // ===========================================================================
-#endif //< DETDESC_SOLIDBASE_H

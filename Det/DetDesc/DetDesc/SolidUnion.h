@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_SOLIDUNION_H
-#define DETDESC_SOLIDUNION_H 1
+#pragma once
 
 /** STD & STL */
 #include <algorithm>
@@ -88,7 +87,8 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode unite( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+  StatusCode unite( std::unique_ptr<ISolid>  child,    //
+                    const Gaudi::XYZPoint&   position, //
                     const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
 
 protected:
@@ -105,10 +105,19 @@ protected:
 private:
   void createCoverTop(); /// create/reset the cover pointer
 
-  std::unique_ptr<SolidBox> m_coverTop;
   template <class aPoint>
-  bool isInsideImpl( const aPoint& point ) const;
+  inline bool isInsideImpl( const aPoint& point ) const {
+    /// check bounding box
+    if ( isOutBBox( point ) ) { return false; }
+    ///  is point inside the "main" volume?
+    if ( first()->isInside( point ) ) { return true; }
+    /// find the first daughter in which the given point is placed
+    auto c = children();
+    return std::any_of( begin( c ), end( c ), Solid::isInside( point ) );
+  }
+
+private:
+  std::unique_ptr<SolidBox> m_coverTop;
 };
 
 // ===========================================================================
-#endif ///<  DETDESC_SOLIDUNION_H

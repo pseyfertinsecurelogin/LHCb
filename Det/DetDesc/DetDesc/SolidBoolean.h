@@ -8,8 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_SOLIDBOOLEAN_H
-#define DETDESC_SOLIDBOOLEAN_H 1
+
+#pragma once
+
 /// STL & STD
 #include "range/v3/view/const.hpp"
 #include "range/v3/view/indirect.hpp"
@@ -19,6 +20,7 @@
 
 /// DetDesc
 #include "DetDesc/SolidChild.h"
+#include "DetDesc/SolidTicks.h"
 
 // Forward declarations
 class StatusCode;
@@ -37,7 +39,7 @@ class MsgStream;
 class SolidBoolean : public virtual SolidBase {
 public:
   //
-  typedef std::vector<std::unique_ptr<SolidChild>> SolidChildrens;
+  using SolidChildrens = std::vector<std::unique_ptr<SolidChild>>;
   //
 
   /** retrieve the specific type of the solid
@@ -80,14 +82,20 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points (=size of Ticks container)
    */
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,  //
+                                  const Gaudi::XYZVector& Vector, //
+                                  ISolid::Ticks&          ticks   //
+                                  ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,  //
+                                  const Gaudi::Polar3DVector& Vector, //
+                                  ISolid::Ticks&              ticks   //
+                                  ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,  //
+                                  const Gaudi::RhoZPhiVector& Vector, //
+                                  ISolid::Ticks&              ticks   //
+                                  ) const override;
 
   /** calculate the intersection points("ticks") with a given line.
    *  Input - line, paramterised by  x_vect = Point + Vector * T
@@ -101,17 +109,26 @@ public:
    *  between tickMin and tickMax
    */
 
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point,   //
+                                  const Gaudi::XYZVector& Vector,  //
+                                  const ISolid::Tick&     tickMin, //
+                                  const ISolid::Tick&     tickMax, //
+                                  ISolid::Ticks&          ticks    //
+                                  ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint&  Point,   //
+                                  const Gaudi::Polar3DVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks    //
+                                  ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
-                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,   //
+                                  const Gaudi::RhoZPhiVector& Vector,  //
+                                  const ISolid::Tick&         tickMin, //
+                                  const ISolid::Tick&         tickMax, //
+                                  ISolid::Ticks&              ticks    //
+                                  ) const override;
 
   /** poiter to the "main"/"first" boolean
    *  @return poiter to the "main"/"first" boolean
@@ -135,14 +152,18 @@ public:
   /** acess to constant iterator
    *  @return "begin" iterator
    */
-  [[deprecated( "please use begin(children()) instead" )]] SolidChildrens::const_iterator childBegin() const {
+  [[deprecated( "please use begin(children()) instead" )]] //
+  SolidChildrens::const_iterator
+  childBegin() const {
     return m_sb_childrens.begin();
   }
 
   /** acess to constant iterator
    *  @return "end" iterator
    */
-  [[deprecated( "please use end(children()) instead" )]] SolidChildrens::const_iterator childEnd() const {
+  [[deprecated( "please use end(children()) instead" )]] //
+  SolidChildrens::const_iterator
+  childEnd() const {
     return m_sb_childrens.end();
   }
 
@@ -166,14 +187,16 @@ protected:
    *  @param mtrx  pointer to transformation
    *  @return status code
    */
-  StatusCode addChild( std::unique_ptr<ISolid> child, const Gaudi::Transform3D* mtrx );
+  StatusCode addChild( std::unique_ptr<ISolid>   child, //
+                       const Gaudi::Transform3D* mtrx );
 
   /** add child to daughter container
    *  @param child    pointer to solid
    *  @param position position
    *  @param rotation rotation
    */
-  StatusCode addChild( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+  StatusCode addChild( std::unique_ptr<ISolid>  child,    //
+                       const Gaudi::XYZPoint&   position, //
                        const Gaudi::Rotation3D& rotation );
 
   /** acess to range of children
@@ -193,12 +216,72 @@ private:
   // assignement operator is disabled
   SolidBoolean& operator=( SolidBoolean& );
 
+  // ============================================================================
+  /** calculate the intersection points("ticks") with a given line.
+   *  Input - line, paramterised by  x_vect = Point + Vector * T
+   *  "tick" is just a value of T, at which the intersection occurs
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @param tickMin minimal value of "Tick"
+   *  @param tickMax maximal value of "Tick"
+   *  @param ticks output container of "Ticks"
+   *  @return the number of intersection points (=size of Ticks container)
+   *  between tickMin and tickMax
+   */
+  // ============================================================================
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
-                                      const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const;
+  inline unsigned int __attribute__( ( always_inline ) ) //
+  intersectionTicksImpl( const aPoint&       Point,      //
+                         const aVector&      Vector,     //
+                         const ISolid::Tick& tickMin,    //
+                         const ISolid::Tick& tickMax,    //
+                         ISolid::Ticks&      ticks       //
+                         ) const {
+    unsigned int ret = 0;
+    // check for bounding box
+    if ( !isOutBBox( Point, Vector, tickMin, tickMax ) ) {
+      ///
+      intersectionTicks( Point, Vector, ticks );
+      // sort and remove adjacent and some EXTRA ticks and return
+      ret = SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, tickMin, tickMax, *this );
+    }
+    return ret;
+  }
 
+  // ============================================================================
+  /** calculate the intersection points("ticks") with a given line.
+   *  Input - line, paramterised by  x_vect = Point + Vector * T
+   *  "tick" is just a value of T, at which the intersection occurs
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @param ticks output container of "Ticks"
+   *  @return the number of intersection points (=size of Ticks container)
+   */
+  // ============================================================================
   template <class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  inline unsigned int __attribute__( ( always_inline ) ) //
+  intersectionTicksImpl( const aPoint&  Point,           //
+                         const aVector& Vector,          //
+                         ISolid::Ticks& ticks            //
+                         ) const {
+    ticks.clear();
+    unsigned int ret = 0;
+    // line with null direction vector is not able to intersect any solid
+    if ( LIKELY( Vector.mag2() > 0 ) ) {
+      // find intersection with main solid:
+      first()->intersectionTicks( Point, Vector, ticks );
+      // find intersections with child solids:
+      ISolid::Ticks childTicks;
+      for ( const auto& child : children() ) {
+        child.intersectionTicks( Point, Vector, childTicks );
+        std::copy( childTicks.begin(), childTicks.end(), std::back_inserter( ticks ) );
+        childTicks.clear();
+      }
+      /// sort and remove adjacent and some EXTRA ticks and return
+      ret = SolidTicks::RemoveAdjacentTicks( ticks, Point, Vector, *this );
+    }
+    return ret;
+  }
 
 protected:
   /** set bounding parameters
@@ -214,4 +297,3 @@ private:
 };
 
 /// ===========================================================================
-#endif ///< DETDESC_SOLIDBOOLEAN_H
