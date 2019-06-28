@@ -98,7 +98,9 @@ namespace {
                                                     "x86_64-centos7-gcc8-dbg+asan",
                                                     "x86_64-centos7-gcc8-dbg+lsan",
                                                     "x86_64-centos7-gcc8-dbg+ubsan",
-                                                    "x86_64-centos7-gcc8-dbg+tsan"};
+                                                    "x86_64-centos7-gcc8-dbg+tsan",
+                                                    "x86_64-centos7-clang8-opt",
+                                                    "x86_64-centos7-clang8-dbg"};
 
   const std::string invalid_platform = "invalid";
 
