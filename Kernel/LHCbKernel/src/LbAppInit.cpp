@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -41,13 +41,13 @@ namespace {
    *  runtime error: left shift of 69513675 by 10 places cannot be represented in type 'int'
    *  runtime error: signed integer overflow: 643403938 + 1715636224 cannot be represented in type 'int'
    *  Suppress with compiler attribute. */
-#if defined( __GNUC__ )
-  __attribute__((no_sanitize_undefined))
-#elif defined( __clang__ )
+#if defined( __clang__ )
   // add something for clang ...
+  // NOTE: testing __clang__ first because clang also defines __GNUC__
+#elif defined( __GNUC__ )
+  __attribute__((no_sanitize_undefined))
 #endif
-  int makeHash( const std::string_view s )
-  {
+  int makeHash( const std::string_view s ) {
     //--> Hash32 algorithm from Pere Mato
     int hash = 0;
     // NOTE : Do NOT modernise this with STL algorithms, as this breaks the attribute...
