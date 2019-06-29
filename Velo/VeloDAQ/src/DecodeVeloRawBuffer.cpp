@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -145,7 +145,7 @@ StatusCode DecodeVeloRawBuffer::execute() {
     try {
       // put clusters into Event Store
       m_clusters.put( new LHCb::VeloClusters( decodeToVeloClusters( banks, decStatus ) ) );
-    } catch ( StatusCode e ) { return e; }
+    } catch ( StatusCode& e ) { return e; }
   }
 
   return StatusCode::SUCCESS;
