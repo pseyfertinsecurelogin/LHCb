@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "Kernel/bit_cast.h"
+#include "LHCbMath/bit_cast.h"
 
 #include <immintrin.h>
 #include <limits>
