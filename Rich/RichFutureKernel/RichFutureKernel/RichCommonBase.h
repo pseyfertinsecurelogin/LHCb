@@ -22,6 +22,7 @@
 #pragma once
 
 // Gaudi
+#include "GaudiKernel/Counters.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/ISvcLocator.h"
@@ -119,11 +120,13 @@ namespace Rich {
           this->release( pTool );
           pTool = nullptr;
         } else {
-          this->Warning( "Attempt to release a NULL Tool pointer" );
+          this->warning() << "Attempt to release a NULL Tool pointer" << endmsg;
         }
       }
 
-    protected: // methods
+    protected:
+      // methods
+
       /// Pointer to Job Options Service
       inline IJobOptionsSvc* joSvc() const noexcept { return m_jos; }
 
@@ -135,15 +138,25 @@ namespace Rich {
        *                   if they are already set
        *  @return StatusCode indicating if the options where correctly copied
        */
-      StatusCode propagateJobOptions( const std::string& from_name, const std::string& to_name,
-                                      const std::vector<std::string>& options   = std::vector<std::string>(),
-                                      const bool                      overwrite = false ) const;
+      StatusCode propagateJobOptions( const std::string&              from_name,                              //
+                                      const std::string&              to_name,                                //
+                                      const std::vector<std::string>& options   = std::vector<std::string>(), //
+                                      const bool                      overwrite = false                       //
+                                      ) const;
+
+    protected:
+      // definitions
+
+      using WarningCounter = Gaudi::Accumulators::MsgCounter<MSG::WARNING>; ///< Warning counter
+      using ErrorCounter   = Gaudi::Accumulators::MsgCounter<MSG::ERROR>;   ///< Error counter
 
     private:
       /// Common Constructor initisalisations
       void initRichCommonConstructor();
 
-    private: // data
+    private:
+      // data
+
       /// Pointer to job options service
       IJobOptionsSvc* m_jos = nullptr;
     };

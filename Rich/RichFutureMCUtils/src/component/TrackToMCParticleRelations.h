@@ -32,7 +32,7 @@ namespace Rich::Future::MC {
 
   /** @class TrackToMCParticleRelations TrackToMCParticleRelations.h
    *
-   *  (Temporary) algorithm that  takes the Track<->MCParticle linker and forms
+   *  (Temporary) algorithm that takes the Track<->MCParticle linker and forms
    *  a relations object from it. Temporary in that the linker object as it stands
    *  is not compatible with the functional framework, given the way it internal
    *  interacts with the TES. Longer term the usage of the linkers in the future
@@ -41,22 +41,32 @@ namespace Rich::Future::MC {
    *  @author Chris Jones
    *  @date   2016-12-07
    */
-  class TrackToMCParticleRelations final
-      : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&, const LHCb::MCParticles&,
-                                                   const LHCb::LinksByKey& ),
-                           Traits::BaseClass_t<AlgBase>> {
+  class TrackToMCParticleRelations final : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&,      //
+                                                                                      const LHCb::MCParticles&, //
+                                                                                      const LHCb::LinksByKey& ),
+                                                              Traits::BaseClass_t<AlgBase>> {
 
   public:
     /// Standard constructor
     TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator );
 
     /// Algorithm execution via transform
-    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks& tks, const LHCb::MCParticles& mcps,
-                                                         const LHCb::LinksByKey& link ) const override;
+    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks&      tks,  //
+                                                         const LHCb::MCParticles& mcps, //
+                                                         const LHCb::LinksByKey&  link  //
+                                                         ) const override;
 
   private:
+    // properties
+
     /// Allow more than one MCParticle per track ?
     Gaudi::Property<bool> m_allowMultMPs{this, "AllowMultipleMCPsPerTrack", true};
+
+  private:
+    // messaging
+
+    /// empty relations table
+    mutable WarningCounter m_emptyWarn{this, "Empty relation table!"};
   };
 
 } // namespace Rich::Future::MC

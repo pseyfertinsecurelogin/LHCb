@@ -19,8 +19,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHFUTUREKERNEL_RICHCOMMONBASE_ICPP
-#define RICHFUTUREKERNEL_RICHCOMMONBASE_ICPP 1
+#pragma once
 
 // STL
 #include <algorithm>
@@ -32,11 +31,6 @@
 
 // Gaudi
 #include "GaudiKernel/IJobOptionsSvc.h"
-
-// Disable warning on windows
-#ifdef _WIN32
-#  pragma warning( disable : 4661 ) // incomplete explicit templates
-#endif
 
 //=============================================================================
 // Constructor initialisation
@@ -51,9 +45,13 @@ void Rich::Future::CommonBase<PBASE>::initRichCommonConstructor() {
 //=============================================================================
 template <class PBASE>
 StatusCode Rich::Future::CommonBase<PBASE>::initialize() {
+
   // Execute the base class initialize
-  const StatusCode sc = PBASE::initialize();
-  if ( sc.isFailure() ) { return this->Error( "Failed to initialise Gaudi Base class", sc ); }
+  const auto sc = PBASE::initialize();
+  if ( !sc ) {
+    this->error() << "Failed to initialise Gaudi Base class" << endmsg;
+    return sc;
+  }
 
   // Load some common tools by default
   m_jos = this->template svc<IJobOptionsSvc>( "JobOptionsSvc" );
@@ -70,6 +68,7 @@ StatusCode Rich::Future::CommonBase<PBASE>::initialize() {
 //=============================================================================
 template <class PBASE>
 StatusCode Rich::Future::CommonBase<PBASE>::finalize() {
+
   // Printout from finalization
   if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Finalize" << endmsg;
 
@@ -77,5 +76,3 @@ StatusCode Rich::Future::CommonBase<PBASE>::finalize() {
   return PBASE::finalize();
 }
 //=============================================================================
-
-#endif // RICHFUTUREKERNEL_RICHCOMMONBASE_ICPP

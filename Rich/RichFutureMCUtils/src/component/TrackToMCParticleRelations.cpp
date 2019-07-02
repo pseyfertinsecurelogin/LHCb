@@ -21,15 +21,21 @@ using namespace Rich::Future::MC;
 
 TrackToMCParticleRelations::TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
     : Transformer( name, pSvcLocator,
+                   // inputs
                    {
                        KeyValue{"TracksLocation", LHCb::TrackLocation::Default},
                        KeyValue{"MCParticlesLocation", LHCb::MCParticleLocation::Default},
                        KeyValue{"MCParticlesLinkLocation", "Link/" + LHCb::TrackLocation::Default},
                    },
+                   // output
                    {KeyValue{"TrackToMCParticlesRelations", Rich::Future::MC::Relations::TrackToMCParticles}} ) {}
 
-Rich::Future::MC::Relations::TkToMCPRels TrackToMCParticleRelations::
-                                         operator()( const LHCb::Tracks& tks, const LHCb::MCParticles& mcParts, const LHCb::LinksByKey& links ) const {
+Rich::Future::MC::Relations::TkToMCPRels                                  //
+TrackToMCParticleRelations::operator()( const LHCb::Tracks&      tks,     //
+                                        const LHCb::MCParticles& mcParts, //
+                                        const LHCb::LinksByKey&  links    //
+                                        ) const {
+
   // make a relations table
   Relations::TkToMCPRels rels( 2 * tks.size() );
 
@@ -60,7 +66,7 @@ Rich::Future::MC::Relations::TkToMCPRels TrackToMCParticleRelations::
     }
   }
 
-  if ( msgLevel( MSG::DEBUG ) ) {
+  if ( msgLevel( MSG::VERBOSE ) ) {
     verbose() << "Rels before sort" << endmsg;
     for ( const auto& i : rels.i_relations() ) {
       verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
@@ -71,7 +77,7 @@ Rich::Future::MC::Relations::TkToMCPRels TrackToMCParticleRelations::
   // MANDATORY usage of i_sort after i_push
   rels.i_sort();
 
-  if ( msgLevel( MSG::DEBUG ) ) {
+  if ( msgLevel( MSG::VERBOSE ) ) {
     verbose() << "Rels after sort" << endmsg;
     for ( const auto& i : rels.i_relations() ) {
       verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
@@ -80,7 +86,7 @@ Rich::Future::MC::Relations::TkToMCPRels TrackToMCParticleRelations::
   }
 
   // check for some "strange" status
-  if ( rels.i_relations().empty() ) { Warning( "Empty relation table!" ).ignore(); }
+  if ( rels.i_relations().empty() ) { ++m_emptyWarn; }
 
   // return the final relations
   return rels;

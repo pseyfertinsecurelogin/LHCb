@@ -51,22 +51,23 @@ StatusCode RawBankDecoder::initialize() {
   m_richSys = getDet<DeRichSystem>( DeRichLocations::RichSystem );
 
   // report inactive RICHes
-  if ( !m_richIsActive[Rich::Rich1] ) { Warning( "Decoding for RICH1 disabled", StatusCode::SUCCESS ).ignore(); }
-  if ( !m_richIsActive[Rich::Rich2] ) { Warning( "Decoding for RICH2 disabled", StatusCode::SUCCESS ).ignore(); }
+  if ( !m_richIsActive[Rich::Rich1] ) { info() << "Decoding for RICH1 disabled" << endmsg; }
+  if ( !m_richIsActive[Rich::Rich2] ) { info() << "Decoding for RICH2 disabled" << endmsg; }
 
   // if suppression is less than max possible number of (ALICE) hits, print a message.
-  if ( m_maxHPDOc < HPD::BitsPerDataWord * HPD::MaxDataSizeALICE )
+  if ( m_maxHPDOc < HPD::BitsPerDataWord * HPD::MaxDataSizeALICE ) {
     info() << "Will suppress PDs with more than " << m_maxHPDOc << " digits" << endmsg;
+  }
 
   // messages if optional features are enabled
-  if ( m_decodeUseOdin ) info() << "ODIN integrity checks are enabled" << endmsg;
-  if ( m_hpdL1check ) info() << "HPD L1 ID checks are enabled" << endmsg;
+  if ( m_decodeUseOdin ) { info() << "ODIN integrity checks are enabled" << endmsg; }
+  if ( m_hpdL1check ) { info() << "HPD L1 ID checks are enabled" << endmsg; }
 
   // warnings if checks are disabled
-  if ( !m_checkDataIntegrity ) Warning( "HPD Data integrity checks are disabled", StatusCode::SUCCESS ).ignore();
-  if ( m_checkODINEventsIDs ) Warning( "Ingress/ODIN Event ID checks are enabled", StatusCode::SUCCESS ).ignore();
-  if ( !m_checkRICHEventsIDs ) Warning( "Internal RICH Event ID checks are disabled", StatusCode::SUCCESS ).ignore();
-  if ( !m_checkBxIDs ) Warning( "Header BX ID checks are disabled", StatusCode::SUCCESS ).ignore();
+  if ( !m_checkDataIntegrity ) { info() << "HPD Data integrity checks are disabled" << endmsg; }
+  if ( m_checkODINEventsIDs ) { info() << "Ingress/ODIN Event ID checks are enabled" << endmsg; }
+  if ( !m_checkRICHEventsIDs ) { info() << "Internal RICH Event ID checks are disabled" << endmsg; }
+  if ( !m_checkBxIDs ) { info() << "Header BX ID checks are disabled" << endmsg; }
 
   // Do we have pixels to suppress ?
   if ( !m_hotChannels.empty() ) {
@@ -84,7 +85,10 @@ StatusCode RawBankDecoder::initialize() {
 
 //=============================================================================
 
-L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, const LHCb::ODIN& odin ) const {
+L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, //
+                                  const LHCb::ODIN&     odin      //
+                                  ) const {
+
   // Make the data map to return
   L1Map decodedData;
 
@@ -105,16 +109,13 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, const LHCb::OD
       try {
         decodeToSmartIDs( *bank, odin, decodedData, banks );
       } catch ( const GaudiException& expt ) {
-        // Print error message
-        std::ostringstream mess;
-        mess << "Error decoding bank ID=" << bank->sourceID() << " version=" << bankVersion( *bank ) << " '"
-             << expt.message() << "' '" << expt.tag() << "'";
-        Error( mess.str() ).ignore();
+        // count errors
+        ++m_rawReadErr;
         // dump the full bank
         if ( m_verboseErrors ) dumpRawBank( *bank, error() );
       }
     } else {
-      Error( "Retrieved null pointer to RawBank" ).ignore();
+      ++m_nullRawBankErr;
     }
   }
 
@@ -127,15 +128,19 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, const LHCb::OD
 
 //=============================================================================
 
-void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank, const LHCb::ODIN& odin, L1Map& decodedData,
-                                       PDBanks& banks ) const {
+void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
+                                       const LHCb::ODIN&    odin,        //
+                                       L1Map&               decodedData, //
+                                       PDBanks&             banks        //
+                                       ) const {
 
   // Check magic code for general data corruption
   if ( UNLIKELY( LHCb::RawBank::MagicPattern != bank.magic() ) ) {
-    std::ostringstream mess;
-    mess << "Magic Pattern mis-match : Expected " << LHCb::RawBank::MagicPattern << " Obtained " << bank.magic();
-    Error( mess.str() ).ignore();
-  } else { // All OK so decode
+
+    ++m_magicErr;
+
+  } else {
+    // All OK so decode
 
     // Check this is a RICH bank
     if ( bank.type() != LHCb::RawBank::Rich ) {
@@ -179,8 +184,11 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank, const LHCb::OD
 
 //=============================================================================
 
-const Rich::DAQ::PDDataBank* RawBankDecoder::createDataBank( const LongType* dataStart, const BankVersion version,
-                                                             PDBanks& banks ) const {
+const Rich::DAQ::PDDataBank* RawBankDecoder::createDataBank( const LongType*   dataStart, //
+                                                             const BankVersion version,   //
+                                                             PDBanks&          banks      //
+                                                             ) const {
+
   Rich::DAQ::PDDataBank* dataBank = nullptr;
 
   // If bank version is different to cache, force a reset
@@ -240,8 +248,12 @@ const Rich::DAQ::PDDataBank* RawBankDecoder::createDataBank( const LongType* dat
 
 //=============================================================================
 
-void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHCb::ODIN& odin, L1Map& decodedData,
-                                            PDBanks& banks ) const {
+void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank,        //
+                                            const LHCb::ODIN&    odin,        //
+                                            L1Map&               decodedData, //
+                                            PDBanks&             banks        //
+                                            ) const {
+
   using namespace Rich::DAQ::HPD;
 
   // Get L1 ID
@@ -297,24 +309,14 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
           ( !m_decodeUseOdin ? true
                              : ( !m_checkODINEventsIDs || ingressWord.eventID() == EventID( odin.eventNumber() ) ) &&
                                    ( !m_checkBxIDs || ingressWord.bxID() == BXID( odin.bunchId() ) ) );
-      if ( !odinOK ) {
-        std::ostringstream mess;
-        mess << "ODIN Mismatch : L1ID " << L1ID << " : ODIN EvID=" << EventID( odin.eventNumber() )
-             << " BxID=" << BXID( odin.bunchId() ) << " : L1IngressHeader " << ingressWord << " -> Data Suppressed";
-        Error( mess.str() ).ignore();
-      }
+      if ( !odinOK ) { ++m_odinErr; }
 
       // get list of active ingress inputs
       ingressWord.activeHPDInputs( inputs );
       _ri_debug << "  Found " << inputs.size() << " PDs with data blocks : " << inputs << endmsg;
 
       // Check the Ingress supression flag
-      if ( ingressWord.hpdsSuppressed() ) {
-        std::ostringstream mess;
-        mess << "L1 board " << L1ID << " : Ingress " << ingressWord << " is HARDWARE suppressed";
-        Warning( mess.str(), StatusCode::SUCCESS, 1 ).ignore();
-        // procStatus()->addAlgorithmStatus( name(), "RICH", mess.str(), -1, false );
-      } else {
+      if ( !ingressWord.hpdsSuppressed() ) {
         // Ingress is OK, so read HPD data
 
         // reserve size
@@ -329,12 +331,6 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
 
           // is this HPD suppressed ?
           const bool hpdIsSuppressed = hpdBank->suppressed();
-          if ( hpdIsSuppressed ) {
-            std::ostringstream mess;
-            mess << "L1 board " << L1ID << " : Ingress " << ingressWord.ingressID() << " Input " << HPD
-                 << " is HARDWARE suppressed";
-            Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
-          }
 
           // Is the PD in extended mode
           const bool isExtend = hpdBank->isExtended();
@@ -361,10 +357,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
             try {
               hpdID = ( m_useFakeHPDID ? s_fakeHPDID : m_richSys->richSmartID( hpdBank->level0ID() ) );
             } catch ( const GaudiException& expt ) {
-              std::ostringstream errMsg;
-              errMsg << "'" << expt.message() << "' | L1HardID=" << L1ID << " Ingress=" << ingressWord.ingressID()
-                     << " Input=" << HPD;
-              Error( errMsg.str() ).ignore();
+              ++m_unknownPD;
+              _ri_debug << "'" << expt.message() << "' | L1HardID=" << L1ID << " Ingress=" << ingressWord.ingressID()
+                        << " Input=" << HPD << endmsg;
             }
             // If the HPD smartID was successfully found, continue with decoding
             if ( hpdID.isValid() ) {
@@ -384,9 +379,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
               bool OK =
                   ( hpdIsSuppressed ? true : !m_checkRICHEventsIDs || ingressWord.eventID() == hpdBank->eventID() );
               if ( UNLIKELY( !OK ) ) {
-                std::ostringstream mess;
-                mess << "EventID Mismatch : HPD L0ID=" << hpdBank->level0ID() << " " << hpdID;
-                Error( mess.str() ).ignore();
+                ++m_eventIDmismatch;
+                _ri_debug << "EventID Mismatch : HPD L0ID=" << hpdBank->level0ID() << " " << hpdID << endmsg;
               } else {
 
                 // Check this HPD is connected to the expected L1 board
@@ -395,12 +389,6 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
                 {
                   const auto db_L1ID = m_richSys->level1HardwareID( hpdBank->level0ID() );
                   OK                 = ( L1ID == db_L1ID );
-                  if ( !OK ) {
-                    std::ostringstream mess;
-                    mess << "HPD L0ID=" << hpdBank->level0ID() << " found in L1HardID=" << L1ID
-                         << " but database says it should be in L1HardID=" << db_L1ID << " -> rejected";
-                    Error( mess.str() ).ignore();
-                  }
                 }
                 if ( OK ) // only carry on if OK
                 {
@@ -411,18 +399,15 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
                   // Do data integrity checks
                   OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity( newids, this ) );
                   if ( UNLIKELY( !OK ) ) {
-                    std::ostringstream mess;
-                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID << " data block failed integrity check";
-                    Error( mess.str() ).ignore();
+                    _ri_debug << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
+                              << " data block failed integrity check" << endmsg;
                     if ( m_purgeHPDsFailIntegrity ) { newids.clear(); }
                   }
 
                   // Is all 'OK' but header is in extended mode ?
                   if ( UNLIKELY( isExtend && OK ) ) {
-                    std::ostringstream mess;
-                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
-                         << " in extended mode for UNKNOWN reasons";
-                    Error( mess.str() ).ignore();
+                    _ri_debug << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
+                              << " in extended mode for UNKNOWN reasons" << endmsg;
                   }
 
                   if ( msgLevel( MSG::VERBOSE ) && hpdHitCount > 0 ) {
@@ -446,9 +431,6 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
                   // suppress hot pixels
                   suppressHotPixels( hpdID, newids );
                 } else {
-                  std::ostringstream hpd;
-                  hpd << hpdID.panelID();
-                  Warning( "Forced suppression of HPD " + hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
                   newids.clear();
                 }
               } else if ( m_verboseErrors ) {
@@ -503,6 +485,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHC
 //=============================================================================
 
 void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& decodedData ) const {
+
   using namespace Rich::DAQ::HPD; // to be changed...
 
   // Get L1 ID
@@ -535,7 +518,7 @@ void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& 
       // Read the smartID direct from the banks
       const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
       if ( UNLIKELY( !id.isValid() ) ) {
-        Warning( "Invalid RichSmartID read from FlatList data format" ).ignore();
+        ++m_flatListReadWarn;
       } else {
         _ri_debug << " -> " << id << endmsg;
 
@@ -630,7 +613,9 @@ void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& 
 
 //=============================================================================
 
-void RawBankDecoder::suppressHotPixels( const LHCb::RichSmartID& hpdID, LHCb::RichSmartID::Vector& newids ) const {
+void RawBankDecoder::suppressHotPixels( const LHCb::RichSmartID&   hpdID, //
+                                        LHCb::RichSmartID::Vector& newids ) const {
+
   // clean out hot pixels enabled at all ?
   if ( m_pixelsToSuppress ) {
     // Does this HPD have some pixels to suppress
@@ -647,18 +632,7 @@ void RawBankDecoder::suppressHotPixels( const LHCb::RichSmartID& hpdID, LHCb::Ri
         if ( iHPDSup->second.find( ID ) == iHPDSup->second.end() ) {
           // not suppressed, so keep
           newids.push_back( ID );
-        } else {
-          // Get detector info
-          const auto l0ID    = m_richSys->level0ID( hpdID );
-          const auto l1ID    = m_richSys->level1HardwareID( hpdID );
-          const auto l1Input = m_richSys->level1InputNum( hpdID );
-          // Print warning
-          std::ostringstream mess;
-          mess << "L1HardID=" << l1ID << " L1Input=" << l1Input << " L0ID=" << l0ID << " " << ID
-               << " is software SUPPRESSED";
-          Warning( mess.str(), StatusCode::SUCCESS ).ignore();
         }
-
       } // loop over pixels
 
     } // this HPD has pixels to suppress
@@ -679,8 +653,8 @@ void RawBankDecoder::dumpRawBank( const LHCb::RawBank& bank, MsgStream& os ) con
 
   std::ostringstream magicAsHex;
   magicAsHex << std::hex << bank.magic();
-  os << "RawBank version=" << version << " L1ID=" << L1ID << " datasize=" << bankSize << " magic=" << magicAsHex.str()
-     << endmsg;
+  os << "RawBank version=" << version << " L1ID=" << L1ID << " datasize=" //
+     << bankSize << " magic=" << magicAsHex.str() << endmsg;
 
   // Printout raw data
 

@@ -27,7 +27,6 @@
 
 // local
 #include "RichFutureKernel/RichCommonBase.h"
-#include "RichFutureKernel/RichConverter_Imp.h"
 #include "RichFutureKernel/RichHistoBase.h"
 
 namespace Rich {
@@ -209,27 +208,6 @@ namespace Rich {
     template <>
     HistoBase<GaudiTupleTool>::HistoBase( long storage_type, const CLID& class_type, ISvcLocator* svc )
         : CommonBase<GaudiTupleTool>( storage_type, class_type, svc ) {}
-    //=============================================================================
-
-    //=============================================================================
-    // Implementation of RichCommonBase for Converter
-    //=============================================================================
-    template <>
-    CommonBase<Converter_Imp>::CommonBase( const std::string& /* type */, const std::string& /* name */,
-                                           const IInterface* /* parent */ )
-        : Converter_Imp( 0, CLID_NULL, nullptr ) {
-      throw GaudiException( "Invalid CommonBase<Converter_Imp> constructor", "CommonBase", StatusCode::FAILURE );
-    }
-    template <>
-    CommonBase<Converter_Imp>::CommonBase( const std::string& /* name */, ISvcLocator* /* pSvcLocator */ )
-        : Converter_Imp( 0, CLID_NULL, nullptr ) {
-      throw GaudiException( "Invalid CommonBase<Rich::Converter_Imp> constructor", "CommonBase", StatusCode::FAILURE );
-    }
-    template <>
-    CommonBase<Converter_Imp>::CommonBase( long storage_type, const CLID& class_type, ISvcLocator* svc )
-        : Converter_Imp( storage_type, class_type, svc ) {
-      this->initRichCommonConstructor();
-    }
     //=============================================================================
 
   } // namespace Future
