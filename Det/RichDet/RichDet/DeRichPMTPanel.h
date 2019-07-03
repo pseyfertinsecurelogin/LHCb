@@ -534,7 +534,7 @@ private:
     } else {
       auto m = ( aModuleNum >= SIMDINT32::Zero() && //
                  aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
-      LHCB_LOOP_UNROLL( SIMDINT32::Size )
+      GAUDI_LOOP_UNROLL( SIMDINT32::Size )
       for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
         // if ( m[i] )
         m[i] = m_ModuleIsWithGrandPMT[aModuleNum[i]];

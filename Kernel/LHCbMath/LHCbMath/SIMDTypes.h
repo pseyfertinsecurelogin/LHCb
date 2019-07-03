@@ -589,15 +589,3 @@ namespace LHCb {
 namespace std {
   using LHCb::SIMD::VE::sqrt;
 }
-
-// Preprocessor helpers
-
-// compiler hint to force loop unrolling
-#define LHCB_DO_PRAGMA( x ) _Pragma( #x )
-#if defined( __clang__ )
-#  define LHCB_LOOP_UNROLL( x ) LHCB_DO_PRAGMA( clang loop unroll_count( x ) )
-#elif defined( __GNUC__ )
-#  define LHCB_LOOP_UNROLL( x ) LHCB_DO_PRAGMA( GCC unroll x )
-#else
-#  define LHCB_LOOP_UNROLL( x )
-#endif
