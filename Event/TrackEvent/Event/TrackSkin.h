@@ -16,20 +16,24 @@
 #include "SOAContainer/SOAField.h"
 #include "SOAContainer/SOASkin.h"
 
-namespace LHCb::Event {
-  namespace v2 {
-    // clang-format off
-    SOAFIELD( TrackField, Track, SOAFIELD_ACCESSORS( track )
-              auto pt() const { return track().pt(); }
-              auto pseudoRapidity() const { return track().pseudoRapidity(); }
-              template <typename... Args>
-              auto stateAt( Args&&... args ) const {
-                return track().stateAt( std::forward<Args>( args )... );
-              }
-              );
-    // clang-format on
-    SOASKIN_TRIVIAL( TrackSkin, TrackField );
-  } // namespace v2
-} // namespace LHCb::Event
+namespace LHCb::Event::v2 {
+  // clang-format off
+  SOAFIELD( TrackField, Track, SOAFIELD_ACCESSORS( track )
+            auto pt() const { return track().pt(); }
+            auto pseudoRapidity() const { return track().pseudoRapidity(); }
+            template <typename... Args>
+            auto stateAt( Args&&... args ) const {
+              return track().stateAt( std::forward<Args>( args )... );
+            }
+            decltype( auto ) closestToBeamStatePos() const {
+              return track().stateAt( LHCb::State::ClosestToBeam )->position();
+            }
+            decltype( auto ) closestToBeamStateDir() const {
+              return track().stateAt( LHCb::State::ClosestToBeam )->slopes();
+            }
+            );
+  // clang-format on
+  SOASKIN_TRIVIAL( TrackSkin, TrackField );
+} // namespace LHCb::Event::v2
 
 #endif /// TrackEvent_v2_H
