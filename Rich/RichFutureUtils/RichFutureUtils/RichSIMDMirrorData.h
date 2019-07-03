@@ -16,6 +16,7 @@
 #include <string>
 
 // Gaudi
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/SerializeSTL.h"
 #include "GaudiKernel/ToStream.h"
 
@@ -136,7 +137,9 @@ namespace Rich::SIMD {
     /// Default constructor
     MirrorData() = default;
 
-  private: // Mirror data
+  private:
+    // Mirror data
+
     /// The mirrors for which the caches are valid
     Mirrors cache_mirrors{{}};
     /// RoC values
@@ -156,7 +159,21 @@ namespace Rich::SIMD {
 
   public:
     /// Update the cached information for the given mirrors
-    void update( const Mirrors& mirrors ) noexcept;
+    inline void update( const Mirrors& mirrors ) noexcept {
+      // loop over the scalar entries and update as needed
+      for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
+        // the mirror pointer
+        const auto m = mirrors[i];
+        // If changed from before, update
+        if ( UNLIKELY( m != cache_mirrors[i] ) ) { cache_update( m, i ); }
+      }
+    }
+
+  private:
+    /// Update cached information for given SIMD scalar index
+    void cache_update( const DeRichSphMirror* m, ///< Mirror pointer
+                       const std::size_t      i  ///< SIMD scalar index to update
+                       ) noexcept;
 
   public:
     /// send to std::ostream
