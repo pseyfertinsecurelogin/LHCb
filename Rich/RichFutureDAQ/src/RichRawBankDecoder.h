@@ -51,8 +51,6 @@
 #include "Kernel/RichSmartID32.h"
 
 namespace Rich::Future {
-  // namespace DAQ
-  //{
 
   // Use the functional framework
   using namespace Gaudi::Functional;
@@ -64,7 +62,8 @@ namespace Rich::Future {
    *  @author Chris Jones
    *  @date   2016-09-21
    */
-  class RawBankDecoder final : public Transformer<Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, const LHCb::ODIN& ),
+  class RawBankDecoder final : public Transformer<Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, //
+                                                                            const LHCb::ODIN& ),
                                                   Traits::BaseClass_t<AlgBase>> {
 
   public:
@@ -75,7 +74,8 @@ namespace Rich::Future {
     StatusCode initialize() override;
 
     /// Algorithm execution via transform
-    Rich::Future::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent, const LHCb::ODIN& odin ) const override;
+    Rich::Future::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent, //
+                                         const LHCb::ODIN&     odin ) const override;
 
   private:
     /// Returns the RawBank version enum for the given bank
@@ -107,22 +107,28 @@ namespace Rich::Future {
      *  @param dataSize  The length of the data block (excluding header HPD word)
      *  @param version   The RICH DAQ data bank version
      */
-    const Rich::DAQ::PDDataBank* createDataBank( const Rich::DAQ::LongType*   dataStart,
-                                                 const Rich::DAQ::BankVersion version, PDBanks& banks ) const;
+    const Rich::DAQ::PDDataBank* createDataBank( const Rich::DAQ::LongType*   dataStart, //
+                                                 const Rich::DAQ::BankVersion version,   //
+                                                 PDBanks&                     banks ) const;
 
   private:
     /// Decode a RawBank into RichSmartID identifiers
-    void decodeToSmartIDs( const LHCb::RawBank& bank, const LHCb::ODIN& odin, Rich::Future::DAQ::L1Map& decodedData,
-                           PDBanks& banks ) const;
+    void decodeToSmartIDs( const LHCb::RawBank&      bank,        //
+                           const LHCb::ODIN&         odin,        //
+                           Rich::Future::DAQ::L1Map& decodedData, //
+                           PDBanks&                  banks ) const;
 
     /// Decode a RawBank into RichSmartID identifiers
     /// Version compatible with first 2007 "final" L1 firmware
-    void decodeToSmartIDs_2007( const LHCb::RawBank& bank, const LHCb::ODIN& odin,
-                                Rich::Future::DAQ::L1Map& decodedData, PDBanks& banks ) const;
+    void decodeToSmartIDs_2007( const LHCb::RawBank&      bank,        //
+                                const LHCb::ODIN&         odin,        //
+                                Rich::Future::DAQ::L1Map& decodedData, //
+                                PDBanks&                  banks ) const;
 
     /// Decode a RawBank into RichSmartID identifiers
     /// MaPMT0 version
-    void decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, Rich::Future::DAQ::L1Map& decodedData ) const;
+    void decodeToSmartIDs_MaPMT0( const LHCb::RawBank&      bank, //
+                                  Rich::Future::DAQ::L1Map& decodedData ) const;
 
     /// Check if a given L1 ID should be decoded
     inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const {
@@ -133,9 +139,7 @@ namespace Rich::Future {
         // Now lookup the RICH type
         const auto rich = m_richSys->richDetector( L1ID );
         if ( UNLIKELY( rich == Rich::InvalidDetector ) ) {
-          std::ostringstream mess;
-          mess << "L1 bank " << L1ID << " has an invalid RICH detector mapping -> Bank skipped";
-          Warning( mess.str() ).ignore();
+          ++m_l1InvalidRich;
           ok = false;
         } else {
           ok = m_richIsActive[rich];
@@ -146,7 +150,8 @@ namespace Rich::Future {
 
   private:
     /// Suppress hot pixels
-    void suppressHotPixels( const LHCb::RichSmartID& hpdID, LHCb::RichSmartID::Vector& newids ) const;
+    void suppressHotPixels( const LHCb::RichSmartID&   hpdID, //
+                            LHCb::RichSmartID::Vector& newids ) const;
 
   private:
     /** Print the given RawBank as a simple hex dump
@@ -157,7 +162,9 @@ namespace Rich::Future {
 
     /// Print the given data word as Hex and as bits, to the given precision
     template <class TYPE>
-    inline void rawDump( MsgStream& os, const TYPE word, const Rich::DAQ::ShortType nBits = 32 ) const {
+    inline void rawDump( MsgStream&                 os,   //
+                         const TYPE                 word, //
+                         const Rich::DAQ::ShortType nBits = 32 ) const {
       std::ostringstream hexW;
       hexW << std::hex << word;
       std::string tmpW = hexW.str();
@@ -168,13 +175,22 @@ namespace Rich::Future {
 
     /// Test if a given bit in a word is set on
     template <class TYPE>
-    inline bool isBitOn( const TYPE data, const Rich::DAQ::ShortType pos ) const noexcept {
+    inline bool isBitOn( const TYPE                 data, //
+                         const Rich::DAQ::ShortType pos ) const noexcept {
       return ( 0 != ( data & ( 1 << pos ) ) );
     }
 
   private:
-    /// RICH System detector element
-    const DeRichSystem* m_richSys = nullptr;
+    // types
+
+    /// Type for hot pixel list
+    using HotPixelListType = std::vector<LHCb::RichSmartID::KeyType>;
+
+    /// Type for Storage of pixels to mask for each HPD
+    using HPDHotPixels = Rich::HashMap<LHCb::RichSmartID, std::set<LHCb::RichSmartID>>;
+
+  private:
+    // properties
 
     /// Flag to turn on/off decoding of each RICH detector (default is both on)
     Gaudi::Property<Rich::DetectorArray<bool>> m_richIsActive{this, "Detectors", {true, true}};
@@ -204,44 +220,66 @@ namespace Rich::Future {
     /// Turn on/off data integrity checks
     Gaudi::Property<bool> m_checkDataIntegrity{this, "CheckDataIntegrity", true};
 
-    /// Boolean to indicate if there are any pixels that need suppressing
-    bool m_pixelsToSuppress = false;
-
     /// Max HPD Occupancy Cut
     Gaudi::Property<Rich::DAQ::ShortType> m_maxHPDOc{this, "MaxHPDOccupancy",
                                                      std::numeric_limits<Rich::DAQ::ShortType>::max()};
 
     /** Turn on/off detailed error messages.
-     *
-     *  VERY verbose in case of frequent errors
-     */
+     *  VERY verbose in case of frequent errors... */
     Gaudi::Property<bool> m_verboseErrors{this, "VerboseErrors", false};
-
-  private: // pixel masking
-    /// Type for hot pixel list
-    using HotPixelListType = std::vector<LHCb::RichSmartID::KeyType>;
 
     /** Software suppression of hot channels. List of RichSmartIDs (as unsigned ints)
      *  to suppress in the data. */
     Gaudi::Property<HotPixelListType> m_hotChannels{this, "HotPixelsToMask"};
 
-    /// Type for Storage of pixels to mask for each HPD
-    typedef Rich::HashMap<LHCb::RichSmartID, std::set<LHCb::RichSmartID>> HPDHotPixels;
-
-    /// Storage of pixels to mask for each HPD
-    HPDHotPixels m_hotPixels;
-
-  private:
     /** @brief Turns on the use of a fake HPD RichSmartID for each HPD data data block.
      *
      *  Useful for deep debugging cases when the HPD L0 ID is missing in the database.
      *
      *  @attention If set to true, decoded data is not complete (RICH,HPD panel and HPD info is
-     * missing). Consequently, this option should only be used to test the data decoding and not if
-     * the RichSmartIDs are needed for analysis downstream.
+     *  missing). Consequently, this option should only be used to test the data decoding and not
+     *  if the RichSmartIDs are needed for analysis downstream.
      */
     Gaudi::Property<bool> m_useFakeHPDID{this, "UseFakeHPDID", false};
+
+  private:
+    // implementation details
+
+    /// Boolean to indicate if there are any pixels that need suppressing
+    bool m_pixelsToSuppress = false;
+
+    /// RICH System detector element
+    const DeRichSystem* m_richSys = nullptr;
+
+    /// Storage of pixels to mask for each HPD
+    HPDHotPixels m_hotPixels;
+
+  private:
+    // messaging
+
+    /// L1 bank with invalid RICh detector
+    mutable WarningCounter m_l1InvalidRich{this, "L1 bank with invalid RICH detector mapping"};
+
+    /// error reading flatlist
+    mutable WarningCounter m_flatListReadWarn{this, "Invalid RichSmartID read from FlatList data format"};
+
+    /// Bank decoding error
+    mutable ErrorCounter m_rawReadErr{this, "Error decoding RawBank"};
+
+    /// Null RawBank pointer
+    mutable ErrorCounter m_nullRawBankErr{this, "Retrieved null pointer to RawBank"};
+
+    /// Magic pattern error
+    mutable ErrorCounter m_magicErr{this, "Magic Pattern mis-match"};
+
+    /// ODIN error
+    mutable ErrorCounter m_odinErr{this, "ODIN Mismatch"};
+
+    /// UnknownPDID
+    mutable ErrorCounter m_unknownPD{this, "Unknown PD ID"};
+
+    /// Event ID mis-match
+    mutable ErrorCounter m_eventIDmismatch{this, "EventID Mismatch"};
   };
 
-  //}
 } // namespace Rich::Future
