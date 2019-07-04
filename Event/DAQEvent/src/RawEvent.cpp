@@ -37,6 +37,7 @@ size_t LHCb::RawEvent::paddedBankLength( size_t len ) {
 }
 
 LHCb::span<const LHCb::RawBank*> LHCb::RawEvent::mapBanks( RawBank::BankType bankType ) const {
+  m_eventMap.resize( RawBank::LastType );
   for ( auto& i : m_banks ) {
     auto* bank = reinterpret_cast<const LHCb::RawBank*>( i.buffer() );
     m_eventMap[bank->type()].push_back( const_cast<LHCb::RawBank*>( bank ) );
@@ -81,9 +82,7 @@ void LHCb::RawEvent::adoptBank( const LHCb::RawBank* bank, bool adopt_memory ) {
 
 /// Remove bank identified by its pointer
 bool LHCb::RawEvent::removeBank( const RawBank* bank ) {
-  auto i = m_eventMap.find( bank->type() );
-  if ( i == m_eventMap.end() ) return false;
-  auto& banks = i->second;
+  auto& banks = m_eventMap[bank->type()];
   auto  j     = std::find( banks.begin(), banks.end(), bank );
   if ( j == banks.end() ) return false;
   // First remove bank from persistent array.
@@ -98,7 +97,5 @@ bool LHCb::RawEvent::removeBank( const RawBank* bank ) {
   }
   // Now erase bank from vector with all banks of one type.
   banks.erase( j );
-  // Finally remove bank type from event map if no further bank is present.
-  if ( banks.empty() ) m_eventMap.erase( i );
   return true;
 }

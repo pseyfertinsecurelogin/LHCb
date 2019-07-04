@@ -14,10 +14,10 @@
 // Include files
 #include "Event/RawBank.h"
 #include "GaudiKernel/DataObject.h"
+#include <boost/container/static_vector.hpp>
 #include <map>
 #include <string>
 #include <vector>
-
 namespace LHCb {
 
   // Class ID definition
@@ -131,7 +131,10 @@ namespace LHCb {
     }
 
     /// allows to reserve space for future banks
-    void reserve( unsigned int n ) { m_banks.reserve( n ); }
+    void reserve( unsigned int n ) {
+      m_banks.reserve( n );
+      m_eventMap.resize( RawBank::LastType );
+    }
 
     /// returns size of the RawEvent, aka number of banks it contains
     unsigned int size() { return m_banks.size(); }
@@ -184,8 +187,9 @@ namespace LHCb {
      */
     LHCb::span<const RawBank*> mapBanks( RawBank::BankType bankType ) const;
 
-    mutable std::map<RawBank::BankType, std::vector<const RawBank*>> m_eventMap; //! transient Map with RawBanks
-                                                                                 //! (values) for each bank type
+    mutable std::vector<boost::container::static_vector<const RawBank*, 350>> m_eventMap; //! transient Map with
+                                                                                          //! RawBanks (values) for each
+                                                                                          //! bank type
     std::vector<Bank> m_banks;          // Vector with persistent bank structure
     mutable bool      m_mapped = false; //! transient
   };                                    // class RawEvent
