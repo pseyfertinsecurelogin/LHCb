@@ -201,7 +201,7 @@ namespace Rich::Future {
           // Mirrors to return
           SIMDMirrors<TYPE> mirrs;
           // Fill the mirrors. Can this be vectorised ??
-          LHCB_LOOP_UNROLL( LHCb::SIMD::FPF::Size )
+          GAUDI_LOOP_UNROLL( LHCb::SIMD::FPF::Size )
           for ( std::size_t i = 0; i < TYPE::Size; ++i ) {
             // just load the mirror using the number
             // mirrs[i] = mirrors[ xyi[i] ];
@@ -454,7 +454,7 @@ namespace Rich::Future {
         } else {
           // SIMD - revert to scalar loop here... Is there a way to avoid this ?
           SIMDMirrors<TYPE> mirrs;
-          LHCB_LOOP_UNROLL( LHCb::SIMD::FPF::Size )
+          GAUDI_LOOP_UNROLL( LHCb::SIMD::FPF::Size )
           for ( std::size_t i = 0; i < TYPE::Size; ++i ) { mirrs[i] = ( x[i] < 0 ? mirrors[0] : mirrors[1] ); }
           return mirrs;
         }
@@ -549,7 +549,7 @@ namespace Rich::Future {
         } else {
           auto mirrs1 = find( rich, Rich::firstSide, x, y );
           auto mirrs2 = find( rich, Rich::secondSide, x, y );
-          LHCB_LOOP_UNROLL( Rich::SIMD::Sides::Size )
+          GAUDI_LOOP_UNROLL( Rich::SIMD::Sides::Size )
           for ( std::size_t i = 0; i < Rich::SIMD::Sides::Size; ++i ) {
             if ( m2[i] ) { mirrs1[i] = mirrs2[i]; }
           }

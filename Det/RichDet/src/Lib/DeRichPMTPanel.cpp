@@ -702,7 +702,7 @@ DeRichPMTPanel::ArraySetupSIMD DeRichPMTPanel::findPMTArraySetupSIMD( const SIMD
 
   // New Use cached positions
   SIMDFP xp( aLocalPoint.X() ), yp( aLocalPoint.Y() );
-  LHCB_LOOP_UNROLL( SIMDINT32::Size )
+  GAUDI_LOOP_UNROLL( SIMDINT32::Size )
   for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
     const auto& p = m_DePMTModulesZeroPtn[nums.aModuleNumInPanel[i]];
     xp[i] -= p.X();
@@ -762,7 +762,7 @@ DeRichPMTPanel::ArraySetupSIMD DeRichPMTPanel::findPMTArraySetupSIMD( const SIMD
   // New Use cached positions
   SIMDFP xpi( -aLocalPoint.X() ), ypi( aLocalPoint.Y() );
 
-  LHCB_LOOP_UNROLL( SIMDINT32::Size )
+  GAUDI_LOOP_UNROLL( SIMDINT32::Size )
   for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
     const auto& p = ( m_DePMTAnodesZeroPtn[nums.aModuleNumInPanel[i]][aPmtNum[i]] );
     // need to check with Sajan why X is inverted here ...
