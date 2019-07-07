@@ -63,7 +63,8 @@ namespace LHCb::Math {
 
     /// Get the sign mask
     template <typename FP>
-    inline UInt32<FP> getSignMask( const FP x ) noexcept {
+    inline UInt32<FP> __attribute__( ( always_inline ) ) //
+    getSignMask( const FP x ) noexcept {
       union {
         FP         y;
         UInt32<FP> i;
@@ -73,7 +74,8 @@ namespace LHCb::Math {
 
     /// Makes an OR of a float and a unsigned long
     template <typename FP>
-    inline FP spORuint32( const FP x, const UInt32<FP> i ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    spORuint32( const FP x, const UInt32<FP> i ) noexcept {
       union {
         FP         y;
         UInt32<FP> i;
@@ -84,7 +86,8 @@ namespace LHCb::Math {
 
     /// Makes an XOR of a float and a unsigned long
     template <typename FP>
-    inline FP spXORuint32( const FP x, const UInt32<FP> i ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    spXORuint32( const FP x, const UInt32<FP> i ) noexcept {
       union {
         FP         y;
         UInt32<FP> i;
@@ -95,7 +98,8 @@ namespace LHCb::Math {
 
     /// Reduce to 0 to 45
     template <typename FP>
-    inline std::pair<FP, Int32<FP>> reduce2quadrant( FP x ) noexcept {
+    inline std::pair<FP, Int32<FP>> __attribute__( ( always_inline ) ) //
+    reduce2quadrant( FP x ) noexcept {
 
       using namespace LHCb::SIMD;
 
@@ -120,7 +124,8 @@ namespace LHCb::Math {
 
     /// Sincos only for -45deg < x < 45deg
     template <typename FP>
-    inline void fast_sincosf_m45_45( const FP x, FP& s, FP& c ) noexcept {
+    inline void __attribute__( ( always_inline ) ) //
+    fast_sincosf_m45_45( const FP x, FP& s, FP& c ) noexcept {
 
       // sin constants
       const FP sa( -1.9515295891E-4f );
@@ -140,7 +145,8 @@ namespace LHCb::Math {
 
     // Like frexp but vectorising and the exponent is a float.
     template <typename FP>
-    inline std::pair<FP, FP> getMantExponent( const FP x ) noexcept {
+    inline std::pair<FP, FP> __attribute__( ( always_inline ) ) //
+    getMantExponent( const FP x ) noexcept {
 
       using namespace LHCb::SIMD;
 
@@ -162,7 +168,8 @@ namespace LHCb::Math {
 
     /// polynominal function for fast_log implementation
     template <typename FP>
-    inline FP get_log_poly( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    get_log_poly( const FP x ) noexcept {
 
       // constants...
       const FP PX1logf( 7.0376836292E-2f );
@@ -197,7 +204,8 @@ namespace LHCb::Math {
 
     /// Converts a float to an int
     template <typename FP>
-    inline UInt32<FP> float2uint32( const FP x ) noexcept {
+    inline UInt32<FP> __attribute__( ( always_inline ) ) //
+    float2uint32( const FP x ) noexcept {
       const union {
         FP         f;
         UInt32<FP> i;
@@ -207,7 +215,8 @@ namespace LHCb::Math {
 
     /// floor implementation
     template <typename FP>
-    inline FP fpfloor( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    fpfloor( const FP x ) noexcept {
       using namespace LHCb::SIMD;
       auto       ret = simd_cast<Int32<FP>>( x );
       const auto m   = ( float2uint32( x ) >> 31 );
@@ -217,7 +226,8 @@ namespace LHCb::Math {
 
     /// Sqrt implmentation from Quake3
     template <std::size_t ITERATIONS, typename FP>
-    inline FP fast_isqrtf_general( const FP x ) {
+    inline FP __attribute__( ( always_inline ) ) //
+    fast_isqrtf_general( const FP x ) {
       const auto x2 = x * FP( 0.5f );
       union {
         FP         f;
@@ -242,7 +252,8 @@ namespace LHCb::Math {
 
   /// fast asin
   template <typename FP>
-  inline FP fast_asin( FP x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_asin( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_asinf( x );
@@ -283,7 +294,8 @@ namespace LHCb::Math {
 
   /// fast acos
   template <typename FP>
-  inline FP fast_acos( FP x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_acos( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
       return vdt::fast_acosf( x );
@@ -300,7 +312,8 @@ namespace LHCb::Math {
 
   /// fast sincos
   template <typename FP>
-  inline void fast_sincos( const FP xx, FP& s, FP& c ) noexcept {
+  inline void __attribute__( ( always_inline ) ) //
+  fast_sincos( const FP xx, FP& s, FP& c ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
       vdt::fast_sincosf( xx, s, c );
@@ -343,7 +356,8 @@ namespace LHCb::Math {
 
   /// fast log
   template <typename FP>
-  inline FP fast_log( const FP initial_x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_log( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -392,7 +406,8 @@ namespace LHCb::Math {
 
   /// fast exp
   template <typename FP>
-  inline FP fast_exp( const FP initial_x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_exp( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -457,7 +472,8 @@ namespace LHCb::Math {
 
   /// fast tan
   template <typename FP>
-  inline FP fast_tan( const FP x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_tan( const FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -508,7 +524,8 @@ namespace LHCb::Math {
 
   /// fast atan2
   template <typename FP>
-  inline FP fast_atan2( const FP y, const FP x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_atan2( FP y, FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -519,38 +536,42 @@ namespace LHCb::Math {
     // SIMD version
     else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
 
+      // masks based on input values
+      const auto x_lt_zero = ( x < FP::Zero() );
+      const auto y_lt_zero = ( y < FP::Zero() );
+      const auto y_is_zero = ( y == FP::Zero() );
+
       // move in first octant
-      auto       xx     = abs( x );
-      auto       yy     = abs( y );
-      const auto m1     = ( yy > xx );
+      x                 = abs( x );
+      y                 = abs( y );
+      const auto m1     = ( y > x );
       const auto any_m1 = any_of( m1 );
       if ( any_m1 ) {
-        const auto tmp = yy;
-        yy( m1 )       = xx;
-        xx( m1 )       = tmp;
+        const auto tmp = y;
+        y( m1 )        = x;
+        x( m1 )        = tmp;
       }
 
       const FP TAN_PIO8F( 0.4142135623730950f ); // tan(pi/8)
 
-      const auto t      = yy / xx;
+      const auto t      = y / x;
       auto       z      = t;
       const auto m2     = t > TAN_PIO8F;
       const auto any_m2 = any_of( m2 );
       if ( any_m2 ) { z( m2 ) = ( t - FP::One() ) / ( t + FP::One() ); }
 
-      const auto z2 = z * z;
+      const auto zz = z * z;
 
       const FP a( 8.05374449538e-2f );
       const FP b( -1.38776856032E-1f );
       const FP c( 1.99777106478E-1f );
       const FP d( -3.33329491539E-1f );
 
-      auto ret = ( ( ( ( ( ( ( ( a * z2 ) + b ) * z2 ) + c ) * z2 ) + d ) * z2 * z ) + z );
+      auto ret = ( ( ( ( ( ( ( ( a * zz ) + b ) * zz ) + c ) * zz ) + d ) * zz * z ) + z );
 
       // move back in place
-      const auto xZero = xx == FP::Zero();
-      const auto yZero = y == FP::Zero();
-      ret.setZero( xZero || yZero );
+      const auto xZero = ( x == FP::Zero() );
+      ret.setZero( xZero || y_is_zero );
 
       const FP PIO4( impl::PIO4F );
       const FP PIO2( impl::PIO2F );
@@ -558,8 +579,8 @@ namespace LHCb::Math {
 
       if ( any_m2 ) { ret( m2 ) += PIO4; }
       if ( any_m1 ) { ret( m1 ) = PIO2 - ret; }
-      ret( x < FP::Zero() ) = PIF - ret;
-      ret( y < FP::Zero() ) = -ret;
+      ret( x_lt_zero ) = PIF - ret;
+      ret( y_lt_zero ) = -ret;
 
       return ret;
     }
@@ -569,7 +590,8 @@ namespace LHCb::Math {
 
   /// fast 1/sqrt
   template <typename FP>
-  inline FP fast_rsqrt( const FP x ) noexcept {
+  inline FP __attribute__( ( always_inline ) ) //
+  fast_rsqrt( const FP x ) noexcept {
     using namespace LHCb::SIMD;
     // For scalars, use VDT-like methods as they seems fastest
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -603,6 +625,8 @@ namespace LHCb::Math {
    *
    *  https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi
    *
+   *  https://gist.github.com/volkansalma/2972237
+   *
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   30/11/2017
    */
@@ -613,7 +637,8 @@ namespace LHCb::Math {
 
     /// Fast log2 approximation
     template <typename FP>
-    inline FP approx_log2( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    approx_log2( const FP x ) noexcept {
       using namespace impl;
       using namespace LHCb::SIMD;
       const union {
@@ -631,13 +656,15 @@ namespace LHCb::Math {
 
     /// Fast log approximation
     template <typename FP>
-    inline FP approx_log( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    approx_log( const FP x ) noexcept {
       return FP( 0.69314718f ) * approx_log2( x );
     }
 
     /// Very fast log approximation
     template <typename FP>
-    inline FP vapprox_log( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    vapprox_log( const FP x ) noexcept {
       using namespace impl;
       using namespace LHCb::SIMD;
       const union {
@@ -649,7 +676,8 @@ namespace LHCb::Math {
 
     /// Fast pow2 approximation
     template <typename FP>
-    inline FP approx_pow2( const FP p ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    approx_pow2( const FP p ) noexcept {
       using namespace LHCb::SIMD;
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
@@ -683,13 +711,15 @@ namespace LHCb::Math {
 
     /// Fast exp approximation
     template <typename FP>
-    inline FP approx_exp( const FP p ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    approx_exp( const FP p ) noexcept {
       return approx_pow2( FP( impl::LOG2EF ) * p );
     }
 
     /// Very fast pow2 approximation
     template <typename FP>
-    inline FP vapprox_pow2( const FP p ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    vapprox_pow2( const FP p ) noexcept {
       using namespace LHCb::SIMD;
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
@@ -715,30 +745,35 @@ namespace LHCb::Math {
 
     /// Very fast exp approximation
     template <typename FP>
-    inline FP vapprox_exp( const FP p ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    vapprox_exp( const FP p ) noexcept {
       return vapprox_pow2( FP( impl::LOG2EF ) * p );
     }
 
     /// very fast approximate atan2
     template <typename FP>
-    inline FP vapprox_atan2( const FP y, const FP x ) {
+    inline FP __attribute__( ( always_inline ) ) //
+    vapprox_atan2( const FP y, const FP x ) {
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
-        const auto abs_y = std::fabs( y ) + 1e-10f;
+        const auto abs_y = std::fabs( y ); // + 1e-10f;
         const auto neg_x = ( x < 0.0f );
-        const auto r     = ( neg_x ? ( x + abs_y ) / ( abs_y - x ) : ( x - abs_y ) / ( x + abs_y ) );
-        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + ( ( ( 0.1963f * r * r ) - 0.9817f ) * r ) );
+        const auto r     = ( neg_x //
+                             ? ( x + abs_y ) / ( abs_y - x )
+                             : ( x - abs_y ) / ( x + abs_y ) );
+        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + //
+                             ( ( ( 0.1963f * r * r ) - 0.9817f ) * r ) );
         // opposite sign if in quad III or IV
         return ( y < 0.0f ? -angle : angle );
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         using namespace LHCb::SIMD;
-        const auto abs_y = abs( y ) + FP( 1e-10f );
+        const auto abs_y = abs( y ); // + FP( 1e-10f );
         const auto neg_x = ( x < FP::Zero() );
         auto       r     = ( x - abs_y ) / ( x + abs_y );
         r( neg_x )       = -FP::One() / r;
-        auto angle       = ( ( ( FP( 0.1963f ) * r * r ) - FP( 0.9817f ) ) * r );
-        angle += iif( neg_x, FP( THREEPIO4 ), FP( PIO4F ) );
+        auto angle       = iif( neg_x, FP( THREEPIO4 ), FP( PIO4F ) ) + //
+                     ( ( ( FP( 0.1963f ) * r * r ) - FP( 0.9817f ) ) * r );
         // opposite sign if in quad III or IV
         angle( y < FP::Zero() ) *= -FP::One();
         // return
@@ -751,7 +786,8 @@ namespace LHCb::Math {
       /// Implements the fast sqrt method.
       /// Template parameter STEPS indicates the number of Babylonian steps to use.
       template <std::size_t STEPS, typename FP>
-      inline FP _impl_approx_sqrt( const FP x ) noexcept {
+      inline FP __attribute__( ( always_inline ) ) //
+      _impl_approx_sqrt( const FP x ) noexcept {
         using namespace impl;
         union {
           FP        x;
@@ -759,9 +795,9 @@ namespace LHCb::Math {
         } u = {x};
         u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
         // One Babylonian Steps
-        if ( STEPS >= 3 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
-        if ( STEPS >= 2 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
-        if ( STEPS >= 1 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        if constexpr ( STEPS >= 3 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        if constexpr ( STEPS >= 2 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        if constexpr ( STEPS >= 1 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
         // return
         return u.x;
       }
@@ -770,13 +806,15 @@ namespace LHCb::Math {
 
     /// Approx sqrt
     template <typename FP>
-    inline FP approx_sqrt( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    approx_sqrt( const FP x ) noexcept {
       return details::_impl_approx_sqrt<1>( x );
     }
 
     /// Very approx sqrt
     template <typename FP>
-    inline FP vapprox_sqrt( const FP x ) noexcept {
+    inline FP __attribute__( ( always_inline ) ) //
+    vapprox_sqrt( const FP x ) noexcept {
       return details::_impl_approx_sqrt<0>( x );
     }
 
