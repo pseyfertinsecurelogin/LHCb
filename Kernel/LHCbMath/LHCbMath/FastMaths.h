@@ -61,44 +61,50 @@ namespace LHCb::Math {
         std::conditional_t<std::is_same_v<FP, LHCb::SIMD::VE::FPF>, LHCb::SIMD::VE::Int32,      // VE
                            std::conditional_t<std::is_same_v<FP, float>, std::int32_t, void>>>; // float
 
+    /** @brief Implements a cast between two SIMD types.
+     *  Ideally would use bit_cast from LHCbMath/bit_cast.h here but
+     *  currently this does not work as Vc types fail the is_trivial check.
+     *  Longer term C++20 std::bit_cast should be tried.
+     *  For the moment stick with the 'compiler dependent but happens to be OK'
+     *  union implementation. See https://godbolt.org/z/WS8szO for more details.
+     */
+    template <typename Out, typename In>
+    inline constexpr Out __attribute__( ( always_inline ) ) //
+    union_cast( const In src ) noexcept {
+      static_assert( sizeof( In ) == sizeof( Out ) );
+      static_assert( !std::is_same_v<std::decay_t<Out>, std::decay_t<In>> );
+      static_assert( std::is_trivially_copyable_v<In> );
+      union {
+        In  i;
+        Out o;
+      } x = {src};
+      return x.o;
+    }
+
     /// Get the sign mask
     template <typename FP>
-    inline UInt32<FP> __attribute__( ( always_inline ) ) //
+    inline constexpr UInt32<FP> __attribute__( ( always_inline ) ) //
     getSignMask( const FP x ) noexcept {
-      union {
-        FP         y;
-        UInt32<FP> i;
-      } z = {x};
-      return z.i & UInt32<FP>( 0x80000000 );
+      return ( union_cast<UInt32<FP>>( x ) & UInt32<FP>( 0x80000000 ) );
     }
 
     /// Makes an OR of a float and a unsigned long
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     spORuint32( const FP x, const UInt32<FP> i ) noexcept {
-      union {
-        FP         y;
-        UInt32<FP> i;
-      } z = {x};
-      z.i |= i;
-      return z.y;
+      return union_cast<FP>( union_cast<UInt32<FP>>( x ) | i );
     }
 
     /// Makes an XOR of a float and a unsigned long
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     spXORuint32( const FP x, const UInt32<FP> i ) noexcept {
-      union {
-        FP         y;
-        UInt32<FP> i;
-      } z = {x};
-      z.i ^= i;
-      return z.y;
+      return union_cast<FP>( union_cast<UInt32<FP>>( x ) ^ i );
     }
 
     /// Reduce to 0 to 45
     template <typename FP>
-    inline std::pair<FP, Int32<FP>> __attribute__( ( always_inline ) ) //
+    inline constexpr std::pair<FP, Int32<FP>> __attribute__( ( always_inline ) ) //
     reduce2quadrant( FP x ) noexcept {
 
       using namespace LHCb::SIMD;
@@ -124,7 +130,7 @@ namespace LHCb::Math {
 
     /// Sincos only for -45deg < x < 45deg
     template <typename FP>
-    inline void __attribute__( ( always_inline ) ) //
+    inline constexpr void __attribute__( ( always_inline ) ) //
     fast_sincosf_m45_45( const FP x, FP& s, FP& c ) noexcept {
 
       // sin constants
@@ -145,30 +151,27 @@ namespace LHCb::Math {
 
     // Like frexp but vectorising and the exponent is a float.
     template <typename FP>
-    inline std::pair<FP, FP> __attribute__( ( always_inline ) ) //
+    inline constexpr std::pair<FP, FP> __attribute__( ( always_inline ) ) //
     getMantExponent( const FP x ) noexcept {
 
       using namespace LHCb::SIMD;
 
-      union {
-        FP         x;
-        UInt32<FP> n;
-      } v = {x};
+      auto i = union_cast<UInt32<FP>>( x );
 
-      const auto e = lb_cast<Int32<FP>>( v.n >> 23 ) - Int32<FP>( 127 );
+      const auto e = lb_cast<Int32<FP>>( i >> 23 ) - Int32<FP>( 127 );
 
       // fractional part
       const UInt32<FP> p05f( 0x3f000000 );
       const UInt32<FP> AA( 0x807fffff ); // ~0x7f800000;
-      v.n &= AA;
-      v.n |= p05f;
+      i &= AA;
+      i |= p05f;
 
-      return {v.x, lb_cast<FP>( e )};
+      return {union_cast<FP>( i ), lb_cast<FP>( e )};
     }
 
     /// polynominal function for fast_log implementation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     get_log_poly( const FP x ) noexcept {
 
       // constants...
@@ -202,40 +205,27 @@ namespace LHCb::Math {
       return y;
     }
 
-    /// Converts a float to an int
-    template <typename FP>
-    inline UInt32<FP> __attribute__( ( always_inline ) ) //
-    float2uint32( const FP x ) noexcept {
-      const union {
-        FP         f;
-        UInt32<FP> i;
-      } vp = {x};
-      return vp.i;
-    }
-
     /// floor implementation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     fpfloor( const FP x ) noexcept {
       using namespace LHCb::SIMD;
       auto       ret = simd_cast<Int32<FP>>( x );
-      const auto m   = ( float2uint32( x ) >> 31 );
+      const auto m   = ( union_cast<UInt32<FP>>( x ) >> 31 );
       ret -= lb_cast<Int32<FP>>( m );
       return lb_cast<FP>( ret );
     }
 
     /// Sqrt implmentation from Quake3
     template <std::size_t ITERATIONS, typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     fast_isqrtf_general( const FP x ) {
-      const auto x2 = x * FP( 0.5f );
-      union {
-        FP         f;
-        UInt32<FP> i;
-      } z = {x};
-      z.i = UInt32<FP>( 0x5f3759df ) - ( z.i >> 1 );
-      for ( std::size_t j = 0; j < ITERATIONS; ++j ) { z.f *= ( FP( 1.5f ) - ( x2 * z.f * z.f ) ); }
-      return z.f;
+      const auto half_x = x * FP( 0.5f );
+      auto       i      = union_cast<UInt32<FP>>( x );
+      i                 = UInt32<FP>( 0x5f3759df ) - ( i >> 1 );
+      auto z            = union_cast<FP>( i );
+      for ( std::size_t j = 0; j < ITERATIONS; ++j ) { z *= ( FP( 1.5f ) - ( half_x * z * z ) ); }
+      return z;
     }
 
     // constants.
@@ -252,7 +242,7 @@ namespace LHCb::Math {
 
   /// fast asin
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_asin( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -294,7 +284,7 @@ namespace LHCb::Math {
 
   /// fast acos
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_acos( FP x ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -312,7 +302,7 @@ namespace LHCb::Math {
 
   /// fast sincos
   template <typename FP>
-  inline void __attribute__( ( always_inline ) ) //
+  inline constexpr void __attribute__( ( always_inline ) ) //
   fast_sincos( const FP xx, FP& s, FP& c ) noexcept {
     // shortcuts to scalar VDT versions.
     if constexpr ( std::is_same_v<FP, float> ) {
@@ -356,7 +346,7 @@ namespace LHCb::Math {
 
   /// fast log
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_log( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
@@ -406,7 +396,7 @@ namespace LHCb::Math {
 
   /// fast exp
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_exp( const FP initial_x ) noexcept {
 
     // shortcuts to scalar VDT versions.
@@ -454,11 +444,7 @@ namespace LHCb::Math {
       z += x + FP::One();
 
       // multiply by power of 2
-      const union {
-        UInt32<FP> i;
-        FP         f;
-      } vp = {( ( n + Int32<FP>( 0x7f ) ) << 23 )};
-      z *= vp.f;
+      z *= union_cast<FP>( ( n + Int32<FP>( 0x7f ) ) << 23 );
       const FP MAXLOGF( 88.72283905206835f );
       const FP MINLOGF( -88.0f );
       z( initial_x > MAXLOGF ) = FP( INFF );
@@ -472,7 +458,7 @@ namespace LHCb::Math {
 
   /// fast tan
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_tan( const FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
@@ -524,7 +510,7 @@ namespace LHCb::Math {
 
   /// fast atan2
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_atan2( FP y, FP x ) noexcept {
 
     // shortcuts to scalar VDT versions.
@@ -590,7 +576,7 @@ namespace LHCb::Math {
 
   /// fast 1/sqrt
   template <typename FP>
-  inline FP __attribute__( ( always_inline ) ) //
+  inline constexpr FP __attribute__( ( always_inline ) ) //
   fast_rsqrt( const FP x ) noexcept {
     using namespace LHCb::SIMD;
     // For scalars, use VDT-like methods as they seems fastest
@@ -637,61 +623,48 @@ namespace LHCb::Math {
 
     /// Fast log2 approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     approx_log2( const FP x ) noexcept {
       using namespace impl;
       using namespace LHCb::SIMD;
-      const union {
-        FP         f;
-        UInt32<FP> i;
-      } vx = {x};
-      const union {
-        UInt32<FP> i;
-        FP         f;
-      } mx         = {( vx.i & UInt32<FP>( 0x007FFFFF ) ) | UInt32<FP>( 0x3f000000 )};
-      const auto y = lb_cast<FP>( vx.i ) * FP( 1.1920928955078125e-7f );
-      return ( y - FP( 124.22551499f ) - ( FP( 1.498030302f ) * mx.f ) -
-               ( FP( 1.72587999f ) / ( FP( 0.3520887068f ) + mx.f ) ) );
+      const auto i  = union_cast<UInt32<FP>>( x );
+      const auto mx = union_cast<FP>( ( i & UInt32<FP>( 0x007FFFFF ) ) | UInt32<FP>( 0x3f000000 ) );
+      const auto y  = lb_cast<FP>( i ) * FP( 1.1920928955078125e-7f );
+      return ( y - FP( 124.22551499f ) - ( FP( 1.498030302f ) * mx ) -
+               ( FP( 1.72587999f ) / ( FP( 0.3520887068f ) + mx ) ) );
     }
 
     /// Fast log approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     approx_log( const FP x ) noexcept {
       return FP( 0.69314718f ) * approx_log2( x );
     }
 
     /// Very fast log approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     vapprox_log( const FP x ) noexcept {
       using namespace impl;
       using namespace LHCb::SIMD;
-      const union {
-        FP         f;
-        UInt32<FP> i;
-      } vx = {x};
-      return ( lb_cast<FP>( vx.i ) * FP( 8.2629582881927490e-8f ) ) - FP( 87.989971088f );
+      const auto i = union_cast<UInt32<FP>>( x );
+      return ( lb_cast<FP>( i ) * FP( 8.2629582881927490e-8f ) ) - FP( 87.989971088f );
     }
 
     /// Fast pow2 approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     approx_pow2( const FP p ) noexcept {
       using namespace LHCb::SIMD;
       using namespace impl;
-      if constexpr ( std::is_arithmetic_v<FP> ) {
+      if constexpr ( std::is_same_v<FP, float> ) {
         // scalar
         const float        offset = ( p < 0 ? 1.0f : 0.0f );
         const float        clipp  = ( p < -126.0f ? -126.0f : p );
         const std::int32_t w      = clipp;
         const float        z      = clipp - w + offset;
-        const union {
-          std::uint32_t i;
-          float         f;
-        } v = {static_cast<std::uint32_t>(
-            ( 1 << 23 ) * ( clipp + 121.2740575f + ( 27.7280233f / ( 4.84252568f - z ) ) - ( 1.49012907f * z ) ) )};
-        return v.f;
+        return union_cast<float>( static_cast<std::uint32_t>(
+            ( 1 << 23 ) * ( clipp + 121.2740575f + ( 27.7280233f / ( 4.84252568f - z ) ) - ( 1.49012907f * z ) ) ) );
       } else if constexpr ( is_SIMD_v<FP> ) {
         // SIMD
         const FP   A( -126.0f );
@@ -699,60 +672,48 @@ namespace LHCb::Math {
         const auto w     = lb_cast<Int32<FP>>( clipp );
         auto       z     = clipp - lb_cast<FP>( w );
         z( p < FP::Zero() ) += FP::One();
-        const union {
-          UInt32<FP> i;
-          FP         f;
-        } v = {lb_cast<UInt32<FP>>( ( 1 << 23 ) *
-                                    ( clipp + FP( 121.2740575f ) + ( FP( 27.7280233f ) / ( FP( 4.84252568f ) - z ) ) -
-                                      ( FP( 1.49012907f ) * z ) ) )};
-        return v.f;
+        return union_cast<FP>( lb_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + FP( 121.2740575f ) +
+                                                                    ( FP( 27.7280233f ) / ( FP( 4.84252568f ) - z ) ) -
+                                                                    ( FP( 1.49012907f ) * z ) ) ) );
       }
     }
 
     /// Fast exp approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     approx_exp( const FP p ) noexcept {
       return approx_pow2( FP( impl::LOG2EF ) * p );
     }
 
     /// Very fast pow2 approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     vapprox_pow2( const FP p ) noexcept {
       using namespace LHCb::SIMD;
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
         const float clipp = ( p < -126 ? -126.0f : p );
-        const union {
-          UInt32<FP> i;
-          FP         f;
-        } v = {static_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + 126.94269504f ) )};
-        return v.f;
+        return union_cast<FP>( static_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + 126.94269504f ) ) );
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         // SIMD
         auto     clipp = p;
         const FP A( -126.0f );
         clipp( p < A ) = A;
-        const union {
-          UInt32<FP> i;
-          FP         f;
-        } v = {simd_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + FP( 126.94269504f ) ) )};
-        return v.f;
+        return union_cast<FP>( simd_cast<UInt32<FP>>( ( 1 << 23 ) * ( clipp + FP( 126.94269504f ) ) ) );
       }
     }
 
     /// Very fast exp approximation
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     vapprox_exp( const FP p ) noexcept {
       return vapprox_pow2( FP( impl::LOG2EF ) * p );
     }
 
     /// very fast approximate atan2
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     vapprox_atan2( const FP y, const FP x ) {
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
@@ -786,34 +747,32 @@ namespace LHCb::Math {
       /// Implements the fast sqrt method.
       /// Template parameter STEPS indicates the number of Babylonian steps to use.
       template <std::size_t STEPS, typename FP>
-      inline FP __attribute__( ( always_inline ) ) //
+      inline constexpr FP __attribute__( ( always_inline ) ) //
       _impl_approx_sqrt( const FP x ) noexcept {
         using namespace impl;
-        union {
-          FP        x;
-          Int32<FP> i;
-        } u = {x};
-        u.i = ( 1 << 29 ) + ( u.i >> 1 ) - ( 1 << 22 );
-        // One Babylonian Steps
-        if constexpr ( STEPS >= 3 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
-        if constexpr ( STEPS >= 2 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
-        if constexpr ( STEPS >= 1 ) { u.x = FP( 0.5f ) * ( u.x + ( x / u.x ) ); }
+        auto i = union_cast<Int32<FP>>( x );
+        i      = ( 1 << 29 ) + ( i >> 1 ) - ( 1 << 22 );
+        // Babylonian Steps
+        auto z = union_cast<FP>( i );
+        if constexpr ( STEPS >= 3 ) { z = FP( 0.5f ) * ( z + ( x / z ) ); }
+        if constexpr ( STEPS >= 2 ) { z = FP( 0.5f ) * ( z + ( x / z ) ); }
+        if constexpr ( STEPS >= 1 ) { z = FP( 0.5f ) * ( z + ( x / z ) ); }
         // return
-        return u.x;
+        return z;
       }
 
     } // namespace details
 
     /// Approx sqrt
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     approx_sqrt( const FP x ) noexcept {
       return details::_impl_approx_sqrt<1>( x );
     }
 
     /// Very approx sqrt
     template <typename FP>
-    inline FP __attribute__( ( always_inline ) ) //
+    inline constexpr FP __attribute__( ( always_inline ) ) //
     vapprox_sqrt( const FP x ) noexcept {
       return details::_impl_approx_sqrt<0>( x );
     }
