@@ -18,7 +18,6 @@
 
 #include <cmath>
 #include <cstdint>
-//#include <climits>
 #include <algorithm>
 
 namespace SIMDWrapper {
@@ -600,7 +599,7 @@ namespace SIMDWrapper {
         return _mm512_mask_mov_epi32( b, mask, a );
       }
 
-      friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm512_cmplt_epi32_mask( rhs, lhs ); }
+      friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm512_cmplt_epi32_mask( lhs, rhs ); }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpeq_epi32_mask( lhs, rhs ); }
 
