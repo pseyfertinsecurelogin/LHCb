@@ -8,8 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef PUN_H
-#define PUN_H
+
+#pragma once
+
 #include <cstring>
 #include <type_traits>
 
@@ -33,5 +34,3 @@ bit_cast( In src ) {
   std::memcpy( &dest, &src, sizeof( Out ) );
   return dest;
 }
-
-#endif
