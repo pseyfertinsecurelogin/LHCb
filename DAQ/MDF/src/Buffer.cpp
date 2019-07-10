@@ -29,11 +29,11 @@ std::optional<LHCb::RawEvent> LHCb::MDF::Buffer::get() {
     const RawBank* bank = reinterpret_cast<const RawBank*>( start );
     // check Bank sanity
     if ( bank->magic() != RawBank::MagicPattern ) {
-      throw GaudiException( "Unknown Bank type in Tell1 bank : " + RawEventPrintout::bankHeader( bank ), "MDF::Buffer",
+      throw GaudiException( "Bad magic pattern in Tell1 bank : " + RawEventPrintout::bankHeader( bank ), "MDF::Buffer",
                             StatusCode::FAILURE );
     }
     if ( bank->type() >= RawBank::LastType ) {
-      throw GaudiException( "Bad magic pattern in Tell1 bank : " + RawEventPrintout::bankHeader( bank ), "MDF::Buffer",
+      throw GaudiException( "Unknown Bank type in Tell1 bank : " + RawEventPrintout::bankHeader( bank ), "MDF::Buffer",
                             StatusCode::FAILURE );
     }
     event.event().adoptBank( bank, false );
