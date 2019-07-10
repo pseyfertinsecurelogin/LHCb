@@ -12,9 +12,9 @@
 
 #include "UTDet/DeUTDetector.h"
 #include "UTDet/DeUTLayer.h"
-#include "UTDet/DeUTModule.h"
 #include "UTDet/DeUTSector.h"
 #include "UTDet/DeUTStation.h"
+#include "UTDet/DeUTStave.h"
 #include "UTDet/UTDetFun.h"
 
 #include "Kernel/Trajectory.h"
@@ -203,8 +203,8 @@ DeUTSector* DeUTDetector::findSector( const Gaudi::XYZPoint& aPoint ) const {
     DeUTStation* aStation = dynamic_cast<DeUTStation*>( tStation );
     DeUTLayer*   aLayer   = aStation->findLayer( aPoint );
     if ( aLayer ) {
-      DeUTModule* aModule = aLayer->findModule( aPoint );
-      if ( aModule ) { aSector = aModule->findSector( aPoint ); }
+      DeUTStave* aStave = aLayer->findStave( aPoint );
+      if ( aStave ) { aSector = aStave->findSector( aPoint ); }
     }
   }
   return aSector;
@@ -240,7 +240,7 @@ void DeUTDetector::setOffset() {
 
   assert( m_stations.size() == NBSTATION && "setOffset of UTDetector assumes a wrong number of station" );
 
-  // add one offset for each region of each module of each layer of each station
+  // add one offset for each region of each stave of each layer of each station
   std::size_t ir = 0;
   for ( auto ptrstation : m_stations ) {
     for ( auto ptrlayer : dynamic_cast<DeUTStation*>( ptrstation )->layers() ) {
@@ -250,12 +250,12 @@ void DeUTDetector::setOffset() {
 #ifndef NDEBUG
       const auto curr_nbreg = ir;
 #endif
-      for ( const auto& ptrmodule : ptrlayer->modules() ) {
-        const auto& vecptrsectors = ptrmodule->sectors();
+      for ( const auto& ptrstave : ptrlayer->staves() ) {
+        const auto& vecptrsectors = ptrstave->sectors();
         // add an offset only if we are on a new region
-        if ( beginit || curr_region != ptrmodule->detRegion() ) {
-          curr_region = ptrmodule->detRegion();
-          beginit     = false;
+        if ( beginit || curr_region != ptrstave->detRegion() ) {
+          curr_region  = ptrstave->detRegion();
+          beginit      = false;
           assert( ir < m_offset.size() );
           m_offset[ir] = topoffset;
           ++ir;

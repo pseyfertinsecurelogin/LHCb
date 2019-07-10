@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDet/DeUTSector.h"
-#include "UTDet/DeUTModule.h"
 #include "UTDet/DeUTSensor.h"
+#include "UTDet/DeUTStave.h"
 #include "UTDet/StatusMap.h"
 #include "UTDet/UTDetFun.h"
 
@@ -123,7 +123,7 @@ StatusCode DeUTSector::initialize() {
     const unsigned subID = param<int>( "subID" );
 
     // sector number needs info from mother
-    if ( m_parent->moduleRotZ() == "No" ) {
+    if ( m_parent->staveRotZ() == "No" ) {
       setID( m_parent->firstSector() + subID - 1 );
     } else {
       setID( m_parent->firstSector() + tSize - subID );
@@ -161,11 +161,10 @@ StatusCode DeUTSector::initialize() {
 
     using namespace boost;
     std::string region = lexical_cast<std::string>( chan.detRegion() );
-    std::string col    = moduleNumber( chan.detRegion(), parentID.station() );
+    std::string col    = staveNumber( chan.detRegion(), parentID.station() );
     std::string sector = lexical_cast<std::string>( subID );
 
-    m_conditionPathName =
-        UTNames().UniqueLayerToString( chan ) + "LayerR" + region + "Module" + col + "Sector" + sector;
+    m_conditionPathName = UTNames().UniqueLayerToString( chan ) + "LayerR" + region + "Stave" + col + "Sector" + sector;
 
     sc = registerConditionsCallbacks();
     if ( sc.isFailure() ) {
@@ -197,7 +196,7 @@ StatusCode DeUTSector::initialize() {
   //             << "\n row " << row()
   //             << "\n prodID " << prodID()
   //             << "\n conditionsPath " << conditionsPathName()
-  //             << "\n moduleType " << moduleType()
+  //             << "\n staveType " << staveType()
   //             << std::endl;
 
   return StatusCode::SUCCESS;
@@ -854,7 +853,7 @@ unsigned int DeUTSector::prodID() const { return m_parent->prodID(); }
 
 std::string DeUTSector::conditionsPathName() const { return m_conditionPathName; }
 
-std::string DeUTSector::moduleNumber( const unsigned int& reg, const unsigned int& station ) const {
+std::string DeUTSector::staveNumber( const unsigned int& reg, const unsigned int& station ) const {
   using namespace boost;
 
   int col = 0;

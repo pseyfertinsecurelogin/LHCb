@@ -113,12 +113,12 @@ public:
    */
   Gaudi::Plane3D plane() const;
 
-  /** plane corresponding to the module entrance
+  /** plane corresponding to the stave entrance
    * @return the plane
    */
   Gaudi::Plane3D entryPlane() const;
 
-  /** plane corresponding to the module exit
+  /** plane corresponding to the stave exit
    * @return the plane
    */
   Gaudi::Plane3D exitPlane() const;

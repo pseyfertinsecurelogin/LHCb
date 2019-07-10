@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "UTDet/DeUTModule.h"
+#include "UTDet/DeUTStave.h"
 #include "UTDet/DeUTLayer.h"
 #include "UTDet/DeUTSector.h"
 
@@ -20,20 +20,20 @@
 
 using namespace LHCb;
 
-/** @file DeUTModule.cpp
+/** @file DeUTStave.cpp
  *
- *  Implementation of class :  DeUTModule
+ *  Implementation of class :  DeUTStave
  *
  *  @author Andy Beiter (based on code by Jianchun Wang, Matt Needham)
  *  @date   2018-09-04
  *
  */
 
-DeUTModule::DeUTModule( const std::string& name ) : DeUTBaseElement( name ) {}
+DeUTStave::DeUTStave( const std::string& name ) : DeUTBaseElement( name ) {}
 
-const CLID& DeUTModule::clID() const { return DeUTModule::classID(); }
+const CLID& DeUTStave::clID() const { return DeUTStave::classID(); }
 
-StatusCode DeUTModule::initialize() {
+StatusCode DeUTStave::initialize() {
   // initialize method
   StatusCode sc = DeUTBaseElement::initialize();
 
@@ -44,22 +44,22 @@ StatusCode DeUTModule::initialize() {
     m_detRegion   = param<int>( "detRegion" );
     m_firstSector = param<int>( "firstReadoutSector" );
     m_column      = param<int>( "column" );
-    m_type        = param<std::string>( "moduleType" );
+    m_type        = param<std::string>( "staveType" );
 
     m_numSectors = param<int>( "numSectors" );
-    m_moduleRotZ = param<std::string>( "moduleRotZ" );
+    m_staveRotZ  = param<std::string>( "staveRotZ" );
 
-    m_parent                   = getParent<DeUTModule>();
+    m_parent                   = getParent<DeUTStave>();
     const UTChannelID parentID = m_parent->elementID();
     UTChannelID chan( UTChannelID::detType::typeUT, parentID.station(), parentID.layer(), m_detRegion, m_firstSector,
                       0 );
     setElementID( chan );
-    m_sectors = getChildren<DeUTModule>();
+    m_sectors = getChildren<DeUTStave>();
   }
 
   if ( exists( "version" ) ) m_versionString = param<std::string>( "version" );
 
-  sc = registerCondition( this, m_prodIDString, &DeUTModule::updateProdIDCondition, true );
+  sc = registerCondition( this, m_prodIDString, &DeUTStave::updateProdIDCondition, true );
   if ( sc.isFailure() ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to register prodID conditions" << endmsg;
@@ -69,7 +69,7 @@ StatusCode DeUTModule::initialize() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode DeUTModule::updateProdIDCondition() {
+StatusCode DeUTStave::updateProdIDCondition() {
   const Condition* aCon = condition( m_prodIDString );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
@@ -80,37 +80,37 @@ StatusCode DeUTModule::updateProdIDCondition() {
   return StatusCode::SUCCESS;
 }
 
-std::ostream& DeUTModule::printOut( std::ostream& os ) const {
+std::ostream& DeUTStave::printOut( std::ostream& os ) const {
   // stream to cout
-  os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
+  os << " Stave : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
      << std::endl;
 
   return os;
 }
 
-MsgStream& DeUTModule::printOut( MsgStream& os ) const {
+MsgStream& DeUTStave::printOut( MsgStream& os ) const {
 
   // stream to Msg service
-  os << " Module : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
+  os << " Stave : " << name() << " type " << m_type << " Det region " << m_detRegion << " Column " << m_column
      << std::endl;
 
   return os;
 }
 
-DeUTSector* DeUTModule::findSector( const UTChannelID aChannel ) {
+DeUTSector* DeUTStave::findSector( const UTChannelID aChannel ) {
   auto iter = std::find_if( m_sectors.begin(), m_sectors.end(),
                             [&]( const DeUTSector* s ) { return s->contains( aChannel ); } );
 
   return ( iter != m_sectors.end() ? *iter : nullptr );
 }
 
-DeUTSector* DeUTModule::findSector( const Gaudi::XYZPoint& point ) {
+DeUTSector* DeUTStave::findSector( const Gaudi::XYZPoint& point ) {
   auto iter =
       std::find_if( m_sectors.begin(), m_sectors.end(), [&]( const DeUTSector* s ) { return s->isInside( point ); } );
   return ( iter != m_sectors.end() ? *iter : nullptr );
 }
 
-double DeUTModule::fractionActive() const {
+double DeUTStave::fractionActive() const {
   return std::accumulate( m_sectors.begin(), m_sectors.end(), 0.0,
                           []( double f, const DeUTSector* s ) { return f + s->fractionActive(); } ) /
          double( m_sectors.size() );

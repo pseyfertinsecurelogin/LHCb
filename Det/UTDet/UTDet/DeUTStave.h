@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _DEUTMODULE_H_
-#define _DEUTMODULE_H_
+#ifndef _DEUTSTAVE_H_
+#define _DEUTSTAVE_H_
 
 #include <string>
 #include <vector>
@@ -20,37 +20,37 @@
 class DeUTSensor;
 class DeUTLayer;
 
-/** @class DeUTModule DeUTModule.h UTDet/DeUTModule.h
+/** @class DeUTStave DeUTStave.h UTDet/DeUTStave.h
  *
- *  Class representing a UT module (13 or 7 sensors)
+ *  Class representing a UT Stave (13 or 7 sensors)
  *
  *  @author Andy Beiter (based on code by Jianchun Wang, Matt Needham)
  *  @date   2018-09-04
  *
  */
 
-static const CLID CLID_DeUTModule = 9310;
+static const CLID CLID_DeUTStave = 9310;
 
-class DeUTModule : public DeUTBaseElement {
+class DeUTStave : public DeUTBaseElement {
 
 public:
   /** parent type */
-  typedef UTDetTraits<DeUTModule>::parent parent_type;
+  typedef UTDetTraits<DeUTStave>::parent parent_type;
 
   /** child type */
-  typedef UTDetTraits<DeUTModule>::child child_type;
+  typedef UTDetTraits<DeUTStave>::child child_type;
 
   /** children */
   typedef std::vector<child_type*> Children;
 
   /** Constructor */
-  DeUTModule( const std::string& name = "" );
+  DeUTStave( const std::string& name = "" );
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID& classID() { return CLID_DeUTModule; }
+  static const CLID& classID() { return CLID_DeUTStave; }
 
   /**
    * another reference to class identifier
@@ -63,7 +63,7 @@ public:
    */
   StatusCode initialize() override;
 
-  /** region where module is located
+  /** region where Stave is located
    * @return m_region
    */
   unsigned int detRegion() const;
@@ -72,17 +72,17 @@ public:
   inline const std::type_info& type( const std::string& name ) const override {
     return ParamValidDataObject::type( name );
   }
-  /** indicate the module type (A/B/C/D)
+  /** indicate the Stave type (A/B/C/D)
    * @return m_type
    */
   std::string type() const;
 
-  /** indicate the module is rotated around Z or not
-   * @return m_moduleRotZ
+  /** indicate the Stave is rotated around Z or not
+   * @return m_staveRotZ
    */
-  std::string moduleRotZ() const;
+  std::string staveRotZ() const;
 
-  /** first readout sector on module
+  /** first readout sector on Stave
    * @return m_firstSector
    */
   unsigned int firstSector() const;
@@ -92,7 +92,7 @@ public:
    */
   unsigned int numSectorsExpected() const;
 
-  /** last readout sector on module
+  /** last readout sector on Stave
    * @return m_firstSector
    */
   unsigned int lastSector() const;
@@ -118,7 +118,7 @@ public:
   DeUTSector* findSector( const Gaudi::XYZPoint& point );
 
   /** children */
-  const DeUTModule::Children& sectors() const;
+  const DeUTStave::Children& sectors() const;
 
   /** column number */
   unsigned int column() const;
@@ -143,7 +143,7 @@ private:
   unsigned int m_firstSector = 0;
   unsigned int m_column      = 0;
   std::string  m_type;
-  std::string  m_moduleRotZ;
+  std::string  m_staveRotZ;
   unsigned int m_numSectors = 0;
   parent_type* m_parent     = nullptr;
   Children     m_sectors;
@@ -155,46 +155,46 @@ private:
 #include "UTDet/DeUTLayer.h"
 #include "UTDet/DeUTSector.h"
 
-inline const DeUTModule::Children& DeUTModule::sectors() const { return m_sectors; }
+inline const DeUTStave::Children& DeUTStave::sectors() const { return m_sectors; }
 
-inline unsigned int DeUTModule::detRegion() const { return m_detRegion; }
+inline unsigned int DeUTStave::detRegion() const { return m_detRegion; }
 
-inline std::string DeUTModule::type() const { return m_type; }
+inline std::string DeUTStave::type() const { return m_type; }
 
-inline std::string DeUTModule::moduleRotZ() const { return m_moduleRotZ; }
+inline std::string DeUTStave::staveRotZ() const { return m_staveRotZ; }
 
-inline unsigned int DeUTModule::lastSector() const { return firstSector() + m_sectors.size() - 1u; }
+inline unsigned int DeUTStave::lastSector() const { return firstSector() + m_sectors.size() - 1u; }
 
-inline unsigned int DeUTModule::firstSector() const { return m_firstSector; }
+inline unsigned int DeUTStave::firstSector() const { return m_firstSector; }
 
-inline unsigned int DeUTModule::numSectorsExpected() const { return m_numSectors; }
+inline unsigned int DeUTStave::numSectorsExpected() const { return m_numSectors; }
 
-inline unsigned int DeUTModule::column() const { return m_column; }
+inline unsigned int DeUTStave::column() const { return m_column; }
 
-inline bool DeUTModule::contains( const LHCb::UTChannelID aChannel ) const {
+inline bool DeUTStave::contains( const LHCb::UTChannelID aChannel ) const {
   return ( ( aChannel.detRegion() == m_detRegion && aChannel.sector() >= m_firstSector &&
              aChannel.sector() < m_firstSector + m_sectors.size() ) &&
            m_parent->contains( aChannel ) );
 }
 
-inline unsigned int DeUTModule::prodID() const { return m_prodID; }
+inline unsigned int DeUTStave::prodID() const { return m_prodID; }
 
-inline std::string DeUTModule::versionString() const { return m_versionString; }
+inline std::string DeUTStave::versionString() const { return m_versionString; }
 
-/** ouput operator for class DeUTModule
- *  @see DeModule
+/** output operator for class DeUTStave
+ *  @see DeUTStave
  *  @see MsgStream
  *  @param os      reference to STL output stream
- *  @param aModule reference to DeUTModule object
+ *  @param aStave reference to DeUTStave object
  */
-inline std::ostream& operator<<( std::ostream& os, const DeUTModule* aModule ) { return aModule->printOut( os ); }
+inline std::ostream& operator<<( std::ostream& os, const DeUTStave* aStave ) { return aStave->printOut( os ); }
 
-/** ouput operator for class DeUTModule
- *  @see DeUTModule
+/** output operator for class DeUTStave
+ *  @see DeUTStave
  *  @see MsgStream
  *  @param os      reference to MsgStream output stream
- *  @param aModule reference to DeUTModule object
+ *  @param aStave reference to DeUTStave object
  */
-inline MsgStream& operator<<( MsgStream& os, const DeUTModule* aModule ) { return aModule->printOut( os ); }
+inline MsgStream& operator<<( MsgStream& os, const DeUTStave* aStave ) { return aStave->printOut( os ); }
 
-#endif // _DEUTMODULE_H
+#endif // _DEUTSTAVE_H

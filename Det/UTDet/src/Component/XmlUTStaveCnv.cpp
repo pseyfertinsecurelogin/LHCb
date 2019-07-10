@@ -12,7 +12,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 // UTDet
-#include "UTDet/DeUTModule.h"
+#include "UTDet/DeUTStave.h"
 
-typedef XmlUserDetElemCnv<DeUTModule> XmlUTModuleCnv;
-DECLARE_CONVERTER( XmlUTModuleCnv )
+typedef XmlUserDetElemCnv<DeUTStave> XmlUTStaveCnv;
+DECLARE_CONVERTER( XmlUTStaveCnv )

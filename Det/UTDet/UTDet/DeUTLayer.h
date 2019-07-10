@@ -19,7 +19,7 @@
 #include "UTDet/DeUTBaseElement.h"
 
 class DeUTSector;
-class DeUTModule;
+class DeUTStave;
 class DeUTStation;
 
 /** @class DeUTLayer DeUTLayer.h UTDet/DeUTLayer.h
@@ -93,13 +93,13 @@ public:
   /** print to stream */
   MsgStream& printOut( MsgStream& os ) const override;
 
-  /**  locate module based on a channel id
-  @return  module */
-  DeUTModule* findModule( const LHCb::UTChannelID aChannel );
+  /**  locate stave based on a channel id
+  @return  stave */
+  DeUTStave* findStave( const LHCb::UTChannelID aChannel );
 
-  /** locate module  based on a point
-  @return module */
-  DeUTModule* findModule( const Gaudi::XYZPoint& point );
+  /** locate stave based on a point
+  @return stave */
+  DeUTStave* findStave( const Gaudi::XYZPoint& point );
 
   /** check whether contains
    *  @param  aChannel channel
@@ -123,7 +123,7 @@ public:
   const std::string& nickname() const;
 
   /** vector of children */
-  const Children& modules() const;
+  const Children& staves() const;
 
   /**
    * fraction active channels
@@ -148,7 +148,7 @@ private:
   /** make flat list of lowest descendents  and also layers*/
   void flatten();
 
-  Children     m_modules;
+  Children     m_staves;
   parent_type* m_parent = nullptr;
 };
 
@@ -182,12 +182,12 @@ inline MsgStream& operator<<( MsgStream& os, const DeUTLayer* aLayer ) { return 
 
 inline const std::string& DeUTLayer::nickname() const { return m_nickname; }
 
-#include "UTDet/DeUTModule.h"
+#include "UTDet/DeUTStave.h"
 
 inline bool DeUTLayer::contains( const LHCb::UTChannelID aChannel ) const {
   return ( elementID().station() == aChannel.station() && ( elementID().layer() == aChannel.layer() ) );
 }
 
-inline const DeUTLayer::Children& DeUTLayer::modules() const { return m_modules; }
+inline const DeUTLayer::Children& DeUTLayer::staves() const { return m_staves; }
 
 #endif // _DEUTLAYER_H

@@ -36,7 +36,7 @@
  */
 
 class DeUTSensor;
-class DeUTModule;
+class DeUTStave;
 
 static const CLID CLID_DeUTSector = 9320;
 
@@ -436,7 +436,7 @@ public:
   const Sensors& sensors() const;
 
   /** locate sensor based on a point
-   * @return module */
+   * @return stave */
   DeUTSensor* findSensor( const Gaudi::XYZPoint& point ) const;
 
   /** find the middle sensor. rounding down if odd **/
@@ -481,8 +481,8 @@ public:
 
   std::string conditionsPathName() const;
 
-  /** module type */
-  std::string moduleType() const;
+  /** stave type */
+  std::string staveType() const;
 
 protected:
   bool m_isStereo = false;
@@ -502,7 +502,7 @@ private:
   std::string  m_hybridType;
   std::string  m_conditionPathName;
 
-  std::string moduleNumber( const unsigned int& chan, const unsigned int& reg ) const;
+  std::string staveNumber( const unsigned int& chan, const unsigned int& reg ) const;
 
   StatusCode             updateStatusCondition();
   StatusCode             updateNoiseCondition();
@@ -734,12 +734,12 @@ inline const Condition* DeUTSector::noiseCondition() const { return condition( m
 
 inline double DeUTSector::measEff() const { return m_measEff; }
 
-#include "UTDet/DeUTModule.h"
+#include "UTDet/DeUTStave.h"
 
 inline unsigned int DeUTSector::column() const { return m_parent->column(); }
 
 inline unsigned int DeUTSector::row() const { return m_row; }
 
-inline std::string DeUTSector::moduleType() const { return m_parent->type(); }
+inline std::string DeUTSector::staveType() const { return m_parent->type(); }
 
 #endif // _DEUTSECTOR_H
