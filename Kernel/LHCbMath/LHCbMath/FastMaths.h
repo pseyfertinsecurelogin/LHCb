@@ -73,7 +73,6 @@ namespace LHCb::Math {
     union_cast( const In src ) noexcept {
       static_assert( sizeof( In ) == sizeof( Out ) );
       static_assert( !std::is_same_v<std::decay_t<Out>, std::decay_t<In>> );
-      static_assert( std::is_trivially_copyable_v<In> );
       union {
         In  i;
         Out o;
