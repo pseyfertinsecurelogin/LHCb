@@ -69,6 +69,11 @@ public:
   inline Vec3<T> gather_##name( const I& key ) const {                                                                 \
     return {gather( locX, key ), gather( locY, key ), gather( locZ, key )};                                            \
   }                                                                                                                    \
+  template <typename T, typename I, typename MaskT>                                                                    \
+  inline Vec3<T> maskgather_##name( const I& key, const MaskT& mask, const T& src ) const {                            \
+    return {maskgather( locX, key, mask, src ), maskgather( locY, key, mask, src ),                                    \
+            maskgather( locZ, key, mask, src )};                                                                       \
+  }                                                                                                                    \
   template <typename T>                                                                                                \
   inline void store_##name( const int key, const Vec3<T>& v ) const {                                                  \
     v.x.store( locX + key );                                                                                           \
@@ -90,6 +95,10 @@ public:
   template <typename T, typename I>                                                                                    \
   inline Vec3<T> gather_##name( const I& key ) const {                                                                 \
     return {gather( locX, key ), gather( locY, key ), valZ};                                                           \
+  }                                                                                                                    \
+  template <typename T, typename I, typename MaskT>                                                                    \
+  inline Vec3<T> maskgather_##name( const I& key, const MaskT& mask, const T& src ) const {                            \
+    return {maskgather( locX, key, mask, src ), maskgather( locY, key, mask, src ), valZ};                             \
   }                                                                                                                    \
   template <typename T>                                                                                                \
   inline void store_##name( const int key, const Vec3<T>& v ) const {                                                  \
@@ -113,6 +122,11 @@ public:
   inline Vec3<T> gather_##name( const I& key, __VA_ARGS__ ) const {                                                    \
     return {gather( locX, key ), gather( locY, key ), gather( locZ, key )};                                            \
   }                                                                                                                    \
+  template <typename T, typename I, typename MaskT>                                                                    \
+  inline Vec3<T> maskgather_##name( const I& key, const MaskT& mask, const T& src, __VA_ARGS__ ) const {               \
+    return {maskgather( locX, key, mask, src ), maskgather( locY, key, mask, src ),                                    \
+            maskgather( locZ, key, mask, src )};                                                                       \
+  }                                                                                                                    \
   template <typename T>                                                                                                \
   inline void store_##name( const int key, __VA_ARGS__, const Vec3<T>& v ) const {                                     \
     v.x.store( locX + key );                                                                                           \
@@ -134,6 +148,10 @@ public:
   template <typename T, typename I>                                                                                    \
   inline Vec3<T> gather_##name( const I& key, __VA_ARGS__ ) const {                                                    \
     return {gather( locX, key ), gather( locY, key ), valZ};                                                           \
+  }                                                                                                                    \
+  template <typename T, typename I, typename MaskT>                                                                    \
+  inline Vec3<T> maskgather_##name( const I& key, const MaskT& mask, const T& src, __VA_ARGS__ ) const {               \
+    return {maskgather( locX, key, mask, src ), maskgather( locY, key, mask, src ), valZ};                             \
   }                                                                                                                    \
   template <typename T>                                                                                                \
   inline void store_##name( const int key, __VA_ARGS__, const Vec3<T>& v ) const {                                     \

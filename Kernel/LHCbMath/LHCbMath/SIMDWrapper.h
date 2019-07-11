@@ -164,6 +164,14 @@ namespace SIMDWrapper {
 
     inline float_v gather( const float* base, const int_v& idx ) { return base[idx.cast()]; }
 
+    inline int_v maskgather( const int* base, const int_v& idx, const mask_v& mask, const int_v& source ) {
+      return select( mask, base[idx.cast()], source );
+    }
+
+    inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
+      return select( mask, base[idx.cast()], source );
+    }
+
     struct types {
       static const size_t size = 1;
       using int_v              = scalar::int_v;
@@ -440,6 +448,14 @@ namespace SIMDWrapper {
       return _mm256_i32gather_ps( base, idx, sizeof( float ) );
     }
 
+    inline int_v maskgather( const int* base, const int_v& idx, const float_v& mask, const int_v& source ) {
+      return _mm256_mask_i32gather_epi32( source, base, idx, castToInt( mask ), sizeof( int ) );
+    }
+
+    inline float_v maskgather( const float* base, const int_v& idx, const float_v& mask, const float_v& source ) {
+      return _mm256_mask_i32gather_ps( source, base, idx, mask, sizeof( float ) );
+    }
+
     struct types {
       static const size_t size = 8;
       using int_v              = avx2::int_v;
@@ -657,6 +673,14 @@ namespace SIMDWrapper {
       return _mm256_i32gather_ps( base, idx, sizeof( float ) );
     }
 
+    inline int_v maskgather( const int* base, const int_v& idx, const mask_v& mask, const int_v& source ) {
+      return _mm256_mmask_i32gather_epi32( source, mask, idx, base, sizeof( int ) );
+    }
+
+    inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
+      return _mm256_mmask_i32gather_ps( source, mask, idx, base, sizeof( float ) );
+    }
+
     struct types {
       static const size_t size = 8;
       using int_v              = avx256::int_v;
@@ -828,6 +852,14 @@ namespace SIMDWrapper {
       return _mm512_i32gather_ps( idx, base, sizeof( float ) );
     }
 
+    inline int_v maskgather( const int* base, const int_v& idx, const mask_v& mask, const int_v& source ) {
+      return _mm512_mask_i32gather_epi32( source, mask, idx, base, sizeof( int ) );
+    }
+
+    inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
+      return _mm512_mask_i32gather_ps( source, mask, idx, base, sizeof( float ) );
+    }
+
     struct types {
       static const size_t size = 16;
       using int_v              = avx512::int_v;
@@ -860,12 +892,16 @@ namespace SIMDWrapper {
   inline auto gather_##name( const T& key ) const {                                                                    \
     return gather( location, key );                                                                                    \
   }                                                                                                                    \
+  template <typename T, typename KeyT, typename MaskT>                                                                 \
+  inline auto maskgather_##name( const KeyT& key, const MaskT& mask, const T& src ) const {                            \
+    return maskgather( location, key, mask, src );                                                                     \
+  }                                                                                                                    \
   template <typename T>                                                                                                \
   inline auto store_##name( const int key, const T& v ) {                                                              \
     v.store( location + key );                                                                                         \
   }                                                                                                                    \
   template <typename T, typename MaskT>                                                                                \
-  inline auto compressstore_##name( const int key, MaskT mask, const T& v ) {                                          \
+  inline auto compressstore_##name( const int key, const MaskT& mask, const T& v ) {                                   \
     v.compressstore( mask, location + key );                                                                           \
   }
 
@@ -878,6 +914,10 @@ namespace SIMDWrapper {
   template <typename T>                                                                                                \
   inline auto gather_##name( const T& key, __VA_ARGS__ ) const {                                                       \
     return gather( location, key );                                                                                    \
+  }                                                                                                                    \
+  template <typename T, typename KeyT, typename MaskT>                                                                 \
+  inline auto maskgather_##name( const T& key, const MaskT& mask, const T& src, __VA_ARGS__ ) const {                  \
+    return maskgather( location, key, mask, src );                                                                     \
   }                                                                                                                    \
   template <typename T>                                                                                                \
   inline auto store_##name( const int key, __VA_ARGS__, const T& v ) {                                                 \
