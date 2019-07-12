@@ -29,6 +29,7 @@
 #include "RichDet/DeRichHPDPanel.h"
 #include "RichDet/DeRichPDPanel.h"
 #include "RichDet/DeRichPMTPanel.h"
+#include "RichDet/DeRichPMTPanelClassic.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRich
@@ -83,7 +84,7 @@ StatusCode DeRich::initialize() {
     m_Rich2PhotoDetectorArrayConfig = param<int>( "Rich2PMTArrayConfig" );
     if ( m_Rich2PhotoDetectorArrayConfig >= 1 ) {
       m_Rich2UseGrandPmt = true;
-      if ( m_Rich2PhotoDetectorArrayConfig == 2 ) { m_Rich2UseMixedPmt = true; }
+      if ( m_Rich2PhotoDetectorArrayConfig == 2 || m_Rich2PhotoDetectorArrayConfig == 3 ) { m_Rich2UseMixedPmt = true; }
     }
   }
 
@@ -229,8 +230,13 @@ void DeRich::loadPDPanels() {
       SmartDataPtr<DeRichHPDPanel> aHpdPanel( dataSvc(), pName );
       phdePanel = aHpdPanel;
     } else if ( RichPhotoDetConfig() == Rich::PMTConfig ) {
-      SmartDataPtr<DeRichPMTPanel> aPmtPanel( dataSvc(), pName );
-      phdePanel = aPmtPanel;
+      if ( m_Rich2PhotoDetectorArrayConfig != 3 ) {
+        SmartDataPtr<DeRichPMTPanelClassic> aPmtPanel( dataSvc(), pName );
+        phdePanel = aPmtPanel;
+      } else {
+        SmartDataPtr<DeRichPMTPanel> aPmtPanel( dataSvc(), pName );
+        phdePanel = aPmtPanel;
+      }
     }
 
     if ( !phdePanel ) {
@@ -336,12 +342,12 @@ DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides& sides
   hitPosition = {hx, hy, hz};
 
   // copy m2 values from res2 to res1
-  res1(m2) = res2;
+  res1( m2 ) = res2;
 
   // scalar loop for non-Vc types
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
     if ( m2[i] ) {
-      //res1[i]    = res2[i];
+      // res1[i]    = res2[i];
       smartID[i] = smartID2[i];
       PDs[i]     = PDs2[i];
     }

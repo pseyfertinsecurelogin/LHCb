@@ -22,6 +22,7 @@
 #include "Kernel/RichSide.h"
 
 class DeRichPMTPanel;
+class DeRichPMTPanelClassic;
 
 namespace LHCb {
 
@@ -36,6 +37,7 @@ namespace LHCb {
 
     // Allow some specific classes friendship
     friend DeRichPMTPanel;
+    friend DeRichPMTPanelClassic;
 
   public:
     /// Type for internal key
