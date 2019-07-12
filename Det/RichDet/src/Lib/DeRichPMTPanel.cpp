@@ -194,6 +194,7 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               auto id = panelID();
               id.setPD_PMT( iModNum, pmtNumberInAModule );
+	      id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               dePMT->setPDSmartID( id );
               // pmtNumberInAModule is SmartID pdInCol
               // iModNum is pdCol
@@ -414,8 +415,8 @@ bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmar
   const Int a1 = ( a[1] )[0];
   const Int a2 = ( a[2] )[0];
   const Int a3 = ( a[3] )[0];
-  setRichPmtSmartID( a0, a1, a2, a3, id );
   id.setLargePMT( ModuleIsWithGrandPMT( a0 ) );
+  setRichPmtSmartID( a0, a1, a2, a3, id );
 
   return true;
 }
@@ -1116,7 +1117,9 @@ bool DeRichPMTPanel::readoutChannelList( LHCb::RichSmartID::Vector& readoutChann
       if ( m_DePMTs[PmtModuleNumInPanelFromModuleNumAlone( iM )][iP] ) {
         for ( Int iPx = 0; iPx < m_PmtPixelsInRowSIMD[0]; ++iPx ) {
           for ( Int iPy = 0; iPy < m_PmtPixelsInColSIMD[0]; ++iPy ) {
-            readoutChannels.emplace_back( rich(), side(), iP, iM, iPy, iPx, m_pdType );
+            auto tmpSmartId = LHCb::RichSmartID( rich(), side(), iP, iM, iPy, iPx, m_pdType );
+            tmpSmartId.setLargePMT( ModuleIsWithGrandPMT( iM ) );
+            readoutChannels.emplace_back( tmpSmartId );
           }
         }
       }
