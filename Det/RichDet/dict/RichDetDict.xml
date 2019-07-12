@@ -18,9 +18,11 @@
   <class name="DeRichPD"                  />
   <class name="DeRichHPD"                 />
   <class name="DeRichPMT"                 />
+  <class name="DeRichPMTClassic"          />
   <class name="DeRichPDPanel"             />
   <class name="DeRichHPDPanel"            />
   <class name="DeRichPMTPanel"            />
+  <class name="DeRichPMTPanelClassic"     />
   <class name="DeRichRadiator"            />
   <class name="DeRichRadiator::Vector"    />
   <class name="DeRichSingleSolidRadiator" />

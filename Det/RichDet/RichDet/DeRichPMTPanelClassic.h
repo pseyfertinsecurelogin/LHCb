@@ -30,23 +30,23 @@
 #include "RichDet/DeRich.h"
 #include "RichDet/DeRichLocations.h"
 #include "RichDet/DeRichPDPanel.h"
-#include "RichDet/DeRichPMT.h"
+#include "RichDet/DeRichPMTClassic.h"
 
-/** @class DeRichPMTPanel DeRichPMTPanel.h RichDet/DeRichPMTPanel.h
+/** @class DeRichPMTPanelClassic DeRichPMTPanelClassic.h RichDet/DeRichPMTPanelClassic.h
  *
  *  Detector element for PMT panels
  *
  *  @author Sajan Easo
  *  @date   2011-10-10
  */
-class DeRichPMTPanel : public DeRichPDPanel {
+class DeRichPMTPanelClassic : public DeRichPDPanel {
 
 public:
   /// Standard constructor
-  DeRichPMTPanel( const std::string& name = "" );
+  DeRichPMTPanelClassic( const std::string& name = "" );
 
   /// Destructor
-  virtual ~DeRichPMTPanel() = default;
+  virtual ~DeRichPMTPanelClassic() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -136,7 +136,7 @@ private:
   using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
   using IGeomInfoV = std::vector<const IGeometryInfo*>;
-  using DRiPMTV    = std::vector<DeRichPMT*>;
+  using DRiPMTV    = std::vector<DeRichPMTClassic*>;
   // using ArraySetup     = std::array<Int,4>;
   using RowCol         = std::array<Int, 2>;
   using XYArray        = std::array<double, 2>;
@@ -171,9 +171,9 @@ private:
     return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
   }
 
-  const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
+  const DeRichPMTClassic* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
-  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const {
+  inline const DeRichPMTClassic* dePMT( const LHCb::RichSmartID pdID ) const {
     // get the lookup indices from the smart ID
     auto pdCol   = pdID.pdCol();
     auto pdInCol = pdID.pdNumInCol();
@@ -273,7 +273,7 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  SIMDINT32::MaskType findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint, ArraySetupSIMD& aCh ) const;
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const;
 
 private:
   // Simple struct to store module numbers
@@ -285,8 +285,8 @@ private:
   };
 
   /// Function pointer for the getModuleNums method to use depending on settings
-  void ( DeRichPMTPanel::*m_getModuleNumsSIMD )( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
-      noexcept = nullptr;
+  void ( DeRichPMTPanelClassic::*m_getModuleNumsSIMD )( const SIMDFP& x, const SIMDFP& y,
+                                                        ModuleNumbersSIMD& nums ) const noexcept = nullptr;
 
   inline void getModuleNumsSIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
     ( this->*m_getModuleNumsSIMD )( x, y, nums );
@@ -294,22 +294,18 @@ private:
 
   void getModuleNums_R1Up_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
     using namespace LHCb::SIMD;
-    nums.aModuleCol =
-        simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR1SIMD[2] ) * m_PmtAllModulePitchInvSIMD[0] );
-    nums.aModuleRow =
-        simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR1SIMD[3] ) * m_PmtAllModulePitchInvSIMD[1] );
-    nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleCol = simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR1SIMD[0] ) * m_PmtModulePitchInvSIMD );
+    nums.aModuleRow = simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR1SIMD[1] ) * m_PmtModulePitchInvSIMD );
+    nums.aModuleNum = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
   }
 
   void getModuleNums_R1Dn_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
     using namespace LHCb::SIMD;
-    nums.aModuleCol =
-        simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR1SIMD[0] ) * m_PmtAllModulePitchInvSIMD[0] );
-    nums.aModuleRow =
-        simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR1SIMD[1] ) * m_PmtAllModulePitchInvSIMD[1] );
-    nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleCol = simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR1SIMD[2] ) * m_PmtModulePitchInvSIMD );
+    nums.aModuleRow = simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR1SIMD[3] ) * m_PmtModulePitchInvSIMD );
+    nums.aModuleNum = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
   }
 
   void getModuleNums_R2Le_Small_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
@@ -317,7 +313,7 @@ private:
     nums.aModuleCol = simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleRow = simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR2SIMD[1] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleNum = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void getModuleNums_R2Ri_Small_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
@@ -325,7 +321,7 @@ private:
     nums.aModuleCol = simd_cast<SIMDINT32>( abs( x - m_PmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleRow = simd_cast<SIMDINT32>( abs( y - m_PmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleNum = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
   void getModuleNums_R2Le_Grand_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
@@ -335,7 +331,7 @@ private:
     nums.aModuleRow =
         simd_cast<SIMDINT32>( abs( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[1] ) * m_GrandPmtModulePitchInvSIMD );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void getModuleNums_R2Ri_Grand_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
@@ -345,57 +341,57 @@ private:
     nums.aModuleRow =
         simd_cast<SIMDINT32>( abs( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
   void getModuleNums_R2Le_Mixed_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
     using namespace LHCb::SIMD;
     nums.aModuleCol =
-        simd_cast<SIMDINT32>( abs( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtAllModulePitchInvSIMD[4] );
+        simd_cast<SIMDINT32>( abs( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[0] ) * m_GrandPmtModulePitchInvSIMD );
 
-    // const auto m1 = simd_cast<SIMDINT32::mask_type>( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    // const auto m1 = simd_cast<SIMDINT32::mask_type>( y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] );
     nums.aModuleRow /*( m1 )*/ =
-        simd_cast<SIMDINT32>( abs( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[5] );
+        simd_cast<SIMDINT32>( abs( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[1] ) * m_GrandPmtModulePitchInvSIMD );
 
-    const auto m2 = simd_cast<SIMDINT32::mask_type>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
-    nums.aModuleRow( m2 ) =
-        simd_cast<SIMDINT32>( abs( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[5] ) +
-        m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
+    const auto m2         = simd_cast<SIMDINT32::mask_type>( y >= abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
+    nums.aModuleRow( m2 ) = simd_cast<SIMDINT32>( abs( ( y - ( abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) ) ) *
+                                                       m_GrandPmtModulePitchInvSIMD ) ) +
+                            m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
-    const auto m3 = simd_cast<SIMDINT32::mask_type>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) );
+    const auto m3 = simd_cast<SIMDINT32::mask_type>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
     nums.aModuleCol( m3 ) =
-        simd_cast<SIMDINT32>( abs( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtAllModulePitchInvSIMD[2] );
+        simd_cast<SIMDINT32>( abs( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleRow( m3 ) =
-        simd_cast<SIMDINT32>( abs( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[3] ) +
+        simd_cast<SIMDINT32>( abs( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) * m_PmtModulePitchInvSIMD ) +
         m_Rich2MixedModuleArrayColumnSizeSIMD[0];
 
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void getModuleNums_R2Ri_Mixed_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const noexcept {
     using namespace LHCb::SIMD;
     nums.aModuleCol =
-        simd_cast<SIMDINT32>( abs( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtAllModulePitchInvSIMD[4] );
+        simd_cast<SIMDINT32>( abs( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[2] ) * m_GrandPmtModulePitchInvSIMD );
 
     // const auto m1 = simd_cast<SIMDINT32::mask_type>( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
     nums.aModuleRow /*( m1 )*/ =
-        simd_cast<SIMDINT32>( abs( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[5] );
+        simd_cast<SIMDINT32>( abs( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD );
 
-    const auto m2 = simd_cast<SIMDINT32::mask_type>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
-    nums.aModuleRow( m2 ) =
-        simd_cast<SIMDINT32>( abs( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[5] ) +
-        m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
+    const auto m2         = simd_cast<SIMDINT32::mask_type>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    nums.aModuleRow( m2 ) = simd_cast<SIMDINT32>( abs( ( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) *
+                                                       m_GrandPmtModulePitchInvSIMD ) ) +
+                            m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
     const auto m3 = simd_cast<SIMDINT32::mask_type>( abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) );
     nums.aModuleCol( m3 ) =
-        simd_cast<SIMDINT32>( abs( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtAllModulePitchInvSIMD[2] );
+        simd_cast<SIMDINT32>( abs( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtModulePitchInvSIMD );
     nums.aModuleRow( m3 ) =
-        simd_cast<SIMDINT32>( abs( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtAllModulePitchInvSIMD[3] ) +
+        simd_cast<SIMDINT32>( abs( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtModulePitchInvSIMD ) +
         m_Rich2MixedModuleArrayColumnSizeSIMD[0];
 
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( nums.aModuleNum );
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
 private:
@@ -429,7 +425,7 @@ private:
     PRow( PRow >= m_NumPmtInRowColSIMD[1] ) = m_NumPmtInRowCol[1] - SIMDINT32::One();
     PCol.setZero( PCol < SIMDINT32::Zero() );
     PCol( PCol >= m_NumPmtInRowColSIMD[0] ) = m_NumPmtInRowCol[0] - SIMDINT32::One();
-    return ( PCol * 2 + ( m_NumPmtInRowColSIMD[1] - SIMDINT32::One() - PRow ) );
+    return ( PCol + ( PRow * m_NumPmtInRowColSIMD[0] ) );
   }
 
   inline SIMDINT32 getGrandPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept {
@@ -437,7 +433,7 @@ private:
     PRow( PRow >= m_NumGrandPmtInRowColSIMD[1] ) = m_NumGrandPmtInRowColSIMD[1] - SIMDINT32::One();
     PCol.setZero( PCol < SIMDINT32::Zero() );
     PCol( PCol >= m_NumGrandPmtInRowColSIMD[0] ) = m_NumGrandPmtInRowColSIMD[0] - SIMDINT32::One();
-    return PCol;
+    return ( PCol + ( PRow * m_NumGrandPmtInRowColSIMD[0] ) );
   }
 
   inline bool isInPmtAnodeLateralAcc( const Gaudi::XYZPoint& aPointInPmtAnode, //
@@ -552,7 +548,7 @@ private:
   template <typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE>
   decltype( auto ) toarray( const std::vector<INTYPE>& v ) const {
     if ( UNLIKELY( v.size() != N ) ) {
-      throw GaudiException( "Vector to Array Size Error", "DeRichPMTPanel", StatusCode::FAILURE );
+      throw GaudiException( "Vector to Array Size Error", "DeRichPMTPanelClassic", StatusCode::FAILURE );
     }
     std::array<OUTTYPE, N> a;
     std::copy( v.begin(), v.end(), a.begin() );
@@ -593,8 +589,6 @@ private:
 
   std::array<SIMDFP, 2> m_RichGrandPmtModuleActiveAreaHalfSizeSIMD = {{}};
 
-  std::array<SIMDFP, 6> m_PmtAllModulePitchInvSIMD = {{}};
-
   std::array<SIMDINT32, 2> m_NumGrandPmtInRowColSIMD = {{}};
 
   SIMDFP m_GrandPmtPitchInvSIMD = SIMDFP::Zero();
@@ -616,9 +610,6 @@ private:
 
   SIMDFP m_PmtAnodeXEdgeSIMD = SIMDFP::Zero();
   SIMDFP m_PmtAnodeYEdgeSIMD = SIMDFP::Zero();
-
-  SIMDFP m_GrandPmtEdgePixelSizeDiffXSIMD = SIMDFP::Zero();
-  SIMDFP m_GrandPmtEdgePixelSizeDiffYSIMD = SIMDFP::Zero();
 
   SIMDFP m_PmtAnodeEffectiveXPixelSizeInvSIMD = SIMDFP::Zero();
   SIMDFP m_PmtAnodeEffectiveYPixelSizeInvSIMD = SIMDFP::Zero();
@@ -659,7 +650,6 @@ private:
   std::array<Int, 2> m_NumPmtInRowCol                 = {{}};
   std::array<Int, 4> m_NumPmtModuleInRich             = {{}};
   Int                m_NumPmtInRichModule{0};
-  Int                m_NumPmtInRichGrandModule{0};
   Int                m_totNumPmtModuleInRich{0};
 
   double m_PmtAnodeXEdge{0};
@@ -678,4 +668,6 @@ private:
 
   std::vector<int>  m_Rich2MixedModuleArrayColumnSize{3, 0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
+
+  Rich::DAQ::PDPanelIndex m_maxPDCopyN{0};
 };

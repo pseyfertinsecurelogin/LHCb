@@ -25,35 +25,35 @@
 
 // local
 #include "RichDet/DeRich.h"
-#include "RichDet/DeRichPMT.h"
+#include "RichDet/DeRichPMTClassic.h"
 #include "RichDet/DeRichSystem.h"
 
 // RichUtils
 #include "RichUtils/FastMaths.h"
 
 //-----------------------------------------------------------------------------
-// Implementation file for class : DeRichPMT
+// Implementation file for class : DeRichPMTClassic
 //
 // 2011-10-11 : Sajan Easo
 //-----------------------------------------------------------------------------
-const CLID CLID_DeRichPMT = 12026; // User defined
+const CLID CLID_DeRichPMTClassic = 12025; // User defined
 
 //=============================================================================
 
-const CLID& DeRichPMT::classID() { return CLID_DeRichPMT; }
+const CLID& DeRichPMTClassic::classID() { return CLID_DeRichPMTClassic; }
 
 //=============================================================================
 
-DeRichPMT::PMTData DeRichPMT::m_pddata;
+DeRichPMTClassic::PMTData DeRichPMTClassic::m_pddata;
 
 //=============================================================================
 
-StatusCode DeRichPMT::initialize() {
-  MsgStream msg( msgSvc(), "DeRichPMT" );
+StatusCode DeRichPMTClassic::initialize() {
+  MsgStream msg( msgSvc(), "DeRichPMTClassic" );
 
   // store the name of the PMT, without the /dd/Structure part
   const auto pos = name().find( "MAPMT:" );
-  setMyName( std::string::npos != pos ? name().substr( pos ) : "DeRichPMT_NO_NAME" );
+  setMyName( std::string::npos != pos ? name().substr( pos ) : "DeRichPMTClassic_NO_NAME" );
   if ( msgLevel( MSG::DEBUG, msg ) ) msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
 
   // extract PMT overall module and copy number from detector element name
@@ -80,10 +80,10 @@ StatusCode DeRichPMT::initialize() {
   }
 
   // register for updates when geometry changes
-  updMgrSvc()->registerCondition( this, geometry(), &DeRichPMT::updateGeometry );
-  updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(), &DeRichPMT::updateGeometry );
+  updMgrSvc()->registerCondition( this, geometry(), &DeRichPMTClassic::updateGeometry );
+  updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(), &DeRichPMTClassic::updateGeometry );
   // Update PMT QE values whenever DeRichSystem updates
-  updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
+  updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMTClassic::initPMTQuantumEff );
 
   // Trigger first update
   sc = updMgrSvc()->update( this );
@@ -94,7 +94,7 @@ StatusCode DeRichPMT::initialize() {
 
 //=============================================================================
 
-DetectorElement* DeRichPMT::getFirstRich() {
+DetectorElement* DeRichPMTClassic::getFirstRich() {
   DetectorElement*              de{nullptr};
   SmartDataPtr<DetectorElement> afterMag( dataSvc(), "/dd/Structure/LHCb/AfterMagnetRegion" );
   if ( !afterMag ) {
@@ -106,13 +106,13 @@ DetectorElement* DeRichPMT::getFirstRich() {
     SmartDataPtr<DetectorElement> deRich( dataSvc(), firstRichLoc );
     if ( deRich ) { de = deRich; }
   }
-  if ( !de ) { error() << "Could not load DeRich for DeRichPMT" << endmsg; }
+  if ( !de ) { error() << "Could not load DeRich for DeRichPMTClassic" << endmsg; }
   return de;
 }
 
 //=============================================================================
 
-void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
+void DeRichPMTClassic::PMTData::initialise( const DetectorElement* deRich ) {
 
   using namespace LHCb::SIMD;
 
@@ -128,8 +128,9 @@ void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
   const auto PmtAnodeLocationInPmt = deRich->param<double>( "RichPmtSiliconDetectorLocalZlocation" );
   const auto PmtPixelXSize         = deRich->param<double>( "RichPmtPixelXSize" );
   const auto PmtPixelYSize         = deRich->param<double>( "RichPmtPixelYSize" );
-  PmtEffectivePixelXSize           = SIMDFP( PmtPixelXSize );
-  PmtEffectivePixelYSize           = SIMDFP( PmtPixelYSize );
+  const auto PmtPixelGap           = deRich->param<double>( "RichPmtPixelGap" );
+  PmtEffectivePixelXSize           = SIMDFP( PmtPixelXSize + PmtPixelGap );
+  PmtEffectivePixelYSize           = SIMDFP( PmtPixelYSize + PmtPixelGap );
   PmtAnodeHalfThickness            = SIMDFP( PmtAnodeZSize * 0.5f );
   PmtNumPixCol                     = SIMDUINT( deRich->param<int>( "RichPmtNumPixelCol" ) );
   PmtNumPixRow                     = SIMDUINT( deRich->param<int>( "RichPmtNumPixelRow" ) );
@@ -146,17 +147,18 @@ void DeRichPMT::PMTData::initialise( const DetectorElement* deRich ) {
     const auto GrandPmtAnodeZSize = deRich->param<double>( "RichGrandPmtAnodeZSize" );
     const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
     const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
+    const auto GrandPmtPixelGap   = deRich->param<double>( "RichGrandPmtPixelGap" );
     GrandPmtEdgePixelXSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelXSize" ) );
     GrandPmtEdgePixelYSize        = SIMDFP( deRich->param<double>( "RichGrandPmtEdgePixelYSize" ) );
-    GrandPmtEffectivePixelXSize   = SIMDFP( GrandPmtPixelXSize );
-    GrandPmtEffectivePixelYSize   = SIMDFP( GrandPmtPixelYSize );
+    GrandPmtEffectivePixelXSize   = SIMDFP( GrandPmtPixelXSize + GrandPmtPixelGap );
+    GrandPmtEffectivePixelYSize   = SIMDFP( GrandPmtPixelYSize + GrandPmtPixelGap );
     GrandPmtAnodeHalfThickness    = SIMDFP( GrandPmtAnodeZSize * 0.5f );
   }
 }
 
 //=============================================================================
 
-StatusCode DeRichPMT::getPMTParameters() {
+StatusCode DeRichPMTClassic::getPMTParameters() {
 
   const auto deRich = getFirstRich();
   if ( !deRich ) { return StatusCode::FAILURE; }
@@ -196,7 +198,7 @@ StatusCode DeRichPMT::getPMTParameters() {
 
 //=============================================================================
 
-void DeRichPMT::setPmtIsGrandFlag( const bool isGrand ) {
+void DeRichPMTClassic::setPmtIsGrandFlag( const bool isGrand ) {
   m_PmtIsGrand = isGrand;
   // Update cached size parameters
   const auto* deRich = getFirstRich();
@@ -219,7 +221,7 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand ) {
 
 //=============================================================================
 
-StatusCode DeRichPMT::initPMTQuantumEff() {
+StatusCode DeRichPMTClassic::initPMTQuantumEff() {
   const auto* deRich = getFirstRich();
   if ( !deRich ) { return StatusCode::FAILURE; }
   const auto                      PmtQELocation = deRich->param<std::string>( "RichPmtQETableName" );
@@ -230,14 +232,14 @@ StatusCode DeRichPMT::initPMTQuantumEff() {
 
 //=============================================================================
 
-StatusCode DeRichPMT::updateGeometry() { return getPMTParameters(); }
+StatusCode DeRichPMTClassic::updateGeometry() { return getPMTParameters(); }
 
 //=============================================================================
 
-bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,         //
-                                Gaudi::XYZPoint&        detectPoint,     //
-                                bool                    photoCathodeSide //
-                                ) const {
+bool DeRichPMTClassic::detectionPoint( const LHCb::RichSmartID smartID,         //
+                                       Gaudi::XYZPoint&        detectPoint,     //
+                                       bool                    photoCathodeSide //
+                                       ) const {
 
   auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), smartID.pixelRow() );
   aLocalHit.SetZ( aLocalHit.Z() + scalar( m_pddata.zShift ) );
@@ -253,10 +255,10 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,         //
 
 //===============================================================================================
 
-DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID,         //
-                                                       SIMDPoint&      detectPoint,     //
-                                                       bool            photoCathodeSide //
-                                                       ) const {
+DeRichPD::SIMDFP::mask_type DeRichPMTClassic::detectionPoint( const SmartIDs& smartID,         //
+                                                              SIMDPoint&      detectPoint,     //
+                                                              bool            photoCathodeSide //
+                                                              ) const {
 
   // return status
   SIMDFP::mask_type ok( true );
@@ -300,7 +302,7 @@ DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID, 
 
 //===============================================================================================
 
-Gaudi::XYZPoint DeRichPMT::detPointOnAnode( const LHCb::RichSmartID& smartID ) const {
+Gaudi::XYZPoint DeRichPMTClassic::detPointOnAnode( const LHCb::RichSmartID& smartID ) const {
   return ( m_dePmtAnode->geometry()->toGlobal(
       getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), smartID.pixelRow() ) ) );
 }

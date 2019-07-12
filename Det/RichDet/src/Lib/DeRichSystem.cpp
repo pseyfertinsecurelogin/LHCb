@@ -65,12 +65,21 @@ StatusCode DeRichSystem::initialize() {
 
   // get condition names for detector numbers
   std::vector<std::string> detCondNames;
-  if ( exists( "DetectorNumbersConditions" ) ) {
-    detCondNames = paramVect<std::string>( "DetectorNumbersConditions" );
-  } else {
+  const std::string        str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
+  const std::string        str_PhotoDetConfigValue = "DetectorConfiguration";
+  if ( hasCondition( str_PhotoDetConfig ) ) {
+    const auto deRC = condition( str_PhotoDetConfig );
+    if ( deRC->exists( str_PhotoDetConfigValue ) )
+      m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
+  }
+  if ( m_photDetConf == Rich::PMTConfig ) {
+    detCondNames.push_back( "Rich1PMTDetectorNumbers" );
+    detCondNames.push_back( "Rich2PMTDetectorNumbers" );
+  } else if ( m_photDetConf == Rich::HPDConfig ) {
     detCondNames.push_back( "Rich1DetectorNumbers" );
     detCondNames.push_back( "Rich2DetectorNumbers" );
-  }
+  } else
+    return Error( "Unknown detector configuration. " );
 
   // check if the numbers match.
   if ( 0 != detCondNames.size() % deRichLocs.size() ) {
@@ -162,40 +171,53 @@ StatusCode DeRichSystem::buildPDMappings() {
 StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
   _ri_debug << "Building Mappings for " << rich << endmsg;
 
-  std::string str_NumberOfPDs                  = "NumberOfHPDs";
-  std::string str_PDSmartIDs                   = "HPDSmartIDs";
-  std::string str_PDHardwareIDs                = "HPDHardwareIDs";
-  std::string str_PDLevel0IDs                  = "HPDLevel0IDs";
-  std::string str_PDLevel1HardwareIDs          = "HPDLevel1HardwareIDs";
-  std::string str_PDLevel1InputNums            = "HPDLevel1InputNums";
-  std::string str_PDCopyNumbers                = "HPDCopyNumbers";
-  std::string str_InactivePDListInSmartIDs     = "InactiveHPDListInSmartIDs";
-  std::string str_InactivePDs                  = "InactiveHPDs";
-  std::string str_PDLevel1IDs                  = "HPDLevel1IDs";
-  std::string str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap";
-  std::string str_PhotoDetConfig               = "RichPhotoDetectorConfiguration";
-  std::string str_PhotoDetConfigValue          = "DetectorConfiguration";
+  const std::string str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
+  const std::string str_PhotoDetConfigValue = "DetectorConfiguration";
+
   if ( hasCondition( str_PhotoDetConfig ) ) {
     const auto deRC = condition( str_PhotoDetConfig );
-    m_photDetConf   = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
-    if ( m_photDetConf == Rich::PMTConfig ) {
-      if ( !exists( "DetectorNumbersConditions" ) ) {
-        m_detNumConds[Rich::Rich1] = "Rich1PMTDetectorNumbers";
-        m_detNumConds[Rich::Rich2] = "Rich2PMTDetectorNumbers";
-      }
-      str_NumberOfPDs                  = "NumberOfPMTs";
-      str_PDSmartIDs                   = "PMTSmartIDs";
-      str_PDHardwareIDs                = "PMTHardwareIDs";
-      str_PDLevel0IDs                  = "PMTLevel0IDs";
-      str_PDLevel1HardwareIDs          = "PMTLevel1HardwareIDs";
-      str_PDLevel1InputNums            = "PMTLevel1InputNums";
-      str_PDCopyNumbers                = "PMTCopyNumbers";
-      str_InactivePDListInSmartIDs     = "InactivePMTListInSmartIDs";
-      str_InactivePDs                  = "InactivePMTs";
-      str_PDLevel1IDs                  = "PMTLevel1IDs";
-      str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap-PMT";
-    }
+    if ( deRC->exists( str_PhotoDetConfigValue ) )
+      m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
   }
+
+  std::string str_NumberOfPDs                  = "";
+  std::string str_PDSmartIDs                   = "";
+  std::string str_PDHardwareIDs                = "";
+  std::string str_PDLevel0IDs                  = "";
+  std::string str_PDLevel1HardwareIDs          = "";
+  std::string str_PDLevel1InputNums            = "";
+  std::string str_PDCopyNumbers                = "";
+  std::string str_InactivePDListInSmartIDs     = "";
+  std::string str_InactivePDs                  = "";
+  std::string str_PDLevel1IDs                  = "";
+  std::string str_Level1LogicalToHardwareIDMap = "";
+
+  if ( m_photDetConf == Rich::PMTConfig ) {
+    str_NumberOfPDs                  = "NumberOfPMTs";
+    str_PDSmartIDs                   = "PMTSmartIDs";
+    str_PDHardwareIDs                = "PMTHardwareIDs";
+    str_PDLevel0IDs                  = "PMTLevel0IDs";
+    str_PDLevel1HardwareIDs          = "PMTLevel1HardwareIDs";
+    str_PDLevel1InputNums            = "PMTLevel1InputNums";
+    str_PDCopyNumbers                = "PMTCopyNumbers";
+    str_InactivePDListInSmartIDs     = "InactivePMTListInSmartIDs";
+    str_InactivePDs                  = "InactivePMTs";
+    str_PDLevel1IDs                  = "PMTLevel1IDs";
+    str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap-PMT";
+  } else if ( m_photDetConf == Rich::HPDConfig ) {
+    str_NumberOfPDs                  = "NumberOfHPDs";
+    str_PDSmartIDs                   = "HPDSmartIDs";
+    str_PDHardwareIDs                = "HPDHardwareIDs";
+    str_PDLevel0IDs                  = "HPDLevel0IDs";
+    str_PDLevel1HardwareIDs          = "HPDLevel1HardwareIDs";
+    str_PDLevel1InputNums            = "HPDLevel1InputNums";
+    str_PDCopyNumbers                = "HPDCopyNumbers";
+    str_InactivePDListInSmartIDs     = "InactiveHPDListInSmartIDs";
+    str_InactivePDs                  = "InactiveHPDs";
+    str_PDLevel1IDs                  = "HPDLevel1IDs";
+    str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap";
+  } else
+    return Error( "Unknown detector configuration. " );
 
   // load conditions
   _ri_debug << "Loading Conditions from " << m_detNumConds[rich] << endmsg;
