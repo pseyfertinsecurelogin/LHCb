@@ -429,7 +429,7 @@ bool DeRichPMTPanelClassic::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::R
   const Int a2 = ( a[2] )[0];
   const Int a3 = ( a[3] )[0];
   id.setLargePMT( ModuleIsWithGrandPMT( a0 ) );
-  setRichPmtSmartID( PmtModuleNumInPanelFromModuleNumAlone( a0 ), a1, a2, a3, id );
+  setRichPmtSmartID( a0, a1, a2, a3, id );
   return true;
 }
 
