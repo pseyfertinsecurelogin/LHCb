@@ -128,8 +128,7 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
 
   const auto& detelems = childIDetectorElements();
 
-  Int iModNum( 0 );
-  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it, ++iModNum ) {
+  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it ) {
     if ( std::string::npos != ( *det_it )->name().find( "MAPMT_MODULE:" ) ) {
 
       // get PMT Module
@@ -183,11 +182,11 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
               // dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               auto id = panelID();
-              id.setPD_PMT( iModNum, curPmtNum );
+              id.setPD_PMT( aCurrentModuleCopyNumber, curPmtNum );
               id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               dePMT->setPDSmartID( id );
               // curPmtNum is SmartID pdInCol
-              // iModNum is pdCol
+              // aCurrentModuleCopyNumber is pdCol
 
               // Set the position of PD's {0,0,0} in this panel's local frame
               {
