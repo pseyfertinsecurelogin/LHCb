@@ -193,7 +193,7 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               auto id = panelID();
               id.setPD_PMT( aCurrentModuleCopyNumber, pmtNumberInAModule );
-	      id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
+              id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               dePMT->setPDSmartID( id );
               // pmtNumberInAModule is SmartID pdInCol
               // aCurrentModuleCopyNumber is pdCol
