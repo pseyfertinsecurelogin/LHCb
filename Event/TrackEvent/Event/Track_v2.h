@@ -16,6 +16,7 @@
 #include "Event/TrackHit.h"
 #include "Event/TrackParameters.h"
 #include "Event/TrackTags.h"
+#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "Kernel/LHCbID.h"
@@ -472,6 +473,13 @@ namespace LHCb::Event {
 
       /// Retrieve  Container of all the states
       auto& states() { return m_states; };
+
+      /// Retrieve the ClosestToBeam state, throwing an exception if it doesn't exist
+      auto const& closestToBeamState() const {
+        auto state = stateAt( LHCb::State::ClosestToBeam );
+        if ( !state ) { throw GaudiException{"No ClosestToBeam state", "Track_v2.h", StatusCode::FAILURE}; }
+        return *state;
+      }
 
       Track& addToAncestors( const Track& ancestor ) {
         m_ancestors.push_back( &ancestor );
