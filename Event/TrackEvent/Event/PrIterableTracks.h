@@ -49,6 +49,15 @@ namespace LHCb::Pr::detail {
     }
   };
 
+  template <typename VecType>
+  struct VeloState {
+    VecType m_position, m_slopes;
+    VeloState( VecType position, VecType slopes )
+        : m_position( std::move( position ) ), m_slopes( std::move( slopes ) ) {}
+    VecType const& position() const { return m_position; }
+    VecType const& slopes() const { return m_slopes; }
+  };
+
   template <typename dType>
   struct VeloProxy : public detail::PODProxy<LHCb::Pr::Velo::Tracks, dType> {
     using FType = typename dType::float_v;
@@ -58,6 +67,10 @@ namespace LHCb::Pr::detail {
     }
     decltype( auto ) closestToBeamStateDir() const {
       return this->m_tracks->template stateDir<FType>( this->m_offset, 0 );
+    }
+    template <typename T>
+    VeloState<T> closestToBeamState() const {
+      return {closestToBeamStatePos(), closestToBeamStateDir()};
     }
     decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
   };
