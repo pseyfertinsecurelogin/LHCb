@@ -55,7 +55,8 @@ preprocessor = (
         "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc",
         "Run numbers generated from 0 every 0 events",
         "############ CONFIGURING RawEventFormatConf!! ###############",
-        "INFO  resolving alias TCK/0x", "SUCCESS Number of counters : "
+        "INFO  resolving alias TCK/0x", "SUCCESS Number of counters : ",
+        "INFO Number of counters : "
     ],
                 regexps=[
                     r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",

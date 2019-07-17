@@ -63,20 +63,18 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         counters = {}
         if comp_type == 'Counters':
             counterStartRE = re.compile(
-                '^([^. ]*)[. ]+SUCCESS Number of counters : (\d+)$')
-            nCountersIndex = 2
+                '^(?P<algorithm>[^. ]*)[. ]+(?:SUCCESS|INFO) Number of counters : (?P<nCounters>\d+)$'
+            )
             firstValueIndex = 1
         elif comp_type == '1DHistograms':
             counterStartRE = re.compile(
-                '^([^. ]*)[. ]+SUCCESS 1D histograms in directory ([^. ]*) : (\d+)$'
+                '^(?P<algorithm>[^. ]*)[. ]+SUCCESS 1D histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'
             )
-            nCountersIndex = 3
             firstValueIndex = 2
         elif comp_type == '1DProfiles':
             counterStartRE = re.compile(
-                '^([^. ]*)[. ]+SUCCESS 1D profile histograms in directory ([^. ]*) : (\d+)$'
+                '^(?P<algorithm>[^. ]*)[. ]+SUCCESS 1D profile histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'
             )
-            nCountersIndex = 3
             firstValueIndex = 2
         if counter_preproc:
             lines = counter_preproc(s)
@@ -88,12 +86,12 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             m = counterStartRE.match(lines[n].strip())
             n += 1
             if None == m: continue
-            algoName = m.group(1)
+            algoName = m.group('algorithm')
             # take care of the case where several algos have same name (problem being that names are cut when too long)
             if (algoName not in counters):
                 counters[algoName] = {}
             # loop through counters (note +1 as we skip header lines of the block)
-            for i in range(int(m.group(nCountersIndex))):
+            for i in range(int(m.group('nCounters'))):
                 # note the horrible hack to handle the fact that /Event/ is sometimes omited at the beginning of paths
                 # on top master and future branch behave differently on that, so in order to keep a common reference,
                 # we have to remove /Event/
