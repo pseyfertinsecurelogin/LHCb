@@ -49,6 +49,8 @@ namespace Rich::Future {
   class RecoPhoton {
 
   public:
+    // definitions
+
     /// The floating point precision to use
     using Scalar = float;
 
@@ -56,26 +58,33 @@ namespace Rich::Future {
     using Vector = LHCb::STL::Vector<RecoPhoton>;
 
   public:
+    // constructors
+
     /// Default Constructor
     RecoPhoton() = default;
 
-  public:
     /** Constructor with parameters
      *
      *  @param theta Cherenkov angle theta
      *  @param phi   Cherenkov angle phi
      *  @param smartID The RCH PD channel identifier associated to the photon
-     *  @param activeFrac The fraction of the associated segment that this photon could have been
-     * radiated from
+     *  @param activeFrac The fraction of the associated segment that this
+     *                    photon could have been radiated from
      */
-    RecoPhoton( const Scalar theta, const Scalar phi, const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                const Scalar activeFrac = 1 )
+    RecoPhoton( const Scalar            theta,                             //
+                const Scalar            phi,                               //
+                const LHCb::RichSmartID smartID     = LHCb::RichSmartID(), //
+                const Scalar            activeFrac  = 1,                   //
+                const bool              unambigPhot = false )
         : m_CherenkovTheta( theta )
         , m_CherenkovPhi( phi )
         , m_smartID( smartID )
-        , m_activeSegmentFraction( activeFrac ) {}
+        , m_activeSegmentFraction( activeFrac )
+        , m_unambigPhot( unambigPhot ) {}
 
   public:
+    // getters and setters
+
     /** Set accessor for the Cherenkov theta angle
      *  @param theta the new value for the Cherenkov theta angle */
     inline void setCherenkovTheta( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
@@ -135,6 +144,8 @@ namespace Rich::Future {
     }
 
   private:
+    // data
+
     /// Cherenkov angle theta
     Scalar m_CherenkovTheta{0};
 
@@ -185,10 +196,15 @@ namespace Rich::Future {
      *  @param activeFrac The fraction of the associate segment that this photon
      *                    could have been radiated from
      */
-    GeomPhoton( const Scalar theta, const Scalar phi, const Gaudi::XYZPoint& emissionPoint,
-                const Gaudi::XYZVector& emissionDir, const Gaudi::XYZPoint& detectionPoint,
-                const Gaudi::XYZPoint& sphMirrReflPoint, const Gaudi::XYZPoint& flatMirrReflPoint,
-                const LHCb::RichSmartID smartID = LHCb::RichSmartID(), const Scalar activeFrac = 0 )
+    GeomPhoton( const Scalar            theta,                            //
+                const Scalar            phi,                              //
+                const Gaudi::XYZPoint&  emissionPoint,                    //
+                const Gaudi::XYZVector& emissionDir,                      //
+                const Gaudi::XYZPoint&  detectionPoint,                   //
+                const Gaudi::XYZPoint&  sphMirrReflPoint,                 //
+                const Gaudi::XYZPoint&  flatMirrReflPoint,                //
+                const LHCb::RichSmartID smartID    = LHCb::RichSmartID(), //
+                const Scalar            activeFrac = 0 )
         : RecoPhoton( theta, phi, smartID, activeFrac )
         , m_emissionPoint( emissionPoint )
         , m_emissionDir( emissionDir )
@@ -208,10 +224,14 @@ namespace Rich::Future {
      *  @param activeFrac The fraction of the associate segment that this photon
      *                    could have been radiated from
      */
-    GeomPhoton( const Scalar theta, const Scalar phi, const Gaudi::XYZPoint& emissionPoint,
-                const Gaudi::XYZPoint& detectionPoint, const Gaudi::XYZPoint& sphMirrReflPoint,
-                const Gaudi::XYZPoint& flatMirrReflPoint, const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                const Scalar activeFrac = 0 )
+    GeomPhoton( const Scalar            theta,                            //
+                const Scalar            phi,                              //
+                const Gaudi::XYZPoint&  emissionPoint,                    //
+                const Gaudi::XYZPoint&  detectionPoint,                   //
+                const Gaudi::XYZPoint&  sphMirrReflPoint,                 //
+                const Gaudi::XYZPoint&  flatMirrReflPoint,                //
+                const LHCb::RichSmartID smartID    = LHCb::RichSmartID(), //
+                const Scalar            activeFrac = 0 )
         : RecoPhoton( theta, phi, smartID, activeFrac )
         , m_emissionPoint( emissionPoint )
         , m_detectionPoint( detectionPoint )
@@ -343,7 +363,9 @@ namespace Rich::Future {
       return photon.fillStream( s );
     }
 
-  private:                                     // data
+  private:
+    // data
+
     Gaudi::XYZPoint  m_emissionPoint;          ///< The photon emission point
     Gaudi::XYZVector m_emissionDir;            ///< The photon direction at the emission point
     Gaudi::XYZPoint  m_detectionPoint;         ///< The photon detection point on the HPD entrance window

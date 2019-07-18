@@ -26,6 +26,9 @@
 #include <type_traits>
 #include <vector>
 
+// Gaudi
+#include "GaudiKernel/Kernel.h"
+
 // LHCbKernel
 #include "Kernel/RichParticleIDType.h"
 
@@ -82,6 +85,7 @@ namespace Rich::Future {
     template <typename OTYPE>
     explicit HypoData( const HypoData<OTYPE>& data ) {
       std::size_t i = 0;
+      GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
       for ( const auto& d : data.dataArray() ) { m_data[i++] = TYPE( d ); }
     }
 
@@ -158,11 +162,51 @@ namespace Rich::Future {
      */
     inline const DataArray& dataArray() const& noexcept { return m_data; }
 
+  public:
+    // messaging
+
     /// Implement textual ostream << method
     friend inline std::ostream& operator<<( std::ostream& os, const HypoData<TYPE>& data ) {
       os << "[ ";
       for ( const auto id : Rich::particles() ) { os << data[id] << " "; }
       return os << "]";
+    }
+
+  public:
+    // mathematical operations (only for non-pointer types)
+
+    /// multiple all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>&> //
+    operator*=( const TYPE value ) noexcept {
+      GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
+      for ( auto& d : m_data ) { d *= value; }
+      return *this;
+    }
+
+    /// shift all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>&> //
+    operator+=( const TYPE value ) noexcept {
+      GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
+      for ( auto& d : m_data ) { d += value; }
+      return *this;
+    }
+
+    /// multiple all hypotheses by given hypo data
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>&> //
+    operator*=( const HypoData<TYPE>& data ) noexcept {
+      std::size_t i = 0;
+      GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
+      for ( const auto& d : data.dataArray() ) { m_data[i++] *= d; }
+      return *this;
+    }
+
+    /// shift all hypotheses by given hypo data
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>&> //
+    operator+=( const HypoData<TYPE>& data ) noexcept {
+      std::size_t i = 0;
+      GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
+      for ( const auto& d : data.dataArray() ) { m_data[i++] += d; }
+      return *this;
     }
 
   private:

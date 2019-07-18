@@ -57,41 +57,65 @@ namespace Rich::SIMD::Future {
   class RecoPhoton : public Vc::AlignedBase<Vc::VectorAlignment> {
 
   public:
+    // definitions
+
     /// The scalar floating point precision
     using FP = Rich::SIMD::DefaultScalarFP;
     /// The SIMD floating point type
     using SIMDFP = Rich::SIMD::FP<FP>;
+    /// Mask type
+    using MASK = SIMDFP::mask_type;
     /// Type for SmartIDs container.
     using SmartIDs = Rich::SIMD::STDArray<LHCb::RichSmartID, SIMDFP>;
     /// Container of photons.
     using Vector = Rich::SIMD::STDVector<RecoPhoton>;
+    /// Type for scalar photon
+    using ScalarPhoton = Rich::Future::RecoPhoton;
 
   public:
+    // constructors
+
     /// Default Constructor
     RecoPhoton() = default;
 
-  public:
     /** Constructor from RICH and SmartIDs
      *
-     *  @param rich  The RICH detector
-     *  @param smartID The RCH PD channel identifiers associated to the photons
+     *  @param rich      The RICH detector
+     *  @param smartID   The RCH PD channel identifiers associated to the photons
+     *  @param validMask Starting validity mask
      */
-    RecoPhoton( const Rich::DetectorType rich, const SmartIDs& smartID ) : m_smartID( smartID ), m_rich( rich ) {}
+    RecoPhoton( const Rich::DetectorType rich, //
+                const SmartIDs&          smartIDs )
+        : m_smartIDs( smartIDs ), m_rich( rich ) {}
 
-    /** Constructor with full parameters
+    /** Constructor from full data
      *
-     *  @param rich  The RICH detector
-     *  @param theta Cherenkov angles theta
-     *  @param phi   Cherenkov angles phi
-     *  @param smartID The RCH PD channel identifiers associated to the photons
-     *  @param activeFrac The fraction of the associated segment that these photons could have been
-     * radiated from
+     *  @param rich         The RICH detector
+     *  @param theta        Cherenkov angles theta
+     *  @param phi          Cherenkov angles phi
+     *  @param smartID      The RICH PD channel identifiers associated to the photons
+     *  @param activeFrac   Fraction of the track segment that these photons could have been radiated from
+     *  @param unambigPhots Unambiguous photon mask
+     *  @param validMask    Photon validity mask
      */
-    RecoPhoton( const Rich::DetectorType rich, const SIMDFP& theta, const SIMDFP& phi,
-                const SmartIDs& smartID = SmartIDs(), const SIMDFP& activeFrac = SIMDFP::One() )
-        : m_ckTheta( theta ), m_ckPhi( phi ), m_smartID( smartID ), m_actSegF( activeFrac ), m_rich( rich ) {}
+    RecoPhoton( const Rich::DetectorType rich,         //
+                const SIMDFP&            theta,        //
+                const SIMDFP&            phi,          //
+                const SmartIDs&          smartIDs,     //
+                const SIMDFP&            activeFrac,   //
+                const MASK&              unambigPhots, //
+                const MASK&              validMask )
+        : m_ckTheta( theta )
+        , m_ckPhi( phi )
+        , m_smartIDs( smartIDs )
+        , m_activeFraction( activeFrac )
+        , m_unambigPhot( unambigPhots )
+        , m_valid( validMask )
+        , m_rich( rich ) {}
 
-  public: // Setters
+  public:
+    // Setters
+
     /** Set accessor for the Cherenkov theta angle
      *  @param theta the new value for the Cherenkov theta angle */
     inline void setCherenkovTheta( const SIMDFP& theta ) noexcept { m_ckTheta = theta; }
@@ -103,19 +127,21 @@ namespace Rich::SIMD::Future {
     /** Set accessor for the current active segment fraction.
      *  The fraction of the RichTrackSegment trajectory this photon is associated
      *  with for which it is geometrically possible this photon was produced. */
-    inline void setActiveSegmentFraction( const SIMDFP& fraction ) noexcept { m_actSegF = fraction; }
+    inline void setActiveSegmentFraction( const SIMDFP& fraction ) noexcept { m_activeFraction = fraction; }
 
     /** Set accessor for the RichSmartID
      *  @param id The new RichSmartID */
-    inline void setSmartID( const SmartIDs& id ) noexcept { m_smartID = id; }
+    inline void setSmartID( const SmartIDs& id ) noexcept { m_smartIDs = id; }
 
     /// Set the unambiguous photon mask
-    inline void setUnambiguousPhoton( const SIMDFP::mask_type& unambig ) noexcept { m_unambigPhot = unambig; }
+    inline void setUnambiguousPhoton( const MASK& unambig ) noexcept { m_unambigPhot = unambig; }
 
     /// Set the photon validity mask
-    inline void setValidityMask( const SIMDFP::mask_type& valid ) noexcept { m_valid = valid; }
+    inline void setValidityMask( const MASK& valid ) noexcept { m_valid = valid; }
 
-  public: // const getters
+  public:
+    // getters
+
     /** Get accessor for the Cherenkov theta angle
      *  @return the current value of the Cherenkov theta angle */
     inline const SIMDFP& CherenkovTheta() const noexcept { return m_ckTheta; }
@@ -128,42 +154,56 @@ namespace Rich::SIMD::Future {
      *  The fraction of the RichTrackSegment trajectory this photon is associated
      *  with for which it is geometrically possible this photon was produced.
      *  @return the current value of the current active segment fraction. */
-    inline const SIMDFP& activeSegmentFraction() const noexcept { return m_actSegF; }
+    inline const SIMDFP& activeSegmentFraction() const noexcept { return m_activeFraction; }
 
     /** Get accessor to RichSmartID
      *  @return the current value of RichSmartID */
-    inline const SmartIDs& smartID() const noexcept { return m_smartID; }
+    inline const SmartIDs& smartID() const noexcept { return m_smartIDs; }
 
     /// Access the unambiguous photon mask
-    inline const SIMDFP::mask_type& unambiguousPhoton() const noexcept { return m_unambigPhot; }
+    inline const MASK& unambiguousPhoton() const noexcept { return m_unambigPhot; }
 
     /// Access the unambiguous photon flag
-    inline const SIMDFP::mask_type& validityMask() const noexcept { return m_valid; }
+    inline const MASK& validityMask() const noexcept { return m_valid; }
 
     /// Access the RICH
     inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   public:
+    // scalar helpers
+
     /// Create a scalar photon object for the given SIMD entry
-    inline Rich::Future::RecoPhoton scalarPhoton( const std::size_t simdEntry ) const noexcept {
-      return {CherenkovTheta()[simdEntry], CherenkovPhi()[simdEntry], smartID()[simdEntry],
-              activeSegmentFraction()[simdEntry]};
+    inline decltype( auto ) scalarPhoton( const std::size_t simdEntry ) const noexcept {
+      // if SIMD entry is valid, return fully constructed object, otherwise defaults
+      return ( simdEntry < SIMDFP::Size && validityMask()[simdEntry]  //
+                   ? ScalarPhoton{CherenkovTheta()[simdEntry],        //
+                                  CherenkovPhi()[simdEntry],          //
+                                  smartID()[simdEntry],               //
+                                  activeSegmentFraction()[simdEntry], //
+                                  unambiguousPhoton()[simdEntry]}     //
+                   : ScalarPhoton{} );
     }
 
     /// Create a vector of valid scalar photons
     Rich::Future::RecoPhoton::Vector scalarPhotons() const;
 
   protected:
+    // messaging
+
     /// Printout method
     std::ostream& fillStream( std::ostream& s ) const;
 
   public:
+    // messaging
+
     /// Implement ostream << method for GeomPhoton
     friend inline std::ostream& operator<<( std::ostream& s, const RecoPhoton& photon ) {
       return photon.fillStream( s );
     }
 
   private:
+    // data
+
     /// Cherenkov angles theta
     SIMDFP m_ckTheta{SIMDFP::Zero()};
 
@@ -171,17 +211,17 @@ namespace Rich::SIMD::Future {
     SIMDFP m_ckPhi{SIMDFP::Zero()};
 
     /// The channel IDs for the photon detection points
-    SmartIDs m_smartID;
+    SmartIDs m_smartIDs;
 
     /** The fraction of the RichTrackSegment trajectory these photons are associated
      *  with for which it is geometrically possible these photon were produced */
-    SIMDFP m_actSegF{SIMDFP::One()};
+    SIMDFP m_activeFraction{SIMDFP::One()};
 
     /// Flag to indicate if unambiguous photons or not
-    SIMDFP::mask_type m_unambigPhot{SIMDFP::mask_type( false )};
+    MASK m_unambigPhot{MASK( false )};
 
     /// Validity mask
-    SIMDFP::mask_type m_valid{SIMDFP::mask_type( false )};
+    MASK m_valid{MASK( false )};
 
     /// RICH
     Rich::DetectorType m_rich{Rich::InvalidDetector};
