@@ -129,9 +129,6 @@ public:
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
-  // The maximum PD copy number for this panel
-  Rich::DAQ::PDPanelIndex maxPdNumber() const override;
-
 private:
   using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
@@ -161,35 +158,53 @@ private:
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept {
     // check for now. to be removed.
-    if ( smartID.rich() != rich() || smartID.panel() != side() ) {
+    if ( UNLIKELY( smartID.rich() != rich() || smartID.panel() != side() ) ) {
       error() << "_pdNumber RICH and side error " << smartID << endmsg;
     }
-    // Should never get different rich or panel, so skip check
-    // return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
-    //                                ( smartID.pdCol() * m_NumPmtInRichModule ) +
-    //                                smartID.pdNumInCol() : nPDs() + 1 );
-    return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
+    // col number is local
+    // return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
+    // col number is global
+    return Rich::DAQ::PDPanelIndex( ( PmtModuleNumInPanelFromModuleNum( smartID.pdCol() ) * m_NumPmtInRichModule ) +
+                                    smartID.pdNumInCol() );
   }
 
   const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
   inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const {
+
     // get the lookup indices from the smart ID
     auto pdCol   = pdID.pdCol();
     auto pdInCol = pdID.pdNumInCol();
 
-    // if need be correct the pdCol (for data when it was incorrectly filled)
-    // this is temporary, can be removed when no longer needed...
-    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) {
-      pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol );
-    } // return the pointer from the array
-    return m_DePMTs[pdCol][pdInCol];
+    // Convert global module number to number in panel
+    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol ); }
 
-    // get the old way
-    // return dePMT( _pdNumber( pdID ) );
+    // the pointer from the array
+    const auto pd =
+        ( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ? m_DePMTs[pdCol][pdInCol] : nullptr );
+
+    // get the old (slower) way
+    // const auto pd = dePMT( _pdNumber( pdID ) );
+
+#ifndef NDEBUG // Sanity checks, only in debug builds
+
+    if ( pd ) {
+      if ( UNLIKELY( pd->pdSmartID().pdID() != pdID.pdID() ) ) {
+        error() << "PMT ID mismatch !!!" << endmsg;
+        error() << "   -> requested " << pdID.pdID() << endmsg;
+        error() << "   -> retrieved " << pd->pdSmartID() << endmsg;
+      }
+    }
+
+#endif
+
+    // return
+    return pd;
   }
 
 private:
+  // methods
+
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept {
     const Int aPRow = ( aPmtNum / m_NumPmtInRowCol[0] );
     return {aPRow, ( Int )( aPmtNum - ( aPRow * m_NumPmtInRowCol[0] ) )};

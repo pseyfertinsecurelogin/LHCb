@@ -73,11 +73,6 @@ StatusCode DeRichPMTPanelClassic::initialize() {
 }
 
 //=========================================================================
-// max PD index for this panel
-//=========================================================================
-Rich::DAQ::PDPanelIndex DeRichPMTPanelClassic::maxPdNumber() const { return m_maxPDCopyN; }
-
-//=========================================================================
 //  getFirstDeRich
 //=========================================================================
 const DetectorElement* DeRichPMTPanelClassic::getFirstDeRich() const {
@@ -98,6 +93,7 @@ const DetectorElement* DeRichPMTPanelClassic::getFirstDeRich() const {
 // generate the transforms for global <-> local frames
 //=========================================================================
 StatusCode DeRichPMTPanelClassic::geometryUpdate() {
+
   using GP = Gaudi::XYZPoint;
 
   MsgStream msg( msgSvc(), "DeRichPMTPanelClassic" );
@@ -128,7 +124,8 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
 
   const auto& detelems = childIDetectorElements();
 
-  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it ) {
+  Int iModNum( 0 );
+  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it, ++iModNum ) {
     if ( std::string::npos != ( *det_it )->name().find( "MAPMT_MODULE:" ) ) {
 
       // get PMT Module
@@ -179,12 +176,14 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
               // const auto curPmtCopyNum = dePMT->pmtCopyNumber();
 
               // CRJ - These should be set by the DePMT class itself....
-              // dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
+              // dePMT->setPmtLensFlag ( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
               auto id = panelID();
-              id.setPD_PMT( aCurrentModuleCopyNumber, curPmtNum );
+              // id.setPD_PMT( iModNum, curPmtNum ); // local PD col
+              id.setPD_PMT( aCurrentModuleCopyNumber, curPmtNum ); // global PD col
               id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
-              dePMT->setPDSmartID( id );
+              dePMT->setPDInfo( id, _pdNumber( id ) );
+
               // curPmtNum is SmartID pdInCol
               // aCurrentModuleCopyNumber is pdCol
 
@@ -330,16 +329,6 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
   m_PDPanelToGlobalTransform = m_globalToPDPanelTransform.Inverse();
 
-  // loop over all PD smartIDs to work out the largest copy number for this panel
-  m_maxPDCopyN = Rich::DAQ::PDPanelIndex( 0 );
-  for ( const auto pd : deRichSys()->allPDRichSmartIDs() ) {
-    if ( pd.rich() == rich() && pd.panel() == side() ) {
-      const auto copyN = _pdNumber( pd );
-      if ( copyN > m_maxPDCopyN ) { m_maxPDCopyN = copyN; }
-    }
-  }
-  _ri_debug << "Max PD Copy Number = " << m_maxPDCopyN << endmsg;
-
   // Define function pointers
 
   if ( Rich::Rich1 == rich() ) {
@@ -365,6 +354,40 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
       } else {
         m_getModuleNumsSIMD = ( side() == Rich::left ? &DeRichPMTPanelClassic::getModuleNums_R2Le_Mixed_SIMD
                                                      : &DeRichPMTPanelClassic::getModuleNums_R2Ri_Mixed_SIMD );
+      }
+    }
+  }
+
+  // Sanity checks
+
+  // loop over DePDs and compare information
+  for ( const auto& m : m_DePMTs ) {
+    for ( const auto& pd : m ) {
+      if ( pd ) {
+        // smartID for this PD
+        const auto pdID = pd->pdSmartID();
+        {
+          // test method to get dePD from smartID
+          const auto test_pd = dePMT( pdID );
+          if ( UNLIKELY( test_pd != pd ) ) {
+            error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
+            error() << "   -> requested " << pdID << endmsg;
+            error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
+          }
+        }
+        {
+          try {
+            // compare to index method
+            const auto test_pd = dePMT( _pdNumber( pdID ) );
+            if ( UNLIKELY( test_pd != pd ) ) {
+              error() << "Inconsistent results from dePMT(PDPanelIndex)" << endmsg;
+              error() << "   -> requested " << pdID << endmsg;
+              error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
+            }
+          } catch ( const GaudiException& excp ) {
+            error() << pdID << " - Issue testing dePMT(PDPanelIndex) " << excp.message() << endmsg;
+          }
+        }
       }
     }
   }
@@ -397,16 +420,19 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
 
     // Set to local matrix
     geometry()->toLocalMatrix().GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_toLocalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy, (FP)zx, (FP)zy,
-                                       (FP)zz, (FP)dz );
+    m_toLocalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, //
+                                       (FP)yx, (FP)yy, (FP)yz, (FP)dy, //
+                                       (FP)zx, (FP)zy, (FP)zz, (FP)dz );
     // and to global
     geometry()->toGlobalMatrix().GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_toGlobalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy, (FP)zx, (FP)zy,
-                                        (FP)zz, (FP)dz );
+    m_toGlobalMatrixSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, //
+                                        (FP)yx, (FP)yy, (FP)yz, (FP)dy, //
+                                        (FP)zx, (FP)zy, (FP)zz, (FP)dz );
 
     // panel
     m_globalToPDPanelTransform.GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-    m_globalToPDPanelTransformSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, (FP)yx, (FP)yy, (FP)yz, (FP)dy,
+    m_globalToPDPanelTransformSIMD.SetComponents( (FP)xx, (FP)xy, (FP)xz, (FP)dx, //
+                                                  (FP)yx, (FP)yy, (FP)yz, (FP)dy, //
                                                   (FP)zx, (FP)zy, (FP)zz, (FP)dz );
   }
 
@@ -419,6 +445,7 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
 }
 
 bool DeRichPMTPanelClassic::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const {
+
   id                 = panelID(); // sets RICH, panel and type
   const auto inPanel = m_toLocalMatrixSIMD * SIMDPoint( globalPoint );
   const auto a       = findPMTArraySetupSIMD( inPanel );
@@ -427,8 +454,12 @@ bool DeRichPMTPanelClassic::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::R
   const Int a1 = ( a[1] )[0];
   const Int a2 = ( a[2] )[0];
   const Int a3 = ( a[3] )[0];
+
   id.setLargePMT( ModuleIsWithGrandPMT( a0 ) );
-  setRichPmtSmartID( a0, a1, a2, a3, id );
+
+  setRichPmtSmartID( a0, a1, a2, a3, id ); // global PD col
+  // setRichPmtSmartID( PmtModuleNumInPanelFromModuleNumAlone( a0 ), a1, a2, a3, id ); // local PD col
+
   return true;
 }
 
@@ -988,8 +1019,7 @@ DeRichPMTPanelClassic::PDWindowPointSIMD( const SIMDPoint&          pGlobal,    
           gPdMask[i] = rich() == Rich::Rich2 && pmt->PmtIsGrand();
 
         } // mask OK
-
-      } // scalar loop
+      }   // scalar loop
 
       // SIMD PMT acceptance check
       mask &= checkPDAcceptance( panelIntersection.X() - X, panelIntersection.Y() - Y, gPdMask );

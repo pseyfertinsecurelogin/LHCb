@@ -114,8 +114,9 @@ public:
    *  @retval true  Conversion to photocathode was OK
    *  @retval false Impossible conversion to photocathode
    */
-  inline bool detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint& detectPoint,
-                              const bool photoCathodeSide = false ) const {
+  inline bool detectionPoint( const LHCb::RichSmartID smartID,     //
+                              Gaudi::XYZPoint&        detectPoint, //
+                              const bool              photoCathodeSide = false ) const {
     return this->dePD( smartID )->detectionPoint( smartID, detectPoint, photoCathodeSide );
   }
 
@@ -177,9 +178,12 @@ public: // virtual methods. Derived classes must implement these
    *
    *  @return Status of intersection
    */
-  virtual LHCb::RichTraceMode::RayTraceResult
-  PDWindowPoint( const Gaudi::XYZPoint& pGlobal, const Gaudi::XYZVector& vGlobal, Gaudi::XYZPoint& windowPointGlobal,
-                 LHCb::RichSmartID& smartID, const DeRichPD*& dePD, const LHCb::RichTraceMode mode ) const = 0;
+  virtual LHCb::RichTraceMode::RayTraceResult PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
+                                                             const Gaudi::XYZVector&   vGlobal,           //
+                                                             Gaudi::XYZPoint&          windowPointGlobal, //
+                                                             LHCb::RichSmartID&        smartID,           //
+                                                             const DeRichPD*&          dePD,              //
+                                                             const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with the detector plane given a vector
    *         and a point (Scalar).
@@ -196,9 +200,12 @@ public: // virtual methods. Derived classes must implement these
    *
    * @return Intersection status
    */
-  virtual LHCb::RichTraceMode::RayTraceResult
-  detPlanePoint( const Gaudi::XYZPoint& pGlobal, const Gaudi::XYZVector& vGlobal, Gaudi::XYZPoint& hitPosition,
-                 LHCb::RichSmartID& smartID, const DeRichPD*& dePD, const LHCb::RichTraceMode mode ) const = 0;
+  virtual LHCb::RichTraceMode::RayTraceResult detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
+                                                             const Gaudi::XYZVector&   vGlobal,     //
+                                                             Gaudi::XYZPoint&          hitPosition, //
+                                                             LHCb::RichSmartID&        smartID,     //
+                                                             const DeRichPD*&          dePD,        //
+                                                             const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point (SIMD)
@@ -216,9 +223,11 @@ public: // virtual methods. Derived classes must implement these
    *
    *  @return Status of intersection
    */
-  virtual SIMDRayTResult::Results PDWindowPointSIMD( const SIMDPoint& pGlobal, const SIMDVector& vGlobal,
-                                                     SIMDPoint& hitPosition, SIMDRayTResult::SmartIDs& smartID,
-                                                     SIMDRayTResult::PDs&      PDs,
+  virtual SIMDRayTResult::Results PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
+                                                     const SIMDVector&         vGlobal,     //
+                                                     SIMDPoint&                hitPosition, //
+                                                     SIMDRayTResult::SmartIDs& smartID,     //
+                                                     SIMDRayTResult::PDs&      PDs,         //
                                                      const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with the detector plane given a vector
@@ -236,9 +245,11 @@ public: // virtual methods. Derived classes must implement these
    *
    * @return Intersection status
    */
-  virtual SIMDRayTResult::Results detPlanePointSIMD( const SIMDPoint& pGlobal, const SIMDVector& vGlobal,
-                                                     SIMDPoint& hitPosition, SIMDRayTResult::SmartIDs& smartID,
-                                                     SIMDRayTResult::PDs&      PDs,
+  virtual SIMDRayTResult::Results detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
+                                                     const SIMDVector&         vGlobal,     //
+                                                     SIMDPoint&                hitPosition, //
+                                                     SIMDRayTResult::SmartIDs& smartID,     //
+                                                     SIMDRayTResult::PDs&      PDs,         //
                                                      const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
@@ -268,11 +279,6 @@ public: // virtual methods. Derived classes must implement these
    */
   virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
 
-  /** The maximum PD number for this panel
-   *  Useful as for the PMTs this is not easily derived from the number of PD
-   *  as they are not completely sequential */
-  virtual Rich::DAQ::PDPanelIndex maxPdNumber() const = 0;
-
 protected:
   /// Set the Rich and side
   void setRichSide( const Rich::DetectorType rich, const Rich::Side side ) noexcept {
@@ -283,7 +289,9 @@ protected:
     m_panelID = LHCb::RichSmartID( rich, side, pdType() );
   }
 
-protected:                      // Parameters that must be properly configured in the derived classes
+protected:
+  // Parameters that must be properly configured in the derived classes
+
   unsigned int m_PDColumns{0};  ///< Number of PD columns in the panel
   unsigned int m_PDNumInCol{0}; ///< Number of PDs in each column
   unsigned int m_PDMax{0};      ///< Total number of PDs in this panel
@@ -303,6 +311,8 @@ protected:                      // Parameters that must be properly configured i
   Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_globalToPDPanelTransformSIMD;
 
 private:
+  // data
+
   /// SmartID for this panel
   LHCb::RichSmartID m_panelID;
 

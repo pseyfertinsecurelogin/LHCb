@@ -91,12 +91,6 @@ public:
 
   inline bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
 
-  /// Set the PD ID
-  inline void setPDSmartID( const LHCb::RichSmartID id ) noexcept { m_pdSmartID = id; }
-
-  /// Access the PD ID
-  inline LHCb::RichSmartID pdSmartID() const noexcept { return m_pdSmartID; }
-
   /// Shortcut to the 'to local' matrix
   inline const Gaudi::Transform3D& toLocalMatrix() const noexcept { return m_toLocM; }
 
@@ -242,9 +236,6 @@ private:
 
   // shared PD data. Same for every PMT.
   static PMTData m_pddata;
-
-  /// PD SmartID
-  LHCb::RichSmartID m_pdSmartID;
 
   /// Cache 'to local' matrix
   Gaudi::Transform3D m_toLocM;

@@ -148,9 +148,6 @@ public:
   /// Returns the number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override final;
 
-  /// The maximum PD number for this panel
-  Rich::DAQ::PDPanelIndex maxPdNumber() const override final;
-
 private: // methods
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const {

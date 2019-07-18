@@ -72,14 +72,6 @@ StatusCode DeRichPMTPanel::initialize() {
 }
 
 //=========================================================================
-// max PD index for this panel
-//=========================================================================
-Rich::DAQ::PDPanelIndex DeRichPMTPanel::maxPdNumber() const {
-  // return max PD copy number in this panel (mind that numbering of modules/PDs starts from 0)
-  return Rich::DAQ::PDPanelIndex( ( m_RichPmtModuleCopyNumEndPanel[m_CurPanelNum] + 1 ) * m_NumPmtInRichModule - 1 );
-}
-
-//=========================================================================
 //  getFirstDeRich
 //=========================================================================
 const DetectorElement* DeRichPMTPanel::getFirstDeRich() const {
@@ -180,11 +172,11 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
               updMgrSvc()->registerCondition( this, dePMT->geometry(), &DeRichPMTPanel::geometryUpdate );
 
               // get the current pmt number in a module (from its name)
-              const auto pmtNumberInAModule = std::stoi( ( *det_it_pm )
-                                                             ->name()
-                                                             .substr( ( *det_it_pm )->name().find( "MAPMT:" ) +
-                                                                      std::string( "MAPMT:" ).length() ) ) %
-                                              m_NumPmtInRichModule;
+              const std::string s_pmt( "MAPMT:" );
+              const auto        pmtNumberInAModule =
+                  ( std::stoi(
+                        ( *det_it_pm )->name().substr( ( *det_it_pm )->name().find( s_pmt ) + s_pmt.length() ) ) %
+                    m_NumPmtInRichModule );
 
               // const auto curPmtCopyNum = dePMT->pmtCopyNumber();
 
@@ -194,7 +186,8 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
               auto id = panelID();
               id.setPD_PMT( aCurrentModuleCopyNumber, pmtNumberInAModule );
               id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
-              dePMT->setPDSmartID( id );
+              dePMT->setPDInfo( id, _pdNumber( id ) );
+
               // pmtNumberInAModule is SmartID pdInCol
               // aCurrentModuleCopyNumber is pdCol
 
@@ -353,6 +346,40 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
     }
   }
 
+  // Sanity checks
+
+  // loop over DePDs and compare information
+  for ( const auto& m : m_DePMTs ) {
+    for ( const auto& pd : m ) {
+      if ( pd ) {
+        // smartID for this PD
+        const auto pdID = pd->pdSmartID();
+        {
+          // test method to get dePD from smartID
+          const auto test_pd = dePMT( pdID );
+          if ( UNLIKELY( test_pd != pd ) ) {
+            error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
+            error() << "   -> requested " << pdID << endmsg;
+            error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
+          }
+        }
+        {
+          try {
+            // compare to index method
+            const auto test_pd = dePMT( _pdNumber( pdID ) );
+            if ( UNLIKELY( test_pd != pd ) ) {
+              error() << "Inconsistent results from dePMT(PDPanelIndex)" << endmsg;
+              error() << "   -> requested " << pdID << endmsg;
+              error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
+            }
+          } catch ( const GaudiException& excp ) {
+            error() << pdID << " - Issue testing dePMT(PDPanelIndex) " << excp.message() << endmsg;
+          }
+        }
+      }
+    }
+  }
+
   // make SIMD caches for various quantities
 
   // m_Rich1LensDemagnificationFactorSIMD = m_Rich1LensDemagnificationFactor;
@@ -405,19 +432,19 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
 bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const {
   id                     = panelID(); // sets RICH, panel and type
   const auto     inPanel = m_toLocalMatrixSIMD * SIMDPoint( globalPoint );
-  ArraySetupSIMD a_tmp{{}};
+  ArraySetupSIMD a{{}};
   // return false if invalid id is found (e.g. in non-existent PMT)
-  if ( !( findPMTArraySetupSIMD( inPanel, a_tmp )[0] ) ) return false;
-  const auto a = a_tmp;
-  // get PMT module number in panel
-  const Int a0 = ( a[0] )[0];
-  const Int a1 = ( a[1] )[0];
-  const Int a2 = ( a[2] )[0];
-  const Int a3 = ( a[3] )[0];
-  id.setLargePMT( ModuleIsWithGrandPMT( a0 ) );
-  setRichPmtSmartID( a0, a1, a2, a3, id );
-
-  return true;
+  const bool ok = findPMTArraySetupSIMD( inPanel, a )[0];
+  if ( ok ) {
+    // get PMT module number in panel
+    const Int a0 = ( a[0] )[0];
+    const Int a1 = ( a[1] )[0];
+    const Int a2 = ( a[2] )[0];
+    const Int a3 = ( a[3] )[0];
+    id.setLargePMT( ModuleIsWithGrandPMT( a0 ) );
+    setRichPmtSmartID( a0, a1, a2, a3, id );
+  }
+  return ok;
 }
 
 StatusCode DeRichPMTPanel::getPanelGeometryInfo() {
