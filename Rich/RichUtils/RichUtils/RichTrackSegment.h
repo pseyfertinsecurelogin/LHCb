@@ -31,9 +31,11 @@
 #include <type_traits>
 
 // local
-#include "RichUtils/FastMaths.h"
 #include "RichUtils/RichException.h"
 #include "RichUtils/RichSIMDTypes.h"
+
+// LHCb Maths
+#include "LHCbMath/FastMaths.h"
 
 // LHCbKernel
 #include "Kernel/RichDetectorType.h"
@@ -299,35 +301,45 @@ namespace LHCb {
     void updateState( const Gaudi::XYZPoint& rotPnt, const Gaudi::Transform3D& trans );
 
     /** Calculates the theta and phi angles of a direction with respect to
-     *  the segment direction
+     *  the segment direction.
+     *
+     *  The precision on the determination of Cherenkov theta and phi can be set
+     *  individually via template parameters. In general, less precision is required in
+     *  phi than theta, so by default use 0 for phi and 1 for theta.
      *
      *  @param direction Direction to which to calculate the angles for this segment
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    template <typename VECTOR, typename TYPE>
-    inline void angleToDirection( const VECTOR& direction, TYPE& theta, TYPE& phi ) const {
-      if constexpr ( std::is_arithmetic<TYPE>::value ) {
+    template <std::size_t THETA_PRECISION = 1, //
+              std::size_t PHI_PRECISION   = 0, //
+              typename VECTOR, typename TYPE>
+    inline void __attribute__( ( always_inline ) ) //
+    angleToDirection( const VECTOR& direction, TYPE& theta, TYPE& phi ) const {
+      if constexpr ( std::is_arithmetic_v<TYPE> ) {
         // scalar implementation
-
         // create vector in track reference frame
         const auto r = m_rotation * direction;
         // compute theta and phi directly from the vector components
-        phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
-        theta = Rich::Maths::fast_atan2( TYPE( std::sqrt( ( r.x() * r.x() ) + ( r.y() * r.y() ) ) ), r.z() );
+        const auto perp = std::sqrt( ( r.x() * r.x() ) + ( r.y() * r.y() ) );
+        theta           = my_atan2<THETA_PRECISION>( perp, r.z() );
+        phi             = my_atan2<PHI_PRECISION>( r.y(), r.x() );
         // correct phi to range 0 - 2PI
         constexpr TYPE twopi = TYPE( 2.0 * M_PI );
         if ( phi < 0 ) { phi += twopi; }
-      } else {
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
         // SIMD version
-
         // create vector in track reference frame
         const auto r = m_rotationSIMD * direction;
         // compute theta and phi directly from the vector components
-        phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
-        theta = Rich::Maths::fast_atan2( std::sqrt( ( r.x() * r.x() ) + ( r.y() * r.y() ) ), r.z() );
+        const auto perp = std::sqrt( ( r.x() * r.x() ) + ( r.y() * r.y() ) );
+        theta           = my_atan2<THETA_PRECISION>( perp, r.z() );
+        phi             = my_atan2<PHI_PRECISION>( r.y(), r.x() );
         // correct phi to range 0 - 2PI
         phi( phi < TYPE::Zero() ) += TYPE( 2.0 * M_PI );
+      } else {
+        // If get here unknown types so force compilation failure
+        TYPE::WillFail();
       }
     }
 
@@ -340,9 +352,10 @@ namespace LHCb {
      */
     template <typename TYPE>
     inline decltype( auto ) vectorAtThetaPhi( const TYPE& theta, const TYPE& phi ) const {
+      using namespace LHCb::Math;
       TYPE sinTheta( 0 ), cosTheta( 0 ), sinPhi( 0 ), cosPhi( 0 );
-      Rich::Maths::fast_sincos( theta, sinTheta, cosTheta );
-      Rich::Maths::fast_sincos( phi, sinPhi, cosPhi );
+      fast_sincos( theta, sinTheta, cosTheta );
+      fast_sincos( phi, sinPhi, cosPhi );
       return vectorAtCosSinThetaPhi( cosTheta, sinTheta, cosPhi, sinPhi );
     }
 
@@ -358,8 +371,11 @@ namespace LHCb {
     template <
         typename THETA, typename PHI,
         typename std::enable_if<std::is_arithmetic<THETA>::value && std::is_arithmetic<PHI>::value>::type* = nullptr>
-    inline decltype( auto ) vectorAtCosSinThetaPhi( const THETA cosTheta, const THETA sinTheta, const PHI cosPhi,
-                                                    const PHI sinPhi ) const noexcept {
+    inline decltype( auto ) vectorAtCosSinThetaPhi( const THETA cosTheta, //
+                                                    const THETA sinTheta, //
+                                                    const PHI   cosPhi,   //
+                                                    const PHI   sinPhi    //
+                                                    ) const noexcept {
       return m_rotation2 * Gaudi::XYZVector( sinTheta * cosPhi, sinTheta * sinPhi, cosTheta );
     }
 
@@ -372,15 +388,18 @@ namespace LHCb {
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    inline decltype( auto ) vectorAtCosSinThetaPhi( const SIMDFP cosTheta, const SIMDFP sinTheta, const SIMDFP cosPhi,
-                                                    const SIMDFP sinPhi ) const noexcept {
+    inline decltype( auto ) vectorAtCosSinThetaPhi( const SIMDFP cosTheta, //
+                                                    const SIMDFP sinTheta, //
+                                                    const SIMDFP cosPhi,   //
+                                                    const SIMDFP sinPhi    //
+                                                    ) const noexcept {
       return m_rotation2SIMD * SIMDVector( sinTheta * cosPhi, sinTheta * sinPhi, cosTheta );
     }
 
     /** Calculates the path lenth of a track segment.
      *  @returns The total length of the track inside the radiator
      */
-    inline double pathLength() const noexcept { return m_pathLength; }
+    inline decltype( auto ) pathLength() const noexcept { return m_pathLength; }
 
     /// Returns the segment entry point to the radiator
     inline const Gaudi::XYZPoint& entryPoint() const noexcept { return radIntersections().front().entryPoint(); }
@@ -403,12 +422,12 @@ namespace LHCb {
     /// Returns the z coordinate at a given fractional distance along segment
     template <typename TYPE>
     inline TYPE zCoordAt( const TYPE fraction ) const {
-      if constexpr ( std::is_arithmetic<TYPE>::value ) {
+      if constexpr ( std::is_arithmetic_v<TYPE> ) {
         // scalar implementation
-        return fraction * exitPoint().z() + ( 1 - fraction ) * entryPoint().z();
-      } else {
+        return ( fraction * exitPoint().z() ) + ( ( TYPE( 1 ) - fraction ) * entryPoint().z() );
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
         // SIMD version
-        return fraction * exitPointSIMD().z() + ( TYPE::One() - fraction ) * entryPointSIMD().z();
+        return ( fraction * exitPointSIMD().z() ) + ( ( TYPE::One() - fraction ) * entryPointSIMD().z() );
       }
     }
 
@@ -417,12 +436,12 @@ namespace LHCb {
     template <typename TYPE>
     inline decltype( auto ) bestPoint( const TYPE fractDist ) const {
       // return the best point
-      if constexpr ( std::is_arithmetic<TYPE>::value ) {
+      if constexpr ( std::is_arithmetic_v<TYPE> ) {
         // scalar implementation
         return ( zCoordAt( fractDist ) < middlePoint().z()
                      ? entryPoint() + ( fractDist * m_invMidFrac1 * m_midEntryV )
                      : middlePoint() + ( m_exitMidV * ( ( fractDist - m_midFrac2 ) / m_midFrac2 ) ) );
-      } else {
+      } else if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
         // SIMD version
         using namespace LHCb::SIMD;
         auto       p    = middlePointSIMD() + ( m_exitMidVSIMD * ( ( fractDist - m_midFrac2SIMD ) / m_midFrac2SIMD ) );
@@ -541,14 +560,37 @@ namespace LHCb {
       return segment.fillStream( s );
     }
 
-  private: // methods
+  private:
+    // methods
+
     /// Provides write access to the radiator intersections
     inline Rich::RadIntersection::Vector& radIntersections() noexcept { return m_radIntersections; }
 
     /// Updates the cached information
     void updateCachedInfo();
 
-  private:                                                 // private data
+    /** atan2 for given precision level
+     *
+     *  PRECISION >= 2 : Use STL std::atan2. 'reference' precision.
+     *  PRECISION == 1 : Use LHCbMath 'VDT inspired' implementation.
+     *  PRECISION == 0 : Use LHCbMath approximate (factor 2 w.r.t. VDT) implementation.
+     */
+    template <std::size_t PRECISION, typename TYPE>
+    inline TYPE __attribute__( ( always_inline ) ) //
+    my_atan2( const TYPE y, const TYPE x ) const noexcept {
+      using namespace LHCb::Math;
+      if constexpr ( PRECISION >= 2 ) {
+        return std::atan2( y, x );
+      } else if constexpr ( PRECISION == 1 ) {
+        return fast_atan2( y, x );
+      } else {
+        return Approx::vapprox_atan2( y, x );
+      }
+    }
+
+  private:
+    // private data
+
     Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
     Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
 
