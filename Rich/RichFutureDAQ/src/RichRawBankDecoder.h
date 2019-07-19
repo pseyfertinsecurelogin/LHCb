@@ -280,6 +280,9 @@ namespace Rich::Future {
 
     /// Event ID mis-match
     mutable ErrorCounter m_eventIDmismatch{this, "EventID Mismatch"};
+
+    /// PMT small/large flag mis-match
+    mutable ErrorCounter m_pmtSLFlagMismatch{this, "Small/Large PD flag mis-match"};
   };
 
 } // namespace Rich::Future

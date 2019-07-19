@@ -111,6 +111,7 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, //
       } catch ( const GaudiException& expt ) {
         // count errors
         ++m_rawReadErr;
+        _ri_verbo << expt.message() << endmsg;
         // dump the full bank
         if ( m_verboseErrors ) dumpRawBank( *bank, error() );
       }
@@ -516,7 +517,14 @@ void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& 
     int lineC( 0 );
     while ( lineC < bankSize ) {
       // Read the smartID direct from the banks
-      const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
+      LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
+      const bool        isLarge = m_richSys->isLargePD( id );
+      if ( id.isLargePMT() != isLarge ) {
+        ++m_pmtSLFlagMismatch;
+        // hack to fix up large PMT flag
+        id.setLargePMT( isLarge );
+      }
+      // OK ?
       if ( UNLIKELY( !id.isValid() ) ) {
         ++m_flatListReadWarn;
       } else {
