@@ -1176,10 +1176,14 @@ DeRichPMTPanelClassic::Int DeRichPMTPanelClassic::getModuleCopyNumber( const std
   Int        anumber = -1;
   const auto pos2    = aModuleName.find( ":" );
   if ( std::string::npos == pos2 ) {
-    error() << "A PMTModule without a number!   " << aModuleName << endmsg;
+    error() << "A PMTModule without a number! " << aModuleName << endmsg;
   } else {
     anumber = atoi( aModuleName.substr( pos2 + 1 ).c_str() );
   }
 
   return anumber;
+}
+
+bool DeRichPMTPanelClassic::isLargePD( const LHCb::RichSmartID smartID ) const {
+  return ModuleIsWithGrandPMT( smartID.pdCol() );
 }

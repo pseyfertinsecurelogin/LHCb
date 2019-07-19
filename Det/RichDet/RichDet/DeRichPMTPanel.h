@@ -39,7 +39,7 @@
  *  @author Sajan Easo
  *  @date   2011-10-10
  */
-class DeRichPMTPanel : public DeRichPDPanel {
+class DeRichPMTPanel final : public DeRichPDPanel {
 
 public:
   /// Standard constructor
@@ -128,6 +128,9 @@ public:
 
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override;
+
+  /// Is a 'large' PD
+  bool isLargePD( const LHCb::RichSmartID smartID ) const override;
 
 private:
   using Int        = std::int32_t;

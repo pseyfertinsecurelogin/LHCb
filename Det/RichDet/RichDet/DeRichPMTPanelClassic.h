@@ -39,7 +39,7 @@
  *  @author Sajan Easo
  *  @date   2011-10-10
  */
-class DeRichPMTPanelClassic : public DeRichPDPanel {
+class DeRichPMTPanelClassic final : public DeRichPDPanel {
 
 public:
   /// Standard constructor
@@ -117,7 +117,7 @@ public:
   /// Get tge sensitivevolumeID
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
 
-  /** Converts a RichSmartID to a point on the anode in global coordinates.
+  /** Converts a RichSmartID to a point on the anode in global coordinates.s
    *  @param[in] smartID The RichSmartID for the PMT channel
    *  @return The detection point on the anode in global coordinates
    */
@@ -128,6 +128,9 @@ public:
 
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override;
+
+  /// Is a 'large' PD
+  bool isLargePD( const LHCb::RichSmartID smartID ) const override;
 
 private:
   using Int        = std::int32_t;
@@ -191,7 +194,6 @@ private:
 #ifndef NDEBUG // Sanity checks, only in debug builds
 
     if ( pd ) {
-      // sanity check
       if ( UNLIKELY( pd->pdSmartID().pdID() != pdID.pdID() ) ) {
         error() << "Classic PMT ID mismatch !!!" << endmsg;
         error() << "   -> requested " << pdID.pdID() << endmsg;

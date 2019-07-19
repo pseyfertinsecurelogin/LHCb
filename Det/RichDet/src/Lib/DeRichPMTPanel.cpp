@@ -766,21 +766,31 @@ DeRichPMTPanel::SIMDINT32::MaskType DeRichPMTPanel::findPMTArraySetupSIMD( const
   }
 #endif
 
-  // Use geometry info to transform point to local anode frame.
-  const auto& mToGlobal = geometry()->toGlobalMatrix();
-
   SIMDFP xpi, ypi;
 
-  GAUDI_LOOP_UNROLL( SIMDINT32::Size )
-  for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
-    if ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] ) {
-      const auto& mToLocalAnode = ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] )->toLocalMatrix();
-      const auto  pointInPmtAnode =
-          mToLocalAnode * mToGlobal * Gaudi::XYZPoint{aLocalPoint.x()[i], aLocalPoint.y()[i], aLocalPoint.z()[i]};
-      xpi[i] = pointInPmtAnode.x();
-      ypi[i] = pointInPmtAnode.y();
-    } else
-      mask_sc[i] = false;
+  {
+    // this is not ideal. Should see if we can reduce what we need to do here...
+    // start by apply global transform using SIMD
+    const auto pointInPmtAnode = m_toGlobalMatrixSIMD * aLocalPoint;
+    // have to fall back to scalar loop for PD specific transform....
+    // Would be good to improve this as will adversely impact CPU performance
+    GAUDI_LOOP_UNROLL( SIMDINT32::Size )
+    for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
+      if ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] ) {
+        // transform for PD
+        const auto& mToLocalAnode = ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] )->toLocalMatrix();
+        // get point in pd
+        const auto pointInPmtAnode_sc = mToLocalAnode * Gaudi::XYZPoint{pointInPmtAnode.x()[i], //
+                                                                        pointInPmtAnode.y()[i], //
+                                                                        pointInPmtAnode.z()[i]};
+        // const auto  pointInPmtAnode_sc =
+        //    mToLocalAnode * geometry()->toGlobalMatrix() * Gaudi::XYZPoint{aLocalPoint.x()[i],
+        //    aLocalPoint.y()[i], aLocalPoint.z()[i]};
+        xpi[i] = pointInPmtAnode_sc.x();
+        ypi[i] = pointInPmtAnode_sc.y();
+      } else
+        mask_sc[i] = false;
+    }
   }
 
   auto& aPmtPixelCol = aCh[2];
@@ -825,8 +835,8 @@ DeRichPMTPanel::SIMDINT32::MaskType DeRichPMTPanel::findPMTArraySetupSIMD( const
   } else {
 
     // we have a mixture of grand and small PMTs
-    // for grand PMTs: try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge pixel
-    // in grand PMT
+    // for grand PMTs: try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge
+    // pixel in grand PMT
     const auto not_gmask = !gmask;
     aPmtPixelCol =
         iif( gmask,
@@ -1206,10 +1216,14 @@ DeRichPMTPanel::Int DeRichPMTPanel::getModuleCopyNumber( const std::string& aMod
   Int        anumber = -1;
   const auto pos2    = aModuleName.find( ":" );
   if ( std::string::npos == pos2 ) {
-    error() << "A PMTModule without a number!   " << aModuleName << endmsg;
+    error() << "A PMTModule without a number! " << aModuleName << endmsg;
   } else {
     anumber = atoi( aModuleName.substr( pos2 + 1 ).c_str() );
   }
 
   return anumber;
+}
+
+bool DeRichPMTPanel::isLargePD( const LHCb::RichSmartID smartID ) const {
+  return ModuleIsWithGrandPMT( smartID.pdCol() );
 }

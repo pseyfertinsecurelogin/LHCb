@@ -148,6 +148,9 @@ public:
   /// Returns the number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override final;
 
+  /// Is a 'large' PD
+  bool isLargePD( const LHCb::RichSmartID ) const override final { return false; }
+
 private: // methods
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const {

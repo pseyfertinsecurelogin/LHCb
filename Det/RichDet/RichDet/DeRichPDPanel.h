@@ -279,6 +279,9 @@ public: // virtual methods. Derived classes must implement these
    */
   virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
 
+  /// Is a 'large' PD
+  virtual bool isLargePD( const LHCb::RichSmartID smartID ) const = 0;
+
 protected:
   /// Set the Rich and side
   void setRichSide( const Rich::DetectorType rich, const Rich::Side side ) noexcept {
