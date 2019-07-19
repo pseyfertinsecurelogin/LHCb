@@ -38,25 +38,27 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, const bool dumpSma
   s << "{";
 
   // Dump the bits if requested
-  if ( dumpSmartIDBits ) {
+  if ( UNLIKELY( dumpSmartIDBits ) ) {
     s << " ";
     dumpBits( s );
   }
 
   // Type
-  s << ( idType() == HPDID ? " HPD" : idType() == MaPMTID ? " MaPMT" : "UndefinedPD" );
+  s << ( UNLIKELY( idType() == HPDID ) ? " HPD" : idType() == MaPMTID ? " PMT" : "UndefinedPD" );
+
+  // if PMT add size (large or small)
+  if ( idType() == MaPMTID ) { s << ( isLargePMT() ? ":l" : ":s" ); }
 
   // Is this smart ID valid
   if ( isValid() ) {
 
     // RICH detector
-    if ( richIsSet() ) s << " " << Rich::text( rich() );
+    if ( richIsSet() ) { s << " " << Rich::text( rich() ); }
 
     // Panel
     if ( panelIsSet() ) {
-      const std::string PANEL = ( rich() == Rich::Rich1 ? ( panel() == Rich::top ? "Top     " : "Bottom  " )
-                                                        : ( panel() == Rich::left ? "Left(A) " : "Right(C)" ) );
-      s << " " << PANEL;
+      s << ( rich() == Rich::Rich1 ? ( panel() == Rich::top ? " Top     " : " Bottom  " )
+                                   : ( panel() == Rich::left ? " Left(A) " : " Right(C)" ) );
     }
 
     // PD
@@ -71,7 +73,7 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, const bool dumpSma
     if ( pixelRowIsSet() ) s << " pixRow" << format( "%3i", pixelRow() );
 
     // Subpixel
-    if ( pixelSubRowIsSet() ) s << " pixSubRow" << format( "%2i", pixelSubRow() );
+    if ( UNLIKELY( pixelSubRowIsSet() ) ) s << " pixSubRow" << format( "%2i", pixelSubRow() );
   } else {
     // This SmartID has no valid bits set. This is bad ...
     s << " WARNING Invalid RichSmartID";

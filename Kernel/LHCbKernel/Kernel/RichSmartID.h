@@ -21,6 +21,9 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
 
+// Gaudi
+#include "GaudiKernel/Kernel.h"
+
 class DeRichPMTPanel;
 class DeRichPMTPanelClassic;
 
@@ -40,6 +43,8 @@ namespace LHCb {
     friend DeRichPMTPanelClassic;
 
   public:
+    // definitions
+
     /// Type for internal key
     using KeyType = std::uint32_t;
 
@@ -56,6 +61,8 @@ namespace LHCb {
     static constexpr const BitPackType NBits = 32;
 
   private:
+    // data
+
     /// Get the initialisation value from a value, shift and mask
     inline static constexpr KeyType initData( const BitPackType value, const BitPackType shift,
                                               const BitPackType mask ) noexcept {
@@ -67,6 +74,8 @@ namespace LHCb {
     KeyType m_key{initData( HPDID, ShiftIDType, MaskIDType )};
 
   public:
+    // data access
+
     /// Retrieve the bit-packed internal data word
     inline constexpr KeyType key() const noexcept { return m_key; }
 
@@ -86,6 +95,8 @@ namespace LHCb {
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
 
   private:
+    // internal bit packing
+
     // Setup up the type bit field
     static constexpr const BitPackType BitsIDType = 1; ///< Number of bits to use for the PD type
     static constexpr const BitPackType ShiftIDType =
@@ -298,10 +309,11 @@ namespace LHCb {
     void rangeError( const DataType value, const DataType maxValue, const std::string& message ) const;
 
   public:
-    /// Default Constructor
-    RichSmartID() {}
+    // constructors
 
-  public:
+    /// Default Constructor
+    RichSmartID() = default;
+
     /// Constructor from internal type (unsigned int)
     explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept : m_key( key ) {}
 
@@ -318,9 +330,14 @@ namespace LHCb {
         : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) {}
 
     /// Pixel level constructor including sub-pixel information
-    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
-                 const DataType pixelRow, const DataType pixelCol, const DataType pixelSubRow,
-                 const IDType type = HPDID )
+    RichSmartID( const Rich::DetectorType rich,        //
+                 const Rich::Side         panel,       //
+                 const DataType           pdNumInCol,  //
+                 const DataType           pdCol,       //
+                 const DataType           pixelRow,    //
+                 const DataType           pixelCol,    //
+                 const DataType           pixelSubRow, //
+                 const IDType             type = HPDID )
 #ifdef NDEBUG
         noexcept
 #endif
@@ -338,8 +355,13 @@ namespace LHCb {
     }
 
     /// Pixel level constructor
-    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
-                 const DataType pixelRow, const DataType pixelCol, const IDType type = HPDID )
+    RichSmartID( const Rich::DetectorType rich,       //
+                 const Rich::Side         panel,      //
+                 const DataType           pdNumInCol, //
+                 const DataType           pdCol,      //
+                 const DataType           pixelRow,   //
+                 const DataType           pixelCol,   //
+                 const IDType             type = HPDID )
 #ifdef NDEBUG
         noexcept
 #endif
@@ -361,8 +383,11 @@ namespace LHCb {
     }
 
     /// PD level constructor
-    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
-                 const IDType type = HPDID )
+    RichSmartID( const Rich::DetectorType rich,       //
+                 const Rich::Side         panel,      //
+                 const DataType           pdNumInCol, //
+                 const DataType           pdCol,      //
+                 const IDType             type = HPDID )
 #ifdef NDEBUG
         noexcept
 #endif
@@ -380,7 +405,9 @@ namespace LHCb {
     }
 
     /// PD panel level constructor
-    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const IDType type = HPDID )
+    RichSmartID( const Rich::DetectorType rich,  //
+                 const Rich::Side         panel, //
+                 const IDType             type = HPDID )
 #ifdef NDEBUG
         noexcept
 #endif
@@ -396,6 +423,8 @@ namespace LHCb {
     }
 
   public:
+    // comparison operators
+
     /// < operator
     inline constexpr friend bool operator<( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return lhs.key() < rhs.key();
@@ -651,6 +680,10 @@ namespace LHCb {
       return RichSmartID( key() &
                           ( MaPMTID == idType()
                                 ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol + MaPMT::MaskPDCol +
+                                    // This should be included, but currently is causing problems because there
+                                    // is a bug in that the PD IDs stored in the DB do not have this flag set.
+                                    // So excluded for now here, but this should be added back once the DB is fixed.
+                                    // MaPMT::MaskLargePixel +
                                     MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet + MaPMT::MaskPDIsSet + MaskIDType )
                                 : ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
                                     HPD::MaskRichIsSet + HPD::MaskPanelIsSet + HPD::MaskPDIsSet + MaskIDType ) ) );
@@ -787,7 +820,8 @@ namespace LHCb {
     /** Returns true if the SmartID is for a 'large' PMT.
      *  @attention Will always return false for HPDs... */
     inline constexpr bool isLargePMT() const noexcept {
-      return ( HPDID == idType() ? false : 0 != ( ( key() & MaPMT::MaskLargePixel ) >> MaPMT::ShiftLargePixel ) );
+      return ( UNLIKELY( HPDID == idType() ) ? false
+                                             : 0 != ( ( key() & MaPMT::MaskLargePixel ) >> MaPMT::ShiftLargePixel ) );
     }
 
     /** Set the large PMT flag.
