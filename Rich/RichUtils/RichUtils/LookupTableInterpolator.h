@@ -125,6 +125,7 @@ namespace Rich {
 #else
       // clang 5.0 has issues with Vc::vector. So fallback to scalar lookup.
       SIMDFP m( SIMDFP::Zero() ), c( SIMDFP::Zero() );
+      GAUDI_LOOP_UNROLL( SIMDFP::Size )
       for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
         const auto& bin = m_data[index[i]];
         m[i]            = bin.m;
