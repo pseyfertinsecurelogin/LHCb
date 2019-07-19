@@ -19,8 +19,7 @@
  */
 //=================================================================================
 
-#ifndef LHCBKERNEL_RICHRADIATORTYPE_H
-#define LHCBKERNEL_RICHRADIATORTYPE_H 1
+#pragma once
 
 // STL
 #include <array>
@@ -33,7 +32,7 @@
 namespace Rich {
 
   /// Number of RICH radiators
-  static const uint8_t NRadiatorTypes = 3;
+  static const std::uint16_t NRadiatorTypes = 3;
 
   /** @enum Rich::RadiatorType
    *
@@ -42,7 +41,7 @@ namespace Rich {
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum RadiatorType : int8_t {
+  enum RadiatorType : std::int8_t {
     InvalidRadiator = -1, ///< Unspecified radiator type
     Aerogel         = 0,  ///< Aerogel in RICH1
     Rich1Gas        = 1,  ///< Gaseous RICH1 radiator
@@ -82,5 +81,3 @@ namespace Rich {
   using RadiatorArray = std::array<TYPE, NRadiatorTypes>;
 
 } // namespace Rich
-
-#endif // LHCBKERNEL_RICHRADIATORTYPE_H

@@ -19,8 +19,7 @@
  */
 //--------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_PARTICLEIDTYPE_H
-#define RICHKERNEL_PARTICLEIDTYPE_H 1
+#pragma once
 
 // std include
 #include <array>
@@ -34,10 +33,10 @@ namespace Rich {
 
   /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below
   /// Threshold')
-  static const uint8_t NParticleTypes = 7;
+  static const std::uint16_t NParticleTypes = 7;
 
   /// Number of 'real' RICH particle types (Electron, Muon, Pion, Kaon, Proton and Deuteron)
-  static const uint8_t NRealParticleTypes = 6;
+  static const std::uint16_t NRealParticleTypes = 6;
 
   //--------------------------------------------------------------------------
   /** @enum ParticleIDType
@@ -47,7 +46,7 @@ namespace Rich {
    *  @date   08/07/2004
    */
   //--------------------------------------------------------------------------
-  enum ParticleIDType : int8_t {
+  enum ParticleIDType : std::int8_t {
     Unknown = -1,  ///< Unknown particle type
     Electron,      ///< Represents e+ or e-
     Muon,          ///< Represents mu+ or mu-
@@ -78,5 +77,3 @@ namespace Rich {
   using ParticleArray = std::array<TYPE, NParticleTypes>;
 
 } // namespace Rich
-
-#endif // RICHKERNEL_PARTICLEIDTYPE_H

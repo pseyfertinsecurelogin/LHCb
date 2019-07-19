@@ -32,7 +32,7 @@
 namespace Rich {
 
   /// Number of RICH detectors
-  static const uint8_t NRiches = 2;
+  static const std::uint16_t NRiches = 2;
 
   /** @enum Rich::DetectorType
    *
@@ -41,7 +41,7 @@ namespace Rich {
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum DetectorType : int8_t {
+  enum DetectorType : std::int8_t {
     InvalidDetector = -1, ///< Unspecified Detector
     Rich1           = 0,  ///< RICH1 detector
     Rich2           = 1,  ///< RICH2 detector
