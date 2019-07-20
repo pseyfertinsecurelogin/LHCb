@@ -32,7 +32,7 @@
 namespace Rich {
 
   /// Number of RICH detectors
-  static const std::uint16_t NRiches = 2;
+  inline constexpr std::uint16_t NRiches = 2;
 
   /** @enum Rich::DetectorType
    *
