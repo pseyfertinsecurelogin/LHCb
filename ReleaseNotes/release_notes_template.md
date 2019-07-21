@@ -9,7 +9,7 @@
 {{date}} {{project}} {{version}}
 ===
 
-This version uses Gaudi v32r0 and LCG_95 with ROOT 6.16.00.
+This version uses Gaudi v32r1 and LCG_96 with ROOT 6.18.00.
 <p>
 This version is released on `master` branch.
 
