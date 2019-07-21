@@ -76,40 +76,44 @@ public:
   bool smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
-                                                     const Gaudi::XYZVector&   vGlobal,     //
-                                                     Gaudi::XYZPoint&          hitPosition, //
-                                                     LHCb::RichSmartID&        smartID,     //
-                                                     const DeRichPD*&          pd,          //
-                                                     const LHCb::RichTraceMode mode         //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                   //
+  detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
+                 const Gaudi::XYZVector&   vGlobal,     //
+                 Gaudi::XYZPoint&          hitPosition, //
+                 LHCb::RichSmartID&        smartID,     //
+                 const DeRichPD*&          pd,          //
+                 const LHCb::RichTraceMode mode         //
+                 ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
-                                                     const Gaudi::XYZVector&   vGlobal,           //
-                                                     Gaudi::XYZPoint&          windowPointGlobal, //
-                                                     LHCb::RichSmartID&        smartID,           //
-                                                     const DeRichPD*&          pd,                //
-                                                     const LHCb::RichTraceMode mode               //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                         //
+  PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
+                 const Gaudi::XYZVector&   vGlobal,           //
+                 Gaudi::XYZPoint&          windowPointGlobal, //
+                 LHCb::RichSmartID&        smartID,           //
+                 const DeRichPD*&          pd,                //
+                 const LHCb::RichTraceMode mode               //
+                 ) const override final;
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
-  SIMDRayTResult::Results PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
-  SIMDRayTResult::Results detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
   bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
@@ -133,6 +137,8 @@ public:
   bool isLargePD( const LHCb::RichSmartID smartID ) const override;
 
 private:
+  // types
+
   using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
   using IGeomInfoV = std::vector<const IGeometryInfo*>;
@@ -297,6 +303,7 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
+  /// get the array info
   ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const;
 
 private:
@@ -692,6 +699,4 @@ private:
 
   std::vector<int>  m_Rich2MixedModuleArrayColumnSize{3, 0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
-
-  // Rich::DAQ::PDPanelIndex m_maxPDCopyN{0};
 };

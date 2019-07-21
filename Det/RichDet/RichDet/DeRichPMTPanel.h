@@ -76,40 +76,44 @@ public:
   bool smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
-                                                     const Gaudi::XYZVector&   vGlobal,     //
-                                                     Gaudi::XYZPoint&          hitPosition, //
-                                                     LHCb::RichSmartID&        smartID,     //
-                                                     const DeRichPD*&          pd,          //
-                                                     const LHCb::RichTraceMode mode         //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                   //
+  detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
+                 const Gaudi::XYZVector&   vGlobal,     //
+                 Gaudi::XYZPoint&          hitPosition, //
+                 LHCb::RichSmartID&        smartID,     //
+                 const DeRichPD*&          pd,          //
+                 const LHCb::RichTraceMode mode         //
+                 ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
-                                                     const Gaudi::XYZVector&   vGlobal,           //
-                                                     Gaudi::XYZPoint&          windowPointGlobal, //
-                                                     LHCb::RichSmartID&        smartID,           //
-                                                     const DeRichPD*&          pd,                //
-                                                     const LHCb::RichTraceMode mode               //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                         //
+  PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
+                 const Gaudi::XYZVector&   vGlobal,           //
+                 Gaudi::XYZPoint&          windowPointGlobal, //
+                 LHCb::RichSmartID&        smartID,           //
+                 const DeRichPD*&          pd,                //
+                 const LHCb::RichTraceMode mode               //
+                 ) const override final;
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
-  SIMDRayTResult::Results PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
-  SIMDRayTResult::Results detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
   bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
@@ -133,17 +137,28 @@ public:
   bool isLargePD( const LHCb::RichSmartID smartID ) const override;
 
 private:
-  using Int        = std::int32_t;
-  using IDeElemV   = std::vector<IDetectorElement*>;
-  using IGeomInfoV = std::vector<const IGeometryInfo*>;
-  using DRiPMTV    = std::vector<DeRichPMT*>;
-  // using ArraySetup     = std::array<Int,4>;
+  // types
+
+  using Int            = std::int32_t;
+  using IDeElemV       = std::vector<IDetectorElement*>;
+  using IGeomInfoV     = std::vector<const IGeometryInfo*>;
+  using DRiPMTV        = std::vector<DeRichPMT*>;
   using RowCol         = std::array<Int, 2>;
   using XYArray        = std::array<double, 2>;
   using XYArraySIMD    = std::array<SIMDFP, 2>;
   using ArraySetupSIMD = std::array<SIMDINT32, 4>;
 
-private: // setup methods
+  class ArrayWithMask {
+  public:
+    ArraySetupSIMD   array{{}};
+    SIMDFP::MaskType mask{SIMDFP::MaskType( true )};
+    ArrayWithMask() = default;
+    ArrayWithMask( const SIMDFP::MaskType& m ) : mask( m ) {}
+  };
+
+private:
+  // setup methods
+
   /// Update cached information on geometry changes
   StatusCode geometryUpdate();
 
@@ -173,7 +188,14 @@ private:
 
   const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
-  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const {
+  template <typename MODULE, typename INMODULE>
+  inline const DeRichPMT* dePMT( const MODULE mod, const INMODULE in ) const noexcept {
+    assert( mod < m_DePMTs.size() );
+    assert( in < m_DePMTs[mod].size() );
+    return m_DePMTs[mod][in];
+  }
+
+  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const noexcept {
 
     // get the lookup indices from the smart ID
     auto pdCol   = pdID.pdCol();
@@ -183,8 +205,7 @@ private:
     if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol ); }
 
     // the pointer from the array
-    const auto pd =
-        ( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ? m_DePMTs[pdCol][pdInCol] : nullptr );
+    const auto pd = ( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ? dePMT( pdCol, pdInCol ) : nullptr );
 
     // get the old (slower) way
     // const auto pd = dePMT( _pdNumber( pdID ) );
@@ -291,7 +312,9 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  SIMDINT32::MaskType findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint, ArraySetupSIMD& aCh ) const;
+  /// get the array info
+  ArrayWithMask findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint, //
+                                       const SIMDFP::mask_type in_mask = SIMDFP::mask_type( true ) ) const;
 
 private:
   // Simple struct to store module numbers
@@ -542,8 +565,7 @@ private:
 
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept {
     // Only RICH2 has grand PMTs
-    return ( rich() == Rich::Rich2 &&   //
-                     aModuleNum >= 0 && //
+    return ( rich() == Rich::Rich2 && aModuleNum >= 0 && //
                      aModuleNum < (Int)m_ModuleIsWithGrandPMT.size()
                  ? m_ModuleIsWithGrandPMT[aModuleNum]
                  : false );
@@ -554,8 +576,10 @@ private:
     if ( rich() == Rich::Rich1 ) {
       return SIMDINT32::mask_type::Zero();
     } else {
-      auto m = ( aModuleNum >= SIMDINT32::Zero() && //
-                 aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
+      // CRJ - Why disable this ?
+      // auto m = ( aModuleNum >= SIMDINT32::Zero() && //
+      //           aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
+      SIMDINT32::mask_type m;
       GAUDI_LOOP_UNROLL( SIMDINT32::Size )
       for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
         // if ( m[i] )

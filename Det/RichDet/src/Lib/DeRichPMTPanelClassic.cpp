@@ -611,80 +611,8 @@ StatusCode DeRichPMTPanelClassic::getPanelGeometryInfo() {
   // Setup flags for large PMTs
   RichSetupMixedSizePmtModules();
 
-  // setup the Lens Flag.
-
-  // m_totNumPmtModuleInRich1 = firstRich->param<int> ("Rich1TotNumModules" );
-
-  // m_Rich1PmtLensPresence = false;
-  // m_Rich1PmtLensModuleCol.clear();
-
-  // if ( exists("Rich1PmtLensPresence") )
-  //{
-  //  m_Rich1PmtLensPresence = ( 0 < firstRich->param<int>("Rich1PmtLensPresence") );
-  //}
-
-  // if ( m_Rich1PmtLensPresence )
-  // {
-
-  //   m_Rich1PmtLensModuleCol = firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumns");
-  //   m_PmtMasterWithLensLateralSizeSIMD = firstRich->param<double>("RichLensPmtMasterLateralSize"
-  //   ); const auto PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
-  //   m_PmtModuleWithLensPitchInvSIMD = ( fabs(PmtModuleWithLensPitch)>0
-  //   ? 1.0/PmtModuleWithLensPitch : 0.0 );
-  //   m_PmtLensPitch=firstRich->param<double>("RichLensPmtPitch");
-  //   m_Rich1PmtPanelWithLensXSizeSIMD = toarray<SIMDFP,2>( firstRich->param<std::vector<double> >
-  //   ("Rich1PMTModuleLensPlaneXEdge") ); m_Rich1PmtPanelWithLensYSizeSIMD = toarray<SIMDFP,2>(
-  //   firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
-
-  //   m_Rich1PmtPanelWithLensColSizeSIMD = toarray<SIMDINT32,2>( firstRich->param<std::vector<int>
-  //   >("Rich1PmtLensModuleColumnsSize")  );
-
-  //   m_RichNumLensPmtinModuleRowColSIMD[0] = firstRich->param<int>( "RichLensPmtNumInModuleRow" );
-  //   m_RichNumLensPmtinModuleRowColSIMD[1] = firstRich->param<int>( "RichLensPmtNumInModuleCol" );
-  //   const auto Rich1LensMagnificationFactor = firstRich->param<double>
-  //   ("RichPmtLensMagnficationFactor" ); m_Rich1LensDemagnificationFactor = (
-  //   fabs(Rich1LensMagnificationFactor) > 0 ?
-  //                                        1.0/Rich1LensMagnificationFactor : 0.0 );
-
-  //   Rich1SetupPMTModulesWithLens();
-
-  // }
-  // else
-  // {
-  //   std::fill( m_RichPmtModuleLensFlag.begin(),
-  //              m_RichPmtModuleLensFlag.end(), false );
-  // }
-
   return sc;
 }
-
-// void DeRichPMTPanelClassic::Rich1SetupPMTModulesWithLens()
-// {
-//   const auto aRowR1 = 2*m_RichPmtNumModulesInRowCol[0];
-//   const auto aColR1 = m_RichPmtNumModulesInRowCol[1];
-//   m_RichPmtModuleLensFlag.clear();
-//   m_RichPmtModuleLensFlag.reserve(aRowR1*aColR1);
-//   m_RichPmtModuleLensFlag.resize(aRowR1*aColR1);
-
-//   //m_RichPmtModuleLensFlag.assign(aRowR1*aColR1, false);
-
-//   for ( Int r = 0; r < aRowR1; ++r )
-//   {
-//     for ( Int c = 0; c < aColR1; ++c )
-//     {
-//       const auto m=(r*aColR1)+c;
-//       m_RichPmtModuleLensFlag[m] = false;
-//       if ( !m_Rich1PmtLensModuleCol.empty() )
-//       {
-//         const auto location = std::find(m_Rich1PmtLensModuleCol.begin(),
-//                                         m_Rich1PmtLensModuleCol.end(), c);
-//         if ( location != m_Rich1PmtLensModuleCol.end() ) m_RichPmtModuleLensFlag[m] = true;
-//       }
-
-//     }
-
-//   }
-// }
 
 void DeRichPMTPanelClassic::RichSetupMixedSizePmtModules() {
 
@@ -853,7 +781,7 @@ DeRichPMTPanelClassic::findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) con
 //=========================================================================
 // returns the (SIMD) intersection point with the detection plane
 //=========================================================================
-DeRichPMTPanelClassic::SIMDRayTResult::Results
+DeRichPMTPanelClassic::SIMDRayTResult::Results                                   //
 DeRichPMTPanelClassic::detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
                                           const SIMDVector&         vGlobal,     //
                                           SIMDPoint&                hitPosition, //
@@ -945,7 +873,7 @@ LHCb::RichTraceMode::RayTraceResult DeRichPMTPanelClassic::detPlanePoint( const 
 //=========================================================================
 // find an intersection with the PMT window (SIMD)
 //=========================================================================
-DeRichPMTPanelClassic::SIMDRayTResult::Results
+DeRichPMTPanelClassic::SIMDRayTResult::Results                                   //
 DeRichPMTPanelClassic::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
                                           const SIMDVector&         vGlobal,     //
                                           SIMDPoint&                hitPosition, //
@@ -1016,7 +944,7 @@ DeRichPMTPanelClassic::PDWindowPointSIMD( const SIMDPoint&          pGlobal,    
           Y[i] = pmt->zeroInPanelLocal().Y();
 
           // grand PD ?
-          gPdMask[i] = rich() == Rich::Rich2 && pmt->PmtIsGrand();
+          gPdMask[i] = ( rich() == Rich::Rich2 && pmt->PmtIsGrand() );
 
         } // mask OK
       }   // scalar loop
@@ -1035,13 +963,14 @@ DeRichPMTPanelClassic::PDWindowPointSIMD( const SIMDPoint&          pGlobal,    
 //=========================================================================
 // Returns the intersection with the PD window
 //=========================================================================
-LHCb::RichTraceMode::RayTraceResult DeRichPMTPanelClassic::PDWindowPoint( const Gaudi::XYZPoint&  pGlobal,           //
-                                                                          const Gaudi::XYZVector& vGlobal,           //
-                                                                          Gaudi::XYZPoint&        windowPointGlobal, //
-                                                                          LHCb::RichSmartID&      smartID,           //
-                                                                          const DeRichPD*&        pd,                //
-                                                                          const LHCb::RichTraceMode mode             //
-                                                                          ) const {
+LHCb::RichTraceMode::RayTraceResult                                                //
+DeRichPMTPanelClassic::PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
+                                      const Gaudi::XYZVector&   vGlobal,           //
+                                      Gaudi::XYZPoint&          windowPointGlobal, //
+                                      LHCb::RichSmartID&        smartID,           //
+                                      const DeRichPD*&          pd,                //
+                                      const LHCb::RichTraceMode mode               //
+                                      ) const {
 
   // Use the SIMD method
   // Note this will not be as efficient as properly using the SIMD methods,
