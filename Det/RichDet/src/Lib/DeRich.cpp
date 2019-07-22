@@ -269,9 +269,12 @@ void DeRich::fillSIMDTypes() {
 // Ray trace a given direction with the given PD panel (scalar)
 //=============================================================================
 
-LHCb::RichTraceMode::RayTraceResult DeRich::rayTrace( const Rich::Side side, const Gaudi::XYZPoint& pGlobal,
-                                                      const Gaudi::XYZVector& vGlobal, Gaudi::XYZPoint& hitPosition,
-                                                      LHCb::RichSmartID& smartID, const DeRichPD*& dePD,
+LHCb::RichTraceMode::RayTraceResult DeRich::rayTrace( const Rich::Side          side,        //
+                                                      const Gaudi::XYZPoint&    pGlobal,     //
+                                                      const Gaudi::XYZVector&   vGlobal,     //
+                                                      Gaudi::XYZPoint&          hitPosition, //
+                                                      LHCb::RichSmartID&        smartID,     //
+                                                      const DeRichPD*&          dePD,        //
                                                       const LHCb::RichTraceMode mode ) const {
   // are we configured to test individual PD acceptance or just interset the plane ?
   return ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDTubes ?
@@ -286,10 +289,13 @@ LHCb::RichTraceMode::RayTraceResult DeRich::rayTrace( const Rich::Side side, con
 // Ray trace a given direction with the given PD panel (SIMD)
 //=============================================================================
 
-DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::Side side, const Rich::SIMD::Point<FP>& pGlobal,
-                                                  const Rich::SIMD::Vector<FP>& vGlobal,
-                                                  Rich::SIMD::Point<FP>& hitPosition, SIMDRayTResult::SmartIDs& smartID,
-                                                  SIMDRayTResult::PDs& PDs, const LHCb::RichTraceMode mode ) const {
+DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::Side              side,        //
+                                                  const Rich::SIMD::Point<FP>&  pGlobal,     //
+                                                  const Rich::SIMD::Vector<FP>& vGlobal,     //
+                                                  Rich::SIMD::Point<FP>&        hitPosition, //
+                                                  SIMDRayTResult::SmartIDs&     smartID,     //
+                                                  SIMDRayTResult::PDs&          PDs,         //
+                                                  const LHCb::RichTraceMode     mode ) const {
   // are we configured to test individual PD acceptance or just interset the plane ?
   return ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDTubes ?
                                                                                               // Full PD acceptance
@@ -302,10 +308,13 @@ DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::Side side, const R
 //=============================================================================
 // Ray trace a given direction with the correct PD panel (SIMD)
 //=============================================================================
-DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides& sides, const Rich::SIMD::Point<FP>& pGlobal,
-                                                  const Rich::SIMD::Vector<FP>& vGlobal,
-                                                  Rich::SIMD::Point<FP>& hitPosition, SIMDRayTResult::SmartIDs& smartID,
-                                                  SIMDRayTResult::PDs& PDs, const LHCb::RichTraceMode mode ) const {
+DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides&      sides,       //
+                                                  const Rich::SIMD::Point<FP>&  pGlobal,     //
+                                                  const Rich::SIMD::Vector<FP>& vGlobal,     //
+                                                  Rich::SIMD::Point<FP>&        hitPosition, //
+                                                  SIMDRayTResult::SmartIDs&     smartID,     //
+                                                  SIMDRayTResult::PDs&          PDs,         //
+                                                  const LHCb::RichTraceMode     mode ) const {
   using namespace LHCb::SIMD;
 
   // If all sides are the same, shortcut to a single call

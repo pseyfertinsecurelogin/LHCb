@@ -350,9 +350,12 @@ public:
   inline const DeRichPDPanel* pdPanel( const Rich::Side panel ) const noexcept { return m_PDPanels[panel]; }
 
   /// Ray trace a given direction with the given PD panel (scalar)
-  LHCb::RichTraceMode::RayTraceResult rayTrace( const Rich::Side side, const Gaudi::XYZPoint& pGlobal,
-                                                const Gaudi::XYZVector& vGlobal, Gaudi::XYZPoint& hitPosition,
-                                                LHCb::RichSmartID& smartID, const DeRichPD*& dePD,
+  LHCb::RichTraceMode::RayTraceResult rayTrace( const Rich::Side          side,        //
+                                                const Gaudi::XYZPoint&    pGlobal,     //
+                                                const Gaudi::XYZVector&   vGlobal,     //
+                                                Gaudi::XYZPoint&          hitPosition, //
+                                                LHCb::RichSmartID&        smartID,     //
+                                                const DeRichPD*&          dePD,        //
                                                 const LHCb::RichTraceMode mode ) const;
 
   /// type for SIMD ray tracing result
@@ -363,16 +366,22 @@ public:
   using SIMDFP = Rich::SIMD::FP<FP>;
 
   /// Ray trace a given direction with the given PD panel (SIMD)
-  SIMDRayTResult::Results rayTrace( const Rich::Side side, const Rich::SIMD::Point<FP>& pGlobal,
-                                    const Rich::SIMD::Vector<FP>& vGlobal, Rich::SIMD::Point<FP>& hitPosition,
-                                    SIMDRayTResult::SmartIDs& smartID, SIMDRayTResult::PDs& PDs,
-                                    const LHCb::RichTraceMode mode ) const;
+  SIMDRayTResult::Results rayTrace( const Rich::Side              side,        //
+                                    const Rich::SIMD::Point<FP>&  pGlobal,     //
+                                    const Rich::SIMD::Vector<FP>& vGlobal,     //
+                                    Rich::SIMD::Point<FP>&        hitPosition, //
+                                    SIMDRayTResult::SmartIDs&     smartID,     //
+                                    SIMDRayTResult::PDs&          PDs,         //
+                                    const LHCb::RichTraceMode     mode ) const;
 
   /// Ray trace a given direction with the correct PD panel (SIMD)
-  SIMDRayTResult::Results rayTrace( const Rich::SIMD::Sides& sides, const Rich::SIMD::Point<FP>& pGlobal,
-                                    const Rich::SIMD::Vector<FP>& vGlobal, Rich::SIMD::Point<FP>& hitPosition,
-                                    SIMDRayTResult::SmartIDs& smartID, SIMDRayTResult::PDs& PDs,
-                                    const LHCb::RichTraceMode mode ) const;
+  SIMDRayTResult::Results rayTrace( const Rich::SIMD::Sides&      sides,       //
+                                    const Rich::SIMD::Point<FP>&  pGlobal,     //
+                                    const Rich::SIMD::Vector<FP>& vGlobal,     //
+                                    Rich::SIMD::Point<FP>&        hitPosition, //
+                                    SIMDRayTResult::SmartIDs&     smartID,     //
+                                    SIMDRayTResult::PDs&          PDs,         //
+                                    const LHCb::RichTraceMode     mode ) const;
 
 protected:
   /// Load on demand the nominal PD Q.E.

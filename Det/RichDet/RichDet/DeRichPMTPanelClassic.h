@@ -304,7 +304,8 @@ private:
   Int getModuleCopyNumber( const std::string& aModuleName );
 
   /// get the array info
-  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const;
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint, //
+                                        const bool       includePixInfo = true ) const;
 
 private:
   // Simple struct to store module numbers
@@ -527,26 +528,16 @@ private:
 
 private:
   /// Gets the intersection with the panel (SIMD) in global panel coordinates
-  inline decltype( auto ) getPanelInterSection( const SIMDPoint&  pGlobal,          //
-                                                const SIMDVector& vGlobal,          //
-                                                SIMDPoint&        panelIntersection //
-                                                ) const noexcept {
+  inline SIMDPoint getPanelInterSection( const SIMDPoint&  pGlobal, //
+                                         const SIMDVector& vGlobal  //
+                                         ) const noexcept {
 
     // find the intersection with the detection plane
-    auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
+    const auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
 
-    // check norm
-    const auto sc = abs( scalar ) > SIMDFP( 1e-5 );
-
-    // Protect against /0
-    if ( !all_of( sc ) ) { scalar( !sc ) = SIMDFP::One(); }
-
-    // get panel intersection point
+    // return panel intersection point
     const auto distance = m_detectionPlaneSIMD.Distance( pGlobal ) / scalar;
-    panelIntersection   = pGlobal - ( distance * vGlobal );
-
-    // return
-    return sc;
+    return ( pGlobal - ( distance * vGlobal ) );
   }
 
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept {

@@ -429,7 +429,8 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
   return sc;
 }
 
-bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const {
+bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint, //
+                              LHCb::RichSmartID&     id ) const {
   id                 = panelID(); // sets RICH, panel and type
   const auto inPanel = m_toLocalMatrixSIMD * SIMDPoint( globalPoint );
   // return false if invalid id is found (e.g. in non-existent PMT)
@@ -674,8 +675,9 @@ void DeRichPMTPanel::RichSetupMixedSizePmtModules() {
 //=========================================================================
 // Gets the PMT information (SIMD)
 //=========================================================================
-DeRichPMTPanel::ArrayWithMask                                               //
-DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint, //
+DeRichPMTPanel::ArrayWithMask                                                  //
+DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    //
+                                       const bool              includePixInfo, //
                                        const SIMDFP::mask_type in_mask ) const {
 
   using namespace LHCb::SIMD;
@@ -685,6 +687,8 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint, //
   // shortcuts
   auto& aCh     = am.array;
   auto& mask_sc = am.mask;
+
+  // First, deduce the PD module numbers...
 
   ModuleNumbersSIMD nums;
   getModuleNumsSIMD( aLocalPoint.x(), aLocalPoint.y(), nums );
@@ -773,109 +777,116 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint, //
   }
 #endif
 
-  SIMDFP xpi, ypi;
-  // this is not ideal. Should see if we can reduce what we need to do here...
-  // start by apply global transform using SIMD
-  const auto pointInPmtAnode = m_toGlobalMatrixSIMD * aLocalPoint;
-  // have to fall back to scalar loop for PD specific transform....
-  // Would be good to improve this as will adversely impact CPU performance
-  GAUDI_LOOP_UNROLL( SIMDINT32::Size )
-  for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
-    if ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] ) {
-      // transform for PD
-      const auto& mToLocalAnode = ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] )->toLocalMatrix();
-      // get point in pd
-      const auto pointInPmtAnode_sc = mToLocalAnode * Gaudi::XYZPoint{pointInPmtAnode.x()[i], //
-                                                                      pointInPmtAnode.y()[i], //
-                                                                      pointInPmtAnode.z()[i]};
-      xpi[i]                        = pointInPmtAnode_sc.x();
-      ypi[i]                        = pointInPmtAnode_sc.y();
-    } else {
-      mask_sc[i] = false;
+  // Now, if requires, the pixel numbers
+  if ( UNLIKELY( includePixInfo ) ) {
+
+    SIMDFP xpi, ypi;
+    // this is not ideal. Should see if we can reduce what we need to do here...
+    // start by apply global transform using SIMD
+    const auto pointInPmtAnode = m_toGlobalMatrixSIMD * aLocalPoint;
+    // have to fall back to scalar loop for PD specific transform....
+    // Would be good to improve this as will adversely impact CPU performance
+    GAUDI_LOOP_UNROLL( SIMDINT32::Size )
+    for ( std::size_t i = 0; i < SIMDINT32::Size; ++i ) {
+      if ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] ) {
+        // transform for PD
+        const auto& mToLocalAnode = ( m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]] )->toLocalMatrix();
+        // get point in pd
+        const auto pointInPmtAnode_sc = mToLocalAnode * Gaudi::XYZPoint{pointInPmtAnode.x()[i], //
+                                                                        pointInPmtAnode.y()[i], //
+                                                                        pointInPmtAnode.z()[i]};
+        xpi[i]                        = pointInPmtAnode_sc.x();
+        ypi[i]                        = pointInPmtAnode_sc.y();
+      } else {
+        mask_sc[i] = false;
+      }
     }
+
+    auto& aPmtPixelCol = aCh[2];
+    auto& aPmtPixelRow = aCh[3];
+
+    if ( !any_gmask ) {
+
+      // All small PMTs
+      aPmtPixelCol =
+          simd_cast<SIMDINT32>( abs( ( xpi - m_PmtAnodeXEdgeSIMD ) * m_PmtAnodeEffectiveXPixelSizeInvSIMD ) );
+      aPmtPixelCol( aPmtPixelCol >= m_PmtPixelsInColSIMD ) = m_PmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelRow =
+          simd_cast<SIMDINT32>( abs( ( ypi - m_PmtAnodeYEdgeSIMD ) * m_PmtAnodeEffectiveYPixelSizeInvSIMD ) );
+      aPmtPixelRow( aPmtPixelRow >= m_PmtPixelsInRowSIMD ) = m_PmtPixelsInRowSIMD - SIMDINT32::One();
+
+    } else if ( all_gmask ) {
+
+      // All grand PMTs
+      // try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge pixel in grand PMT
+      aPmtPixelCol =
+          simd_cast<SIMDINT32>( abs( ( ( xpi - m_GrandPmtEdgePixelSizeDiffXSIMD ) - m_GrandPmtAnodeXEdgeSIMD ) *
+                                     m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD ) );
+      aPmtPixelRow =
+          simd_cast<SIMDINT32>( abs( ( ( ypi - m_GrandPmtEdgePixelSizeDiffYSIMD ) - m_GrandPmtAnodeYEdgeSIMD ) *
+                                     m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD ) );
+
+      // if the hit falls into 'extra' edge pixel area, set it accordingly
+      const auto maskInEdgePixelXFirst =
+          simd_cast<SIMDINT32::MaskType>( ( xpi < m_GrandPmtEdgePixelSizeDiffXSIMD ) && ( xpi > 0 ) );
+      const auto maskInEdgePixelXLast = simd_cast<SIMDINT32::MaskType>(
+          xpi < -m_GrandPmtAnodeXEdgeSIMD && xpi > -m_GrandPmtAnodeXEdgeSIMD - m_GrandPmtEdgePixelSizeDiffXSIMD );
+      const auto maskInEdgePixelYFirst =
+          simd_cast<SIMDINT32::MaskType>( ( ypi < m_GrandPmtEdgePixelSizeDiffYSIMD ) && ( ypi > 0 ) );
+      const auto maskInEdgePixelYLast = simd_cast<SIMDINT32::MaskType>(
+          ypi < -m_GrandPmtAnodeYEdgeSIMD && xpi > -m_GrandPmtAnodeYEdgeSIMD - m_GrandPmtEdgePixelSizeDiffYSIMD );
+      aPmtPixelCol( maskInEdgePixelXFirst ) = SIMDINT32::Zero();
+      aPmtPixelRow( maskInEdgePixelYFirst ) = SIMDINT32::Zero();
+      aPmtPixelCol( maskInEdgePixelXLast )  = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelRow( maskInEdgePixelYLast )  = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
+
+      aPmtPixelCol( aPmtPixelCol >= m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelRow( aPmtPixelRow >= m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
+
+    } else {
+
+      // we have a mixture of grand and small PMTs
+      // for grand PMTs: try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge
+      // pixel in grand PMT
+      const auto not_gmask = !gmask;
+      aPmtPixelCol =
+          iif( gmask,
+               simd_cast<SIMDINT32>( abs( ( ( xpi - m_GrandPmtEdgePixelSizeDiffXSIMD ) - m_GrandPmtAnodeXEdgeSIMD ) *
+                                          m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD ) ),
+               simd_cast<SIMDINT32>( abs( ( xpi - m_PmtAnodeXEdgeSIMD ) * m_PmtAnodeEffectiveXPixelSizeInvSIMD ) ) );
+      aPmtPixelRow =
+          iif( gmask,
+               simd_cast<SIMDINT32>( abs( ( ( ypi - m_GrandPmtEdgePixelSizeDiffYSIMD ) - m_GrandPmtAnodeYEdgeSIMD ) *
+                                          m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD ) ),
+               simd_cast<SIMDINT32>( abs( ( ypi - m_PmtAnodeYEdgeSIMD ) * m_PmtAnodeEffectiveYPixelSizeInvSIMD ) ) );
+
+      // for grand PMTs: if the hit falls into 'extra' edge pixel area, set it accordingly
+      const auto maskInEdgePixelXFirst =
+          gmask && simd_cast<SIMDINT32::MaskType>( ( xpi < m_GrandPmtEdgePixelSizeDiffXSIMD ) && ( xpi > 0 ) );
+      const auto maskInEdgePixelXLast =
+          gmask && simd_cast<SIMDINT32::MaskType>( xpi < -m_GrandPmtAnodeXEdgeSIMD &&
+                                                   xpi > -m_GrandPmtAnodeXEdgeSIMD - m_GrandPmtEdgePixelSizeDiffXSIMD );
+      const auto maskInEdgePixelYFirst =
+          gmask && simd_cast<SIMDINT32::MaskType>( ( ypi < m_GrandPmtEdgePixelSizeDiffYSIMD ) && ( ypi > 0 ) );
+      const auto maskInEdgePixelYLast =
+          gmask && simd_cast<SIMDINT32::MaskType>( ypi < -m_GrandPmtAnodeYEdgeSIMD &&
+                                                   xpi > -m_GrandPmtAnodeYEdgeSIMD - m_GrandPmtEdgePixelSizeDiffYSIMD );
+      aPmtPixelCol( maskInEdgePixelXFirst ) = SIMDINT32::Zero();
+      aPmtPixelRow( maskInEdgePixelYFirst ) = SIMDINT32::Zero();
+      aPmtPixelCol( maskInEdgePixelXLast )  = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelRow( maskInEdgePixelYLast )  = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
+
+      aPmtPixelCol( gmask && aPmtPixelCol >= m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelCol( not_gmask && aPmtPixelCol >= m_PmtPixelsInColSIMD )  = m_PmtPixelsInColSIMD - SIMDINT32::One();
+      aPmtPixelRow( gmask && aPmtPixelRow >= m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
+      aPmtPixelRow( not_gmask && aPmtPixelRow >= m_PmtPixelsInRowSIMD )  = m_PmtPixelsInRowSIMD - SIMDINT32::One();
+    }
+
+    aPmtPixelCol.setZero( aPmtPixelCol < SIMDINT32::Zero() );
+    aPmtPixelRow.setZero( aPmtPixelRow < SIMDINT32::Zero() );
   }
 
-  auto& aPmtPixelCol = aCh[2];
-  auto& aPmtPixelRow = aCh[3];
-
-  if ( !any_gmask ) {
-
-    // All small PMTs
-    aPmtPixelCol = simd_cast<SIMDINT32>( abs( ( xpi - m_PmtAnodeXEdgeSIMD ) * m_PmtAnodeEffectiveXPixelSizeInvSIMD ) );
-    aPmtPixelCol( aPmtPixelCol >= m_PmtPixelsInColSIMD ) = m_PmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelRow = simd_cast<SIMDINT32>( abs( ( ypi - m_PmtAnodeYEdgeSIMD ) * m_PmtAnodeEffectiveYPixelSizeInvSIMD ) );
-    aPmtPixelRow( aPmtPixelRow >= m_PmtPixelsInRowSIMD ) = m_PmtPixelsInRowSIMD - SIMDINT32::One();
-
-  } else if ( all_gmask ) {
-
-    // All grand PMTs
-    // try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge pixel in grand PMT
-    aPmtPixelCol =
-        simd_cast<SIMDINT32>( abs( ( ( xpi - m_GrandPmtEdgePixelSizeDiffXSIMD ) - m_GrandPmtAnodeXEdgeSIMD ) *
-                                   m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD ) );
-    aPmtPixelRow =
-        simd_cast<SIMDINT32>( abs( ( ( ypi - m_GrandPmtEdgePixelSizeDiffYSIMD ) - m_GrandPmtAnodeYEdgeSIMD ) *
-                                   m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD ) );
-
-    // if the hit falls into 'extra' edge pixel area, set it accordingly
-    const auto maskInEdgePixelXFirst =
-        simd_cast<SIMDINT32::MaskType>( ( xpi < m_GrandPmtEdgePixelSizeDiffXSIMD ) && ( xpi > 0 ) );
-    const auto maskInEdgePixelXLast = simd_cast<SIMDINT32::MaskType>(
-        xpi < -m_GrandPmtAnodeXEdgeSIMD && xpi > -m_GrandPmtAnodeXEdgeSIMD - m_GrandPmtEdgePixelSizeDiffXSIMD );
-    const auto maskInEdgePixelYFirst =
-        simd_cast<SIMDINT32::MaskType>( ( ypi < m_GrandPmtEdgePixelSizeDiffYSIMD ) && ( ypi > 0 ) );
-    const auto maskInEdgePixelYLast = simd_cast<SIMDINT32::MaskType>(
-        ypi < -m_GrandPmtAnodeYEdgeSIMD && xpi > -m_GrandPmtAnodeYEdgeSIMD - m_GrandPmtEdgePixelSizeDiffYSIMD );
-    aPmtPixelCol( maskInEdgePixelXFirst ) = SIMDINT32::Zero();
-    aPmtPixelRow( maskInEdgePixelYFirst ) = SIMDINT32::Zero();
-    aPmtPixelCol( maskInEdgePixelXLast )  = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelRow( maskInEdgePixelYLast )  = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
-
-    aPmtPixelCol( aPmtPixelCol >= m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelRow( aPmtPixelRow >= m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
-
-  } else {
-
-    // we have a mixture of grand and small PMTs
-    // for grand PMTs: try to find pixel coord normally after offsetting the xpi/ypi by difference in size of edge
-    // pixel in grand PMT
-    const auto not_gmask = !gmask;
-    aPmtPixelCol =
-        iif( gmask,
-             simd_cast<SIMDINT32>( abs( ( ( xpi - m_GrandPmtEdgePixelSizeDiffXSIMD ) - m_GrandPmtAnodeXEdgeSIMD ) *
-                                        m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD ) ),
-             simd_cast<SIMDINT32>( abs( ( xpi - m_PmtAnodeXEdgeSIMD ) * m_PmtAnodeEffectiveXPixelSizeInvSIMD ) ) );
-    aPmtPixelRow =
-        iif( gmask,
-             simd_cast<SIMDINT32>( abs( ( ( ypi - m_GrandPmtEdgePixelSizeDiffYSIMD ) - m_GrandPmtAnodeYEdgeSIMD ) *
-                                        m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD ) ),
-             simd_cast<SIMDINT32>( abs( ( ypi - m_PmtAnodeYEdgeSIMD ) * m_PmtAnodeEffectiveYPixelSizeInvSIMD ) ) );
-
-    // for grand PMTs: if the hit falls into 'extra' edge pixel area, set it accordingly
-    const auto maskInEdgePixelXFirst =
-        gmask && simd_cast<SIMDINT32::MaskType>( ( xpi < m_GrandPmtEdgePixelSizeDiffXSIMD ) && ( xpi > 0 ) );
-    const auto maskInEdgePixelXLast =
-        gmask && simd_cast<SIMDINT32::MaskType>( xpi < -m_GrandPmtAnodeXEdgeSIMD &&
-                                                 xpi > -m_GrandPmtAnodeXEdgeSIMD - m_GrandPmtEdgePixelSizeDiffXSIMD );
-    const auto maskInEdgePixelYFirst =
-        gmask && simd_cast<SIMDINT32::MaskType>( ( ypi < m_GrandPmtEdgePixelSizeDiffYSIMD ) && ( ypi > 0 ) );
-    const auto maskInEdgePixelYLast =
-        gmask && simd_cast<SIMDINT32::MaskType>( ypi < -m_GrandPmtAnodeYEdgeSIMD &&
-                                                 xpi > -m_GrandPmtAnodeYEdgeSIMD - m_GrandPmtEdgePixelSizeDiffYSIMD );
-    aPmtPixelCol( maskInEdgePixelXFirst ) = SIMDINT32::Zero();
-    aPmtPixelRow( maskInEdgePixelYFirst ) = SIMDINT32::Zero();
-    aPmtPixelCol( maskInEdgePixelXLast )  = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelRow( maskInEdgePixelYLast )  = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
-
-    aPmtPixelCol( gmask && aPmtPixelCol >= m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelCol( not_gmask && aPmtPixelCol >= m_PmtPixelsInColSIMD )  = m_PmtPixelsInColSIMD - SIMDINT32::One();
-    aPmtPixelRow( gmask && aPmtPixelRow >= m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
-    aPmtPixelRow( not_gmask && aPmtPixelRow >= m_PmtPixelsInRowSIMD )  = m_PmtPixelsInRowSIMD - SIMDINT32::One();
-  }
-
-  aPmtPixelCol.setZero( aPmtPixelCol < SIMDINT32::Zero() );
-  aPmtPixelRow.setZero( aPmtPixelRow < SIMDINT32::Zero() );
-
+  // finally return the data
   return am;
 }
 
@@ -893,58 +904,58 @@ DeRichPMTPanel::detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
 
   using namespace LHCb::SIMD;
 
-  // results to return
-  SIMDRayTResult::Results res;
+  // results to return. defaults to outside panel.
+  SIMDRayTResult::Results res( (unsigned int)LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel );
 
   // panel intersection in global coords
-  auto mask = getPanelInterSection( pGlobal, vGlobal, hitPosition );
-  if ( UNLIKELY( none_of( mask ) ) ) { return res; }
+  hitPosition = getPanelInterSection( pGlobal, vGlobal );
 
   // set hit position to plane intersection in local frame
   const auto panelIntersection = m_toLocalMatrixSIMD * hitPosition;
 
+  // maybe should be an option ?
+  const bool includePixInfo = false;
+
   // get the PMT info (SIMD)
-  const auto aC = findPMTArraySetupSIMD( panelIntersection, mask );
-  if ( UNLIKELY( none_of( aC.mask ) ) ) { return res; }
+  const auto aC = findPMTArraySetupSIMD( panelIntersection, includePixInfo );
+  if ( LIKELY( any_of( aC.mask ) ) ) {
 
-  // get PMT module number in panel
-  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] );
+    // get PMT module number in panel
+    const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] );
 
-  // in panel mask
-  const auto pmask = isInPmtPanel( panelIntersection );
+    // in panel mask
+    auto pmask = aC.mask && isInPmtPanel( panelIntersection );
 
-  // Resort to a scalar loop at this point. To be improved...
-  for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
-    if ( aC.mask[i] ) {
+    // Resort to a scalar loop at this point. To be improved...
+    for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
+      if ( LIKELY( pmask[i] ) ) {
 
-      // get the DePMT object
-      const auto pmt = dePMT( pdNumInPanel[i], aC.array[1][i] );
+        // get the DePMT object
+        PDs[i] = dePMT( pdNumInPanel[i], aC.array[1][i] );
+        if ( PDs[i] ) {
+          // Set the SmartID to the PD ID
+          smartID[i] = PDs[i]->pdSmartID();
+          // set the pixel parts
+          if ( UNLIKELY( includePixInfo ) ) { setRichPmtSmartIDPix( aC.array[2][i], aC.array[3][i], smartID[i] ); }
+        } else {
+          pmask[i] = false;
+        }
 
-      PDs[i] = pmt;
-
-      // Set the SmartID to the PD ID
-      smartID[i] = pmt->pdSmartID();
-      // set the pixel parts
-      setRichPmtSmartIDPix( aC.array[2][i], aC.array[3][i], smartID[i] );
-
-      // set final status
-      res[i] = ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDPanel
-                     ? pmask[i] ? LHCb::RichTraceMode::RayTraceResult::InPDPanel
-                                : LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel
-                     : LHCb::RichTraceMode::RayTraceResult::InPDPanel );
+        // set final status
+        res[i] = ( mode.detPlaneBound() >= LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDPanel
+                       ? pmask[i] ? LHCb::RichTraceMode::RayTraceResult::InPDPanel
+                                  : LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel
+                       : LHCb::RichTraceMode::RayTraceResult::InPDPanel );
+      }
     }
-    // this should not be required...
-    // else {
-    //      res[i] = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
-    //    }
   }
 
   return res;
 }
 
-//=========================================================================
+//===================================================================================
 // Returns the intersection point with the detector plane given a vector and a point.
-//=========================================================================
+//===================================================================================
 LHCb::RichTraceMode::RayTraceResult                                   //
 DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
                                const Gaudi::XYZVector&   vGlobal,     //
@@ -993,12 +1004,11 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
 
   using namespace LHCb::SIMD;
 
-  // results to return
-  SIMDRayTResult::Results res;
+  // results to return. Default to outside panel.
+  SIMDRayTResult::Results res( (unsigned int)LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel );
 
   // panel intersection in global
-  auto mask = getPanelInterSection( pGlobal, vGlobal, hitPosition );
-  if ( UNLIKELY( none_of( mask ) ) ) { return res; }
+  hitPosition = getPanelInterSection( pGlobal, vGlobal );
 
   // transform to local
   const auto panelIntersection = m_toLocalMatrixSIMD * hitPosition;
@@ -1006,16 +1016,15 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
   // sets RICH, panel and type
   smartID.fill( panelID() );
 
-  // set results to outside panel
-  res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::mask_type>( mask ) ) =
-      SIMDRayTResult::Results( (unsigned int)LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel );
+  // maybe should be an option ?
+  const bool includePixInfo = false;
 
   // are we in the panel ?
-  mask &= isInPmtPanel( panelIntersection );
+  auto mask = isInPmtPanel( panelIntersection );
   if ( any_of( mask ) ) {
 
     // Set res flag for those in mask to InPDPanel
-    res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::mask_type>( mask ) ) =
+    res( simd_cast<SIMDRayTResult::Results::mask_type>( mask ) ) =
         SIMDRayTResult::Results( (unsigned int)LHCb::RichTraceMode::RayTraceResult::InPDPanel );
 
     // check PD acceptance ?
@@ -1024,7 +1033,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
       // get the PMT info (SIMD) - has to be checked here - findPMTArraySetupSIMD checks if smartID is valid (so
       // non-existent PMTs should give OutsidePDPanel)
       // is the smartID valid ?
-      const auto aC = findPMTArraySetupSIMD( panelIntersection, mask );
+      auto aC = findPMTArraySetupSIMD( panelIntersection, includePixInfo, mask );
 
       // get module in panel number
       const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] );
@@ -1043,28 +1052,29 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
           // get the DePMT object
           const auto pmt = dePMT( aModuleNumInPanel[i], aC.array[1][i] );
           PDs[i]         = pmt;
+          if ( pmt ) {
 
-          // Set the SmartID to the PD ID
-          smartID[i] = pmt->pdSmartID();
+            // Set the SmartID to the PD ID
+            smartID[i] = pmt->pdSmartID();
 
-          // set the pixel parts
-          setRichPmtSmartIDPix( aC.array[2][i], aC.array[3][i], smartID[i] );
+            // set the pixel parts
+            if ( UNLIKELY( includePixInfo ) ) { setRichPmtSmartIDPix( aC.array[2][i], aC.array[3][i], smartID[i] ); }
 
-          // Update SIMD PD X,Y in local panel
-          X[i] = pmt->zeroInPanelLocal().X();
-          Y[i] = pmt->zeroInPanelLocal().Y();
+            // Update SIMD PD X,Y in local panel
+            X[i] = pmt->zeroInPanelLocal().X();
+            Y[i] = pmt->zeroInPanelLocal().Y();
 
-          // grand PD ?
-          gPdMask[i] = ( rich() == Rich::Rich2 && pmt->PmtIsGrand() );
+            // grand PD ?
+            gPdMask[i] = ( rich() == Rich::Rich2 && pmt->PmtIsGrand() );
+
+          } else {
+            aC.mask[i] = false;
+          }
         }
-        // else {
-        // CRJ - This should not be neccessary as already set above...
-        // res[i] = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
-        // }
       } // scalar loop
 
       // SIMD PMT acceptance check
-      const auto pmt_mask = LHCb::SIMD::simd_cast<SIMDRayTResult::Results::mask_type>(
+      const auto pmt_mask = simd_cast<SIMDRayTResult::Results::mask_type>(
           aC.mask && checkPDAcceptance( panelIntersection.X() - X, panelIntersection.Y() - Y, gPdMask ) );
       res( pmt_mask ) = SIMDRayTResult::Results( (unsigned int)LHCb::RichTraceMode::RayTraceResult::InPDTube );
     }
