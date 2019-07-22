@@ -42,7 +42,8 @@ const CLID CLID_DeRichPMTPanel = 12021; // User defined
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeRichPMTPanel::DeRichPMTPanel( const std::string& name ) : DeRichPDPanel( name ), m_ModuleIsWithGrandPMT( 350 ) {
+DeRichPMTPanel::DeRichPMTPanel( const std::string& name ) //
+    : DeRichPDPanel( name ), m_ModuleIsWithGrandPMT( 350 ) {
   // Set the PD type to PMT
   m_pdType = LHCb::RichSmartID::MaPMTID;
 }
@@ -186,7 +187,7 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
               auto id = panelID();
               id.setPD_PMT( aCurrentModuleCopyNumber, pmtNumberInAModule );
               id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
-              dePMT->setPDInfo( id, _pdNumber( id ) );
+              dePMT->setPDSmartID( id );
 
               // pmtNumberInAModule is SmartID pdInCol
               // aCurrentModuleCopyNumber is pdCol
@@ -354,27 +355,12 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
       if ( pd ) {
         // smartID for this PD
         const auto pdID = pd->pdSmartID();
-        {
-          // test method to get dePD from smartID
-          const auto test_pd = dePMT( pdID );
-          if ( UNLIKELY( test_pd != pd ) ) {
-            error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
-            error() << "   -> requested " << pdID << endmsg;
-            error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
-          }
-        }
-        {
-          try {
-            // compare to index method
-            const auto test_pd = dePMT( _pdNumber( pdID ) );
-            if ( UNLIKELY( test_pd != pd ) ) {
-              error() << "Inconsistent results from dePMT(PDPanelIndex)" << endmsg;
-              error() << "   -> requested " << pdID << endmsg;
-              error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
-            }
-          } catch ( const GaudiException& excp ) {
-            error() << pdID << " - Issue testing dePMT(PDPanelIndex) " << excp.message() << endmsg;
-          }
+        // test method to get dePD from smartID
+        const auto test_pd = dePMT( pdID );
+        if ( UNLIKELY( test_pd != pd ) ) {
+          error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
+          error() << "   -> requested " << pdID << endmsg;
+          error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
         }
       }
     }
@@ -571,80 +557,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo() {
   // Setup flags for large PMTs
   RichSetupMixedSizePmtModules();
 
-  // setup the Lens Flag.
-
-  // m_totNumPmtModuleInRich1 = firstRich->param<int> ("Rich1TotNumModules" );
-
-  // m_Rich1PmtLensPresence = false;
-  // m_Rich1PmtLensModuleCol.clear();
-
-  // if ( exists("Rich1PmtLensPresence") )
-  //{
-  //  m_Rich1PmtLensPresence = ( 0 < firstRich->param<int>("Rich1PmtLensPresence") );
-  //}
-
-  // if ( m_Rich1PmtLensPresence )
-  // {
-
-  //   m_Rich1PmtLensModuleCol = firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumns");
-  //   m_PmtMasterWithLensLateralSizeSIMD = firstRich->param<double>("RichLensPmtMasterLateralSize"
-  //   ); const auto PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
-  //   m_PmtModuleWithLensPitchInvSIMD = ( fabs(PmtModuleWithLensPitch)>0
-  //   ? 1.0/PmtModuleWithLensPitch : 0.0 );
-  //   m_PmtLensPitch=firstRich->param<double>("RichLensPmtPitch");
-  //   m_Rich1PmtPanelWithLensXSizeSIMD = toarray<SIMDFP,2>( firstRich->param<std::vector<double> >
-  //   ("Rich1PMTModuleLensPlaneXEdge") ); m_Rich1PmtPanelWithLensYSizeSIMD = toarray<SIMDFP,2>(
-  //   firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
-
-  //   m_Rich1PmtPanelWithLensColSizeSIMD = toarray<SIMDINT32,2>( firstRich->param<std::vector<int>
-  //   >("Rich1PmtLensModuleColumnsSize")  );
-
-  //   m_RichNumLensPmtinModuleRowColSIMD[0] = firstRich->param<int>( "RichLensPmtNumInModuleRow" );
-  //   m_RichNumLensPmtinModuleRowColSIMD[1] = firstRich->param<int>( "RichLensPmtNumInModuleCol" );
-  //   const auto Rich1LensMagnificationFactor = firstRich->param<double>
-  //   ("RichPmtLensMagnficationFactor" ); m_Rich1LensDemagnificationFactor = (
-  //   fabs(Rich1LensMagnificationFactor) > 0 ?
-  //                                        1.0/Rich1LensMagnificationFactor : 0.0 );
-
-  //   Rich1SetupPMTModulesWithLens();
-
-  // }
-  // else
-  // {
-  //   std::fill( m_RichPmtModuleLensFlag.begin(),
-  //              m_RichPmtModuleLensFlag.end(), false );
-  // }
-
   return sc;
 }
-
-// void DeRichPMTPanel::Rich1SetupPMTModulesWithLens()
-// {
-//   const auto aRowR1 = 2*m_RichPmtNumModulesInRowCol[0];
-//   const auto aColR1 = m_RichPmtNumModulesInRowCol[1];
-//   m_RichPmtModuleLensFlag.clear();
-//   m_RichPmtModuleLensFlag.reserve(aRowR1*aColR1);
-//   m_RichPmtModuleLensFlag.resize(aRowR1*aColR1);
-
-//   //m_RichPmtModuleLensFlag.assign(aRowR1*aColR1, false);
-
-//   for ( Int r = 0; r < aRowR1; ++r )
-//   {
-//     for ( Int c = 0; c < aColR1; ++c )
-//     {
-//       const auto m=(r*aColR1)+c;
-//       m_RichPmtModuleLensFlag[m] = false;
-//       if ( !m_Rich1PmtLensModuleCol.empty() )
-//       {
-//         const auto location = std::find(m_Rich1PmtLensModuleCol.begin(),
-//                                         m_Rich1PmtLensModuleCol.end(), c);
-//         if ( location != m_Rich1PmtLensModuleCol.end() ) m_RichPmtModuleLensFlag[m] = true;
-//       }
-
-//     }
-
-//   }
-// }
 
 void DeRichPMTPanel::RichSetupMixedSizePmtModules() {
 
@@ -701,6 +615,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
   }
 #endif
 
+  // set the module number
   aCh[0] = nums.aModuleNum;
 
   // Use cached positions
@@ -717,7 +632,6 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
 
   auto& aPmtNum = aCh[1];
 
-  const bool is_r1     = ( rich() == Rich::Rich1 );
   const bool is_r2     = ( rich() == Rich::Rich2 );
   const auto gmask     = ModuleIsWithGrandPMT( nums.aModuleNum );
   const auto any_gmask = is_r2 && any_of( gmask );
@@ -726,26 +640,30 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
   if ( !any_gmask ) {
 
     // All small PMTs
-    if ( is_r1 ) {
+    if ( !is_r2 ) {
+      // RICH1
 
       // In Rich::top (Rich::bottom) module zero is at the top left (bottom right) corner
       // the following lines assume that all points in SIMD operation are in the same panel
-      const auto sign = ( side() == Rich::top ? -1 : 1 );
+      const auto sign = ( side() == Rich::top ? -SIMDFP::One() : SIMDFP::One() );
       aPmtCol =
           simd_cast<SIMDINT32>( abs( ( sign * xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) );
       aPmtRow =
           simd_cast<SIMDINT32>( abs( ( sign * yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) );
 
     } else {
+      // RICH2
 
       aPmtCol = simd_cast<SIMDINT32>( abs( ( -yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) );
       aPmtRow = simd_cast<SIMDINT32>( abs( ( xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) );
     }
+
     aPmtNum = getPmtNumFromRowCol( aPmtRow, aPmtCol );
 
   } else if ( all_gmask ) {
 
-    // All grand PMTs
+    // All grand PMTs. Only in RICH2.
+    assert( is_r2 );
     aPmtCol =
         simd_cast<SIMDINT32>( abs( ( -yp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_GrandPmtPitchInvSIMD ) );
     aPmtRow =
@@ -756,6 +674,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
 
     // we have a mixture of grand and small PMTs
     // in current (upgrade) system this is only possible for R2
+    assert( is_r2 );
     aPmtCol = iif(
         gmask, //
         simd_cast<SIMDINT32>( abs( ( -yp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_GrandPmtPitchInvSIMD ) ),
@@ -777,7 +696,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
   }
 #endif
 
-  // Now, if requires, the pixel numbers
+  // Now, if required, the pixel numbers
   if ( UNLIKELY( includePixInfo ) ) {
 
     SIMDFP xpi, ypi;
@@ -978,8 +897,9 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
   PDs.fill( pd );
 
   // Call the SIMD method
-  const auto simdRes =
-      detPlanePointSIMD( SIMDPoint( pGlobal ), SIMDVector( vGlobal ), simdHitPoint, simdIDs, PDs, mode );
+  const auto simdRes = detPlanePointSIMD( SIMDPoint( pGlobal ),  //
+                                          SIMDVector( vGlobal ), //
+                                          simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
   hitPosition = {simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0]};
@@ -1052,7 +972,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
           // get the DePMT object
           const auto pmt = dePMT( aModuleNumInPanel[i], aC.array[1][i] );
           PDs[i]         = pmt;
-          if ( pmt ) {
+          if ( LIKELY( pmt ) ) {
 
             // Set the SmartID to the PD ID
             smartID[i] = pmt->pdSmartID();
@@ -1109,8 +1029,9 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
   PDs.fill( pd );
 
   // Call the SIMD method
-  const auto simdRes =
-      PDWindowPointSIMD( SIMDPoint( pGlobal ), SIMDVector( vGlobal ), simdHitPoint, simdIDs, PDs, mode );
+  const auto simdRes = PDWindowPointSIMD( SIMDPoint( pGlobal ),  //
+                                          SIMDVector( vGlobal ), //
+                                          simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
   windowPointGlobal = {simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0]};
@@ -1126,33 +1047,6 @@ Rich::DAQ::PDPanelIndex DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smart
 }
 
 const DeRichPD* DeRichPMTPanel::dePD( const LHCb::RichSmartID pdID ) const { return dePMT( pdID ); }
-
-const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::PDPanelIndex PmtNumber ) const { return dePMT( PmtNumber ); }
-
-const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const {
-  const DeRichPMT* dePmt = nullptr;
-
-  if ( PmtNumber.data() < (unsigned int)m_totNumPmtModuleInRich * m_NumPmtInRichModule ) {
-    const auto Mnum           = (unsigned int)( PmtNumber.data() / m_NumPmtInRichModule );
-    const auto MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone( Mnum );
-    const auto Pnum           = PmtNumber.data() - ( Mnum * m_NumPmtInRichModule );
-
-    if ( UNLIKELY( MNumInCurPanel >= (Int)m_DePMTs.size() || Pnum >= m_DePMTs[MNumInCurPanel].size() ) ) {
-      std::ostringstream mess;
-      mess << "DeRichPMTPanel::dePMT : Inappropriate PMT module and pmt numbers " << MNumInCurPanel << " " << Pnum;
-
-      throw GaudiException( mess.str(), "*DeRichPMTPanel*", StatusCode::FAILURE );
-    } else {
-      dePmt = dePMT( MNumInCurPanel, Pnum );
-    }
-  } else {
-    std::ostringstream mess;
-    mess << "DeRichPMTPanel: Inappropriate PmtcopyNumber : " << PmtNumber;
-    throw GaudiException( mess.str(), "*DeRichPMTPanel*", StatusCode::FAILURE );
-  }
-
-  return dePmt;
-}
 
 //  return a list with all the valid readout channels (smartIDs)
 //=========================================================================
@@ -1170,7 +1064,7 @@ bool DeRichPMTPanel::readoutChannelList( LHCb::RichSmartID::Vector& readoutChann
       if ( dePMT( PmtModuleNumInPanelFromModuleNumAlone( iM ), iP ) ) {
         for ( Int iPx = 0; iPx < m_PmtPixelsInRowSIMD[0]; ++iPx ) {
           for ( Int iPy = 0; iPy < m_PmtPixelsInColSIMD[0]; ++iPy ) {
-            auto tmpSmartId = LHCb::RichSmartID( rich(), side(), iP, iM, iPy, iPx, m_pdType );
+            auto tmpSmartId = LHCb::RichSmartID( rich(), side(), iP, iM, iPy, iPx, pdType() );
             tmpSmartId.setLargePMT( ModuleIsWithGrandPMT( iM ) );
             readoutChannels.emplace_back( tmpSmartId );
           }
@@ -1184,12 +1078,9 @@ bool DeRichPMTPanel::readoutChannelList( LHCb::RichSmartID::Vector& readoutChann
 
 int DeRichPMTPanel::sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const {
   // Create a RichSmartID for this RICH and panel
-  const LHCb::RichSmartID def_id( rich(), side(), 0, 0, 0, 0, m_pdType );
+  auto id = panelID();
   // set the remaining fields from the position
-  auto id = def_id;
-  return ( smartID( globalPoint, id ) ? id : def_id );
-  // From FTTU branch - return pdNumber
-  // return pdNumber( smartID(globalPoint,id) ? id : def_id ).data();
+  return ( smartID( globalPoint, id ) ? id : panelID() );
 }
 
 //=========================================================================

@@ -124,9 +124,6 @@ public:
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
   /// Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const override final;
-
-  /// Returns the detector element for the given PD number
   inline const DeRichHPD* deHPD( const Rich::DAQ::PDPanelIndex HPDNumber ) const {
     const DeRichHPD* deHPD = ( HPDNumber.data() < nPDs() ? m_DeHPDs[HPDNumber.data()] : nullptr );
 #ifndef NDEBUG
@@ -151,7 +148,9 @@ public:
   /// Is a 'large' PD
   bool isLargePD( const LHCb::RichSmartID ) const override final { return false; }
 
-private: // methods
+private:
+  // methods
+
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const {
     return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side()

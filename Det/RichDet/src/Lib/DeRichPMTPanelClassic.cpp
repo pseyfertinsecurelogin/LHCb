@@ -182,7 +182,7 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
               // id.setPD_PMT( iModNum, curPmtNum ); // local PD col
               id.setPD_PMT( aCurrentModuleCopyNumber, curPmtNum ); // global PD col
               id.setLargePMT( ModuleIsWithGrandPMT( aCurrentModuleCopyNumber ) );
-              dePMT->setPDInfo( id, _pdNumber( id ) );
+              dePMT->setPDSmartID( id );
 
               // curPmtNum is SmartID pdInCol
               // aCurrentModuleCopyNumber is pdCol
@@ -366,27 +366,12 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
       if ( pd ) {
         // smartID for this PD
         const auto pdID = pd->pdSmartID();
-        {
-          // test method to get dePD from smartID
-          const auto test_pd = dePMT( pdID );
-          if ( UNLIKELY( test_pd != pd ) ) {
-            error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
-            error() << "   -> requested " << pdID << endmsg;
-            error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
-          }
-        }
-        {
-          try {
-            // compare to index method
-            const auto test_pd = dePMT( _pdNumber( pdID ) );
-            if ( UNLIKELY( test_pd != pd ) ) {
-              error() << "Inconsistent results from dePMT(PDPanelIndex)" << endmsg;
-              error() << "   -> requested " << pdID << endmsg;
-              error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
-            }
-          } catch ( const GaudiException& excp ) {
-            error() << pdID << " - Issue testing dePMT(PDPanelIndex) " << excp.message() << endmsg;
-          }
+        // test method to get dePD from smartID
+        const auto test_pd = dePMT( pdID );
+        if ( UNLIKELY( test_pd != pd ) ) {
+          error() << "Inconsistent results from dePMT(RichSmartID)" << endmsg;
+          error() << "   -> requested " << pdID << endmsg;
+          error() << "   -> retrieved " << test_pd->pdSmartID() << endmsg;
         }
       }
     }
@@ -852,13 +837,14 @@ DeRichPMTPanelClassic::detPlanePointSIMD( const SIMDPoint&          pGlobal,    
 //=========================================================================
 // Returns the intersection point with the detector plane given a vector and a point.
 //=========================================================================
-LHCb::RichTraceMode::RayTraceResult DeRichPMTPanelClassic::detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
-                                                                          const Gaudi::XYZVector&   vGlobal,     //
-                                                                          Gaudi::XYZPoint&          hitPosition, //
-                                                                          LHCb::RichSmartID&        smartID,     //
-                                                                          const DeRichPD*&          pd,          //
-                                                                          const LHCb::RichTraceMode mode         //
-                                                                          ) const {
+LHCb::RichTraceMode::RayTraceResult                                          //
+DeRichPMTPanelClassic::detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
+                                      const Gaudi::XYZVector&   vGlobal,     //
+                                      Gaudi::XYZPoint&          hitPosition, //
+                                      LHCb::RichSmartID&        smartID,     //
+                                      const DeRichPD*&          pd,          //
+                                      const LHCb::RichTraceMode mode         //
+                                      ) const {
 
   // Use the SIMD method
   // Note this will not be as efficient as properly using the SIMD methods,
@@ -873,8 +859,9 @@ LHCb::RichTraceMode::RayTraceResult DeRichPMTPanelClassic::detPlanePoint( const 
   PDs.fill( pd );
 
   // Call the SIMD method
-  const auto simdRes =
-      detPlanePointSIMD( SIMDPoint( pGlobal ), SIMDVector( vGlobal ), simdHitPoint, simdIDs, PDs, mode );
+  const auto simdRes = detPlanePointSIMD( SIMDPoint( pGlobal ),  //
+                                          SIMDVector( vGlobal ), //
+                                          simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
   hitPosition = {simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0]};
@@ -1003,8 +990,9 @@ DeRichPMTPanelClassic::PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,        
   PDs.fill( pd );
 
   // Call the SIMD method
-  const auto simdRes =
-      PDWindowPointSIMD( SIMDPoint( pGlobal ), SIMDVector( vGlobal ), simdHitPoint, simdIDs, PDs, mode );
+  const auto simdRes = PDWindowPointSIMD( SIMDPoint( pGlobal ),  //
+                                          SIMDVector( vGlobal ), //
+                                          simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
   windowPointGlobal = {simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0]};
@@ -1020,36 +1008,6 @@ Rich::DAQ::PDPanelIndex DeRichPMTPanelClassic::pdNumber( const LHCb::RichSmartID
 }
 
 const DeRichPD* DeRichPMTPanelClassic::dePD( const LHCb::RichSmartID pdID ) const { return dePMT( pdID ); }
-
-const DeRichPD* DeRichPMTPanelClassic::dePD( const Rich::DAQ::PDPanelIndex PmtNumber ) const {
-  return dePMT( PmtNumber );
-}
-
-const DeRichPMTClassic* DeRichPMTPanelClassic::dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const {
-  const DeRichPMTClassic* dePmt = nullptr;
-
-  if ( PmtNumber.data() < m_totNumPMTs ) {
-    const auto Mnum           = (unsigned int)( PmtNumber.data() / m_NumPmtInRichModule );
-    const auto MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone( Mnum );
-    const auto Pnum           = PmtNumber.data() - ( Mnum * m_NumPmtInRichModule );
-
-    if ( UNLIKELY( MNumInCurPanel >= (Int)m_DePMTs.size() || Pnum >= m_DePMTs[MNumInCurPanel].size() ) ) {
-      std::ostringstream mess;
-      mess << "DeRichPMTPanelClassic::dePMT : Inappropriate PMT module and pmt numbers " << MNumInCurPanel << " "
-           << Pnum;
-
-      throw GaudiException( mess.str(), "*DeRichPMTPanelClassic*", StatusCode::FAILURE );
-    } else {
-      dePmt = m_DePMTs[MNumInCurPanel][Pnum];
-    }
-  } else {
-    std::ostringstream mess;
-    mess << "DeRichPMTPanelClassic: Inappropriate PmtcopyNumber : " << PmtNumber;
-    throw GaudiException( mess.str(), "*DeRichPMTPanelClassic*", StatusCode::FAILURE );
-  }
-
-  return dePmt;
-}
 
 //  return a list with all the valid readout channels (smartIDs)
 //=========================================================================
@@ -1079,7 +1037,7 @@ int DeRichPMTPanelClassic::sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint
   auto id = def_id;
   return ( smartID( globalPoint, id ) ? id : def_id );
   // From FTTU branch - return pdNumber
-  // return pdNumber( smartID(globalPoint,id) ? id : def_id ).data();
+  // return _pdNumber( smartID(globalPoint,id) ? id : def_id ).data();
 }
 
 //=========================================================================

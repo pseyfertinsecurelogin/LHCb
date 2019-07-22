@@ -141,31 +141,17 @@ public:
     return m_pdSmartID;
   }
 
-  /// Access the PD number
-  inline const Rich::DAQ::PDPanelIndex& pdNumber() const noexcept {
-    // only support PMTs. Validity check assures never used when not defined.
-    assert( m_pdSmartID.isValid() );
-    return m_pdNumber;
-  }
-
 public:
   // setter methods
 
   /// Set the PD information
-  inline void setPDInfo( const LHCb::RichSmartID       id, //
-                         const Rich::DAQ::PDPanelIndex pdNumber ) noexcept {
-    m_pdSmartID = id;
-    m_pdNumber  = pdNumber;
-  }
+  inline void setPDSmartID( const LHCb::RichSmartID id ) noexcept { m_pdSmartID = id; }
 
 private:
   // data
 
   /// PD SmartID
   LHCb::RichSmartID m_pdSmartID;
-
-  /// PD panel index
-  Rich::DAQ::PDPanelIndex m_pdNumber;
 
   /// The RICH this PD is in
   Rich::DetectorType m_rich = Rich::InvalidDetector;

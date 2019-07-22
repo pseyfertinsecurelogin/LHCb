@@ -69,9 +69,6 @@ public:
   // Access the DeRichPD object for a given PD RichSmartID
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
-  // Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const override final;
-
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   bool smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const override final;
 
@@ -147,7 +144,6 @@ private:
   using XYArray        = std::array<double, 2>;
   using XYArraySIMD    = std::array<SIMDFP, 2>;
   using ArraySetupSIMD = std::array<SIMDINT32, 4>;
-
   class ArrayWithMask {
   public:
     ArraySetupSIMD   array{{}};
@@ -175,18 +171,16 @@ private:
 
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept {
-    // check for now. to be removed.
-    if ( UNLIKELY( smartID.rich() != rich() || smartID.panel() != side() ) ) {
-      error() << "_pdNumber RICH and side error " << smartID << endmsg;
-    }
+    // checks
+    assert( smartID.rich() == rich() );
+    assert( smartID.panel() == side() );
+
     // col number is local
     // return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
     // col number is global
     return Rich::DAQ::PDPanelIndex( ( PmtModuleNumInPanelFromModuleNum( smartID.pdCol() ) * m_NumPmtInRichModule ) +
                                     smartID.pdNumInCol() );
   }
-
-  const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
   template <typename MODULE, typename INMODULE>
   inline const DeRichPMT* dePMT( const MODULE mod, const INMODULE in ) const noexcept {
@@ -522,7 +516,8 @@ private:
   }
 
   inline decltype( auto ) isInPmtPanel( const SIMDPoint& aPointInPanel ) const noexcept {
-    return ( abs( aPointInPanel.x() ) < m_xyHalfSizeSIMD[0] && abs( aPointInPanel.y() ) < m_xyHalfSizeSIMD[1] );
+    return ( abs( aPointInPanel.x() ) < m_xyHalfSizeSIMD[0] && //
+             abs( aPointInPanel.y() ) < m_xyHalfSizeSIMD[1] );
   }
 
   inline decltype( auto ) checkPDAcceptance( SIMDFP                  X,            //

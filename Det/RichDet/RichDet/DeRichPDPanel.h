@@ -159,9 +159,6 @@ public: // virtual methods. Derived classes must implement these
    */
   virtual const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const = 0;
 
-  /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const = 0;
-
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point (scalar)
    *
