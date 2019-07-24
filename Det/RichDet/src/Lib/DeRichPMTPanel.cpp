@@ -620,9 +620,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
     yp[i] -= p.Y();
   }
 
-  SIMDINT32 aPmtCol = -SIMDINT32::One();
-  SIMDINT32 aPmtRow = -SIMDINT32::One();
-
+  // shortcut to pmt number for below
   auto& aPmtNum = aCh[1];
 
   const bool is_r2     = ( rich() == Rich::Rich2 );
@@ -639,27 +637,29 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
       // In Rich::top (Rich::bottom) module zero is at the top left (bottom right) corner
       // the following lines assume that all points in SIMD operation are in the same panel
       const auto sign = ( side() == Rich::top ? -SIMDFP::One() : SIMDFP::One() );
-      aPmtCol =
+      const auto aPmtCol =
           simd_cast<SIMDINT32>( abs( ( sign * xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) );
-      aPmtRow =
+      const auto aPmtRow =
           simd_cast<SIMDINT32>( abs( ( sign * yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) );
+      aPmtNum = getPmtNumFromRowCol( aPmtRow, aPmtCol );
 
     } else {
       // RICH2
 
-      aPmtCol = simd_cast<SIMDINT32>( abs( ( -yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) );
-      aPmtRow = simd_cast<SIMDINT32>( abs( ( xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) );
+      const auto aPmtCol =
+          simd_cast<SIMDINT32>( abs( ( -yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) );
+      const auto aPmtRow =
+          simd_cast<SIMDINT32>( abs( ( xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) );
+      aPmtNum = getPmtNumFromRowCol( aPmtRow, aPmtCol );
     }
-
-    aPmtNum = getPmtNumFromRowCol( aPmtRow, aPmtCol );
 
   } else if ( all_gmask ) {
 
     // All grand PMTs. Only in RICH2.
     assert( is_r2 );
-    aPmtCol =
+    const auto aPmtCol =
         simd_cast<SIMDINT32>( abs( ( -yp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_GrandPmtPitchInvSIMD ) );
-    aPmtRow =
+    const auto aPmtRow =
         simd_cast<SIMDINT32>( abs( ( xp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_GrandPmtPitchInvSIMD ) );
     aPmtNum = getGrandPmtNumFromRowCol( aPmtRow, aPmtCol );
 
@@ -668,11 +668,11 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
     // we have a mixture of grand and small PMTs
     // in current (upgrade) system this is only possible for R2
     assert( is_r2 );
-    aPmtCol = iif(
+    const auto aPmtCol = iif(
         gmask, //
         simd_cast<SIMDINT32>( abs( ( -yp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_GrandPmtPitchInvSIMD ) ),
         simd_cast<SIMDINT32>( abs( ( -yp - m_RichPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_PmtPitchInvSIMD ) ) );
-    aPmtRow = iif(
+    const auto aPmtRow = iif(
         gmask, //
         simd_cast<SIMDINT32>( abs( ( xp - m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0] ) * m_GrandPmtPitchInvSIMD ) ),
         simd_cast<SIMDINT32>( abs( ( xp - m_RichPmtModuleActiveAreaHalfSizeSIMD[1] ) * m_PmtPitchInvSIMD ) ) );
