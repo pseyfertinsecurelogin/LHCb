@@ -137,6 +137,7 @@ private:
   // types
 
   using Int            = std::int32_t;
+  using UInt           = std::uint32_t;
   using IDeElemV       = std::vector<IDetectorElement*>;
   using IGeomInfoV     = std::vector<const IGeometryInfo*>;
   using DRiPMTV        = std::vector<DeRichPMT*>;
@@ -166,61 +167,6 @@ private:
   bool setRichAndSide();
 
 private:
-  /// Get the first RICH pointer
-  const DetectorElement* getFirstDeRich() const;
-
-  /// Returns the PD number for the given RichSmartID
-  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept {
-    // checks
-    assert( smartID.rich() == rich() );
-    assert( smartID.panel() == side() );
-
-    // col number is local
-    // return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
-    // col number is global
-    return Rich::DAQ::PDPanelIndex( ( PmtModuleNumInPanelFromModuleNum( smartID.pdCol() ) * m_NumPmtInRichModule ) +
-                                    smartID.pdNumInCol() );
-  }
-
-  template <typename MODULE, typename INMODULE>
-  inline const DeRichPMT* dePMT( const MODULE mod, const INMODULE in ) const noexcept {
-    assert( (std::size_t)mod < m_DePMTs.size() );
-    assert( (std::size_t)in < m_DePMTs[mod].size() );
-    return m_DePMTs[mod][in];
-  }
-
-  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const noexcept {
-
-    // get the lookup indices from the smart ID
-    auto pdCol   = pdID.pdCol();
-    auto pdInCol = pdID.pdNumInCol();
-
-    // Convert global module number to number in panel
-    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol ); }
-
-    // the pointer from the array
-    const auto pd = ( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ? dePMT( pdCol, pdInCol ) : nullptr );
-
-    // get the old (slower) way
-    // const auto pd = dePMT( _pdNumber( pdID ) );
-
-#ifndef NDEBUG // Sanity checks, only in debug builds
-
-    if ( pd ) {
-      if ( UNLIKELY( pd->pdSmartID().pdID() != pdID.pdID() ) ) {
-        error() << "PMT ID mismatch !!!" << endmsg;
-        error() << "   -> requested " << pdID.pdID() << endmsg;
-        error() << "   -> retrieved " << pd->pdSmartID() << endmsg;
-      }
-    }
-
-#endif
-
-    // return
-    return pd;
-  }
-
-private:
   // methods
 
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept {
@@ -233,37 +179,39 @@ private:
     return {aPRow, ( Int )( aPmtNum - ( aPRow * m_NumGrandPmtInRowCol[0] ) )};
   }
 
-  inline Int PmtModuleNumInPanelFromModuleNum( const Int aMnum ) const noexcept {
-    return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
-  }
-
-  inline SIMDINT32 PmtModuleNumInPanelFromModuleNum( const SIMDINT32& aMnum ) const noexcept {
-    return aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
-  }
-
-  inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept {
-    return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] && aMnum <= m_RichPmtModuleCopyNumEndPanel[0]
-                 ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0]
-                 : aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] && aMnum <= m_RichPmtModuleCopyNumEndPanel[1]
-                       ? aMnum - m_RichPmtModuleCopyNumBeginPanel[1]
-                       : aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] && aMnum <= m_RichPmtModuleCopyNumEndPanel[2]
-                             ? aMnum - m_RichPmtModuleCopyNumBeginPanel[2]
-                             : aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
-                                       aMnum <= m_RichPmtModuleCopyNumEndPanel[3]
-                                   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[3]
-                                   : -1 );
-  }
-
-  inline SIMDINT32 PmtModuleNumInPanelFromModuleNumAlone( const SIMDINT32& aMnum ) const noexcept {
-    SIMDINT32 res = -SIMDINT32::One();
-    // loop over panels and test for each
-    GAUDI_LOOP_UNROLL( 4 )
-    for ( Int i = 0; i < 4; ++i ) {
-      const auto m = ( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[i] && //
-                       aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[i] );
-      res( m )     = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[i];
+  template <typename TYPE>
+  inline TYPE PmtModuleNumInPanelFromModuleNum( const TYPE aMnum ) const noexcept {
+    if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
+      return aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
+    } else {
+      return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
     }
-    return res;
+  }
+
+  template <typename TYPE>
+  inline decltype( auto ) PmtModuleNumInPanelFromModuleNumAlone( const TYPE aMnum ) const noexcept {
+    if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
+      SIMDINT32 res = -SIMDINT32::One();
+      // loop over panels and test for each
+      GAUDI_LOOP_UNROLL( 4 )
+      for ( Int i = 0; i < 4; ++i ) {
+        const auto m = ( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[i] && //
+                         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[i] );
+        res( m )     = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[i];
+      }
+      return res;
+    } else {
+      return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] && aMnum <= m_RichPmtModuleCopyNumEndPanel[0]
+                   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0]
+                   : aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] && aMnum <= m_RichPmtModuleCopyNumEndPanel[1]
+                         ? aMnum - m_RichPmtModuleCopyNumBeginPanel[1]
+                         : aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] && aMnum <= m_RichPmtModuleCopyNumEndPanel[2]
+                               ? aMnum - m_RichPmtModuleCopyNumBeginPanel[2]
+                               : aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
+                                         aMnum <= m_RichPmtModuleCopyNumEndPanel[3]
+                                     ? aMnum - m_RichPmtModuleCopyNumBeginPanel[3]
+                                     : -1 );
+    }
   }
 
   inline RowCol PmtModuleRowColFromModuleNumInPanel( const Int aMnum ) const noexcept {
@@ -315,6 +263,60 @@ private:
   ArrayWithMask findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,           //
                                        const bool              includePixInfo = true, //
                                        const SIMDFP::mask_type in_mask        = SIMDFP::mask_type( true ) ) const;
+
+private:
+  /// Get the first RICH pointer
+  const DetectorElement* getFirstDeRich() const;
+
+  /// Returns the PD number for the given RichSmartID
+  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept {
+    // checks
+    assert( smartID.rich() == rich() );
+    assert( smartID.panel() == side() );
+
+    // col number is local
+    // return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
+    // col number is global
+    return Rich::DAQ::PDPanelIndex( ( PmtModuleNumInPanelFromModuleNum( smartID.pdCol() ) * m_NumPmtInRichModule ) +
+                                    smartID.pdNumInCol() );
+  }
+
+  template <typename MODULE, typename INMODULE>
+  inline const DeRichPMT* dePMT( const MODULE mod, const INMODULE in ) const noexcept {
+    assert( (std::size_t)mod < m_DePMTs.size() );
+    assert( (std::size_t)in < m_DePMTs[mod].size() );
+    return m_DePMTs[mod][in];
+  }
+
+  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const noexcept {
+
+    // Convert global module number to number in panel
+    // This panel should never be asked to a PMT associated with a different one..
+    const auto pdCol = PmtModuleNumInPanelFromModuleNum( pdID.pdCol() );
+    // sanity check
+    assert( (Int)pdCol == PmtModuleNumInPanelFromModuleNumAlone( (Int)pdID.pdCol() ) );
+
+    // number in module
+    const auto pdInCol = pdID.pdNumInCol();
+
+    // the pointer from the array
+    const auto pd = ( LIKELY( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ) //
+                          ? dePMT( pdCol, pdInCol )
+                          : nullptr );
+
+#ifndef NDEBUG // Sanity checks, only in debug builds
+    if ( pd ) {
+      if ( UNLIKELY( pd->pdSmartID().pdID() != pdID.pdID() ) ) {
+        error() << "PMT ID mismatch !!!" << endmsg;
+        error() << "   -> requested " << pdID.pdID() << endmsg;
+        error() << "   -> retrieved " << pd->pdSmartID() << endmsg;
+      }
+    }
+#endif
+
+    // return
+    return pd;
+  }
 
 private:
   // Simple struct to store module numbers

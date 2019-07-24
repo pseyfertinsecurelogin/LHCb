@@ -996,8 +996,9 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
       const auto pmt_mask = simd_cast<SIMDRayTResult::Results::mask_type>(
           aC.mask && checkPDAcceptance( panelIntersection.X() - X, panelIntersection.Y() - Y, gPdMask ) );
       res( pmt_mask ) = SIMDRayTResult::Results( (unsigned int)LHCb::RichTraceMode::RayTraceResult::InPDTube );
-    }
-  }
+
+    } // check pd acceptance
+  }   // in panel
 
   // return
   return res;
