@@ -229,6 +229,10 @@ private:
     return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
   }
 
+  inline SIMDINT32 PmtModuleNumInPanelFromModuleNum( const SIMDINT32& aMnum ) const noexcept {
+    return aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
+  }
+
   inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept {
     return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] && aMnum <= m_RichPmtModuleCopyNumEndPanel[0]
                  ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0]

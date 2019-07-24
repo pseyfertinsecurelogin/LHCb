@@ -322,17 +322,8 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
   // Define function pointers
 
   if ( Rich::Rich1 == rich() ) {
-    // if ( m_Rich1PmtLensPresence )
-    // {
-    //   m_getModuleNumsSIMD = ( side() == Rich::top ?
-    //                           &DeRichPMTPanel::getModuleNums_R1Up_Lens_SIMD :
-    //                           &DeRichPMTPanel::getModuleNums_R1Dn_Lens_SIMD );
-    // }
-    // else
-    //{
     m_getModuleNumsSIMD = ( side() == Rich::top ? &DeRichPMTPanel::getModuleNums_R1Up_NoLens_SIMD
                                                 : &DeRichPMTPanel::getModuleNums_R1Dn_NoLens_SIMD );
-    //}
   } else {
     if ( !m_Rich2UseGrandModule ) {
       m_getModuleNumsSIMD = ( side() == Rich::left ? &DeRichPMTPanel::getModuleNums_R2Le_Small_SIMD
@@ -342,7 +333,8 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
         m_getModuleNumsSIMD = ( side() == Rich::left ? &DeRichPMTPanel::getModuleNums_R2Le_Grand_SIMD
                                                      : &DeRichPMTPanel::getModuleNums_R2Ri_Grand_SIMD );
       } else {
-        m_getModuleNumsSIMD = &DeRichPMTPanel::getModuleNums_R2Le_Mixed_SIMD;
+        // use same for both panels...
+        m_getModuleNumsSIMD = &DeRichPMTPanel::getModuleNums_R2_Mixed_SIMD;
       }
     }
   }
@@ -549,6 +541,7 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo() {
 
   m_MixedPmtModulePlaneHalfSizeR2SIMD =
       toarray<SIMDFP, 4>( firstRich->param<std::vector<double>>( "Rich2MixedPMTModulePlaneHalfSize" ) );
+
   m_MixedStdPmtModulePlaneHalfSizeR2SIMD =
       toarray<SIMDFP, 4>( firstRich->param<std::vector<double>>( "Rich2MixedStdPMTModulePlaneHalfSize" ) );
 
@@ -803,7 +796,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint&        aLocalPoint,    /
 
     aPmtPixelCol.setZero( aPmtPixelCol < SIMDINT32::Zero() );
     aPmtPixelRow.setZero( aPmtPixelRow < SIMDINT32::Zero() );
-  }
+  } // include pixel info
 
   // finally return the data
   return am;
@@ -840,7 +833,10 @@ DeRichPMTPanel::detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
   if ( LIKELY( any_of( aC.mask ) ) ) {
 
     // get PMT module number in panel
-    const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] );
+    // Note module number should *always* be for current panel, so use method that assumes this
+    const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNum( aC.array[0] );
+    // Sanity checks, only in debug builds
+    assert( all_of( pdNumInPanel == PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] ) ) );
 
     // in panel mask
     auto pmask = aC.mask && isInPmtPanel( panelIntersection );
@@ -941,7 +937,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
 
   // are we in the panel ?
   auto mask = isInPmtPanel( panelIntersection );
-  if ( any_of( mask ) ) {
+  if ( LIKELY( any_of( mask ) ) ) {
 
     // Set res flag for those in mask to InPDPanel
     res( simd_cast<SIMDRayTResult::Results::mask_type>( mask ) ) =
@@ -956,7 +952,10 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
       auto aC = findPMTArraySetupSIMD( panelIntersection, includePixInfo, mask );
 
       // get module in panel number
-      const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] );
+      // Note module number should *always* be for current panel, so use method that assumes this
+      const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNum( aC.array[0] );
+      // Sanity checks, only in debug builds
+      assert( all_of( aModuleNumInPanel == PmtModuleNumInPanelFromModuleNumAlone( aC.array[0] ) ) );
 
       // Is Grand PD Mask
       SIMDFP::mask_type gPdMask( false );
@@ -964,7 +963,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
       // SIMD {X,Y} for PD centres in panel frame
       SIMDFP X( SIMDFP::Zero() ), Y( SIMDFP::Zero() );
 
-      // Resort to a scalar loop at this point to extractPD specific info.
+      // Resort to a scalar loop at this point to extract PD specific info.
       for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
         // skip those already failed
         if ( LIKELY( aC.mask[i] ) ) {
@@ -985,7 +984,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
             Y[i] = pmt->zeroInPanelLocal().Y();
 
             // grand PD ?
-            gPdMask[i] = ( rich() == Rich::Rich2 && pmt->PmtIsGrand() );
+            gPdMask[i] = pmt->PmtIsGrand();
 
           } else {
             aC.mask[i] = false;

@@ -800,7 +800,10 @@ DeRichPMTPanelClassic::detPlanePointSIMD( const SIMDPoint&          pGlobal,    
   const auto aC = findPMTArraySetupSIMD( panelIntersection, includePixInfo );
 
   // get PMT module number in panel
-  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC[0] );
+  // Note module number should *always* be for current panel, so use method that assumes this
+  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNum( aC[0] );
+  // Sanity checks, only in debug builds
+  assert( all_of( pdNumInPanel == PmtModuleNumInPanelFromModuleNumAlone( aC[0] ) ) );
 
   // in panel mask
   auto pmask = isInPmtPanel( panelIntersection );
@@ -916,7 +919,10 @@ DeRichPMTPanelClassic::PDWindowPointSIMD( const SIMDPoint&          pGlobal,    
       const auto aC = findPMTArraySetupSIMD( panelIntersection, includePixInfo );
 
       // get module in panel number
-      const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone( aC[0] );
+      // Note module number should *always* be for current panel, so use method that assumes this
+      const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNum( aC[0] );
+      // Sanity checks, only in debug builds
+      assert( all_of( aModuleNumInPanel == PmtModuleNumInPanelFromModuleNumAlone( aC[0] ) ) );
 
       // Is Grand PD Mask
       SIMDFP::mask_type gPdMask( false );
