@@ -146,6 +146,18 @@ protected:
     return sc;
   }
 
+protected:
+  /// utility method to convert a vector to an array of the same contained type and size
+  template <typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE>
+  decltype( auto ) toarray( const std::vector<INTYPE>& v ) const {
+    if ( UNLIKELY( v.size() != N ) ) {
+      throw GaudiException( "Vector to Array Size Error", name(), StatusCode::FAILURE );
+    }
+    std::array<OUTTYPE, N> a;
+    std::copy( v.begin(), v.end(), a.begin() );
+    return a;
+  }
+
 private:
   /// reset the message stream with the currently set name
   void resetMsgStream() { m_msgStream = std::make_unique<MsgStream>( msgSvc(), myName() ); }

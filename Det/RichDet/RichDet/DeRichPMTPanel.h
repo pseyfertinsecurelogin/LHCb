@@ -535,8 +535,7 @@ private:
 private:
   /// Gets the intersection with the panel (SIMD) in global panel coordinates
   inline SIMDPoint getPanelInterSection( const SIMDPoint&  pGlobal, //
-                                         const SIMDVector& vGlobal  //
-                                         ) const noexcept {
+                                         const SIMDVector& vGlobal ) const noexcept {
 
     // find the intersection with the detection plane
     const auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
@@ -548,8 +547,7 @@ private:
 
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept {
     // Only RICH2 has grand PMTs
-    return ( rich() == Rich::Rich2 && aModuleNum >= 0 && //
-                     aModuleNum < (Int)m_ModuleIsWithGrandPMT.size()
+    return ( rich() == Rich::Rich2 && aModuleNum >= 0 && aModuleNum < (Int)m_ModuleIsWithGrandPMT.size() //
                  ? m_ModuleIsWithGrandPMT[aModuleNum]
                  : false );
   }
@@ -570,18 +568,6 @@ private:
       }
       return m;
     }
-  }
-
-private:
-  /// utility method to convert a vector to an array of the same size.
-  template <typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE>
-  decltype( auto ) toarray( const std::vector<INTYPE>& v ) const {
-    if ( UNLIKELY( v.size() != N ) ) {
-      throw GaudiException( "Vector to Array Size Error", "DeRichPMTPanel", StatusCode::FAILURE );
-    }
-    std::array<OUTTYPE, N> a;
-    std::copy( v.begin(), v.end(), a.begin() );
-    return a;
   }
 
 private:
