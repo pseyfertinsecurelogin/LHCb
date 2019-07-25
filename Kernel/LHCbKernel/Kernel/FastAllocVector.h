@@ -19,8 +19,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef KERNEL_FastAllocVector_H
-#define KERNEL_FastAllocVector_H 1
+#pragma once
 
 // STL
 #include <ostream>
@@ -35,6 +34,9 @@
 // STL Pool allocator
 #  include <ext/pool_allocator.h>
 #endif
+
+// boost
+#include <boost/container/small_vector.hpp>
 
 namespace LHCb {
 
@@ -53,22 +55,11 @@ namespace LHCb {
 
   private:
     /// Shortcut to the base class type
-    typedef std::vector<TYPE, ALLOC> BaseClass;
+    using BaseClass = std::vector<TYPE, ALLOC>;
 
   public:
-    /// Default constructor
-    constexpr FastAllocVector() {}
-
-    /** Constructor with initial size
-     *  @param size Initialisation size for vector
-     */
-    constexpr FastAllocVector( const typename BaseClass::size_type size ) : BaseClass( size ) {}
-
-    /** Constructor with initial size and initialisation value
-     *  @param size Initialisation size for vector
-     *  @param init Initialisation value
-     */
-    constexpr FastAllocVector( const typename BaseClass::size_type size, const TYPE& init ) : BaseClass( size, init ) {}
+    /// Inherit all constructors
+    using BaseClass::BaseClass;
 
   public:
     /// Operator overloading for ostream
@@ -102,6 +93,40 @@ namespace LHCb {
 
     template <typename TYPE, typename ALLOC = VecPoolAlloc<TYPE>>
     using PoolAllocVector = FastAllocVector<TYPE, ALLOC>;
+
+    namespace Small {
+
+      //--------------------------------------------------------------------------------
+      /** @typedef Vector Kernel/FastAllocVector.h
+       *
+       *  Boost 'small' vector
+       *
+       *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+       *  @date   25/07/2019
+       */
+      //--------------------------------------------------------------------------------
+
+      template <typename TYPE, std::size_t N, typename ALLOC = boost::container::new_allocator<TYPE>>
+      class Vector : public boost::container::small_vector<TYPE, N, ALLOC> {
+
+      private:
+        /// Shortcut to the base class type
+        using BaseClass = boost::container::small_vector<TYPE, N, ALLOC>;
+
+      public:
+        /// Inherit all constructors
+        using BaseClass::BaseClass;
+
+      public:
+        /// Operator overloading for ostream
+        friend inline std::ostream& operator<<( std::ostream& str, const Vector<TYPE, N, ALLOC>& v ) {
+          str << "[ ";
+          for ( const auto& i : v ) { str << i << " "; }
+          return str << "]";
+        }
+      };
+
+    } // namespace Small
 
   } // namespace Boost
 
@@ -161,5 +186,3 @@ namespace LHCb {
   } // namespace STL
 
 } // namespace LHCb
-
-#endif // KERNEL_FastAllocVector_H
