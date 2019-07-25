@@ -47,7 +47,7 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, const bool dumpSma
   s << ( UNLIKELY( idType() == HPDID ) ? " HPD" : idType() == MaPMTID ? " PMT" : "UndefinedPD" );
 
   // if PMT add size (large or small)
-  if ( idType() == MaPMTID ) { s << ( isLargePMT() ? ":l" : ":s" ); }
+  if ( pdIsSet() && idType() == MaPMTID ) { s << ( isLargePMT() ? ":l" : ":s" ); }
 
   // Is this smart ID valid
   if ( isValid() ) {
