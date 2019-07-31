@@ -20,6 +20,31 @@ using namespace LHCb;
 //
 // 2014-03-06 : Karol Hennessy, Kurt Rinnert
 //-----------------------------------------------------------------------------
+namespace {
+  /// bank version. (change this every time semantics change!)
+  constexpr unsigned int c_bankVersion = 2;
+
+  /// to sort super pixels by column (major) and row (minor)
+  auto SPLowerThan = []( unsigned int lhs, unsigned int rhs ) { return ( lhs & 0x7FFF00 ) < ( rhs & 0x7FFF00 ); };
+
+  // convert channelID to super pixel words
+  struct sp_word {
+    sp_word( VPChannelID id ) noexcept {
+      const unsigned int chip      = id.chip();
+      const unsigned int row       = id.row();
+      const unsigned int col       = id.col();
+      const unsigned int sensorCol = col + 256 * chip;
+      const unsigned int spCol     = sensorCol / 2;
+      const unsigned int spRow     = row / 4;
+      addr                         = ( ( spCol << 6 ) | spRow );
+      ix                           = 0x1u << ( ( ( col % 2 ) * 4 ) + row % 4 );
+    }
+    unsigned int addr;
+    unsigned int ix;
+    unsigned int to_uint() const noexcept { return ( addr << 8 ) | ix; }
+  };
+
+} // namespace
 
 DECLARE_COMPONENT( VPSuperPixelBankEncoder )
 
@@ -27,26 +52,9 @@ DECLARE_COMPONENT( VPSuperPixelBankEncoder )
 // Constructor
 //=============================================================================
 VPSuperPixelBankEncoder::VPSuperPixelBankEncoder( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ), m_bankVersion( 2 ) {
+    : GaudiAlgorithm( name, pSvcLocator ) {
   declareProperty( "DigitLocation", m_digitLocation = LHCb::VPDigitLocation::Default );
   declareProperty( "RawEventLocation", m_rawEventLocation = LHCb::RawEventLocation::Default );
-}
-
-//=============================================================================
-// Destructor
-//=============================================================================
-VPSuperPixelBankEncoder::~VPSuperPixelBankEncoder() { ; }
-
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode VPSuperPixelBankEncoder::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) return sc;
-  m_isDebug   = msgLevel( MSG::DEBUG );
-  m_isVerbose = msgLevel( MSG::VERBOSE );
-  if ( m_isDebug ) debug() << "==> Initialise" << endmsg;
-  return StatusCode::SUCCESS;
 }
 
 //=============================================================================
@@ -54,10 +62,10 @@ StatusCode VPSuperPixelBankEncoder::initialize() {
 //=============================================================================
 StatusCode VPSuperPixelBankEncoder::execute() {
 
-  if ( m_isDebug ) debug() << "==> Execute" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
   ++m_evt;
   const VPDigits* digits = getIfExists<VPDigits>( m_digitLocation );
-  if ( NULL == digits ) { return Error( " ==> There are no VPDigits in TES! " ); }
+  if ( !digits ) { return Error( " ==> There are no VPDigits in TES! " ); }
 
   // Check if RawEvent exists
   RawEvent* rawEvent = getIfExists<RawEvent>( m_rawEventLocation );
@@ -68,56 +76,50 @@ StatusCode VPSuperPixelBankEncoder::execute() {
   }
 
   for ( auto& s : m_spBySensor ) {
-    s.clear();
     // put header word as first element (but don't know content yet)
-    s.push_back( 0 );
+    s = {0};
   }
 
   // Loop over digits create super pixel words and store them.
   // No assumption about the order of digits is made.
   for ( const auto& seed : *digits ) {
-    const unsigned int chip      = seed->channelID().chip();
-    const unsigned int row       = seed->channelID().row();
-    const unsigned int col       = seed->channelID().col();
-    const unsigned int sensor    = seed->channelID().sensor();
-    const unsigned int sensorCol = col + 256 * chip;
-    const unsigned int spCol     = sensorCol / 2;
-    const unsigned int spRow     = row / 4;
-    const unsigned int spAddr    = ( ( spCol << 6 ) | spRow );
-    const unsigned int spix      = 1 << ( ( ( col % 2 ) * 4 ) + row % 4 );
+    auto& sensor = m_spBySensor[seed->channelID().sensor()];
+    auto  sp     = sp_word{seed->channelID()};
 
-    auto j = std::find_if( m_spBySensor[sensor].begin(), m_spBySensor[sensor].end(),
-                           [&]( unsigned int s ) { return ( s >> 8 ) == spAddr; } );
+    auto j = std::find_if( sensor.begin(), sensor.end(), [&]( unsigned int s ) { return ( s >> 8 ) == sp.addr; } );
 
-    if ( j != m_spBySensor[sensor].end() ) {
-      *j |= spix;
+    if ( j != sensor.end() ) {
+      *j |= sp.ix;
     } else {
-      m_spBySensor[sensor].push_back( ( spAddr << 8 ) | spix );
+      sensor.push_back( sp.to_uint() );
     }
   }
 
-  // set 'no neighbour' hint flags
-  int dx[] = {-1, 0, 1, -1, 0, 1, -1, 1};
-  int dy[] = {-1, -1, -1, 1, 1, 1, 0, 0};
+  constexpr auto dx = std::array{-1, 0, 1, -1, 0, 1, -1, 1};
+  constexpr auto dy = std::array{-1, -1, -1, 1, 1, 1, 0, 0};
 
-  for ( unsigned int sens = 0; sens < m_spBySensor.size(); ++sens ) {
+  int total  = 0;
+  int sensor = 0;
+  for ( LHCb::span<unsigned int> data : m_spBySensor ) {
+    assert( !data.empty() ); // must have at least a header!
 
-    if ( m_spBySensor[sens].size() < 2 ) { continue; } // empty bank
+    auto spixels = data.subspan<1>(); // skip header word
+
+    // encode header.
+    data[0] = spixels.size(); // set correct number of super pixels
 
     // sort super pixels column major on each sensor
-    std::sort( m_spBySensor[sens].begin() + 1, m_spBySensor[sens].end(), SPLowerThan() );
+    std::sort( spixels.begin(), spixels.end(), SPLowerThan );
 
-    memset( m_buffer, 0, 24576 * sizeof( unsigned char ) );
-    m_idx.clear();
-    unsigned int nsp = m_spBySensor[sens].size();
-    for ( unsigned int j = 1; j < nsp; ++j ) {
-      unsigned int spw = m_spBySensor[sens][j];
+    // set 'no neighbour' hint flags
+    std::array<bool, VP::NPixelsPerSensor> buffer = {false}; // buffer for checking super pixel neighbours
+    for ( auto spw : spixels ) {
+      assert( ( spw & 0xFFu ) != 0 );
       unsigned int idx = ( spw >> 8 );
-      m_buffer[idx]    = spw & 0xFFU;
-      m_idx.push_back( j );
+      buffer[idx]      = true;
     }
-    for ( unsigned int ik = 0; ik < m_idx.size(); ++ik ) {
-      const unsigned int spw          = m_spBySensor[sens][m_idx[ik]];
+
+    for ( auto& spw : spixels ) {
       const unsigned int idx          = ( spw >> 8 );
       const unsigned int row          = idx & 0x3FU;
       const unsigned int col          = ( idx >> 6 );
@@ -128,33 +130,21 @@ StatusCode VPSuperPixelBankEncoder::execute() {
         const int ncol = col + dx[ni];
         if ( ncol < 0 || ncol > 383 ) continue;
         const unsigned int nidx = ( ncol << 6 ) | nrow;
-        if ( m_buffer[nidx] ) {
+        if ( buffer[nidx] ) {
           no_neighbour = 0;
           break;
         }
       }
-      m_spBySensor[sens][m_idx[ik]] = spw | ( no_neighbour << 31 );
+      spw |= ( no_neighbour << 31 );
     }
+
+    total += data.size_bytes();
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "evt " << m_evt << "sensor " << sensor << " sp " << data.size() << endmsg;
+
+    rawEvent->addBank( sensor++, LHCb::RawBank::VP, c_bankVersion, data );
   }
 
-  int total = 0;
-  for ( unsigned int sensor = 0; sensor < m_spBySensor.size(); sensor++ ) {
-
-    // encode header.
-    m_spBySensor[sensor][0] = m_spBySensor[sensor].size() - 1; // set correct number of super pixels
-
-    unsigned int banksize = sizeof( unsigned int ) * m_spBySensor[sensor].size();
-    total += banksize;
-    if ( m_isDebug )
-      debug() << "evt " << m_evt << "sensor " << sensor << " sp " << m_spBySensor[sensor].size() << endmsg;
-
-    LHCb::RawBank* spBank =
-        rawEvent->createBank( sensor, LHCb::RawBank::VP, m_bankVersion, banksize, &( m_spBySensor[sensor][0] ) );
-    // Add new bank and pass memory ownership to raw event
-    rawEvent->adoptBank( spBank, true );
-  }
-
-  if ( m_isDebug ) debug() << "total " << total << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "total " << total << endmsg;
 
   return StatusCode::SUCCESS;
 }
