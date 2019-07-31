@@ -15,7 +15,8 @@ gaudi_subdir(DetDesc v19r1)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          GaudiUtils
-                         Kernel/LHCbMath)
+                         Kernel/LHCbMath
+                         Kernel/LHCbKernel)
 
 find_package(Boost)
 find_package(VDT)

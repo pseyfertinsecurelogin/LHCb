@@ -10,9 +10,10 @@
 \*****************************************************************************/
 #pragma once
 
-#include <DetDesc/ConditionKey.h>
-#include <DetDesc/IConditionDerivationMgr.h>
-#include <GaudiKernel/StatusCode.h>
+#include "DetDesc/ConditionKey.h"
+#include "DetDesc/IConditionDerivationMgr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STLExtensions.h"
 #include <functional>
 #include <unordered_map>
 #include <vector>
@@ -31,7 +32,7 @@ namespace LHCb::DetDesc {
     /// Construct a transformation object declaring the list of inputs ConditionKey
     /// and the output ConditionKey, and a callback function to invoke when an
     /// update of the output Condition is required.
-    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output, ConditionCallbackFunction func );
+    ConditionDerivation( LHCb::span<const ConditionKey> inputs, ConditionKey output, ConditionCallbackFunction func );
 
     /// Althogh one should not specialize this class, a virtual destructor is needed
     /// to comply to IUpdateManagerSvc requirements.

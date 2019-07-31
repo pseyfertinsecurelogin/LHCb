@@ -24,7 +24,7 @@ IConditionDerivationMgr::DerivationId VPTrackingInfo::registerDerivation( ICondi
   // it was not, so we have to register it now.
   auto adapter = [minZ_forward, maxZ_backward]( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
                                                 Condition& output ) {
-    const auto vp = dynamic_cast<DeVP*>( ctx[VP_det_path] );
+    const auto vp = dynamic_cast<const DeVP*>( ctx[VP_det_path] );
     if ( !vp )
       throw GaudiException( "The object at " + VP_det_path + " is not a DeVP", "VPTrackingInfo", StatusCode::FAILURE );
     output.payload = VPTrackingInfo{*vp, minZ_forward, maxZ_backward};
@@ -32,10 +32,8 @@ IConditionDerivationMgr::DerivationId VPTrackingInfo::registerDerivation( ICondi
   // we declare a dependency on the detector and the conditions to make sure the call back
   // is called when there is a change we care about (even if in the code we seem to look
   // only at the detector)
-  if ( withAlignment )
-    return cdm.add( VP_paths, std::move( key ), std::move( adapter ) );
-  else
-    return cdm.add( {VP_det_path}, std::move( key ), std::move( adapter ) );
+  return withAlignment ? cdm.add( VP_paths, std::move( key ), std::move( adapter ) )
+                       : cdm.add( VP_det_path, std::move( key ), std::move( adapter ) );
 }
 
 VPTrackingInfo::VPTrackingInfo( const DeVP& vp, float minZ_forward, float maxZ_backward ) : m_vp{vp} {

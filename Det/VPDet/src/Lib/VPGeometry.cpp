@@ -20,7 +20,7 @@ IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( ICondition
   if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
   // it was not, so we have to register it now.
   auto adapter = []( const ConditionKey& /* target */, ConditionUpdateContext& ctx, Condition& output ) {
-    const auto vp = dynamic_cast<DeVP*>( ctx[VP_det_path] );
+    const auto vp = dynamic_cast<const DeVP*>( ctx[VP_det_path] );
     if ( !vp )
       throw GaudiException( "The object at " + VP_det_path + " is not a DeVP", "VPGeometry", StatusCode::FAILURE );
     output.payload = VPGeometry{*vp};
@@ -28,10 +28,8 @@ IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( ICondition
   // we declare a dependency on the detector and the conditions to make sure the call back
   // is called when there is a change we care about (even if in the code we seem to look
   // only at the detector)
-  if ( withAlignment )
-    return cdm.add( VP_paths, std::move( key ), std::move( adapter ) );
-  else
-    return cdm.add( {VP_det_path}, std::move( key ), std::move( adapter ) );
+  return withAlignment ? cdm.add( VP_paths, std::move( key ), std::move( adapter ) )
+                       : cdm.add( VP_det_path, std::move( key ), std::move( adapter ) );
 }
 
 //============================================================================
@@ -45,16 +43,16 @@ VPGeometry::VPGeometry( const DeVP& vp ) {
   std::copy( sensors.front()->xPitch().begin(), sensors.front()->xPitch().end(), m_x_pitch.begin() );
   m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
-  for ( unsigned i = 0; i < 208; ++i ) {
+  for ( const auto& sensor : sensors ) {
     // TODO:
     // if (!sensor->isReadOut()) continue;
-    auto sensor = sensors[i];
 
     // get the local to global transformation matrix and
     // store it in a flat float array of sixe 12.
     Gaudi::Rotation3D     ltg_rot;
     Gaudi::TranslationXYZ ltg_trans;
     sensor->geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
+    assert( sensor->sensorNumber() < m_ltg.size() );
     auto& ltg = m_ltg[sensor->sensorNumber()];
     ltg_rot.GetComponents( ltg.data() ); // writes to [ ltg[0], ltg[8] ]
     ltg[9]  = ltg_trans.X();

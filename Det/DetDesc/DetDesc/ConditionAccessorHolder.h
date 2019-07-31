@@ -22,7 +22,7 @@
 #include <GaudiKernel/StatusCode.h>
 
 #include <functional>
-#include <list>
+#include <queue>
 
 class EventContext;
 
@@ -64,7 +64,7 @@ namespace LHCb::DetDesc {
 
       while ( !m_delayedRegistrations.empty() ) {
         m_delayedRegistrations.front()();
-        m_delayedRegistrations.pop_front();
+        m_delayedRegistrations.pop();
       }
 
       return status;
@@ -99,8 +99,7 @@ namespace LHCb::DetDesc {
       if ( m_ums ) {
         m_ums->registerCondition( this, accessor.key(), nullptr, accessor.m_ptr );
       } else {
-        auto ptr = &accessor;
-        m_delayedRegistrations.emplace_back( [this, ptr]() { registerConditionAccessor( *ptr ); } );
+        m_delayedRegistrations.emplace( [this, ptr = &accessor]() { registerConditionAccessor( *ptr ); } );
       }
     }
 
@@ -113,6 +112,6 @@ namespace LHCb::DetDesc {
 
     /// ConditionAccessors are usually registered before initialization, so we need
     /// to postpone the actual registration to the UMS to the initialization.
-    std::list<std::function<void()>> m_delayedRegistrations;
+    std::queue<std::function<void()>> m_delayedRegistrations;
   };
 } // namespace LHCb::DetDesc
