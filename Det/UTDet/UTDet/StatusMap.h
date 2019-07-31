@@ -18,9 +18,8 @@
 #include "UTDet/DeUTSector.h"
 
 namespace Status {
-
-  typedef std::map<DeUTSector::Status, std::string> StatusToStringMap;
-  typedef std::vector<DeUTSector::Status>           StatusVector;
+  using StatusToStringMap = std::map<DeUTSector::Status, std::string>;
+  using StatusVector      = std::vector<DeUTSector::Status>;
 
   /** map conversion from enum to string */
   const StatusToStringMap& statusDescription();

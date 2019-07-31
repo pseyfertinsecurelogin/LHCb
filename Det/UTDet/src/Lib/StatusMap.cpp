@@ -9,12 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDet/StatusMap.h"
-#if !( defined( __GXX_EXPERIMENTAL_CXX0X__ ) || __cplusplus >= 201103L )
-#  include <boost/assign/list_of.hpp>
-#endif
+#include <string_view>
 
-const Status::StatusToStringMap& Status::statusDescription() {
-  static const Status::StatusToStringMap s_map = {{DeUTSector::OK, "OK"},
+namespace {
+  static const Status::StatusToStringMap s_map    = {{DeUTSector::OK, "OK"},
                                                   {DeUTSector::Open, "Open"},
                                                   {DeUTSector::Short, "Short"},
                                                   {DeUTSector::Pinhole, "Pinhole"},
@@ -25,41 +23,33 @@ const Status::StatusToStringMap& Status::statusDescription() {
                                                   {DeUTSector::OtherFault, "OtherFault"},
                                                   {DeUTSector::Dead, "Dead"},
                                                   {DeUTSector::UnknownStatus, "Unknown"}};
-  return s_map;
-}
+  static const Status::StatusVector      s_vec_bs = {DeUTSector::OK, DeUTSector::ReadoutProblems, DeUTSector::Dead,
+                                                DeUTSector::OtherFault};
+  static const Status::StatusVector      s_vec_ps = {DeUTSector::NotBonded};
+} // namespace
+
+const Status::StatusToStringMap& Status::statusDescription() { return s_map; }
 
 DeUTSector::Status Status::toStatus( const std::string& str ) {
-
-  const ::Status::StatusToStringMap&          statusMap = ::Status::statusDescription();
-  ::Status::StatusToStringMap::const_iterator iterMap   = statusMap.begin();
-  while ( iterMap != statusMap.end() ) {
-    if ( iterMap->second == str ) break;
-    ++iterMap;
-  } // iterMap
-  return ( iterMap == statusMap.end() ? DeUTSector::UnknownStatus : iterMap->first );
+  const auto& map = statusDescription();
+  auto        i   = std::find_if( map.begin(), map.end(), [&]( const auto& i ) { return i.second == str; } );
+  return i == map.end() ? DeUTSector::UnknownStatus : i->first;
 }
 
 std::string Status::toString( const DeUTSector::Status& tstatus ) {
-
-  const ::Status::StatusToStringMap&          statusMap = ::Status::statusDescription();
-  ::Status::StatusToStringMap::const_iterator iterMap   = statusMap.find( tstatus );
-  return ( iterMap == statusMap.end() ? "UnknownStatus" : iterMap->second );
+  const auto& map = statusDescription();
+  auto        i   = map.find( tstatus );
+  return i == map.end() ? "UnknownStatus" : i->second;
 }
 
-const Status::StatusVector& Status::validBeetleStates() {
-  static const StatusVector s_vec = {DeUTSector::OK, DeUTSector::ReadoutProblems, DeUTSector::Dead,
-                                     DeUTSector::OtherFault};
-  return s_vec;
-}
+const Status::StatusVector& Status::validBeetleStates() { return s_vec_bs; }
 
-const Status::StatusVector& Status::protectedStates() {
-  static const StatusVector s_vec = {DeUTSector::NotBonded};
-  return s_vec;
-}
+const Status::StatusVector& Status::protectedStates() { return s_vec_ps; }
 
 /** stream operator for status */
 std::ostream& operator<<( std::ostream& s, DeUTSector::Status e ) {
-  const Status::StatusToStringMap&          theMap = Status::statusDescription();
-  Status::StatusToStringMap::const_iterator iter   = theMap.find( e );
-  return ( iter == theMap.end() ? s << "Unknown" : s << iter->second );
+  using namespace std::string_view_literals;
+  const auto& map = Status::statusDescription();
+  auto        i   = map.find( e );
+  return s << ( i == map.end() ? "Unknown"sv : std::string_view{i->second} );
 }
