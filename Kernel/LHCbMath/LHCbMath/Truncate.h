@@ -49,7 +49,7 @@ namespace LHCb::Math {
 
         // scale factors for the given number of DP
         constexpr TYPE dp     = std::pow( UINT( 10u ), PRECISION );
-        constexpr TYPE inv_dp = 1.0f / TYPE( dp );
+        constexpr TYPE inv_dp = 1.0f / dp;
 
         // cast and return
         return static_cast<TYPE>( static_cast<INT>( x * dp ) ) * inv_dp;
@@ -68,7 +68,7 @@ namespace LHCb::Math {
 
         // scale factors for the given number of DP
         constexpr FP dp     = std::pow( UINT( 10u ), PRECISION );
-        constexpr FP inv_dp = 1.0f / FP( dp );
+        constexpr FP inv_dp = 1.0f / dp;
 
         // cast and return
         using namespace LHCb::SIMD;
