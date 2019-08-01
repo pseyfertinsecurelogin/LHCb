@@ -52,7 +52,7 @@ namespace LHCb::Math {
         constexpr TYPE inv_dp = 1.0f / TYPE( dp );
 
         // cast and return
-        return static_cast<TYPE>( static_cast<INT>( x * TYPE( dp ) ) ) * TYPE( inv_dp );
+        return static_cast<TYPE>( static_cast<INT>( x * dp ) ) * inv_dp;
 
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<TYPE> ) {
 

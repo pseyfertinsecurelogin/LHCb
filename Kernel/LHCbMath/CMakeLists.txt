@@ -113,6 +113,10 @@ if(GAUDI_BUILD_TESTS)
                        tests/kinematics.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+ gaudi_add_executable(TestTruncate
+                       tests/truncate.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
   gaudi_add_executable(TestLomont
                        tests/TestLomontCompare.cpp
                        INCLUDE_DIRS Boost GSL ROOT
