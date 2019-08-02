@@ -35,31 +35,33 @@
  *  @author Olivier Deschamps
  *  @date   2007-05-29
  */
-struct ICaloFuture2CaloFuture : public extend_interfaces<IAlgTool> {
+namespace Calo::Future::Interfaces {
+  struct ICalo2Calo : public extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  DeclareInterfaceID( ICaloFuture2CaloFuture, 4, 0 );
+    // Return the interface ID
+    DeclareInterfaceID( ICalo2Calo, 1, 0 );
 
-  virtual void setCalos( const std::string& from, const std::string& to ) = 0;
+    virtual void setCalos( const std::string& from, const std::string& to ) const = 0;
 
-  virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCluster& fromCluster,
-                                                        const std::string&       toCaloFuture ) = 0;
-  virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture,
-                                                        bool init = true )                = 0;
-  virtual const std::vector<LHCb::CaloCellID>& cellIDs()                                  = 0;
-  virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCellID& fromId,
-                                                       const std::string&      toCaloFuture )  = 0;
-  virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCluster& fromCluster,
-                                                       const std::string&       toCaloFuture )  = 0;
-  virtual const std::vector<LHCb::CaloDigit*>& digits()                                   = 0;
-  //
-  virtual double energy( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture )             = 0;
-  virtual double energy( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture )       = 0;
-  virtual double energy()                                                                              = 0;
-  virtual int    multiplicity( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture )       = 0;
-  virtual int    multiplicity( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) = 0;
-  virtual int    multiplicity()                                                                        = 0;
+    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCluster& fromCluster,
+                                                          const std::string&       toCaloFuture ) const                   = 0;
+    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCellID& fromId,
+                                                          const std::string& toCaloFuture, bool init = true ) const = 0;
+    virtual const std::vector<LHCb::CaloCellID>& cellIDs() const                                                    = 0;
+    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCellID& fromId,
+                                                         const std::string&      toCaloFuture ) const                    = 0;
+    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCluster& fromCluster,
+                                                         const std::string&       toCaloFuture ) const                    = 0;
+    virtual const std::vector<LHCb::CaloDigit*>& digits() const                                                     = 0;
+    //
+    virtual double energy( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture ) const             = 0;
+    virtual double energy( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const       = 0;
+    virtual double energy() const                                                                              = 0;
+    virtual int    multiplicity( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture ) const       = 0;
+    virtual int    multiplicity( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
+    virtual int    multiplicity() const                                                                        = 0;
 
-  virtual bool isLocalMax( const LHCb::CaloDigit& digit ) = 0;
-};
+    virtual bool isLocalMax( const LHCb::CaloDigit& digit ) const = 0;
+  };
+} // namespace Calo::Future::Interfaces
 #endif // ICALOFUTURE2CALOFUTURE_H

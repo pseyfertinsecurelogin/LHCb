@@ -11,7 +11,7 @@
 <lcgdict>
 
   <class name    = "IFutureCounterLevel"            />
-  <class name    = "ICaloFuture2CaloFuture"               />
+  <class name    = "Calo::Future::Interfaces::ICalo2Calo"               />
   <class name    = "ICaloFuture2MCTool"             />
   <class name    = "ICaloFutureClusterization"      />
   <class name    = "ICaloFutureClusterSelector"     />
@@ -27,9 +27,9 @@
   <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
   <class name    = "IPart2CaloFuture"               />
   <class name    = "ITrack2CaloFuture"              />
-  <class name    = "ICaloFutureHypo2CaloFuture"           />
+  <class name    = "Calo::Future::Interfaces::IHypo2Calo"           />
   <class name    = "ICaloFutureGetterTool"          />
-  <class name    = "ICaloFutureHypoEstimator"       />
+  <class name    = "Calo::Future::Interfaces::IHypoEstimator"       />
   <class name    = "IFutureGammaPi0SeparationTool"  />
   <class name    = "ICaloFutureRelationsGetter"     />
   <class name    = "Calo::Future::Interfaces::INeutralID"           />
