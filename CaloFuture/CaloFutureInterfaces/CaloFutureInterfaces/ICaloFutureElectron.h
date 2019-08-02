@@ -13,14 +13,20 @@
 
 // Include files
 // from STL
-#include <string>
+#include <string_view>
 
-#include "CaloFutureInterfaces/IPart2CaloFuture.h"
+// from Gaudi
+#include "GaudiKernel/IAlgTool.h"
+// from LHCb
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/CaloPosition.h"
+#include "Event/State.h"
+#include "Event/Track.h"
 
 // Forward declarations
 namespace LHCb {
-  class Particle;
   class ProtoParticle;
+  class CaloHypo;
   class CaloMomentum;
 } // namespace LHCb
 
@@ -30,25 +36,22 @@ namespace LHCb {
  *  @author Olivier Deschamps
  *  @date   2006-11-30
  */
-struct ICaloFutureElectron : public extend_interfaces<IPart2CaloFuture> {
+namespace Calo::Future::Interfaces {
+  struct IElectron : public extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  DeclareInterfaceID( ICaloFutureElectron, 4, 0 );
+    // Return the interface ID
+    DeclareInterfaceID( Calo::Future::Interfaces::IElectron, 1, 0 );
 
-  virtual bool               set( const LHCb::Particle* particle, std::string det = DeCalorimeterLocation::Ecal,
-                                  CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
-  virtual bool               set( const LHCb::ProtoParticle* proto, std::string det = DeCalorimeterLocation::Ecal,
-                                  CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
-  virtual double             eOverP()                                                               = 0;
-  virtual double             ecalE()                                                                = 0;
-  virtual LHCb::CaloHypo*    electron()                                                             = 0;
-  virtual LHCb::CaloHypo*    bremstrahlung()                                                        = 0;
-  virtual LHCb::CaloMomentum bremCaloFutureMomentum()                                               = 0;
+    virtual bool set( LHCb::ProtoParticle const* proto, std::string const& det = DeCalorimeterLocation::Ecal,
+                      CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
 
-  using ITrack2CaloFuture::closestState;
-  virtual LHCb::State closestState( std::string toWhat = "hypo" ) = 0;
-
-  virtual double caloTrajectoryZ( CaloPlane::Plane refPlane = CaloPlane::ShowerMax, std::string toWhat = "hypo" ) = 0;
-  virtual double caloTrajectoryL( CaloPlane::Plane refPlane = CaloPlane::ShowerMax, std::string toWhat = "hypo" ) = 0;
-};
+    virtual LHCb::State           caloState() const                                                         = 0;
+    virtual LHCb::State           closestState() const                                                      = 0;
+    virtual double                eOverP() const                                                            = 0;
+    virtual const LHCb::CaloHypo* electron() const                                                          = 0;
+    virtual const LHCb::CaloHypo* bremstrahlung() const                                                     = 0;
+    virtual LHCb::CaloMomentum    bremCaloFutureMomentum() const                                            = 0;
+    virtual double                caloTrajectoryL( CaloPlane::Plane refPlane = CaloPlane::ShowerMax ) const = 0;
+  };
+} // namespace Calo::Future::Interfaces
 #endif // ICALOFUTUREELECTRON_H

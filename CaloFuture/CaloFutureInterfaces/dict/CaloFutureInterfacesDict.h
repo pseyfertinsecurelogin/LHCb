@@ -33,7 +33,5 @@
 #include "CaloFutureInterfaces/IFutureCounterLevel.h"
 #include "CaloFutureInterfaces/IFutureGammaPi0SeparationTool.h"
 #include "CaloFutureInterfaces/IFutureNeutralIDTool.h"
-#include "CaloFutureInterfaces/IPart2CaloFuture.h"
-#include "CaloFutureInterfaces/ITrack2CaloFuture.h"
 
 #endif // DICT_CALOFUTUREINTERFACESDICT_H
