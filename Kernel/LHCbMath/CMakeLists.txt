@@ -204,7 +204,7 @@ if(GAUDI_BUILD_TESTS)
   set_property(SOURCE tests/TestVDTMathAVX512.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX512_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX512
                        tests/TestVDTMathAVX512.cpp
-                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       INCLUDE_DIRS VDT
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
 
   gaudi_add_executable(TestMathSpeedSSE4
