@@ -13,6 +13,9 @@
 #include "LHCbMath/FastMaths.h"
 #include "LHCbMath/SIMDTypes.h"
 
+// Gaudi
+#include "GaudiKernel/System.h"
+
 // local timing utils
 #include "../Timing.h"
 
@@ -121,23 +124,23 @@ const FloatV simdSum( 0 );
 
 int main( int /*argc*/, char** /*argv*/ ) {
 
-  //   // get instruction set level of CPU
-  //   const int cpulevel = instrset_detect();
+  // get instruction set level of CPU
+  const int cpulevel = System::instructionsetLevel();
 
-  //   // the compilation level
-  // #ifdef INSTRSET
-  //   const int complevel = INSTRSET;
-  // #else
-  //   const int complevel = 999;
-  // #endif
+  // the compilation level
+#ifdef INSTRSET
+  const int complevel = INSTRSET;
+#else
+  const int complevel = 999;
+#endif
 
-  //   // test if the CPU supports the compiled level
-  //   // if not, return the code that informs Gaudi the test was not run.
-  //   if ( cpulevel < complevel ) {
-  //     std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel
-  //               << ". Test will not be run." << std::endl;
-  //     return 77;
-  //   }
+  // test if the CPU supports the compiled level
+  // if not, return the code that informs Gaudi the test was not run.
+  if ( cpulevel < complevel ) {
+    std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel
+              << ". Test will not be run." << std::endl;
+    return 77;
+  }
 
   using namespace LHCb::Math;
   using namespace LHCb::Math::Approx;
