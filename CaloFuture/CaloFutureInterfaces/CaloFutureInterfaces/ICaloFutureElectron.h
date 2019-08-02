@@ -16,13 +16,12 @@
 #include <string>
 
 #include "CaloFutureInterfaces/IPart2CaloFuture.h"
-// from LHCb
-#include "CaloFutureUtils/CaloMomentum.h"
 
 // Forward declarations
 namespace LHCb {
   class Particle;
   class ProtoParticle;
+  class CaloMomentum;
 } // namespace LHCb
 
 /** @class ICaloFutureElectron ICaloFutureElectron.h Kernel/ICaloFutureElectron.h

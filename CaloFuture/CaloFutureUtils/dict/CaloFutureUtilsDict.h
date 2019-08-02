@@ -18,9 +18,9 @@
 #include "CaloFutureUtils/CaloFutureCellIDAsProperty.h"
 #include "CaloFutureUtils/CaloFutureParticle.h"
 #include "CaloFutureUtils/CaloFutureUtils.h"
-#include "CaloFutureUtils/CaloMomentum.h"
-#include "CaloFutureUtils/ICaloFutureElectron.h"
 #include "CaloFutureUtils/Kinematics.h"
+#include "CaloKernel/CaloVector.h"
+
 // ============================================================================
 // DigiEvent
 // ============================================================================
