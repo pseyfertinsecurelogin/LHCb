@@ -31,12 +31,12 @@
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich {
 
-  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below
-  /// Threshold')
-  static const std::uint16_t NParticleTypes = 7;
+  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron
+  /// and 'Below Threshold')
+  inline constexpr std::uint16_t NParticleTypes = 7;
 
   /// Number of 'real' RICH particle types (Electron, Muon, Pion, Kaon, Proton and Deuteron)
-  static const std::uint16_t NRealParticleTypes = 6;
+  inline constexpr std::uint16_t NRealParticleTypes = 6;
 
   //--------------------------------------------------------------------------
   /** @enum ParticleIDType

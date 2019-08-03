@@ -71,23 +71,32 @@ public:
   virtual StatusCode initialize() override;
 
   // Finds the next intersection point with radiator.
-  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal, const Gaudi::XYZVector& vGlobal,
-                                    Gaudi::XYZPoint& returnPoint ) const override;
+  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint&  pGlobal,    //
+                                    const Gaudi::XYZVector& vGlobal,    //
+                                    Gaudi::XYZPoint&        returnPoint //
+                                    ) const override;
 
   // Finds the entry and exit points of the radiator. For boolean solids
   // this is the first and last intersection point.
-  virtual StatusCode intersectionPoints( const Gaudi::XYZPoint& position, const Gaudi::XYZVector& direction,
-                                         Gaudi::XYZPoint& entryPoint, Gaudi::XYZPoint& exitPoint ) const override;
+  virtual StatusCode intersectionPoints( const Gaudi::XYZPoint&  position,   //
+                                         const Gaudi::XYZVector& direction,  //
+                                         Gaudi::XYZPoint&        entryPoint, //
+                                         Gaudi::XYZPoint&        exitPoint   //
+                                         ) const override;
 
   // Finds the intersection points with radiator. For boolean solids there
   // can be more than two intersection points
-  virtual unsigned int intersectionPoints( const Gaudi::XYZPoint& pGlobal, const Gaudi::XYZVector& vGlobal,
-                                           std::vector<Gaudi::XYZPoint>& points ) const override;
+  virtual unsigned int intersectionPoints( const Gaudi::XYZPoint&        pGlobal, //
+                                           const Gaudi::XYZVector&       vGlobal, //
+                                           std::vector<Gaudi::XYZPoint>& points   //
+                                           ) const override;
 
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
   //  can be more than one intersections
-  virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal, const Gaudi::XYZVector& vGlobal,
-                                      Rich::RadIntersection::Vector& intersections ) const override;
+  virtual unsigned int intersections( const Gaudi::XYZPoint&         pGlobal,      //
+                                      const Gaudi::XYZVector&        vGlobal,      //
+                                      Rich::RadIntersection::Vector& intersections //
+                                      ) const override;
 
   // Returns the refractive index at the given photon energy for this radiator
   virtual double refractiveIndex( const double energy, const bool hlt = true ) const override;
@@ -102,8 +111,11 @@ public:
 protected:
   /// prepare the momentum vector for the calculation of the
   /// refractive index
-  StatusCode prepareMomentumVector( std::vector<double>& photonMomentumVect, const double min, const double max,
-                                    const unsigned int nbins ) const;
+  StatusCode prepareMomentumVector( std::vector<double>& photonMomentumVect, //
+                                    const double         min,                //
+                                    const double         max,                //
+                                    const unsigned int   nbins               //
+                                    ) const;
 
 private:
   const ISolid*   m_solid    = nullptr; ///< top most solid of the radiator

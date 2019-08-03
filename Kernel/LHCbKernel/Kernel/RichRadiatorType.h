@@ -32,7 +32,7 @@
 namespace Rich {
 
   /// Number of RICH radiators
-  static const std::uint16_t NRadiatorTypes = 3;
+  inline constexpr std::uint16_t NRadiatorTypes = 3;
 
   /** @enum Rich::RadiatorType
    *

@@ -22,7 +22,9 @@
 #pragma once
 
 // STL
+#include <assert.h>
 #include <memory>
+#include <type_traits>
 
 // LHCbKernel
 #include "Kernel/RichSmartID.h"
@@ -33,6 +35,7 @@
 #include "RichDet/Rich1DTabProperty.h"
 
 // RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
 #include "RichUtils/RichSIMDTypes.h"
 
 //=============================================================================
@@ -65,6 +68,8 @@ public:
   inline const Rich::TabulatedProperty1D* pdQuantumEff() const noexcept { return m_pdQuantumEffFunc.get(); }
 
 public:
+  // types
+
   /// scalar FP type for SIMD objects
   using FP = Rich::SIMD::DefaultScalarFP;
   /// SIMD float type
@@ -76,7 +81,9 @@ public:
   /// SIMD uint32 type
   using SIMDUINT = Rich::SIMD::UInt32;
 
-public: // virtual methods to be implemented by derived classes
+public:
+  // virtual methods to be implemented by derived classes
+
   /** @brief Converts a RichSmartID to a point in global coordinates.
    *
    *  The point can be given either on the inside of the PD window (photocathode) if
@@ -91,8 +98,9 @@ public: // virtual methods to be implemented by derived classes
    *  @retval true  Conversion was successful
    *  @retval false Conversion failed
    */
-  virtual bool detectionPoint( const LHCb::RichSmartID smartID, Gaudi::XYZPoint& detectPoint,
-                               bool photoCathodeSide = false ) const = 0;
+  virtual bool detectionPoint( const LHCb::RichSmartID smartID,     //
+                               Gaudi::XYZPoint&        detectPoint, //
+                               bool                    photoCathodeSide = false ) const = 0;
 
   /** @brief Converts an 'SIMD' array of RichSmartIDs to an SIMD point in
    *         global coordinates.
@@ -107,10 +115,13 @@ public: // virtual methods to be implemented by derived classes
    *
    *  @return Mask indicating if the conversion was successful or not for each scalar entry
    */
-  virtual SIMDFP::mask_type detectionPoint( const SmartIDs& smartID, SIMDPoint& detectPoint,
-                                            bool photoCathodeSide = false ) const = 0;
+  virtual SIMDFP::mask_type detectionPoint( const SmartIDs& smartID,     //
+                                            SIMDPoint&      detectPoint, //
+                                            bool            photoCathodeSide = false ) const = 0;
 
 public:
+  // accessor methods
+
   /// Access the RICH
   inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
@@ -123,11 +134,31 @@ public:
   /// Access the effective number of active pixels
   inline float effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
 
+  /// Access the PD ID
+  inline const LHCb::RichSmartID& pdSmartID() const noexcept {
+    // only support PMTs. Validity check assures never used when not defined.
+    assert( m_pdSmartID.isValid() );
+    return m_pdSmartID;
+  }
+
+public:
+  // setter methods
+
+  /// Set the PD information
+  inline void setPDSmartID( const LHCb::RichSmartID id ) noexcept { m_pdSmartID = id; }
+
 private:
+  // data
+
+  /// PD SmartID
+  LHCb::RichSmartID m_pdSmartID;
+
   /// The RICH this PD is in
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
-protected: // to be initialised by derived classes
+protected:
+  // data to be initialised by derived classes
+
   /// Interpolated property for HPD quantum efficiency
   std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;
 

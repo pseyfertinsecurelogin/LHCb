@@ -717,23 +717,31 @@ namespace LHCb::Math {
       using namespace impl;
       if constexpr ( std::is_arithmetic_v<FP> ) {
         // scalar
-        const auto abs_y = std::fabs( y ); // + 1e-10f;
-        const auto neg_x = ( x < 0.0f );
-        const auto r     = ( neg_x //
-                             ? ( x + abs_y ) / ( abs_y - x )
-                             : ( x - abs_y ) / ( x + abs_y ) );
-        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + //
-                             ( ( ( 0.1963f * r * r ) - 0.9817f ) * r ) );
+        const auto abs_y     = std::fabs( y );
+        const auto neg_x     = ( x < 0.0f );
+        auto       x_p_abs_y = x + abs_y;
+        auto       x_m_abs_y = x - abs_y;
+        if ( 0.0f == x_p_abs_y ) { x_p_abs_y = 1e-10f; } // protects against /0
+        if ( 0.0f == x_m_abs_y ) { x_m_abs_y = 1e-10f; } // protects against /0
+        const auto r = ( neg_x                           //
+                             ? ( x_p_abs_y ) / ( -x_m_abs_y )
+                             : ( x_m_abs_y ) / ( x_p_abs_y ) );
+        // final angle
+        const auto angle = ( ( neg_x ? THREEPIO4 : PIO4F ) + ( ( ( 0.1963f * r * r ) - 0.9817f ) * r ) );
         // opposite sign if in quad III or IV
         return ( y < 0.0f ? -angle : angle );
       } else if constexpr ( LHCb::SIMD::is_SIMD_v<FP> ) {
         using namespace LHCb::SIMD;
-        const auto abs_y = abs( y ); // + FP( 1e-10f );
-        const auto neg_x = ( x < FP::Zero() );
-        auto       r     = ( x - abs_y ) / ( x + abs_y );
-        r( neg_x )       = -FP::One() / r;
-        auto angle       = iif( neg_x, FP( THREEPIO4 ), FP( PIO4F ) ) + //
-                     ( ( ( FP( 0.1963f ) * r * r ) - FP( 0.9817f ) ) * r );
+        const auto abs_y                     = abs( y );
+        const auto neg_x                     = ( x < FP::Zero() );
+        auto       x_p_abs_y                 = x + abs_y;
+        auto       x_m_abs_y                 = x - abs_y;
+        x_p_abs_y( FP::Zero() == x_p_abs_y ) = FP( 1e-10f ); // protects against /0
+        x_m_abs_y( FP::Zero() == x_m_abs_y ) = FP( 1e-10f ); // protects against /0
+        auto r                               = x_m_abs_y / x_p_abs_y;
+        r( neg_x )                           = -FP::One() / r;
+        // final angle
+        auto angle = iif( neg_x, FP( THREEPIO4 ), FP( PIO4F ) ) + ( ( ( FP( 0.1963f ) * r * r ) - FP( 0.9817f ) ) * r );
         // opposite sign if in quad III or IV
         angle( y < FP::Zero() ) *= -FP::One();
         // return

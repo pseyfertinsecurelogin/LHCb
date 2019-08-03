@@ -175,6 +175,8 @@ namespace Rich::Future {
   public:
     // mathematical operations (only for non-pointer types)
 
+    // in place operations
+
     /// multiple all hypotheses by given value
     inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>&> //
     operator*=( const TYPE value ) noexcept {
@@ -207,6 +209,40 @@ namespace Rich::Future {
       GAUDI_LOOP_UNROLL( Rich::NParticleTypes )
       for ( const auto& d : data.dataArray() ) { m_data[i++] += d; }
       return *this;
+    }
+
+    // create new arrays
+
+    /// multiple all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>> //
+    operator*( const TYPE value ) const noexcept {
+      HypoData<TYPE> ret = *this;
+      ret *= value;
+      return ret;
+    }
+
+    /// shift all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>> //
+    operator+( const TYPE value ) const noexcept {
+      HypoData<TYPE> ret = *this;
+      ret += value;
+      return ret;
+    }
+
+    /// multiple all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>> //
+    operator*( const HypoData<TYPE>& data ) const noexcept {
+      HypoData<TYPE> ret = *this;
+      ret *= data;
+      return ret;
+    }
+
+    /// shift all hypotheses by given value
+    inline std::enable_if_t<!std::is_pointer_v<TYPE>, HypoData<TYPE>> //
+    operator+( const HypoData<TYPE>& data ) const noexcept {
+      HypoData<TYPE> ret = *this;
+      ret += data;
+      return ret;
     }
 
   private:

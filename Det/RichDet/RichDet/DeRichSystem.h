@@ -275,6 +275,9 @@ public:
    */
   inline const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const { return dePDPanel( pdID )->dePD( pdID ); }
 
+  /// Is a 'large' PD
+  inline bool isLargePD( const LHCb::RichSmartID pdID ) const { return dePDPanel( pdID )->isLargePD( pdID ); }
+
 public:
   /**
    * Retrieves the location of the PD/PMT in the detector store, so it can be
@@ -297,7 +300,9 @@ private: // definitions
   // using MyMap = std::map< TO, FROM >;
   using MyMap = std::unordered_map<TO, FROM>;
 
-private: // methods
+private:
+  // methods
+
   /// Update methods for PD mappings
   StatusCode buildPDMappings();
 

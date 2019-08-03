@@ -34,10 +34,10 @@
 namespace Rich {
 
   /// Total number of PD panels
-  static const uint8_t NTotalPDPanels = 4;
+  inline constexpr uint16_t NTotalPDPanels = 4;
 
   /// Number of PD panels per RICH detector
-  static const uint8_t NPDPanelsPerRICH = 2;
+  inline constexpr uint16_t NPDPanelsPerRICH = 2;
 
   /** @enum Rich::Side
    *

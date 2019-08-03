@@ -39,7 +39,7 @@
  *  @author Sajan Easo
  *  @date   2011-10-10
  */
-class DeRichPMTPanelClassic : public DeRichPDPanel {
+class DeRichPMTPanelClassic final : public DeRichPDPanel {
 
 public:
   /// Standard constructor
@@ -69,47 +69,48 @@ public:
   // Access the DeRichPD object for a given PD RichSmartID
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
-  // Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const override final;
-
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   bool smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
-                                                     const Gaudi::XYZVector&   vGlobal,     //
-                                                     Gaudi::XYZPoint&          hitPosition, //
-                                                     LHCb::RichSmartID&        smartID,     //
-                                                     const DeRichPD*&          pd,          //
-                                                     const LHCb::RichTraceMode mode         //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                   //
+  detPlanePoint( const Gaudi::XYZPoint&    pGlobal,     //
+                 const Gaudi::XYZVector&   vGlobal,     //
+                 Gaudi::XYZPoint&          hitPosition, //
+                 LHCb::RichSmartID&        smartID,     //
+                 const DeRichPD*&          pd,          //
+                 const LHCb::RichTraceMode mode         //
+                 ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
-  LHCb::RichTraceMode::RayTraceResult PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
-                                                     const Gaudi::XYZVector&   vGlobal,           //
-                                                     Gaudi::XYZPoint&          windowPointGlobal, //
-                                                     LHCb::RichSmartID&        smartID,           //
-                                                     const DeRichPD*&          pd,                //
-                                                     const LHCb::RichTraceMode mode               //
-                                                     ) const override final;
+  LHCb::RichTraceMode::RayTraceResult                         //
+  PDWindowPoint( const Gaudi::XYZPoint&    pGlobal,           //
+                 const Gaudi::XYZVector&   vGlobal,           //
+                 Gaudi::XYZPoint&          windowPointGlobal, //
+                 LHCb::RichSmartID&        smartID,           //
+                 const DeRichPD*&          pd,                //
+                 const LHCb::RichTraceMode mode               //
+                 ) const override final;
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
-  SIMDRayTResult::Results PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  PDWindowPointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
-  SIMDRayTResult::Results detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
-                                             const SIMDVector&         vGlobal,     //
-                                             SIMDPoint&                hitPosition, //
-                                             SIMDRayTResult::SmartIDs& smartID,     //
-                                             SIMDRayTResult::PDs&      PDs,         //
-                                             const LHCb::RichTraceMode mode         //
-                                             ) const override final;
+  SIMDRayTResult::Results                                   //
+  detPlanePointSIMD( const SIMDPoint&          pGlobal,     //
+                     const SIMDVector&         vGlobal,     //
+                     SIMDPoint&                hitPosition, //
+                     SIMDRayTResult::SmartIDs& smartID,     //
+                     SIMDRayTResult::PDs&      PDs,         //
+                     const LHCb::RichTraceMode mode         //
+                     ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
   bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
@@ -117,7 +118,7 @@ public:
   /// Get tge sensitivevolumeID
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
 
-  /** Converts a RichSmartID to a point on the anode in global coordinates.
+  /** Converts a RichSmartID to a point on the anode in global coordinates.s
    *  @param[in] smartID The RichSmartID for the PMT channel
    *  @return The detection point on the anode in global coordinates
    */
@@ -129,10 +130,12 @@ public:
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
-  // The maximum PD copy number for this panel
-  Rich::DAQ::PDPanelIndex maxPdNumber() const override;
+  /// Is a 'large' PD
+  bool isLargePD( const LHCb::RichSmartID smartID ) const override;
 
 private:
+  // types
+
   using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
   using IGeomInfoV = std::vector<const IGeometryInfo*>;
@@ -143,7 +146,9 @@ private:
   using XYArraySIMD    = std::array<SIMDFP, 2>;
   using ArraySetupSIMD = std::array<SIMDINT32, 4>;
 
-private: // setup methods
+private:
+  // setup methods
+
   /// Update cached information on geometry changes
   StatusCode geometryUpdate();
 
@@ -160,36 +165,52 @@ private:
 
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept {
-    // check for now. to be removed.
-    if ( smartID.rich() != rich() || smartID.panel() != side() ) {
-      error() << "_pdNumber RICH and side error " << smartID << endmsg;
-    }
-    // Should never get different rich or panel, so skip check
-    // return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
-    //                                ( smartID.pdCol() * m_NumPmtInRichModule ) +
-    //                                smartID.pdNumInCol() : nPDs() + 1 );
-    return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
+    // checks
+    assert( smartID.rich() == rich() );
+    assert( smartID.panel() == side() );
+
+    // col number is local
+    // return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
+    // col number is global
+    return Rich::DAQ::PDPanelIndex( ( PmtModuleNumInPanelFromModuleNum( smartID.pdCol() ) * m_NumPmtInRichModule ) +
+                                    smartID.pdNumInCol() );
   }
 
-  const DeRichPMTClassic* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
-
   inline const DeRichPMTClassic* dePMT( const LHCb::RichSmartID pdID ) const {
+
     // get the lookup indices from the smart ID
     auto pdCol   = pdID.pdCol();
     auto pdInCol = pdID.pdNumInCol();
 
-    // if need be correct the pdCol (for data when it was incorrectly filled)
-    // this is temporary, can be removed when no longer needed...
-    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) {
-      pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol );
-    } // return the pointer from the array
-    return m_DePMTs[pdCol][pdInCol];
+    // Convert global module number to number in panel
+    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol ); }
 
-    // get the old way
-    // return dePMT( _pdNumber( pdID ) );
+    // the pointer from the array
+    const auto pd =
+        ( pdCol < m_DePMTs.size() && pdInCol < m_DePMTs[pdCol].size() ? m_DePMTs[pdCol][pdInCol] : nullptr );
+
+    // get the old (slower) way
+    // const auto pd = dePMT( _pdNumber( pdID ) );
+
+#ifndef NDEBUG // Sanity checks, only in debug builds
+
+    if ( pd ) {
+      if ( UNLIKELY( pd->pdSmartID().pdID() != pdID.pdID() ) ) {
+        error() << "Classic PMT ID mismatch !!!" << endmsg;
+        error() << "   -> requested " << pdID.pdID() << endmsg;
+        error() << "   -> retrieved " << pd->pdSmartID() << endmsg;
+      }
+    }
+
+#endif
+
+    // return
+    return pd;
   }
 
 private:
+  // methods
+
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept {
     const Int aPRow = ( aPmtNum / m_NumPmtInRowCol[0] );
     return {aPRow, ( Int )( aPmtNum - ( aPRow * m_NumPmtInRowCol[0] ) )};
@@ -200,8 +221,16 @@ private:
     return {aPRow, ( Int )( aPmtNum - ( aPRow * m_NumGrandPmtInRowCol[0] ) )};
   }
 
+  inline Int PmtModuleNumFromNumInPanel( const Int aMnum ) const noexcept {
+    return aMnum + m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
+  }
+
   inline Int PmtModuleNumInPanelFromModuleNum( const Int aMnum ) const noexcept {
     return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
+  }
+
+  inline SIMDINT32 PmtModuleNumInPanelFromModuleNum( const SIMDINT32& aMnum ) const noexcept {
+    return aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
   }
 
   inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept {
@@ -273,7 +302,9 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const;
+  /// get the array info
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint, //
+                                        const bool       includePixInfo = true ) const;
 
 private:
   // Simple struct to store module numbers
@@ -496,26 +527,16 @@ private:
 
 private:
   /// Gets the intersection with the panel (SIMD) in global panel coordinates
-  inline decltype( auto ) getPanelInterSection( const SIMDPoint&  pGlobal,          //
-                                                const SIMDVector& vGlobal,          //
-                                                SIMDPoint&        panelIntersection //
-                                                ) const noexcept {
+  inline SIMDPoint getPanelInterSection( const SIMDPoint&  pGlobal, //
+                                         const SIMDVector& vGlobal  //
+                                         ) const noexcept {
 
     // find the intersection with the detection plane
-    auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
+    const auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
 
-    // check norm
-    const auto sc = abs( scalar ) > SIMDFP( 1e-5 );
-
-    // Protect against /0
-    if ( !all_of( sc ) ) { scalar( !sc ) = SIMDFP::One(); }
-
-    // get panel intersection point
+    // return panel intersection point
     const auto distance = m_detectionPlaneSIMD.Distance( pGlobal ) / scalar;
-    panelIntersection   = pGlobal - ( distance * vGlobal );
-
-    // return
-    return sc;
+    return ( pGlobal - ( distance * vGlobal ) );
   }
 
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept {
@@ -541,18 +562,6 @@ private:
       }
       return m;
     }
-  }
-
-private:
-  /// utility method to convert a vector to an array of the same size.
-  template <typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE>
-  decltype( auto ) toarray( const std::vector<INTYPE>& v ) const {
-    if ( UNLIKELY( v.size() != N ) ) {
-      throw GaudiException( "Vector to Array Size Error", "DeRichPMTPanelClassic", StatusCode::FAILURE );
-    }
-    std::array<OUTTYPE, N> a;
-    std::copy( v.begin(), v.end(), a.begin() );
-    return a;
   }
 
 private:
@@ -668,6 +677,4 @@ private:
 
   std::vector<int>  m_Rich2MixedModuleArrayColumnSize{3, 0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
-
-  Rich::DAQ::PDPanelIndex m_maxPDCopyN{0};
 };

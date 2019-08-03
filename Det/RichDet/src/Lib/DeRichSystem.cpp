@@ -52,6 +52,7 @@ const CLID& DeRichSystem::classID() { return CLID_DERichSystem; }
 //  initialize
 //=========================================================================
 StatusCode DeRichSystem::initialize() {
+
   setMyName( "DeRichSystem" );
 
   _ri_debug << "Initialize " << name() << endmsg;
@@ -78,8 +79,9 @@ StatusCode DeRichSystem::initialize() {
   } else if ( m_photDetConf == Rich::HPDConfig ) {
     detCondNames.push_back( "Rich1DetectorNumbers" );
     detCondNames.push_back( "Rich2DetectorNumbers" );
-  } else
+  } else {
     return Error( "Unknown detector configuration. " );
+  }
 
   // check if the numbers match.
   if ( 0 != detCondNames.size() % deRichLocs.size() ) {
@@ -114,7 +116,7 @@ StatusCode DeRichSystem::initialize() {
   }
 
   // Run first update
-  const StatusCode sc = updMgrSvc()->update( this );
+  const auto sc = updMgrSvc()->update( this );
   if ( sc.isFailure() ) error() << "Failed to update mappings" << endmsg;
 
   _ri_debug << "DeRichSystem initialized " << endmsg;
@@ -298,12 +300,21 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
   _ri_verbo << "Condition InactiveHPDs = " << inacts << endmsg;
 
   // check consistency
-  if ( nPDs != softIDs.size() || nPDs != hardIDs.size() || nPDs != l1IDs.size() || nPDs != l0IDs.size() ||
-       nPDs != l1Ins.size() || nPDs != copyNs.size() ) {
-    error() << "Mismatch in " << rich << " PD numbering schemes : # PDs = " << nPDs
-            << " # SmartIDs = " << softIDs.size() << " # HardIDs = " << hardIDs.size() << " # L0IDs = " << l0IDs.size()
-            << " # L1BoardIDs = " << l1IDs.size() << " # L1InputIDs = " << l1Ins.size()
-            << " # CopyNumbers = " << copyNs.size() << endmsg;
+  if ( nPDs != softIDs.size() || //
+       nPDs != hardIDs.size() || //
+       nPDs != l1IDs.size() ||   //
+       nPDs != l0IDs.size() ||   //
+       nPDs != l1Ins.size() ||   //
+       nPDs != copyNs.size() ) {
+    error() << "Mismatch in " << rich                     //
+            << " PD numbering schemes : # PDs = " << nPDs //
+            << " # SmartIDs = " << softIDs.size()         //
+            << " # HardIDs = " << hardIDs.size()          //
+            << " # L0IDs = " << l0IDs.size()              //
+            << " # L1BoardIDs = " << l1IDs.size()         //
+            << " # L1InputIDs = " << l1Ins.size()         //
+            << " # CopyNumbers = " << copyNs.size()       //
+            << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -311,10 +322,18 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
   const auto saveL1size = m_l1IDs.size();
 
   // build cached mappings
-  for ( auto iSoft( softIDs.begin() ), iHard( hardIDs.begin() ), iL1( l1IDs.begin() ), iL1In( l1Ins.begin() ),
-        iL0( l0IDs.begin() ), icopyN( copyNs.begin() );
-        iSoft != softIDs.end() && iHard != hardIDs.end() && iL0 != l0IDs.end() && iL1 != l1IDs.end() &&
-        iL1In != l1Ins.end() && icopyN != copyNs.end();
+  for ( auto iSoft( softIDs.begin() ), //
+        iHard( hardIDs.begin() ),      //
+        iL1( l1IDs.begin() ),          //
+        iL1In( l1Ins.begin() ),        //
+        iL0( l0IDs.begin() ),          //
+        icopyN( copyNs.begin() );
+        iSoft != softIDs.end() && //
+        iHard != hardIDs.end() && //
+        iL0 != l0IDs.end() &&     //
+        iL1 != l1IDs.end() &&     //
+        iL1In != l1Ins.end() &&   //
+        icopyN != copyNs.end();
         ++iSoft, ++iHard, ++iL0, ++iL1, ++iL1In, ++icopyN ) {
 
     // get data
@@ -366,10 +385,9 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
     }
 
     // Fill maps
-    bool OK = true;
     m_allPDHardIDs.push_back( hardID );
     m_allPDSmartIDs.push_back( pdID );
-
+    bool OK = true;
     OK &= safeMapFill( pdID, hardID, m_soft2hard );
     OK &= safeMapFill( hardID, pdID, m_hard2soft );
     OK &= safeMapFill( L0ID, pdID, m_l0hard2soft );
@@ -411,10 +429,10 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
       auto data = id;
       // Strip extra " characters if present at start and end of string
       // To work around a small typo in the DB - Can be removed at some later date
-      if ( data[0] == '"' ) data = data.substr( 1, data.size() );
-      if ( data[data.size() - 1] == '"' ) data = data.substr( 0, data.size() - 1 );
+      if ( data[0] == '"' ) { data = data.substr( 1, data.size() ); }
+      if ( data[data.size() - 1] == '"' ) { data = data.substr( 0, data.size() - 1 ); }
       // Format of string is 'LogicalID/HardwareID'
-      const std::string::size_type slash = data.find_first_of( "/" );
+      const auto slash = data.find_first_of( "/" );
       if ( slash == 0 ) {
         error() << "Badly formed " << L1LogToHardMapName << " for " << rich << endmsg;
         return StatusCode::FAILURE;
@@ -441,8 +459,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
     }
   }
 
-  _ri_debug << "Built mappings for " << boost::format( "%2i" ) % ( m_l1IDs.size() - saveL1size ) << " L1 and " << nPDs
-            << " PDs in " << rich << endmsg;
+  _ri_debug << "Built mappings for " << boost::format( "%2i" ) % ( m_l1IDs.size() - saveL1size ) //
+            << " L1 and " << nPDs << " PDs in " << rich << endmsg;
 
   return StatusCode::SUCCESS;
 }

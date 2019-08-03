@@ -115,11 +115,6 @@ StatusCode DeRichHPDPanel::initialize() {
 }
 
 //=========================================================================
-// The maximum PD copy number for this panel
-//=========================================================================
-Rich::DAQ::PDPanelIndex DeRichHPDPanel::maxPdNumber() const { return Rich::DAQ::PDPanelIndex( m_DeHPDs.size() ); }
-
-//=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
 bool DeRichHPDPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmartID& id ) const {
@@ -158,7 +153,7 @@ bool DeRichHPDPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmar
   // if point still outside silicon flag an error
   if ( ( fabs( inSiliconX ) - m_siliconHalfLengthX > 1E-3 * Gaudi::Units::mm ) ||
        ( fabs( inSiliconY ) - m_siliconHalfLengthY > 1E-3 * Gaudi::Units::mm ) ) {
-    error() << "Point " << inSilicon << " is outside the silicon box " << dePD( HPDNumber )->name() << endmsg;
+    error() << "Point " << inSilicon << " is outside the silicon box " << deHPD( HPDNumber )->name() << endmsg;
     return false;
   }
 
@@ -474,11 +469,6 @@ int DeRichHPDPanel::sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) cons
 // Access the DeRichPD object for a given PD RichSmartID
 //=========================================================================
 const DeRichPD* DeRichHPDPanel::dePD( const LHCb::RichSmartID pdID ) const { return deHPD( _pdNumber( pdID ) ); }
-
-//=========================================================================
-// Returns the detector element for the given HPD number
-//=========================================================================
-const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const { return deHPD( PDNumber ); }
 
 //=========================================================================
 //  generate the transfroms for global <-> local frames

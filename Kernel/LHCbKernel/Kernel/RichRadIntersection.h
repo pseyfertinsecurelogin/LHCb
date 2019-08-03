@@ -19,8 +19,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef KERNEL_RichRadIntersection_H
-#define KERNEL_RichRadIntersection_H 1
+#pragma once
 
 // STL
 #include <algorithm>
@@ -209,5 +208,3 @@ namespace Rich {
   };
 
 } // namespace Rich
-
-#endif // KERNEL_RichRadIntersection_H
