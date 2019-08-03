@@ -786,18 +786,17 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
 }
 
 using namespace LHCb::DetDesc;
-IConditionDerivationMgr::DerivationId UpdateManagerSvc::add( std::vector<ConditionKey> inputs, ConditionKey output,
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::add( LHCb::span<const ConditionKey> inputs, ConditionKey output,
                                                              ConditionCallbackFunction func ) {
-  auto derivation =
-      std::make_unique<ConditionDerivation>( std::move( inputs ), std::move( output ), std::move( func ) );
+  auto derivation = std::make_unique<ConditionDerivation>( inputs, std::move( output ), std::move( func ) );
   derivation->registerDerivation( this, dataProvider() );
   m_derivations[m_nextDerivationId] = std::move( derivation );
   return m_nextDerivationId++;
 }
 IConditionDerivationMgr::DerivationId UpdateManagerSvc::derivationFor( const ConditionKey& key ) const {
-  for ( const auto& item : m_derivations )
-    if ( item.second->target() == key ) return item.first;
-  return IConditionDerivationMgr::NoDerivation;
+  auto i = std::find_if( m_derivations.begin(), m_derivations.end(),
+                         [&]( const auto& item ) { return item.second->target() == key; } );
+  return i != m_derivations.end() ? i->first : IConditionDerivationMgr::NoDerivation;
 }
 void UpdateManagerSvc::remove( DerivationId dId ) {
   auto node = m_derivations.extract( dId );

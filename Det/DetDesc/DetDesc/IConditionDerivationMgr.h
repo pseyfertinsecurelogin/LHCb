@@ -10,8 +10,9 @@
 \*****************************************************************************/
 #pragma once
 
-#include <DetDesc/ConditionKey.h>
-#include <GaudiKernel/IInterface.h>
+#include "DetDesc/ConditionKey.h"
+#include "GaudiKernel/IInterface.h"
+#include "Kernel/STLExtensions.h"
 #include <functional>
 #include <memory>
 #include <unordered_map>
@@ -21,7 +22,7 @@ class ParamValidDataObject;
 
 namespace LHCb::DetDesc {
   /// Class used to access the conditions accessible to the current transformation.
-  using ConditionUpdateContext = std::unordered_map<ConditionKey, ParamValidDataObject*>;
+  using ConditionUpdateContext = std::unordered_map<ConditionKey, ParamValidDataObject const*>;
 
   /// Type for a user provided callback function.
   /// The first argument is the ConditionKey of the target and is used to be
@@ -44,8 +45,11 @@ namespace LHCb::DetDesc {
     static constexpr DerivationId NoDerivation = -1;
 
     /// Add a condition derivation to the manager.
-    virtual DerivationId add( std::vector<ConditionKey> inputs, ConditionKey output,
+    virtual DerivationId add( LHCb::span<const ConditionKey> inputs, ConditionKey output,
                               ConditionCallbackFunction func ) = 0;
+    DerivationId         add( const ConditionKey& input, ConditionKey output, ConditionCallbackFunction func ) {
+      return add( LHCb::range::single{input}, std::move( output ), std::move( func ) );
+    }
 
     /// Method to find the DerivationId of the derivation responsible of producing
     /// the object with ConditionKey `key`.

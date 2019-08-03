@@ -19,18 +19,14 @@
 #include <memory>
 
 namespace LHCb::DetDesc {
-  ConditionDerivation::ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output,
+  ConditionDerivation::ConditionDerivation( LHCb::span<const ConditionKey> inputs, ConditionKey output,
                                             ConditionCallbackFunction func )
       : m_func{std::move( func )}, m_outputKey{std::move( output )} {
     for ( const auto& k : inputs ) m_condContext[k] = nullptr;
   }
 
   void ConditionDerivation::registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds ) {
-    // FIXME: clang-format-7 doesn't understand structured binding
-    // for ( auto& [in_path, input] : m_condContext ) {
-    for ( auto& item : m_condContext ) {
-      auto& in_path = item.first;
-      auto& input   = item.second;
+    for ( auto& [in_path, input] : m_condContext ) {
 
       DataObject* obj = nullptr;
       auto        sc  = dds->retrieveObject( in_path, obj );

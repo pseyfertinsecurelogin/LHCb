@@ -104,7 +104,7 @@ public:
   ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
 
   //@{
-  DerivationId add( std::vector<LHCb::DetDesc::ConditionKey> inputs, LHCb::DetDesc::ConditionKey output,
+  DerivationId add( LHCb::span<const LHCb::DetDesc::ConditionKey> inputs, LHCb::DetDesc::ConditionKey output,
                     LHCb::DetDesc::ConditionCallbackFunction func ) override;
   DerivationId derivationFor( const LHCb::DetDesc::ConditionKey& key ) const override;
   void         remove( DerivationId dId ) override;
