@@ -13,11 +13,9 @@
   <class name    = "IFutureCounterLevel"            />
   <class name    = "Calo::Future::Interfaces::ICalo2Calo"               />
   <class name    = "ICaloFuture2MCTool"             />
-  <class name    = "ICaloFutureClusterization"      />
   <class name    = "ICaloFutureClusterSelector"     />
   <class name    = "ICaloFutureClusterTool"         />
   <class name    = "ICaloFutureCorrection"          />
-  <class name    = "ICaloFutureDigitTool"           />
   <class name    = "ICaloFutureHypoLikelihood"      /> 
   <class name    = "Calo::Future::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
@@ -25,10 +23,7 @@
   <class name    = "ICaloFutureSubClusterTag"       />
   <class name    = "Calo::Future::Interfaces::ITrackIdEval"         />
   <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
-  <class name    = "IPart2CaloFuture"               />
-  <class name    = "ITrack2CaloFuture"              />
   <class name    = "Calo::Future::Interfaces::IHypo2Calo"           />
-  <class name    = "ICaloFutureGetterTool"          />
   <class name    = "Calo::Future::Interfaces::IHypoEstimator"       />
   <class name    = "IFutureGammaPi0SeparationTool"  />
   <class name    = "ICaloFutureRelationsGetter"     />
