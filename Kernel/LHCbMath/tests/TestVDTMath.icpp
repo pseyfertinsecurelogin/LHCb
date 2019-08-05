@@ -28,6 +28,9 @@
 #include <limits>
 #include <random>
 
+// VectorClass
+#include "instrset.h"
+
 // ============================================================================
 /** @file
  *  Test VDT Math Precision
