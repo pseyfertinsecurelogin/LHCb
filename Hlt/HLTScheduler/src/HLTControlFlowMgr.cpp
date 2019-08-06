@@ -330,7 +330,6 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
         m_algExecStateSvc->updateEventStatus( true, evtContext );
         fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
         Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::UnhandledException );
-        break;
       }
     }
 
@@ -410,6 +409,14 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   tbb::task_scheduler_init tbbSchedInit( m_threadPoolSize.value() + 1 );
   task_observer            taskObsv{};
 
+  auto shutdown_threadpool = [&]() {
+    if constexpr ( !use_debuggable_threadpool ) {
+      tbbSchedInit.terminate();             // non blocking
+      while ( taskObsv.m_thread_count > 0 ) // this is our "threads.join()" alternative
+        std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+    }
+  };
+
   // start with event 0
   m_nextevt = 0;
   // Run the first event before spilling more than one
@@ -469,6 +476,10 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   while ( maxEvtNotReached() ) {
     std::unique_lock<std::mutex> lock{m_createEventMutex};
     if ( m_createEventCond.wait_for( lock, 2ms, okToStartNewEvt ) ) {
+      if ( m_shutdown_now ) {
+        shutdown_threadpool();
+        return StatusCode::FAILURE;
+      }
       // in some cases, due to concurrency, we do not stop exactly at the given value.
       if ( UNLIKELY( static_cast<unsigned int>( m_stopTimeAtEvt ) < m_finishedEvt && !endTime && m_finishedEvt > 0 ) ) {
         m_stopTimeAtEvt = m_finishedEvt;
@@ -480,7 +491,10 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
       StatusCode sc         = executeEvent( std::move( evtContext ) );
       if ( m_nextevt == -1 ) break;
 
-      if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
+      if ( !sc.isSuccess() ) {
+        shutdown_threadpool();
+        return StatusCode::FAILURE; // else we have an success --> exit loop
+      }
       newEvtAllowed = true;
     }
   } // end main loop on finished events
@@ -490,11 +504,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
     m_stopTimeAtEvt = m_finishedEvt;
   }
 
-  if constexpr ( !use_debuggable_threadpool ) {
-    tbbSchedInit.terminate();             // non blocking
-    while ( taskObsv.m_thread_count > 0 ) // this is our "threads.join()" alternative
-      std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
-  }
+  shutdown_threadpool();
 
   delete m_evtSelContext;
   m_evtSelContext = nullptr;
@@ -544,19 +554,20 @@ StatusCode HLTControlFlowMgr::eventFailed( EventContext& eventContext ) const {
   std::ostringstream ost;
   m_algExecStateSvc->dump( ost, eventContext );
   info() << "Dumping Alg Exec State for slot " << eventContext.slot() << ":\n" << ost.str() << endmsg;
+  if ( ++m_failed_evts_detected > m_stopAfterNFailures ) { m_shutdown_now = true; }
   return StatusCode::FAILURE;
 }
 
 void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
-  // Check if the execution failed
-  if ( m_algExecStateSvc->eventStatus( eventContext ) != EventStatus::Success ) eventFailed( eventContext ).ignore();
   int si = eventContext.slot();
 
   // Schedule the cleanup of the event
   if ( m_algExecStateSvc->eventStatus( eventContext ) == EventStatus::Success ) {
+    m_failed_evts_detected = 0;
     if ( msgLevel( MSG::VERBOSE ) )
       verbose() << "Event " << eventContext.evt() << " finished (slot " << si << ")." << endmsg;
   } else {
+    eventFailed( eventContext ).ignore();
     fatal() << "Failed event detected on " << eventContext << endmsg;
   }
 
