@@ -38,10 +38,8 @@ namespace unique {
   };
 
   class A : public IFace, private InstanceCounter<A> {
-    int m_i;
 
   public:
-    A( int i ) : m_i( i ) {}
     ~A() {}
     std::unique_ptr<IFace> clone() const override { return std::make_unique<A>( *this ); }
     int                    f() const override { return 1; }
@@ -49,10 +47,8 @@ namespace unique {
   };
 
   class B : public IFace, private InstanceCounter<B> {
-    float m_f;
 
   public:
-    B( float f ) : m_f( f ) {}
     ~B() {}
     std::unique_ptr<IFace> clone() const override { return std::make_unique<B>( *this ); }
     int                    f() const override { return 3; }
@@ -69,10 +65,8 @@ namespace plain {
   };
 
   class A : public IFace, private InstanceCounter<A> {
-    int m_i;
 
   public:
-    A( int i ) : m_i( i ) {}
     ~A() {}
     A*  clone() const override { return new A( *this ); }
     int f() const override { return 1; }
@@ -80,10 +74,8 @@ namespace plain {
   };
 
   class B : public IFace, private InstanceCounter<B> {
-    float m_f;
 
   public:
-    B( float f ) : m_f( f ) {}
     ~B() {}
     B*  clone() const override { return new B( *this ); }
     int f() const override { return 3; }
@@ -113,13 +105,13 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_plain ) {
   BOOST_CHECK( InstanceCounter<plain::A>::count() == 0 );
   BOOST_CHECK( InstanceCounter<plain::B>::count() == 0 );
   {
-    auto c = Composite<plain::IFace>{std::make_unique<plain::A>( 1 )};
+    auto c = Composite<plain::IFace>{std::make_unique<plain::A>()};
     BOOST_CHECK( InstanceCounter<plain::A>::count() == 1 );
     auto d = c;
     BOOST_CHECK( InstanceCounter<plain::A>::count() == 2 );
     BOOST_CHECK( c.f() == 2 );
     BOOST_CHECK( std::as_const( c ).f() == 1 );
-    c.setIFace( std::make_unique<plain::B>( 1.5 ) );
+    c.setIFace( std::make_unique<plain::B>() );
     BOOST_CHECK( InstanceCounter<plain::A>::count() == 1 );
     BOOST_CHECK( InstanceCounter<plain::B>::count() == 1 );
     BOOST_CHECK( c.f() == 4 );
@@ -144,12 +136,12 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_unique ) {
   BOOST_CHECK( InstanceCounter<unique::A>::count() == 0 );
   BOOST_CHECK( InstanceCounter<unique::B>::count() == 0 );
   {
-    auto c = Composite<unique::IFace>{std::make_unique<unique::A>( 1 )};
+    auto c = Composite<unique::IFace>{std::make_unique<unique::A>()};
     BOOST_CHECK( InstanceCounter<unique::A>::count() == 1 );
     auto d = c;
     BOOST_CHECK( InstanceCounter<unique::A>::count() == 2 );
     c.f();
-    c.setIFace( std::make_unique<unique::B>( 1.5 ) );
+    c.setIFace( std::make_unique<unique::B>() );
     BOOST_CHECK( InstanceCounter<unique::A>::count() == 1 );
     BOOST_CHECK( InstanceCounter<unique::B>::count() == 1 );
     c.f();
@@ -173,12 +165,12 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_unique ) {
 }
 
 BOOST_AUTO_TEST_CASE( test_PolymorphicValue_compare ) {
-  auto iface_99 = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>( 99 )};
+  auto iface_99 = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>()};
 
   BOOST_CHECK( iface_99 == iface_99 );
   BOOST_CHECK( !( iface_99 != iface_99 ) );
 
-  auto iface_11 = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::B>( 11.0 )};
+  auto iface_11 = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::B>()};
   BOOST_CHECK( iface_99 != iface_11 );
   BOOST_CHECK( !( iface_99 == iface_11 ) );
 
@@ -204,7 +196,7 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_compare ) {
 #include <functional>
 
 BOOST_AUTO_TEST_CASE( test_PolymorphicValue_hash ) {
-  auto iface_a = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>( 99 )};
+  auto iface_a = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>()};
 
   auto ptr_a = iface_a.ptr();
   auto hash1 = std::hash<decltype( ptr_a )>{}( ptr_a );
@@ -213,7 +205,7 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_hash ) {
 }
 
 BOOST_AUTO_TEST_CASE( test_PolymorphicValue_deref ) {
-  auto iface_a = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>( 99 )};
+  auto iface_a = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>()};
 
   const auto& r = *iface_a;
   r.f();
