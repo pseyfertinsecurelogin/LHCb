@@ -79,6 +79,10 @@ public:
 
 private:
   int m_nextevt = 0;
+
+  mutable std::atomic<uint16_t> m_failed_evts_detected = 0;
+  mutable bool                  m_shutdown_now         = false;
+
   /// Declare the root address of the event
   std::optional<IOpaqueAddress*> declareEventRootAddress();
 
@@ -118,6 +122,9 @@ private:
   Gaudi::Property<int> m_stopTimeAtEvt{this, "StopTimeAtEvt", -1, "stop timing at this event. Counting from 0. \
                                           Default choice is deduced from #slots and #evts \
                                           to be reasonably far away from the end of processing"};
+
+  Gaudi::Property<int> m_stopAfterNFailures{this, "StopAfterNFailures", 3,
+                                            "Stop processing if this number of consecutive event failures happened"};
 
   /// Reference to the Event Data Service's IDataManagerSvc interface
   IDataManagerSvc* m_evtDataMgrSvc = nullptr;
