@@ -17,8 +17,7 @@
  *  @date   2005-11-21
  */
 // ============================================================================
-#ifndef LHCBMATH_LHCBMATH_H
-#define LHCBMATH_LHCBMATH_H 1
+#pragma once
 // ============================================================================
 // Include files
 // ============================================================================
@@ -27,6 +26,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <type_traits>
 #include <vector>
 // ============================================================================
 // LHCbMath
@@ -95,7 +95,8 @@ namespace LHCb {
     struct abs_less final {
       template <typename V1, typename V2>
       bool operator()( V1&& v1, V2&& v2 ) const {
-        return std::less{}( std::fabs( std::forward<V1>( v1 ) ), std::fabs( std::forward<V2>( v2 ) ) );
+        return std::less<typename std::common_type_t<V1, V2>>{}( std::fabs( std::forward<V1>( v1 ) ),
+                                                                 std::fabs( std::forward<V2>( v2 ) ) );
       }
     };
     // ========================================================================
@@ -108,7 +109,8 @@ namespace LHCb {
     struct abs_greater final {
       template <typename V1, typename V2>
       bool operator()( V1&& v1, V2&& v2 ) const {
-        return std::greater{}( std::abs( std::forward<V1>( v1 ) ), std::abs( std::forward<V1>( v2 ) ) );
+        return std::greater<typename std::common_type_t<V1, V2>>{}( std::abs( std::forward<V1>( v1 ) ),
+                                                                    std::abs( std::forward<V1>( v2 ) ) );
       }
     };
     // ========================================================================
@@ -1098,4 +1100,3 @@ namespace Gaudi {
 // ============================================================================
 // The END
 // ============================================================================
-#endif // LHCBMATH_LHCBMATH_H
