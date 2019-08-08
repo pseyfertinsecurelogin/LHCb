@@ -39,7 +39,6 @@ namespace BloomFilterImpl {
 #elif defined( __clang__ ) || ( defined( __INTEL_COMPILER ) && __INTEL_COMPILER >= 1400 )
   // ICC (the Intel C++ compiler) and Clang currently need a workarounds,
   // because they cannot deal with a constexpr std::log...
-#  warning "activating constexpr workarounds for std::log for Intel or clang compilers"
 #  if defined( __clang__ ) && ( __clang_major__ < 3 || ( __clang_major__ == 3 && __clang_minor__ <= 3 ) )
   static constexpr double abs( const double x ) { return ( x < 0. ) ? -x : x; }
 #  else

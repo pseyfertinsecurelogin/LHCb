@@ -23,11 +23,7 @@
 #include "RichUtils/RichSIMDTypes.h"
 
 // Vc
-// Note clang 5.0 has problems with Vc::vector.
-// See https://bugs.llvm.org/show_bug.cgi?id=26764
-#ifndef __clang__
-#  include <Vc/vector>
-#endif
+#include <Vc/vector>
 
 namespace Rich {
 
@@ -64,11 +60,8 @@ namespace Rich {
       }
 
     public:
-#ifndef __clang__
+      /// vector of bins
       using Vector = Vc::vector<Bin>;
-#else
-      using Vector = std::vector<Bin>;
-#endif
     };
 
   public:
@@ -118,20 +111,11 @@ namespace Rich {
     /** Returns the SIMD value for the given SIMD index and x value.
      *  Assumes range checking if required is already done. */
     inline SIMDFP value( const SIMDFP::index_type& index, const SIMDFP& x ) const noexcept {
-#ifndef __clang__
+
       // gather the m and c parameters for f(x) = m.x + c
       const SIMDFP m = m_data[index][&Bin::m];
       const SIMDFP c = m_data[index][&Bin::c];
-#else
-      // clang 5.0 has issues with Vc::vector. So fallback to scalar lookup.
-      SIMDFP m( SIMDFP::Zero() ), c( SIMDFP::Zero() );
-      GAUDI_LOOP_UNROLL( SIMDFP::Size )
-      for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
-        const auto& bin = m_data[index[i]];
-        m[i]            = bin.m;
-        c[i]            = bin.c;
-      }
-#endif
+
       // return the function values
       return ( m * x ) + c;
     }
