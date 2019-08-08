@@ -21,7 +21,7 @@
 #include <utility>
 
 // add a macro state assumptions
-#if defined(ASSUME)
+#if defined( ASSUME )
 #  undef ASSUME
 #endif
 #ifdef NDEBUG
@@ -36,6 +36,9 @@
 #  pragma GCC diagnostic ignored "-Wunused-parameter"
 #  define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
 #endif
+#include <cstddef>
+// cstddef must be defined _before_ gsl/span to make gsl::span use std::byte
+// instead of gsl::byte...
 #include "gsl/span"
 #ifdef NDEBUG
 #  pragma GCC diagnostic pop

@@ -68,8 +68,7 @@ StatusCode VPRetinaClusterDecoder::rebuildGeometry() {
   m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
   float ltg_rot_components[9];
-  for ( unsigned i = 0; i < 208; ++i ) {
-    auto sensor = sensors[i];
+  for ( const auto& sensor : sensors ) {
 
     // get the local to global transformation matrix and
     // store it in a flat float array of sixe 12.

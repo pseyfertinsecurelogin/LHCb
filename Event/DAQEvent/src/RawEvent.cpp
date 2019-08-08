@@ -12,7 +12,7 @@
 #include <cstring> // for memcpy with gcc 4.3
 
 namespace {
-  inline LHCb::RawBank* allocateBank( size_t len ) {
+  LHCb::RawBank* allocateBank( size_t len ) {
     size_t        mem_len = LHCb::RawEvent::paddedBankLength( len );
     size_t        new_len = mem_len / sizeof( unsigned int );
     unsigned int* mem     = new unsigned int[new_len];
@@ -44,11 +44,6 @@ LHCb::span<const LHCb::RawBank*> LHCb::RawEvent::mapBanks( RawBank::BankType ban
   }
   m_mapped = true;
   return m_eventMap[bankType];
-}
-
-// For offline use only: copy data into a set of banks, adding bank header internally.
-void LHCb::RawEvent::addBank( int srcID, LHCb::RawBank::BankType typ, int vsn, const std::vector<unsigned int>& data ) {
-  adoptBank( createBank( srcID, typ, vsn, data.size() * sizeof( unsigned int ), data.data() ), true );
 }
 
 LHCb::RawBank* LHCb::RawEvent::createBank( int srcID, LHCb::RawBank::BankType typ, int vsn, size_t len,

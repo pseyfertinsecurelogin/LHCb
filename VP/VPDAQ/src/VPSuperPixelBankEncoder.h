@@ -62,34 +62,15 @@ class VPSuperPixelBankEncoder : public GaudiAlgorithm {
 public:
   /// Standard constructor
   VPSuperPixelBankEncoder( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual ~VPSuperPixelBankEncoder(); ///< Destructor
-  StatusCode initialize() override;   ///< Algorithm initialization
-  StatusCode execute() override;      ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-  /// to sort super pixels by column (major) and row (minor)
-  struct SPLowerThan {
-    inline bool operator()( unsigned int lhs, unsigned int rhs ) const {
-      return ( lhs & 0x7FFF00 ) < ( rhs & 0x7FFF00 );
-    }
-  };
-
   /// where to get the digits from
   std::string m_digitLocation;
   /// where to write the clusters to
   std::string m_rawEventLocation;
-  /// bank version. (change this every time semantics change!)
-  const unsigned int m_bankVersion;
-  /// quick check for debug state
-  bool m_isDebug = false;
-  /// quick check for verbose state
-  bool m_isVerbose = false;
   /// event counter
   unsigned int m_evt = 0;
   /// per sensor buffers of super pixel words
-  std::array<std::vector<unsigned int>, 208> m_spBySensor;
-  /// buffer for checking super pixel neighbours
-  unsigned char m_buffer[VP::NPixelsPerSensor];
-  /// buffer for all non-zero super pixel indices on a sensor
-  std::vector<unsigned int> m_idx;
+  std::array<std::vector<unsigned int>, VP::NSensors> m_spBySensor;
 };

@@ -14,9 +14,11 @@
 // Include files
 #include "Event/RawBank.h"
 #include "GaudiKernel/DataObject.h"
+#include "Kernel/STLExtensions.h"
 #include <boost/container/static_vector.hpp>
 #include <map>
 #include <string>
+#include <type_traits>
 #include <vector>
 namespace LHCb {
 
@@ -140,7 +142,19 @@ namespace LHCb {
     unsigned int size() { return m_banks.size(); }
 
     /// For offline use only: copy data into a set of banks, adding bank header internally.
-    void addBank( int sourceID, RawBank::BankType bankType, int version, const std::vector<unsigned int>& data );
+    void addBank( int sourceID, RawBank::BankType bankType, int version, LHCb::span<const std::byte> data ) {
+      adoptBank( createBank( sourceID, bankType, version, data ), true );
+    }
+
+    template <typename ValueType, typename = std::enable_if_t<!std::is_convertible_v<ValueType, std::byte>>>
+    void addBank( int sourceID, RawBank::BankType bankType, int version, LHCb::span<ValueType> data ) {
+      addBank( sourceID, bankType, version, as_bytes( data ) );
+    }
+
+    template <typename ValueType>
+    void addBank( int sourceID, RawBank::BankType bankType, int version, const std::vector<ValueType>& data ) {
+      addBank( sourceID, bankType, version, LHCb::make_span( data ) );
+    }
 
     /// For offline use only: copy data into a bank, adding bank header internally.
     void addBank( const RawBank* data ); // Pointer to data block (payload) of bank
@@ -169,7 +183,12 @@ namespace LHCb {
      *
      *  @return Initialized Pointer to RawBank structure
      */
-    static RawBank* createBank( int srcID, RawBank::BankType typ, int vsn, size_t len, const void* data = 0 );
+    static RawBank* createBank( int srcID, RawBank::BankType typ, int vsn, size_t len, const void* data = nullptr );
+
+    template <typename ValueType>
+    static RawBank* createBank( int srcID, RawBank::BankType typ, int vsn, LHCb::span<ValueType> data ) {
+      return createBank( srcID, typ, vsn, data.size_bytes(), data.data() );
+    }
 
     /// Access the full length 32 bit aligned length of a bank in bytes
     /** Access full bank length

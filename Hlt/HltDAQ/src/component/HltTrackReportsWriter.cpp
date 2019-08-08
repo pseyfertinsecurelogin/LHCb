@@ -136,7 +136,7 @@ void HltTrackReportsWriter::convert( const std::string& location, unsigned sourc
     int  ioff  = iBank * 16300;
     auto isize = std::min( bankBody.size() - ioff, 16300ul );
     rawEvent->addBank( ( sourceID << kSourceID_BitShift ) | iBank, RawBank::HltTrackReports, kVersionNumber,
-                       {&bankBody[ioff], &bankBody[ioff + isize]} );
+                       LHCb::make_span( bankBody ).subspan( ioff, isize ) );
   }
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) && nBank > 1 ) {
     debug() << "HltTrackReports is huge. Saved in " << nBank << " separate RawBanks " << endmsg;
