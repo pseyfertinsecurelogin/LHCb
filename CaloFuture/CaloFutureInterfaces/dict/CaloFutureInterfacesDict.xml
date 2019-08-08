@@ -25,7 +25,7 @@
   <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
   <class name    = "Calo::Future::Interfaces::IHypo2Calo"           />
   <class name    = "Calo::Future::Interfaces::IHypoEstimator"       />
-  <class name    = "IFutureGammaPi0SeparationTool"  />
+  <class name    = "Calo::Future::Interfaces::IGammaPi0Separation"  />
   <class name    = "ICaloFutureRelationsGetter"     />
   <class name    = "Calo::Future::Interfaces::INeutralID"           />
   <class name    = "ICaloFutureShowerOverlapTool"   />
