@@ -27,9 +27,18 @@ namespace LHCb::Math {
   /// Precision type
   enum class PrecisionMode { Relative, Absolute };
 
+  namespace details {
+    /// clang does not have constexpr std::pow so roll our own for now... :(
+    template <typename TYPE>
+    inline constexpr std::enable_if_t<std::is_integral_v<TYPE>, TYPE> //
+    pow_of_ten( const TYPE i ) {
+      return ( 0 == i ? TYPE( 1u ) : TYPE( 10u ) * pow_of_ten( i - 1 ) );
+    }
+  } // namespace details
+
   /// Truncate the given value to a given number of decimal places
   template <PrecisionMode MODE,      ///< Precision mode (relative or absolute)
-            std::size_t   PRECISION, ///< Number of d.p. to truncate to
+            std::uint32_t PRECISION, ///< Number of d.p. to truncate to
             typename TYPE            ///< variable type
             >
   inline std::enable_if_t<std::is_floating_point_v<TYPE> || LHCb::SIMD::is_SIMD_v<TYPE>, TYPE>
@@ -45,10 +54,10 @@ namespace LHCb::Math {
         using UINT = std::conditional_t<std::is_same_v<TYPE, float>, std::uint32_t, std::uint64_t>;
 
         // sanity check on required precision level
-        static_assert( PRECISION <= std::log10( std::numeric_limits<UINT>::max() ) );
+        static_assert( PRECISION <= std::numeric_limits<UINT>::digits10 );
 
         // scale factors for the given number of DP
-        constexpr TYPE dp     = std::pow( UINT( 10u ), PRECISION );
+        constexpr TYPE dp     = details::pow_of_ten( UINT( PRECISION ) );
         constexpr TYPE inv_dp = 1.0f / dp;
 
         // cast and return
@@ -64,10 +73,10 @@ namespace LHCb::Math {
         using UINT = std::conditional_t<std::is_same_v<FP, float>, std::uint32_t, std::uint64_t>;
 
         // sanity check on required precision level
-        static_assert( PRECISION <= std::log10( std::numeric_limits<UINT>::max() ) );
+        static_assert( PRECISION <= std::numeric_limits<UINT>::digits10 );
 
         // scale factors for the given number of DP
-        constexpr FP dp     = std::pow( UINT( 10u ), PRECISION );
+        constexpr FP dp     = details::pow_of_ten( UINT( PRECISION ) );
         constexpr FP inv_dp = 1.0f / dp;
 
         // cast and return
