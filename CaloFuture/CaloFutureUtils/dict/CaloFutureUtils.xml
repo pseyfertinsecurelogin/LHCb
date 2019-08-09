@@ -21,7 +21,6 @@
 
 <lcgdict>
   
-  <class name      = "ICaloFutureElectron"      />
   <class name      = "LHCb::CaloFutureParticle" />
 
   <class    name   = "CaloFutureCellCode::Cell2String" />
