@@ -11,6 +11,7 @@
 #ifndef _DEUTDETECTOR_H_
 #define _DEUTDETECTOR_H_
 
+#include <assert.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -236,7 +237,10 @@ public:
   DeUTSector* getSector( unsigned int station, unsigned int layer, unsigned int region, unsigned int sector,
                          unsigned int uniqueSector ) const;
 
-  inline DeUTSector* getSectorDirect( const int fullChanIdx ) const { return m_sectors_direct[fullChanIdx]; }
+  inline DeUTSector* getSectorDirect( const unsigned int fullChanIdx ) const {
+    assert( fullChanIdx < m_sectors_direct.size() );
+    return m_sectors_direct[fullChanIdx];
+  }
 
   void setOffset();
 
