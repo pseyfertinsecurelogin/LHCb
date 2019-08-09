@@ -41,8 +41,8 @@ namespace Calo::Future::Interfaces {
       double spdm    = std::numeric_limits<double>::quiet_NaN();
     };
 
-    virtual double isNotE( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
-    virtual double isNotH( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
+    virtual std::optional<double> isNotE( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
+    virtual std::optional<double> isNotH( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
 
     virtual double isNotE( const Observables& v ) const = 0;
     virtual double isNotH( const Observables& v ) const = 0;

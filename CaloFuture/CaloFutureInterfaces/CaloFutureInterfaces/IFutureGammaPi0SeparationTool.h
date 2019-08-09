@@ -14,6 +14,7 @@
 // Include files
 // from STL
 #include <map>
+#include <optional>
 
 // from Gaudi
 #include "CaloFutureInterfaces/Enums.h"
@@ -33,8 +34,8 @@ namespace Calo::Future::Interfaces {
     // Return the interface ID
     DeclareInterfaceID( IGammaPi0Separation, 1, 0 );
 
-    virtual double                                  isPhoton( const LHCb::CaloHypo& hypo ) = 0;
-    virtual double                                  isPhoton( LHCb::span<const double> )   = 0;
+    virtual std::optional<double>                   isPhoton( const LHCb::CaloHypo& hypo ) = 0;
+    virtual std::optional<double>                   isPhoton( LHCb::span<const double> )   = 0;
     virtual const std::map<Enum::DataType, double>& inputDataMap()                         = 0;
   };
 } // namespace Calo::Future::Interfaces
