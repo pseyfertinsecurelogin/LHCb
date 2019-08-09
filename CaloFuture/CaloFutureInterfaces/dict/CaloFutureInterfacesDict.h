@@ -23,7 +23,6 @@
 #include "CaloFutureInterfaces/ICaloFutureLikelihood.h"
 #include "CaloFutureInterfaces/ICaloFutureRelationsGetter.h"
 #include "CaloFutureInterfaces/ICaloFutureShowerOverlapTool.h"
-#include "CaloFutureInterfaces/ICaloFutureSplitTool.h"
 #include "CaloFutureInterfaces/ICaloFutureSubClusterTag.h"
 #include "CaloFutureInterfaces/ICaloFutureTrackIdEval.h"
 #include "CaloFutureInterfaces/ICaloFutureTrackMatch.h"

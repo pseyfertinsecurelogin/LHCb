@@ -19,7 +19,6 @@
   <class name    = "ICaloFutureHypoLikelihood"      /> 
   <class name    = "Calo::Future::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
-  <class name    = "ICaloFutureSplitTool"           />
   <class name    = "ICaloFutureSubClusterTag"       />
   <class name    = "Calo::Future::Interfaces::ITrackIdEval"         />
   <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
