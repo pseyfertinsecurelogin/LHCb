@@ -181,7 +181,9 @@ public:
    * @param  aChannel channel
    * @return sector
    */
-  DeUTSector* getSector( const LHCb::UTChannelID aChannel ) const;
+  inline DeUTSector* getSector( const LHCb::UTChannelID chan ) const {
+    return getSector( chan.station(), chan.layer(), chan.detRegion(), chan.sector(), chan.uniqueSector() );
+  }
 
   /**
    *  short cut to pick up the wafer corresponding to a given nickname
@@ -242,12 +244,6 @@ public:
                          unsigned int sector,  //
                          unsigned int uniqueSector ) const;
 
-  inline DeUTSector* getSectorDirect( const unsigned int fullChanIdx ) const {
-    auto de = ( fullChanIdx < m_sectors_direct.size() ? m_sectors_direct[fullChanIdx] : nullptr );
-    assert( nullptr != de );
-    return de;
-  }
-
   void setOffset();
 
   /** find a list of sectors from channelIDs **/
@@ -272,9 +268,6 @@ protected:
   Stations m_stations;
 
   Sectors m_sectors;
-
-  /** Faster access to sectors (no offsets) **/
-  std::array<DeUTSector*, NBSTATION * NBLAYER * NBREGION * NBSECTOR> m_sectors_direct;
 
   Layers m_layers;
 

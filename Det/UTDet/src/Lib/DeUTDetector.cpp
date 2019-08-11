@@ -241,14 +241,14 @@ void DeUTDetector::setOffset() {
   assert( m_stations.size() == NBSTATION && "setOffset of UTDetector assumes a wrong number of station" );
 
   // add one offset for each region of each module of each layer of each station
-  int ir = 0;
+  std::size_t ir = 0;
   for ( auto ptrstation : m_stations ) {
     for ( auto ptrlayer : dynamic_cast<DeUTStation*>( ptrstation )->layers() ) {
 
       assert( dynamic_cast<DeUTStation*>( ptrstation )->layers().size() == NBLAYER &&
               "setOffset of UTDetector assumes a wrong number of layers per station" );
 #ifndef NDEBUG
-      int curr_nbreg = ir;
+      auto curr_nbreg = ir;
 #endif
       for ( const auto& ptrmodule : ptrlayer->modules() ) {
         const auto& vecptrsectors = ptrmodule->sectors();
@@ -258,18 +258,7 @@ void DeUTDetector::setOffset() {
           beginit     = false;
           assert( ir < m_offset.size() );
           m_offset[ir] = topoffset;
-          ir++;
-        }
-
-        for ( auto& sector : vecptrsectors ) {
-          const int idx =
-              ( ( ( ptrstation->id() - 1 ) * NBLAYER + ptrlayer->id() - 1 ) * NBREGION + ptrmodule->detRegion() - 1 ) *
-                  NBSECTOR +
-              sector->id() - 1;
-          assert( idx < m_sectors_direct.size() );
-          m_sectors_direct[idx] = sector;
-          // printf("i=%4d sector=%3d ir=%3d stat=%d, layer=%d, region=%d\n", idx, sector->id(), ir, ptrstation->id(),
-          // ptrlayer->id(), curr_region);
+          ++ir;
         }
 
         // move the total to the last offset
@@ -280,26 +269,31 @@ void DeUTDetector::setOffset() {
   }
 }
 
-DeUTSector* DeUTDetector::getSector( LHCb::UTChannelID chan ) const {
-  return getSector( chan.station(), chan.layer(), chan.detRegion(), chan.sector(), chan.uniqueSector() );
-}
-
 DeUTSector* DeUTDetector::getSector( unsigned int station, //
                                      unsigned int layer,   //
                                      unsigned int region,  //
                                      unsigned int sector,  //
                                      unsigned int uniqueSector ) const {
 
+  DeUTSector* res = nullptr;
+
   // helper to get index according to station/layer/region
   constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset{
       {{{{0, 1, 2}, {3, 4, 5}}}, {{{6, 7, 8}, {9, 10, 11}}}}};
 
-  // get index offset corresponding to the station/layer/region we want
-  auto idx_offset = get_idx_offset[station - 1][layer - 1][region - 1];
+  const unsigned int ista( station - 1u ), ilay( layer - 1u ), ireg( region - 1u ), isec( sector - 1u );
 
-  const auto i = getOffset( idx_offset ) + sector - 1;
-  assert( i < m_sectors.size() );
-  auto res = m_sectors[i];
+  // check for valid info...
+  if ( ista < NBSTATION && ilay < NBLAYER && ireg < NBREGION ) {
+
+    // get index offset corresponding to the station/layer/region we want
+    auto idx_offset = ( ( get_idx_offset[ista] )[ilay] )[ireg];
+
+    const auto i = getOffset( idx_offset ) + isec;
+
+    // assert( i < m_sectors.size() );
+    res = ( i < m_sectors.size() ? m_sectors[i] : nullptr );
+  }
 
   // debug check to be sure we find the same sector as findSector
   assert( [&]() {
