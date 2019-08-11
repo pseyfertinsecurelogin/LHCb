@@ -45,21 +45,6 @@
 #endif
 
 namespace LHCb {
-  /// An implementation (cut down) of 'std::make_array' based on
-  /// http://en.cppreference.com/w/cpp/experimental/make_array
-  /// Once we target gcc 6.1 or newer only, this can be removed
-  /// and <experimental/array> directly used instead.
-  template <typename... T>
-  [[deprecated( "use class template argument deduction instead, i.e. replace LHCb::make_array(...) with "
-                "std::array{...}" )]] constexpr decltype( auto )
-  make_array( T&&... values ) {
-    return std::array{std::forward<T>( values )...};
-  }
-
-  template <typename F, typename... Args>
-  [[deprecated( "use std::invoke instead" )]] decltype( auto ) invoke( F&& f, Args&&... args ) {
-    return std::invoke( std::forward<F>( f ), std::forward<Args>( args )... );
-  }
 
   // TODO: when we use a more recent version of range-v3, switch to its version of span
   using gsl::span;
@@ -133,7 +118,11 @@ namespace LHCb {
 
   template <typename Iterator, typename = std::enable_if_t<details_se::isContiguous<Iterator>()>>
   auto make_span( Iterator firstElem, Iterator lastElem ) {
-    return make_span( std::addressof( *firstElem ), std::distance( firstElem, lastElem ) );
+    // avoid forming a reference to *firstElem, as [firstElem,lastElem) may be an empty range,
+    // in which case *firstElem would be an invalid expression, and eg. std::addressof(*firstElem)
+    // would imply UB.
+    // C++20 FIXME: use std::to_address(firstElem)
+    return make_span( firstElem.operator->(), std::distance( firstElem, lastElem ) );
   }
 
   namespace range {
