@@ -248,7 +248,7 @@ void DeUTDetector::setOffset() {
       assert( dynamic_cast<DeUTStation*>( ptrstation )->layers().size() == NBLAYER &&
               "setOffset of UTDetector assumes a wrong number of layers per station" );
 #ifndef NDEBUG
-      auto curr_nbreg = ir;
+      const auto curr_nbreg = ir;
 #endif
       for ( const auto& ptrmodule : ptrlayer->modules() ) {
         const auto& vecptrsectors = ptrmodule->sectors();
@@ -281,6 +281,7 @@ DeUTSector* DeUTDetector::getSector( unsigned int station, //
   constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset{
       {{{{0, 1, 2}, {3, 4, 5}}}, {{{6, 7, 8}, {9, 10, 11}}}}};
 
+  // form array indices. 
   const unsigned int ista( station - 1u ), ilay( layer - 1u ), ireg( region - 1u ), isec( sector - 1u );
 
   // check for valid info...
@@ -290,18 +291,17 @@ DeUTSector* DeUTDetector::getSector( unsigned int station, //
     auto idx_offset = ( ( get_idx_offset[ista] )[ilay] )[ireg];
 
     const auto i = getOffset( idx_offset ) + isec;
-
     // assert( i < m_sectors.size() );
     res = ( i < m_sectors.size() ? m_sectors[i] : nullptr );
-  }
 
-  // debug check to be sure we find the same sector as findSector
-  assert( [&]() {
-    auto goodsector = m_sMap.find( uniqueSector )->second;
-    return goodsector == res;
-  }() && "getSector was not able to find the same UT Sector as findSector" );
-  // avoid warning in non debug mode
-  (void)uniqueSector;
+    // debug check to be sure we find the same sector as findSector
+    assert( [&]() {
+      auto goodsector = m_sMap.find( uniqueSector )->second;
+      return ( goodsector == res );
+    }() && "getSector was not able to find the same UT Sector as findSector" );
+    // avoid warning in non debug mode
+    (void)uniqueSector;
+  }
 
   return res;
 }
