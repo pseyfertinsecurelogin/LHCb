@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _UTTell1Board_H
-#define _UTTell1Board_H 1
+
+#pragma once
 
 #include "Kernel/UTChannelID.h"
 #include "Kernel/UTDAQDefinitions.h"
@@ -32,12 +32,12 @@ class UTTell1Board final {
 
 public:
   struct ExpandedChannelID {
-    unsigned int station;
-    unsigned int layer;
-    unsigned int detRegion;
-    unsigned int sector;
-    unsigned int uniqueSector;
-    unsigned int chanID;
+    unsigned int station{0};
+    unsigned int layer{0};
+    unsigned int detRegion{0};
+    unsigned int sector{0};
+    unsigned int uniqueSector{0};
+    unsigned int chanID{0};
   };
   typedef std::pair<LHCb::UTChannelID, int> chanPair;
 
@@ -109,7 +109,7 @@ private:
   std::string serviceBox( const unsigned int& waferIndex ) const;
 
   UTTell1ID                      m_boardID;
-  unsigned int                   m_nStripsPerHybrid;
+  unsigned int                   m_nStripsPerHybrid{0};
   std::vector<LHCb::UTChannelID> m_sectorsVector;
   std::vector<ExpandedChannelID> m_sectorsVectorOpt;
   std::vector<int>               m_orientation;
@@ -141,7 +141,7 @@ inline std::string UTTell1Board::serviceBox( const unsigned int& waferIndex ) co
 }
 
 inline std::string UTTell1Board::serviceBox( const LHCb::UTChannelID& chan ) const {
-  unsigned int waferIndex;
+  unsigned int waferIndex{0};
   isInside( chan, waferIndex );
   return serviceBox( waferIndex );
 }
@@ -153,5 +153,3 @@ inline bool UTTell1Board::validChannel( const unsigned int daqChan ) const {
 }
 
 inline unsigned int UTTell1Board::nSectors() const { return m_sectorsVector.size(); }
-
-#endif // _UTTell1Board_H
