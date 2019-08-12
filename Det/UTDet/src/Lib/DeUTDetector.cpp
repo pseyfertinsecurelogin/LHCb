@@ -281,7 +281,7 @@ DeUTSector* DeUTDetector::getSector( unsigned int station, //
   constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset{
       {{{{0, 1, 2}, {3, 4, 5}}}, {{{6, 7, 8}, {9, 10, 11}}}}};
 
-  // form array indices. 
+  // form array indices.
   const unsigned int ista( station - 1u ), ilay( layer - 1u ), ireg( region - 1u ), isec( sector - 1u );
 
   // check for valid info...

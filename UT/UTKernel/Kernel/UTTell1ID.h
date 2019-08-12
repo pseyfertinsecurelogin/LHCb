@@ -8,8 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _UTTell1ID_H
-#define _UTTell1ID_H 1
+
+#pragma once
+
+#include <iostream>
 
 /** @class UTTell1ID UTTell1ID.h "UTDAQ/UTTell1ID.h"
  *
@@ -18,8 +20,6 @@
  *  @author A. Beiter (based on code by M.Needham)
  *  @date   2018-09-04
  */
-
-#include <iostream>
 
 class UTTell1ID final {
 
@@ -82,7 +82,7 @@ private:
   enum bits { subIDBits = 0, regionBits = 5, regionBitsUT = 6 }; /// Enumeration to store the bit packing offsets
   enum masks { subIDMask = 0x0000001f, regionMask = 0x000000e0, subIDMaskUT = 0x0000003f, regionMaskUT = 0x000000c0 };
 
-  unsigned int m_id   = 0; /// UTell1ID
+  unsigned int m_id   = 0; ///< UTell1ID
   bool         m_isUT = false;
 };
 
@@ -108,16 +108,8 @@ inline unsigned int UTTell1ID::subID() const {
 }
 
 inline std::ostream& UTTell1ID::fillStream( std::ostream& s ) const {
-  s << "{ "
-    << " UTTell1ID:\t" << id() << std::endl
-    << " region:\t" << region() << std::endl
-    << " subID:\t" << subID();
-  if ( isUT() )
-    s << " isUT } ";
-  else
-    s << " } ";
-
+  s << "{ UTTell1ID: " << id() << " region: " << region() << " subID: " << subID();
+  if ( isUT() ) { s << " isUT"; }
+  s << " }";
   return s;
 }
-
-#endif // _UTTell1ID_H
