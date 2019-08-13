@@ -28,9 +28,6 @@ namespace Calo::Future::Interfaces {
     // Return the interface ID
     DeclareInterfaceID( INeutralID, 1, 0 );
 
-    virtual double isNotE( const LHCb::CaloHypo& hypo, ICaloFutureHypoEstimator* e = nullptr ) const = 0;
-    virtual double isNotH( const LHCb::CaloHypo& hypo, ICaloFutureHypoEstimator* e = nullptr ) const = 0;
-
     struct Observables {
       double clmatch = std::numeric_limits<double>::quiet_NaN();
       double prse    = std::numeric_limits<double>::quiet_NaN();
@@ -43,7 +40,9 @@ namespace Calo::Future::Interfaces {
       double prsm    = std::numeric_limits<double>::quiet_NaN();
       double spdm    = std::numeric_limits<double>::quiet_NaN();
     };
-    virtual Observables observables( const LHCb::CaloHypo& hypo ) const = 0;
+
+    virtual std::optional<double> isNotE( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
+    virtual std::optional<double> isNotH( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
 
     virtual double isNotE( const Observables& v ) const = 0;
     virtual double isNotH( const Observables& v ) const = 0;

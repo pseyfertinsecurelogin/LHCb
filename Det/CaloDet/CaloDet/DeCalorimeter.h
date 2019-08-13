@@ -163,93 +163,93 @@ public:
 
   // accessing readout parameters
   //-----------------------------
-  unsigned int numberOfCells() { return m_cells.size() - numberOfPins(); };
-  unsigned int numberOfCards() { return m_feCards.size(); };
-  unsigned int numberOfTell1s() { return m_tell1Boards.size(); };
-  unsigned int numberOfPins() { return m_pins.size(); };
-  unsigned int numberOfLeds() { return m_leds.size(); };
-  unsigned int numberOfInvalidCells() {
+  unsigned int numberOfCells() const { return m_cells.size() - numberOfPins(); };
+  unsigned int numberOfCards() const { return m_feCards.size(); };
+  unsigned int numberOfTell1s() const { return m_tell1Boards.size(); };
+  unsigned int numberOfPins() const { return m_pins.size(); };
+  unsigned int numberOfLeds() const { return m_leds.size(); };
+  unsigned int numberOfInvalidCells() const {
     return std::count_if( m_cells.begin(), m_cells.end(),
                           []( const CellParam& c ) { return !c.cellID().isPin() && !c.valid(); } );
   };
-  unsigned int pinArea() { return m_pinArea; };
+  unsigned int pinArea() const { return m_pinArea; };
   ///  Cell Parameters
-  inline bool   valid( const LHCb::CaloCellID& ) const;
-  inline double cellX( const LHCb::CaloCellID& ) const;
-  inline double cellY( const LHCb::CaloCellID& ) const;
-  inline double cellZ( const LHCb::CaloCellID& ) const;
-  inline double cellSize( const LHCb::CaloCellID& ) const;
-  inline double cellSine( const LHCb::CaloCellID& ) const;
-  inline double cellGain( const LHCb::CaloCellID& ) const;
+  bool   valid( const LHCb::CaloCellID& ) const;
+  double cellX( const LHCb::CaloCellID& ) const;
+  double cellY( const LHCb::CaloCellID& ) const;
+  double cellZ( const LHCb::CaloCellID& ) const;
+  double cellSize( const LHCb::CaloCellID& ) const;
+  double cellSine( const LHCb::CaloCellID& ) const;
+  double cellGain( const LHCb::CaloCellID& ) const;
   // convert ADC to energy in MeV for a given cellID
-  double cellEnergy( int adc, LHCb::CaloCellID id ) {
+  double cellEnergy( int adc, LHCb::CaloCellID id ) const {
     double offset = isPinId( id ) ? pinPedestalShift() : pedestalShift();
     return cellGain( id ) * ( (double)adc - offset );
   };
   // reverse operation : convert energy in MeV to ADC
-  double cellADC( double energy, LHCb::CaloCellID id ) {
+  double cellADC( double energy, LHCb::CaloCellID id ) const {
     double offset = isPinId( id ) ? pinPedestalShift() : pedestalShift();
     double gain   = cellGain( id );
     return ( gain > 0 ) ? floor( energy / gain + offset + 0.5 ) : 0;
   };
-  bool isSaturated( double energy, LHCb::CaloCellID id ) { return cellADC( energy, id ) + 256 >= adcMax(); }
+  bool isSaturated( double energy, LHCb::CaloCellID id ) const { return cellADC( energy, id ) + 256 >= adcMax(); }
 
-  inline double                cellTime( const LHCb::CaloCellID& ) const;
-  inline const Gaudi::XYZPoint cellCenter( const LHCb::CaloCellID& ) const;
-  inline const CaloNeighbors&  neighborCells( const LHCb::CaloCellID& ) const;
-  inline const CaloNeighbors&  zsupNeighborCells( const LHCb::CaloCellID& ) const;
-  inline bool                  hasQuality( const LHCb::CaloCellID&, CaloCellQuality::Flag flag );
-  inline bool                  isDead( const LHCb::CaloCellID& );
-  inline bool                  isNoisy( const LHCb::CaloCellID& );
-  inline bool                  isShifted( const LHCb::CaloCellID& );
-  inline bool                  hasDeadLED( const LHCb::CaloCellID& );
-  inline bool                  isVeryNoisy( const LHCb::CaloCellID& );
-  inline bool                  isVeryShifted( const LHCb::CaloCellID& );
+  double                cellTime( const LHCb::CaloCellID& ) const;
+  const Gaudi::XYZPoint cellCenter( const LHCb::CaloCellID& ) const;
+  const CaloNeighbors&  neighborCells( const LHCb::CaloCellID& ) const;
+  const CaloNeighbors&  zsupNeighborCells( const LHCb::CaloCellID& ) const;
+  bool                  hasQuality( const LHCb::CaloCellID&, CaloCellQuality::Flag flag ) const;
+  bool                  isDead( const LHCb::CaloCellID& ) const;
+  bool                  isNoisy( const LHCb::CaloCellID& ) const;
+  bool                  isShifted( const LHCb::CaloCellID& ) const;
+  bool                  hasDeadLED( const LHCb::CaloCellID& ) const;
+  bool                  isVeryNoisy( const LHCb::CaloCellID& ) const;
+  bool                  isVeryShifted( const LHCb::CaloCellID& ) const;
   // from cellId to  serial number and vice-versa
-  inline int              cellIndex( const LHCb::CaloCellID& ) const;
-  inline LHCb::CaloCellID cellIdByIndex( const unsigned int ) const;
+  int              cellIndex( const LHCb::CaloCellID& ) const;
+  LHCb::CaloCellID cellIdByIndex( const unsigned int ) const;
   // from cell to FEB
-  inline bool isReadout( const LHCb::CaloCellID& ) const;
-  inline int  cardNumber( const LHCb::CaloCellID& ) const;
-  inline int  cardRow( const LHCb::CaloCellID& ) const;
-  inline int  cardColumn( const LHCb::CaloCellID& ) const;
-  inline void cardAddress( const LHCb::CaloCellID& ID, int& card, int& row, int& col ) const;
+  bool isReadout( const LHCb::CaloCellID& ) const;
+  int  cardNumber( const LHCb::CaloCellID& ) const;
+  int  cardRow( const LHCb::CaloCellID& ) const;
+  int  cardColumn( const LHCb::CaloCellID& ) const;
+  void cardAddress( const LHCb::CaloCellID& ID, int& card, int& row, int& col ) const;
   //  FEB card
-  int                                         nCards() const { return m_feCards.size(); }
-  inline int                                  downCardNumber( const int card ) const;
-  inline int                                  leftCardNumber( const int card ) const;
-  inline int                                  cornerCardNumber( const int card ) const;
-  inline int                                  previousCardNumber( const int card ) const;
-  inline void                                 cardNeighbors( const int card, int& down, int& left, int& corner ) const;
-  inline int                                  validationNumber( const int card ) const;
-  inline int                                  selectionType( const int card ) const;
-  inline int                                  cardArea( const int card ) const;
-  inline int                                  cardFirstRow( const int card ) const;
-  inline int                                  cardLastColumn( const int card ) const;
-  inline int                                  cardLastRow( const int card ) const;
-  inline int                                  cardFirstColumn( const int card ) const;
-  inline int                                  cardFirstValidRow( const int card ) const;
-  inline int                                  cardLastValidRow( const int card ) const;
-  inline int                                  cardFirstValidColumn( const int card ) const;
-  inline int                                  cardLastValidColumn( const int card ) const;
-  inline LHCb::CaloCellID                     firstCellID( const int card ) const;
-  inline LHCb::CaloCellID                     lastCellID( const int card ) const;
-  inline LHCb::CaloCellID                     cardCellID( const int card, const int row, const int col ) const;
-  inline int                                  cardCrate( const int card ) const;
-  inline int                                  cardSlot( const int card ) const;
-  inline int                                  cardCode( const int card ) const;
-  inline const std::vector<LHCb::CaloCellID>& cardChannels( const int card );
-  inline const std::vector<LHCb::CaloCellID>& pinChannels( const LHCb::CaloCellID );
-  inline const std::vector<LHCb::CaloCellID>& ledChannels( const int led );
-  inline const std::vector<int>&              pinLeds( const LHCb::CaloCellID );
-  inline const std::vector<int>&              cellLeds( const LHCb::CaloCellID );
-  inline int                                  cardIndexByCode( const int crate, const int slot );
-  inline int                                  cardToTell1( const int card ) const;
+  int                                  nCards() const { return m_feCards.size(); }
+  int                                  downCardNumber( const int card ) const;
+  int                                  leftCardNumber( const int card ) const;
+  int                                  cornerCardNumber( const int card ) const;
+  int                                  previousCardNumber( const int card ) const;
+  void                                 cardNeighbors( const int card, int& down, int& left, int& corner ) const;
+  int                                  validationNumber( const int card ) const;
+  int                                  selectionType( const int card ) const;
+  int                                  cardArea( const int card ) const;
+  int                                  cardFirstRow( const int card ) const;
+  int                                  cardLastColumn( const int card ) const;
+  int                                  cardLastRow( const int card ) const;
+  int                                  cardFirstColumn( const int card ) const;
+  int                                  cardFirstValidRow( const int card ) const;
+  int                                  cardLastValidRow( const int card ) const;
+  int                                  cardFirstValidColumn( const int card ) const;
+  int                                  cardLastValidColumn( const int card ) const;
+  LHCb::CaloCellID                     firstCellID( const int card ) const;
+  LHCb::CaloCellID                     lastCellID( const int card ) const;
+  LHCb::CaloCellID                     cardCellID( const int card, const int row, const int col ) const;
+  int                                  cardCrate( const int card ) const;
+  int                                  cardSlot( const int card ) const;
+  int                                  cardCode( const int card ) const;
+  const std::vector<LHCb::CaloCellID>& cardChannels( const int card );
+  const std::vector<LHCb::CaloCellID>& pinChannels( const LHCb::CaloCellID );
+  const std::vector<LHCb::CaloCellID>& ledChannels( const int led );
+  const std::vector<int>&              pinLeds( const LHCb::CaloCellID );
+  const std::vector<int>&              cellLeds( const LHCb::CaloCellID );
+  int                                  cardIndexByCode( const int crate, const int slot );
+  int                                  cardToTell1( const int card ) const;
   // from validation to Hcal FEB
-  inline int validationToHcalFEB( const int validation, const unsigned int slot ) const;
+  int validationToHcalFEB( const int validation, const unsigned int slot ) const;
   // Tell1s
-  int                     nTell1s() const { return m_tell1Boards.size(); }
-  inline std::vector<int> tell1ToCards( const int tell1 ) const;
+  int              nTell1s() const { return m_tell1Boards.size(); }
+  std::vector<int> tell1ToCards( const int tell1 ) const;
   // CardParam/Tell1Param/CellParam
   const CardParam  cardParam( const int card ) { return ( card < nCards() ) ? m_feCards[card] : CardParam(); }
   const Tell1Param tell1Param( const int tell1 ) {
@@ -259,24 +259,24 @@ public:
   const CaloPin   caloPin( const LHCb::CaloCellID& id ) { return m_pins[id]; }
   const CaloLed   caloLed( const int led ) { return ( led < (int)m_leds.size() ) ? m_leds[led] : -1; }
   //  More complex functions
-  LHCb::CaloCellID        Cell( const Gaudi::XYZPoint& point ) const;
-  inline const CellParam* Cell_( const Gaudi::XYZPoint& point ) const;
+  LHCb::CaloCellID Cell( const Gaudi::XYZPoint& point ) const;
+  const CellParam* Cell_( const Gaudi::XYZPoint& point ) const;
   // Collections
-  const CaloVector<CellParam>&   cellParams() { return m_cells; }
-  const CaloVector<CaloPin>&     caloPins() { return m_pins; }
-  const std::vector<CaloLed>&    caloLeds() { return m_leds; }
-  const std::vector<CardParam>&  cardParams() { return m_feCards; }
-  const std::vector<Tell1Param>& tell1Params() { return m_tell1Boards; }
+  const CaloVector<CellParam>&   cellParams() const { return m_cells; }
+  const CaloVector<CaloPin>&     caloPins() const { return m_pins; }
+  const std::vector<CaloLed>&    caloLeds() const { return m_leds; }
+  const std::vector<CardParam>&  cardParams() const { return m_feCards; }
+  const std::vector<Tell1Param>& tell1Params() const { return m_tell1Boards; }
   // PIN flag
-  bool isParasiticCard( const int card ) { return ( card < nCards() ) ? m_feCards[card].isParasitic() : false; };
-  bool isPmtCard( const int card ) { return ( card < nCards() ) ? m_feCards[card].isPmtCard() : false; };
-  bool isPinCard( const int card ) { return ( card < nCards() ) ? m_feCards[card].isPinCard() : false; };
-  bool isPinTell1( const int tell1 ) { return ( tell1 < nTell1s() ) ? m_tell1Boards[tell1].readPin() : false; };
-  bool isPinId( LHCb::CaloCellID id ) { return ( (unsigned)m_pinArea == id.area() ) ? true : false; }
+  bool isParasiticCard( const int card ) const { return ( card < nCards() ) ? m_feCards[card].isParasitic() : false; };
+  bool isPmtCard( const int card ) const { return ( card < nCards() ) ? m_feCards[card].isPmtCard() : false; };
+  bool isPinCard( const int card ) const { return ( card < nCards() ) ? m_feCards[card].isPinCard() : false; };
+  bool isPinTell1( const int tell1 ) const { return ( tell1 < nTell1s() ) ? m_tell1Boards[tell1].readPin() : false; };
+  bool isPinId( LHCb::CaloCellID id ) const { return ( (unsigned)m_pinArea == id.area() ) ? true : false; }
   // pileUp subtraction parameters
-  int pileUpSubstractionMethod() { return m_puMeth; }
-  int pileUpSubstractionBin() { return m_puBin; }
-  int pileUpSubstractionMin() { return m_puMin; }
+  int pileUpSubstractionMethod() const { return m_puMeth; }
+  int pileUpSubstractionBin() const { return m_puBin; }
+  int pileUpSubstractionMin() const { return m_puMin; }
 
 private:
   ///  Initialization method for building the cells/cards/tell1/PIN layout
@@ -438,22 +438,26 @@ inline bool DeCalorimeter::valid( const LHCb::CaloCellID& ID ) const { return m_
 // ===========================================================================
 //  Quality flag for the cell
 // ===========================================================================
-inline bool DeCalorimeter::hasQuality( const LHCb::CaloCellID& ID, CaloCellQuality::Flag flag ) {
+inline bool DeCalorimeter::hasQuality( const LHCb::CaloCellID& ID, CaloCellQuality::Flag flag ) const {
   int quality = m_cells[ID].quality();
   return flag == CaloCellQuality::OK ? quality == 0 : ( ( quality & flag ) != 0 );
 }
-inline bool DeCalorimeter::isDead( const LHCb::CaloCellID& ID ) { return hasQuality( ID, CaloCellQuality::Dead ); }
-inline bool DeCalorimeter::isNoisy( const LHCb::CaloCellID& ID ) { return hasQuality( ID, CaloCellQuality::Noisy ); }
-inline bool DeCalorimeter::isShifted( const LHCb::CaloCellID& ID ) {
+inline bool DeCalorimeter::isDead( const LHCb::CaloCellID& ID ) const {
+  return hasQuality( ID, CaloCellQuality::Dead );
+}
+inline bool DeCalorimeter::isNoisy( const LHCb::CaloCellID& ID ) const {
+  return hasQuality( ID, CaloCellQuality::Noisy );
+}
+inline bool DeCalorimeter::isShifted( const LHCb::CaloCellID& ID ) const {
   return hasQuality( ID, CaloCellQuality::Shifted );
 }
-inline bool DeCalorimeter::hasDeadLED( const LHCb::CaloCellID& ID ) {
+inline bool DeCalorimeter::hasDeadLED( const LHCb::CaloCellID& ID ) const {
   return hasQuality( ID, CaloCellQuality::DeadLED );
 }
-inline bool DeCalorimeter::isVeryNoisy( const LHCb::CaloCellID& ID ) {
+inline bool DeCalorimeter::isVeryNoisy( const LHCb::CaloCellID& ID ) const {
   return hasQuality( ID, CaloCellQuality::VeryNoisy );
 }
-inline bool DeCalorimeter::isVeryShifted( const LHCb::CaloCellID& ID ) {
+inline bool DeCalorimeter::isVeryShifted( const LHCb::CaloCellID& ID ) const {
   return hasQuality( ID, CaloCellQuality::VeryShifted );
 }
 // ===========================================================================

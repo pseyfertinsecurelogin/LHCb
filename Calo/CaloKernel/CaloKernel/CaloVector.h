@@ -45,18 +45,19 @@ template <class CONTENT, class INDEX_ = LHCb::CaloCellID>
 class CaloVector final : private std::vector<CONTENT> {
 public:
   /// type fo content
-  typedef CONTENT Content;
+  using Content = CONTENT;
   /// own type
-  typedef std::vector<CONTENT>                    ContVector;
-  typedef ContVector                              Vector;
-  typedef typename Vector::iterator               iterator;
-  typedef typename Vector::const_iterator         const_iterator;
-  typedef typename Vector::reverse_iterator       reverse_iterator;
-  typedef typename Vector::const_reverse_iterator const_reverse_iterator;
-  typedef std::vector<int>                        Indices;
+  using ContVector             = std::vector<CONTENT>;
+  using Vector                 = ContVector;
+  using iterator               = typename Vector::iterator;
+  using const_iterator         = typename Vector::const_iterator;
+  using reverse_iterator       = typename Vector::reverse_iterator;
+  using const_reverse_iterator = typename Vector::const_reverse_iterator;
+  using const_reference        = typename Vector::const_reference;
+  using Indices                = std::vector<int>;
 
   /// type for the argument
-  typedef typename boost::call_traits<const INDEX_>::param_type INDEX;
+  using INDEX = typename boost::call_traits<const INDEX_>::param_type;
 
 public:
   /** constructor:
@@ -85,6 +86,10 @@ public:
   const_reverse_iterator rbegin() const { return Vector::rbegin(); }
   /// sequential access to content container (const version!)
   const_reverse_iterator rend() const { return Vector::rend(); }
+
+  decltype( auto ) front() const { return Vector::front(); }
+  decltype( auto ) back() const { return Vector::back(); }
+
   /// size of content container
   typename Vector::size_type size() const { return Vector::size(); }
   /// clear the container

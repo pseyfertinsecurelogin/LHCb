@@ -62,7 +62,7 @@ inline Gaudi::Plane3D DeCalorimeter::plane( const Gaudi::XYZPoint& global ) cons
  *  @return cell parameters (null if point is not in Calorimter
  */
 // ============================================================================
-const CellParam* DeCalorimeter::Cell_( const Gaudi::XYZPoint& globalPoint ) const {
+inline const CellParam* DeCalorimeter::Cell_( const Gaudi::XYZPoint& globalPoint ) const {
   // if the point is outside calorimeter
   const IGeometryInfo* geo = geometry();
   Assert( 0 != geo, " Unable to extract IGeometryInfo* " );

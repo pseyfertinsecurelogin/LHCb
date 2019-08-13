@@ -182,59 +182,11 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline int caloNum( const std::string& name ) {
-    typedef CALONAMES::const_iterator iterator;
-    iterator                          begin = CaloNames.begin();
-    iterator                          end   = CaloNames.end();
-    for ( iterator current = begin; current != end; ++current ) {
-      if ( current->size() <= name.size() && std::string::npos != name.find( *current ) ) { return current - begin; }
-    }
-    //
-    return -1; // RETURN
-  }
-  // ==========================================================================
-  /** get the calorimeter index from name, returns -1 for wrong name!
-   *  @param first (INPUT)  begin of the sequence
-   *  @param last  (INPUT)  end   of the sequence
-   *  @return calorimeter index from name, returns -1 for wrong name!
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  template <class ITERATOR>
-  inline int caloNum( ITERATOR first, ITERATOR last ) {
-    typedef CALONAMES::const_iterator iterator;
-    iterator                          begin = CaloNames.begin();
-    iterator                          end   = CaloNames.end();
-    std::size_t                       size  = std::distance( first, last );
-    for ( iterator current = begin; current != end; ++current ) {
-      if ( current->size() <= size && last != std::search( first, last, current->begin(), current->end() ) ) {
-        return current - begin;
-      } // RETURN
-    }
-    //
-    return -1; // RETURN
-  }
-  // ==========================================================================
-  /** get the calorimeter index from name, returns -1 for wrong name!
-   *  @paran name (INPUT) the calorimeter name (can be long string)
-   *  @return calorimeter index from name, returns -1 for wrong name!
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  template <unsigned N>
-  inline int caloNum( const char ( &name )[N] ) {
-    return caloNum( name, name + N );
-  }
-  // =========================================================================
-  /** get the calorimeter index from name, returns -1 for wrong name!
-   *  @paran name (INPUT) the calorimeter name (can be long string)
-   *  @return calorimeter index from name, returns -1 for wrong name!
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  template <unsigned N>
-  inline int caloNum( char ( &name )[N] ) {
-    return caloNum( name, name + N );
+  inline int caloNum( std::string_view name ) {
+    auto begin = CaloNames.begin();
+    auto end   = CaloNames.end();
+    auto m     = std::find_if( begin, end, [=]( const auto& i ) { return name.find( i ) != std::string_view::npos; } );
+    return m != end ? static_cast<int>( m - begin ) : -1;
   }
   // =========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!

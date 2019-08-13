@@ -29,7 +29,6 @@ class IRelation;
 
 namespace LHCb {
   class CaloHypo;
-  class CaloCluster;
 } // namespace LHCb
 
 /** @class ICaloFutureRelationsGetter ICaloFutureRelationsGetter.h
@@ -41,10 +40,9 @@ namespace LHCb {
 struct ICaloFutureRelationsGetter : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  DeclareInterfaceID( ICaloFutureRelationsGetter, 2, 0 );
+  DeclareInterfaceID( ICaloFutureRelationsGetter, 3, 0 );
 
-  virtual IRelationWeighted2D<LHCb::Track, LHCb::CaloHypo, float>*  getTrHypoTable2D( std::string location ) = 0;
-  virtual IRelation<LHCb::CaloHypo, float>*                         getHypoEvalTable( std::string location ) = 0;
-  virtual IRelationWeighted<LHCb::CaloCluster, LHCb::Track, float>* getClusTrTable( std::string location )   = 0;
+  virtual const IRelationWeighted2D<LHCb::Track, LHCb::CaloHypo, float>*
+  getTrHypoTable2D( std::string location ) const = 0;
 };
 #endif // ICALOFUTURERELATIONSGETTER_H
