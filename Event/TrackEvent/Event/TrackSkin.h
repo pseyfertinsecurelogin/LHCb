@@ -21,6 +21,7 @@ namespace LHCb::Event::v2 {
   SOAFIELD( TrackField, Track, SOAFIELD_ACCESSORS( track )
             auto pt() const { return track().pt(); }
             auto pseudoRapidity() const { return track().pseudoRapidity(); }
+            auto chi2PerDoF() const {return track().chi2PerDoF() ;}
             template <typename... Args>
             auto stateAt( Args&&... args ) const {
               return track().stateAt( std::forward<Args>( args )... );
