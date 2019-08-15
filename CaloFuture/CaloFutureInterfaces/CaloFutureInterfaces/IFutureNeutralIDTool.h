@@ -22,7 +22,7 @@
  *  @date   2013-07-25
  */
 
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct INeutralID : extend_interfaces<IAlgTool> {
 
     // Return the interface ID
@@ -41,11 +41,11 @@ namespace Calo::Future::Interfaces {
       double spdm    = std::numeric_limits<double>::quiet_NaN();
     };
 
-    virtual std::optional<double> isNotE( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
-    virtual std::optional<double> isNotH( const LHCb::CaloHypo& hypo, const Observables& v ) const = 0;
+    virtual std::optional<double> isNotE( const CaloHypo& hypo, const Observables& v ) const = 0;
+    virtual std::optional<double> isNotH( const CaloHypo& hypo, const Observables& v ) const = 0;
 
     virtual double isNotE( const Observables& v ) const = 0;
     virtual double isNotH( const Observables& v ) const = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // IFUTURENEUTRALIDTOOL_H

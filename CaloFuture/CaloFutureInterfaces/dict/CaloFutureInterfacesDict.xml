@@ -11,22 +11,22 @@
 <lcgdict>
 
   <class name    = "IFutureCounterLevel"            />
-  <class name    = "Calo::Future::Interfaces::ICalo2Calo"               />
+  <class name    = "LHCb::Calo::Interfaces::ICalo2Calo"               />
   <class name    = "ICaloFuture2MCTool"             />
   <class name    = "ICaloFutureClusterSelector"     />
   <class name    = "ICaloFutureClusterTool"         />
   <class name    = "ICaloFutureCorrection"          />
   <class name    = "ICaloFutureHypoLikelihood"      /> 
-  <class name    = "Calo::Future::Interfaces::IProcessHypos"            />
+  <class name    = "LHCb::Calo::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "ICaloFutureSubClusterTag"       />
-  <class name    = "Calo::Future::Interfaces::ITrackIdEval"         />
-  <class name    = "Calo::Future::Interfaces::ITrackMatch"          />
-  <class name    = "Calo::Future::Interfaces::IHypo2Calo"           />
-  <class name    = "Calo::Future::Interfaces::IHypoEstimator"       />
-  <class name    = "Calo::Future::Interfaces::IGammaPi0Separation"  />
+  <class name    = "LHCb::Calo::Interfaces::ITrackIdEval"         />
+  <class name    = "LHCb::Calo::Interfaces::ITrackMatch"          />
+  <class name    = "LHCb::Calo::Interfaces::IHypo2Calo"           />
+  <class name    = "LHCb::Calo::Interfaces::IHypoEstimator"       />
+  <class name    = "LHCb::Calo::Interfaces::IGammaPi0Separation"  />
   <class name    = "ICaloFutureRelationsGetter"     />
-  <class name    = "Calo::Future::Interfaces::INeutralID"           />
+  <class name    = "LHCb::Calo::Interfaces::INeutralID"           />
   <class name    = "ICaloFutureShowerOverlapTool"   />
 </lcgdict>
 

@@ -32,7 +32,7 @@ namespace LHCb {
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   30/10/2001
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct IProcessHypos : extend_interfaces<IAlgTool> {
 
     /** static interface identification
@@ -45,18 +45,18 @@ namespace Calo::Future::Interfaces {
      *  @param  hypos  range of pointers to CaloHypo objects to be processed
      *  @return status code
      */
-    // FIXME: the use of `LHCb::CaloHypo*` is temporary, waiting for a migration
+    // FIXME: the use of `CaloHypo*` is temporary, waiting for a migration
     //       from KeyedContainer to a plain vector. At that point this should
-    //       become LHCb::span<LHCb::CaloHypo> hypos...
-    virtual StatusCode process( LHCb::span<LHCb::CaloHypo* const> hypos ) const = 0;
+    //       become span<CaloHypo> hypos...
+    virtual StatusCode process( span<CaloHypo* const> hypos ) const = 0;
 
     /** The main processing method -- backwards compatibility for callers
      *  @param  hypo  reference to CaloHypo object to be processed
      *  @return status code
      */
-    StatusCode process( LHCb::CaloHypo& hypo ) const { return process( LHCb::range::single{&hypo} ); }
+    StatusCode process( CaloHypo& hypo ) const { return process( range::single{&hypo} ); }
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURECLUSTERTOOL_H

@@ -35,7 +35,7 @@
  *  @author Olivier Deschamps
  *  @date   2007-05-29
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct ICalo2Calo : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
@@ -43,25 +43,25 @@ namespace Calo::Future::Interfaces {
 
     virtual void setCalos( const std::string& from, const std::string& to ) const = 0;
 
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCluster& fromCluster,
-                                                          const std::string&       toCaloFuture ) const                   = 0;
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCellID& fromId,
-                                                          const std::string& toCaloFuture, bool init = true ) const = 0;
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs() const                                                    = 0;
-    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCellID& fromId,
-                                                         const std::string&      toCaloFuture ) const                    = 0;
-    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCluster& fromCluster,
-                                                         const std::string&       toCaloFuture ) const                    = 0;
-    virtual const std::vector<LHCb::CaloDigit*>& digits() const                                                     = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster& fromCluster,
+                                                    const std::string& toCaloFuture ) const = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCellID& fromId, const std::string& toCaloFuture,
+                                                    bool init = true ) const                = 0;
+    virtual const std::vector<CaloCellID>& cellIDs() const                                  = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCellID&  fromId,
+                                                   const std::string& toCaloFuture ) const  = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCluster& fromCluster,
+                                                   const std::string& toCaloFuture ) const  = 0;
+    virtual const std::vector<CaloDigit*>& digits() const                                   = 0;
     //
-    virtual double energy( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture ) const             = 0;
-    virtual double energy( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const       = 0;
-    virtual double energy() const                                                                              = 0;
-    virtual int    multiplicity( const LHCb::CaloCellID& fromId, const std::string& toCaloFuture ) const       = 0;
-    virtual int    multiplicity( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual int    multiplicity() const                                                                        = 0;
+    virtual double energy( const CaloCellID& fromId, const std::string& toCaloFuture ) const             = 0;
+    virtual double energy( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const       = 0;
+    virtual double energy() const                                                                        = 0;
+    virtual int    multiplicity( const CaloCellID& fromId, const std::string& toCaloFuture ) const       = 0;
+    virtual int    multiplicity( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
+    virtual int    multiplicity() const                                                                  = 0;
 
-    virtual bool isLocalMax( const LHCb::CaloDigit& digit ) const = 0;
+    virtual bool isLocalMax( const CaloDigit& digit ) const = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTURE2CALOFUTURE_H

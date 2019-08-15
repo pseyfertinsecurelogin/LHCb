@@ -11,7 +11,7 @@
 #pragma once
 #include <stdexcept>
 
-namespace Calo::Future::Enum {
+namespace LHCb::Calo::Enum {
 
   inline constexpr double Default = -1.e+06; // default value
 
@@ -327,4 +327,4 @@ namespace Calo::Future::Enum {
     }
     throw std::runtime_error( "Unknown ClusterType" );
   }
-} // namespace Calo::Future::Enum
+} // namespace LHCb::Calo::Enum
