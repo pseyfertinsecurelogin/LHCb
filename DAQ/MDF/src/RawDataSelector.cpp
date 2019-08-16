@@ -37,12 +37,7 @@ using namespace LHCb;
 
 /// Standard constructor
 RawDataSelector::LoopContext::LoopContext( const RawDataSelector* pSelector )
-    : m_sel( pSelector )
-    , m_fileOffset( 0 )
-    , m_ioMgr( m_sel->fileMgr() )
-    , m_connection( 0 )
-    , m_trgMask( 0 )
-    , m_vetoMask( 0 ) {}
+    : m_sel( pSelector ), m_ioMgr( m_sel->fileMgr() ) {}
 
 /// Set connection
 StatusCode RawDataSelector::LoopContext::connect( const std::string& specs ) {
@@ -64,7 +59,7 @@ void RawDataSelector::LoopContext::close() {
   if ( m_connection ) {
     m_ioMgr->disconnect( m_connection ).ignore();
     delete m_connection;
-    m_connection = 0;
+    m_connection = nullptr;
   }
 }
 
@@ -121,7 +116,7 @@ StatusCode RawDataSelector::initialize() {
 StatusCode RawDataSelector::finalize() {
   if ( m_ioMgr ) {
     m_ioMgr->release();
-    m_ioMgr = 0;
+    m_ioMgr = nullptr;
   }
   m_evtCount = 0;
   return Service::finalize();
@@ -129,7 +124,7 @@ StatusCode RawDataSelector::finalize() {
 
 StatusCode RawDataSelector::next( Context& ctxt ) const {
   LoopContext* pCtxt = dynamic_cast<LoopContext*>( &ctxt );
-  if ( pCtxt != 0 ) {
+  if ( pCtxt ) {
     ++m_evtCount;
     if ( m_printFreq > 0 && ( m_evtCount % m_printFreq ) == 0 ) {
       MsgStream log( msgSvc(), name() );
@@ -191,7 +186,7 @@ StatusCode RawDataSelector::createAddress( const Context& ctxt, IOpaqueAddress*&
       return S_OK;
     }
   }
-  pAddr = 0;
+  pAddr = nullptr;
   return S_ERROR;
 }
 

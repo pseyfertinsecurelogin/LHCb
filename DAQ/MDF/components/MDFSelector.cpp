@@ -48,7 +48,7 @@ namespace LHCb {
       setIgnoreChecksum( ignoreChcksum );
     }
     /// Standard destructor
-    ~MDFContext() {}
+    virtual ~MDFContext() {}
     /// Allocate buffer space for reading data
     MDFDescriptor getDataSpace( void* const ioDesc, size_t len ) override {
       io_context_t* par   = (io_context_t*)ioDesc;
@@ -128,17 +128,17 @@ namespace LHCb {
      * @return StatusCode indicating success or failure
      */
     StatusCode createContext( Context*& refpCtxt ) const override {
-      int c    = ::toupper( m_ignoreChecksum[0] );
-      refpCtxt = new MDFContext( this, c == 'Y' || c == 'T' ); // YES or TRUE
+      const int c   = ::toupper( m_ignoreChecksum[0] );
+      refpCtxt      = new MDFContext( this, c == 'Y' || c == 'T' ); // YES or TRUE
+      StatusCode sc = StatusCode::SUCCESS;
       if ( !m_input.empty() ) {
-        StatusCode sc = resetCriteria( m_input, *refpCtxt );
+        sc = resetCriteria( m_input, *refpCtxt );
         if ( !sc.isSuccess() ) {
           delete refpCtxt;
-          refpCtxt = 0;
+          refpCtxt = nullptr;
         }
-        return sc;
       }
-      return StatusCode::SUCCESS;
+      return sc;
     }
     /// Service Constructor
     MDFSelector( const std::string& nam, ISvcLocator* svcloc ) : RawDataSelector( nam, svcloc ) {

@@ -44,21 +44,21 @@ namespace LHCb {
     class LoopContext : public IEvtSelector::Context {
     protected:
       /// Owning event selector
-      const RawDataSelector* m_sel;
+      const RawDataSelector* m_sel = nullptr;
       /// Connection specs of current file
       std::string m_conSpec;
       /// Data holder
-      mutable std::pair<char*, int> m_data;
+      mutable std::pair<char*, int> m_data{nullptr, 0};
       /// Current file offset
-      long long m_fileOffset;
+      long long m_fileOffset{0};
       /// Pointer to file manager service
-      Gaudi::IIODataManager* m_ioMgr;
+      Gaudi::IIODataManager* m_ioMgr = nullptr;
       /// Pointer to file connection
-      Gaudi::IDataConnection* m_connection;
+      Gaudi::IDataConnection* m_connection = nullptr;
       /// Cached pointer to trigger mask of the event selector
-      const std::vector<unsigned int>* m_trgMask;
+      const std::vector<unsigned int>* m_trgMask = nullptr;
       /// Cached pointer to veto mask of the event selector
-      const std::vector<unsigned int>* m_vetoMask;
+      const std::vector<unsigned int>* m_vetoMask = nullptr;
 
     public:
       /// Standard constructor
@@ -75,9 +75,9 @@ namespace LHCb {
       virtual std::pair<char*, int> data() const { return m_data; }
       /// Release data buffer and give ownership to caller
       virtual std::pair<char*, int> releaseData() const {
-        std::pair<char*, int> tmp = m_data;
-        m_data.first              = 0;
-        m_data.second             = 0;
+        auto tmp      = m_data;
+        m_data.first  = nullptr;
+        m_data.second = 0;
         return tmp;
       }
       /// Receive event and update communication structure
@@ -201,11 +201,11 @@ namespace LHCb {
     /// Pointer to file manager service
     Gaudi::IIODataManager* m_ioMgr = nullptr;
     /// Property: First event to process
-    int m_skipEvents;
+    int m_skipEvents{0};
     /// Property: printout frequency
-    int m_printFreq;
+    int m_printFreq{0};
     /// Property: additional dataspace to be used to add data [KBYTES]. Default=0
-    int m_addSpace;
+    int m_addSpace{0};
     /// Property: required trigger mask from MDF header (only 128 bits significant)
     Mask m_trgMask;
     /// Property: veto mask from MDF header (only 128 bits significant)
