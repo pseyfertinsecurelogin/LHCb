@@ -26,7 +26,8 @@ IConditionDerivationMgr::DerivationId VPTrackingInfo::registerDerivation( ICondi
                                                 Condition& output ) {
     const auto vp = dynamic_cast<const DeVP*>( ctx[LHCb::Det::VP::det_path] );
     if ( !vp )
-      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present", "VPTrackingInfo", StatusCode::FAILURE );
+      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present",
+                            "VPTrackingInfo", StatusCode::FAILURE );
     output.payload = VPTrackingInfo{*vp, minZ_forward, maxZ_backward};
   };
   // we declare a dependency on the detector and the conditions to make sure the call back

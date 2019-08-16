@@ -24,7 +24,8 @@ IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( ICondition
   auto adapter = []( const ConditionKey& /* target */, ConditionUpdateContext& ctx, Condition& output ) {
     const auto vp = dynamic_cast<const DeVP*>( ctx[LHCb::Det::VP::det_path] );
     if ( !vp )
-      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present", "VPGeometry", StatusCode::FAILURE );
+      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present",
+                            "VPGeometry", StatusCode::FAILURE );
     output.payload = VPGeometry{*vp};
   };
   // we declare a dependency on the detector and the conditions to make sure the call back

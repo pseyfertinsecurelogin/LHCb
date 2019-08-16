@@ -83,10 +83,9 @@ public:
     } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->second->type() ); }
   }
   template <typename... T, typename... Names>
-  std::tuple<T const&... > params( Names&&... names ) const
-  {
-        static_assert(sizeof...(T) == sizeof...(Names));
-        return { param<T>(std::forward<Names>(names))... };
+  std::tuple<T const&...> params( Names&&... names ) const {
+    static_assert( sizeof...( T ) == sizeof...( Names ) );
+    return {param<T>( std::forward<Names>( names ) )...};
   }
 
   /// Give a read/write accessor to a parameter.
@@ -157,8 +156,7 @@ public:
     if ( !comment.empty() ) { m_comments[name] = comment; }
   }
 
-  void addBasicParam( const std::string& name, const BasicParam& p,
-                             const std::string& comment = std::string() ) {
+  void addBasicParam( const std::string& name, const BasicParam& p, const std::string& comment = std::string() ) {
     m_paramList.addBasicParam( name, p );
     if ( !comment.empty() ) { m_comments[name] = comment; }
   }

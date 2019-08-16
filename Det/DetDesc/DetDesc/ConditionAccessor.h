@@ -29,14 +29,14 @@ namespace LHCb::DetDesc {
 
   namespace details {
     template <typename T>
-    inline constexpr bool is_condition_type_v = std::is_base_of_v<ParamValidDataObject,T>;
+    inline constexpr bool is_condition_type_v = std::is_base_of_v<ParamValidDataObject, T>;
 
     template <typename T>
     using accessor_storage_t = std::conditional_t<is_condition_type_v<T>, T*, ParamValidDataObject*>;
 
     template <typename T>
     const T& extract_payload( const accessor_storage_t<T> ptr ) {
-      if constexpr (is_condition_type_v<T>) {
+      if constexpr ( is_condition_type_v<T> ) {
         return *ptr;
       } else {
         return *std::any_cast<T>( &ptr->payload );

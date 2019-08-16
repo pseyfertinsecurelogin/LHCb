@@ -23,4 +23,4 @@ namespace LHCb::Det::VP {
   static const LHCb::DetDesc::ConditionKey module_align = "/dd/Conditions/Alignment/VP/Module00";
 
   static const auto paths = std::array{det_path, system_align, module_align};
-} // namespace
+} // namespace LHCb::Det::VP
