@@ -56,20 +56,26 @@ IDQFilter::FlagsType CondDBDQScanner::scan( const Gaudi::Time& since, const Gaud
     Condition*      cond = nullptr;
     if ( m_converter->addressCreator()
              ->createAddress( XML_StorageType, Condition::classID(), par, ipar, addr )
-             .isFailure() ||
-         m_converter->createObj( addr, obj ).isFailure() || m_converter->fillObjRefs( addr, obj ).isFailure() ||
+             .isFailure() ||                                       //
+         m_converter->createObj( addr, obj ).isFailure() ||        //
+         m_converter->fillObjRefs( addr, obj ).isFailure() ||      //
          ( cond = dynamic_cast<Condition*>( obj ) ) == nullptr ) { // assignment intended
-      if ( addr ) delete addr;
-      if ( obj ) delete obj;
+      delete addr;
+      delete obj;
       Exception( "Conversion of Condition failed" );
       return flags; // never reached, but helps Coverity
     }
 
     // Merge the condition map with the collected one.
-    const IDQFilter::FlagsType& condFlags = cond->param<IDQFilter::FlagsType>( "map" );
+    const auto& condFlags = cond->param<IDQFilter::FlagsType>( "map" );
     flags.insert( condFlags.begin(), condFlags.end() );
 
+    // update time point
     cursor = cond->validTill();
+
+    // finally clean up
+    delete addr;
+    delete cond;
   }
 
   return flags;
