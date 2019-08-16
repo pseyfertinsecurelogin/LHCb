@@ -16,23 +16,17 @@ using namespace LHCb::DetDesc;
 IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( IConditionDerivationMgr& cdm, ConditionKey key,
                                                                       bool withAlignment ) {
 
-  // registerDerivation( cdm, key,
-  // check if the derivation was already registered
-  auto dId = cdm.derivationFor( key );
-  if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
-  // it was not, so we have to register it now.
-  auto adapter = []( const ConditionKey& /* target */, ConditionUpdateContext& ctx, Condition& output ) {
-    const auto vp = dynamic_cast<const DeVP*>( ctx[LHCb::Det::VP::det_path] );
-    if ( !vp )
-      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present",
-                            "VPGeometry", StatusCode::FAILURE );
-    output.payload = VPGeometry{*vp};
-  };
-  // we declare a dependency on the detector and the conditions to make sure the call back
-  // is called when there is a change we care about (even if in the code we seem to look
-  // only at the detector)
-  return withAlignment ? cdm.add( LHCb::Det::VP::paths, std::move( key ), std::move( adapter ) )
-                       : cdm.add( LHCb::Det::VP::det_path, std::move( key ), std::move( adapter ) );
+  // in case of withAlignment, we declare a dependency on the detector and the two additional conditions
+  // to make sure the call back is called when there is a change we care about (even if in the code we
+  // seem to look only at the detector)
+  //
+  // Please note that the number of arguments to the 'transformer' must match the inputkeys
+  return withAlignment
+             ? LHCb::DetDesc::addConditionDerivation( cdm, LHCb::Det::VP::paths, std::move( key ),
+                                                      []( const DeVP& vp, const ParamValidDataObject&,
+                                                          const ParamValidDataObject& ) -> VPGeometry { return {vp}; } )
+             : LHCb::DetDesc::addConditionDerivation( cdm, LHCb::Det::VP::det_path, std::move( key ),
+                                                      []( const DeVP& vp ) -> VPGeometry { return {vp}; } );
 }
 
 //============================================================================

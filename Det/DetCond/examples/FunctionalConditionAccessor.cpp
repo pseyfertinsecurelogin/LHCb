@@ -48,12 +48,12 @@ namespace DetCond::Examples::Functional {
       const auto sc = Consumer::initialize();
       if ( !sc ) return sc;
 
-      registerDerivationFor<MyData>( m_srcPath.value(), inputLocation<0>(),
-                                     /// Callable which converts raw information into a derived condition.
-                                     []( const ParamValidDataObject& obj ) {
-                                       const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
-                                       return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
-                                     } );
+      addConditionDerivation( m_srcPath.value(), inputLocation<0>(),
+                              /// Callable which converts raw information into a derived condition.
+                              []( const ParamValidDataObject& obj ) -> MyData {
+                                const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
+                                return {p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+                              } );
 
       return sc;
     }

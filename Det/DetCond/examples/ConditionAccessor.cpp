@@ -62,13 +62,13 @@ namespace DetCond::Examples {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
-      registerDerivationFor<MyData>( m_srcPath.value(), m_cond.key(),
-                                     /// Callable which converts the object at m_srcPath.value() into a derived
-                                     /// condition, of type MyData which will be stored at m_cond.key()
-                                     []( const ParamValidDataObject& obj ) {
-                                       const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
-                                       return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
-                                     } );
+      addConditionDerivation( m_srcPath.value(), m_cond.key(),
+                              /// Callable which converts the object at m_srcPath.value() into a derived
+                              /// condition, of type MyData which will be stored at m_cond.key()
+                              []( const ParamValidDataObject& obj ) {
+                                const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
+                                return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+                              } );
 
       return sc;
     }

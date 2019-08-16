@@ -10,15 +10,15 @@
 \*****************************************************************************/
 #pragma once
 
+#include "DetDesc/Condition.h"
 #include "DetDesc/ConditionKey.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IInterface.h"
 #include "Kernel/STLExtensions.h"
+#include "boost/callable_traits.hpp"
 #include <functional>
 #include <memory>
 #include <unordered_map>
-
-#include "DetDesc/Condition.h"
 
 class ParamValidDataObject;
 
@@ -31,8 +31,8 @@ namespace LHCb::DetDesc {
   /// able to reuse a transformation function that behaves differently depending
   /// on the requested output, The ConditionUpdateContext will be filled with the
   /// input conditions, and the last argument is the Condition instance to update.
-  using ConditionCallbackFunction = std::function<void( const ConditionKey& /* target */,
-                                                        ConditionUpdateContext& /* ctx */, Condition& /* output */ )>;
+  using ConditionCallbackFunction = std::function<void(
+      ConditionKey const& /* target */, ConditionUpdateContext const& /* ctx */, Condition& /* output */ )>;
 
   /// Interface for managers of condition derivations.
   class GAUDI_API IConditionDerivationMgr : virtual public IInterface {
@@ -64,34 +64,54 @@ namespace LHCb::DetDesc {
   };
 
   namespace detail {
-    template <typename Out>
-    struct Convert {
-      template <typename... Arg>
-      Out operator()( Arg&&... arg ) const {
-        return Out{std::forward<Arg>( arg )...};
-      }
-    };
+    template <typename Callable>
+    inline constexpr auto arity_v = std::tuple_size_v<boost::callable_traits::args_t<Callable>>;
+
+    template <typename Input>
+    decltype( auto ) fetch_1( ConditionUpdateContext const& ctx, ConditionKey const& key ) {
+      auto i = ctx.find( key );
+      if ( i == ctx.end() )
+        throw GaudiException{"No object found at " + key, "addConditionDerivation", StatusCode::FAILURE};
+      auto* p = dynamic_cast<std::decay_t<Input> const*>( i->second );
+      if ( !p )
+        throw GaudiException{"The object found at " + key + " is not of the expected type", "addConditionDerivation",
+                             StatusCode::FAILURE};
+      return *p;
+    }
+
+    template <typename TypeList, std::ptrdiff_t N, std::size_t... I>
+    auto fetch_n( ConditionUpdateContext const& ctx, span<const ConditionKey, N> keys, std::index_sequence<I...> ) {
+      return std::forward_as_tuple( fetch_1<std::tuple_element_t<I, TypeList>>( ctx, keys[I] )... );
+    }
+
+    template <typename Transform, std::ptrdiff_t N = detail::arity_v<Transform>>
+    auto fetch_inputs_for( ConditionUpdateContext const& ctx, span<const ConditionKey, N> keys ) {
+      using InputTypes = boost::callable_traits::args_t<Transform>;
+      return fetch_n<InputTypes>( ctx, keys, std::make_index_sequence<N>{} );
+    }
 
   } // namespace detail
 
-  template <typename OutputType, typename InputType = ParamValidDataObject,
-            typename Transform = detail::Convert<OutputType>>
-  IConditionDerivationMgr::DerivationId registerDerivationFor( IConditionDerivationMgr& cdm, ConditionKey inputKey,
-                                                               ConditionKey outputKey, Transform&& f = {} ) {
-
+  template <typename Transform, size_t N = detail::arity_v<Transform>>
+  IConditionDerivationMgr::DerivationId addConditionDerivation( IConditionDerivationMgr&    cdm,
+                                                                std::array<ConditionKey, N> inputKeys,
+                                                                ConditionKey outputKey, Transform f ) {
     // check if the derivation was already registered
     auto dId = cdm.derivationFor( outputKey );
     if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
     // it was not, so we have to register it now.
-    return cdm.add( std::move( inputKey ), std::move( outputKey ),
-                    [f   = std::forward<Transform>( f ),
-                     key = inputKey]( const ConditionKey&, ConditionUpdateContext& ctx, Condition& output ) {
-                      const auto input = dynamic_cast<const InputType*>( ctx[key] );
-                      if ( !input )
-                        throw GaudiException{"The object at " + key + " is either the wrong type or not present",
-                                             "registerDerivation", StatusCode::FAILURE};
-                      output.payload = f( *input );
-                    } );
+    return cdm.add(
+        inputKeys, std::move( outputKey ),
+        [=, f = std::move( f )]( ConditionKey const&, ConditionUpdateContext const& ctx, Condition& output ) {
+          output.payload = std::apply( f, detail::fetch_inputs_for<Transform>( ctx, make_span( inputKeys ) ) );
+        } );
+  }
+
+  template <typename Transform>
+  IConditionDerivationMgr::DerivationId addConditionDerivation( IConditionDerivationMgr& cdm, ConditionKey inputKey,
+                                                                ConditionKey outputKey, Transform f ) {
+
+    return addConditionDerivation( cdm, std::array{inputKey}, std::move( outputKey ), std::move( f ) );
   }
 
 } // namespace LHCb::DetDesc
