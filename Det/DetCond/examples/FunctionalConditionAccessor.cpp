@@ -63,14 +63,12 @@ namespace DetCond::Examples::Functional {
       auto adapter = [key = m_srcPath.value()]( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
                                                 Condition& output ) {
         // get the input condition from the context
-        const auto cond = ctx[key];
-        // use the condition object to compute parameter and fill the output condition
-        const auto p1  = cond->param<double>( "par1" );
-        const auto p2  = cond->param<double>( "par2" );
-        output.payload = make_cond( p1, p2 );
+        const auto* cond = ctx[key];
+        if ( !cond ) throw std::runtime_error( "could not locate condition " + key );
+        output.payload = std::apply( make_cond, cond->params<double, double>( "par1", "par2" ) );
       };
       // add our derivation callback to the IConditionDerivationMgr
-      addConditionDerivation( {m_srcPath.value()}, inputLocation<0>(), std::move( adapter ) );
+      addConditionDerivation( m_srcPath.value(), inputLocation<0>(), std::move( adapter ) );
 
       return sc;
     }

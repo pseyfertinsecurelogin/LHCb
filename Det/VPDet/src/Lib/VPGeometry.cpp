@@ -15,21 +15,23 @@ using namespace LHCb::DetDesc;
 
 IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( IConditionDerivationMgr& cdm, ConditionKey key,
                                                                       bool withAlignment ) {
+
+  // registerDerivation( cdm, key,
   // check if the derivation was already registered
   auto dId = cdm.derivationFor( key );
   if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
   // it was not, so we have to register it now.
   auto adapter = []( const ConditionKey& /* target */, ConditionUpdateContext& ctx, Condition& output ) {
-    const auto vp = dynamic_cast<const DeVP*>( ctx[VP_det_path] );
+    const auto vp = dynamic_cast<const DeVP*>( ctx[LHCb::Det::VP::det_path] );
     if ( !vp )
-      throw GaudiException( "The object at " + VP_det_path + " is not a DeVP", "VPGeometry", StatusCode::FAILURE );
+      throw GaudiException( "The object at " + LHCb::Det::VP::det_path + " is either not a DeVP or not present", "VPGeometry", StatusCode::FAILURE );
     output.payload = VPGeometry{*vp};
   };
   // we declare a dependency on the detector and the conditions to make sure the call back
   // is called when there is a change we care about (even if in the code we seem to look
   // only at the detector)
-  return withAlignment ? cdm.add( VP_paths, std::move( key ), std::move( adapter ) )
-                       : cdm.add( VP_det_path, std::move( key ), std::move( adapter ) );
+  return withAlignment ? cdm.add( LHCb::Det::VP::paths, std::move( key ), std::move( adapter ) )
+                       : cdm.add( LHCb::Det::VP::det_path, std::move( key ), std::move( adapter ) );
 }
 
 //============================================================================

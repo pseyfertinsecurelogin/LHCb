@@ -11,13 +11,15 @@
 #pragma once
 
 #include "DetDesc/ConditionKey.h"
+#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IInterface.h"
 #include "Kernel/STLExtensions.h"
 #include <functional>
 #include <memory>
 #include <unordered_map>
 
-struct Condition;
+#include "DetDesc/Condition.h"
+
 class ParamValidDataObject;
 
 namespace LHCb::DetDesc {
@@ -47,7 +49,7 @@ namespace LHCb::DetDesc {
     /// Add a condition derivation to the manager.
     virtual DerivationId add( LHCb::span<const ConditionKey> inputs, ConditionKey output,
                               ConditionCallbackFunction func ) = 0;
-    DerivationId         add( const ConditionKey& input, ConditionKey output, ConditionCallbackFunction func ) {
+    DerivationId         add( ConditionKey input, ConditionKey output, ConditionCallbackFunction func ) {
       return add( LHCb::range::single{input}, std::move( output ), std::move( func ) );
     }
 
@@ -60,4 +62,41 @@ namespace LHCb::DetDesc {
     /// Retire a specific condition derivation from the manager.
     virtual void remove( DerivationId dId ) = 0;
   };
+
+  namespace detail {
+    template <typename Out>
+    struct Convert {
+      template <typename... Arg>
+      Out operator()( Arg&&... arg ) const {
+        return Out{std::forward<Arg>( arg )...};
+      }
+    };
+
+    template <typename Out> inline constexpr auto to_ = Convert<Out>{};
+
+  } // namespace detail
+
+  template <typename OutputType, typename InputType = ParamValidDataObject, typename Transform>
+  IConditionDerivationMgr::DerivationId registerDerivation( IConditionDerivationMgr& cdm, ConditionKey outputKey,
+                                                            ConditionKey inputKey,
+                                                            Transform&&  f = detail::to_<OutputType> ) {
+
+    // check if the derivation was already registered
+    auto dId = cdm.derivationFor( outputKey );
+    if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
+    // it was not, so we have to register it now.
+    auto adapter = [f = std::forward<Transform>( f ), key = inputKey](
+                       const ConditionKey& /* target */, ConditionUpdateContext& ctx, Condition& output ) {
+      const auto input = dynamic_cast<const InputType*>( ctx[key] );
+      if ( !input )
+        throw GaudiException{"The object at " + key + " is either the wrong type or not present", "registerDerivation",
+                             StatusCode::FAILURE};
+      output.payload = f( *input );
+    };
+    // we declare a dependency on the detector and the conditions to make sure the call back
+    // is called when there is a change we care about (even if in the code we seem to look
+    // only at the detector)
+    return cdm.add( std::move( inputKey ), std::move( outputKey ), std::move( adapter ) );
+  }
+
 } // namespace LHCb::DetDesc

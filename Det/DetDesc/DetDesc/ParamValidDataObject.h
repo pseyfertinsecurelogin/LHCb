@@ -60,7 +60,7 @@ public:
 
   /// Check the type of a parameter (commodity function).
   template <class T>
-  inline bool is( const std::string& name ) const {
+  bool is( const std::string& name ) const {
     return type( name ) == typeid( T );
   }
 
@@ -75,17 +75,23 @@ public:
 
   /// Give a read-only accessor to a parameter.
   template <class T>
-  inline const T& param( const std::string& name ) const {
+  const T& param( const std::string& name ) const {
     auto i = m_paramList.find( name );
     if ( i == m_paramList.end() ) throw ParamException( name );
     try {
       return i->second->template get<T>();
     } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->second->type() ); }
   }
+  template <typename... T, typename... Names>
+  std::tuple<T const&... > params( Names&&... names ) const
+  {
+        static_assert(sizeof...(T) == sizeof...(Names));
+        return { param<T>(std::forward<Names>(names))... };
+  }
 
   /// Give a read/write accessor to a parameter.
   template <class T>
-  inline T& param( const std::string& name ) {
+  T& param( const std::string& name ) {
     auto i = m_paramList.find( name );
     if ( i == m_paramList.end() ) throw ParamException( name );
     try {
@@ -95,13 +101,13 @@ public:
 
   /// Give a read-only accessor to a parameter vector.
   template <class T>
-  inline const std::vector<T>& paramVect( const std::string& name ) const {
+  const std::vector<T>& paramVect( const std::string& name ) const {
     return param<std::vector<T>>( name );
   }
 
   /// Give a read/write accessor to a parameter vector.
   template <class T>
-  inline std::vector<T>& paramVect( const std::string& name ) {
+  std::vector<T>& paramVect( const std::string& name ) {
     return param<std::vector<T>>( name );
   }
 
@@ -146,12 +152,12 @@ public:
 
 public:
   template <class T>
-  inline void addParam( const std::string& name, const T& value, const std::string& comment = std::string() ) {
+  void addParam( const std::string& name, const T& value, const std::string& comment = std::string() ) {
     m_paramList.add( name, value );
     if ( !comment.empty() ) { m_comments[name] = comment; }
   }
 
-  inline void addBasicParam( const std::string& name, const BasicParam& p,
+  void addBasicParam( const std::string& name, const BasicParam& p,
                              const std::string& comment = std::string() ) {
     m_paramList.addBasicParam( name, p );
     if ( !comment.empty() ) { m_comments[name] = comment; }
