@@ -105,8 +105,8 @@ namespace {
   const std::string invalid_platform = "invalid";
 
   const std::vector<std::string> known_instruction_sets = {
-      "80386", "SSE", "SSE2", "SSE3", "Supplementary SSE3 (SSSE3)", "SSE4.1", "SSE4.2", "AVX", "AVX2", "AVX512F",
-  };
+      "80386", "SSE",     "SSE2",     "SSE3",    "Supplementary SSE3 (SSSE3)", "SSE4.1", "SSE4.2", "AVX",
+      "AVX2",  "AVX512F", "AVX512VL", "AVX512BW"};
   const std::string unknown_instructions_set = "unknown";
 
 // special trick to add quotes around a macro value
