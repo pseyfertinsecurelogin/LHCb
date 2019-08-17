@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef TrackEvent_v2_H
-#define TrackEvent_v2_H 1
+
+#pragma once
 
 // Include files
 #include "Event/State.h"
@@ -37,6 +37,7 @@
 
 namespace LHCb::Event {
   namespace v2 {
+
     // Namespace for locations in TDS
     namespace TrackLocation {
       inline std::string const Default             = "Rec/Track/Best";
@@ -492,6 +493,10 @@ namespace LHCb::Event {
         return *this;
       }
 
+    public:
+      /// Overloaded ostream output
+      friend inline std::ostream& operator<<( std::ostream& s, const Track& tk ) { return tk.fillStream( s ); }
+
     private:
       std::vector<LHCbID>       m_lhcbIDs{}; ///< Container of (sorted) LHCbIDs
       std::vector<State>        m_states{};  ///< Container with all the states
@@ -523,10 +528,7 @@ namespace LHCb::Event {
       static_assert( flagsMasks::fitStatusMask == 0x30000L );
       static_assert( flagsMasks::flagMask == 0xffc0000L );
       static_assert( flagsMasks::specificMask == 0xf0000000L );
-
-    }; // class Track
+    };
 
   } // namespace v2
 } // namespace LHCb::Event
-
-#endif /// TrackEvent_v2_H
