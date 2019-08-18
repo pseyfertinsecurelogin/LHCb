@@ -8,12 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
 #pragma once
 
 /// STL & STD
-#include "range/v3/view/const.hpp"
-#include "range/v3/view/indirect.hpp"
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -21,6 +18,10 @@
 /// DetDesc
 #include "DetDesc/SolidChild.h"
 #include "DetDesc/SolidTicks.h"
+
+#include "range/v3/span.hpp"
+#include "range/v3/view/const.hpp"
+#include "range/v3/view/indirect.hpp"
 
 // Forward declarations
 class StatusCode;
@@ -138,7 +139,7 @@ public:
   /** acess to range of const children
    *  @return "range"
    */
-  auto children() const { return m_sb_childrens | ranges::view::indirect | ranges::view::const_; }
+  auto children() const { return ranges::span( m_sb_childrens ) | ranges::view::indirect | ranges::view::const_; }
 
   /** access to the childrens by index
    *  @param index index of child solid
@@ -202,7 +203,7 @@ protected:
   /** acess to range of children
    *  @return "range"
    */
-  auto children() { return m_sb_childrens | ranges::view::indirect; }
+  auto children() { return ranges::span( m_sb_childrens ) | ranges::view::indirect; }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
