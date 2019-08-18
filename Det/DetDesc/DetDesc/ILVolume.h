@@ -8,8 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_ILVOLUME_H
-#define DETDESC_ILVOLUME_H 1
+
+#pragma once
+
 /// STD & STL includes
 #include <iostream>
 #include <string>
@@ -112,6 +113,9 @@ struct ILVolume : virtual IInterface {
    *  @return vector of physical volumes
    */
   virtual const PVolumes& pvolumes() const = 0;
+
+  /// Clears all physical volumes
+  virtual void clearVolumes() = 0;
 
   /**  return number of Physical Volumes inside gived Logical Volume
    *  @return number of Physical Volumes inside gived Logical Volume
@@ -346,4 +350,3 @@ inline MsgStream& operator<<( MsgStream& os, const ILVolume* lv ) {
 // ============================================================================
 // The End
 // ============================================================================
-#endif ///< DETDESC_ILVOLUME_H
