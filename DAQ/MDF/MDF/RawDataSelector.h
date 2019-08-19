@@ -16,6 +16,7 @@
 #include "GaudiKernel/IEvtSelector.h"
 #include "GaudiKernel/Service.h"
 #include "MDF/StreamDescriptor.h"
+#include <memory>
 #include <utility>
 
 // Forward declarations
@@ -55,7 +56,7 @@ namespace LHCb {
       /// Pointer to file manager service
       Gaudi::IIODataManager* m_ioMgr = nullptr;
       /// Pointer to file connection
-      Gaudi::IDataConnection* m_connection = nullptr;
+      std::unique_ptr<Gaudi::IDataConnection> m_connection;
       /// Cached pointer to trigger mask of the event selector
       const std::vector<unsigned int>* m_trgMask = nullptr;
       /// Cached pointer to veto mask of the event selector

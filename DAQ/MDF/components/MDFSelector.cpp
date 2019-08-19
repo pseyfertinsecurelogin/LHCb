@@ -61,14 +61,14 @@ namespace LHCb {
     }
     /// Read raw byte buffer from input stream
     StatusCode readBuffer( void* const /* ioDesc */, void* const data, size_t len ) override {
-      return m_ioMgr->read( m_connection, data, len );
+      return m_ioMgr->read( m_connection.get(), data, len );
     }
     /// Receive event and update communication structure
     StatusCode receiveData( IMessageSvc* msg ) override {
       io_context_t par( 0, 0 );
 
     Next:
-      m_fileOffset = m_ioMgr->seek( m_connection, 0, SEEK_CUR );
+      m_fileOffset = m_ioMgr->seek( m_connection.get(), 0, SEEK_CUR );
       setupMDFIO( msg, 0 );
       m_data = readBanks( &par, 0 == m_fileOffset );
       if ( m_data.second > 0 ) {
@@ -104,10 +104,10 @@ namespace LHCb {
     /// Skip a single record in the file
     StatusCode skipRecord() {
       MDFHeader  h;
-      StatusCode sc = m_ioMgr->read( m_connection, &h, 3 * sizeof( int ) );
+      StatusCode sc = m_ioMgr->read( m_connection.get(), &h, 3 * sizeof( int ) );
       if ( sc.isSuccess() ) {
         int len      = h.recordSize() - 3 * sizeof( int );
-        m_fileOffset = m_ioMgr->seek( m_connection, len, SEEK_CUR );
+        m_fileOffset = m_ioMgr->seek( m_connection.get(), len, SEEK_CUR );
         if ( m_fileOffset == -1 ) sc = StatusCode::FAILURE;
       }
       return sc;
