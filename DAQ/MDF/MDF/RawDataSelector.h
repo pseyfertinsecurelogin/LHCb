@@ -9,13 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 //====================================================================
-#ifndef MDF_RAWDATASELECTOR_H
-#define MDF_RAWDATASELECTOR_H 1
+
+#pragma once
 
 // Include files
 #include "GaudiKernel/IEvtSelector.h"
 #include "GaudiKernel/Service.h"
 #include "MDF/StreamDescriptor.h"
+#include <utility>
 
 // Forward declarations
 namespace Gaudi {
@@ -74,12 +75,7 @@ namespace LHCb {
       /// Raw data buffer (if it exists)
       virtual std::pair<char*, int> data() const { return m_data; }
       /// Release data buffer and give ownership to caller
-      virtual std::pair<char*, int> releaseData() const {
-        auto tmp      = m_data;
-        m_data.first  = nullptr;
-        m_data.second = 0;
-        return tmp;
-      }
+      virtual std::pair<char*, int> releaseData() const { return std::exchange( m_data, {nullptr, 0} ); }
       /// Receive event and update communication structure
       virtual StatusCode receiveData( IMessageSvc* msg ) = 0;
       /// Skip N events
@@ -214,4 +210,3 @@ namespace LHCb {
     mutable int m_evtCount = 0;
   };
 } // namespace LHCb
-#endif // MDF_RAWDATASELECTOR_H
