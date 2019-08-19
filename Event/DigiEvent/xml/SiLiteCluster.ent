@@ -89,13 +89,6 @@
       </constructor>
 
 
-     <method type='LHCb::&className; &amp;' 
-             name='operator ='
-             argList='const &className; &amp; c'  
-             const='FALSE'  desc='equal'>
-        <code>m_liteCluster = c.m_liteCluster; 
-              return *this; </code>
-     </method>
 
      <method
       name="interStripFraction"
