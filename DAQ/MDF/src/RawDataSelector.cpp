@@ -37,34 +37,28 @@ using namespace LHCb;
 
 /// Standard constructor
 RawDataSelector::LoopContext::LoopContext( const RawDataSelector* pSelector )
-    : m_sel( pSelector )
-    , m_fileOffset( 0 )
-    , m_ioMgr( m_sel->fileMgr() )
-    , m_connection( 0 )
-    , m_trgMask( 0 )
-    , m_vetoMask( 0 ) {}
+    : m_sel( pSelector ), m_ioMgr( m_sel->fileMgr() ) {}
 
 /// Set connection
 StatusCode RawDataSelector::LoopContext::connect( const std::string& specs ) {
   close();
-  m_connection  = new RawDataConnection( m_sel, specs );
-  StatusCode sc = m_ioMgr->connectRead( true, m_connection );
+  m_connection  = std::make_unique<RawDataConnection>( m_sel, specs );
+  StatusCode sc = m_ioMgr->connectRead( true, m_connection.get() );
   if ( sc.isSuccess() ) {
     m_conSpec  = m_connection->fid();
     m_vetoMask = ( m_sel->vetoMask().empty() ) ? 0 : &( m_sel->vetoMask() );
     m_trgMask  = ( m_sel->triggerMask().empty() ) ? 0 : &( m_sel->triggerMask() );
-    return sc;
+  } else {
+    close();
   }
-  close();
   return sc;
 }
 
 /// close connection
 void RawDataSelector::LoopContext::close() {
   if ( m_connection ) {
-    m_ioMgr->disconnect( m_connection ).ignore();
-    delete m_connection;
-    m_connection = 0;
+    m_ioMgr->disconnect( m_connection.get() ).ignore();
+    m_connection.reset();
   }
 }
 
@@ -121,15 +115,15 @@ StatusCode RawDataSelector::initialize() {
 StatusCode RawDataSelector::finalize() {
   if ( m_ioMgr ) {
     m_ioMgr->release();
-    m_ioMgr = 0;
+    m_ioMgr = nullptr;
   }
   m_evtCount = 0;
   return Service::finalize();
 }
 
 StatusCode RawDataSelector::next( Context& ctxt ) const {
-  LoopContext* pCtxt = dynamic_cast<LoopContext*>( &ctxt );
-  if ( pCtxt != 0 ) {
+  auto pCtxt = dynamic_cast<LoopContext*>( &ctxt );
+  if ( pCtxt ) {
     ++m_evtCount;
     if ( m_printFreq > 0 && ( m_evtCount % m_printFreq ) == 0 ) {
       MsgStream log( msgSvc(), name() );
@@ -144,7 +138,7 @@ StatusCode RawDataSelector::next( Context& ctxt ) const {
 StatusCode RawDataSelector::next( Context& ctxt, int jump ) const {
   if ( jump > 0 ) {
     for ( int i = 0; i < jump; ++i ) {
-      StatusCode status = next( ctxt );
+      auto status = next( ctxt );
       if ( !status.isSuccess() ) { return status; }
     }
     return S_OK;
@@ -161,7 +155,7 @@ StatusCode RawDataSelector::previous( Context& /* ctxt */ ) const {
 StatusCode RawDataSelector::previous( Context& ctxt, int jump ) const {
   if ( jump > 0 ) {
     for ( int i = 0; i < jump; ++i ) {
-      StatusCode status = previous( ctxt );
+      auto status = previous( ctxt );
       if ( !status.isSuccess() ) { return status; }
     }
     return S_OK;
@@ -170,38 +164,38 @@ StatusCode RawDataSelector::previous( Context& ctxt, int jump ) const {
 }
 
 StatusCode RawDataSelector::releaseContext( Context*& ctxt ) const {
-  LoopContext* pCtxt = dynamic_cast<LoopContext*>( ctxt );
+  auto pCtxt = dynamic_cast<LoopContext*>( ctxt );
   if ( pCtxt ) {
     pCtxt->close();
     delete pCtxt;
-    pCtxt = 0;
+    ctxt = nullptr;
     return S_OK;
   }
   return S_ERROR;
 }
 
 StatusCode RawDataSelector::createAddress( const Context& ctxt, IOpaqueAddress*& pAddr ) const {
-  const LoopContext* pctxt = dynamic_cast<const LoopContext*>( &ctxt );
+  auto pctxt = dynamic_cast<const LoopContext*>( &ctxt );
   if ( pctxt ) {
     if ( pctxt->data().second > 0 ) {
-      RawDataAddress* pA = new RawDataAddress( RAWDATA_StorageType, m_rootCLID, pctxt->specs(), "0", 0, 0 );
+      auto pA = std::make_unique<RawDataAddress>( RAWDATA_StorageType, m_rootCLID, pctxt->specs(), "0", 0, 0 );
       pA->setFileOffset( pctxt->offset() );
       pA->adoptData( pctxt->releaseData() );
-      pAddr = pA;
+      pAddr = pA.release();
       return S_OK;
     }
   }
-  pAddr = 0;
+  pAddr = nullptr;
   return S_ERROR;
 }
 
 StatusCode RawDataSelector::resetCriteria( const std::string& criteria, Context& context ) const {
-  MsgStream    log( msgSvc(), name() );
-  LoopContext* ctxt = dynamic_cast<LoopContext*>( &context );
+  MsgStream log( msgSvc(), name() );
+  auto      ctxt = dynamic_cast<LoopContext*>( &context );
   if ( ctxt ) {
-    std::string crit = criteria.substr( 5 );
+    auto crit = criteria.substr( 5 );
     ctxt->close();
-    StatusCode sc = ctxt->connect( crit );
+    auto sc = ctxt->connect( crit );
     if ( !sc.isSuccess() ) {
       log << MSG::ERROR << "Failed to connect to:" << crit << endmsg;
     } else if ( m_skipEvents > 0 ) {

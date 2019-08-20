@@ -260,6 +260,8 @@ StatusCode HLTControlFlowMgr::finalize() {
     }
   }
 
+  if ( m_evtSelector ) { m_evtSelector->releaseContext( m_evtSelContext ); }
+
   StatusCode sc2 = Service::finalize();
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
 }
@@ -395,6 +397,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   // precisely in declareEventRootAddress. Cannot be passed through the interface
   // without breaking other schedulers
   if ( m_evtSelector ) {
+    m_evtSelector->releaseContext( m_evtSelContext ); // to be sure not to leak on next line
     StatusCode sc = m_evtSelector->createContext( m_evtSelContext );
     if ( !sc.isSuccess() ) {
       fatal() << "Can not create the event selector Context." << endmsg;
@@ -506,8 +509,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   shutdown_threadpool();
 
-  delete m_evtSelContext;
-  m_evtSelContext = nullptr;
+  if ( m_evtSelector ) { m_evtSelector->releaseContext( m_evtSelContext ); }
 
   if ( UNLIKELY( !startTime ) ) {
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
