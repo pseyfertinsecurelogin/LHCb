@@ -83,9 +83,12 @@ namespace LHCb::DetDesc {
     }
     // This is not properly part of the ConditionAccessorHolder interface, but it helps
     // for the migration.
-    IConditionDerivationMgr::DerivationId addConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output,
-                                                                  ConditionCallbackFunction func ) const {
-      return conditionDerivationMgr().add( std::move( inputs ), std::move( output ), std::move( func ) );
+
+    template <typename Transform, typename InputKeys>
+    IConditionDerivationMgr::DerivationId addConditionDerivation( InputKeys&& inputKeys, ConditionKey outputKey,
+                                                                  Transform f ) const {
+      return LHCb::DetDesc::addConditionDerivation( conditionDerivationMgr(), std::forward<InputKeys>( inputKeys ),
+                                                    std::move( outputKey ), std::move( f ) );
     }
 
   private:

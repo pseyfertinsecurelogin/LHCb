@@ -35,12 +35,6 @@ namespace DetCond::Examples::Functional {
     double p1, p2, v;
   };
 
-  /// Function converting raw information into a derived condition.
-  // In this example it's a static member of the algorithm, but it can live
-  // in another library, to be shared with other condition derivation backends
-  // (e.g. DD4hep).
-  static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
-
   struct CondAccessExampleWithDerivation
       : Gaudi::Functional::Consumer<void( const MyData& ), LHCb::DetDesc::usesConditions<MyData>> {
     // costructor
@@ -54,23 +48,12 @@ namespace DetCond::Examples::Functional {
       const auto sc = Consumer::initialize();
       if ( !sc ) return sc;
 
-      using ConditionUpdateContext = LHCb::DetDesc::ConditionUpdateContext;
-
-      // Function to adapt the ConditionCallbackFunc signature to the
-      // actual function deriving the condition (make_cond in this case).
-      // The first argument is not needed in this case, because we do not have
-      // different code depending on the output key.
-      auto adapter = [key = m_srcPath.value()]( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
-                                                Condition& output ) {
-        // get the input condition from the context
-        const auto cond = ctx[key];
-        // use the condition object to compute parameter and fill the output condition
-        const auto p1  = cond->param<double>( "par1" );
-        const auto p2  = cond->param<double>( "par2" );
-        output.payload = make_cond( p1, p2 );
-      };
-      // add our derivation callback to the IConditionDerivationMgr
-      addConditionDerivation( {m_srcPath.value()}, inputLocation<0>(), std::move( adapter ) );
+      addConditionDerivation( m_srcPath.value(), inputLocation<0>(),
+                              /// Callable which converts raw information into a derived condition.
+                              []( const ParamValidDataObject& obj ) -> MyData {
+                                const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
+                                return {p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+                              } );
 
       return sc;
     }

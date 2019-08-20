@@ -51,12 +51,6 @@ namespace DetCond::Examples {
       double p1, p2, v;
     };
 
-    /// Function converting raw information into a derived condition.
-    // In this example it's a static member of the algorithm, but it can live
-    // in another library, to be shared with other condition derivation backends
-    // (e.g. DD4hep).
-    static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
-
     /// Property used to change the path of the input condition, if needed
     Gaudi::Property<std::string> m_srcPath{this, "Source", "TestCondition"};
 
@@ -68,23 +62,13 @@ namespace DetCond::Examples {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
-      using ConditionUpdateContext = LHCb::DetDesc::ConditionUpdateContext;
-
-      // Function to adapt the ConditionCallbackFunc signature to the
-      // actual function deriving the condition (make_cond in this case).
-      // The first argument is not needed in this case, because we do not have
-      // different code depending on the output key.
-      auto adapter = [key = m_srcPath.value()]( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
-                                                Condition& output ) {
-        // get the input condition from the context
-        const auto cond = ctx[key];
-        // use the condition object to compute parameter and fill the output condition
-        const auto p1  = cond->param<double>( "par1" );
-        const auto p2  = cond->param<double>( "par2" );
-        output.payload = make_cond( p1, p2 );
-      };
-      // add our derivation callback to the IConditionDerivationMgr
-      addConditionDerivation( {m_srcPath.value()}, m_cond.key(), std::move( adapter ) );
+      addConditionDerivation( m_srcPath.value(), m_cond.key(),
+                              /// Callable which converts the object at m_srcPath.value() into a derived
+                              /// condition, of type MyData which will be stored at m_cond.key()
+                              []( const ParamValidDataObject& obj ) {
+                                const auto& [p1, p2] = obj.params<double, double>( "par1", "par2" );
+                                return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+                              } );
 
       return sc;
     }

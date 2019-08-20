@@ -11,18 +11,16 @@
 #pragma once
 
 #include <DetDesc/ConditionKey.h>
-#include <vector>
+#include <array>
 
-// It's bad practice to use anonymous namespace in headers, but I just want to
-// share a few constants.
-namespace {
+namespace LHCb::Det::VP {
   // Path in the TDS to the VP detector
-  static const LHCb::DetDesc::ConditionKey VP_det_path = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
+  static const LHCb::DetDesc::ConditionKey det_path = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
   // Path to a couple of alignement conditions (one per XML file in the db):
   // - Conditions/VP/Alignment/Global.xml
-  static const LHCb::DetDesc::ConditionKey VP_system_align = "/dd/Conditions/Alignment/VP/VPSystem";
+  static const LHCb::DetDesc::ConditionKey system_align = "/dd/Conditions/Alignment/VP/VPSystem";
   // - Conditions/VP/Alignment/Modules.xml
-  static const LHCb::DetDesc::ConditionKey VP_module_align = "/dd/Conditions/Alignment/VP/Module00";
+  static const LHCb::DetDesc::ConditionKey module_align = "/dd/Conditions/Alignment/VP/Module00";
 
-  static const std::vector<LHCb::DetDesc::ConditionKey> VP_paths{VP_det_path, VP_system_align, VP_module_align};
-} // namespace
+  static const auto paths = std::array{det_path, system_align, module_align};
+} // namespace LHCb::Det::VP
