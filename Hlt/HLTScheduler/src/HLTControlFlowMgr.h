@@ -78,11 +78,6 @@ public:
   EventContext createEventContext() override;
 
 private:
-  int m_nextevt = 0;
-
-  mutable std::atomic<uint16_t> m_failed_evts_detected = 0;
-  mutable bool                  m_shutdown_now         = false;
-
   /// Declare the root address of the event
   std::optional<IOpaqueAddress*> declareEventRootAddress();
 
@@ -97,6 +92,41 @@ private:
   void configureScheduling();
   // build per-thread state-vector
   void buildNodeStates();
+
+  // helper to release context
+  inline StatusCode releaseEvtSelContext() {
+    StatusCode sc = StatusCode::SUCCESS;
+    auto       c  = m_evtSelContext.release();
+    if ( c ) {
+      if ( m_evtSelector ) {
+        sc = m_evtSelector->releaseContext( c );
+      } else {
+        delete c;
+      }
+    }
+    return sc;
+  }
+
+  // helper to create context
+  inline StatusCode createEvtSelContext() {
+    auto sc = releaseEvtSelContext();
+    if ( sc ) {
+      decltype( m_evtSelContext )::pointer c = nullptr;
+      sc = ( m_evtSelector ? m_evtSelector->createContext( c ) : StatusCode::FAILURE );
+      m_evtSelContext.reset( c );
+    }
+    return sc;
+  }
+
+  // functions to create m_printableDependencyTree
+  void registerStructuredTree();
+  void registerTreePrintWidth();
+
+private:
+  int m_nextevt = 0;
+
+  mutable std::atomic<uint16_t> m_failed_evts_detected = 0;
+  mutable bool                  m_shutdown_now         = false;
 
   std::unique_ptr<ThreadPool> m_debug_pool = nullptr;
 
@@ -149,7 +179,7 @@ private:
   std::mutex m_createEventMutex;
 
   /// event selector context
-  IEvtSelector::Context* m_evtSelContext{nullptr};
+  std::unique_ptr<IEvtSelector::Context> m_evtSelContext;
 
   // state vectors for each event, once filled, then copied per event
   std::vector<NodeState>                                      m_NodeStates;
@@ -179,9 +209,6 @@ private:
   // maximum width of the dependencytree
   int m_maxTreeWidth;
 
-  // functions to create m_printableDependencyTree
-  void registerStructuredTree();
-  void registerTreePrintWidth();
   // runtime adding of states to print tree and states
 public:
   template <typename printable>
