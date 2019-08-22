@@ -15,11 +15,14 @@
 #include <array>
 #include <cassert>
 #include <numeric>
+#include <tuple>
 #include <vector>
 
 // Range V3
-#include <range/v3/algorithm.hpp>
-#include <range/v3/view.hpp>
+#ifndef NDEBUG
+#  include <range/v3/algorithm.hpp>
+#  include <range/v3/view.hpp>
+#endif
 
 #include "GaudiKernel/Range.h"
 
