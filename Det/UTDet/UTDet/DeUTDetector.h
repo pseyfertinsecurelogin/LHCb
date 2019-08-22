@@ -8,9 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _DEUTDETECTOR_H_
-#define _DEUTDETECTOR_H_
 
+#pragma once
+
+#include <assert.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -139,8 +140,10 @@ public:
 
   /// Workaround to prevent hidden base class function
   inline bool isValid() const override { return ValidDataObject::isValid(); }
+
   /// Workaround to prevent hidden base class function
   inline bool isValid( const Gaudi::Time& t ) const override { return ValidDataObject::isValid( t ); }
+
   /** check channel number is valid */
   bool isValid( const LHCb::UTChannelID aChannel ) const;
 
@@ -178,7 +181,9 @@ public:
    * @param  aChannel channel
    * @return sector
    */
-  DeUTSector* getSector( const LHCb::UTChannelID aChannel ) const;
+  inline DeUTSector* getSector( const LHCb::UTChannelID chan ) const {
+    return getSector( chan.station(), chan.layer(), chan.detRegion(), chan.sector(), chan.uniqueSector() );
+  }
 
   /**
    *  short cut to pick up the wafer corresponding to a given nickname
@@ -233,10 +238,11 @@ public:
    */
   double fractionActive() const;
 
-  DeUTSector* getSector( unsigned int station, unsigned int layer, unsigned int region, unsigned int sector,
+  DeUTSector* getSector( unsigned int station, //
+                         unsigned int layer,   //
+                         unsigned int region,  //
+                         unsigned int sector,  //
                          unsigned int uniqueSector ) const;
-
-  inline DeUTSector* getSectorDirect( const int fullChanIdx ) const { return m_sectors_direct[fullChanIdx]; }
 
   void setOffset();
 
@@ -263,13 +269,16 @@ protected:
 
   Sectors m_sectors;
 
-  /** Faster access to sectors (no offsets) **/
-  std::array<DeUTSector*, NBSTATION * NBLAYER * NBREGION * NBSECTOR> m_sectors_direct;
-
   Layers m_layers;
 
   typedef GaudiUtils::VectorMap<unsigned int, DeUTSector*> SectorMap;
   mutable SectorMap                                        m_sMap;
+
+private:
+  std::size_t getOffset( const std::size_t index ) const noexcept {
+    assert( index < m_offset.size() );
+    return m_offset[index];
+  }
 
 private:
   unsigned int m_firstStation = 0u;
@@ -278,7 +287,7 @@ private:
   /** make flat list of lowest descendents  and also layers */
   void flatten();
   /** offsets on the "flatten" list of sectors in order to have quicker access */
-  std::array<size_t, NBSTATION * NBLAYER * NBREGION> m_offset;
+  std::array<std::size_t, NBSTATION * NBLAYER * NBREGION> m_offset;
 };
 
 inline const std::string& DeUTDetLocation::location() { return ( DeUTDetLocation::UT ); }
@@ -310,23 +319,23 @@ inline const DeUTDetector::Sectors& DeUTDetector::sectors() const { return m_sec
 inline const DeUTDetector::Layers& DeUTDetector::layers() const { return m_layers; }
 
 inline LHCb::UTChannelID DeUTDetector::nextLeft( const LHCb::UTChannelID aChannel ) const {
-  const DeUTSector* aSector = findSector( aChannel );
-  return ( 0 != aSector ? aSector->nextLeft( aChannel ) : LHCb::UTChannelID( 0u ) );
+  const auto aSector = findSector( aChannel );
+  return ( aSector ? aSector->nextLeft( aChannel ) : LHCb::UTChannelID( 0u ) );
 }
 
 inline LHCb::UTChannelID DeUTDetector::nextRight( const LHCb::UTChannelID aChannel ) const {
-  const DeUTSector* aSector = findSector( aChannel );
-  return ( 0 != aSector ? aSector->nextRight( aChannel ) : LHCb::UTChannelID( 0u ) );
+  const auto aSector = findSector( aChannel );
+  return ( aSector ? aSector->nextRight( aChannel ) : LHCb::UTChannelID( 0u ) );
 }
 
 inline bool DeUTDetector::isValid( const LHCb::UTChannelID aChannel ) const {
-  const DeUTSector* aSector = findSector( aChannel );
-  return ( aSector != 0 ? aSector->isStrip( aChannel.strip() ) : false );
+  const auto aSector = findSector( aChannel );
+  return ( aSector ? aSector->isStrip( aChannel.strip() ) : false );
 }
 
 inline DeUTSector* DeUTDetector::findSector( const LHCb::UTChannelID aChannel ) const {
-  SectorMap::iterator iter = m_sMap.find( aChannel.uniqueSector() );
-  return ( iter != m_sMap.end() ? iter->second : 0 );
+  auto iter = m_sMap.find( aChannel.uniqueSector() );
+  return ( iter != m_sMap.end() ? iter->second : nullptr );
 }
 
 inline unsigned int DeUTDetector::nLayer() const { return layers().size(); }
@@ -336,29 +345,25 @@ inline unsigned int DeUTDetector::nReadoutSector() const { return sectors().size
 inline unsigned int DeUTDetector::nLayersPerStation() const { return nLayer() / nStation(); }
 
 inline DeUTDetector::Sectors DeUTDetector::findSectors( const std::vector<LHCb::UTChannelID>& vec ) const {
-  std::vector<DeUTSector*> sectors;
+  DeUTDetector::Sectors sectors;
   sectors.reserve( vec.size() );
-  for ( auto iter = vec.begin(); iter != vec.end(); ++iter ) {
-    DeUTSector* aSector = findSector( *iter );
-    if ( aSector != 0 ) sectors.push_back( aSector );
-  } // for
-
+  for ( auto i : vec ) {
+    auto aSector = findSector( i );
+    if ( aSector ) { sectors.push_back( aSector ); }
+  }
   // ensure unique list
   sectors.erase( std::unique( sectors.begin(), sectors.end() ), sectors.end() );
   return sectors;
 }
 
 inline DeUTDetector::Sectors DeUTDetector::findSectors( const std::vector<std::string>& vec ) const {
-  std::vector<DeUTSector*> sectors;
+  DeUTDetector::Sectors sectors;
   sectors.reserve( vec.size() );
-  for ( auto iter = vec.begin(); iter != vec.end(); ++iter ) {
-    DeUTSector* aSector = findSector( *iter );
-    if ( aSector ) sectors.push_back( aSector );
-  } // for
-
+  for ( auto i : vec ) {
+    auto aSector = findSector( i );
+    if ( aSector ) { sectors.push_back( aSector ); }
+  }
   // ensure unique list
   sectors.erase( std::unique( sectors.begin(), sectors.end() ), sectors.end() );
   return sectors;
 }
-
-#endif // _DEUTDETECTOR_H
