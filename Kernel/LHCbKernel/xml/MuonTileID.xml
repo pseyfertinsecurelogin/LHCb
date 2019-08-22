@@ -25,7 +25,6 @@
       <constructor
         desc="Default constructor"
         initList="m_muonid(0)"/>
-      <copyconstructor/>
       <constructor
         desc="Constructor with all the arguments"
         argList="int station,const IMuonLayout lay,

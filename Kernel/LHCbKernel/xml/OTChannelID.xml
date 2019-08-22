@@ -18,6 +18,8 @@
     <class name    = "OTChannelID" 
            author  = "Jeroen van Tilburg and Jacopo Nardulli"
            desc    = "Simple class that represents a straw and the tdc time of a hit"
+           defaultdestructor = "FALSE"
+           final            = 'TRUE'
            virtual = "FALSE"                                                      >
       
       &StlVector;
@@ -50,7 +52,6 @@
         <code></code>
       </constructor>
 
-      <copyconstructor/>
 
       <method type    = "bool" 
               name    = "operator=="

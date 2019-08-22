@@ -16,6 +16,8 @@
     <class name    = 'STChannelID' 
            author  = 'M Needham, J. Wang'
            desc    = 'Channel ID for class for ST'
+           defaultdestructor = "FALSE"
+           final            = 'TRUE'
            virtual = 'FALSE'>
       &StlVector;
 
