@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef TrackSkin_H
-#define TrackSkin_H 1
+
+#pragma once
 
 // Include files
 #include "Event/Track_v2.h"
@@ -36,5 +36,3 @@ namespace LHCb::Event::v2 {
   // clang-format on
   SOASKIN_TRIVIAL( TrackSkin, TrackField );
 } // namespace LHCb::Event::v2
-
-#endif /// TrackEvent_v2_H
