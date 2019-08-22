@@ -123,8 +123,7 @@ StatusCode HLTControlFlowMgr::initialize() {
     m_evtSelector = serviceLocator()->service<IEvtSelector>( "EventSelector" );
   } else if ( m_evtsel == "NONE" ) {
     m_evtSelector = nullptr;
-    warning() << "Unable to locate service \"EventSelector\" " << endmsg;
-    warning() << "No events will be processed from external input." << endmsg;
+    info() << "Will not use an EventSelector." << endmsg;
   } else {
     m_evtSelector = serviceLocator()->service<IEvtSelector>( m_evtsel );
     if ( !m_evtSelector ) {
