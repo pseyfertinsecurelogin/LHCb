@@ -15,11 +15,10 @@
 //  Author    : Markus Frank
 //
 //  ====================================================================
-#include "MDF/RawDataConnection.h"
-//#include "MDF/RawEventHelpers.h"
+#include "MDF/RawDataCnvSvc.h"
 #include "MDF/MDFHeader.h"
 #include "MDF/RawDataAddress.h"
-#include "MDF/RawDataCnvSvc.h"
+#include "MDF/RawDataConnection.h"
 
 #include "Event/RawEvent.h"
 #include "GaudiKernel/DataObject.h"
@@ -48,9 +47,9 @@ namespace LHCb {
 
 namespace {
   struct MDFMapEntry final {
-    string           name;
-    IDataConnection* connection;
-    StreamDescriptor desc;
+    string                           name;
+    std::unique_ptr<IDataConnection> connection;
+    StreamDescriptor                 desc;
   };
   static bool               s_recursiveFlag = true;
   struct RecursiveDetection final {
@@ -95,7 +94,7 @@ StatusCode RawDataCnvSvc::initialize() {
   //       this EventPersistencySvc instance alive, and avoid it going
   //       out of scope, and then being resurrected without 'us' being
   //       added... (as createIf is set to true here!)
-  IPersistencySvc* pSvc = 0;
+  IPersistencySvc* pSvc = nullptr;
   sc                    = service( "EventPersistencySvc", pSvc, true );
   if ( !sc.isSuccess() ) {
     log << MSG::ERROR << "Unable to localize EventPersistencySvc." << endmsg;
@@ -197,8 +196,8 @@ StatusCode RawDataCnvSvc::createObj( IOpaqueAddress* pA, DataObject*& refpObj ) 
           // if ( rand() < int(RAND_MAX*0.05) )
           //  return error("TEST: Triggered access failure for "+pReg->identifier());
           if ( pReg && pAddRaw ) {
-            std::unique_ptr<RawEvent> raw( new RawEvent() );
-            MDFDescriptor             dat = accessRawData( pAddRaw );
+            auto          raw = std::make_unique<RawEvent>();
+            MDFDescriptor dat = accessRawData( pAddRaw );
             if ( dat.second > 0 ) {
               StatusCode sc = unpackTAE( dat.first, dat.first + dat.second, pReg->identifier(), raw.get() );
               if ( sc.isSuccess() ) {
@@ -227,15 +226,14 @@ StatusCode RawDataCnvSvc::createObj( IOpaqueAddress* pA, DataObject*& refpObj ) 
 }
 
 StatusCode RawDataCnvSvc::regAddr( IRegistry* pReg, RawDataAddress* pA, CSTR path, const CLID& clid ) {
-  RawDataAddress* paddr = new RawDataAddress( *pA );
+  auto paddr = std::make_unique<RawDataAddress>( *pA );
   paddr->setClID( clid );
-  StatusCode sc = StatusCode::FAILURE;
-  if ( pReg ) {
-    sc = m_dataMgr->registerAddress( pReg, path, paddr );
-  } else {
-    sc = m_dataMgr->registerAddress( path, paddr );
+  const StatusCode sc = ( pReg ? m_dataMgr->registerAddress( pReg, path, paddr.get() )
+                               : m_dataMgr->registerAddress( path, paddr.get() ) );
+  if ( sc.isSuccess() ) {
+    paddr.release();
+    return sc;
   }
-  if ( sc.isSuccess() ) { return sc; }
   paddr->release();
   return error( "Failed to register address for object " + path );
 }
@@ -253,13 +251,11 @@ MDFDescriptor RawDataCnvSvc::accessRawData( RawDataAddress* pAddRaw ) {
 /// Decode a TAE event record from MDF banks
 StatusCode RawDataCnvSvc::registerRawAddresses( IRegistry* pReg, RawDataAddress* pAddRaw,
                                                 const vector<string>& names ) {
-  typedef vector<string> _N;
   if ( !names.empty() ) {
     StatusCode sc, iret = StatusCode::SUCCESS;
-    for ( _N::const_iterator i = names.begin(); i != names.end(); ++i ) {
-      const string& s    = *i;
-      string        path = s.length() > 7 ? s.substr( 7 ) : string( "/DAQ" );
-      sc                 = regAddr( pReg, pAddRaw, path, CLID_DataObject );
+    for ( const auto& s : names ) {
+      auto path = s.length() > 7 ? s.substr( 7 ) : string( "/DAQ" );
+      sc        = regAddr( pReg, pAddRaw, path, CLID_DataObject );
       if ( !sc.isSuccess() ) iret = sc;
     }
     return iret.isSuccess() ? iret : error( "Error registering RawEvent leaves in TES." );
@@ -271,10 +267,10 @@ StatusCode RawDataCnvSvc::registerRawAddresses( IRegistry* pReg, RawDataAddress*
 StatusCode RawDataCnvSvc::fillObjRefs( IOpaqueAddress* pA, DataObject* pObj ) {
   if ( pA && pObj ) {
     try {
-      IRegistry*      pReg    = pA->registry();
-      RawDataAddress* pAddRaw = dynamic_cast<RawDataAddress*>( pA );
+      auto pReg    = pA->registry();
+      auto pAddRaw = dynamic_cast<RawDataAddress*>( pA );
       if ( pReg && pAddRaw ) {
-        string id = pReg->identifier().substr( 6 );
+        auto id = pReg->identifier().substr( 6 );
         if ( id.empty() ) {
           MDFDescriptor dat = pAddRaw->data();
           if ( dat.second > 0 ) { return registerRawAddresses( pReg, pAddRaw, buffersTAE( dat.first ) ); }
@@ -283,7 +279,7 @@ StatusCode RawDataCnvSvc::fillObjRefs( IOpaqueAddress* pA, DataObject* pObj ) {
           MDFDescriptor dat   = pAddRaw->data();
           char *        start = dat.first, *end = start + dat.second;
           while ( start < end ) {
-            RawBank* b = (RawBank*)start;
+            auto b = (RawBank*)start;
             if ( b->type() == RawBank::DstAddress ) {
               // cout << "Reg:" << pReg->identifier() << "  " << m_dstLocation << endl;
               StatusCode  sc     = StatusCode::FAILURE;
@@ -297,12 +293,12 @@ StatusCode RawDataCnvSvc::fillObjRefs( IOpaqueAddress* pA, DataObject* pObj ) {
               else
                 sc = regAddr( pReg, pAddRaw, m_dstLocation, RawEvent::classID() );
               if ( sc.isSuccess() ) {
-                unsigned int*     ptr  = b->begin<unsigned int>();
+                auto              ptr  = b->begin<unsigned int>();
                 long unsigned int clid = *ptr++, ip[2] = {*ptr++, *ptr++}, svc_typ = *ptr++;
                 size_t            len     = strlen( (char*)ptr ) + 1;
                 string            p[2]    = {std::string( (char*)ptr ), std::string( ( (char*)ptr ) + len )};
                 string            raw_loc = ( (char*)ptr ) + len + 1 + p[1].length();
-                IOpaqueAddress*   addr    = 0;
+                IOpaqueAddress*   addr    = nullptr;
                 // cout << "P0:" << p[0] << " P1:" << p[1] << " IP0:" << ip[0] << " IP1:" << ip[1] << " " << svc_typ <<
                 // endl;
                 sc = m_addressCreator->createAddress( svc_typ, clid, p, ip, addr );
@@ -339,7 +335,7 @@ StatusCode RawDataCnvSvc::commitOutput( CSTR, bool doCommit ) {
       setupMDFIO( msgSvc(), dataProvider() );
       if ( typ == RAWDATA_StorageType ) {
         io_context_t ctx( ( *m_current ).second, MDFDescriptor( 0, 0 ) );
-        StatusCode   sc = commitRawBanks( m_compress, m_genChecksum, &ctx, m_bankLocation );
+        const auto   sc = commitRawBanks( m_compress, m_genChecksum, &ctx, m_bankLocation );
         if ( ctx.second.first ) ::free( ctx.second.first );
         m_current = m_fileMap.end();
         return sc;
@@ -355,7 +351,7 @@ StatusCode RawDataCnvSvc::commitOutput( CSTR, bool doCommit ) {
 StatusCode RawDataCnvSvc::createRep( DataObject* pObj, IOpaqueAddress*& refpAddr ) {
   if ( pObj ) {
     if ( m_current != m_fileMap.end() ) {
-      IRegistry*    reg    = pObj->registry();
+      auto          reg    = pObj->registry();
       string        spar[] = {( *m_current ).first, reg->identifier()};
       unsigned long ipar[] = {0, 0};
       return createAddress( repSvcType(), pObj->clID(), spar, ipar, refpAddr );
@@ -377,15 +373,14 @@ StatusCode RawDataCnvSvc::fillRepRefs( IOpaqueAddress* /* pAddr */, DataObject* 
 /// Create a Generic address using explicit arguments to identify a single object.
 StatusCode RawDataCnvSvc::createAddress( long typ, const CLID& clid, const string* par, const unsigned long* ip,
                                          IOpaqueAddress*& refpAddress ) {
-  RawDataAddress* pA = new RawDataAddress( typ, clid, par[0], par[1], ip[0], ip[1] );
-  refpAddress        = pA;
+  refpAddress = new RawDataAddress( typ, clid, par[0], par[1], ip[0], ip[1] );
   return StatusCode::SUCCESS;
 }
 
 /// Close all files disconnected from the IO manager
 void RawDataCnvSvc::closeDisconnected() {
-  for ( FileMap::iterator i = m_fileMap.begin(); i != m_fileMap.end(); ) {
-    MDFMapEntry* e = (MDFMapEntry*)( *i ).second;
+  for ( auto i = m_fileMap.begin(); i != m_fileMap.end(); ) {
+    auto e = (MDFMapEntry*)( *i ).second;
     if ( e && e->connection && !e->connection->isConnected() ) {
       closeIO( e ).ignore();
       m_fileMap.erase( i );
@@ -398,25 +393,24 @@ void RawDataCnvSvc::closeDisconnected() {
 
 /// Open MDF file
 void* RawDataCnvSvc::openIO( CSTR fname, CSTR mode ) const {
-  MsgStream    log( msgSvc(), name() );
-  MDFMapEntry* ent = new MDFMapEntry;
-  ent->name        = fname;
+  MsgStream log( msgSvc(), name() );
+  auto      ent = std::make_unique<MDFMapEntry>();
+  ent->name     = fname;
   if ( strncasecmp( mode.c_str(), "N", 1 ) == 0 || strncasecmp( mode.c_str(), "REC", 3 ) == 0 ) {
-    ent->connection = new RawDataConnection( this, fname );
-    if ( m_ioMgr->connectWrite( ent->connection, IDataConnection::RECREATE, "MDF" ).isSuccess() ) {
-      log << MSG::INFO << "Opened(NEW)  MDF stream:" << ent->name << " ID:" << (void*)ent << endmsg;
-      return ent;
+    ent->connection = std::make_unique<RawDataConnection>( this, fname );
+    if ( m_ioMgr->connectWrite( ent->connection.get(), IDataConnection::RECREATE, "MDF" ).isSuccess() ) {
+      log << MSG::INFO << "Opened(NEW)  MDF stream:" << ent->name << " ID:" << (void*)ent.get() << endmsg;
+      return ent.release();
     }
   } else if ( strncasecmp( mode.c_str(), "O", 1 ) == 0 || strncasecmp( mode.c_str(), "REA", 3 ) == 0 ) {
-    ent->connection = new RawDataConnection( this, fname );
-    if ( m_ioMgr->connectRead( false, ent->connection ).isSuccess() ) {
-      log << MSG::INFO << "Opened(READ) MDF stream:" << ent->name << " ID:" << (void*)ent << endmsg;
-      return ent;
+    ent->connection = std::make_unique<RawDataConnection>( this, fname );
+    if ( m_ioMgr->connectRead( false, ent->connection.get() ).isSuccess() ) {
+      log << MSG::INFO << "Opened(READ) MDF stream:" << ent->name << " ID:" << (void*)ent.get() << endmsg;
+      return ent.release();
     }
   }
   error( "Unknown openmode " + mode + " for MDF file :" + fname );
-  delete ent;
-  return 0;
+  return nullptr;
 }
 
 /// Close MDF file
@@ -425,7 +419,7 @@ StatusCode RawDataCnvSvc::closeIO( void* ioDesc ) const {
   if ( ent ) {
     MsgStream log( msgSvc(), name() );
     bool      connected = ent->connection->isConnected();
-    m_ioMgr->disconnect( ent->connection ).ignore();
+    m_ioMgr->disconnect( ent->connection.get() ).ignore();
     log << MSG::INFO << ( connected ? "Closed " : "Removed dis" ) << "connected MDF stream:" << ent->name
         << " ID:" << (void*)ent << endmsg;
     delete ent;
@@ -439,10 +433,10 @@ StatusCode RawDataCnvSvc::readRawBanks( RawDataAddress* pAddr ) {
   const string* par = pAddr->par();
   StatusCode    sc  = connectInput( par[0], ctx.first );
   if ( sc.isSuccess() ) {
-    long long    offset = pAddr->fileOffset();
-    MDFMapEntry* ent    = (MDFMapEntry*)ctx.first;
+    long long offset = pAddr->fileOffset();
+    auto      ent    = (MDFMapEntry*)ctx.first;
     if ( ent->connection ) {
-      if ( m_ioMgr->seek( ent->connection, offset, SEEK_SET ) != -1 ) {
+      if ( m_ioMgr->seek( ent->connection.get(), offset, SEEK_SET ) != -1 ) {
         setupMDFIO( msgSvc(), dataProvider() );
         MDFDescriptor result = readBanks( &ctx );
         if ( result.first ) {
@@ -461,7 +455,7 @@ StatusCode RawDataCnvSvc::readRawBanks( RawDataAddress* pAddr ) {
 
 /// MDFIO interface: Allocate data space for output
 MDFDescriptor RawDataCnvSvc::getDataSpace( void* const ioDesc, size_t len ) {
-  io_context_t* ctx = (io_context_t*)ioDesc;
+  auto ctx = (io_context_t*)ioDesc;
   if ( ctx->second.second < int( len ) ) {
     ctx->second.first  = (char*)::realloc( ctx->second.first, len );
     ctx->second.second = len;
@@ -471,21 +465,21 @@ MDFDescriptor RawDataCnvSvc::getDataSpace( void* const ioDesc, size_t len ) {
 
 /// MDFIO interface: Read raw byte buffer from input stream
 StatusCode RawDataCnvSvc::readBuffer( void* const ioDesc, void* const data, size_t len ) {
-  io_context_t* ctx = (io_context_t*)ioDesc;
+  auto ctx = (io_context_t*)ioDesc;
   if ( ctx && ctx->first ) {
-    MDFMapEntry* ent = (MDFMapEntry*)ctx->first;
-    if ( ent->connection ) { return m_ioMgr->read( ent->connection, data, len ); }
+    auto ent = (MDFMapEntry*)ctx->first;
+    if ( ent->connection ) { return m_ioMgr->read( ent->connection.get(), data, len ); }
   }
   return StatusCode::FAILURE;
 }
 
 /// MDFIO interface: Write data block to stream
 StatusCode RawDataCnvSvc::writeBuffer( void* ioDesc, const void* data, size_t len ) {
-  io_context_t* ctx = (io_context_t*)ioDesc;
+  auto ctx = (io_context_t*)ioDesc;
   if ( ctx && ctx->first ) {
-    MDFMapEntry* ent = (MDFMapEntry*)ctx->first;
+    auto ent = (MDFMapEntry*)ctx->first;
     if ( ent->connection ) {
-      if ( m_ioMgr->write( ent->connection, data, len ).isSuccess() ) { return StatusCode::SUCCESS; }
+      if ( m_ioMgr->write( ent->connection.get(), data, len ).isSuccess() ) { return StatusCode::SUCCESS; }
       return error( "Cannot write data record: [Invalid I/O operation]" );
     }
   }
