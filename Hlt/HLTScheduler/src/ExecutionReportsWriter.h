@@ -13,6 +13,7 @@
 // as this one also includes a parser, lets put that first
 #include "HLTControlFlowMgr.h"
 
+#include "Event/HltDecReports.h"
 #include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/EventContext.h"
@@ -33,7 +34,11 @@ public:
 private:
   HLTControlFlowMgr* m_schedulerPtr = nullptr;
 
-  Gaudi::Property<int>                          m_printFreq{this, "PrintFreq", 1000, "Print Frequency for states"};
-  DataObjectWriteHandle<std::vector<NodeState>> m_outputHandle{this, "DecReportsLocation",
-                                                               std::string( "/Event/DecReport" )};
+  std::vector<int> m_name_indices{};
+
+  Gaudi::Property<int>                       m_printFreq{this, "PrintFreq", 1000, "Print Frequency for states"};
+  DataObjectWriteHandle<LHCb::HltDecReports> m_outputHandle{this, "DecReportsLocation",
+                                                            std::string( "/Event/DecReport" )};
+
+  Gaudi::Property<std::vector<std::string>> m_line_names{this, "Persist", {}, "Specify the nodes to be written to TES"};
 };
