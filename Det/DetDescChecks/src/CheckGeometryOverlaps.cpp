@@ -54,17 +54,17 @@
 namespace DetDesc {
   // ==========================================================================
   bool isOK( const ILVolume::Intersections& cnt ) {
-    for ( ILVolume::Intersections::const_iterator i1 = cnt.begin(); cnt.end() != i1; ++i1 ) {
-      const double x1 = i1->first.first;
-      const double x2 = i1->first.second;
-      for ( ILVolume::Intersections::const_iterator i2 = i1 + 1; cnt.end() != i2; ++i2 ) {
+    for ( auto i1 = cnt.begin(); cnt.end() != i1; ++i1 ) {
+      const auto x1 = i1->first.first;
+      const auto x2 = i1->first.second;
+      for ( auto i2 = i1 + 1; cnt.end() != i2; ++i2 ) {
         if ( 0 == VolumeIntersectionIntervals::intersect( *i1, *i2 ) ) { return false; }
 
-        const double y1 = i2->first.first;
-        const double y2 = i2->first.second;
+        const auto y1 = i2->first.first;
+        const auto y2 = i2->first.second;
         if ( x2 < y1 || y2 < x1 ) { continue; }
-        const double z1 = std::max( x1, y1 );
-        const double z2 = std::min( x2, y2 );
+        const auto z1 = std::max( x1, y1 );
+        const auto z2 = std::min( x2, y2 );
         // ??
         if ( z1 < z2 ) { return false; }
       }
@@ -73,15 +73,15 @@ namespace DetDesc {
   }
   // ==========================================================================
   std::pair<std::pair<int, int>, double> notOK( const ILVolume::Intersections& cnt ) {
-    for ( ILVolume::Intersections::const_iterator i1 = cnt.begin(); cnt.end() != i1; ++i1 ) {
-      const double x1 = i1->first.first;
-      const double x2 = i1->first.second;
-      for ( ILVolume::Intersections::const_iterator i2 = i1 + 1; cnt.end() != i2; ++i2 ) {
-        const double y1 = i2->first.first;
-        const double y2 = i2->first.second;
+    for ( auto i1 = cnt.begin(); cnt.end() != i1; ++i1 ) {
+      const auto x1 = i1->first.first;
+      const auto x2 = i1->first.second;
+      for ( auto i2 = i1 + 1; cnt.end() != i2; ++i2 ) {
+        const auto y1 = i2->first.first;
+        const auto y2 = i2->first.second;
         if ( x2 < y1 || y2 < x1 ) { continue; }
-        const double z1 = std::max( x1, y1 );
-        const double z2 = std::min( x2, y2 );
+        const auto z1 = std::max( x1, y1 );
+        const auto z2 = std::min( x2, y2 );
         if ( z1 < z2 ) {
           auto p = std::pair{i1 - cnt.begin(), i2 - cnt.begin()};
           return {p, z2 - z1};
@@ -132,24 +132,24 @@ namespace DetDesc {
     // ========================================================================
   private:
     // ========================================================================
-    // volume name
-    std::string m_volumeName; ///< the logical volume name
-    // volume itself
-    const ILVolume* m_volume; ///< volume itself
+    /// volume name
+    Gaudi::Property<std::string> m_volumeName{this, "Volume", "Undefined Volume", "Volume name ot be checked"};
+    /// volume itself
+    const ILVolume* m_volume = nullptr;
 
     // volume limits (for assemblies)
-    double m_minx;
-    double m_maxx;
-    double m_miny;
-    double m_maxy;
-    double m_minz;
-    double m_maxz;
+    Gaudi::Property<double> m_minx{this, "MinX", -10 * Gaudi::Units::m};
+    Gaudi::Property<double> m_maxx{this, "MaxX", 10 * Gaudi::Units::m};
+    Gaudi::Property<double> m_miny{this, "MinY", -10 * Gaudi::Units::m};
+    Gaudi::Property<double> m_maxy{this, "MaxY", 10 * Gaudi::Units::m};
+    Gaudi::Property<double> m_minz{this, "MinZ", -10 * Gaudi::Units::m};
+    Gaudi::Property<double> m_maxz{this, "MaxZ", 10 * Gaudi::Units::m};
 
     // number of shots
-    int m_shots;
+    Gaudi::Property<int> m_shots{this, "Shots", 10000};
 
     // point of shooting for sphere
-    Gaudi::XYZPoint                   m_vertex;
+    Gaudi::Property<Gaudi::XYZPoint>  m_vertex{this, "Null"};
     mutable std::set<const ILVolume*> m_checked;
 
     mutable Gaudi::Accumulators::Counter<> m_volumesCnt{this, "#volumes"};
@@ -163,29 +163,7 @@ namespace DetDesc {
  *  @param svcloc pointer to Service Locator
  */
 // ============================================================================
-DetDesc::CheckOverlap::CheckOverlap( const std::string& name, ISvcLocator* svcloc )
-    : GaudiAlgorithm( name, svcloc )
-    , m_volumeName( "Undefined Volume" )
-    , m_volume( 0 )
-    , m_minx( -10 * Gaudi::Units::m )
-    , m_maxx( 10 * Gaudi::Units::m )
-    , m_miny( -10 * Gaudi::Units::m )
-    , m_maxy( 10 * Gaudi::Units::m )
-    , m_minz( -10 * Gaudi::Units::m )
-    , m_maxz( 10 * Gaudi::Units::m )
-    , m_shots( 10000 )
-    , m_vertex()
-    , m_checked() {
-  declareProperty( "Volume", m_volumeName, "Volume name ot be checked" );
-  declareProperty( "MinX", m_minx );
-  declareProperty( "MinY", m_miny );
-  declareProperty( "MinZ", m_minz );
-  declareProperty( "MaxX", m_maxx );
-  declareProperty( "MaxY", m_maxy );
-  declareProperty( "MaxZ", m_maxz );
-  declareProperty( "Shots", m_shots );
-  declareProperty( "Null", m_vertex );
-}
+DetDesc::CheckOverlap::CheckOverlap( const std::string& name, ISvcLocator* svcloc ) : GaudiAlgorithm( name, svcloc ) {}
 // ============================================================================
 /*  standard algorithm initialization
  *  @see IAlgorithm
@@ -196,8 +174,8 @@ StatusCode DetDesc::CheckOverlap::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) { return sc; }
 
-  Assert( 0 != randSvc(), "randSvc() points to NULL!" );
-  Assert( 0 != detSvc(), "detSvc()  points to NULL!" );
+  Assert( randSvc(), "randSvc() points to NULL!" );
+  Assert( detSvc(), "detSvc()  points to NULL!" );
 
   if ( !exist<ILVolume>( detSvc(), m_volumeName ) && exist<ILVolume>( detSvc(), "/dd/Geometry/" + m_volumeName ) ) {
     m_volumeName = "/dd/Geometry/" + m_volumeName;
@@ -206,10 +184,10 @@ StatusCode DetDesc::CheckOverlap::initialize() {
   m_volume = getDet<ILVolume>( m_volumeName );
 
   if ( !m_volume->isAssembly() && 0 != m_volume->solid() ) {
-    const ISolid* top = m_volume->solid()->coverTop();
-    if ( 0 == top ) { return Error( "CoverTop* points to NULL!" ); }
-    const SolidBox* box = dynamic_cast<const SolidBox*>( top );
-    if ( 0 == box ) { return Error( "SolidBox* points to NULL!" ); }
+    const auto top = m_volume->solid()->coverTop();
+    if ( !top ) { return Error( "CoverTop* points to NULL!" ); }
+    const auto box = dynamic_cast<const SolidBox*>( top );
+    if ( !box ) { return Error( "SolidBox* points to NULL!" ); }
 
     m_minx = -1 * box->xHalfLength() * 1.05;
     m_maxx = box->xHalfLength() * 1.05;
@@ -247,7 +225,8 @@ StatusCode DetDesc::CheckOverlap::execute() {
 // perform the actual checking of the volume
 // ============================================================================
 StatusCode DetDesc::CheckOverlap::checkVolume( const ILVolume* volume, const unsigned int level ) const {
-  if ( 0 == volume ) { return Error( "Invalid pointer to ILVolume!" ); }
+
+  if ( !volume ) { return Error( "Invalid pointer to ILVolume!" ); }
 
   boost::format     fmt( "%-3d" );
   const std::string lev = ( fmt % level ).str();
@@ -259,28 +238,23 @@ StatusCode DetDesc::CheckOverlap::checkVolume( const ILVolume* volume, const uns
 
   // ==========================================================================
   // loop over all daughter volumes and
-  const ILVolume::PVolumes& pvs = volume->pvolumes();
-  for ( ILVolume::PVolumes::const_iterator ipv = pvs.begin(); pvs.end() != ipv; ++ipv ) {
-    const IPVolume* pv = *ipv;
-    if ( 0 == pv ) { return Error( "IPVolume* points to NULL!" ); } // RETURN
-    const ILVolume* lv = pv->lvolume();
-    if ( 0 == lv ) { return Error( "ILVolume* points to NULL!" ); } // RETURN
+  for ( const auto pv : volume->pvolumes() ) {
+    if ( !pv ) { return Error( "IPVolume* points to NULL!" ); } // RETURN
+    const auto lv = pv->lvolume();
+    if ( !lv ) { return Error( "ILVolume* points to NULL!" ); } // RETURN
     // check the daughter volume
-    StatusCode sc = checkVolume( lv, level + 1 );
+    const auto sc = checkVolume( lv, level + 1 );
     if ( sc.isFailure() ) { return sc; } // RETURN
   }
   // ==========================================================================
   /*  here all daughter volumes are OK and are CLEARED!
    *  and one can start to make the own  shoots (MUST be efficient!)
    */
-  const StatusCode result = makeShots( volume );
+  const auto result = makeShots( volume );
   //
-  {
-    // ATTENTION!!!
-    // clear daugher volumes :
-    ILVolume* vol = const_cast<ILVolume*>( volume );
-    vol->pvolumes().clear();
-  }
+  // ATTENTION!!!
+  // clear daugher volumes :
+  const_cast<ILVolume*>( volume )->clearVolumes();
 
   // ==========================================================================
   always() << lev << std::string( 2 * level, ' ' ) << "Checked:  " << volume->name() << endmsg;
@@ -297,36 +271,37 @@ StatusCode DetDesc::CheckOverlap::checkVolume( const ILVolume* volume, const uns
 // ============================================================================
 StatusCode DetDesc::CheckOverlap::makeShots( const ILVolume* volume ) const {
 
-  if ( 0 == volume ) { return Error( "Invalid pointer to ILVolume!" ); }
+  if ( !volume ) { return Error( "Invalid pointer to ILVolume!" ); }
 
   // reset the counter of errors
   DetDesc::IntersectionErrors::setCode( StatusCode::SUCCESS, volume );
 
-  typedef std::vector<Gaudi::XYZVector> Vectors;
-  Vectors                               vcts;
+  std::vector<Gaudi::XYZVector> vcts;
+  const int                     max_vectors = 7;
+  vcts.reserve( max_vectors );
 
   //
-  vcts.push_back( Gaudi::XYZVector( 0, 0, 1 ) );
-  vcts.push_back( Gaudi::XYZVector( 0, 1, 0 ) );
-  vcts.push_back( Gaudi::XYZVector( 1, 0, 0 ) );
+  vcts.emplace_back( 0, 0, 1 );
+  vcts.emplace_back( 0, 1, 0 );
+  vcts.emplace_back( 1, 0, 0 );
 
-  vcts.push_back( Gaudi::XYZVector( 1, 1, 0 ) );
-  vcts.push_back( Gaudi::XYZVector( 1, -1, 0 ) );
-  vcts.push_back( Gaudi::XYZVector( 0, 1, 1 ) );
-  vcts.push_back( Gaudi::XYZVector( 0, -1, 1 ) );
+  vcts.emplace_back( 1, 1, 0 );
+  vcts.emplace_back( 1, -1, 0 );
+  vcts.emplace_back( 0, 1, 1 );
+  vcts.emplace_back( 0, -1, 1 );
 
-  double xmin = m_minx;
-  double xmax = m_maxx;
-  double ymin = m_miny;
-  double ymax = m_maxy;
-  double zmin = m_minz;
-  double zmax = m_maxz;
+  auto xmin = m_minx;
+  auto xmax = m_maxx;
+  auto ymin = m_miny;
+  auto ymax = m_maxy;
+  auto zmin = m_minz;
+  auto zmax = m_maxz;
 
   if ( !volume->isAssembly() && 0 != volume->solid() ) {
-    const ISolid* top = volume->solid()->coverTop();
-    if ( 0 == top ) { return Error( "CoverTop* points to NULL!" ); }
-    const SolidBox* box = dynamic_cast<const SolidBox*>( top );
-    if ( 0 == box ) { return Error( "SolidBox* points to NULL!" ); }
+    const auto top = volume->solid()->coverTop();
+    if ( !top ) { return Error( "CoverTop* points to NULL!" ); }
+    const auto box = dynamic_cast<const SolidBox*>( top );
+    if ( !box ) { return Error( "SolidBox* points to NULL!" ); }
 
     xmin = -1 * box->xHalfLength() * 1.01;
     xmax = box->xHalfLength() * 1.01;
@@ -337,12 +312,12 @@ StatusCode DetDesc::CheckOverlap::makeShots( const ILVolume* volume ) const {
   }
 
   // get the number of shoots
-  int nShots = m_shots;
+  auto nShots = m_shots;
 
   // check the simplest cases
   if ( !volume->isAssembly() && volume->pvolumes().empty() ) {
-    const ISolid* solid = volume->solid();
-    if ( 0 != solid && 0 != dynamic_cast<const SolidBox*>( solid ) ) {
+    const auto solid = volume->solid();
+    if ( solid && dynamic_cast<const SolidBox*>( solid ) ) {
       // nothing to check, the case is just trivial
       nShots = 0;
       return StatusCode::SUCCESS; // RETURN
@@ -363,55 +338,55 @@ StatusCode DetDesc::CheckOverlap::makeShots( const ILVolume* volume ) const {
 
   for ( int iShoot = 0; iShoot < nShots; ++iShoot ) {
 
-    const double x1 = xmin + flat.shoot() * ( xmax - xmin );
-    const double y1 = ymin + flat.shoot() * ( ymax - ymin );
-    const double z1 = zmin + flat.shoot() * ( zmax - zmin );
+    const auto x1 = xmin + flat.shoot() * ( xmax - xmin );
+    const auto y1 = ymin + flat.shoot() * ( ymax - ymin );
+    const auto z1 = zmin + flat.shoot() * ( zmax - zmin );
 
-    const double x2 = xmin + flat.shoot() * ( xmax - xmin );
-    const double y2 = ymin + flat.shoot() * ( ymax - ymin );
-    const double z2 = zmin + flat.shoot() * ( zmax - zmin );
+    const auto x2 = xmin + flat.shoot() * ( xmax - xmin );
+    const auto y2 = ymin + flat.shoot() * ( ymax - ymin );
+    const auto z2 = zmin + flat.shoot() * ( zmax - zmin );
 
-    Gaudi::XYZPoint point( x1, y1, z1 );
-    Gaudi::XYZPoint p2( x2, y2, z2 );
+    const Gaudi::XYZPoint point( x1, y1, z1 );
+    const Gaudi::XYZPoint p2( x2, y2, z2 );
 
-    vcts.push_back( p2 - point );
-    vcts.push_back( m_vertex - point );
-    vcts.push_back( m_vertex - point );
+    vcts.emplace_back( p2 - point );
+    vcts.emplace_back( m_vertex.value() - point );
+    vcts.emplace_back( m_vertex.value() - point );
 
-    vcts.push_back( Gaudi::XYZVector( flat1(), flat1(), flat1() ) );
-    vcts.push_back( Gaudi::XYZVector( flat1(), flat1(), flat1() ) );
-    vcts.push_back( Gaudi::XYZVector( flat1(), flat1(), flat1() ) );
+    vcts.emplace_back( flat1(), flat1(), flat1() );
+    vcts.emplace_back( flat1(), flat1(), flat1() );
+    vcts.emplace_back( flat1(), flat1(), flat1() );
 
-    vcts.push_back( Gaudi::XYZVector( 0, 0, 1 + 0.1 * flat1() ) );
-    vcts.push_back( Gaudi::XYZVector( 0, 1 + 0.1 * flat1(), 0 ) );
-    vcts.push_back( Gaudi::XYZVector( 1 + 0.1 * flat1(), 0, 0 ) );
+    vcts.emplace_back( 0, 0, 1 + 0.1 * flat1() );
+    vcts.emplace_back( 0, 1 + 0.1 * flat1(), 0 );
+    vcts.emplace_back( 1 + 0.1 * flat1(), 0, 0 );
 
-    vcts.push_back( Gaudi::XYZVector( 0, 0, 1 + 0.1 * flat1() ) );
-    vcts.push_back( Gaudi::XYZVector( 0, 1 + 0.1 * flat1(), 0 ) );
-    vcts.push_back( Gaudi::XYZVector( 1 + 0.1 * flat1(), 0, 0 ) );
+    vcts.emplace_back( 0, 0, 1 + 0.1 * flat1() );
+    vcts.emplace_back( 0, 1 + 0.1 * flat1(), 0 );
+    vcts.emplace_back( 1 + 0.1 * flat1(), 0, 0 );
 
-    for ( Vectors::const_iterator iv = vcts.begin(); vcts.end() != iv; ++iv ) {
+    for ( const auto v : vcts ) {
+
       // reset the counter of errors
       DetDesc::IntersectionErrors::setCode( StatusCode::SUCCESS, volume );
 
       ILVolume::Intersections intersections;
-      volume->intersectLine( point, *iv, intersections, 0 );
+      volume->intersectLine( point, v, intersections, 0 );
 
       // get the status
-      StatusCode sc = DetDesc::IntersectionErrors::code();
+      auto sc = DetDesc::IntersectionErrors::code();
 
       if ( sc.isFailure() ) {
 
-        error() << "Problem is detected with volume " << volume->name() << " With P/V=" << point << "/" << ( *iv )
-                << endmsg;
+        error() << "Problem is detected with volume " << volume->name() << " With P/V=" << point << "/" << v << endmsg;
 
-        DetDesc::IntersectionErrors::inspect( volume, point, *iv, intersections );
+        DetDesc::IntersectionErrors::inspect( volume, point, v, intersections );
 
         return Error( "Intersection problems with " + volume->name(), sc );
       }
     } // vectors
     // remove last vectors
-    while ( 7 < vcts.size() ) { vcts.pop_back(); }
+    while ( max_vectors < vcts.size() ) { vcts.pop_back(); }
     // show the progress
     ++progress;
   } // shoots

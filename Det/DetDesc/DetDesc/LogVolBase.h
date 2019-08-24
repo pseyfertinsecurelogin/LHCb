@@ -8,10 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DETDESC_LOGVOLBASE_H
-#define DETDESC_LOGVOLBASE_H
+#pragma once
 /// STD and STL includes
 #include <algorithm>
+#include <memory>
 /// GaudiKernel includes
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IValidity.h"
@@ -216,6 +216,12 @@ public:
     return this;
   }
 
+  /// Clear (delete) all volumes
+  inline void clearVolumes() override {
+    for ( auto& ipv : m_pvolumes ) { delete ipv; }
+    m_pvolumes.clear();
+  }
+
   /** query the interface
    *  @see IInterface
    *  @param ID unique interface identifier
@@ -366,4 +372,3 @@ private:
 // ============================================================================
 // The End
 // ============================================================================
-#endif ///< DETDESC_LVOLUME_H

@@ -45,10 +45,7 @@ LogVolBase::LogVolBase( const std::string& /*name*/, const std::string& sensitiv
 // ============================================================================
 // destructor
 // ============================================================================
-LogVolBase::~LogVolBase() {
-  // release physical volumes
-  for ( auto& ipv : m_pvolumes ) delete ipv;
-}
+LogVolBase::~LogVolBase() { clearVolumes(); }
 // ============================================================================
 /*
  *  accessor to data service used for retriving of the material
