@@ -16,6 +16,8 @@
     <class name = 'HCCellID' 
            author = 'Victor Coco' 
            desc = 'This class identifies a single PMT in the HC'
+      defaultdestructor = "FALSE"
+      final            = 'TRUE'
            virtual = 'FALSE'>
 
       <constructor argList = 'unsigned int crate, unsigned int channel'
@@ -28,8 +30,6 @@
       <constructor argList = 'int id' initList = 'm_cellID(id)'
                    desc = 'Constructor with cellID'>
       </constructor>
-
-      <copyconstructor/>
 
       <method type = '' name = 'operator unsigned int' const = 'TRUE' 
               desc = 'Cast'>

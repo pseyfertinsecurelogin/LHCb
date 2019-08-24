@@ -90,19 +90,13 @@ namespace {
     InvokeFuncPtrWith( const std::array<double, N>& pp, std::size_t npar ) : p( pp ), n( npar ) { assert( n <= N ); }
     template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_same<Args, double>...>>>
     std::optional<double> operator()( double ( *fun )( Args... ) ) const {
-#if __GNUC__ == 8
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
-      if ( sizeof...( Args ) != n ) return {};
-#if __GNUC__ == 8
-#  pragma GCC diagnostic pop
-#endif
-      return apply( fun, std::index_sequence_for<Args...>{} );
+      if ( sizeof...( Args ) != n ) return std::nullopt;
+      return apply( fun, std::index_sequence_for<Args...>{} ); // pick up n out of N values from p
+      // C++20: use std::apply together with std::span<double,sizeof...(Args)>
     }
   };
 
-  inline std::string_view remove_blanks( std::string_view str ) {
+  std::string_view remove_blanks( std::string_view str ) {
     int n = str.size();
     int i = 0;
     while ( i < n && isspace( str[i] ) ) ++i;
@@ -111,8 +105,8 @@ namespace {
     return str.substr( i, j - i + 1 );
   }
 
-  inline std::string to_string( std::string_view str ) { return std::string{str}; }
-  inline std::string operator+( char s1, std::string_view s2 ) { return s1 + to_string( s2 ); }
+  std::string to_string( std::string_view str ) { return std::string{str}; }
+  std::string operator+( char s1, std::string_view s2 ) { return s1 + to_string( s2 ); }
 } // namespace
 #define SKIP_BLANKS                                                                                                    \
   for ( ;; ++pointer ) {                                                                                               \

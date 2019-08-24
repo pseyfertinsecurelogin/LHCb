@@ -16,6 +16,8 @@
     <class name = 'VeloChannelID' 
       author    = 'Chris Parkes, modified by David Hutchcroft' 
       desc      = 'This class describes a single channel of LHCb VELO'
+      defaultdestructor = "FALSE"
+      final            = 'TRUE'
       virtual   = "FALSE"                                             >
 
       <desc> Fully qualified constructor: sets strip and sensor numbers and
@@ -45,8 +47,6 @@ m_channelID = ( sensor &lt;&lt; sensorBits ) | ( type &lt;&lt; typeBits ) | stri
         <code></code>
       </constructor>
 
-      <copyconstructor/>
-      
       <method name='setType' argList='VeloChannelID::sensorType type'
         desc='Set sensor type bits'>
         <code>

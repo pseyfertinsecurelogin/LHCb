@@ -16,6 +16,8 @@
     <class name = 'VPChannelID' 
            author = 'Victor Coco' 
            desc = 'This class identifies a single pixel in the VP'
+           defaultdestructor = "FALSE"
+           final            = 'TRUE'
            virtual = 'FALSE'>
 
       <constructor argList = 'unsigned int sensor, unsigned int chip, unsigned int col, unsigned int row' 
@@ -28,8 +30,6 @@
       <constructor argList = 'int id' initList = 'm_channelID(id)'
                    desc = 'Constructor with channelID'>
       </constructor>
-
-      <copyconstructor/>
 
       <method type = '' name = 'operator unsigned int' const = 'TRUE' 
               desc = 'Cast'>
