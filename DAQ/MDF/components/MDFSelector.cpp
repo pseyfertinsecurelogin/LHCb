@@ -141,11 +141,11 @@ namespace LHCb {
       return sc;
     }
     /// Service Constructor
-    MDFSelector( const std::string& nam, ISvcLocator* svcloc ) : RawDataSelector( nam, svcloc ) {
+    MDFSelector( const std::string& name, ISvcLocator* svcloc ) : RawDataSelector( name, svcloc ) {
       declareProperty( "IgnoreChecksum", m_ignoreChecksum = "NO" );
     }
     /// Standard destructor
-    virtual ~MDFSelector() {}
+    virtual ~MDFSelector() = default;
   };
 } // namespace LHCb
 

@@ -166,7 +166,7 @@ StatusCode RawDataSelector::previous( Context& ctxt, int jump ) const {
 StatusCode RawDataSelector::releaseContext( Context*& ctxt ) const {
   auto pCtxt = dynamic_cast<LoopContext*>( ctxt );
   if ( pCtxt ) {
-    pCtxt->close();
+    pCtxt->close(); // delete does this ??
     delete pCtxt;
     ctxt = nullptr;
     return S_OK;

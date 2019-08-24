@@ -213,7 +213,8 @@ StatusCode HLTControlFlowMgr::initialize() {
 }
 
 StatusCode HLTControlFlowMgr::finalize() {
-  StatusCode sc;
+
+  StatusCode sc = StatusCode::SUCCESS;
 
   // print the counters
   info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count\n"};
@@ -240,13 +241,13 @@ StatusCode HLTControlFlowMgr::finalize() {
       // skip /stat entry!
       sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const& i ) {
         IOpaqueAddress* pAddr = nullptr;
-        StatusCode      iret  = m_histoPersSvc->createRep( i, pAddr );
+        auto            iret  = m_histoPersSvc->createRep( i, pAddr );
         if ( iret.isSuccess() ) i->registry()->setAddress( pAddr );
         return s.isFailure() ? s : iret;
       } );
       sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const& i ) {
-        IRegistry* reg  = i->registry();
-        StatusCode iret = m_histoPersSvc->fillRepRefs( reg->address(), i );
+        auto reg  = i->registry();
+        auto iret = m_histoPersSvc->fillRepRefs( reg->address(), i );
         return s.isFailure() ? s : iret;
       } );
       if ( sc.isSuccess() ) {
@@ -259,9 +260,9 @@ StatusCode HLTControlFlowMgr::finalize() {
     }
   }
 
-  if ( m_evtSelector ) { m_evtSelector->releaseContext( m_evtSelContext ); }
+  releaseEvtSelContext();
 
-  StatusCode sc2 = Service::finalize();
+  auto sc2 = Service::finalize();
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
 }
 
@@ -269,7 +270,7 @@ EventContext HLTControlFlowMgr::createEventContext() {
   // setup evtcontext
   EventContext evtContext{};
   evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
-  m_nextevt++;
+  ++m_nextevt;
   // giving the scheduler states to the evtContext, so that they are
   // globally accessible within an event
   // copy of states happens here!
@@ -297,7 +298,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
   auto event_task = [evt_root_ptr, evtContext = std::move( evtContext ), this]() mutable {
-    StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
+    auto sc = m_whiteboard->selectStore( evtContext.slot() );
     if ( sc.isFailure() ) {
       fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
               << "Impossible to create event context" << endmsg;
@@ -396,8 +397,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   // precisely in declareEventRootAddress. Cannot be passed through the interface
   // without breaking other schedulers
   if ( m_evtSelector ) {
-    m_evtSelector->releaseContext( m_evtSelContext ); // to be sure not to leak on next line
-    StatusCode sc = m_evtSelector->createContext( m_evtSelContext );
+    auto sc = createEvtSelContext();
     if ( !sc.isSuccess() ) {
       fatal() << "Can not create the event selector Context." << endmsg;
       return sc;
@@ -508,7 +508,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   shutdown_threadpool();
 
-  if ( m_evtSelector ) { m_evtSelector->releaseContext( m_evtSelContext ); }
+  releaseEvtSelContext();
 
   if ( UNLIKELY( !startTime ) ) {
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
@@ -528,19 +528,21 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 std::optional<IOpaqueAddress*> HLTControlFlowMgr::declareEventRootAddress() {
 
   IOpaqueAddress* pAddr = nullptr;
-  StatusCode      sc    = m_evtSelector->next( *m_evtSelContext );
-  // TODO make a difference between finished and read error in the eventselector
-  if ( sc.isSuccess() ) {
-    // Create root address and assign address to data service
-    sc = m_evtSelector->createAddress( *m_evtSelContext, pAddr );
-    if ( !sc.isSuccess() ) {
-      error() << "Error creating IOpaqueAddress." << endmsg;
-      return {};
+  if ( m_evtSelContext ) {
+    auto sc = m_evtSelector->next( *m_evtSelContext );
+    // TODO make a difference between finished and read error in the eventselector
+    if ( sc.isSuccess() ) {
+      // Create root address and assign address to data service
+      sc = m_evtSelector->createAddress( *m_evtSelContext, pAddr );
+      if ( !sc.isSuccess() ) {
+        error() << "Error creating IOpaqueAddress." << endmsg;
+        return {};
+      }
     }
-  }
-  if ( !sc.isSuccess() ) {
-    info() << "No more events in event selection " << endmsg;
-    return nullptr;
+    if ( !sc.isSuccess() ) {
+      info() << "No more events in event selection " << endmsg;
+      return nullptr;
+    }
   }
   return pAddr;
 }
@@ -575,7 +577,7 @@ void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
   if ( msgLevel( MSG::VERBOSE ) )
     verbose() << "Clearing slot " << si << " (event " << eventContext.evt() << ") of the whiteboard" << endmsg;
 
-  StatusCode sc = m_whiteboard->clearStore( si );
+  auto sc = m_whiteboard->clearStore( si );
   if ( !sc.isSuccess() ) warning() << "Clear of Event data store failed" << endmsg;
   sc = m_whiteboard->freeStore( si );
   if ( !sc.isSuccess() ) error() << "Whiteboard slot " << eventContext.slot() << " could not be properly cleared";
