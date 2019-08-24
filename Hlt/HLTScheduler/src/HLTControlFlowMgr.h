@@ -214,4 +214,18 @@ public:
   template <typename printable>
   std::stringstream buildPrintableStateTree( std::vector<printable> const& states ) const;
   std::stringstream buildAlgsWithStates( std::vector<uint16_t> const& states ) const;
+
+  // to be able to check which states belong to which node (from the outside)
+  auto getNodeNamesWithIndices() {
+    std::vector<std::tuple<std::string, int>> names_indices;
+    names_indices.reserve( m_allVNodes.size() );
+    for ( auto const& vnode : m_allVNodes ) {
+      names_indices.emplace_back( std::visit(
+          []( auto const& node ) {
+            return std::tuple{node.m_name, node.m_NodeID};
+          },
+          vnode ) );
+    }
+    return names_indices;
+  }
 };

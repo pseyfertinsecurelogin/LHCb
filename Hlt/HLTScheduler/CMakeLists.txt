@@ -18,7 +18,8 @@ gaudi_depends_on_subdirs(
                          GaudiCoreSvc
                          GaudiHive
                          GaudiAlg
-                         GaudiKernel)
+                         GaudiKernel
+                         Event/HltEvent)
 
 find_package(Boost)
 find_package(TBB)
@@ -29,11 +30,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${TBB_INCLUDE_DIRS})
 gaudi_add_module(HLTScheduler
                  src/*.cpp
                  INCLUDE_DIRS Boost HLTScheduler cppgsl
-                 LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel)
+                 LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel HltEvent)
 
-#gaudi_add_unit_test(utestTrackingCoder
-#                    src/utest/utestTrackingCoder.cpp
-#                    LINK_LIBRARIES GaudiKernel HltEvent HLTSchedulerLib
-#                    TYPE Boost)
-#
 gaudi_add_test(QMTest QMTEST)
