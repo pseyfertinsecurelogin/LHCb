@@ -74,6 +74,9 @@ namespace LHCb::Event::v2 {
     /// Retrieve const  Covariance matrix containing errors on vertex position
     const Gaudi::SymMatrix3x3& covMatrix() const { return m_covMatrix; };
 
+    /// Retrieve const covariance matrix containing errors on vertex position
+    const Gaudi::SymMatrix3x3& posCovMatrix() const { return m_covMatrix; };
+
     /// Update  Covariance matrix containing errors on vertex position
     void setCovMatrix( const Gaudi::SymMatrix3x3& value ) { m_covMatrix = value; }
 

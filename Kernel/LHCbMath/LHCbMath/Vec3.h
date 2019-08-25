@@ -29,6 +29,7 @@
 template <typename T>
 class Vec3 {
 public:
+  using value_type = T;
   T x, y, z;
 
   Vec3() {}
@@ -52,6 +53,7 @@ public:
   T       X() const { return x; }
   T       Y() const { return y; }
   T       Z() const { return z; }
+  T       Rho() const { return rho(); }
   Vec3<T> Cross( Vec3<T> const& b ) const { return cross( b ); }
 
   inline T eta() const {

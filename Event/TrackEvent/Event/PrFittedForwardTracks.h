@@ -38,6 +38,7 @@ namespace LHCb::Pr::Fitted::Forward {
       m_size       = other.m_size;
     }
 
+    bool        empty() const { return m_size == 0; }
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
 
@@ -70,7 +71,7 @@ namespace LHCb::Pr::Fitted::Forward {
     template <typename T>
     inline T p( int t ) const {
       T qop = QoP<T>( t );
-      return 1 / qop;
+      return abs( 1 / qop );
     }
 
     template <typename simd, typename maskT>

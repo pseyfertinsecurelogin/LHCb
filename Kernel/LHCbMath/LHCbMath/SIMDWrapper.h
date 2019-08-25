@@ -19,9 +19,28 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 #include <string>
 
+template <typename T>
+inline T approx_log2( const T& x ) {
+  auto vx = castToInt( x );
+  auto mx = castToFloat( ( vx & 0x007FFFFF ) | 0x3F000000 );
+  auto y  = T( vx ) * 1.1920928955078125e-7f;
+  return y - 124.22551499f - 1.498030302f * mx - 1.72587999f / ( 0.3520887068f + mx );
+}
+
+template <typename T>
+inline T approx_log( const T& x ) {
+  return approx_log2( x ) * 0.69314718f;
+}
+
 namespace SIMDWrapper {
+  template <typename T>
+  inline T log( T const& x ) {
+    return approx_log( x );
+  }
+
   enum InstructionSet { Scalar = 0, AVX2, AVX256, AVX512, EndOfList };
   inline std::string instructionSetName( InstructionSet set ) {
     switch ( set ) {
@@ -39,16 +58,23 @@ namespace SIMDWrapper {
   }
   // Define some helper functions that will always return which instruction set
   // was used for the types in a given namespace when the stack was built.
+  namespace scalar {
+    using SIMDWrapper::log;
+  } // namespace scalar
   namespace avx2 {
+    using SIMDWrapper::log;
     InstructionSet stackInstructionSet();
   } // namespace avx2
   namespace avx256 {
+    using SIMDWrapper::log;
     InstructionSet stackInstructionSet();
   } // namespace avx256
   namespace avx512 {
+    using SIMDWrapper::log;
     InstructionSet stackInstructionSet();
   } // namespace avx512
   namespace best {
+    using SIMDWrapper::log;
     InstructionSet stackInstructionSet();
   } // namespace best
 
@@ -988,19 +1014,6 @@ inline T faster_atan2( const T& y, const T& x ) { // error < 0.07 rad, no 0/0 se
   T angle = signselect( x, c1, c2 ) - c1 * r;
 
   return copysign( angle, y );
-}
-
-template <typename T>
-inline T approx_log2( const T& x ) {
-  auto vx = castToInt( x );
-  auto mx = castToFloat( ( vx & 0x007FFFFF ) | 0x3F000000 );
-  auto y  = T( vx ) * 1.1920928955078125e-7f;
-  return y - 124.22551499f - 1.498030302f * mx - 1.72587999f / ( 0.3520887068f + mx );
-}
-
-template <typename T>
-inline T approx_log( const T& x ) {
-  return approx_log2( x ) * 0.69314718f;
 }
 
 template <typename T>
