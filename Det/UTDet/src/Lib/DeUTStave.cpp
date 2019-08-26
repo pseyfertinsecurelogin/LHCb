@@ -44,10 +44,15 @@ StatusCode DeUTStave::initialize() {
     m_detRegion   = param<int>( "detRegion" );
     m_firstSector = param<int>( "firstReadoutSector" );
     m_column      = param<int>( "column" );
-    m_type        = param<std::string>( "staveType" );
+    m_numSectors  = param<int>( "numSectors" );
 
-    m_numSectors = param<int>( "numSectors" );
-    m_staveRotZ  = param<std::string>( "staveRotZ" );
+    if ( exists( "staveType" ) ) {
+      m_staveRotZ = param<std::string>( "staveRotZ" );
+      m_type      = param<std::string>( "staveType" );
+    } else if ( exists( "moduleType" ) ) {
+      m_staveRotZ = param<std::string>( "moduleRotZ" );
+      m_type      = param<std::string>( "moduleType" );
+    }
 
     m_parent                   = getParent<DeUTStave>();
     const UTChannelID parentID = m_parent->elementID();

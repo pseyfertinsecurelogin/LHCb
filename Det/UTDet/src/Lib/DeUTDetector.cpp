@@ -254,8 +254,8 @@ void DeUTDetector::setOffset() {
         const auto& vecptrsectors = ptrstave->sectors();
         // add an offset only if we are on a new region
         if ( beginit || curr_region != ptrstave->detRegion() ) {
-          curr_region  = ptrstave->detRegion();
-          beginit      = false;
+          curr_region = ptrstave->detRegion();
+          beginit     = false;
           assert( ir < m_offset.size() );
           m_offset[ir] = topoffset;
           ++ir;
