@@ -78,10 +78,10 @@ void CaloDataProvider::clear() {
   m_digits.clear();
   m_tell1s = 0;
   m_readSources.clear();
-  m_minADC    = LHCb::CaloAdc( LHCb::CaloCellID(), 3840 );
-  m_minPinADC = LHCb::CaloAdc( LHCb::CaloCellID(), 3840 );
-  m_maxADC    = LHCb::CaloAdc( LHCb::CaloCellID(), -256 );
-  m_maxPinADC = LHCb::CaloAdc( LHCb::CaloCellID(), -256 );
+  m_minADC    = {LHCb::CaloCellID(), 3840};
+  m_minPinADC = {LHCb::CaloCellID(), 3840};
+  m_maxADC    = {LHCb::CaloCellID(), -256};
+  m_maxPinADC = {LHCb::CaloCellID(), -256};
   if ( msgLevel( MSG::DEBUG ) ) debug() << "ALL DATA CLEARED" << endmsg;
 }
 //-------------------------------------
@@ -253,7 +253,7 @@ bool CaloDataProvider::decodeBank( const LHCb::RawBank& bank ) {
                   << " |  CaloCell " << cellId << " |  valid ? " << m_calo->valid( cellId ) << " |  ADC value = " << adc
                   << endmsg;
 
-      if ( 0 != cellId.index() ) fillAdc( cellId, adc, sourceID );
+      if ( 0 != cellId.index() ) fillAdc( {cellId, adc}, sourceID );
     }
 
   } else if ( 2 == version ) {
@@ -337,7 +337,7 @@ bool CaloDataProvider::decodeBank( const LHCb::RawBank& bank ) {
                     << " |  ADC value = " << adc << endmsg;
 
         //== Keep only valid cells
-        if ( 0 != id.index() ) fillAdc( id, adc, sourceID );
+        if ( 0 != id.index() ) fillAdc( {id, adc}, sourceID );
       }
     }
     // Check All cards have been read
@@ -411,7 +411,7 @@ bool CaloDataProvider::decodeBank( const LHCb::RawBank& bank ) {
           verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( id )
                     << " |  Channel : " << num << " |  CaloCell " << id << " |  valid ? " << m_calo->valid( id )
                     << " |  ADC value = " << adc << endmsg;
-        if ( 0 != id.index() ) fillAdc( id, adc, sourceID );
+        if ( 0 != id.index() ) fillAdc( {id, adc}, sourceID );
         lenAdc--;
         offset += 16;
       }
@@ -458,7 +458,7 @@ bool CaloDataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
         LHCb::CaloCellID id( lastID + kk );
         LHCb::CaloCellID spdId( ( lastID + kk ) & 0x3FFF );
 
-        if ( 0 != ( spdData & 1 ) && 0 != spdId.index() ) fillAdc( spdId, 1, sourceID );
+        if ( 0 != ( spdData & 1 ) && 0 != spdId.index() ) fillAdc( {spdId, 1}, sourceID );
 
         // event dump
         if ( msgLevel( MSG::VERBOSE ) )
@@ -488,7 +488,7 @@ bool CaloDataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
         if ( 0 != ( item & 2 ) ) {
           LHCb::CaloCellID id( spdId ); // SPD
-          if ( 0 != id.index() ) fillAdc( id, 1, sourceID );
+          if ( 0 != id.index() ) fillAdc( {id, 1}, sourceID );
         }
       }
       ++data;
@@ -566,7 +566,7 @@ bool CaloDataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
         if ( 0 != isSpd ) {
           LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
-          if ( 0 != spdId.index() ) fillAdc( spdId, 1, sourceID );
+          if ( 0 != spdId.index() ) fillAdc( {spdId, 1}, sourceID );
         }
       }
       int nSkip = ( lenAdc + 1 ) / 2; // Length in number of words
