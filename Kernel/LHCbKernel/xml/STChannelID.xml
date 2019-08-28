@@ -42,10 +42,6 @@
         </code>
       </constructor>
 
-      <constructor argList='const STChannelID aChannelID' 
-                   desc='copy constructor'>
-        <code>  m_channelID = aChannelID.m_channelID;</code>
-      </constructor>
 
       <constructor argList='int id'
                    initList = 'm_channelID(id)'
