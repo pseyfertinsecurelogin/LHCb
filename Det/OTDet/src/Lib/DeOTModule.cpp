@@ -638,7 +638,7 @@ std::unique_ptr<LHCb::Trajectory<double>> DeOTModule::trajectoryLastWire( int mo
   /// Default is 1 -> straw 64(s3)/128
   auto traj = m_trajFirstWire[monolayer]->cloneOTWireTraj();
   traj->applyTranslation( ( m_nStraws / 2 - 1 ) * m_dp0di );
-  return std::move( traj );
+  return traj;
 }
 
 /// Returns a Trajectory representing the wire identified by the LHCbID
@@ -653,7 +653,7 @@ std::unique_ptr<LHCb::Trajectory<double>> DeOTModule::trajectory( const OTChanne
   unsigned int mono   = this->mono( aStraw );
   auto         traj   = m_trajFirstWire[mono]->cloneOTWireTraj();
   traj->applyTranslation( ( ( aStraw - 1 ) % m_nStraws ) * m_dp0di );
-  return std::move( traj );
+  return traj;
 }
 
 StatusCode DeOTModule::setStrawStatus( const std::vector<int>& flags ) {
