@@ -24,13 +24,15 @@
 
 namespace LHCb::Pr::Velo {
   class Tracks {
-    constexpr static int max_tracks = align_size( 1024 );
-    constexpr static int max_hits   = 26;
-    constexpr static int max_states = 2;
+    constexpr static int max_tracks       = align_size( 1024 );
+    constexpr static int max_hits         = 26;
+    constexpr static int max_states       = 2;
+    constexpr static int params_per_state = 11;
+    constexpr static int other_params     = 1;
 
   public:
     Tracks() {
-      const size_t size = max_tracks * ( max_hits + max_states * 8 + 1 );
+      const size_t size = max_tracks * ( max_hits + max_states * params_per_state + other_params );
       m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
@@ -47,18 +49,29 @@ namespace LHCb::Pr::Velo {
     bool        empty() const { return m_size == 0; }
 
     SOA_ACCESSOR( nHits, &( m_data->i ) )
-    SOA_ACCESSOR_VAR( hit, &( m_data[( hit + 1 ) * max_tracks].i ), int hit )
+    SOA_ACCESSOR_VAR( hit, &( m_data[( hit + other_params ) * max_tracks].i ), int hit )
 
-    VEC3_SOA_ACCESSOR_VAR( statePos, &( m_data[( max_hits + 1 + state * 8 ) * max_tracks].f ),
-                           &( m_data[( max_hits + 1 + state * 8 + 1 ) * max_tracks].f ),
-                           &( m_data[( max_hits + 1 + state * 8 + 2 ) * max_tracks].f ), int state )
+    VEC3_SOA_ACCESSOR_VAR( statePos, &( m_data[( max_hits + other_params + state * params_per_state ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 1 ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 2 ) * max_tracks].f ),
+                           int state )
 
-    VEC3_XY_SOA_ACCESSOR_VAR( stateDir, &( m_data[( max_hits + 1 + state * 8 + 3 ) * max_tracks].f ),
-                              &( m_data[( max_hits + 1 + state * 8 + 4 ) * max_tracks].f ), 1.f, int state )
+    VEC3_XY_SOA_ACCESSOR_VAR( stateDir,
+                              &( m_data[( max_hits + other_params + state * params_per_state + 3 ) * max_tracks].f ),
+                              &( m_data[( max_hits + other_params + state * params_per_state + 4 ) * max_tracks].f ),
+                              1.f, int state )
 
-    VEC3_SOA_ACCESSOR_VAR( stateCov, &( m_data[( max_hits + 1 + state * 8 + 5 ) * max_tracks].f ),
-                           &( m_data[( max_hits + 1 + state * 8 + 6 ) * max_tracks].f ),
-                           &( m_data[( max_hits + 1 + state * 8 + 7 ) * max_tracks].f ), int state )
+    VEC3_SOA_ACCESSOR_VAR( stateCovX,
+                           &( m_data[( max_hits + other_params + state * params_per_state + 5 ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 6 ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 7 ) * max_tracks].f ),
+                           int state )
+
+    VEC3_SOA_ACCESSOR_VAR( stateCovY,
+                           &( m_data[( max_hits + other_params + state * params_per_state + 8 ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 9 ) * max_tracks].f ),
+                           &( m_data[( max_hits + other_params + state * params_per_state + 10 ) * max_tracks].f ),
+                           int state )
 
     /// Retrieve the pseudorapidity at the first state
     template <typename T>
@@ -75,7 +88,7 @@ namespace LHCb::Pr::Velo {
     template <typename simd, typename maskT>
     inline void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
-      for ( int i = 0; i < max_hits + max_states * 8 + 1; i++ ) {
+      for ( int i = 0; i < max_hits + max_states * params_per_state + other_params; i++ ) {
         intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
       }
       m_size += simd::popcount( mask );
