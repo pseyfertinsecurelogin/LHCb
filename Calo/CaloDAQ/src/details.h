@@ -8,7 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#include "Event/CaloAdc.h"
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellID.h"
 #include <iomanip>
 #include <iostream>
 #include <string_view>
@@ -47,5 +49,17 @@ namespace details {
   StatusCode parse( DetectorName_t& result, std::string_view input );
 
   DetectorName_t alg_name_to_detector( const std::string& s );
+
+  class ADC { // light-weight non-keyed-object version of CaloAdc...
+    LHCb::CaloCellID m_cellID;
+    int              m_adc;
+
+  public:
+    constexpr ADC( const LHCb::CaloCellID& id, int count ) noexcept : m_cellID{id}, m_adc{count} {}
+    ADC( const LHCb::CaloAdc& adc ) noexcept : ADC{adc.cellID(), adc.adc()} {}
+                                      operator LHCb::CaloAdc() const noexcept { return {cellID(), adc()}; }
+    constexpr int                     adc() const noexcept { return m_adc; }
+    constexpr const LHCb::CaloCellID& cellID() const noexcept { return m_cellID; }
+  };
 
 } // namespace details

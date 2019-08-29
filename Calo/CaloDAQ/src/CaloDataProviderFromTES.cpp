@@ -136,10 +136,10 @@ void CaloDataProviderFromTES::clear() {
   m_adcs.clear();
   m_digits.clear();
   m_readSources.clear();
-  m_minADC    = LHCb::CaloAdc( LHCb::CaloCellID(), 3840 );
-  m_minPinADC = LHCb::CaloAdc( LHCb::CaloCellID(), 3840 );
-  m_maxADC    = LHCb::CaloAdc( LHCb::CaloCellID(), -256 );
-  m_maxPinADC = LHCb::CaloAdc( LHCb::CaloCellID(), -256 );
+  m_minADC    = {LHCb::CaloCellID(), 3840};
+  m_minPinADC = {LHCb::CaloCellID(), 3840};
+  m_maxADC    = {LHCb::CaloCellID(), -256};
+  m_maxPinADC = {LHCb::CaloCellID(), -256};
 }
 void CaloDataProviderFromTES::cleanData( int feb ) {
   if ( feb < 0 ) return;
