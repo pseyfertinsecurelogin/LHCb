@@ -50,8 +50,8 @@ namespace {
   template <typename Container, typename Fun>
   void resetCellParam( MsgStream& msg, const char* member, Container& c, Fun&& fun ) {
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
-      msg << MSG::DEBUG << "Before updating condition - reset CellParam." << member << endmsg,
-          std::for_each( std::begin( c ), std::end( c ), std::forward<Fun>( fun ) );
+      msg << MSG::DEBUG << "Before updating condition - reset CellParam." << member << endmsg;
+    std::for_each( std::begin( c ), std::end( c ), std::forward<Fun>( fun ) );
   }
 } // namespace
 // ============================================================================
