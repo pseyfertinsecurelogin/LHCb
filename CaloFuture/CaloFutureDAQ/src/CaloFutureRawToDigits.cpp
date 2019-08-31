@@ -68,7 +68,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   LHCb::span<const LHCb::RawBank*> banks;
   LHCb::RawBankReadoutStatus       status;
 
-  bool m_packed = false;
+  bool packed = false;
   if ( !m_packedIsDefault ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of short type are requested as default" << endmsg;
     banks  = rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
@@ -80,7 +80,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
         LHCb::RawBankReadoutStatus( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
   }
 
-  if ( 0 == banks.size() ) {
+  if ( banks.empty() ) {
     if ( !m_packedIsDefault ) {
       if ( msgLevel( MSG::DEBUG ) )
         debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
@@ -100,7 +100,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
     } else {
       if ( !m_packedIsDefault ) {
         if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of packed type has been found" << endmsg;
-        m_packed = true;
+        packed = true;
       } else {
         if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of short type has found" << endmsg;
       }
@@ -110,7 +110,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
       if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of short type has been found" << endmsg;
     } else {
       if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of packed type has found" << endmsg;
-      m_packed = true;
+      packed = true;
     }
   }
 
@@ -131,7 +131,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
     }
   }
 
-  if ( m_packed ) { // TELL1 format : 1 source per TELL1
+  if ( packed ) { // TELL1 format : 1 source per TELL1
     for ( const auto& t : m_calo->tell1Params() ) {
       bool ok = std::any_of( sources.begin(), sources.end(), [&]( int n ) { return t.number() == n; } );
       status.addStatus( t.number(),
@@ -560,7 +560,7 @@ int CaloFutureRawToDigits::findCardbyCode( const std::vector<int>& feCards, int 
   return std::distance( feCards.begin(), i );
 }
 
-void CaloFutureRawToDigits::checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus status ) const {
+void CaloFutureRawToDigits::checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus& status ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Control word :" << ctrl << endmsg;
   if ( 0 != ( 0x1 & ctrl ) || 0 != ( 0x20 & ctrl ) || 0 != ( 0x40 & ctrl ) ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Tell1 error bits have been detected in data" << endmsg;

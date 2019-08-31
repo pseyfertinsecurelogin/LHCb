@@ -56,13 +56,10 @@ public:
     m_ok    = true;
   }
   // actual implementation MUST BE in the parent tool
-  void clear() override {
-    Warning( "DUMMY CLEARING : THIS MESSAGE MUST NOT APPEAR" ).ignore();
-    return;
-  }
+  void clear() override { Warning( "DUMMY CLEARING : THIS MESSAGE MUST NOT APPEAR" ).ignore(); }
   //
   void                        cleanData( int ) override { return; } // to be implemented in the parent tool
-  LHCb::RawBankReadoutStatus& status() override { return m_status; }
+  LHCb::RawBankReadoutStatus& status() override { return *m_status; }
   void                        putStatusOnTES() override;
   bool                        ok() override {
     if ( m_getRaw ) getBanks();
@@ -75,6 +72,7 @@ public:
   void handle( const Incident& /* inc */ ) override {
     if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "IIncident Svc reset" << endmsg;
     m_getRaw = true;
+    m_status.reset();
   }
   // =========================================================================
 
@@ -94,12 +92,12 @@ protected:
   LHCb::RawBank::BankType                  m_errorType;
   bool                                     m_getRaw = true;
 
-  Gaudi::Property<bool>      m_extraHeader{this, "DetectorSpecificHeader", false};
-  bool                       m_packed = false;
-  Gaudi::Property<bool>      m_cleanCorrupted{this, "CleanWhenCorruption", false};
-  LHCb::RawBankReadoutStatus m_status;
-  std::vector<int>           m_readSources;
-  bool                       m_ok = false;
+  Gaudi::Property<bool>                     m_extraHeader{this, "DetectorSpecificHeader", false};
+  bool                                      m_packed = false;
+  Gaudi::Property<bool>                     m_cleanCorrupted{this, "CleanWhenCorruption", false};
+  std::optional<LHCb::RawBankReadoutStatus> m_status;
+  std::vector<int>                          m_readSources;
+  bool                                      m_ok = false;
 
 private:
   bool                  m_first = true;

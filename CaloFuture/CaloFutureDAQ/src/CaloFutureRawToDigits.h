@@ -48,7 +48,7 @@ public:
 private:
   bool checkCards( int nCards, const std::vector<int>& feCards ) const;
   int  findCardbyCode( const std::vector<int>& feCards, int code ) const;
-  void checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus status ) const;
+  void checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus& status ) const;
 
   Gaudi::Property<std::string> m_detectorName{this, "DetectorName", "Ecal", "Detector element name"};
   Gaudi::Property<std::string> m_zsupMethod{this, "ZSupMethod", "1D"};
