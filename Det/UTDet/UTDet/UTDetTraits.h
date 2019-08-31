@@ -21,7 +21,7 @@
 class DeUTDetector;
 class DeUTStation;
 class DeUTLayer;
-class DeUTModule;
+class DeUTStave;
 class DeUTSector;
 class DeUTSensor;
 
@@ -43,11 +43,11 @@ template <>
 class UTDetTraits<DeUTLayer> {
 public:
   typedef DeUTStation parent;
-  typedef DeUTModule  child;
+  typedef DeUTStave   child;
 };
 
 template <>
-class UTDetTraits<DeUTModule> {
+class UTDetTraits<DeUTStave> {
 public:
   typedef DeUTLayer  parent;
   typedef DeUTSector child;
@@ -56,7 +56,7 @@ public:
 template <>
 class UTDetTraits<DeUTSector> {
 public:
-  typedef DeUTModule parent;
+  typedef DeUTStave  parent;
   typedef DeUTSensor child;
 };
 

@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDet/DeUTLayer.h"
-#include "UTDet/DeUTModule.h"
 #include "UTDet/DeUTStation.h"
+#include "UTDet/DeUTStave.h"
 
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/SolidBox.h"
@@ -34,7 +34,7 @@ using namespace LHCb;
  *
  */
 
-DeUTLayer::DeUTLayer( const std::string& name ) : DeUTBaseElement( name ) { m_modules.clear(); }
+DeUTLayer::DeUTLayer( const std::string& name ) : DeUTBaseElement( name ) { m_staves.clear(); }
 
 const CLID& DeUTLayer::clID() const { return DeUTLayer::classID(); }
 
@@ -60,7 +60,7 @@ StatusCode DeUTLayer::initialize() {
     UTChannelID parentID = m_parent->elementID();
     UTChannelID chan( UTChannelID::detType::typeUT, parentID.station(), id(), 0, 0, 0 );
     setElementID( chan );
-    m_modules = getChildren<DeUTLayer>();
+    m_staves = getChildren<DeUTLayer>();
     flatten();
     m_nickname = UTNames().UniqueLayerToString( chan );
   }
@@ -96,24 +96,24 @@ StatusCode DeUTLayer::cachePlane() {
   return StatusCode::SUCCESS;
 }
 
-DeUTModule* DeUTLayer::findModule( const UTChannelID aChannel ) {
-  auto iter = std::find_if( m_modules.begin(), m_modules.end(),
-                            [&]( const DeUTModule* m ) { return m->contains( aChannel ); } );
-  return iter != m_modules.end() ? *iter : nullptr;
+DeUTStave* DeUTLayer::findStave( const UTChannelID aChannel ) {
+  auto iter =
+      std::find_if( m_staves.begin(), m_staves.end(), [&]( const DeUTStave* m ) { return m->contains( aChannel ); } );
+  return iter != m_staves.end() ? *iter : nullptr;
 }
 
-DeUTModule* DeUTLayer::findModule( const Gaudi::XYZPoint& point ) {
+DeUTStave* DeUTLayer::findStave( const Gaudi::XYZPoint& point ) {
   auto iter =
-      std::find_if( m_modules.begin(), m_modules.end(), [&]( const DeUTModule* m ) { return m->isInside( point ); } );
-  return iter != m_modules.end() ? *iter : nullptr;
+      std::find_if( m_staves.begin(), m_staves.end(), [&]( const DeUTStave* m ) { return m->isInside( point ); } );
+  return iter != m_staves.end() ? *iter : nullptr;
 }
 
 void DeUTLayer::flatten() {
-  DeUTLayer::Children::const_iterator iterModule = modules().begin();
-  for ( ; iterModule != modules().end(); ++iterModule ) {
-    DeUTModule*                          tModule    = *iterModule;
-    DeUTModule::Children::const_iterator iterSector = tModule->sectors().begin();
-    for ( ; iterSector != tModule->sectors().end(); ++iterSector ) {
+  DeUTLayer::Children::const_iterator iterStave = staves().begin();
+  for ( ; iterStave != staves().end(); ++iterStave ) {
+    DeUTStave*                          tStave     = *iterStave;
+    DeUTStave::Children::const_iterator iterSector = tStave->sectors().begin();
+    for ( ; iterSector != tStave->sectors().end(); ++iterSector ) {
       DeUTSector* tSector = *iterSector;
       m_sectors.push_back( tSector );
     }
@@ -121,7 +121,7 @@ void DeUTLayer::flatten() {
 }
 
 double DeUTLayer::fractionActive() const {
-  return std::accumulate( m_modules.begin(), m_modules.end(), 0.0,
-                          []( double f, const DeUTModule* m ) { return f + m->fractionActive(); } ) /
-         double( m_modules.size() );
+  return std::accumulate( m_staves.begin(), m_staves.end(), 0.0,
+                          []( double f, const DeUTStave* m ) { return f + m->fractionActive(); } ) /
+         double( m_staves.size() );
 }

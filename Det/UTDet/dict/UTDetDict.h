@@ -14,10 +14,10 @@
 #include "UTDet/DeUTBaseElement.h"
 #include "UTDet/DeUTDetector.h"
 #include "UTDet/DeUTLayer.h"
-#include "UTDet/DeUTModule.h"
 #include "UTDet/DeUTSector.h"
 #include "UTDet/DeUTSensor.h"
 #include "UTDet/DeUTStation.h"
+#include "UTDet/DeUTStave.h"
 
 // Needed to resolve forward declaration when making dictiobary
 #include "Kernel/Trajectory.h"

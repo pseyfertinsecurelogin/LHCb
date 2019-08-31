@@ -216,7 +216,7 @@ void UTClustersToRawBankAlgT<IReadoutTool>::writeBank( const UTClustersOnBoard::
     bWriter << neighbourSum;
     UTCluster::ADCVector adcs = aCluster->stripValues();
 
-    // flip ADC values for rotated modules
+    // flip ADC values for rotated staves
     UTChannelID channelID = aCluster->channelID();
     this->readoutTool()->ADCOfflineToDAQ( channelID, aBoardID, adcs );
 
