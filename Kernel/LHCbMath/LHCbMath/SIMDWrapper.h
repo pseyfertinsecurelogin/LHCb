@@ -18,6 +18,7 @@
 #include <limits>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -57,6 +58,16 @@ namespace SIMDWrapper {
       return "Unknown";
     }
   }
+
+  template <typename bare, std::size_t size, typename T>
+  inline std::ostream& print_vector( std::ostream& os, T const& x, const char* name ) {
+    std::array<bare, size> tmp;
+    x.store( tmp.data() );
+    os << name << "{";
+    for ( std::size_t i = 0; i < size - 1; ++i ) { os << tmp[i] << ", "; }
+    return os << tmp[size - 1] << "}";
+  }
+
   // Define some helper functions that will always return which instruction set
   // was used for the types in a given namespace when the stack was built.
   namespace scalar {
@@ -156,9 +167,10 @@ namespace SIMDWrapper {
       }
       friend float_v select( int mask, const float_v& a, const float_v& b ) { return ( mask ) ? a : b; }
 
-      friend mask_v operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
-      friend mask_v operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
-      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
+      friend mask_v        operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
+      friend mask_v        operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
+      friend mask_v        operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) { return os << x.cast(); }
 
     private:
       float data;
@@ -209,6 +221,8 @@ namespace SIMDWrapper {
       friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return lhs.data < rhs.data; }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return lhs.data > rhs.data; }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return lhs.data == rhs.data; }
+
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) { return os << x.cast(); }
 
     private:
       int data;
@@ -368,6 +382,10 @@ namespace SIMDWrapper {
       friend float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
       friend float_v operator!( const float_v& x ) { return x ^ _mm256_castsi256_ps( _mm256_set1_epi32( -1 ) ); }
 
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 8>( os, x, "avx2" );
+      }
+
       friend float_v min( const float_v& lhs, const float_v& rhs ) { return _mm256_min_ps( lhs, rhs ); }
       friend float_v max( const float_v& lhs, const float_v& rhs ) { return _mm256_max_ps( lhs, rhs ); }
       friend float_v abs( const float_v& v ) { return v & _mm256_castsi256_ps( _mm256_set1_epi32( 0x7FFFFFFF ) ); }
@@ -480,6 +498,10 @@ namespace SIMDWrapper {
 
       friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm256_sllv_epi32( lhs, rhs ); }
       friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
+
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 8>( os, x, "avx2" );
+      }
 
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( a ), _mm256_castsi256_ps( b ), s ) );
