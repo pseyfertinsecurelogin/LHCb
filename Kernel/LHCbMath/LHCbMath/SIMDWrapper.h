@@ -104,6 +104,8 @@ namespace SIMDWrapper {
       int data;
     };
 
+    inline int popcount( const mask_v& mask ) { return (int)mask; }
+
     class int_v;
 
     class float_v {
@@ -238,10 +240,7 @@ namespace SIMDWrapper {
       static mask_v mask_false() { return false; }
       static int_v  indices() { return 0; }
       static int_v  indices( int start ) { return start; }
-      template <typename T>
-      static int popcount( T mask ) {
-        return (int)mask;
-      }
+      static int    popcount( mask_v const& mask ) { return scalar::popcount( mask ); }
       static mask_v loop_mask( int, int ) { return true; }
     };
   } // namespace scalar
@@ -417,6 +416,8 @@ namespace SIMDWrapper {
       __m256 data;
     };
 
+    inline int popcount( const float_v& mask ) { return _mm_popcnt_u32( _mm256_movemask_ps( mask ) ); }
+
     class int_v {
     public:
       int_v() {} // Constructor must be empty
@@ -524,7 +525,7 @@ namespace SIMDWrapper {
       static mask_v  mask_false() { return mask_v( 0.f ); }
       static int_v   indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
       static int_v   indices( int start ) { return indices() + start; }
-      static int     popcount( __m256 mask ) { return _mm_popcnt_u32( _mm256_movemask_ps( mask ) ); }
+      static int     popcount( mask_v const& mask ) { return avx2::popcount( mask ); }
       static float_v loop_mask( int i, int n ) {
         return _mm256_cmp_ps( _mm256_setr_ps( 0, 1, 2, 3, 4, 5, 6, 7 ), _mm256_set1_ps( n - i ), _CMP_LT_OS );
       }
@@ -573,6 +574,8 @@ namespace SIMDWrapper {
       __mmask8 data;
     };
 
+    inline int popcount( mask_v const& mask ) { return _mm_popcnt_u32( mask ); }
+
     class int_v;
 
     class float_v {
@@ -588,7 +591,7 @@ namespace SIMDWrapper {
         return *this;
       }
 
-             operator __m256() const { return data; }
+      operator __m256() const { return data; }
       inline operator int_v() const;
 
       void store( float* ptr ) const { _mm256_storeu_ps( ptr, data ); }
@@ -597,20 +600,20 @@ namespace SIMDWrapper {
 
       float hmax() const {
         __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hmin() const {
         __m128 r = _mm_min_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hadd() const {
         __m128 r = _mm_add_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
@@ -679,20 +682,20 @@ namespace SIMDWrapper {
 
       int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hmin() const {
         __m128i r = _mm_min_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hadd() const {
         __m128i r = _mm_add_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
@@ -745,14 +748,14 @@ namespace SIMDWrapper {
 
     struct types {
       static const size_t size = 8;
-      using int_v              = avx256::int_v;
-      using float_v            = avx256::float_v;
-      using mask_v             = avx256::mask_v;
+      using int_v = avx256::int_v;
+      using float_v = avx256::float_v;
+      using mask_v = avx256::mask_v;
       static mask_v mask_true() { return 0xFF; }
       static mask_v mask_false() { return 0x00; }
-      static int_v  indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
-      static int_v  indices( int start ) { return indices() + start; }
-      static int    popcount( mask_v mask ) { return _mm_popcnt_u32( mask ); }
+      static int_v indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
+      static int_v indices( int start ) { return indices() + start; }
+      static int popcount( mask_v const& mask ) { return avx256::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 8 ) > n ) ? ~( 0xFF << ( n & 7 ) ) : 0xFF; }
     };
   } // namespace avx256
@@ -783,6 +786,8 @@ namespace SIMDWrapper {
       __mmask16 data;
     };
 
+    inline int popcount( mask_v const& mask ) { return _mm_popcnt_u32( mask ); }
+
     class int_v;
 
     class float_v {
@@ -798,7 +803,7 @@ namespace SIMDWrapper {
         return *this;
       }
 
-             operator __m512() const { return data; }
+      operator __m512() const { return data; }
       inline operator int_v() const;
 
       void store( float* ptr ) const { _mm512_storeu_ps( ptr, data ); }
@@ -925,14 +930,14 @@ namespace SIMDWrapper {
 
     struct types {
       static const size_t size = 16;
-      using int_v              = avx512::int_v;
-      using float_v            = avx512::float_v;
-      using mask_v             = avx512::mask_v;
+      using int_v = avx512::int_v;
+      using float_v = avx512::float_v;
+      using mask_v = avx512::mask_v;
       static mask_v mask_true() { return 0xFFFF; }
       static mask_v mask_false() { return 0x0000; }
-      static int_v  indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
-      static int_v  indices( int start ) { return indices() + start; }
-      static int    popcount( mask_v mask ) { return _mm_popcnt_u32( mask ); }
+      static int_v indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
+      static int_v indices( int start ) { return indices() + start; }
+      static int popcount( mask_v const& mask ) { avx512::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 16 ) > n ) ? ~( 0xFFFF << ( n & 15 ) ) : 0xFFFF; }
     };
   } // namespace avx512
