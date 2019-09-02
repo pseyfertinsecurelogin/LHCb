@@ -542,7 +542,7 @@ namespace {
     for ( const auto& l : morelines ) { *file << l << '\n'; }
     *file << '\n';
     //
-    return std::move( file ); // must std::move to convert from std::fstream to std::ostream...
+    return file;
   }
   // ==========================================================================
 } // namespace
