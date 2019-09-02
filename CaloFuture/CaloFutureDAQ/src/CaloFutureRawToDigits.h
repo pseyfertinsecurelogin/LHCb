@@ -41,14 +41,14 @@ public:
   CaloFutureRawToDigits( const std::string& name, ISvcLocator* pSvcLocator );
   StatusCode initialize() override;
   std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus>
-                             operator()( const LHCb::RawEvent& rawEvt ) const override;
-  std::vector<LHCb::CaloAdc> decode( const LHCb::RawBank& bank, LHCb::RawBankReadoutStatus status,
-                                     bool getPinData ) const;
+  operator()( const LHCb::RawEvent& rawEvt ) const override;
 
 private:
-  bool checkCards( int nCards, const std::vector<int>& feCards ) const;
-  int  findCardbyCode( const std::vector<int>& feCards, int code ) const;
-  void checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus& status ) const;
+  template <bool decodePinData>
+  std::vector<LHCb::CaloAdc> decode( const LHCb::RawBank& bank, LHCb::RawBankReadoutStatus& status ) const;
+  bool                       checkCards( int nCards, const std::vector<int>& feCards ) const;
+  int                        findCardbyCode( const std::vector<int>& feCards, int code ) const;
+  void                       checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus& status ) const;
 
   Gaudi::Property<std::string> m_detectorName{this, "DetectorName", "Ecal", "Detector element name"};
   Gaudi::Property<std::string> m_zsupMethod{this, "ZSupMethod", "1D"};
