@@ -10,6 +10,7 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrVeloTracks.h"
+#include "Event/PrZip.h"
 
 namespace LHCb::Pr::Velo {
   namespace detail {
@@ -46,7 +47,7 @@ namespace LHCb::Pr::Velo {
     decltype( auto ) closestToBeamStateDir() const {
       return this->m_tracks->template stateDir<FType>( this->offset(), 0 );
     }
-    auto             closestToBeamState() const { return State{closestToBeamStatePos(), closestToBeamStateDir()}; }
+    auto closestToBeamState() const { return detail::State{closestToBeamStatePos(), closestToBeamStateDir()}; }
     decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
   };
 } // namespace LHCb::Pr::Velo
