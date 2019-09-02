@@ -13,6 +13,39 @@
 #include "CaloFutureUtils/CaloFutureAlgUtils.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 
+namespace {
+  LHCb::RawBank::BankType alternate( LHCb::RawBank::BankType b ) {
+    assert( b == LHCb::RawBank::EcalE || b == LHCb::RawBank::EcalPacked || b == LHCb::RawBank::HcalE ||
+            b == LHCb::RawBank::HcalPacked );
+    switch ( b ) {
+    case LHCb::RawBank::EcalE:
+      return LHCb::RawBank::EcalPacked;
+    case LHCb::RawBank::EcalPacked:
+      return LHCb::RawBank::EcalE;
+    case LHCb::RawBank::HcalE:
+      return LHCb::RawBank::HcalPacked;
+    case LHCb::RawBank::HcalPacked:
+      return LHCb::RawBank::HcalE;
+    default:
+      throw std::invalid_argument( "alternate: bad BankType" );
+    }
+  }
+  const char* label( LHCb::RawBank::BankType b ) {
+    assert( b == LHCb::RawBank::EcalE || b == LHCb::RawBank::EcalPacked || b == LHCb::RawBank::HcalE ||
+            b == LHCb::RawBank::HcalPacked );
+    switch ( b ) {
+    case LHCb::RawBank::EcalE:
+    case LHCb::RawBank::HcalE:
+      return "short";
+    case LHCb::RawBank::EcalPacked:
+    case LHCb::RawBank::HcalPacked:
+      return "packed";
+    default:
+      throw std::invalid_argument( "label: bad BankType" );
+    }
+  }
+} // namespace
+
 DECLARE_COMPONENT( CaloFutureRawToDigits )
 
 //=============================================================================
@@ -65,53 +98,34 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   // ------------------------------------
   // --- Get RawBank AND ReadoutStatus
   // ------------------------------------
-  LHCb::span<const LHCb::RawBank*> banks;
 
-  bool isEcal = ( m_detectorName == "Ecal" );
-  std::optional<LHCb::RawBank::BankType> bt;
-  if ( !m_packedIsDefault ) {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of short type are requested as default" << endmsg;
-    bt = ( isEcal ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-    banks = rawEvt.banks( *bt );
-    if ( banks.empty() ) {
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
-      bt = ( isEcal ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
-      banks  = rawEvt.banks( *bt );
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << ( banks.empty() ? "WARNING : None of short and packed banks have been found "
-                                   : " Requested banks of packed type has been found" )
-                << endmsg;
-    } else {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of short type has been found" << endmsg;
-    }
-  } else {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of packed type are requested as default" << endmsg;
-    bt = ( isEcal ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
-    banks  = rawEvt.banks( *bt );
-    if ( banks.empty() ) {
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << " Requested banks of packed type has not been found ... try short type" << endmsg;
-      bt = ( isEcal ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-      banks  = rawEvt.banks( *bt );
-      if ( msgLevel( MSG::DEBUG ) ) {
-        debug() << ( banks.empty() ? "WARNING : None of short and packed banks have been found "
-                                   : " Requested banks of short type has found" )
-                << endmsg;
-      }
-    } else {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of packed type has found" << endmsg;
-    }
+  bool                    isEcal = ( m_detectorName == "Ecal" );
+  LHCb::RawBank::BankType bank_type =
+      ( isEcal ? ( m_packedIsDefault ? LHCb::RawBank::EcalPacked : LHCb::RawBank::EcalE )
+               : ( m_packedIsDefault ? LHCb::RawBank::HcalPacked : LHCb::RawBank::HcalE ) );
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "Banks of " << label( bank_type ) << " type are requested as default" << endmsg;
+
+  LHCb::span<const LHCb::RawBank*> banks = rawEvt.banks( bank_type );
+  if ( banks.empty() ) {
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " Requested banks of " << label( bank_type ) << " type has not been found ... try "
+              << label( alternate( bank_type ) ) << " type" << endmsg;
+    bank_type = alternate( bank_type );
+    banks     = rawEvt.banks( bank_type );
   }
-
-  assert (bt.hasValue());
-  LHCb::RawBankReadoutStatus status = LHCb::RawBankReadoutStatus(*bt);
-  bool packed = ( *bt == LHCb::RawBank::EcalPacked || *bt == LHCb::RawBank::HcalPacked );
+  if ( msgLevel( MSG::DEBUG ) ) {
+    if ( banks.empty() )
+      debug() << "WARNING : None of short and packed banks have been found " << endmsg;
+    else
+      debug() << " Requested banks of " << label( bank_type ) << " type has been found" << endmsg;
+  }
+  LHCb::RawBankReadoutStatus status = LHCb::RawBankReadoutStatus( bank_type );
+  bool packed = ( bank_type == LHCb::RawBank::EcalPacked || bank_type == LHCb::RawBank::HcalPacked );
   m_noBanksCounter += banks.empty();
 
   // check whether the associated Error Bank is present or not
-  for ( const auto& b :
-        rawEvt.banks( isEcal ? LHCb::RawBank::EcalPackedError : LHCb::RawBank::HcalPackedError ) )
+  for ( const auto& b : rawEvt.banks( isEcal ? LHCb::RawBank::EcalPackedError : LHCb::RawBank::HcalPackedError ) )
     status.addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::ErrorBank );
 
   // check banks integrity + Magic pattern
