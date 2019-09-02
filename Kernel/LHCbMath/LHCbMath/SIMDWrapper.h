@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "LHCbMath/TypeMapping.h"
 #include "LHCbMath/bit_cast.h"
 
 #include <immintrin.h>
@@ -244,7 +245,14 @@ namespace SIMDWrapper {
       static mask_v loop_mask( int, int ) { return true; }
     };
   } // namespace scalar
+} // namespace SIMDWrapper
 
+template <>
+struct LHCb::type_map<SIMDWrapper::scalar::float_v> {
+  using int_t = SIMDWrapper::scalar::int_v;
+};
+
+namespace SIMDWrapper {
 #ifndef __AVX2__
   namespace avx2 {
     constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
@@ -531,6 +539,14 @@ namespace SIMDWrapper {
       }
     };
   } // namespace avx2
+} // namespace SIMDWrapper
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx2::float_v> {
+  using int_t = SIMDWrapper::avx2::int_v;
+};
+
+namespace SIMDWrapper {
 #endif
 
 #ifndef __AVX512F__
@@ -941,6 +957,19 @@ namespace SIMDWrapper {
       static mask_v loop_mask( int i, int n ) { return ( ( i + 16 ) > n ) ? ~( 0xFFFF << ( n & 15 ) ) : 0xFFFF; }
     };
   } // namespace avx512
+} // namespace SIMDWrapper
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx256::float_v> {
+  using int_t = SIMDWrapper::avx256::int_v;
+};
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx512::float_v> {
+  using int_t = SIMDWrapper::avx512::int_v;
+};
+
+namespace SIMDWrapper {
 #endif
 
   namespace best {
