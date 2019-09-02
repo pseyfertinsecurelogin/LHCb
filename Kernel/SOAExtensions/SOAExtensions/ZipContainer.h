@@ -73,7 +73,7 @@ namespace Zipping {
     ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
   private:
-    ZipFamilyNumber m_zipIdentifier = details::ZipFamilyNumberGenerator::generate(); ///< container's family membership
+    ZipFamilyNumber m_zipIdentifier = generateZipIdentifier(); ///< container's family membership
 
     // constructors
   public:
