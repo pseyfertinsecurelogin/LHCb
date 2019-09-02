@@ -49,10 +49,13 @@ namespace LHCb {
     //             34, 34, 24, 24, 27, 29, 30, 32, 35, 35, 46, 46, 49, 51, 52, 54, 57, 57, 47, 47, 48, 50,
     //             53, 55, 56, 56, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
 
-    constexpr static const auto mapQuarterSectorToSectorCentralRegion =
-        std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 24, 24, 27, 28, 31, 32,
-                   35, 35, 25, 25, 26, 29, 30, 33, 34, 34, 47, 47, 48, 51, 52, 55, 56, 56, 46, 46, 49, 50,
-                   53, 54, 57, 57, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
+    // constexpr static const auto mapQuarterSectorToSectorCentralRegion =
+    //    std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 24, 24, 27, 28, 31, 32,
+    //               35, 35, 25, 25, 26, 29, 30, 33, 34, 34, 47, 47, 48, 51, 52, 55, 56, 56, 46, 46, 49, 50,
+    //               53, 54, 57, 57, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
+
+    // -- For the moment, this is assigned in "computeGeometry"
+    std::array<int, 64> mapQuarterSectorToSectorCentralRegion;
 
     constexpr static const auto mapSectorToSector = std::array{
         1,  2,  3,  4,  5,  0, 0, 0, 0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 0, 0, 0, 36, 37, 38, 39, 40,
