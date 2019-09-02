@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrFittedForwardTracks.h"
-#include "Event/PrIterableTracks.h"
+#include "Event/PrZip.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include <Math/SMatrix.h>
 namespace LHCb::Pr::Fitted::Forward {

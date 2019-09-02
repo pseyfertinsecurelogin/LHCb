@@ -14,6 +14,8 @@
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
 
+#include "SOAExtensions/ZipUtils.h"
+
 /**
  * Track data after the Kalman fit
  *
@@ -22,25 +24,31 @@
 
 namespace LHCb::Pr::Fitted::Forward {
   class Tracks {
-    constexpr static int max_tracks = align_size( 1024 );
+    constexpr static int     max_tracks = align_size( 1024 );
+    Zipping::ZipFamilyNumber m_zipIdentifier;
 
   public:
-    Tracks() {
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
+        : m_zipIdentifier{zipIdentifier} {
       const size_t size = max_tracks * 15;
       m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
+    // Special constructor for zipping machinery
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& ) : Tracks( zipIdentifier ) {}
+
     Tracks( const Tracks& ) = delete;
 
-    Tracks( Tracks&& other ) {
+    Tracks( Tracks&& other ) : m_zipIdentifier{other.m_zipIdentifier} {
       m_data       = other.m_data;
       other.m_data = nullptr;
       m_size       = other.m_size;
     }
 
-    bool        empty() const { return m_size == 0; }
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
+    bool                     empty() const { return m_size == 0; }
+    inline int               size() const { return m_size; }
+    inline int&              size() { return m_size; }
+    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     // Index in TracksFT container of the track's ancestor
     SOA_ACCESSOR( trackFT, &( m_data->i ) )
