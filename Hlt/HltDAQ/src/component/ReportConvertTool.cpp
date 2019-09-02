@@ -1353,11 +1353,8 @@ void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* inf
   }
 }
 
-void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const LHCb::Track* object, bool turbo ) {
-  if ( m_version == -999 ) {
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
-    m_version = m_LatestVersion;
-  }
+void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const LHCb::Track* object,
+                                             bool turbo ) const {
 
   const auto& used_map = ( turbo ? s_track_unordered_map2_Turbo : s_track_unordered_map2 );
 
@@ -1387,7 +1384,7 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
     last  = *( object->states().back() );
   }
 
-  for ( const auto& track : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
+  for ( const auto& track : used_map.at( findBestPrevious( used_map, m_LatestVersion ) ) ) {
     switch ( track.second.second ) {
     case 0:
       info->insert( track.first, float( first.z() ) );
@@ -1659,14 +1656,9 @@ void ReportConvertTool::CaloHypoObject2Summary( HltObjectSummary::Info* info, co
 }
 
 void ReportConvertTool::RecVertexObject2Summary( HltObjectSummary::Info* info, const LHCb::RecVertex* object,
-                                                 bool turbo ) {
-  if ( m_version == -999 ) {
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
-    m_version = m_LatestVersion;
-  }
-
+                                                 bool turbo ) const {
   const auto& used_map = ( turbo ? s_recvertex_unordered_map2_Turbo : s_recvertex_unordered_map2 );
-  for ( const auto& recvertex : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
+  for ( const auto& recvertex : used_map.at( findBestPrevious( used_map, m_LatestVersion ) ) ) {
     switch ( recvertex.second.second ) {
     case 0:
       info->insert( recvertex.first, float( object->position().x() ) );
@@ -1999,32 +1991,15 @@ void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::
   }
 }
 
-void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Track* object, bool turbo ) {
-  if ( m_version == -999 ) {
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
-    m_version = m_LatestVersion;
-  }
-
+void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Track* object,
+                                                bool turbo ) const {
   const auto& used_map = ( turbo ? s_track_unordered_map2_Turbo : s_track_unordered_map2 );
-  if ( m_version < 3 ) {
-    int run1version = -999;
-    // find size we care about (i.e. make sure extra info not counted)
-    auto Isize = count_info( *info );
-    // Looking at Run 1 data, need to know which map to use
-    if ( Isize == ( s_track_unordered_map2.at( 1 ) ).size() )
-      run1version = 1;
-    else if ( Isize == ( s_track_unordered_map2.at( 2 ) ).size() )
-      run1version = 2;
-    else
-      Error( "Track requested in Run 1 reports, but reports are unknown", StatusCode::FAILURE, 100 ).ignore();
-    m_version = run1version;
-  }
 
   LHCb::State first;
   LHCb::State last;
 
   Gaudi::TrackSymMatrix cov;
-  for ( const auto& track : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
+  for ( const auto& track : used_map.at( findBestPrevious( used_map, m_LatestVersion ) ) ) {
     auto x = ( *info )[track.first];
     switch ( track.second.second ) {
     case 0:
@@ -2338,30 +2313,12 @@ void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info*
 }
 
 void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info* info, LHCb::RecVertex* object,
-                                                    bool turbo ) {
-  if ( m_version == -999 ) {
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
-    m_version = m_LatestVersion;
-  }
-
+                                                    bool turbo ) const {
   const auto& used_map = ( turbo ? s_recvertex_unordered_map2_Turbo : s_recvertex_unordered_map2 );
-  if ( m_version < 3 ) {
-    int run1version = -999;
-    // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = count_info( *info );
-    // Looking at Run 1 data, need to know which map to use
-    if ( Isize == ( s_recvertex_unordered_map2.at( 1 ) ).size() )
-      run1version = 1;
-    else if ( Isize == ( s_recvertex_unordered_map2.at( 2 ) ).size() )
-      run1version = 2;
-    else
-      Error( "Track requested in Run 1 reports, but reports are unknown", StatusCode::FAILURE, 100 ).ignore();
-    m_version = run1version;
-  }
 
   Gaudi::XYZPoint      xyz;
   Gaudi::SymMatrix3x3& cov = *( const_cast<Gaudi::SymMatrix3x3*>( &object->covMatrix() ) );
-  for ( const auto& recvertex : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
+  for ( const auto& recvertex : used_map.at( findBestPrevious( used_map, m_LatestVersion ) ) ) {
     auto x = ( *info )[recvertex.first];
     switch ( recvertex.second.second ) {
     case 0:

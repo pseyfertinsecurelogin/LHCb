@@ -70,12 +70,12 @@ public:
   /// Put the information in to the HltObjectSummary
   void ParticleObject2Summary( HltObjectSummary::Info*, const LHCb::Particle*, bool ) override;
   void ProtoParticleObject2Summary( HltObjectSummary::Info*, const LHCb::ProtoParticle*, bool ) override;
-  void TrackObject2Summary( HltObjectSummary::Info*, const LHCb::Track*, bool ) override;
+  void TrackObject2Summary( HltObjectSummary::Info*, const LHCb::Track*, bool ) const override;
   void RichPIDObject2Summary( HltObjectSummary::Info*, const LHCb::RichPID*, bool ) override;
   void MuonPIDObject2Summary( HltObjectSummary::Info*, const LHCb::MuonPID*, bool ) override;
   void CaloClusterObject2Summary( HltObjectSummary::Info*, const LHCb::CaloCluster*, bool ) override;
   void CaloHypoObject2Summary( HltObjectSummary::Info*, const LHCb::CaloHypo*, bool ) override;
-  void RecVertexObject2Summary( HltObjectSummary::Info*, const LHCb::RecVertex*, bool ) override;
+  void RecVertexObject2Summary( HltObjectSummary::Info*, const LHCb::RecVertex*, bool ) const override;
   void VertexObject2Summary( HltObjectSummary::Info*, const LHCb::Vertex*, bool ) override;
   void RecSummaryObject2Summary( HltObjectSummary::Info*, const LHCb::RecSummary* ) override;
   void GenericMapObject2Summary( HltObjectSummary::Info*, const GaudiUtils::VectorMap<short, float>* ) override;
@@ -83,12 +83,12 @@ public:
   /// Put the information in the summary back in the object
   void ParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::Particle*, bool ) override;
   void ProtoParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::ProtoParticle*, bool ) override;
-  void TrackObjectFromSummary( const HltObjectSummary::Info*, LHCb::Track*, bool ) override;
+  void TrackObjectFromSummary( const HltObjectSummary::Info*, LHCb::Track*, bool ) const override;
   void RichPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::RichPID*, bool ) override;
   void MuonPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::MuonPID*, bool ) override;
   void CaloClusterObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloCluster*, bool ) override;
   void CaloHypoObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloHypo*, bool ) override;
-  void RecVertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecVertex*, bool ) override;
+  void RecVertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecVertex*, bool ) const override;
   void VertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::Vertex*, bool ) override;
   void RecSummaryObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecSummary* ) override;
   void GenericMapObjectFromSummary( const HltObjectSummary::Info*, GaudiUtils::VectorMap<short, float>* ) override;
