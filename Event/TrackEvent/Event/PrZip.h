@@ -13,7 +13,6 @@
 #include "GaudiKernel/detected.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "SOAExtensions/ZipUtils.h"
-#include "SelKernel/Utilities.h"
 
 namespace LHCb::Pr::detail {
   /** Helper to determine if the given type has a reserve( std::size_t ) method
@@ -111,6 +110,26 @@ namespace LHCb::Pr::detail {
       if constexpr ( has_reserve_v<base_t<I>> ) { base_t<I>::reserve( capacity ); }
     }
   };
+
+  /** Helper to check the given set of containers all have zipIdentifier()
+   *  methods that return compatible values. Note this is very similar to
+   *  Zipping::areSemanticallyCompatible but is more inclusive, perhaps the two
+   *  should be merged.
+   */
+  template <typename FIRST, typename... OTHERS>
+  bool areSemanticallyCompatible( FIRST& first, OTHERS&... others ) {
+    return ( ... && ( others.zipIdentifier() == first.zipIdentifier() ) );
+  }
+
+  /** Helper to check that the given set of containers are all the same size.
+   */
+  template <typename FIRST, typename... OTHERS>
+  bool areSameSize( FIRST const& first, OTHERS const&... others ) {
+    // Check that converting to std::size_t won't cause problems
+    if ( UNLIKELY( ( first.size() < 0 ) || ( ... || ( others.size() < 0 ) ) ) ) return false;
+    // Check that all containers have the same size as the first one.
+    return ( ... && ( std::size_t( others.size() ) == std::size_t( first.size() ) ) );
+  }
 } // namespace LHCb::Pr::detail
 
 namespace LHCb::Pr {
@@ -225,11 +244,11 @@ namespace LHCb::Pr {
     Zip( ContainerTypes const&... containers ) : m_containers{&containers...} {
       // We assume that size() and zipIdentifier() can just be taken from the
       // 0th container, now's the time to check that assumption...!
-      if ( !Sel::Utils::areSemanticallyCompatible( containers... ) ) {
+      if ( !detail::areSemanticallyCompatible( containers... ) ) {
         throw GaudiException{"Asked to zip containers that are not semantically compatible", "LHCb::Pr::Zip",
                              StatusCode::FAILURE};
       }
-      if ( !Sel::Utils::areSameSize( containers... ) ) {
+      if ( !detail::areSameSize( containers... ) ) {
         throw GaudiException{"Asked to zip containers that are not the same size", "LHCb::Pr::Zip",
                              StatusCode::FAILURE};
       }
