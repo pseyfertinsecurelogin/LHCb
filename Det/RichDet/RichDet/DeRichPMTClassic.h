@@ -223,7 +223,6 @@ private:
 
   private:
     // implementation data
-
     std::mutex m_initLock;
     bool       m_initialised{false};
   };

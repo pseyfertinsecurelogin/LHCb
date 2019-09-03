@@ -28,6 +28,9 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichRadiatorType.h"
 
+// RichDet
+#include "RichDet/RichDetConfigType.h"
+
 // *******************************************************************************************
 
 /** @namespace DeRichLocations
@@ -82,6 +85,13 @@ namespace DeRichLocations {
   inline const std::string Rich1BeamPipe = "/dd/Structure/LHCb/BeforeMagnetRegion/Rich1/Rich1BeamPipe";
   /// Rich2 Beampipe location in TDS
   inline const std::string Rich2BeamPipe = "/dd/Structure/LHCb/AfterMagnetRegion/Rich2/Rich2BeamPipe";
+
+  /// Detector numbering locations
+  inline std::vector<std::string> detectorNumberings( const Rich::RichPhDetConfigType type ) noexcept {
+    if ( Rich::PMTConfig == type ) { return {"Rich1PMTDetectorNumbers", "Rich2PMTDetectorNumbers"}; }
+    if ( Rich::HPDConfig == type ) { return {"Rich1DetectorNumbers", "Rich2DetectorNumbers"}; }
+    return {};
+  }
 
   // ----------------------------------------------------------------------------------------
   // Utility methods

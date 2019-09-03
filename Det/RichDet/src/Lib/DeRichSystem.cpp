@@ -41,6 +41,9 @@
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 
+// STL
+#include <algorithm>
+
 //=============================================================================
 
 const CLID CLID_DERichSystem = 12005; // User defined
@@ -65,23 +68,17 @@ StatusCode DeRichSystem::initialize() {
   std::vector<std::string> deRichLocs = getDeRichLocations();
 
   // get condition names for detector numbers
-  std::vector<std::string> detCondNames;
-  const std::string        str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
-  const std::string        str_PhotoDetConfigValue = "DetectorConfiguration";
+  // std::vector<std::string> detCondNames;
+  const std::string str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
+  const std::string str_PhotoDetConfigValue = "DetectorConfiguration";
   if ( hasCondition( str_PhotoDetConfig ) ) {
     const auto deRC = condition( str_PhotoDetConfig );
     if ( deRC->exists( str_PhotoDetConfigValue ) )
       m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
   }
-  if ( m_photDetConf == Rich::PMTConfig ) {
-    detCondNames.push_back( "Rich1PMTDetectorNumbers" );
-    detCondNames.push_back( "Rich2PMTDetectorNumbers" );
-  } else if ( m_photDetConf == Rich::HPDConfig ) {
-    detCondNames.push_back( "Rich1DetectorNumbers" );
-    detCondNames.push_back( "Rich2DetectorNumbers" );
-  } else {
-    return Error( "Unknown detector configuration. " );
-  }
+
+  const auto detCondNames = DeRichLocations::detectorNumberings( m_photDetConf );
+  if ( detCondNames.empty() ) { return Error( "Unknown detector configuration." ); }
 
   // check if the numbers match.
   if ( 0 != detCondNames.size() % deRichLocs.size() ) {
@@ -178,8 +175,9 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
 
   if ( hasCondition( str_PhotoDetConfig ) ) {
     const auto deRC = condition( str_PhotoDetConfig );
-    if ( deRC->exists( str_PhotoDetConfigValue ) )
+    if ( deRC->exists( str_PhotoDetConfigValue ) ) {
       m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
+    }
   }
 
   std::string str_NumberOfPDs                  = "";
@@ -194,7 +192,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
   std::string str_PDLevel1IDs                  = "";
   std::string str_Level1LogicalToHardwareIDMap = "";
 
-  if ( m_photDetConf == Rich::PMTConfig ) {
+  if ( Rich::PMTConfig == m_photDetConf ) {
     str_NumberOfPDs                  = "NumberOfPMTs";
     str_PDSmartIDs                   = "PMTSmartIDs";
     str_PDHardwareIDs                = "PMTHardwareIDs";
@@ -206,7 +204,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
     str_InactivePDs                  = "InactivePMTs";
     str_PDLevel1IDs                  = "PMTLevel1IDs";
     str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap-PMT";
-  } else if ( m_photDetConf == Rich::HPDConfig ) {
+  } else if ( Rich::HPDConfig == m_photDetConf ) {
     str_NumberOfPDs                  = "NumberOfHPDs";
     str_PDSmartIDs                   = "HPDSmartIDs";
     str_PDHardwareIDs                = "HPDHardwareIDs";
@@ -218,8 +216,9 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
     str_InactivePDs                  = "InactiveHPDs";
     str_PDLevel1IDs                  = "HPDLevel1IDs";
     str_Level1LogicalToHardwareIDMap = "Level1LogicalToHardwareIDMap";
-  } else
-    return Error( "Unknown detector configuration. " );
+  } else {
+    return Error( "Unknown detector configuration" );
+  }
 
   // load conditions
   _ri_debug << "Loading Conditions from " << m_detNumConds[rich] << endmsg;
@@ -289,9 +288,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
         error() << "Invalid SmartID in the list of inactive PDs : " << inpd << endmsg;
       }
     }
-  }
-
-  else {
+  } else {
     // hardware IDs
     _ri_debug << "Inactive PDs are taken from the hardware list" << endmsg;
     inacts.clear();
@@ -336,9 +333,30 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
         icopyN != copyNs.end();
         ++iSoft, ++iHard, ++iL0, ++iL1, ++iL1In, ++icopyN ) {
 
-    // get data
-    const LHCb::RichSmartID32         pdID32( *iSoft ); // needed for 32->64 bit support
-    const LHCb::RichSmartID           pdID( pdID32 );   // handles correct format conversion
+    // get PD ID
+    const LHCb::RichSmartID32 pdID32( *iSoft ); // needed for 32->64 bit support
+    LHCb::RichSmartID         pdID( pdID32 );   // handles correct format conversion
+
+    // PMT specific checks
+    if ( Rich::PMTConfig == m_photDetConf ) {
+      // check large PMT flag
+      const auto check_isLarge = isLargePD( pdID );
+      if ( pdID.isLargePMT() != check_isLarge ) {
+        // should make this a warning/error/fatal when 'classic' PMT support is not required any longer.
+        _ri_debug << "IsLarge PMT flag mis-match " << pdID << " " << pdID.isLargePMT() << "->" << check_isLarge
+                  << endmsg;
+        pdID.setLargePMT( check_isLarge );
+      }
+      // check if this PD ID has a valid DePD object, if not skip.
+      // skip this for HPDs due to circular dep issues with DeRichSystem
+      if ( !dePD( pdID ) ) {
+        // should make this a warning/error/fatal when 'classic' PMT support is not required any longer.
+        _ri_debug << pdID << " has no DePD object !" << endmsg;
+        continue;
+      }
+    }
+
+    // get readout numbers
     const Rich::DAQ::PDHardwareID     hardID( *iHard );
     const Rich::DAQ::Level1HardwareID L1ID( *iL1 );
     const Rich::DAQ::Level0ID         L0ID( *iL0 );
