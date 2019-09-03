@@ -139,107 +139,109 @@
 
       <method
 	name='getFullNames'
-	type='std::map&lt;std::string,std::string&gt;'
+	type='const std::map&lt;std::string,std::string&gt;&amp;'
 	desc='return the list with the complete names of cross-sections'
+    static='TRUE'
 	const='FALSE'>
 	<code>
-	  std::map&lt;std::string,std::string&gt; map;
+	  static const std::map&lt;std::string,std::string&gt; map = {
 
 <!-- ****************************** Pythia total cross-section ********************************* -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("MBCrossSection","Total cross-section of Minimum Bias events"));
+      { "MBCrossSection","Total cross-section of Minimum Bias events"},
 
 <!-- ****************************** Computation of Pile-Up ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("MeanNoZeroPUInt","Mean number of non-empty generated Pile-Up interactions"));
-	  map.insert(std::pair&lt;std::string,std::string&gt;("MeanPUInt","Mean number of generated Pile-Up interactions"));
-	  map.insert(std::pair&lt;std::string,std::string&gt;("MeanPUIntAcc","Mean number of accepted Pile-Up interactions"));
+      {"MeanNoZeroPUInt","Mean number of non-empty generated Pile-Up interactions"},
+      {"MeanPUInt","Mean number of generated Pile-Up interactions"},
+      {"MeanPUIntAcc","Mean number of accepted Pile-Up interactions"},
 
 <!-- ****************************** Computation of full event cut efficiencies  ****************************** -->
-          map.insert(std::pair&lt;std::string,std::string&gt;("FullEvtCut","Full event cut efficiency"));
+      {"FullEvtCut","Full event cut efficiency"},
 
 <!-- ****************************** Computation of cross-sections ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("bCrossGen","Generated b cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("ThreebCrossGen", "Double generated b cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("PromptBCrossGen", "Generated prompt B cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("cCrossGen", "Generated c cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("ThreecCrossGen","Double generated c cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("PromptCCrossGen","Generated prompt C cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("bAndcCrossGen","Generated b and c cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("bCrossAcc","Accepted b cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("ThreebCrossAcc","Double accepted b cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("PromptBCrossAcc","Accepted prompt B cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("cCrossAcc","Accepted c cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("ThreecCrossAcc","Double accepted c cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("PromptCCrossAcc","Accepted prompt C cross-section"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("bAndcCrossAcc","Accepted b and c cross-section"));
+      {"bCrossGen","Generated b cross-section"},
+      {"ThreebCrossGen", "Double generated b cross-section"},
+      {"PromptBCrossGen", "Generated prompt B cross-section"},
+      {"cCrossGen", "Generated c cross-section"},
+      {"ThreecCrossGen","Double generated c cross-section"},
+      {"PromptCCrossGen","Generated prompt C cross-section"},
+      {"bAndcCrossGen","Generated b and c cross-section"},
+      {"bCrossAcc","Accepted b cross-section"},
+      {"ThreebCrossAcc","Double accepted b cross-section"},
+      {"PromptBCrossAcc","Accepted prompt B cross-section"},
+      {"cCrossAcc","Accepted c cross-section"},
+      {"ThreecCrossAcc","Double accepted c cross-section"},
+      {"PromptCCrossAcc","Accepted prompt C cross-section"},
+      {"bAndcCrossAcc","Accepted b and c cross-section"},
 
 <!-- ****************************** Computation of generator level cut efficiencies ****************************** -->
-          map.insert(std::pair&lt;std::string,std::string&gt;("GenLevelCut","Generator level cut efficiency"));
+      {"GenLevelCut","Generator level cut efficiency"},
 
 <!-- ****************************** Computation of B Hadron fraction ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionB0Gen","Fraction of generated B0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiB0Gen","Fraction of generated B0bar"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBplusGen","Fraction of generated B+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBminusGen","Fraction of generated B-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBs0Gen","Fraction of generated Bs0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiBs0Gen","Fraction of generated anti-Bs0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionbBarGen","Fraction of generated b-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantibBarGen","Fraction of generated anti-b-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBcplusGen","Fraction of generated Bc+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBcminusGen","Fraction of generated Bc-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionB0Acc","Fraction of accepted B0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiB0Acc","Fraction of accepted B0bar"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBplusAcc","Fraction of accepted B+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBminusAcc","Fraction of accepted B-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBs0Acc","Fraction of accepted Bs0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiBs0Acc","Fraction of accepted anti-Bs0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionbBaryonAcc","Fraction of accepted b-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantibBarAcc","Fraction of accepted anti-b-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBcplusAcc","Fraction of accepted Bc+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBcminusAcc","Fraction of accepted Bc-"));
+      {"FractionB0Gen","Fraction of generated B0"},
+      {"FractionantiB0Gen","Fraction of generated B0bar"},
+      {"FractionBplusGen","Fraction of generated B+"},
+      {"FractionBminusGen","Fraction of generated B-"},
+      {"FractionBs0Gen","Fraction of generated Bs0"},
+      {"FractionantiBs0Gen","Fraction of generated anti-Bs0"},
+      {"FractionbBarGen","Fraction of generated b-Baryon"},
+      {"FractionantibBarGen","Fraction of generated anti-b-Baryon"},
+      {"FractionBcplusGen","Fraction of generated Bc+"},
+      {"FractionBcminusGen","Fraction of generated Bc-"},
+      {"FractionB0Acc","Fraction of accepted B0"},
+      {"FractionantiB0Acc","Fraction of accepted B0bar"},
+      {"FractionBplusAcc","Fraction of accepted B+"},
+      {"FractionBminusAcc","Fraction of accepted B-"},
+      {"FractionBs0Acc","Fraction of accepted Bs0"},
+      {"FractionantiBs0Acc","Fraction of accepted anti-Bs0"},
+      {"FractionbBaryonAcc","Fraction of accepted b-Baryon"},
+      {"FractionantibBarAcc","Fraction of accepted anti-b-Baryon"},
+      {"FractionBcplusAcc","Fraction of accepted Bc+"},
+      {"FractionBcminusAcc","Fraction of accepted Bc-"},
 
 <!-- ****************************** Computation of D Hadron fraction ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionD0Gen","Fraction of generated D0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiD0Gen","Fraction of generated D0bar"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDplusGen","Fraction of generated D+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDminusGen","Fraction of generated D-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDsplusGen","Fraction of generated Ds+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDsminusGen","Fraction of generated Ds-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractioncBarGen","Fraction of generated c-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionanticBarGen","Fraction of generated anti-c-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionD0Acc","Fraction of accepted D0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiD0Acc","Fraction of accepted D0bar"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDplusAcc","Fraction of accepted D+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDminusAcc","Fraction of accepted D-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDsplusAcc","Fraction of accepted Ds+"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDsminusAcc","Fraction of accepted Ds-"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractioncBaryonAcc","Fraction of accepted c-Baryon"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionanticBarAcc","Fraction of accepted anti-c-Baryon"));
+      {"FractionD0Gen","Fraction of generated D0"},
+      {"FractionantiD0Gen","Fraction of generated D0bar"},
+      {"FractionDplusGen","Fraction of generated D+"},
+      {"FractionDminusGen","Fraction of generated D-"},
+      {"FractionDsplusGen","Fraction of generated Ds+"},
+      {"FractionDsminusGen","Fraction of generated Ds-"},
+      {"FractioncBarGen","Fraction of generated c-Baryon"},
+      {"FractionanticBarGen","Fraction of generated anti-c-Baryon"},
+      {"FractionD0Acc","Fraction of accepted D0"},
+      {"FractionantiD0Acc","Fraction of accepted D0bar"},
+      {"FractionDplusAcc","Fraction of accepted D+"},
+      {"FractionDminusAcc","Fraction of accepted D-"},
+      {"FractionDsplusAcc","Fraction of accepted Ds+"},
+      {"FractionDsminusAcc","Fraction of accepted Ds-"},
+      {"FractioncBaryonAcc","Fraction of accepted c-Baryon"},
+      {"FractionanticBarAcc","Fraction of accepted anti-c-Baryon"},
 
 <!-- ****************************** Computation of B** fraction ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionBGen","Fraction of generated B"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBstarGen","Fraction of generated B*"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionB2starGen","Fraction of generated B**"));
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionBAcc","Fraction of accepted B"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionBstarAcc","Fraction of accepted B*"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionB2starAcc","Fraction of accepted B**"));
+      {"FractionBGen","Fraction of generated B"},
+      {"FractionBstarGen","Fraction of generated B*"},
+      {"FractionB2starGen","Fraction of generated B**"},
+      {"FractionBAcc","Fraction of accepted B"},
+      {"FractionBstarAcc","Fraction of accepted B*"},
+      {"FractionB2starAcc","Fraction of accepted B**"},
 
 <!-- ****************************** Computation of D** fraction ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionDGen","Fraction of generated D"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDstarGen","Fraction of generated D*"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionD2starGen","Fraction of generated D**"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDAcc","Fraction of accepted D"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionDstarAcc","Fraction of accepted D*"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionD2starAcc","Fraction of accepted D**"));
+      {"FractionDGen","Fraction of generated D"},
+      {"FractionDstarGen","Fraction of generated D*"},
+      {"FractionD2starGen","Fraction of generated D**"},
+      {"FractionDAcc","Fraction of accepted D"},
+      {"FractionDstarAcc","Fraction of accepted D*"},
+      {"FractionD2starAcc","Fraction of accepted D**"},
 
 
 <!-- ****************************** Computation of signal generator level cut efficiencies ****************************** -->
-	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionSignal","Fraction of generated signal events"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiSignal","Fraction of generated anti-signal events"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("PartCutEff","Particle cut efficiency"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("antiPartCutEff","Anti-particle cut efficiency"));
+      {"FractionSignal","Fraction of generated signal events"},
+      {"FractionantiSignal","Fraction of generated anti-signal events"},
+      {"PartCutEff","Particle cut efficiency"},
+      {"antiPartCutEff","Anti-particle cut efficiency"}
+      };
 
 
-	  return map;
+      return map;
 	</code>
       </method>
 
@@ -253,10 +255,7 @@
         override='TRUE'>
         <arg name="s" type="std::ostream" const="FALSE"/>
 	<code>
-	  std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);
-	  ss &lt;&lt; "{ }";
-
-	  return ss;
+      return s &lt;&lt; "{ }";
         </code>
       </method>
 
