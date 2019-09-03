@@ -186,6 +186,10 @@ void CaloReadoutTool::putStatusOnTES() {
   // Readout Status
   typedef LHCb::RawBankReadoutStatus  Status;
   typedef LHCb::RawBankReadoutStatuss Statuss;
+  if ( !m_status ) {
+    error() << "putStatusOnTES(): RawBankReadoutStatus not created for this event, not putting it on TES" << endmsg;
+    return;
+  }
   if ( msgLevel( MSG::DEBUG ) )
     debug() << "Creating container at " << LHCb::RawBankReadoutStatusLocation::Default << endmsg;
   Statuss* statuss = getOrCreate<Statuss, Statuss>( LHCb::RawBankReadoutStatusLocation::Default );
