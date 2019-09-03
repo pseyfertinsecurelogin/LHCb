@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bitset>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -66,6 +67,13 @@ namespace SIMDWrapper {
     os << name << "{";
     for ( std::size_t i = 0; i < size - 1; ++i ) { os << tmp[i] << ", "; }
     return os << tmp[size - 1] << "}";
+  }
+
+  template <std::size_t size, typename T>
+  inline std::ostream& print_bitset( std::ostream& os, T const& x, const char* name ) {
+    auto s = std::bitset<size>{x}.to_string();
+    std::reverse( s.begin(), s.end() );
+    return os << name << "{" << s << "}";
   }
 
   // Define some helper functions that will always return which instruction set
@@ -608,6 +616,10 @@ namespace SIMDWrapper {
       friend bool none( const mask_v& mask ) { return mask == 0x00; }
       friend bool any( const mask_v& mask ) { return mask != 0x00; }
 
+      friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
+        return print_bitset<8>( os, x, "avx256" );
+      }
+
     private:
       __mmask8 data;
     };
@@ -694,6 +706,12 @@ namespace SIMDWrapper {
       friend mask_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps_mask( lhs, rhs, _CMP_GT_OS );
       }
+      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) {
+        return _mm256_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
+      }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 8>( os, x, "avx256" );
+      }
 
     private:
       __m256 data;
@@ -757,6 +775,9 @@ namespace SIMDWrapper {
       friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm256_cmplt_epi32_mask( lhs, rhs ); }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpeq_epi32_mask( lhs, rhs ); }
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 8>( os, x, "avx256" );
+      }
 
     private:
       __m256i data;
@@ -819,6 +840,9 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return mask == 0xFFFF; }
       friend bool none( const mask_v& mask ) { return mask == 0x0000; }
       friend bool any( const mask_v& mask ) { return mask != 0x0000; }
+      friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
+        return print_bitset<16>( os, x, "avx512" );
+      }
 
     private:
       __mmask16 data;
@@ -891,6 +915,12 @@ namespace SIMDWrapper {
       friend mask_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_GT_OS );
       }
+      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) {
+        return _mm512_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
+      }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 16>( os, x, "avx512" );
+      }
 
     private:
       __m512 data;
@@ -939,6 +969,9 @@ namespace SIMDWrapper {
       friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm512_cmplt_epi32_mask( lhs, rhs ); }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpeq_epi32_mask( lhs, rhs ); }
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 16>( os, x, "avx512" );
+      }
 
     private:
       __m512i data;
