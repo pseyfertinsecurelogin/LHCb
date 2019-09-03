@@ -31,9 +31,10 @@
  * family.
  *
  * Semantic validation is only done in debug builds (more precisely based on
- * DNDEBUG) since it introduces a runtime overhead. Data members are not
- * optimized out in the optimized build to provide ABI compatibility and ensure
- * persistency formats do not depend on the architecture.
+ * ZIPPING_SEMANTIC_CHECKS) since it introduces a runtime overhead. Data
+ * members are not optimized out in the optimized build to provide ABI
+ * compatibility and ensure persistency formats do not depend on the
+ * architecture.
  */
 
 #ifndef ZipContainer_h
@@ -170,7 +171,7 @@ namespace Zipping {
             typename = std::enable_if_t<SOA::Utils::ALL( SOA::impl::is_skin<SKIN>(),
                                                          has_semantic_zip_v<std::decay_t<ZIPCONTAINER>>... )>>
   auto semantic_zip( ZIPCONTAINER&&... views ) {
-#ifndef NDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
     if ( !areSemanticallyCompatible( views... ) ) {
       throw IncompatibleZipException( "zipping from different container families" );
     }
@@ -182,7 +183,7 @@ namespace Zipping {
   template <typename... ZIPCONTAINER,
             typename = std::enable_if_t<SOA::Utils::ALL( has_semantic_zip_v<std::decay_t<ZIPCONTAINER>>... )>>
   auto semantic_zip( ZIPCONTAINER&&... views ) {
-#ifndef NDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
     if ( !areSemanticallyCompatible( views... ) ) {
       throw IncompatibleZipException( "zipping from different container families" );
     }

@@ -9,8 +9,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
-#undef NDEBUG
+#define ZIPPING_SEMANTIC_CHECKS
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE utestSelection
@@ -264,22 +263,22 @@ BOOST_AUTO_TEST_CASE( transform ) {
 
   Zipping::SelectionView view1{&foo1, exported_selection};
 
-  [[maybe_unused]] Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo4 =
-      Zipping::transform<s_fitres>( foo1,
-                                    []( Zipping::ZipContainer<SOA::Container<std::vector, s_track>>::proxy track ) {
-                                      return fitres{track.accessor_track().x, track.accessor_track().y,
-                                                    track.accessor_track().z, (int)track.accessor_track().y};
-                                    },
-                                    exported_selection );
+  [[maybe_unused]] Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo4 = Zipping::transform<s_fitres>(
+      foo1,
+      []( Zipping::ZipContainer<SOA::Container<std::vector, s_track>>::proxy track ) {
+        return fitres{track.accessor_track().x, track.accessor_track().y, track.accessor_track().z,
+                      (int)track.accessor_track().y};
+      },
+      exported_selection );
 
   [[maybe_unused]] Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>> foo5 =
-      Zipping::transform<s_fitres, std::vector>( zip,
-                                                 []( auto track ) {
-                                                   return fitres{track.accessor_track().x, track.accessor_track().y,
-                                                                 track.accessor_track().z,
-                                                                 (int)track.accessor_track().y};
-                                                 },
-                                                 exported_selection );
+      Zipping::transform<s_fitres, std::vector>(
+          zip,
+          []( auto track ) {
+            return fitres{track.accessor_track().x, track.accessor_track().y, track.accessor_track().z,
+                          (int)track.accessor_track().y};
+          },
+          exported_selection );
 
   [[maybe_unused]] auto foo6 = Zipping::transform<s_fitres, std::vector>( view1, []( auto track ) {
     return fitres{track.accessor_track().x, track.accessor_track().y, track.accessor_track().z,
