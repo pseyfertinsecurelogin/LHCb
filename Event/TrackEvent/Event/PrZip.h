@@ -345,13 +345,13 @@ namespace LHCb::Pr {
     template <typename T>
     struct merged_object_helper {
       static auto           decompose( T const& x ) { return std::tie( x ); }
-      static constexpr bool is_zippable_v = is_zippable_v<T>;
+      static constexpr bool is_zippable_v = ::LHCb::Pr::detail::is_zippable_v<T>;
     };
 
     template <typename... T>
     struct merged_object_helper<merged_t<T...>> {
       static auto           decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
-      static constexpr bool is_zippable_v = ( is_zippable_v<T> && ... );
+      static constexpr bool is_zippable_v = ( ::LHCb::Pr::detail::is_zippable_v<T> && ... );
     };
 
     template <typename def_simd, bool def_unwrap, typename... T,
