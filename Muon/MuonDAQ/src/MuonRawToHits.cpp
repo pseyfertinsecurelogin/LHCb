@@ -103,6 +103,22 @@ StatusCode MuonRawToHits::initialize() {
     m_nStations    = boost::numeric_cast<size_t>( m_muonDetector->stations() );
     assert( m_nStations <= 4 );
   }
+
+  // create the layouts
+  for ( auto station = 0; station != 4; ++station ) {
+    for ( auto region = 0; region != 4; ++region ) {
+      unsigned int x1 = m_muonDetector->getLayoutX( 0, station, region );
+      unsigned int y1 = m_muonDetector->getLayoutY( 0, station, region );
+      unsigned int x2 = m_muonDetector->getLayoutX( 1, station, region );
+      unsigned int y2 = m_muonDetector->getLayoutY( 1, station, region );
+      if ( x1 > x2 ) {
+        layouts[station + 4 * region] = {MuonLayout( x1, y1 ), MuonLayout( x2, y2 )};
+      } else {
+        layouts[station + 4 * region] = {MuonLayout( x2, y2 ), MuonLayout( x1, y1 )};
+      }
+    }
+  }
+
   return !( m_muonDetector || m_muonPosTool )
              ? Error( "Could not read " + DeMuonLocation::Default + " or could not get MuonFastPosTool" )
              : sc;
@@ -119,7 +135,6 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
   if ( mb.empty() ) return MuonHitContainer{std::move( stations )};
 
   std::array<std::vector<Digit>, 4> decoding;
-  for ( auto& decode : decoding ) { decode.reserve( nDigits( mb ) ); }
 
   // decode tha data
   decoding = decodeTileAndTDC( mb );
@@ -162,35 +177,20 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
         addCoordsCrossingMap( coordsPerRegQua, commonHits );
       }
     }
-    auto region = m_xRegions.size() - m_nStations + station;
-
+    auto region       = m_xRegions.size() - m_nStations + station;
     stations[station] = CommonMuonStation{*m_muonDetector, station, m_xRegions[region], std::move( commonHits )};
     station++;
   }
-
   return MuonHitContainer{std::move( stations )};
 }
 
 //=============================================================================
 
-std::array<MuonLayout, 2> MuonRawToHits::makeStripLayouts( const unsigned int station,
-                                                           const unsigned int region ) const {
-  unsigned int x1 = m_muonDetector->getLayoutX( 0, station, region );
-  unsigned int y1 = m_muonDetector->getLayoutY( 0, station, region );
-  unsigned int x2 = m_muonDetector->getLayoutX( 1, station, region );
-  unsigned int y2 = m_muonDetector->getLayoutY( 1, station, region );
-  if ( x1 > x2 ) {
-    return {MuonLayout( x1, y1 ), MuonLayout( x2, y2 )};
-  } else {
-    return {MuonLayout( x2, y2 ), MuonLayout( x1, y1 )};
-  }
-}
-
 void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& commonHits ) const {
   // need to calculate the shape of the horizontal and vertical logical strips
 
   // get local MuonLayouts for strips
-  const auto& [layoutOne, layoutTwo] = makeStripLayouts( digits.front().tile.station(), digits.front().tile.region() );
+  const auto& [layoutOne, layoutTwo] = layouts[digits.front().tile.station() + 4 * digits.front().tile.region()];
 
   // used flags
   std::vector<bool> used( digits.size(), false );
@@ -242,7 +242,6 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
     }
     ++i;
   }
-
   // copy over "uncrossed" digits
 
   unsigned m = 0;
@@ -282,6 +281,7 @@ std::array<std::vector<Digit>, 4> MuonRawToHits::decodeTileAndTDC( LHCb::span<co
   // each element of the array correspond to hits from a single station
   // this will ease the sorting after
   std::array<std::vector<Digit>, 4> storage;
+  for ( auto& decode : storage ) { decode.reserve( nDigits( mb ) ); }
 
   for ( const auto& r : mb ) {
     if ( LHCb::RawBank::MagicPattern != r->magic() ) { OOPS( MuonRawHits::ErrorCode::BAD_MAGIC ); }
