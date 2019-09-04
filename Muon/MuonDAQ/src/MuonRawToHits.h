@@ -56,13 +56,13 @@ public:
 private:
   std::array<std::vector<Digit>, 4> decodeTileAndTDC( LHCb::span<const LHCb::RawBank*> ) const;
 
-  std::array<MuonLayout, 2> makeStripLayouts( const unsigned int, const unsigned int ) const;
-
   void addCoordsCrossingMap( DigitsRange&, CommonMuonHits& ) const;
 
   DeMuonDetector*                    m_muonDetector = nullptr;
   PublicToolHandle<IMuonFastPosTool> m_muonPosTool{this, "PosTool", "MuonFastPosTool"};
 
   size_t m_nStations = 0;
+
+  std::array<std::array<MuonLayout, 2>, 16> layouts;
 };
 #endif // MUONRAWTOHITS_MUONRAWTOHITS_H
