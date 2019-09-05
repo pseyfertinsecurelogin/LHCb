@@ -23,6 +23,7 @@
 
 // STL
 #include <memory>
+#include <mutex>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -164,7 +165,7 @@ private:
 
 protected:
   /// Access DeRichSystem on demand
-  DeRichSystem* deRichSys();
+  DeRichSystem* deRichSys() const;
 
 protected:
   /// Get a scalar parameter value from an SIMD parameter
@@ -174,7 +175,8 @@ protected:
   }
 
 private:
+  mutable std::mutex         m_initLock;          ///< update lock
   std::string                m_myname = "";       ///< The name of this detector element
   std::unique_ptr<MsgStream> m_msgStream;         ///< Message Stream Object
-  DeRichSystem*              m_deRichS = nullptr; ///< Pointer to the overall RICH system object
+  mutable DeRichSystem*      m_deRichS = nullptr; ///< Pointer to the overall RICH system object
 };

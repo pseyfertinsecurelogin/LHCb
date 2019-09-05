@@ -207,9 +207,6 @@ private:                          // data
   std::vector<IDetectorElement*> m_DeSiSensors; ///< Container for the Si sensors as Det Elements
 
   std::vector<DeRichHPD*> m_DeHPDs; ///< Container for the HPDs as Det Elements
-
-  /// DeRichSystem pointer
-  DeRichSystem* m_deRichS = nullptr;
 };
 
 //=========================================================================

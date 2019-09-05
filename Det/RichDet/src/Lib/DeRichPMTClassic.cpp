@@ -26,7 +26,6 @@
 // local
 #include "RichDet/DeRich.h"
 #include "RichDet/DeRichPMTClassic.h"
-#include "RichDet/DeRichSystem.h"
 
 // RichUtils
 #include "RichUtils/FastMaths.h"
@@ -71,7 +70,7 @@ StatusCode DeRichPMTClassic::initialize() {
 
   // Common DePD init
   auto sc = DeRichPD::initialize();
-  if ( !sc ) return sc;
+  if ( !sc ) { return sc; }
 
   m_dePmtAnode = ( !childIDetectorElements().empty() ? childIDetectorElements().front() : nullptr );
   if ( !m_dePmtAnode ) {
@@ -82,8 +81,15 @@ StatusCode DeRichPMTClassic::initialize() {
   // register for updates when geometry changes
   updMgrSvc()->registerCondition( this, geometry(), &DeRichPMTClassic::updateGeometry );
   updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(), &DeRichPMTClassic::updateGeometry );
+
   // Update PMT QE values whenever DeRichSystem updates
-  updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMTClassic::initPMTQuantumEff );
+  // Turn this off for now to avoid dependency on DeRichSystem. Anyway we do not yet have
+  // a complete set of PMT Q.E. conditions, so come back to this once this is in place.
+  // instead of depending on DeRichSystem we should just depend on the relevant condition.
+  // For now, just run the initialisation once by hand.
+  sc = DeRichPMTClassic::initPMTQuantumEff();
+  if ( !sc ) { return sc; }
+  // updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMTClassic::initPMTQuantumEff );
 
   // Trigger first update
   sc = updMgrSvc()->update( this );
@@ -201,7 +207,7 @@ StatusCode DeRichPMTClassic::getPMTParameters() {
 void DeRichPMTClassic::setPmtIsGrandFlag( const bool isGrand ) {
   m_PmtIsGrand = isGrand;
   // Update cached size parameters
-  const auto* deRich = getFirstRich();
+  const auto deRich = getFirstRich();
   if ( deRich ) {
     if ( isGrand ) {
       const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
@@ -222,7 +228,7 @@ void DeRichPMTClassic::setPmtIsGrandFlag( const bool isGrand ) {
 //=============================================================================
 
 StatusCode DeRichPMTClassic::initPMTQuantumEff() {
-  const auto* deRich = getFirstRich();
+  const auto deRich = getFirstRich();
   if ( !deRich ) { return StatusCode::FAILURE; }
   const auto                      PmtQELocation = deRich->param<std::string>( "RichPmtQETableName" );
   SmartDataPtr<TabulatedProperty> pmtQuantumEffTabProp( dataSvc(), PmtQELocation );

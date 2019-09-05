@@ -17,8 +17,13 @@
 #include "RichDet/DeRichSystem.h"
 
 // Access DeRichSystem on demand
-DeRichSystem* DeRichBase::deRichSys() {
+DeRichSystem* DeRichBase::deRichSys() const {
+
   if ( UNLIKELY( !m_deRichS ) ) {
+
+    // lock for update
+    std::lock_guard lock( m_initLock );
+
     // find the RichSystem
     SmartDataPtr<DetectorElement> afterMag( dataSvc(), "/dd/Structure/LHCb/AfterMagnetRegion" );
     if ( !afterMag ) {
@@ -52,7 +57,7 @@ DeRichSystem* DeRichBase::deRichSys() {
     }
 
     m_deRichS = deRichS;
-  } // close if for first time access
+  }
 
   return m_deRichS;
 }

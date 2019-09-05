@@ -293,11 +293,11 @@ public:
   /// The version of RichSystem
   inline int systemVersion() const noexcept { return m_version; }
 
-private: // definitions
+private:
+  // definitions
+
   /// Map type to use.
   template <typename TO, typename FROM>
-  // using MyMap = GaudiUtils::HashMap< TO, FROM >;
-  // using MyMap = std::map< TO, FROM >;
   using MyMap = std::unordered_map<TO, FROM>;
 
 private:

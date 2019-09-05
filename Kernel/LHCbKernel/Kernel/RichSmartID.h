@@ -693,11 +693,8 @@ namespace LHCb {
       return RichSmartID( key() &
                           ( LIKELY( MaPMTID == idType() )
                                 ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol + MaPMT::MaskPDCol +
-                                    // This should be included, but currently is causing problems because there
-                                    // is a bug in that the PD IDs stored in the DB do not have this flag set.
-                                    // So excluded for now here, but this should be added back once the DB is fixed.
-                                    // MaPMT::MaskLargePixel +
-                                    MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet + MaPMT::MaskPDIsSet + MaskIDType )
+                                    MaPMT::MaskLargePixel + MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet +
+                                    MaPMT::MaskPDIsSet + MaskIDType )
                                 : ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
                                     HPD::MaskRichIsSet + HPD::MaskPanelIsSet + HPD::MaskPDIsSet + MaskIDType ) ) );
     }

@@ -71,9 +71,6 @@ StatusCode DeRichHPDPanel::initialize() {
 
   if ( msgLevel( MSG::DEBUG, msg ) ) msg << MSG::DEBUG << "Initialize " << name() << endmsg;
 
-  // cache the DeRichSystem pointer
-  m_deRichS = deRichSys();
-
   // register UMS dependency on local geometry
   updMgrSvc()->registerCondition( this, geometry(), &DeRichHPDPanel::geometryUpdate );
 
@@ -126,7 +123,7 @@ bool DeRichHPDPanel::smartID( const Gaudi::XYZPoint& globalPoint, LHCb::RichSmar
   }
 
   // check if the HPD is active or dead
-  if ( !m_deRichS->pdIsActive( id ) ) return false;
+  if ( !deRichSys()->pdIsActive( id ) ) return false;
 
   const auto HPDNumber = _pdNumber( id );
   if ( HPDNumber.data() > nPDs() ) {
@@ -270,8 +267,8 @@ LHCb::RichTraceMode::RayTraceResult DeRichHPDPanel::PDWindowPoint( const Gaudi::
       res = checkPanelAcc( panelIntersection );
     } else {
       // Inside an HPD
-      if ( !m_deRichS->pdIsActive( smartID ) || // check if the HPD is active or dead
-           ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
+      if ( !deRichSys()->pdIsActive( smartID ) || // check if the HPD is active or dead
+           ( mode.hpdKaptonShadowing() &&         // check for intersection with kapton shield
              HPD->testKaptonShadowing( pInPanel, vInPanel ) ) ) {
         res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
       }
@@ -333,7 +330,7 @@ LHCb::RichTraceMode::RayTraceResult DeRichHPDPanel::PDWindowPoint( const Gaudi::
         windowPointGlobal = HPD->geometry()->toGlobal( windowPointInHPD );
 
         // check if the HPD is active or dead
-        if ( !m_deRichS->pdIsActive( smartID ) ) { res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel; }
+        if ( !deRichSys()->pdIsActive( smartID ) ) { res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel; }
 
       } // found intersection with HPD window
 

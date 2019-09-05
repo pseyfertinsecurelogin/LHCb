@@ -26,7 +26,6 @@
 // local
 #include "RichDet/DeRich.h"
 #include "RichDet/DeRichPMT.h"
-#include "RichDet/DeRichSystem.h"
 
 // RichUtils
 #include "RichUtils/FastMaths.h"
@@ -71,7 +70,7 @@ StatusCode DeRichPMT::initialize() {
 
   // Common DePD init
   auto sc = DeRichPD::initialize();
-  if ( !sc ) return sc;
+  if ( !sc ) { return sc; }
 
   m_dePmtAnode = ( !childIDetectorElements().empty() ? childIDetectorElements().front() : nullptr );
   if ( !m_dePmtAnode ) {
@@ -83,7 +82,13 @@ StatusCode DeRichPMT::initialize() {
   updMgrSvc()->registerCondition( this, geometry(), &DeRichPMT::updateGeometry );
   updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(), &DeRichPMT::updateGeometry );
   // Update PMT QE values whenever DeRichSystem updates
-  updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
+  // Turn this off for now to avoid dependency on DeRichSystem. Anyway we do not yet have
+  // a complete set of PMT Q.E. conditions, so come back to this once this is in place.
+  // instead of depending on DeRichSystem we should just depend on the relevant condition.
+  // For now, just run the initialisation once by hand.
+  sc = DeRichPMT::initPMTQuantumEff();
+  if ( !sc ) { return sc; }
+  // updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
   // Trigger first update
   sc = updMgrSvc()->update( this );
