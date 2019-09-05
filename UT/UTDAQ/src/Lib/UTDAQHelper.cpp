@@ -121,7 +121,7 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
 
         // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
         // -- where some sector numbers in the inner region were swapped (see below).
-        // -- Given that this is not future proof, it is a purely temporary measure to allow development.
+        // -- Given that this is not future proof, is a purely a temporary measure to allow development.
         if ( sector->elementID().detRegion() == 2 && layerIndex == 0 ) {
           if ( utSector->id() == 24 ) xPos24 = utSector->globalCentre().X();
           if ( utSector->id() == 25 ) xPos25 = utSector->globalCentre().X();
@@ -160,13 +160,8 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
 
   // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
   // -- where some sector numbers in the inner region were swapped.
-  // -- Given that this is not future proof, it is a purely temporary measure to allow development.
-  if ( xPos24 < xPos25 ) {
-    mapQuarterSectorToSectorCentralRegion =
-        std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 24, 24, 27, 28, 31, 32,
-                   35, 35, 25, 25, 26, 29, 30, 33, 34, 34, 47, 47, 48, 51, 52, 55, 56, 56, 46, 46, 49, 50,
-                   53, 54, 57, 57, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
-  } else {
+  // -- Given that this is not future proof, is a purely a temporary measure to allow development.
+  if ( xPos24 > xPos25 ) {
     mapQuarterSectorToSectorCentralRegion =
         std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 25, 25, 26, 28, 31, 33,
                    34, 34, 24, 24, 27, 29, 30, 32, 35, 35, 46, 46, 49, 51, 52, 54, 57, 57, 47, 47, 48, 50,
