@@ -87,7 +87,7 @@ StatusCode CaloFutureDigitFilterAlg::initialize() {
   if ( sc.isFailure() ) return sc;
 
   // Retrieve the calorimeter we are working with.
-  m_calo = getDet<DeCalorimeter>( LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( m_detectorName ) );
+  m_calo = getDet<DeCalorimeter>( LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( m_detectorName.value() ) );
   if ( !m_calo ) { return Error( "Detector information is not available!" ); }
 
   return StatusCode::SUCCESS;
