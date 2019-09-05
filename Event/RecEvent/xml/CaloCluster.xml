@@ -116,14 +116,24 @@
 
 <constructor
  desc     = "Default constructor"
- initList = "Base (    ) , m_type ( LHCb::CaloCluster::Type::Undefined ) , m_seed() , m_entries() , m_position () "
+ initList = "m_type ( LHCb::CaloCluster::Type::Undefined ) , m_seed() , m_entries() , m_position () "
 > <code/> </constructor>
 
 <constructor
  desc     = "Copy Constructor"
  argList  = "LHCb::CaloCluster right"
- initList = "Base() , m_type( right.type() ) , m_seed( right.seed() ) , m_entries( right.entries() ) , m_position( right.position() ) "
+ initList = "Base( right.key() ) , m_type( right.type() ) , m_seed( right.seed() ) , m_entries( right.entries() ) , m_position( right.position() ) "
 > <code/> </constructor>
+
+      <method
+       desc="Assignment operator"
+       name="operator="
+       access    = 'PRIVATE'
+       type="LHCb::CaloCluster&amp;" >
+        <arg name="rhs" type="LHCb::CaloCluster" const='TRUE'/>
+       </method>
+
+
 
 <attribute
  name = "type"
