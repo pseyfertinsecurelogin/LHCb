@@ -28,22 +28,22 @@ namespace LHCb {
   namespace CaloFutureHelpers {
     // ========================================================================
     /// vector -> set converter
-    LHCb::CaloCellID::Set toSet( const LHCb::CaloCellID::Vector& inp );
+    CaloCellID::Set toSet( const CaloCellID::Vector& inp );
     /// vector -> set converter
-    LHCb::CaloDigit::Set toSet( const LHCb::CaloDigit::Vector& inp );
+    CaloDigit::Set toSet( const CaloDigit::Vector& inp );
     /// set -> vector converter
-    LHCb::CaloCellID::Vector toVector( const LHCb::CaloCellID::Set& inp );
+    CaloCellID::Vector toVector( const CaloCellID::Set& inp );
     /// set -> vector converter
-    LHCb::CaloDigit::Vector toVector( const LHCb::CaloDigit::Set& inp );
+    CaloDigit::Vector toVector( const CaloDigit::Set& inp );
     // ========================================================================
     /// vector -> set converter
-    void toSet( const LHCb::CaloCellID::Vector& inp, LHCb::CaloCellID::Set& out );
+    void toSet( const CaloCellID::Vector& inp, CaloCellID::Set& out );
     /// vector -> set converter
-    void toSet( const LHCb::CaloDigit::Vector& inp, LHCb::CaloDigit::Set& out );
+    void toSet( const CaloDigit::Vector& inp, CaloDigit::Set& out );
     /// set -> vector converter
-    void toVector( const LHCb::CaloCellID::Set& inp, LHCb::CaloCellID::Vector& out );
+    void toVector( const CaloCellID::Set& inp, CaloCellID::Vector& out );
     /// set -> vector converter
-    void toVector( const LHCb::CaloDigit::Set& inp, LHCb::CaloDigit::Vector& out );
+    void toVector( const CaloDigit::Set& inp, CaloDigit::Vector& out );
     // ========================================================================
     /** get the cell form the set
      *  @param cells (INPUT) the input set
@@ -52,7 +52,7 @@ namespace LHCb {
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      *  @date 2009-11-28
      */
-    LHCb::CaloCellID _get_at_( const LHCb::CaloCellID::Set& cells, const size_t index );
+    CaloCellID _get_at_( const CaloCellID::Set& cells, const size_t index );
     // ========================================================================
     /** get the digit from the set
      *  @param cells (INPUT) the input set
@@ -61,13 +61,13 @@ namespace LHCb {
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      *  @date 2009-11-28
      */
-    const LHCb::CaloDigit* _get_at_( const LHCb::CaloDigit::Set& cells, const size_t index );
+    const CaloDigit* _get_at_( const CaloDigit::Set& cells, const size_t index );
     // ========================================================================
     /// insert the object to set
-    size_t _insert_( LHCb::CaloCellID::Set& cells, const LHCb::CaloCellID& cell );
+    size_t _insert_( CaloCellID::Set& cells, const CaloCellID& cell );
     // ========================================================================
     /// insert the object to set
-    size_t _insert_( LHCb::CaloDigit::Set& cells, const LHCb::CaloDigit* digit );
+    size_t _insert_( CaloDigit::Set& cells, const CaloDigit* digit );
     // ========================================================================
   } // namespace CaloFutureHelpers
   // ==========================================================================

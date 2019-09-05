@@ -38,7 +38,7 @@ namespace LHCb {
         return uStr;
       }
 
-      inline std::string operator+( const std::string& lhs, std::string_view rhs ) { return lhs + to_string( rhs ); }
+      inline std::string operator+( std::string_view lhs, std::string_view rhs ) { return to_string( lhs ) + rhs; }
 
     } // namespace details
     using details::toUpper;
@@ -57,17 +57,17 @@ namespace LHCb {
     }
 
     // Default location for CaloFutureObject as function of detector
-    std::string              DeCaloFutureLocation( const std::string& name );
-    std::string              CaloFutureRawBankReadoutStatusLocation( const std::string& name );
-    std::string              CaloFutureAdcLocation( const std::string& name );
-    std::string              CaloFutureUnfilteredDigitLocation( const std::string& name );
-    std::string              CaloFutureDigitLocation( const std::string& name );
-    std::string              CaloFutureClusterLocation( const std::string& name, const std::string& type = "" );
+    std::string              DeCaloFutureLocation( std::string_view name );
+    std::string              CaloFutureRawBankReadoutStatusLocation( std::string_view name );
+    std::string              CaloFutureAdcLocation( std::string_view name );
+    std::string              CaloFutureUnfilteredDigitLocation( std::string_view name );
+    std::string              CaloFutureDigitLocation( std::string_view name );
+    std::string              CaloFutureClusterLocation( std::string_view name, std::string_view type = "" );
     std::string              CaloFutureSplitClusterLocation();
-    std::string              CaloFutureHypoLocation( const std::string& type );
-    std::string              CaloFutureIdLocation( const std::string& type );
+    std::string              CaloFutureHypoLocation( std::string_view type );
+    std::string              CaloFutureIdLocation( std::string_view type );
     std::vector<std::string> TrackLocations();
-    const LHCb::CaloCluster* ClusterFromHypo( const LHCb::CaloHypo* hypo, bool split = true );
+    const CaloCluster*       ClusterFromHypo( const CaloHypo* hypo, bool split = true );
     bool                     StringMatcher( const std::vector<std::string>& refs, const std::string& name );
     bool                     StringMatcher( const std::string& ref, const std::string& name );
   } // namespace CaloFutureAlgUtils

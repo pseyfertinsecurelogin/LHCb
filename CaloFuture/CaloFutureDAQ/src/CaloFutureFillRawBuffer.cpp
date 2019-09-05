@@ -109,22 +109,21 @@ StatusCode CaloFutureFillRawBuffer::execute() {
   //== Build the data banks
 
   switch ( m_dataCodingType ) {
-    case 1 : {
+  case 1: {
     //=========================================================================
     //  Fill the calorimeter data bank, simple structure: ID (upper 16 bits) + ADC
     //=========================================================================
-    LHCb::CaloAdcs*                digs = get<LHCb::CaloAdcs>( m_inputBank );
+    LHCb::CaloAdcs* digs = get<LHCb::CaloAdcs>( m_inputBank );
     std::transform( digs->begin(), digs->end(), std::back_inserter( m_banks[0] ),
-                     [](const auto& dig) {
-      return ( dig->cellID().all() << 16 ) | ( dig->adc() & 0xFFFF );
-    } );
+                    []( const auto& dig ) { return ( dig->cellID().all() << 16 ) | ( dig->adc() & 0xFFFF ); } );
     break;
-    }
-    case 2 :  {
+  }
+  case 2: {
     fillPackedBank();
     break;
-    }
-    default :  ASSUME(false);
+  }
+  default:
+    ASSUME( false );
   }
 
   //== Build the trigger banks
@@ -160,17 +159,17 @@ StatusCode CaloFutureFillRawBuffer::execute() {
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) {
     for ( unsigned int kk = 0; m_banks.size() > kk; kk++ ) {
       verbose() << "DATA bank : " << kk << endmsg;
-      int                                       kl = 0;
+      int kl = 0;
 
       for ( auto itW : m_banks[kk] ) {
-        verbose() << format( " %8x %11d   ", itW , itW );
+        verbose() << format( " %8x %11d   ", itW, itW );
         kl++;
         if ( 0 == kl % 4 ) verbose() << endmsg;
       }
 
       verbose() << endmsg << "TRIGGER bank size=" << m_trigBanks[kk].size() << "  " << endmsg;
       kl = 0;
-      for ( auto itW : m_trigBanks[kk] ){
+      for ( auto itW : m_trigBanks[kk] ) {
         verbose() << format( " %8x ", itW );
         kl++;
         if ( 0 == kl % 8 ) verbose() << endmsg;
@@ -213,7 +212,7 @@ void CaloFutureFillRawBuffer::fillPackedBank() {
   LHCb::L0CaloAdcs* trigAdcs = get<LHCb::L0CaloAdcs>( m_triggerBank );
 
   for ( int kTell1 = 0; m_numberOfBanks > kTell1; kTell1++ ) {
-    for ( int cardNum : m_calo->tell1ToCards( kTell1 )) {
+    for ( int cardNum : m_calo->tell1ToCards( kTell1 ) ) {
       if ( m_calo->isPinCard( cardNum ) && !m_pin ) continue; // No sub-bank for PIN-FEB if not explicitely requested
       int sizeIndex = m_banks[kTell1].size();
       m_banks[kTell1].push_back( m_calo->cardCode( cardNum ) << 14 );
@@ -260,9 +259,9 @@ void CaloFutureFillRawBuffer::fillPackedBank() {
       bNum   = 0;
 
       for ( LHCb::CaloCellID id : ids ) {
-        LHCb::CaloAdc*   dig = digs->object( id );
-        int   adc = ( dig ? std::clamp( dig->adc() + 256, 0, 4095 ) : 256 );//== Default if non existing cell.
-        if ( 248 <= adc && adc < 264 ) { //... store short
+        LHCb::CaloAdc* dig = digs->object( id );
+        int            adc = ( dig ? std::clamp( dig->adc() + 256, 0, 4095 ) : 256 ); //== Default if non existing cell.
+        if ( 248 <= adc && adc < 264 ) {                                              //... store short
           adc -= 248;
           word |= adc << offset;
           offset += 4;
@@ -303,7 +302,7 @@ void CaloFutureFillRawBuffer::fillTriggerBank() {
   int nextIndex = -1;
   int word      = -1;
 
-  LHCb::L0CaloAdcs*                trigAdcs = get<LHCb::L0CaloAdcs>( m_triggerBank );
+  LHCb::L0CaloAdcs* trigAdcs = get<LHCb::L0CaloAdcs>( m_triggerBank );
   for ( auto itT = trigAdcs->begin(); trigAdcs->end() != itT; ++itT ) {
     LHCb::CaloCellID id        = ( *itT )->cellID();
     int              cellIndex = id.all();
