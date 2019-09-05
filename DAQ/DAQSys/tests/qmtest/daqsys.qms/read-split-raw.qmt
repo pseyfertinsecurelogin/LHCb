@@ -66,7 +66,7 @@ if len(found)!=len(lookfor):
     causes.append("Required modifications not found")
     result["daqsys.read-split-raw.missing"]=result.Quote("\n\t".join(lost))
 
-countErrorLines({"FATAL":0, "ERROR":10, "WARNING" :10})
+countErrorLines({"FATAL":0, "ERROR":40, "WARNING" :10})
 
 </text></argument>
 </extension>
