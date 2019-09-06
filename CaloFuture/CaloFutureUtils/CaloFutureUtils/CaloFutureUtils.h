@@ -21,7 +21,7 @@
 namespace LHCb {
   // ==========================================================================
   /** @namespace LHCb::CaloFutureHelpers
-   *  Helper namespace for dcoration of CaloFuture-objects
+   *  Helper namespace for decoration of Calo-objects
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-11-28
    */
