@@ -23,52 +23,33 @@
 //=============================================================================
 // Copy constructor
 //=============================================================================
-ParamList::ParamList( const ParamList& pl ) : base_type() { *this = pl; }
+ParamList::ParamList( const ParamList& pl ) { *this = pl; }
 
 //=============================================================================
 // Assignement
 //=============================================================================
 ParamList& ParamList::operator=( const ParamList& pl ) {
   clear();
-  for ( const auto& i : pl ) { insert( {i.first, i.second->new_copy().release()} ); }
+  for ( const auto& [k, v] : pl.m_map ) { m_map.insert( {k, v->clone()} ); }
   return *this;
 }
 ParamList& ParamList::operator+=( const ParamList& pl ) {
-  for ( const auto& i : pl ) {
-    auto old = find( i.first );
-    if ( old != end() ) { // key already used
-      delete old->second;
-      old->second = i.second->new_copy().release();
-    } else {
-      insert( {i.first, i.second->new_copy().release()} );
-    }
-  }
+  for ( const auto& [k, v] : pl.m_map ) { m_map.insert_or_assign( k, v->clone() ); }
   return *this;
 }
 
 //=============================================================================
 // Clear the list
 //=============================================================================
-void ParamList::clear() {
-  deleteItems();
-  base_type::clear();
-}
-
-//=============================================================================
-// Delete the object referenced by the stored pointers
-//=============================================================================
-void ParamList::deleteItems() {
-  std::for_each( begin(), end(), []( const std::pair<const std::string, BasicParam*>& i ) { delete i.second; } );
-}
+void ParamList::clear() { m_map.clear(); }
 
 //=============================================================================
 // return a vector containing all the stored keys
 //=============================================================================
 std::vector<std::string> ParamList::getKeys() const {
   std::vector<std::string> v;
-  v.reserve( size() );
-  std::transform( begin(), end(), std::back_inserter( v ),
-                  []( const std::pair<const std::string, BasicParam*>& i ) { return i.first; } );
+  v.reserve( m_map.size() );
+  std::transform( m_map.begin(), m_map.end(), std::back_inserter( v ), []( const auto& i ) { return i.first; } );
   return v;
 }
 

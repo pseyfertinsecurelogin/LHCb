@@ -40,7 +40,7 @@ void ParamValidDataObject::reset() {
 void ParamValidDataObject::update( ValidDataObject& obj ) {
   // first check the class
   ParamValidDataObject* pvdo = dynamic_cast<ParamValidDataObject*>( &obj );
-  if ( 0 == pvdo ) {
+  if ( !pvdo ) {
     throw GaudiException( "Trying to do a deep copy between different classes", "ParamValidDataObject",
                           StatusCode::FAILURE );
   }
@@ -60,16 +60,14 @@ void ParamValidDataObject::update( ValidDataObject& obj ) {
 
 //----------------------------------------------------------------------------
 
-bool ParamValidDataObject::exists( const std::string& name ) const {
-  return m_paramList.find( name ) != m_paramList.end();
-}
+bool ParamValidDataObject::exists( const std::string& name ) const { return m_paramList.find( name ) != nullptr; }
 
 //----------------------------------------------------------------------------
 /// TypeId of the parameter
 const std::type_info& ParamValidDataObject::type( const std::string& name ) const {
   auto i = m_paramList.find( name );
-  if ( i == m_paramList.end() ) throw ParamException( name );
-  return i->second->type();
+  if ( !i ) throw ParamException( name );
+  return i->type();
 }
 
 //----------------------------------------------------------------------------
@@ -90,13 +88,13 @@ std::string ParamValidDataObject::comment( const std::string& name ) const {
 
 //----------------------------------------------------------------------------
 /// Set the comment of a parameter.
-void ParamValidDataObject::setComment( const std::string& name, const char* comm ) {
+void ParamValidDataObject::setComment( const std::string& name, std::string_view comm ) {
   if ( !exists( name ) ) throw ParamException( name );
 
   auto i = m_comments.find( name );
   if ( i != m_comments.end() ) {
     // set the comment only if is not empty (or a null pointer)
-    if ( comm != NULL && std::strlen( comm ) != 0 ) {
+    if ( !comm.empty() ) {
       i->second = comm;
     } else {
       // if the comment is an empty string or a null pointer, remove the comment
@@ -104,7 +102,7 @@ void ParamValidDataObject::setComment( const std::string& name, const char* comm
     }
   } else {
     // do not add the comment if empty (ora a null pointer)
-    if ( comm && std::strlen( comm ) != 0 ) m_comments.insert( {name, std::string( comm )} );
+    if ( !comm.empty() ) m_comments.emplace( name, comm );
   }
 }
 
@@ -128,10 +126,8 @@ double ParamValidDataObject::paramAsDouble( const std::string& name ) const {
   try {
     return param<double>( name );
   } catch ( std::bad_cast& ) {
-    if ( type( name ) == typeid( int ) ) {
-      return param<int>( name );
-    } else
-      throw;
+    if ( type( name ) != typeid( int ) ) throw;
+    return param<int>( name );
   }
   return 0; // avoid Eclipse analyzer warning
 }
@@ -180,12 +176,12 @@ std::vector<std::string> ParamValidDataObject::paramNames() const { return m_par
 /// Print the user parameters on a string
 std::string ParamValidDataObject::printParams() const {
   std::ostringstream os;
-  for ( auto i = m_paramList.begin(); i != m_paramList.end(); ++i ) {
-    os << "(" << System::typeinfoName( i->second->type() ) << ") " << i->first;
-
-    auto c = m_comments.find( i->first );
+  for ( const auto& k : m_paramList.getKeys() ) {
+    const auto* v = m_paramList.find( k );
+    os << "(" << System::typeinfoName( v->type() ) << ") " << k;
+    auto c = m_comments.find( k );
     if ( c != m_comments.end() ) os << " (" << c->second << ")";
-    os << " = " << i->second->toStr() << "\n";
+    os << " = " << v->toStr() << "\n";
   }
   return os.str();
 }
@@ -194,6 +190,6 @@ std::string ParamValidDataObject::printParams() const {
 /// Convert a parameter to a string (for xml representation).
 std::string ParamValidDataObject::paramToString( const std::string& name, int precision ) const {
   auto i = m_paramList.find( name );
-  if ( i == m_paramList.end() ) throw ParamException( name );
-  return i->second->toXMLStr( name, comment( name ), precision );
+  if ( !i ) throw ParamException( name );
+  return i->toXMLStr( name, comment( name ), precision );
 }

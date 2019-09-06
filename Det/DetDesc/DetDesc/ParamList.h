@@ -12,72 +12,61 @@
 #define DETDESC_PARAMLIST_H 1
 
 // Include files
-
 #include "DetDesc/Param.h"
+#include <map>
+#include <memory>
 
 #include "GaudiKernel/Map.h"
 
 /** @class ParamList ParamList.h DetDesc/ParamList.h
  *
- *  Simple implementation of a polymorfic list of parameters identified by
+ *  Simple implementation of a polymorphic list of parameters identified by
  *  an std::string.
  *
  *  @author Marco CLEMENCIC
  *  @date   2005-02-22
  */
-class ParamList final : private GaudiUtils::Map<std::string, BasicParam*> {
-private:
-  typedef GaudiUtils::Map<std::string, BasicParam*> base_type;
+class ParamList final {
+
+  std::map<std::string, std::unique_ptr<BasicParam>> m_map;
 
 public:
   /// Standard constructor
   ParamList() = default;
+  ParamList( const ParamList& );
+  ParamList& operator      =( const ParamList& );
+  ParamList( ParamList&& ) = default;
+  ParamList& operator=( ParamList&& ) = default;
 
-  /// Copy constructor
-  ParamList( const ParamList& pl );
-
-  /// Destructor
-  ~ParamList() { deleteItems(); }
-
-  using base_type::begin;
-  using base_type::end;
-  using base_type::find;
+  const BasicParam* find( const std::string& key ) const {
+    auto i = m_map.find( key );
+    return i != m_map.end() ? i->second.get() : nullptr;
+  }
+  BasicParam* find( const std::string& key ) {
+    auto i = m_map.find( key );
+    return i != m_map.end() ? i->second.get() : nullptr;
+  }
 
   /// Add a new parameter to the list (or replace if already there)
   template <class T>
-  inline void add( const std::string& key, const T& val ) {
-    auto i = find( key );
-    if ( i != end() ) { // key already used
-      i->second->set( val );
+  void add( const std::string& key, T val ) {
+    auto i = m_map.find( key );
+    if ( i != m_map.end() ) { // key already used
+      i->second->set( std::move( val ) );
     } else {
-      insert( {key, new Param<T>( val )} );
+      m_map.emplace( key, std::make_unique<Param<T>>( std::move( val ) ) );
     }
   }
 
-  inline void addBasicParam( const std::string& key, const BasicParam& p ) {
-    auto i = find( key );
-    if ( i != end() ) { // key already used
-                        // replace with new one
-      delete i->second;
-      i->second = p.new_copy().release();
-    } else {
-      insert( {key, p.new_copy().release()} );
-    }
-  }
+  void addBasicParam( const std::string& key, const BasicParam& p ) { m_map.insert_or_assign( key, p.clone() ); }
 
   /// return a vector containing all the stored keys
   virtual std::vector<std::string> getKeys() const;
-
-  /// Copy a list into this one (deleting this one)
-  ParamList& operator=( const ParamList& pl );
 
   /// Merge two lists (overwriting objects with the same name)
   ParamList& operator+=( const ParamList& pl );
 
   /// Remove all elements from the list, deleting the objects
   void clear();
-
-private:
-  void deleteItems();
 };
 #endif // DETDESC_PARAMLIST_H

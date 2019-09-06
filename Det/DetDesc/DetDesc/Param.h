@@ -61,10 +61,7 @@ public:
   const std::type_info& type() const override { return typeid( T ); }
 
   /// Create a copy of this object on the heap (generic copy)
-  std::unique_ptr<BasicParam> new_copy() const override {
-    // return std::make_unique<Param<T>>(m_val);
-    return std::unique_ptr<BasicParam>( new Param<T>( m_val ) );
-  }
+  std::unique_ptr<BasicParam> clone() const override { return std::make_unique<Param<T>>( m_val ); }
 
 private:
   /// Void pointer to the datum (used by BasicParam)

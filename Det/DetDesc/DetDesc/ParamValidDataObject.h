@@ -71,16 +71,16 @@ public:
   virtual std::string comment( const std::string& name ) const;
 
   /// Set the comment of a parameter.
-  virtual void setComment( const std::string& name, const char* comm );
+  virtual void setComment( const std::string& name, std::string_view comm );
 
   /// Give a read-only accessor to a parameter.
   template <class T>
   const T& param( const std::string& name ) const {
     auto i = m_paramList.find( name );
-    if ( i == m_paramList.end() ) throw ParamException( name );
+    if ( !i ) throw ParamException( name );
     try {
-      return i->second->template get<T>();
-    } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->second->type() ); }
+      return i->get<T>();
+    } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->type() ); }
   }
   template <typename... T, typename... Names>
   std::tuple<T const&...> params( Names&&... names ) const {
@@ -92,10 +92,10 @@ public:
   template <class T>
   T& param( const std::string& name ) {
     auto i = m_paramList.find( name );
-    if ( i == m_paramList.end() ) throw ParamException( name );
+    if ( !i ) throw ParamException( name );
     try {
-      return i->second->template get<T>();
-    } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->second->type() ); }
+      return i->get<T>();
+    } catch ( const std::bad_cast& ) { throw ParamException( name, typeid( T ), i->type() ); }
   }
 
   /// Give a read-only accessor to a parameter vector.
@@ -151,21 +151,19 @@ public:
 
 public:
   template <class T>
-  void addParam( const std::string& name, const T& value, const std::string& comment = std::string() ) {
-    m_paramList.add( name, value );
-    if ( !comment.empty() ) { m_comments[name] = comment; }
+  void addParam( const std::string& name, T value, std::string comment = {} ) {
+    m_paramList.add( name, std::move( value ) );
+    if ( !comment.empty() ) { m_comments[name] = std::move( comment ); }
   }
 
-  void addBasicParam( const std::string& name, const BasicParam& p, const std::string& comment = std::string() ) {
+  void addBasicParam( const std::string& name, const BasicParam& p, std::string comment = {} ) {
     m_paramList.addBasicParam( name, p );
-    if ( !comment.empty() ) { m_comments[name] = comment; }
+    if ( !comment.empty() ) { m_comments[name] = std::move( comment ); }
   }
 
 private:
-  typedef std::map<std::string, std::string> CommentMap;
-
-  ParamList  m_paramList;
-  CommentMap m_comments;
+  ParamList                          m_paramList;
+  std::map<std::string, std::string> m_comments;
 
 public:
   std::any payload;
