@@ -20,7 +20,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include <algorithm>
 
-namespace LHCb::CaloFutureAlgUtils {
+namespace LHCb::Calo::Utilities {
 
   using details::contains_ci;
   namespace {
@@ -29,7 +29,7 @@ namespace LHCb::CaloFutureAlgUtils {
       auto i = std::find_if(
           std::begin( table ), std::end( table ),
           [&]( const std::pair<std::string_view, std::string_view>& item ) { return contains_ci( val, item.first ); } );
-      return i != std::end( table ) ? details::to_string( i->second ) : std::string{};
+      return i != std::end( table ) ? std::string{i->second} : std::string{};
     }
   } // namespace
 
@@ -229,4 +229,4 @@ namespace LHCb::CaloFutureAlgUtils {
     bool        match = ( exact ? uref == uname : contains_ci( uname, uref ) );
     return rev ? !match : match;
   }
-} // namespace LHCb::CaloFutureAlgUtils
+} // namespace LHCb::Calo::Utilities

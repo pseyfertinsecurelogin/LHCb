@@ -20,7 +20,7 @@
 
 namespace LHCb {
   class CaloCluster;
-  namespace CaloFutureAlgUtils {
+  namespace Calo::Utilities {
 
     namespace details {
       // Try to find in the Haystack the Needle - ignore case
@@ -30,15 +30,16 @@ namespace LHCb {
         return it != std::end( haystack );
       }
 
-      inline std::string to_string( std::string_view sr ) { return std::string{sr}; }
-
       inline std::string toUpper( std::string_view str ) {
-        auto uStr = to_string( str );
+        auto uStr = std::string{str};
         std::transform( uStr.begin(), uStr.end(), uStr.begin(), ::toupper );
         return uStr;
       }
 
-      inline std::string operator+( std::string_view lhs, std::string_view rhs ) { return to_string( lhs ) + rhs; }
+      // TODO: use fmt::format / std::format
+      inline std::string operator+( std::string_view lhs, std::string_view rhs ) {
+        return std::string{lhs}.append( rhs );
+      }
 
     } // namespace details
     using details::toUpper;
@@ -70,8 +71,10 @@ namespace LHCb {
     const CaloCluster*       ClusterFromHypo( const CaloHypo* hypo, bool split = true );
     bool                     StringMatcher( const std::vector<std::string>& refs, const std::string& name );
     bool                     StringMatcher( const std::string& ref, const std::string& name );
-  } // namespace CaloFutureAlgUtils
+  } // namespace Calo::Utilities
 } // end of namespace LHCb
 
-namespace Calo::Future::Utilities {}
+namespace LHCb::CaloFutureAlgUtils {
+  using namespace Calo::Utilities; // for backwards compatibility
+}
 #endif // CALOFUTUREUTILS_CALOFUTUREALGUTILS_H
