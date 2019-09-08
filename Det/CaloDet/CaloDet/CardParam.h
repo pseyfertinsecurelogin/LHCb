@@ -24,7 +24,7 @@ class DeCalorimeter;
  *
  */
 
-class CardParam {
+class CardParam final {
 
   friend class DeCalorimeter;
 
@@ -43,9 +43,6 @@ public:
   */
   CardParam( int iArea = 0, int iRow = 0, int iCol = 0, int ilRow = 0, int ilCol = 0, int iNum = 0, int iCrate = 0,
              int iSlot = 0 );
-
-  /// destructor
-  ~CardParam();
 
   int     downNumber() const { return m_DownNumber; }
   int     leftNumber() const { return m_LeftNumber; }
@@ -70,7 +67,7 @@ public:
   } // special FEBs (no channelID associated)
   bool isPmtCard() const { return ( !isPinCard() && !isParasitic() ); }
 
-  const std::vector<LHCb::CaloCellID>& ids() { return m_ids; }
+  const std::vector<LHCb::CaloCellID>& ids() const { return m_ids; }
   void                                 addID( LHCb::CaloCellID id ) { m_ids.push_back( id ); }
   void                                 setTell1( int tell1 ) { m_tell1 = tell1; }
   void                                 setValidationNumber( int num ) { m_validationNumber = num; }
@@ -90,19 +87,19 @@ private:
   int                           m_Col;
   int                           m_lRow;
   int                           m_lCol;
-  int                           m_DownNumber;
-  int                           m_LeftNumber;
-  int                           m_CornerNumber;
-  int                           m_PreviousNumber;
-  int                           m_validationNumber;
-  bool                          m_isPin;
+  int                           m_DownNumber       = -1;
+  int                           m_LeftNumber       = -1;
+  int                           m_CornerNumber     = -1;
+  int                           m_PreviousNumber   = -1;
+  int                           m_validationNumber = -1;
+  bool                          m_isPin            = false;
   int                           m_number;
   std::vector<LHCb::CaloCellID> m_ids;
   int                           m_crate;
   int                           m_slot;
-  int                           m_tell1;
-  int     m_selectionType; // [e,g,pi0L,pi0G] = -1 ; [hadronMaster] = 0 ; [hadronSlave1]=1 ; [hadronSlave2]=2
-  Mapping m_mapping;       // see CardParam::Mapping  enum
+  int                           m_tell1 = -1;
+  int     m_selectionType = -1; // [e,g,pi0L,pi0G] = -1 ; [hadronMaster] = 0 ; [hadronSlave1]=1 ; [hadronSlave2]=2
+  Mapping m_mapping       = CardParam::None; // see CardParam::Mapping  enum
 };
 
 /// ===========================================================================

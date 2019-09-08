@@ -15,7 +15,6 @@
 /// Include files
 /// local
 #include "CaloDet/CardParam.h"
-#include "CaloDet/DeCalorimeter.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CardParam
@@ -32,25 +31,11 @@ CardParam::CardParam( int iArea, int iRow, int iCol, int ilRow, int ilCol, int i
     , m_Col( iCol )
     , m_lRow( ilRow )
     , m_lCol( ilCol )
-    , m_DownNumber( -1 )
-    , m_LeftNumber( -1 )
-    , m_CornerNumber( -1 )
-    , m_PreviousNumber( -1 )
-    , m_validationNumber( -1 )
-    , m_isPin( false )
     , m_number( iNum )
     , m_crate( iCrate )
-    , m_slot( iSlot )
-    , m_tell1( -1 )
-    , m_selectionType( -1 )
-    , m_mapping( CardParam::None ) {
+    , m_slot( iSlot ) {
   m_ids.reserve( 64 );
   m_ids.clear();
 }
-
-// ============================================================================
-// Destructor
-// ============================================================================
-CardParam::~CardParam() {}
 
 // ============================================================================

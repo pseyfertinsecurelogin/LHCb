@@ -12,7 +12,6 @@
 #define CALODET_CALOLED_H 1
 
 // Include files
-class DeCalorimeter;
 #include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
 #include <sstream>
@@ -22,21 +21,17 @@ class DeCalorimeter;
  *
  */
 
-class CaloLed {
-  friend class DeCalorimeter;
+class CaloLed final {
 
 public:
   /** constructors
    */
   CaloLed() : m_id( -1 ) {}
-  CaloLed( int number );
-
-  /// destructor
-  ~CaloLed();
+  CaloLed( int id ) : m_id( id ) {}
 
   // getters
   int                                  number() const { return m_id; }
-  const std::vector<LHCb::CaloCellID>& cells() { return m_cells; }
+  const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
   LHCb::CaloCellID                     pin() const { return m_pin; }
 
   std::vector<int> firstRows() const { return m_fRow; }
@@ -73,14 +68,14 @@ public:
 
 private:
   int                           m_id;
-  std::string                   m_region;
-  LHCb::CaloCellID              m_pin;
+  std::string                   m_region = "Region ";
+  LHCb::CaloCellID              m_pin    = {};
   std::vector<int>              m_area;
   std::vector<int>              m_fCol;
   std::vector<int>              m_fRow;
   std::vector<int>              m_lCol;
   std::vector<int>              m_lRow;
-  int                           m_index;
+  int                           m_index = -1;
   std::vector<LHCb::CaloCellID> m_cells;
 };
 
