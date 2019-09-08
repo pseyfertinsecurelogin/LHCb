@@ -114,7 +114,7 @@ namespace SIMDWrapper {
 
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
       friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
-      friend mask_v operator!( const mask_v& x ) { return ~x.data; }
+      friend mask_v operator!( const mask_v& x ) { return !x.data; }
 
       friend bool all( const mask_v& mask ) { return mask == 1; }
       friend bool none( const mask_v& mask ) { return mask == 0; }
