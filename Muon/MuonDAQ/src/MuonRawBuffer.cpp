@@ -111,7 +111,7 @@ void MuonRawBuffer::clearData() {
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " reset all buffers " << endmsg;
   m_checkTell1HeaderPerformed = false;
   m_checkTell1HeaderResult    = true;
-  m_statusCreated             = false;
+  m_status.reset();
 
   m_alreadyDecoded.reset();
   m_padAlreadyDecoded.reset();
@@ -750,8 +750,6 @@ StatusCode MuonRawBuffer::getNZSupp( const LHCb::RawEvent*                      
                                      const std::string&                                      offset ) {
   TESOffsetGuard guard{*this, m_TESChanged, offset};
 
-  initStatusNZS();
-
   const auto& b = raw->banks( RawBank::MuonFull );
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " tell1 " << b.size() << endmsg;
   if ( b.empty() ) {
@@ -781,7 +779,7 @@ StatusCode MuonRawBuffer::checkBankSize( const LHCb::RawBank* rawdata ) {
   // minimum length is 3 words --> 12 bytes
   if ( bank_size < 12 ) {
     err() << " muon bank " << tell1Number << " is too short " << bank_size << endmsg;
-    m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
+    m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
     return StatusCode::FAILURE;
   }
   // how many pads ?
@@ -796,7 +794,7 @@ StatusCode MuonRawBuffer::checkBankSize( const LHCb::RawBank* rawdata ) {
   if ( ( bank_size - skip * 4 ) < 0 ) {
     err() << "bank_size " << bank_size << " pad size to read " << nPads * 4 << endmsg;
     err() << "so muon bank " << tell1Number << " is too short in pad part " << endmsg;
-    m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
+    m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
     return StatusCode::FAILURE;
   }
 
@@ -813,7 +811,7 @@ StatusCode MuonRawBuffer::checkBankSize( const LHCb::RawBank* rawdata ) {
     if ( bank_size - read_data * 2 < pp_cnt * 2 ) {
       err() << "bank_size " << bank_size << "read data " << read_data << " hit size to read " << pp_cnt * 2 << endmsg;
       err() << "so muon bank " << tell1Number << " is too short in hit part " << endmsg;
-      m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
+      m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::Incomplete );
       // break;
 
       return StatusCode::FAILURE;
@@ -917,7 +915,7 @@ StatusCode MuonRawBuffer::checkAllHeaders( const LHCb::RawEvent* raw ) {
   if ( b.empty() ) {
     if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " no muon banks in event" << endmsg;
     for ( int i = 0; i < static_cast<int>( MuonDAQHelper_maxTell1Number ); i++ ) {
-      m_status.addStatus( i, RawBankReadoutStatus::Status::Missing );
+      m_status->addStatus( i, RawBankReadoutStatus::Status::Missing );
     }
     m_checkTell1HeaderResult = false;
     return StatusCode::SUCCESS;
@@ -929,16 +927,16 @@ StatusCode MuonRawBuffer::checkAllHeaders( const LHCb::RawEvent* raw ) {
   for ( const auto& mb : b ) {
 
     unsigned int tell1Number = mb->sourceID();
-    m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::OK );
+    m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::OK );
 
-    if ( mb->size() == 0 ) m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::Empty );
+    if ( mb->size() == 0 ) m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::Empty );
     auto iList = std::find( tell1InEvent.begin(), tell1InEvent.end(), tell1Number );
     if ( iList != tell1InEvent.end() ) {
       m_checkTell1HeaderResult    = false;
       m_checkTell1HeaderPerformed = true;
       if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " failed " << endmsg;
       foundError = true;
-      m_status.addStatus( tell1Number, RawBankReadoutStatus::Status::NonUnique );
+      m_status->addStatus( tell1Number, RawBankReadoutStatus::Status::NonUnique );
       break;
       // return StatusCode::FAILURE;
     }
@@ -947,8 +945,8 @@ StatusCode MuonRawBuffer::checkAllHeaders( const LHCb::RawEvent* raw ) {
 
   // set missing bank readout status
   for ( int i = 0; i < static_cast<int>( MuonDAQHelper_maxTell1Number ); i++ ) {
-    if ( m_status.status( i ) == LHCb::RawBankReadoutStatus::Status::Unknown ) {
-      m_status.addStatus( i, RawBankReadoutStatus::Status::Missing );
+    if ( m_status->status( i ) == LHCb::RawBankReadoutStatus::Status::Unknown ) {
+      m_status->addStatus( i, RawBankReadoutStatus::Status::Missing );
     }
   }
   if ( foundError ) {
@@ -967,7 +965,7 @@ StatusCode MuonRawBuffer::checkAllHeaders( const LHCb::RawEvent* raw ) {
     error() << " The muon Tell1 boards: not all the same version so  skip the event" << endmsg;
     m_checkTell1HeaderResult    = false;
     m_checkTell1HeaderPerformed = true;
-    m_status.addStatus( ( *ibad )->sourceID(), RawBankReadoutStatus::Status::Tell1Error );
+    m_status->addStatus( ( *ibad )->sourceID(), RawBankReadoutStatus::Status::Tell1Error );
     return StatusCode::FAILURE; // return m_checkTell1HeaderResult;
   }
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " test successeful " << endmsg;
@@ -994,37 +992,32 @@ void MuonRawBuffer::putStatusOnTES() {
   typedef LHCb::RawBankReadoutStatuss Statuss;
 
   Statuss* statuss = getOrCreate<Statuss, Statuss>( LHCb::RawBankReadoutStatusLocation::Default );
-  Status*  status  = statuss->object( m_status.key() );
+  Status*  status  = statuss->object( m_status->key() );
 
   if ( !status ) {
     std::stringstream type;
-    type << LHCb::RawBank::typeName( m_status.key() );
+    type << LHCb::RawBank::typeName( m_status->key() );
     if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
       verbose() << "Status for bankType " << type.str() << " created now" << endmsg;
-    status = new Status( m_status );
+    status = new Status( *m_status );
     statuss->insert( status );
 
   } else {
     std::stringstream type;
-    type << LHCb::RawBank::typeName( m_status.key() );
+    type << LHCb::RawBank::typeName( m_status->key() );
 
     if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
       debug() << "Status for bankType " << type.str() << " already exists" << endmsg;
-    if ( status->status() != m_status.status() ) {
+    if ( status->status() != m_status->status() ) {
       Warning( "Status for bankType " + type.str() + " already exists  with different status value -> merge both",
                StatusCode::SUCCESS )
           .ignore();
-      for ( const auto& i : m_status.statusMap() ) { status->addStatus( i.first, i.second ); }
+      for ( const auto& i : m_status->statusMap() ) { status->addStatus( i.first, i.second ); }
     }
   }
 }
 
 void MuonRawBuffer::initStatus() {
-  if ( !m_statusCreated ) {
-    m_statusCreated = true;
-    m_status        = LHCb::RawBankReadoutStatus( RawBank::Muon );
-  }
-  if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " init " << m_status.key() << " " << m_status << endmsg;
+  if ( !m_status ) { m_status.emplace( RawBank::Muon ); }
+  if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " init " << m_status->key() << " " << *m_status << endmsg;
 }
-
-void MuonRawBuffer::initStatusNZS() { m_statusFull = LHCb::RawBankReadoutStatus( RawBank::MuonFull ); }

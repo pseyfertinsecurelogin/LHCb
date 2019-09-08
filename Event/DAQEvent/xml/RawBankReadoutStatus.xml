@@ -86,6 +86,20 @@
         initList = "Base(rh.key() ), m_status(rh.m_status)"
         > <code/> </constructor>
 
+      <method
+       desc="Assignment operator"
+       name="operator="
+       type="LHCb::RawBankReadoutStatus&amp;" >
+        <arg name="rhs" type="LHCb::RawBankReadoutStatus" const='TRUE'/>
+       <code>
+          if ( this != &amp;rhs ) {
+             m_status = rhs.m_status;
+             if ( key() != rhs.key() ) setKey(rhs.key());
+          }
+          return *this;
+          </code>
+       </method>
+
 
       <attribute name="status" desc=" mapping of source status" type="std::map&lt; int, long &gt;" getMeth='FALSE' setMeth='FALSE' />
 

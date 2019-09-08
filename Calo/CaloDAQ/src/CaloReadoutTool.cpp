@@ -54,7 +54,6 @@ StatusCode CaloReadoutTool::finalize() {
 }
 
 bool CaloReadoutTool::getCaloBanksFromRaw() {
-
   m_readSources.clear();
   m_banks = {};
 
@@ -72,25 +71,25 @@ bool CaloReadoutTool::getCaloBanksFromRaw() {
   m_packed = false;
   if ( !m_packedIsDefault ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of short type are requested as default" << endmsg;
-    m_banks  = rawEvt->banks( m_shortType );
-    m_status = LHCb::RawBankReadoutStatus( m_shortType );
+    m_banks = rawEvt->banks( m_shortType );
+    m_status.emplace( m_shortType );
   } else {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of paked type are requested as default" << endmsg;
-    m_banks  = rawEvt->banks( m_packedType );
-    m_status = LHCb::RawBankReadoutStatus( m_packedType );
+    m_banks = rawEvt->banks( m_packedType );
+    m_status.emplace( m_packedType );
   }
 
   if ( m_banks.empty() ) {
     if ( !m_packedIsDefault ) {
       if ( msgLevel( MSG::DEBUG ) )
         debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
-      m_banks  = rawEvt->banks( m_packedType );
-      m_status = LHCb::RawBankReadoutStatus( m_packedType );
+      m_banks = rawEvt->banks( m_packedType );
+      m_status.emplace( m_packedType );
     } else {
       if ( msgLevel( MSG::DEBUG ) )
         debug() << " Requested banks of packed type has not been found ... try short type" << endmsg;
-      m_banks  = rawEvt->banks( m_shortType );
-      m_status = LHCb::RawBankReadoutStatus( m_shortType );
+      m_banks = rawEvt->banks( m_shortType );
+      m_status.emplace( m_shortType );
     }
 
     if ( m_banks.empty() ) {
@@ -116,7 +115,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw() {
 
   // check whether the associated Error Bank is present or not
   for ( const auto& b : rawEvt->banks( m_errorType ) )
-    m_status.addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::ErrorBank );
+    m_status->addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::ErrorBank );
 
   // check banks integrity + Magic pattern
   std::vector<int> sources;
@@ -126,19 +125,19 @@ bool CaloReadoutTool::getCaloBanksFromRaw() {
     sources.push_back( b->sourceID() );
     if ( LHCb::RawBank::MagicPattern != b->magic() ) {
       Error( "Bad MagicPattern for sourceID " + Gaudi::Utils::toString( b->sourceID() ), StatusCode::SUCCESS ).ignore();
-      m_status.addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::BadMagicPattern );
+      m_status->addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::BadMagicPattern );
     }
   }
 
   if ( m_packed ) { // TELL1 format : 1 source per TELL1
     for ( const auto& t : m_calo->tell1Params() ) {
       bool ok = std::any_of( sources.begin(), sources.end(), [&]( int n ) { return t.number() == n; } );
-      m_status.addStatus( t.number(),
-                          ok ? LHCb::RawBankReadoutStatus::Status::OK : LHCb::RawBankReadoutStatus::Status::Missing );
+      m_status->addStatus( t.number(),
+                           ok ? LHCb::RawBankReadoutStatus::Status::OK : LHCb::RawBankReadoutStatus::Status::Missing );
     }
   } else { // Offline format : single source 0
-    m_status.addStatus( 0, sources.empty() ? LHCb::RawBankReadoutStatus::Status::Missing
-                                           : LHCb::RawBankReadoutStatus::Status::OK );
+    m_status->addStatus( 0, sources.empty() ? LHCb::RawBankReadoutStatus::Status::Missing
+                                            : LHCb::RawBankReadoutStatus::Status::OK );
   }
 
   return true;
@@ -187,24 +186,28 @@ void CaloReadoutTool::putStatusOnTES() {
   // Readout Status
   typedef LHCb::RawBankReadoutStatus  Status;
   typedef LHCb::RawBankReadoutStatuss Statuss;
+  if ( !m_status ) {
+    error() << "putStatusOnTES(): RawBankReadoutStatus not created for this event, not putting it on TES" << endmsg;
+    return;
+  }
   if ( msgLevel( MSG::DEBUG ) )
     debug() << "Creating container at " << LHCb::RawBankReadoutStatusLocation::Default << endmsg;
   Statuss* statuss = getOrCreate<Statuss, Statuss>( LHCb::RawBankReadoutStatusLocation::Default );
-  Status*  nstatus = statuss->object( m_status.key() );
+  Status*  nstatus = statuss->object( m_status->key() );
   if ( !nstatus ) {
     if ( msgLevel( MSG::DEBUG ) )
-      debug() << "Inserting new status for bankType " << Gaudi::Utils::toString( m_status.key() ) << endmsg;
-    nstatus = new Status( m_status );
+      debug() << "Inserting new status for bankType " << Gaudi::Utils::toString( m_status->key() ) << endmsg;
+    nstatus = new Status( *m_status );
     statuss->insert( nstatus );
   } else {
     if ( msgLevel( MSG::DEBUG ) )
-      debug() << "Status for bankType " << Gaudi::Utils::toString( m_status.key() ) << " already exists" << endmsg;
-    if ( nstatus->status() != m_status.status() ) {
-      Warning( "Status for bankType " + LHCb::RawBank::typeName( m_status.key() ) +
+      debug() << "Status for bankType " << Gaudi::Utils::toString( m_status->key() ) << " already exists" << endmsg;
+    if ( nstatus->status() != m_status->status() ) {
+      Warning( "Status for bankType " + LHCb::RawBank::typeName( m_status->key() ) +
                    " already exists  with different status value -> merge both",
                StatusCode::SUCCESS )
           .ignore();
-      for ( const auto& it : m_status.statusMap() ) { nstatus->addStatus( it.first, it.second ); }
+      for ( const auto& it : m_status->statusMap() ) { nstatus->addStatus( it.first, it.second ); }
     }
   }
 }
@@ -215,9 +218,9 @@ void CaloReadoutTool::checkCtrl( int ctrl, int sourceID ) {
 
   if ( 0 != ( 0x1 & ctrl ) || 0 != ( 0x20 & ctrl ) || 0 != ( 0x40 & ctrl ) ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Tell1 error bits have been detected in data" << endmsg;
-    if ( 0 != ( 0x1 & ctrl ) ) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Error );
-    if ( 0 != ( 0x20 & ctrl ) ) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Sync );
-    if ( 0 != ( 0x40 & ctrl ) ) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Link );
+    if ( 0 != ( 0x1 & ctrl ) ) m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Error );
+    if ( 0 != ( 0x20 & ctrl ) ) m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Sync );
+    if ( 0 != ( 0x40 & ctrl ) ) m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Link );
   }
 }
 
@@ -227,7 +230,7 @@ bool CaloReadoutTool::checkSrc( int source ) {
   if ( read ) {
     Warning( "Another bank with same sourceID " + Gaudi::Utils::toString( source ) + " has already been read" )
         .ignore();
-    m_status.addStatus( source, LHCb::RawBankReadoutStatus::Status::NonUnique );
+    m_status->addStatus( source, LHCb::RawBankReadoutStatus::Status::NonUnique );
   } else {
     m_readSources.push_back( source );
   }

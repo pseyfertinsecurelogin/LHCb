@@ -69,7 +69,7 @@ public:
   bool         PPReachedHitLimit( unsigned int Tell1Number, int pp_num ) override;
   bool         LinkReachedHitLimit( unsigned int Tell1Number, int link_num ) override;
 
-  LHCb::RawBankReadoutStatus status() override { return m_status; }
+  LHCb::RawBankReadoutStatus status() override { return *m_status; }
   void                       putStatusOnTES() override;
 
   std::vector<std::pair<MuonTell1Header, unsigned int>> getHeaders( LHCb::RawEvent* raw ) override;
@@ -97,7 +97,6 @@ private:
   StatusCode checkAllHeaders( const LHCb::RawEvent* raw );
   void       fillTell1Header( unsigned int tell1, unsigned int data );
   void       initStatus();
-  void       initStatusNZS();
 
   unsigned int                                                   m_M1Tell1 = 0;
   DeMuonDetector*                                                m_muonDet = nullptr;
@@ -129,8 +128,6 @@ private:
   std::array<unsigned int, MuonDAQHelper_maxTell1Number>      m_tell1_header_SYNCH_Evt_error;
   int                                                         m_TESChanged = 0;
 
-  LHCb::RawBankReadoutStatus m_status;
-  LHCb::RawBankReadoutStatus m_statusFull;
-  bool                       m_statusCreated = false;
+  std::optional<LHCb::RawBankReadoutStatus> m_status;
 };
 #endif // MUONRAWBUFFER_H

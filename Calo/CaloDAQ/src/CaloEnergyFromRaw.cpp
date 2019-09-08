@@ -199,7 +199,7 @@ bool CaloEnergyFromRaw::getData( const LHCb::RawBank& bank ) {
     debug() << "Decode bank " << &bank << " source " << sourceID << " version " << version << " size " << size
             << endmsg;
 
-  if ( 0 == size ) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
+  if ( 0 == size ) m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
 
   // -----------------------------------------------
   // skip detector specific header line
@@ -277,8 +277,8 @@ bool CaloEnergyFromRaw::getData( const LHCb::RawBank& bank ) {
             .ignore();
         Error( "Warning : previous data may be corrupted" ).ignore();
         if ( m_cleanCorrupted ) cleanData( prevCard );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
         return false;
       }
       prevCard = card;
@@ -341,7 +341,7 @@ bool CaloEnergyFromRaw::getData( const LHCb::RawBank& bank ) {
     }
     // Check All cards have been read
     if ( !checkCards( nCards, feCards ) )
-      m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+      m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
 
   } else if ( 3 == version ) {
     //******************************************************************
@@ -375,8 +375,8 @@ bool CaloEnergyFromRaw::getData( const LHCb::RawBank& bank ) {
             .ignore();
         Error( "Warning : previous data may be corrupted" ).ignore();
         if ( m_cleanCorrupted ) cleanData( prevCard );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
-                                          LHCb::RawBankReadoutStatus::Status::Incomplete );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
+                                           LHCb::RawBankReadoutStatus::Status::Incomplete );
         return false;
       }
       std::vector<LHCb::CaloCellID> chanID = m_calo->cardChannels( feCards[card] );
@@ -425,7 +425,7 @@ bool CaloEnergyFromRaw::getData( const LHCb::RawBank& bank ) {
     } //== DataSize
     // Check All cards have been read
     if ( !checkCards( nCards, feCards ) )
-      m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+      m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
   } //== versions
 
   return true;

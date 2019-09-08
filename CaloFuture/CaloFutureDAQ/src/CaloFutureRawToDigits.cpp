@@ -13,6 +13,51 @@
 #include "CaloFutureUtils/CaloFutureAlgUtils.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 
+namespace {
+  LHCb::RawBank::BankType alternate( LHCb::RawBank::BankType b ) {
+    assert( b == LHCb::RawBank::EcalE || b == LHCb::RawBank::EcalPacked || b == LHCb::RawBank::HcalE ||
+            b == LHCb::RawBank::HcalPacked );
+    switch ( b ) {
+    case LHCb::RawBank::EcalE:
+      return LHCb::RawBank::EcalPacked;
+    case LHCb::RawBank::EcalPacked:
+      return LHCb::RawBank::EcalE;
+    case LHCb::RawBank::HcalE:
+      return LHCb::RawBank::HcalPacked;
+    case LHCb::RawBank::HcalPacked:
+      return LHCb::RawBank::HcalE;
+    default:
+      throw std::invalid_argument( "alternate: bad BankType" );
+    }
+  }
+  const char* label( LHCb::RawBank::BankType b ) {
+    assert( b == LHCb::RawBank::EcalE || b == LHCb::RawBank::EcalPacked || b == LHCb::RawBank::HcalE ||
+            b == LHCb::RawBank::HcalPacked );
+    switch ( b ) {
+    case LHCb::RawBank::EcalE:
+    case LHCb::RawBank::HcalE:
+      return "short";
+    case LHCb::RawBank::EcalPacked:
+    case LHCb::RawBank::HcalPacked:
+      return "packed";
+    default:
+      throw std::invalid_argument( "label: bad BankType" );
+    }
+  }
+
+  template <typename T, std::ptrdiff_t N>
+  constexpr auto pop( gsl::span<T, N>& v ) {
+    auto first = v[0];
+    v          = v.template subspan<1>();
+    return first;
+  }
+  template <typename T, std::ptrdiff_t N>
+  constexpr void advance( gsl::span<T, N>& v, int s ) {
+    v = v.subspan( s );
+  }
+
+} // namespace
+
 DECLARE_COMPONENT( CaloFutureRawToDigits )
 
 //=============================================================================
@@ -41,7 +86,7 @@ StatusCode CaloFutureRawToDigits::initialize() {
   if ( sc.isFailure() ) return sc;
 
   // Retrieve the calorimeter we are working with.
-  m_calo = getDet<DeCalorimeter>( LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( m_detectorName ) );
+  m_calo = getDet<DeCalorimeter>( LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( m_detectorName.value() ) );
   if ( !m_calo ) { return Error( "Detector information is not available!" ); }
 
   m_numberOfCells = m_calo->numberOfCells();
@@ -65,58 +110,34 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   // ------------------------------------
   // --- Get RawBank AND ReadoutStatus
   // ------------------------------------
-  LHCb::span<const LHCb::RawBank*> banks;
-  LHCb::RawBankReadoutStatus       status;
 
-  bool m_packed = false;
-  if ( !m_packedIsDefault ) {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of short type are requested as default" << endmsg;
-    banks  = rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-    status = LHCb::RawBankReadoutStatus( m_detectorName == "Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-  } else {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "Banks of packed type are requested as default" << endmsg;
-    banks = rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
-    status =
-        LHCb::RawBankReadoutStatus( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
+  bool                    isEcal = ( m_detectorName == "Ecal" );
+  LHCb::RawBank::BankType bank_type =
+      ( isEcal ? ( m_packedIsDefault ? LHCb::RawBank::EcalPacked : LHCb::RawBank::EcalE )
+               : ( m_packedIsDefault ? LHCb::RawBank::HcalPacked : LHCb::RawBank::HcalE ) );
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "Banks of " << label( bank_type ) << " type are requested as default" << endmsg;
+
+  LHCb::span<const LHCb::RawBank*> banks = rawEvt.banks( bank_type );
+  if ( banks.empty() ) {
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " Requested banks of " << label( bank_type ) << " type has not been found ... try "
+              << label( alternate( bank_type ) ) << " type" << endmsg;
+    bank_type = alternate( bank_type );
+    banks     = rawEvt.banks( bank_type );
   }
-
-  if ( 0 == banks.size() ) {
-    if ( !m_packedIsDefault ) {
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
-      banks  = rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked );
-      status = LHCb::RawBankReadoutStatus( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPacked
-                                                                    : LHCb::RawBank::HcalPacked );
-    } else {
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << " Requested banks of packed type has not been found ... try short type" << endmsg;
-      banks  = rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-      status = LHCb::RawBankReadoutStatus( m_detectorName == "Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE );
-    }
-
-    m_noBanksCounter += banks.empty();
-    if ( banks.empty() && msgLevel( MSG::DEBUG ) ) {
+  if ( msgLevel( MSG::DEBUG ) ) {
+    if ( banks.empty() )
       debug() << "WARNING : None of short and packed banks have been found " << endmsg;
-    } else {
-      if ( !m_packedIsDefault ) {
-        if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of packed type has been found" << endmsg;
-        m_packed = true;
-      } else {
-        if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of short type has found" << endmsg;
-      }
-    }
-  } else {
-    if ( !m_packedIsDefault ) {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of short type has been found" << endmsg;
-    } else {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << " Requested banks of packed type has found" << endmsg;
-      m_packed = true;
-    }
+    else
+      debug() << " Requested banks of " << label( bank_type ) << " type has been found" << endmsg;
   }
+  LHCb::RawBankReadoutStatus status = LHCb::RawBankReadoutStatus( bank_type );
+  bool packed = ( bank_type == LHCb::RawBank::EcalPacked || bank_type == LHCb::RawBank::HcalPacked );
+  m_noBanksCounter += banks.empty();
 
   // check whether the associated Error Bank is present or not
-  for ( const auto& b :
-        rawEvt.banks( m_detectorName == "Ecal" ? LHCb::RawBank::EcalPackedError : LHCb::RawBank::HcalPackedError ) )
+  for ( const auto& b : rawEvt.banks( isEcal ? LHCb::RawBank::EcalPackedError : LHCb::RawBank::HcalPackedError ) )
     status.addStatus( b->sourceID(), LHCb::RawBankReadoutStatus::Status::ErrorBank );
 
   // check banks integrity + Magic pattern
@@ -131,7 +152,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
     }
   }
 
-  if ( m_packed ) { // TELL1 format : 1 source per TELL1
+  if ( packed ) { // TELL1 format : 1 source per TELL1
     for ( const auto& t : m_calo->tell1Params() ) {
       bool ok = std::any_of( sources.begin(), sources.end(), [&]( int n ) { return t.number() == n; } );
       status.addStatus( t.number(),
@@ -165,15 +186,14 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
       if ( read ) continue;
 
       //--- decode the rawbanks
-      std::vector<LHCb::CaloAdc> dataVecDec = decode( *bank, status, false ); // false is to get data, not pinData
+      std::vector<LHCb::CaloAdc> dataVecDec = decode<false>( *bank, status ); // false is to get data, not pinData
       dataVec.insert( dataVec.end(), dataVecDec.begin(), dataVecDec.end() );
 
-      if ( dataVec.size() == 0 )
+      if ( dataVecDec.empty() )
         if ( msgLevel( MSG::DEBUG ) )
           debug() << "Error when decoding bank " << Gaudi::Utils::toString( sourceID )
                   << " -> incomplete data - May be corrupted" << endmsg;
     }
-    readSources.clear();
   }
 
   // ------------------------------------
@@ -242,283 +262,249 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   if ( msgLevel( MSG::DEBUG ) ) debug() << format( "Have stored %5d CaloAdcs.", newAdcs.size() ) << endmsg;
   if ( msgLevel( MSG::DEBUG ) ) debug() << format( "Have stored %5d CaloDigits.", newDigits.size() ) << endmsg;
 
-  return std::make_tuple( std::move( newAdcs ), std::move( newDigits ), std::move( status ) );
+  return std::tuple{std::move( newAdcs ), std::move( newDigits ), std::move( status )};
 }
 //=============================================================================
+template <bool decodePinData>
+std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode_v1( int sourceID, LHCb::span<const unsigned int> data,
+                                                             LHCb::RawBankReadoutStatus& ) const {
+  std::vector<LHCb::CaloAdc> dataVec;
+  dataVec.reserve( decodePinData ? m_calo->numberOfPins() : m_calo->numberOfCells() );
+  //******************************************************************
+  //**** Simple coding, ID + adc in 32 bits.
+  //******************************************************************
+  while ( !data.empty() ) {
+    auto d   = pop( data );
+    int  adc = d & 0xFFFF;
+    if ( 32767 < adc ) adc |= 0xFFFF0000; //= negative value
+    LHCb::CaloCellID cellId( ( d >> 16 ) & 0xFFFF );
+    LHCb::CaloAdc    temp( cellId, adc );
+    // event dump
+    verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( cellId ) << " |  CaloCell "
+              << cellId << " |  valid ? " << m_calo->valid( cellId ) << " |  ADC value = " << adc << endmsg;
 
+    if ( 0 != cellId.index() && cellId.isPin() == decodePinData ) dataVec.push_back( temp );
+  }
+  return dataVec;
+}
+//=============================================================================
+template <bool decodePinData>
+std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode_v2( int sourceID, LHCb::span<const unsigned int> data,
+                                                             LHCb::RawBankReadoutStatus& status ) const {
+  std::vector<LHCb::CaloAdc> dataVec;
+  dataVec.reserve( decodePinData ? m_calo->numberOfPins() : m_calo->numberOfCells() );
+  //******************************************************************
+  //**** 1 MHz compression format, Ecal and Hcal
+  //******************************************************************
+  // Get the FE-Cards associated to that bank (via condDB)
+  std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
+  int              nCards  = feCards.size();
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << nCards << " FE-Cards are expected to be readout : " << feCards << " in Tell1 bank " << sourceID
+            << endmsg;
+  int prevCard = -1;
+  while ( !data.empty() ) {
+    // Skip
+    unsigned int word = pop( data );
+    // Read bank header
+    int lenTrig = word & 0x7F;
+    int code    = ( word >> 14 ) & 0x1FF;
+    int ctrl    = ( word >> 23 ) & 0x1FF;
+    checkCtrl( ctrl, sourceID, status );
+    // access chanID via condDB
+    std::vector<LHCb::CaloCellID> chanID;
+    // look for the FE-Card in the Tell1->cards vector
+    int card = findCardbyCode( feCards, code );
+    if ( 0 <= card ) {
+      chanID = m_calo->cardChannels( feCards[card] );
+      feCards.erase( feCards.begin() + card );
+    } else {
+      Error( " FE-Card w/ [code : " + Gaudi::Utils::toString( code ) +
+             " ] is not associated with TELL1 bank sourceID : " + Gaudi::Utils::toString( sourceID ) +
+             " in condDB :  Cannot read that bank" )
+          .ignore();
+
+      Error( "Warning : previous data may be corrupted" ).ignore();
+      if ( m_cleanCorrupted && m_calo->isPinCard( prevCard ) == decodePinData ) {
+        auto hasBadCardNumber = [&]( const LHCb::CaloAdc& adc ) {
+          return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
+        };
+        dataVec.erase( std::remove_if( dataVec.begin(), dataVec.end(), hasBadCardNumber ), dataVec.end() );
+      }
+      status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+      status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
+    }
+    prevCard = card;
+
+    // Start readout of the FE-board
+    // First skip trigger bank ...
+    int nSkip = ( lenTrig + 3 ) / 4; //== is in bytes, with padding
+    advance( data, nSkip );
+    unsigned int pattern  = pop( data );
+    int          offset   = 0;
+    unsigned int lastData = pop( data );
+    // ... and readout data
+    for ( unsigned int bitNum = 0; 32 > bitNum; bitNum++ ) {
+      int adc;
+      if ( 31 < offset ) {
+        offset -= 32;
+        lastData = pop( data );
+      }
+      if ( 0 == ( pattern & ( 1 << bitNum ) ) ) { //.. short coding
+        adc = ( ( lastData >> offset ) & 0xF ) - 8;
+        offset += 4;
+      } else {
+        adc = ( ( lastData >> offset ) & 0xFFF );
+        if ( 24 == offset ) adc &= 0xFF;
+        if ( 28 == offset ) adc &= 0xF; //== clean-up extra bits
+        offset += 12;
+        if ( 32 < offset ) { //.. get the extra bits on next word
+          lastData = pop( data );
+          offset -= 32;
+          int temp = ( lastData << ( 12 - offset ) ) & 0xFFF;
+          adc += temp;
+        }
+        adc -= 256;
+      }
+
+      LHCb::CaloCellID id = ( bitNum < chanID.size() ? chanID[bitNum] : LHCb::CaloCellID() );
+
+      // event dump
+      verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( id )
+                << " |  Channel : " << bitNum << " |  CaloCell " << id << " |  valid ? " << m_calo->valid( id )
+                << " |  ADC value = " << adc << endmsg;
+
+      //== Keep only valid cells
+      if ( 0 != id.index() ) {
+        LHCb::CaloAdc temp( id, adc );
+        if ( id.isPin() == decodePinData ) dataVec.push_back( temp );
+      }
+    }
+  }
+  // Check All cards have been read
+  if ( !checkCards( nCards, feCards ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+
+  return dataVec;
+}
+//=============================================================================
+template <bool decodePinData>
+std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode_v3( int sourceID, LHCb::span<const unsigned int> data,
+                                                             LHCb::RawBankReadoutStatus& status ) const {
+  std::vector<LHCb::CaloAdc> dataVec;
+  dataVec.reserve( decodePinData ? m_calo->numberOfPins() : m_calo->numberOfCells() );
+  //******************************************************************
+  //**** 1 MHz compression format, Preshower + SPD
+  //******************************************************************
+
+  // Get the FE-Cards associated to that bank (via condDB)
+  std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
+  int              nCards  = feCards.size();
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << nCards << " FE-Cards are expected to be readout : " << feCards << " in Tell1 bank " << sourceID
+            << endmsg;
+  int prevCard = -1;
+  while ( !data.empty() ) {
+    // Skip
+    unsigned int word = pop( data );
+    // Read bank header
+    int lenTrig = word & 0x7F;
+    int lenAdc  = ( word >> 7 ) & 0x7F;
+    int code    = ( word >> 14 ) & 0x1FF;
+    int ctrl    = ( word >> 23 ) & 0x1FF;
+    checkCtrl( ctrl, sourceID, status );
+    // access chanID via condDB
+    // look for the FE-Card in the Tell1->cards vector
+    int card = findCardbyCode( feCards, code );
+    if ( card < 0 ) {
+      Error( " FE-Card w/ [code : " + Gaudi::Utils::toString( code ) +
+             " ] is not associated with TELL1 bank sourceID : " + Gaudi::Utils::toString( sourceID ) +
+             " in condDB :  Cannot read that bank" )
+          .ignore();
+
+      Error( "Warning : previous data may be corrupted" ).ignore();
+      if ( m_cleanCorrupted && m_calo->isPinCard( prevCard ) == decodePinData ) {
+        auto hasBadCardNumber = [&]( const LHCb::CaloAdc& adc ) {
+          return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
+        };
+        dataVec.erase( std::remove_if( dataVec.begin(), dataVec.end(), hasBadCardNumber ), dataVec.end() );
+      }
+
+      status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
+                                      LHCb::RawBankReadoutStatus::Status::Incomplete );
+    }
+    std::vector<LHCb::CaloCellID> chanID = m_calo->cardChannels( feCards[card] );
+    feCards.erase( feCards.begin() + card );
+    prevCard = card;
+
+    // Read the FE-Board
+    // skip the trigger bits
+    int nSkip = ( lenTrig + 3 ) / 4; //== Length in byte, with padding
+    advance( data, nSkip );
+
+    // read data
+    int          offset   = 32; //== force read the first word, to have also the debug for it.
+    unsigned int lastData = 0;
+
+    while ( 0 < lenAdc ) {
+      if ( 32 == offset ) {
+        lastData = pop( data );
+        offset   = 0;
+      }
+      int          adc = ( lastData >> offset ) & 0x3FF;
+      unsigned int num = ( lastData >> ( offset + 10 ) ) & 0x3F;
+
+      LHCb::CaloCellID id = ( num < chanID.size() ? chanID[num] : LHCb::CaloCellID{} );
+
+      // event dump
+      verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( id )
+                << " |  Channel : " << num << " |  CaloCell " << id << " |  valid ? " << m_calo->valid( id )
+                << " |  ADC value = " << adc << endmsg;
+
+      if ( 0 != id.index() ) {
+        if ( id.isPin() == decodePinData ) dataVec.emplace_back( id, adc );
+      }
+
+      lenAdc--;
+      offset += 16;
+    }
+  } //== DataSize
+  // Check All cards have been read
+  if ( !checkCards( nCards, feCards ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+  return dataVec;
+}
 //=============================================================================
 // Main method to decode the rawBank
 //=============================================================================
-std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode( const LHCb::RawBank& bank, LHCb::RawBankReadoutStatus status,
-                                                          bool getPinData ) const {
-
-  long                       nCells = m_calo->numberOfCells();
-  long                       nPins  = m_calo->numberOfPins();
-  std::vector<LHCb::CaloAdc> pinDataVec;
-  std::vector<LHCb::CaloAdc> dataVec;
-  pinDataVec.reserve( nPins );
-  dataVec.reserve( nCells );
-
-  if ( LHCb::RawBank::MagicPattern != bank.magic() ) return dataVec; // false;// do not decode when MagicPattern is bad
+template <bool decodePinData>
+std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode( const LHCb::RawBank&        bank,
+                                                          LHCb::RawBankReadoutStatus& status ) const {
+  if ( LHCb::RawBank::MagicPattern != bank.magic() ) return {}; // false;// do not decode when MagicPattern is bad
   // Get bank info
-  const unsigned int* data     = bank.data();
-  int                 size     = bank.size() / 4; // Bank size is in bytes
-  int                 version  = bank.version();
-  int                 sourceID = bank.sourceID();
+  auto data     = bank.range<unsigned int>();
+  int  version  = bank.version();
+  int  sourceID = bank.sourceID();
 
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Decode bank " << &bank << " source " << sourceID << " version " << version << " size " << size
+    debug() << "Decode bank " << &bank << " source " << sourceID << " version " << version << " size " << data.size()
             << endmsg;
 
-  if ( 0 == size ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
+  if ( data.empty() ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
 
-  // -----------------------------------------------
   // skip detector specific header line
-  if ( m_extraHeader ) {
-    ++data;
-    --size;
-  }
-  // -----------------------------------------------
+  if ( m_extraHeader ) pop( data ); // drop first word
 
-  if ( 1 > version || 3 < version ) {
+  switch ( version ) {
+  case 1:
+    return decode_v1<decodePinData>( sourceID, data, status );
+  case 2:
+    return decode_v2<decodePinData>( sourceID, data, status );
+  case 3:
+    return decode_v3<decodePinData>( sourceID, data, status );
+  default:
     warning() << "Bank type " << bank.type() << " sourceID " << sourceID << " has version " << version
               << " which is not supported" << endmsg;
-
-  } else if ( 1 == version ) {
-    //******************************************************************
-    //**** Simple coding, ID + adc in 32 bits.
-    //******************************************************************
-    while ( 0 != size ) {
-      int id  = ( ( *data ) >> 16 ) & 0xFFFF;
-      int adc = ( *data ) & 0xFFFF;
-      if ( 32767 < adc ) adc |= 0xFFFF0000; //= negative value
-      LHCb::CaloCellID cellId( id );
-      LHCb::CaloAdc    temp( cellId, adc );
-
-      // event dump
-      verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( cellId ) << " |  CaloCell "
-                << cellId << " |  valid ? " << m_calo->valid( cellId ) << " |  ADC value = " << adc << endmsg;
-
-      if ( 0 != cellId.index() ) {
-        if ( !cellId.isPin() ) {
-          dataVec.push_back( temp );
-        } else {
-          pinDataVec.push_back( temp );
-        }
-      }
-
-      ++data;
-      --size;
-    }
-
-  } else if ( 2 == version ) {
-    //******************************************************************
-    //**** 1 MHz compression format, Ecal and Hcal
-    //******************************************************************
-    // Get the FE-Cards associated to that bank (via condDB)
-    std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
-    int              nCards  = feCards.size();
-    if ( msgLevel( MSG::DEBUG ) )
-      debug() << nCards << " FE-Cards are expected to be readout : " << feCards << " in Tell1 bank " << sourceID
-              << endmsg;
-    int prevCard = -1;
-    while ( 0 != size ) {
-      // Skip
-      unsigned int word = *data++;
-      size--;
-      // Read bank header
-      int lenTrig = word & 0x7F;
-      int code    = ( word >> 14 ) & 0x1FF;
-      int ctrl    = ( word >> 23 ) & 0x1FF;
-      checkCtrl( ctrl, sourceID, status );
-      // access chanID via condDB
-      std::vector<LHCb::CaloCellID> chanID;
-      // look for the FE-Card in the Tell1->cards vector
-      int card = findCardbyCode( feCards, code );
-      if ( 0 <= card ) {
-        chanID = m_calo->cardChannels( feCards[card] );
-        feCards.erase( feCards.begin() + card );
-      } else {
-        Error( " FE-Card w/ [code : " + Gaudi::Utils::toString( code ) +
-               " ] is not associated with TELL1 bank sourceID : " + Gaudi::Utils::toString( sourceID ) +
-               " in condDB :  Cannot read that bank" )
-            .ignore();
-
-        Error( "Warning : previous data may be corrupted" ).ignore();
-        if ( m_cleanCorrupted ) {
-          if ( m_calo->isPinCard( prevCard ) ) {
-            pinDataVec.erase( std::remove_if( pinDataVec.begin(), pinDataVec.end(),
-                                              [&]( const LHCb::CaloAdc& adc ) {
-                                                return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
-                                              } ),
-                              pinDataVec.end() );
-          } else {
-            dataVec.erase( std::remove_if( dataVec.begin(), dataVec.end(),
-                                           [&]( const LHCb::CaloAdc& adc ) {
-                                             return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
-                                           } ),
-                           dataVec.end() );
-          }
-        }
-        status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
-        status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
-      }
-      prevCard = card;
-
-      // Start readout of the FE-board
-      // First skip trigger bank ...
-      int nSkip = ( lenTrig + 3 ) / 4; //== is in bytes, with padding
-      data += nSkip;
-      size -= nSkip;
-      unsigned int pattern  = *data++;
-      int          offset   = 0;
-      unsigned int lastData = *data++;
-      size -= 2;
-      // ... and readout data
-      for ( unsigned int bitNum = 0; 32 > bitNum; bitNum++ ) {
-        int adc;
-        if ( 31 < offset ) {
-          offset -= 32;
-          lastData = *data++;
-          size--;
-        }
-        if ( 0 == ( pattern & ( 1 << bitNum ) ) ) { //.. short coding
-          adc = ( ( lastData >> offset ) & 0xF ) - 8;
-          offset += 4;
-        } else {
-          adc = ( ( lastData >> offset ) & 0xFFF );
-          if ( 24 == offset ) adc &= 0xFF;
-          if ( 28 == offset ) adc &= 0xF; //== clean-up extra bits
-          offset += 12;
-          if ( 32 < offset ) { //.. get the extra bits on next word
-            lastData = *data++;
-            size--;
-            offset -= 32;
-            int temp = ( lastData << ( 12 - offset ) ) & 0xFFF;
-            adc += temp;
-          }
-          adc -= 256;
-        }
-
-        LHCb::CaloCellID id = LHCb::CaloCellID();
-        if ( bitNum < chanID.size() ) id = chanID[bitNum];
-
-        // event dump
-        verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( id )
-                  << " |  Channel : " << bitNum << " |  CaloCell " << id << " |  valid ? " << m_calo->valid( id )
-                  << " |  ADC value = " << adc << endmsg;
-
-        //== Keep only valid cells
-        if ( 0 != id.index() ) {
-          LHCb::CaloAdc temp( id, adc );
-          if ( !id.isPin() ) {
-            dataVec.push_back( temp );
-          } else {
-            pinDataVec.push_back( temp );
-          }
-        }
-      }
-    }
-    // Check All cards have been read
-    if ( !checkCards( nCards, feCards ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
-
-  } else if ( 3 == version ) {
-    //******************************************************************
-    //**** 1 MHz compression format, Preshower + SPD
-    //******************************************************************
-
-    // Get the FE-Cards associated to that bank (via condDB)
-    std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
-    int              nCards  = feCards.size();
-    if ( msgLevel( MSG::DEBUG ) )
-      debug() << nCards << " FE-Cards are expected to be readout : " << feCards << " in Tell1 bank " << sourceID
-              << endmsg;
-    int prevCard = -1;
-    while ( 0 != size ) {
-      // Skip
-      unsigned int word = *data++;
-      size--;
-      // Read bank header
-      int lenTrig = word & 0x7F;
-      int lenAdc  = ( word >> 7 ) & 0x7F;
-      int code    = ( word >> 14 ) & 0x1FF;
-      int ctrl    = ( word >> 23 ) & 0x1FF;
-      checkCtrl( ctrl, sourceID, status );
-      // access chanID via condDB
-      // look for the FE-Card in the Tell1->cards vector
-      int card = findCardbyCode( feCards, code );
-      if ( card < 0 ) {
-        Error( " FE-Card w/ [code : " + Gaudi::Utils::toString( code ) +
-               " ] is not associated with TELL1 bank sourceID : " + Gaudi::Utils::toString( sourceID ) +
-               " in condDB :  Cannot read that bank" )
-            .ignore();
-
-        Error( "Warning : previous data may be corrupted" ).ignore();
-        if ( m_cleanCorrupted ) {
-          if ( m_calo->isPinCard( prevCard ) ) {
-            pinDataVec.erase( std::remove_if( pinDataVec.begin(), pinDataVec.end(),
-                                              [&]( const LHCb::CaloAdc& adc ) {
-                                                return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
-                                              } ),
-                              pinDataVec.end() );
-          } else {
-            dataVec.erase( std::remove_if( dataVec.begin(), dataVec.end(),
-                                           [&]( const LHCb::CaloAdc& adc ) {
-                                             return m_calo->cellParam( adc.cellID() ).cardNumber() == prevCard;
-                                           } ),
-                           dataVec.end() );
-          }
-        }
-
-        status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
-                                        LHCb::RawBankReadoutStatus::Status::Incomplete );
-      }
-      std::vector<LHCb::CaloCellID> chanID = m_calo->cardChannels( feCards[card] );
-      feCards.erase( feCards.begin() + card );
-      prevCard = card;
-
-      // Read the FE-Board
-      // skip the trigger bits
-      int nSkip = ( lenTrig + 3 ) / 4; //== Length in byte, with padding
-      size -= nSkip;
-      data += nSkip;
-
-      // read data
-      int          offset   = 32; //== force read the first word, to have also the debug for it.
-      unsigned int lastData = 0;
-
-      while ( 0 < lenAdc ) {
-        if ( 32 == offset ) {
-          lastData = *data++;
-          size--;
-          offset = 0;
-        }
-        int          adc = ( lastData >> offset ) & 0x3FF;
-        unsigned int num = ( lastData >> ( offset + 10 ) ) & 0x3F;
-
-        LHCb::CaloCellID id = ( num < chanID.size() ? chanID[num] : LHCb::CaloCellID{} );
-
-        // event dump
-        verbose() << " |  SourceID : " << sourceID << " |  FeBoard : " << m_calo->cardNumber( id )
-                  << " |  Channel : " << num << " |  CaloCell " << id << " |  valid ? " << m_calo->valid( id )
-                  << " |  ADC value = " << adc << endmsg;
-
-        if ( 0 != id.index() ) {
-          if ( !id.isPin() ) {
-            dataVec.emplace_back( id, adc );
-          } else {
-            pinDataVec.emplace_back( id, adc );
-          }
-        }
-
-        lenAdc--;
-        offset += 16;
-      }
-    } //== DataSize
-    // Check All cards have been read
-    if ( !checkCards( nCards, feCards ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
-  } //== versions
-  return ( getPinData ? pinDataVec : dataVec );
+    return {};
+  }
 }
 
 //========================
@@ -560,11 +546,11 @@ int CaloFutureRawToDigits::findCardbyCode( const std::vector<int>& feCards, int 
   return std::distance( feCards.begin(), i );
 }
 
-void CaloFutureRawToDigits::checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus status ) const {
+void CaloFutureRawToDigits::checkCtrl( int ctrl, int sourceID, LHCb::RawBankReadoutStatus& status ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Control word :" << ctrl << endmsg;
-  if ( 0 != ( 0x1 & ctrl ) || 0 != ( 0x20 & ctrl ) || 0 != ( 0x40 & ctrl ) ) {
+  if ( 0 != ( 0x01 & ctrl ) || 0 != ( 0x20 & ctrl ) || 0 != ( 0x40 & ctrl ) ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Tell1 error bits have been detected in data" << endmsg;
-    if ( 0 != ( 0x1 & ctrl ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Error );
+    if ( 0 != ( 0x01 & ctrl ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Error );
     if ( 0 != ( 0x20 & ctrl ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Sync );
     if ( 0 != ( 0x40 & ctrl ) ) status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Tell1Link );
   }

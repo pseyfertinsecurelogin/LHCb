@@ -179,7 +179,7 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ) {
   int                       sourceID = bank.sourceID();
   unsigned int              lastData = 0;
 
-  if ( data == end ) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
+  if ( data == end ) m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Empty );
 
   if ( msgLevel( MSG::DEBUG ) )
     debug() << "Decode bank " << &bank << " source " << sourceID << " version " << version << " size "
@@ -249,8 +249,8 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ) {
             .ignore();
         Error( "Warning : previous data may be corrupted" ).ignore();
         if ( m_cleanCorrupted ) cleanData( prevCard );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted );
         return false;
       }
       prevCard = card;
@@ -294,7 +294,7 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ) {
     }                             // another card
     // Check All cards have been read
     if ( !checkCards( nCards, feCards ) )
-      m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+      m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
   } // version
   return true;
 }
@@ -310,7 +310,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
   int                       sourceID = bank.sourceID();
   unsigned int              lastData = 0;
 
-  m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::OK );
+  m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::OK );
 
   if ( msgLevel( MSG::DEBUG ) )
     debug() << "Decode Prs bank " << &bank << " source " << sourceID << " version " << version << " size "
@@ -422,8 +422,8 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
             .ignore();
         Error( "Warning : previous data may be corrupted" ).ignore();
         if ( m_cleanCorrupted ) cleanData( prevCard );
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
-                                          LHCb::RawBankReadoutStatus::Status::Incomplete );
+        m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Corrupted |
+                                           LHCb::RawBankReadoutStatus::Status::Incomplete );
         return false;
       }
       prevCard = card;
@@ -466,7 +466,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
     } //== DataSize
     // Check All cards have been read
     if ( !checkCards( nCards, feCards ) )
-      m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
+      m_status->addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::Incomplete );
   } //== versions
   return true;
 }
