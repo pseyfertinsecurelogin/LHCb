@@ -125,7 +125,7 @@
           if( m_substructure.size() == 1 ){
               const HltObjectSummary &amp; inner = *(m_substructure[0]);
               if( inner.summarizedObjectCLID() == m_summarizedObjectCLID ){
-                 std::vector&lt;LHCb::LHCbID&gt; innerHits = inner.lhcbIDsFlattened();
+                 const auto&amp; innerHits = inner.lhcbIDsFlattened();
                  flattenedLhcbIDs.insert(flattenedLhcbIDs.end(),innerHits.begin(),innerHits.end());
               }
           }
@@ -178,8 +178,9 @@
           const='TRUE' >
         <code>
           std::vector&lt;std::string&gt; names;
-          Info::const_iterator it = m_numericalInfo.begin();
-          while ( it != m_numericalInfo.end()) names.push_back((it++)-&gt;first);
+          names.reserve(m_numericalInfo.size());
+          std::transform(  m_numericalInfo.begin(), m_numericalInfo.end(), std::back_inserter(names),
+                           [](const auto&amp; p) { return p.first; } );
           return names;
         </code>
       </method>
@@ -256,9 +257,8 @@
          desc='returns a pointer to Hlt Selection Report for given trigger selection name (==0 if not found)'
          const = 'TRUE' >
         <code>
-    Container::const_iterator rep = m_selReports.find(selectionName);
-    if( rep==m_selReports.end() )return ((const LHCb::HltObjectSummary*)(0));
-    return &amp;(rep-&gt;second);
+    auto rep = m_selReports.find(selectionName);
+    return rep!=m_selReports.end() ? &amp;(rep-&gt;second) : nullptr;
         </code>
       </method>
 
@@ -273,7 +273,7 @@
          const = 'TRUE'
        >
         <code>
-          return (m_selReports.find(selectionName)!=m_selReports.end());
+          return m_selReports.find(selectionName)!=m_selReports.end();
        </code>
       </method>
 
@@ -284,8 +284,10 @@
         const = 'TRUE' >
         <code>
     std::vector&lt;std::string&gt; names;
-    Container::const_iterator it = m_selReports.begin();
-    while ( it != m_selReports.end()) names.push_back((it++)-&gt;first);
+    names.reserve(m_selReports.size());
+    std::transform( m_selReports.begin(), m_selReports.end(),
+                    std::back_inserter(names),
+                    [](const auto&amp; p) { return p.first; } );
     return names;
         </code>
       </method>
@@ -347,8 +349,8 @@
         desc='insert HltObjectSummary for given selectionName, returns StatusCode::FAILURE if duplicate selection name'
       >
         <code>
-   if( m_selReports.insert(selectionName,selReport).second )return StatusCode::SUCCESS;
-   return StatusCode::FAILURE;
+   return m_selReports.insert(selectionName,selReport).second ? StatusCode::SUCCESS
+                                                              : StatusCode::FAILURE;
         </code>
       </method>
 
@@ -362,15 +364,12 @@
          const = 'TRUE' >
         <code>
      std::vector &lt; std::string &gt; selNamesV;
-     for( HltSelReports::Container::const_iterator i=m_selReports.begin();i!=m_selReports.end();++i){
-        const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = i-&gt;second.substructure();
-        for( SmartRefVector&lt;LHCb::HltObjectSummary&gt;::const_iterator iObj = candidates.begin();
-                       iObj != candidates.end(); ++iObj ){
-          if( iObj-&gt;target() == selectedCandidate ){
-	    selNamesV.push_back( i-&gt;first );
-            break;
-          }
-        }
+     for( const auto&amp; r  : m_selReports ) {
+        const auto &amp; candidates = r.second.substructure();
+        if ( std::any_of( candidates.begin(), candidates.end(), 
+                               [&amp;](const auto&amp; c) { return c.target() == selectedCandidate; } ))
+             selNamesV.push_back( r.first );
+
      }
      return selNamesV;
         </code>
@@ -387,15 +386,12 @@
          const = 'TRUE' >
         <code>
     const LHCb::HltObjectSummary* summaryOfSelection = selReport(selectionName);
-    if( !summaryOfSelection )return std::string("");
-    const HltObjectSummary::Info &amp; nInfo = summaryOfSelection-&gt;numericalInfo();
-    for( HltObjectSummary::Info::const_iterator i=nInfo.begin();i!=nInfo.end();++i){
-         const std::string &amp; nInfoKey = i-&gt;first;
-         if( nInfoKey.substr(0,3) == "10#" ){
-	     return nInfoKey.substr(3);
-         }
+    if( !summaryOfSelection ) return std::string{};
+    for( const auto&amp;  i : summaryOfSelection-&gt;numericalInfo()) {
+         const std::string &amp; nInfoKey = i.first;
+         if( nInfoKey.compare( 0,3,  "10#") == 0 ) return nInfoKey.substr(3);
     }
-    return std::string("");
+    return std::string{};
         </code>
       </method>
 
@@ -409,17 +405,16 @@
          const = 'TRUE' >
         <code>
     const LHCb::HltObjectSummary* summaryOfSelection = selReport(selectionName);
-    if( !summaryOfSelection )return int(-3);
+    if( !summaryOfSelection )return -3;
     // make sure that the candidate in fact in this selection
     const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = summaryOfSelection-&gt;substructure();
     int iKey(0);
-    for( SmartRefVector&lt;LHCb::HltObjectSummary&gt;::const_iterator iObj = candidates.begin();
-                       iObj != candidates.end(); ++iObj,++iKey ){
+    for( auto iObj = candidates.begin(); iObj != candidates.end(); ++iObj,++iKey ){
          if( iObj-&gt;target() == selectedCandidate ){
              const HltObjectSummary::Info &amp; nInfo = summaryOfSelection-&gt;numericalInfo();
-             for( HltObjectSummary::Info::const_iterator i=nInfo.begin();i!=nInfo.end();++i){
+             for( auto i=nInfo.begin();i!=nInfo.end();++i){
                 const std::string &amp; nInfoKey = i-&gt;first;
-                if( nInfoKey.substr(0,3) == "10#" ){
+                if( nInfoKey.compare(0,3,"10#")==0 ){
 	            // std::string pvSelectionName = nInfoKey.substr(3); // not used
                     // now unpack the key
                     int j = iKey / 4;
@@ -427,19 +422,18 @@
                     std::stringstream ss;
                     ss &lt;&lt; "11#" &lt;&lt; boost::format("%1$=08X") % j;
 		    if( nInfo.find( ss.str() )!= nInfo.end() ){
-                        union IntFloat { unsigned int mInt; float mFloat; };
-                        IntFloat a;
-			a.mFloat = nInfo( ss.str() );
-                        unsigned int pWord = a.mInt;
-                        return int( ( (pWord &gt;&gt; inj*8 ) &amp; 255 ) );
+                        union { unsigned int mInt; float mFloat; };
+			mFloat = nInfo( ss.str() );
+                        unsigned int pWord = mInt;
+                        return ( (pWord &gt;&gt; inj*8 ) &amp; 255 );
                     }
-                    return int(0); // that means all keys were ==0
+                    return 0; // that means all keys were ==0
                 }
              }
-             return int(-1);
+             return -1;
          }
     }
-    return int(-2);
+    return -2;
         </code>
       </method>
 
@@ -452,11 +446,11 @@
          desc='returns name of PV selection and PV key used in selection of the given summarized candidate. Goes via 1st candidate selection found. ("",-1 if none).'
          const = 'TRUE' >
         <code>
-   std::vector&lt;std::string&gt; selectedBy = selectedAsCandidateBy(selectedCandidate);
-   if( selectedBy.size() ){
-      return std::pair&lt;std::string,int&gt;( pvSelectionName(selectedBy[0]),pvKey(selectedBy[0],selectedCandidate) );
+   const auto &amp;  selectedBy = selectedAsCandidateBy(selectedCandidate);
+   if( !selectedBy.empty() ){
+      return { pvSelectionName(selectedBy[0]),pvKey(selectedBy[0],selectedCandidate) };
    }
-   return std::pair&lt;std::string,int&gt;( "",-1 );
+   return { "",-1 };
         </code>
       </method>
 

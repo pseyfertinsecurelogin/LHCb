@@ -37,13 +37,8 @@
 
       &DataObject;
       <base name="DataObject"/>
-<!-- 
-      <constructor
-        argList="HltLumiSummary rhs"
-        desc="Copy constructor"
-        initList="m_extraInfo(rhs.m_extraInfo)"
-	/>
--->
+
+
       <method
         name="clone"
         desc="Clone LumiSummary"
@@ -56,19 +51,6 @@
 	</code>
       </method>
 
-      <method
-        desc="Assignment operator"
-        name="operator="
-        type="LHCb::HltLumiSummary&amp;"
-	>
-	<arg name="rhs" type="HltLumiSummary" const='TRUE'/>
-        <code>
-   if ( this != &amp;rhs ) {
-      m_extraInfo         = rhs.m_extraInfo;
-   }
-   return *this;
-        </code>
-      </method>
 
       <attribute
         name="extraInfo"
