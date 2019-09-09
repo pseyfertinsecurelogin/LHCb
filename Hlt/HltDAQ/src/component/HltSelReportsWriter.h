@@ -21,6 +21,8 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+#include "GaudiAlg/Consumer.h"
+
 /** @class HltSelReportsWriter HltSelReportsWriter.h
  *
  *
@@ -30,13 +32,23 @@
  *  Algorithm to convert HltSelReports and HltObjectSummarys containers on TES to HltSelCandidates Raw Bank
  *
  */
-class HltSelReportsWriter : public GaudiAlgorithm {
+using HltSelReportsWriterBase_t =
+    Gaudi::Functional::Consumer<void( LHCb::HltDecReports const&, LHCb::HltSelReports const&,
+                                      LHCb::HltObjectSummary::Container const&, LHCb::RawEvent const& )>;
+
+class HltSelReportsWriter : public HltSelReportsWriterBase_t {
 public:
-  /// Standard constructor
-  using GaudiAlgorithm::GaudiAlgorithm;
+  HltSelReportsWriter( const std::string& name, ISvcLocator* pSvcLocator )
+      : HltSelReportsWriterBase_t( name, pSvcLocator,
+                                   {KeyValue{"DecReports", LHCb::HltDecReportsLocation::Default},
+                                    KeyValue{"SelReports", LHCb::HltSelReportsLocation::Default},
+                                    KeyValue{"ObjectSummaries", LHCb::HltObjectSummaryLocation::Default},
+                                    KeyValue{"RawEvent", LHCb::RawEventLocation::Default}} ) {}
 
   StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
+  void       operator()( LHCb::HltDecReports const& decreps, LHCb::HltSelReports const& selreps,
+                   LHCb::HltObjectSummary::Container const& objectSummaries,
+                   LHCb::RawEvent const&                    rawevt ) const override; ///< Algorithm execution
 
   enum HeaderIDs { kVersionNumber = 11 };
 
@@ -52,20 +64,8 @@ public:
   };
 
 private:
-  /// location of input H
-  Gaudi::Property<std::string> m_inputHltSelReportsLocation{this, "InputHltSelReportsLocation",
-                                                            LHCb::HltSelReportsLocation::Default};
-
-  /// location of input HltDecReports, used to get the TCK, see UseTCK
-  Gaudi::Property<std::string> m_inputHltDecReportsLocation{this, "InputHltDecReportsLocation",
-                                                            LHCb::HltDecReportsLocation::Default};
-
   /// whether to try to use the TCK and the TCKANNSvc
   Gaudi::Property<bool> m_useTCK{this, "UseTCK", false};
-
-  /// location of output
-  Gaudi::Property<std::string> m_outputRawEventLocation{this, "OutputRawEventLocation",
-                                                        LHCb::RawEventLocation::Default};
 
   /// SourceID to insert in the bank header (0-7)
   Gaudi::Property<int> m_sourceID{this, "SourceID", kSourceID_Dummy};

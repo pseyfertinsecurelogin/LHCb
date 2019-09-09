@@ -63,6 +63,7 @@ content_filter = HltRoutingBitsFilter('RBFilter')
 content_filter.RequireMask = [0x0, 0x0, 0x80000000]
 
 decoder = DecoderDB['HltSelReportsDecoder/Hlt2SelReportsDecoder']
+decdecoder = DecoderDB['HltDecReportsDecoder/Hlt2DecReportsDecoder'].setup()
 decoder.Properties['OutputLevel'] = LEVEL
 
 stripper = HltSelReportsStripper()
@@ -91,7 +92,9 @@ killer.KillSourceIDMask = 0xE000
 
 writer = HltSelReportsWriter('Hlt2SelReportsWriter')
 writer.SourceID = 2
-writer.InputHltSelReportsLocation = str(stripper.OutputHltSelReportsLocation)
+writer.DecReports = str(decdecoder.OutputHltDecReportsLocation)
+writer.SelReports = str(stripper.OutputHltSelReportsLocation)
+writer.ObjectSummaries = str(stripper.OutputHltObjectSummariesLocation)
 writer.OutputLevel = LEVEL
 
 decoder2 = decoder.clone('HltSelReportsDecoder/SecondDecoder')
@@ -108,6 +111,7 @@ topSeq.Members = [
     content_filter,
     copyRaw,
     decoder.setup(),
+    decdecoder,
     stripper,
     killer,
     writer,
