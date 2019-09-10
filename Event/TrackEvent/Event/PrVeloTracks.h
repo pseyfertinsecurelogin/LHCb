@@ -16,6 +16,8 @@
 
 #include "PrVeloHits.h"
 
+#include "SOAExtensions/ZipUtils.h"
+
 /**
  * Track data for exchanges between VeloTracking and UT
  *
@@ -24,29 +26,35 @@
 
 namespace LHCb::Pr::Velo {
   class Tracks {
-    constexpr static int max_tracks       = align_size( 1024 );
-    constexpr static int max_hits         = 26;
-    constexpr static int max_states       = 2;
-    constexpr static int params_per_state = 11;
-    constexpr static int other_params     = 1;
+    constexpr static int     max_tracks       = align_size( 1024 );
+    constexpr static int     max_hits         = 26;
+    constexpr static int     max_states       = 2;
+    constexpr static int     params_per_state = 11;
+    constexpr static int     other_params     = 1;
+    Zipping::ZipFamilyNumber m_zipIdentifier;
 
   public:
-    Tracks() {
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
+        : m_zipIdentifier{zipIdentifier} {
       const size_t size = max_tracks * ( max_hits + max_states * params_per_state + other_params );
       m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
     Tracks( const Tracks& ) = delete;
 
-    Tracks( Tracks&& other ) {
+    // Special constructor for zipping machinery
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& ) : Tracks( zipIdentifier ) {}
+
+    Tracks( Tracks&& other ) : m_zipIdentifier{other.m_zipIdentifier} {
       m_data       = other.m_data;
       other.m_data = nullptr;
       m_size       = other.m_size;
     }
 
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
-    bool        empty() const { return m_size == 0; }
+    inline int               size() const { return m_size; }
+    inline int&              size() { return m_size; }
+    bool                     empty() const { return m_size == 0; }
+    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     SOA_ACCESSOR( nHits, &( m_data->i ) )
     SOA_ACCESSOR_VAR( hit, &( m_data[( hit + other_params ) * max_tracks].i ), int hit )

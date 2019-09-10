@@ -11,12 +11,15 @@
 
 #pragma once
 
+#include "LHCbMath/TypeMapping.h"
 #include "LHCbMath/bit_cast.h"
 
 #include <immintrin.h>
 #include <limits>
 
 #include <algorithm>
+#include <array>
+#include <bitset>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -56,6 +59,23 @@ namespace SIMDWrapper {
       return "Unknown";
     }
   }
+
+  template <typename bare, std::size_t size, typename T>
+  inline std::ostream& print_vector( std::ostream& os, T const& x, const char* name ) {
+    std::array<bare, size> tmp;
+    x.store( tmp.data() );
+    os << name << "{";
+    for ( std::size_t i = 0; i < size - 1; ++i ) { os << tmp[i] << ", "; }
+    return os << tmp[size - 1] << "}";
+  }
+
+  template <std::size_t size, typename T>
+  inline std::ostream& print_bitset( std::ostream& os, T const& x, const char* name ) {
+    auto s = std::bitset<size>{x}.to_string();
+    std::reverse( s.begin(), s.end() );
+    return os << name << "{" << s << "}";
+  }
+
   // Define some helper functions that will always return which instruction set
   // was used for the types in a given namespace when the stack was built.
   namespace scalar {
@@ -94,7 +114,7 @@ namespace SIMDWrapper {
 
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
       friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
-      friend mask_v operator!( const mask_v& x ) { return ~x.data; }
+      friend mask_v operator!( const mask_v& x ) { return !x.data; }
 
       friend bool all( const mask_v& mask ) { return mask == 1; }
       friend bool none( const mask_v& mask ) { return mask == 0; }
@@ -103,6 +123,8 @@ namespace SIMDWrapper {
     private:
       int data;
     };
+
+    inline int popcount( const mask_v& mask ) { return (int)mask; }
 
     class int_v;
 
@@ -153,9 +175,10 @@ namespace SIMDWrapper {
       }
       friend float_v select( int mask, const float_v& a, const float_v& b ) { return ( mask ) ? a : b; }
 
-      friend mask_v operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
-      friend mask_v operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
-      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
+      friend mask_v        operator<( const float_v& lhs, const float_v& rhs ) { return lhs.data < rhs.data; }
+      friend mask_v        operator>( const float_v& lhs, const float_v& rhs ) { return lhs.data > rhs.data; }
+      friend mask_v        operator==( const float_v& lhs, const float_v& rhs ) { return lhs.data == rhs.data; }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) { return os << x.cast(); }
 
     private:
       float data;
@@ -207,6 +230,8 @@ namespace SIMDWrapper {
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return lhs.data > rhs.data; }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return lhs.data == rhs.data; }
 
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) { return os << x.cast(); }
+
     private:
       int data;
     };
@@ -238,14 +263,18 @@ namespace SIMDWrapper {
       static mask_v mask_false() { return false; }
       static int_v  indices() { return 0; }
       static int_v  indices( int start ) { return start; }
-      template <typename T>
-      static int popcount( T mask ) {
-        return (int)mask;
-      }
+      static int    popcount( mask_v const& mask ) { return scalar::popcount( mask ); }
       static mask_v loop_mask( int, int ) { return true; }
     };
   } // namespace scalar
+} // namespace SIMDWrapper
 
+template <>
+struct LHCb::type_map<SIMDWrapper::scalar::float_v> {
+  using int_t = SIMDWrapper::scalar::int_v;
+};
+
+namespace SIMDWrapper {
 #ifndef __AVX2__
   namespace avx2 {
     constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
@@ -361,6 +390,10 @@ namespace SIMDWrapper {
       friend float_v operator||( const float_v& lhs, const float_v& rhs ) { return _mm256_or_ps( lhs, rhs ); }
       friend float_v operator!( const float_v& x ) { return x ^ _mm256_castsi256_ps( _mm256_set1_epi32( -1 ) ); }
 
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 8>( os, x, "avx2" );
+      }
+
       friend float_v min( const float_v& lhs, const float_v& rhs ) { return _mm256_min_ps( lhs, rhs ); }
       friend float_v max( const float_v& lhs, const float_v& rhs ) { return _mm256_max_ps( lhs, rhs ); }
       friend float_v abs( const float_v& v ) { return v & _mm256_castsi256_ps( _mm256_set1_epi32( 0x7FFFFFFF ) ); }
@@ -417,6 +450,8 @@ namespace SIMDWrapper {
       __m256 data;
     };
 
+    inline int popcount( const float_v& mask ) { return _mm_popcnt_u32( _mm256_movemask_ps( mask ) ); }
+
     class int_v {
     public:
       int_v() {} // Constructor must be empty
@@ -472,6 +507,10 @@ namespace SIMDWrapper {
       friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm256_sllv_epi32( lhs, rhs ); }
       friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
 
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 8>( os, x, "avx2" );
+      }
+
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( a ), _mm256_castsi256_ps( b ), s ) );
       }
@@ -524,12 +563,20 @@ namespace SIMDWrapper {
       static mask_v  mask_false() { return mask_v( 0.f ); }
       static int_v   indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
       static int_v   indices( int start ) { return indices() + start; }
-      static int     popcount( __m256 mask ) { return _mm_popcnt_u32( _mm256_movemask_ps( mask ) ); }
+      static int     popcount( mask_v const& mask ) { return avx2::popcount( mask ); }
       static float_v loop_mask( int i, int n ) {
         return _mm256_cmp_ps( _mm256_setr_ps( 0, 1, 2, 3, 4, 5, 6, 7 ), _mm256_set1_ps( n - i ), _CMP_LT_OS );
       }
     };
   } // namespace avx2
+} // namespace SIMDWrapper
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx2::float_v> {
+  using int_t = SIMDWrapper::avx2::int_v;
+};
+
+namespace SIMDWrapper {
 #endif
 
 #ifndef __AVX512F__
@@ -569,9 +616,15 @@ namespace SIMDWrapper {
       friend bool none( const mask_v& mask ) { return mask == 0x00; }
       friend bool any( const mask_v& mask ) { return mask != 0x00; }
 
+      friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
+        return print_bitset<8>( os, x, "avx256" );
+      }
+
     private:
       __mmask8 data;
     };
+
+    inline int popcount( mask_v const& mask ) { return _mm_popcnt_u32( mask ); }
 
     class int_v;
 
@@ -588,7 +641,7 @@ namespace SIMDWrapper {
         return *this;
       }
 
-             operator __m256() const { return data; }
+      operator __m256() const { return data; }
       inline operator int_v() const;
 
       void store( float* ptr ) const { _mm256_storeu_ps( ptr, data ); }
@@ -597,20 +650,20 @@ namespace SIMDWrapper {
 
       float hmax() const {
         __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_max_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hmin() const {
         __m128 r = _mm_min_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_min_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hadd() const {
         __m128 r = _mm_add_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
-        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
       float hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
@@ -653,6 +706,12 @@ namespace SIMDWrapper {
       friend mask_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps_mask( lhs, rhs, _CMP_GT_OS );
       }
+      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) {
+        return _mm256_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
+      }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 8>( os, x, "avx256" );
+      }
 
     private:
       __m256 data;
@@ -679,20 +738,20 @@ namespace SIMDWrapper {
 
       int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hmin() const {
         __m128i r = _mm_min_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_min_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hadd() const {
         __m128i r = _mm_add_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
-        r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
-        r         = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
+        r = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
+        r = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
       int hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
@@ -716,6 +775,9 @@ namespace SIMDWrapper {
       friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm256_cmplt_epi32_mask( lhs, rhs ); }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpeq_epi32_mask( lhs, rhs ); }
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 8>( os, x, "avx256" );
+      }
 
     private:
       __m256i data;
@@ -745,14 +807,14 @@ namespace SIMDWrapper {
 
     struct types {
       static const size_t size = 8;
-      using int_v              = avx256::int_v;
-      using float_v            = avx256::float_v;
-      using mask_v             = avx256::mask_v;
+      using int_v = avx256::int_v;
+      using float_v = avx256::float_v;
+      using mask_v = avx256::mask_v;
       static mask_v mask_true() { return 0xFF; }
       static mask_v mask_false() { return 0x00; }
-      static int_v  indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
-      static int_v  indices( int start ) { return indices() + start; }
-      static int    popcount( mask_v mask ) { return _mm_popcnt_u32( mask ); }
+      static int_v indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
+      static int_v indices( int start ) { return indices() + start; }
+      static int popcount( mask_v const& mask ) { return avx256::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 8 ) > n ) ? ~( 0xFF << ( n & 7 ) ) : 0xFF; }
     };
   } // namespace avx256
@@ -778,10 +840,15 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return mask == 0xFFFF; }
       friend bool none( const mask_v& mask ) { return mask == 0x0000; }
       friend bool any( const mask_v& mask ) { return mask != 0x0000; }
+      friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
+        return print_bitset<16>( os, x, "avx512" );
+      }
 
     private:
       __mmask16 data;
     };
+
+    inline int popcount( mask_v const& mask ) { return _mm_popcnt_u32( mask ); }
 
     class int_v;
 
@@ -798,7 +865,7 @@ namespace SIMDWrapper {
         return *this;
       }
 
-             operator __m512() const { return data; }
+      operator __m512() const { return data; }
       inline operator int_v() const;
 
       void store( float* ptr ) const { _mm512_storeu_ps( ptr, data ); }
@@ -848,6 +915,12 @@ namespace SIMDWrapper {
       friend mask_v operator>( const float_v& lhs, const float_v& rhs ) {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_GT_OS );
       }
+      friend mask_v operator==( const float_v& lhs, const float_v& rhs ) {
+        return _mm512_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
+      }
+      friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
+        return print_vector<float, 16>( os, x, "avx512" );
+      }
 
     private:
       __m512 data;
@@ -896,6 +969,9 @@ namespace SIMDWrapper {
       friend mask_v operator<( const int_v& lhs, const int_v& rhs ) { return _mm512_cmplt_epi32_mask( lhs, rhs ); }
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpeq_epi32_mask( lhs, rhs ); }
+      friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
+        return print_vector<int, 16>( os, x, "avx512" );
+      }
 
     private:
       __m512i data;
@@ -925,17 +1001,30 @@ namespace SIMDWrapper {
 
     struct types {
       static const size_t size = 16;
-      using int_v              = avx512::int_v;
-      using float_v            = avx512::float_v;
-      using mask_v             = avx512::mask_v;
+      using int_v = avx512::int_v;
+      using float_v = avx512::float_v;
+      using mask_v = avx512::mask_v;
       static mask_v mask_true() { return 0xFFFF; }
       static mask_v mask_false() { return 0x0000; }
-      static int_v  indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
-      static int_v  indices( int start ) { return indices() + start; }
-      static int    popcount( mask_v mask ) { return _mm_popcnt_u32( mask ); }
+      static int_v indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
+      static int_v indices( int start ) { return indices() + start; }
+      static int popcount( mask_v const& mask ) { return avx512::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 16 ) > n ) ? ~( 0xFFFF << ( n & 15 ) ) : 0xFFFF; }
     };
   } // namespace avx512
+} // namespace SIMDWrapper
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx256::float_v> {
+  using int_t = SIMDWrapper::avx256::int_v;
+};
+
+template <>
+struct LHCb::type_map<SIMDWrapper::avx512::float_v> {
+  using int_t = SIMDWrapper::avx512::int_v;
+};
+
+namespace SIMDWrapper {
 #endif
 
   namespace best {

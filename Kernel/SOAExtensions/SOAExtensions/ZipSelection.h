@@ -145,7 +145,7 @@ namespace Zipping {
      * @param s2 a Zipping::ExportedSelection
      */
     friend ExportedSelection set_intersection( ExportedSelection const& s1, ExportedSelection const& s2 ) {
-#ifndef DNDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
         throw GaudiException( "Performing set intersection on different container families.",
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
@@ -168,7 +168,7 @@ namespace Zipping {
      * @param s2 a Zipping::ExportedSelection
      */
     friend ExportedSelection set_union( ExportedSelection const& s1, ExportedSelection const& s2 ) {
-#ifndef DNDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
         throw GaudiException( "Performing set union on different container families.",
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
@@ -195,7 +195,7 @@ namespace Zipping {
      * @param s2 a Zipping::ExportedSelection
      */
     friend ExportedSelection set_difference( ExportedSelection const& s1, ExportedSelection const& s2 ) {
-#ifndef DNDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
         throw GaudiException( "Performing set difference on different container families.",
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
@@ -220,7 +220,7 @@ namespace Zipping {
      * @param s2 a Zipping::ExportedSelection
      */
     friend ExportedSelection set_symmetric_difference( ExportedSelection const& s1, ExportedSelection const& s2 ) {
-#ifndef DNDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
         throw GaudiException( "Performing set symmetric difference on different container families.",
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
@@ -239,7 +239,7 @@ namespace Zipping {
     }
 
     friend bool includes( ExportedSelection const& s1, ExportedSelection const& s2 ) {
-#ifndef DNDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
         throw GaudiException( "Performing set includes on different container families.",
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
@@ -357,7 +357,7 @@ namespace Zipping {
      */
     SelectionView( const container_t* container, const ExportedSelection<IndexSize>& selection )
         : m_container{container}, m_indices{&selection.m_indices} {
-#ifndef NDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       if ( selection.zipIdentifier() != container->zipIdentifier() ) {
         throw GaudiException( "Building SelectionView from an ExportedSelection of a different container family.",
                               details::typename_v<SelectionView>, StatusCode::FAILURE );

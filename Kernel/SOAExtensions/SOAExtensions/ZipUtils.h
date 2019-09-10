@@ -23,6 +23,12 @@
  */
 #ifndef ZipUtils_H
 #define ZipUtils_H 1
+#ifndef NDEBUG
+#  define ZIPPING_SEMANTIC_CHECKS
+#else
+// Comment out to disable runtime checks in optimised builds
+#  define ZIPPING_SEMANTIC_CHECKS
+#endif
 #include "SOAContainer/SOAUtils.h"
 #include "ZipTraits.h" // IWYU pragma: keep
 #include <atomic>
@@ -58,6 +64,11 @@ namespace Zipping {
     friend constexpr bool operator!=( ZipFamilyNumber lhs, ZipFamilyNumber rhs ) noexcept {
       return lhs.m_value != rhs.m_value;
     }
+
+    /// output operator
+    friend std::ostream& operator<<( std::ostream& os, ZipFamilyNumber x ) {
+      return os << "ZipFamilyNumber( " << x.m_value << " )";
+    }
   };
 
   namespace details {
@@ -71,7 +82,7 @@ namespace Zipping {
       inline static std::atomic_uint64_t s_generator; ///< static tracker of used ZipFamilyNumbers
 
     public:
-#ifndef NDEBUG
+#ifdef ZIPPING_SEMANTIC_CHECKS
       /// generate a so-far unused ZipFamilyNumber
       [[nodiscard]] static ZipFamilyNumber generate() { return ZipFamilyNumber( s_generator.fetch_add( 1 ) ); }
 #else
@@ -80,6 +91,13 @@ namespace Zipping {
 #endif
     };
   } // namespace details
+
+  /**
+   * @brief Helper function to obtain a so-far unused ZipFamilyNumber
+   *
+   * @return A new ZipFamilyNumber
+   */
+  [[nodiscard]] inline ZipFamilyNumber generateZipIdentifier() { return details::ZipFamilyNumberGenerator::generate(); }
 
   /**
    * @brief Helper function to obtain the family number from a set of (assumed semantically compatible) zip'able
