@@ -19,7 +19,13 @@
 #include "DetDesc/SolidChild.h"
 #include "DetDesc/SolidTicks.h"
 
-#include "range/v3/span.hpp"
+// make range v3 include used version specific.
+#include "range/v3/version.hpp"
+#if RANGE_V3_VERSION < 900
+#  include "range/v3/span.hpp"
+#else
+#  include "range/v3/view/span.hpp"
+#endif
 #include "range/v3/view/const.hpp"
 #include "range/v3/view/indirect.hpp"
 
