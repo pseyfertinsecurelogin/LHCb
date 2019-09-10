@@ -84,6 +84,8 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
                                    std::array<LHCb::UTDAQ::LayerInfo, UTInfo::TotalLayers>& layers,
                                    std::array<SectorsInStationZ, UTInfo::Stations>&         sectorsZ ) {
 
+  float xPos24( 0.0f ), xPos25( 0.0f );
+
   for ( int iStation = 0; iStation < UTInfo::Stations; ++iStation ) {
     for ( int iLayer = 0; iLayer < UTInfo::Layers; ++iLayer ) {
       // get layer
@@ -116,6 +118,14 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
           bottomMostRow = std::min( bottomMostRow, row );
         }
         if ( utSector->row() == bottomMostRow ) { biggestColumn = std::max( biggestColumn, column ); }
+
+        // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
+        // -- where some sector numbers in the inner region were swapped (see below).
+        // -- Given that this is not future proof, is a purely a temporary measure to allow development.
+        if ( sector->elementID().detRegion() == 2 && layerIndex == 0 ) {
+          if ( utSector->id() == 24 ) xPos24 = utSector->globalCentre().X();
+          if ( utSector->id() == 25 ) xPos25 = utSector->globalCentre().X();
+        }
       }
       // Second pass
       // find x and y values in the corners to deduce the geometry of the layer
@@ -146,5 +156,15 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
       layers[layerIndex].invHalfSectorXSize = 2 * ( ncols - 1 ) / ( smallestXLastCol - smallestXFirstcol );
       layers[layerIndex].dxDy               = ( biggestXFirstCol - smallestXFirstcol ) / ( YLastRow - YFirstRow );
     }
+  }
+
+  // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
+  // -- where some sector numbers in the inner region were swapped.
+  // -- Given that this is not future proof, is a purely a temporary measure to allow development.
+  if ( xPos24 > xPos25 ) {
+    mapQuarterSectorToSectorCentralRegion =
+        std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 25, 25, 26, 28, 31, 33,
+                   34, 34, 24, 24, 27, 29, 30, 32, 35, 35, 46, 46, 49, 51, 52, 54, 57, 57, 47, 47, 48, 50,
+                   53, 55, 56, 56, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
   }
 }
