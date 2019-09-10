@@ -22,10 +22,17 @@
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include "Kernel/meta_enum.h"
-#include "range/v3/range_traits.hpp"
 #include <ostream>
 #include <type_traits>
 #include <vector>
+
+// make range v3 include used version specific.
+#include "range/v3/version.hpp"
+#if RANGE_V3_VERSION < 900
+#  include "range/v3/range_traits.hpp"
+#else
+#  include "range/v3/range/traits.hpp"
+#endif
 
 /**
  *
