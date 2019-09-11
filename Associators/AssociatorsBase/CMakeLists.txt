@@ -11,7 +11,7 @@
 ################################################################################
 # Package: AssociatorsBase
 ################################################################################
-gaudi_subdir(AssociatorsBase v1r0)
+gaudi_subdir(AssociatorsBase)
 
 gaudi_depends_on_subdirs(Event/LinkerEvent
                          Event/MCEvent

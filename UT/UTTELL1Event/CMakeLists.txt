@@ -11,7 +11,7 @@
 ################################################################################
 # Package: UTTELL1Event
 ################################################################################
-gaudi_subdir(UTTELL1Event v1r0)
+gaudi_subdir(UTTELL1Event)
 
 gaudi_depends_on_subdirs(GaudiObjDesc
                          Kernel/LHCbKernel

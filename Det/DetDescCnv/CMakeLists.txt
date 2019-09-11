@@ -11,7 +11,7 @@
 ################################################################################
 # Package: DetDescCnv
 ################################################################################
-gaudi_subdir(DetDescCnv v4r19)
+gaudi_subdir(DetDescCnv)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          GaudiKernel

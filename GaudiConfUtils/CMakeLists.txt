@@ -11,7 +11,7 @@
 ################################################################################
 # Package: GaudiConfUtils
 ################################################################################
-gaudi_subdir(GaudiConfUtils v1r1)
+gaudi_subdir(GaudiConfUtils)
 
 gaudi_depends_on_subdirs(GaudiKernel)
 

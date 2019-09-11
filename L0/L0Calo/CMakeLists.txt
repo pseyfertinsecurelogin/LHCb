@@ -11,7 +11,7 @@
 ################################################################################
 # Package: L0Calo
 ################################################################################
-gaudi_subdir(L0Calo v11r16)
+gaudi_subdir(L0Calo)
 
 # hide warnings from some external projects
 find_package(Boost)

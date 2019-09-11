@@ -11,7 +11,7 @@
 ################################################################################
 # Package: FTDet
 ################################################################################
-gaudi_subdir(FTDet v2r13)
+gaudi_subdir(FTDet)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
                          Event/FTEvent

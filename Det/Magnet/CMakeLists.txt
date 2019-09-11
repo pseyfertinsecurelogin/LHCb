@@ -11,7 +11,7 @@
 ################################################################################
 # Package: Magnet
 ################################################################################
-gaudi_subdir(Magnet v8r0)
+gaudi_subdir(Magnet)
 
 gaudi_depends_on_subdirs(Det/DDDB
                          Det/DetDesc

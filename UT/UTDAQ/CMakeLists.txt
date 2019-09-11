@@ -11,7 +11,7 @@
 ################################################################################
 # Package: UTDAQ
 ################################################################################
-gaudi_subdir(UTDAQ v1r0)
+gaudi_subdir(UTDAQ)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/DetDesc

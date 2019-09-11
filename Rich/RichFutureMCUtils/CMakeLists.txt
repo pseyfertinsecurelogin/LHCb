@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichFutureMCUtils
 ################################################################################
-gaudi_subdir(RichFutureMCUtils v1r0)
+gaudi_subdir(RichFutureMCUtils)
 
 gaudi_depends_on_subdirs(GaudiUtils
                          Kernel/LHCbKernel

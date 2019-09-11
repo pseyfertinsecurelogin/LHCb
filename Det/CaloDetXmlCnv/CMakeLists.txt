@@ -11,7 +11,7 @@
 ################################################################################
 # Package: CaloDetXmlCnv
 ################################################################################
-gaudi_subdir(CaloDetXmlCnv v3r3p1)
+gaudi_subdir(CaloDetXmlCnv)
 
 find_package(Boost)
 find_package(XercesC)

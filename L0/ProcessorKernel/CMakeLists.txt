@@ -11,7 +11,7 @@
 ################################################################################
 # Package: ProcessorKernel
 ################################################################################
-gaudi_subdir(ProcessorKernel v7r2)
+gaudi_subdir(ProcessorKernel)
 
 gaudi_depends_on_subdirs(Kernel/LHCbKernel)
 

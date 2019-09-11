@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichFutureDAQ
 ################################################################################
-gaudi_subdir(RichFutureDAQ v1r0)
+gaudi_subdir(RichFutureDAQ)
 
 gaudi_depends_on_subdirs(Det/RichDet
                          Event/DAQEvent

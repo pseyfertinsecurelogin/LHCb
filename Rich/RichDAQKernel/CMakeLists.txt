@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichDAQKernel
 ################################################################################
-gaudi_subdir(RichDAQKernel v1r0)
+gaudi_subdir(RichDAQKernel)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          Event/DAQEvent

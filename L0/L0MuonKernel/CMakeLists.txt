@@ -11,7 +11,7 @@
 ################################################################################
 # Package: L0MuonKernel
 ################################################################################
-gaudi_subdir(L0MuonKernel v9r10)
+gaudi_subdir(L0MuonKernel)
 
 gaudi_depends_on_subdirs(L0/ProcessorKernel)
 

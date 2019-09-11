@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichUtils
 ################################################################################
-gaudi_subdir(RichUtils v1r0)
+gaudi_subdir(RichUtils)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
 	                 GaudiUtils

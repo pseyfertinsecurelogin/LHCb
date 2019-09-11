@@ -11,7 +11,7 @@
 ################################################################################
 # Package: KernelSys
 ################################################################################
-gaudi_subdir(KernelSys v12r3)
+gaudi_subdir(KernelSys)
 
 gaudi_depends_on_subdirs(Calo/CaloKernel
                          Kernel/LHCbKernel

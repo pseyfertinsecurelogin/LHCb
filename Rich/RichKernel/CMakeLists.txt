@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichKernel
 ################################################################################
-gaudi_subdir(RichKernel v8r0)
+gaudi_subdir(RichKernel)
 
 gaudi_depends_on_subdirs(GaudiAlg
                          GaudiUtils

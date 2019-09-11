@@ -11,7 +11,7 @@
 ################################################################################
 # Package: CaloFutureDAQ
 ################################################################################
-gaudi_subdir(CaloFutureDAQ v4r39)
+gaudi_subdir(CaloFutureDAQ)
 
 gaudi_depends_on_subdirs(CaloFuture/CaloFutureUtils
                          DAQ/DAQUtils

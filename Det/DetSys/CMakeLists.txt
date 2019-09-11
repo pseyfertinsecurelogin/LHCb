@@ -11,7 +11,7 @@
 ################################################################################
 # Package: DetSys
 ################################################################################
-gaudi_subdir(DetSys v17r2)
+gaudi_subdir(DetSys)
 
 gaudi_depends_on_subdirs(Det/BcmDet
                          Det/CaloDet

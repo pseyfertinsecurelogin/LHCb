@@ -11,7 +11,7 @@
 ################################################################################
 # Package: XmlTools
 ################################################################################
-gaudi_subdir(XmlTools v6r9)
+gaudi_subdir(XmlTools)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          Kernel/LHCbKernel)

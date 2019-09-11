@@ -11,7 +11,7 @@
 ################################################################################
 # Package: MCAssociators
 ################################################################################
-gaudi_subdir(MCAssociators v1r6)
+gaudi_subdir(MCAssociators)
 
 gaudi_depends_on_subdirs(Event/LinkerEvent
                          Event/MCEvent

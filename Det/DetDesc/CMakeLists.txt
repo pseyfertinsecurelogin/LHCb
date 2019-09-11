@@ -11,7 +11,7 @@
 ################################################################################
 # Package: DetDesc
 ################################################################################
-gaudi_subdir(DetDesc v19r1)
+gaudi_subdir(DetDesc)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          GaudiUtils

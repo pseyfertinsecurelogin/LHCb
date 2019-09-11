@@ -11,7 +11,7 @@
 ################################################################################
 # Package: STKernel
 ################################################################################
-gaudi_subdir(STKernel v2r14)
+gaudi_subdir(STKernel)
 
 gaudi_depends_on_subdirs(Det/STDet
                          Event/DAQEvent

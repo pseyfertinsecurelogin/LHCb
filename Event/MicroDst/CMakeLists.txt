@@ -11,7 +11,7 @@
 ################################################################################
 # Package: MicroDst
 ################################################################################
-gaudi_subdir(MicroDst v1r3)
+gaudi_subdir(MicroDst)
 
 gaudi_depends_on_subdirs(Event/PhysEvent
                          GaudiKernel

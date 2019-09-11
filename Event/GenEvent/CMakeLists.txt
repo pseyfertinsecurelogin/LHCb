@@ -11,7 +11,7 @@
 ################################################################################
 # Package: GenEvent
 ################################################################################
-gaudi_subdir(GenEvent v7r0)
+gaudi_subdir(GenEvent)
 
 gaudi_depends_on_subdirs(Event/EventBase
                          GaudiObjDesc)

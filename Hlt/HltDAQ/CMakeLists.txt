@@ -11,7 +11,7 @@
 ################################################################################
 # Package: HltDAQ
 ################################################################################
-gaudi_subdir(HltDAQ v4r28)
+gaudi_subdir(HltDAQ)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          Event/DAQEvent

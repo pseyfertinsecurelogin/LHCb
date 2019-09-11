@@ -10,7 +10,7 @@
 ###############################################################################
 # Package: MuonDAQ
 ###############################################################################
-gaudi_subdir(MuonDAQ v4r22)
+gaudi_subdir(MuonDAQ)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/MuonDet

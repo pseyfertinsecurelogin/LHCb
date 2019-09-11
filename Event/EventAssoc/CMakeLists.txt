@@ -11,7 +11,7 @@
 ################################################################################
 # Package: EventAssoc
 ################################################################################
-gaudi_subdir(EventAssoc v5r6)
+gaudi_subdir(EventAssoc)
 
 gaudi_depends_on_subdirs(Event/GenEvent
                          Event/L0Event
