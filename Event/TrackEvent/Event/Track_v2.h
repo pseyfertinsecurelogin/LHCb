@@ -326,7 +326,7 @@ namespace LHCb::Event {
 
       /// Sets the list of LHCbIDs associated to this track
       template <typename Range, typename Tg,
-                typename = std::enable_if_t<std::is_convertible_v<LHCbID, ranges::v3::range_value_type_t<Range>>>,
+                typename = std::enable_if_t<std::is_convertible_v<LHCbID, ranges::range_value_type_t<Range>>>,
                 typename = std::enable_if_t<std::is_base_of_v<Tag::Unordered_tag, std::decay_t<Tg>>>>
       Track& setLhcbIDs( const Range& ids, Tg = Tag::Unordered ) {
         m_lhcbIDs.assign( ids.begin(), ids.end() );
