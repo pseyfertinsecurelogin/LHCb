@@ -106,15 +106,15 @@ namespace DetDescPython {
 } // namespace DetDescPython
 
 #define ParamValidDataObject_template_instantiation_base( Type )                                                       \
-  template void  ParamValidDataObject::addParam( const std::string&, const Type&, const std::string& );                \
+  template void  ParamValidDataObject::addParam( const std::string&, Type, std::string );                              \
   template Type& ParamValidDataObject::param<Type>( const std::string& )
 
 #define ParamValidDataObject_template_instantiation_vect( Type )                                                       \
   ParamValidDataObject_template_instantiation_base( std::vector<Type> );                                               \
   template std::vector<Type>& ParamValidDataObject::paramVect<Type>( const std::string& )
 
-#define ParamValidDataObject_template_instantiation_map( Key, Type )                                                   \
-  template void ParamValidDataObject::addParam( const std::string&, const std::map<Key, Type>&, const std::string& );  \
+#define ParamValidDataObject_template_instantiation_map( Key, Type )                                                    \
+  template void                 ParamValidDataObject::addParam( const std::string&, std::map<Key, Type>, std::string ); \
   template std::map<Key, Type>& ParamValidDataObject::param<std::map<Key, Type>>( const std::string& )
 
 #define ParamValidDataObject_template_instantiation( Type )                                                            \

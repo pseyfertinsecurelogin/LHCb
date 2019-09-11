@@ -39,7 +39,7 @@ public:
   template <class T>
   inline const T& get() const {
     if ( type() != typeid( T ) ) { throw std::bad_cast(); }
-    return *static_cast<T*>( _get_ptr() );
+    return *static_cast<const T*>( _get_ptr() );
   }
 
   /// Generic setter. Same cosideration as for the getters.
@@ -61,7 +61,7 @@ public:
 
   /// Used for generic copy. You can copy type-safely a parameter via the base class.
   /// (Needed by ParamList)
-  virtual std::unique_ptr<BasicParam> new_copy() const = 0;
+  virtual std::unique_ptr<BasicParam> clone() const = 0;
 
 private:
   /// Handle to access the real datum
