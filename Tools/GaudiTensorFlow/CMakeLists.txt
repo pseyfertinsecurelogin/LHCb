@@ -21,16 +21,21 @@ set(TENSORFLOW_REPOSITORY https://storage.googleapis.com/tensorflow/libtensorflo
 set(TENSORFLOW_TAG "1.12.0" CACHE STRING "Version of TensorFlow binaries" )
 set(TENSORFLOW_DEVICE  "cpu" CACHE STRING "Device used by TensorFlow (either 'cpu' or 'gpu')")
 
-set(TENSORFLOW_LIBRARIES 
-    ${CMAKE_BINARY_DIR}/lib/libtensorflow_framework.so 
-    ${CMAKE_BINARY_DIR}/lib/libtensorflow.so)
+# directory for the unpack fo TensorFlow deployment kit
+set(TF_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG})
+file(MAKE_DIRECTORY ${TF_BIN_DIR})
 
+set(TENSORFLOW_LIBRARIES
+    ${TF_BIN_DIR}/lib/libtensorflow_framework.so
+    ${TF_BIN_DIR}/lib/libtensorflow.so)
 
-add_custom_command(OUTPUT ${TENSORFLOW_LIBRARIES}
+add_custom_command(OUTPUT libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz
   COMMAND curl -L -o libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz ${TENSORFLOW_REPOSITORY}/libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz
-  COMMAND tar xfC libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz ${CMAKE_BINARY_DIR}
 )
-
+add_custom_command(OUTPUT ${TENSORFLOW_LIBRARIES}
+  COMMAND tar xfC libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz ${TF_BIN_DIR}
+  DEPENDS libtensorflow-${TENSORFLOW_DEVICE}-linux-x86_64-${TENSORFLOW_TAG}.tar.gz
+)
 
 ### Find Boost 
 find_package (Boost) 
@@ -39,12 +44,13 @@ find_package (Boost)
 find_package (GSL)
 find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
 if(NOT CPP_GSL_INCLUDE_DIR)
-     message(FATAL "required headers from C++ GSL missing")
-   endif()
+  message(FATAL "required headers from C++ GSL missing")
+endif()
 
 
 
 add_custom_target(TensorFlow DEPENDS ${TENSORFLOW_LIBRARIES})
+include_directories(${TF_BIN_DIR}/include)
 gaudi_add_library (GaudiTensorFlow
                     src/*.cpp
                     PUBLIC_HEADERS GaudiTensorFlow 
@@ -55,7 +61,7 @@ gaudi_add_library (GaudiTensorFlow
 add_dependencies (GaudiTensorFlow TensorFlow)
 
 install(FILES     ${TENSORFLOW_LIBRARIES}                DESTINATION lib     OPTIONAL)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/tensorflow DESTINATION include OPTIONAL)
+install(DIRECTORY ${TF_BIN_DIR}/include/tensorflow DESTINATION include OPTIONAL)
 
 
 gaudi_add_executable(testTensor
