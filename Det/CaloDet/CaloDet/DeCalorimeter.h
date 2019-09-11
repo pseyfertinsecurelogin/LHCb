@@ -238,12 +238,12 @@ public:
   int                                  cardCrate( const int card ) const;
   int                                  cardSlot( const int card ) const;
   int                                  cardCode( const int card ) const;
-  const std::vector<LHCb::CaloCellID>& cardChannels( const int card );
-  const std::vector<LHCb::CaloCellID>& pinChannels( const LHCb::CaloCellID );
-  const std::vector<LHCb::CaloCellID>& ledChannels( const int led );
-  const std::vector<int>&              pinLeds( const LHCb::CaloCellID );
-  const std::vector<int>&              cellLeds( const LHCb::CaloCellID );
-  int                                  cardIndexByCode( const int crate, const int slot );
+  const std::vector<LHCb::CaloCellID>& cardChannels( const int card ) const;
+  const std::vector<LHCb::CaloCellID>& pinChannels( const LHCb::CaloCellID ) const;
+  const std::vector<LHCb::CaloCellID>& ledChannels( const int led ) const;
+  const std::vector<int>&              pinLeds( const LHCb::CaloCellID ) const;
+  const std::vector<int>&              cellLeds( const LHCb::CaloCellID ) const;
+  int                                  cardIndexByCode( const int crate, const int slot ) const;
   int                                  cardToTell1( const int card ) const;
   // from validation to Hcal FEB
   int validationToHcalFEB( const int validation, const unsigned int slot ) const;
@@ -251,13 +251,13 @@ public:
   int              nTell1s() const { return m_tell1Boards.size(); }
   std::vector<int> tell1ToCards( const int tell1 ) const;
   // CardParam/Tell1Param/CellParam
-  const CardParam  cardParam( const int card ) { return ( card < nCards() ) ? m_feCards[card] : CardParam(); }
-  const Tell1Param tell1Param( const int tell1 ) {
+  const CardParam  cardParam( const int card ) const { return ( card < nCards() ) ? m_feCards[card] : CardParam(); }
+  const Tell1Param tell1Param( const int tell1 ) const {
     return ( tell1 < nTell1s() ) ? m_tell1Boards[tell1] : Tell1Param( -1 );
   }
-  const CellParam cellParam( const LHCb::CaloCellID& id ) { return m_cells[id]; }
-  const CaloPin   caloPin( const LHCb::CaloCellID& id ) { return m_pins[id]; }
-  const CaloLed   caloLed( const int led ) { return ( led < (int)m_leds.size() ) ? m_leds[led] : -1; }
+  const CellParam cellParam( const LHCb::CaloCellID& id ) const { return m_cells[id]; }
+  const CaloPin   caloPin( const LHCb::CaloCellID& id ) const { return m_pins[id]; }
+  const CaloLed   caloLed( const int led ) const { return ( led < (int)m_leds.size() ) ? m_leds[led] : -1; }
   //  More complex functions
   LHCb::CaloCellID Cell( const Gaudi::XYZPoint& point ) const;
   const CellParam* Cell_( const Gaudi::XYZPoint& point ) const;
@@ -757,23 +757,23 @@ inline int DeCalorimeter::cardSlot( const int card ) const { return ( card < nCa
 
 inline int DeCalorimeter::cardCode( const int card ) const { return ( card < nCards() ) ? m_feCards[card].code() : -1; }
 
-inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::cardChannels( const int card ) {
+inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::cardChannels( const int card ) const {
   return card < nCards() ? m_feCards[card].ids() : m_empty;
 }
 
-inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::pinChannels( const LHCb::CaloCellID id ) {
+inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::pinChannels( const LHCb::CaloCellID id ) const {
   return m_pins[id].cells();
 }
 
-inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::ledChannels( const int led ) {
+inline const std::vector<LHCb::CaloCellID>& DeCalorimeter::ledChannels( const int led ) const {
   return led < (int)m_leds.size() ? m_leds[led].cells() : m_empty;
 }
 
-inline const std::vector<int>& DeCalorimeter::pinLeds( const LHCb::CaloCellID id ) { return m_pins[id].leds(); }
+inline const std::vector<int>& DeCalorimeter::pinLeds( const LHCb::CaloCellID id ) const { return m_pins[id].leds(); }
 
-inline const std::vector<int>& DeCalorimeter::cellLeds( const LHCb::CaloCellID id ) { return m_cells[id].leds(); }
+inline const std::vector<int>& DeCalorimeter::cellLeds( const LHCb::CaloCellID id ) const { return m_cells[id].leds(); }
 
-inline int DeCalorimeter::cardIndexByCode( const int crate, const int slot ) {
+inline int DeCalorimeter::cardIndexByCode( const int crate, const int slot ) const {
   auto i = std::find_if( m_feCards.begin(), m_feCards.end(),
                          [&]( const CardParam& c ) { return c.crate() == crate && c.slot() == slot; } );
   return i != m_feCards.end() ? i - m_feCards.begin() : -1;

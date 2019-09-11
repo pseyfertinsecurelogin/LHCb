@@ -12,7 +12,6 @@
 #define CALODET_CALOPIN_H 1
 
 // Include files
-class DeCalorimeter;
 #include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
 #include <sstream>
@@ -21,23 +20,18 @@ class DeCalorimeter;
  *
  */
 
-class CaloPin {
-
-  friend class DeCalorimeter;
+class CaloPin final {
 
 public:
   /** constructors
    */
   CaloPin() : m_id( LHCb::CaloCellID() ) {}
-  CaloPin( LHCb::CaloCellID id );
-
-  /// destructor
-  ~CaloPin();
+  CaloPin( LHCb::CaloCellID id ) : m_id( id ){};
 
   // getters
   LHCb::CaloCellID                     id() const { return m_id; }
-  const std::vector<int>&              leds() { return m_leds; }
-  const std::vector<LHCb::CaloCellID>& cells() { return m_cells; }
+  const std::vector<int>&              leds() const { return m_leds; }
+  const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
 
   std::vector<int> firstRows() const { return m_fRow; }
   std::vector<int> lastRows() const { return m_lRow; }
@@ -87,10 +81,10 @@ public:
 
 private:
   LHCb::CaloCellID              m_id;
-  std::string                   m_region;
-  std::string                   m_code;
-  int                           m_side;
-  int                           m_index;
+  std::string                   m_region = "Region ";
+  std::string                   m_code   = "Code ";
+  int                           m_side   = -1;
+  int                           m_index  = -1;
   int                           m_box;
   std::vector<int>              m_area;
   std::vector<int>              m_fCol;
