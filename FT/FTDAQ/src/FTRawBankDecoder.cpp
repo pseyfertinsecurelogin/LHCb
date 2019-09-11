@@ -22,6 +22,10 @@
 #if RANGE_V3_VERSION < 900
 #  include "range/v3/iterator_range.hpp"
 #  define MY_MAKE_RANGE ranges::make_iterator_range
+// upstream has renamed namespace ranges::view ranges::views
+namespace ranges::views {
+  using namespace ranges::view;
+}
 #else
 #  include "range/v3/view/subrange.hpp"
 #  define MY_MAKE_RANGE ranges::make_subrange
@@ -172,7 +176,7 @@ FTLiteClusters FTRawBankDecoder::decode<4>( LHCb::span<const LHCb::RawBank*> ban
     if ( *( last - 1 ) == 0 && first < last ) --last; // Remove padding at the end
 
     auto r = MY_MAKE_RANGE( first, last ) |
-             ranges::view::transform( [&offset]( unsigned short int c ) -> LHCb::FTLiteCluster {
+             ranges::views::transform( [&offset]( unsigned short int c ) -> LHCb::FTLiteCluster {
                return {offset + channelInBank( c ), fraction( c ), ( cSize( c ) ? 0 : 4 )};
              } );
     clus.insert( r.begin(), r.end(), quarterFromChannel( offset ) );

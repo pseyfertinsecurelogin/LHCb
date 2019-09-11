@@ -90,7 +90,11 @@ SOASKIN_TRIVIAL( s_fitqual, f_fitqual );
 #include "range/v3/all.hpp" // IWYU pragma: keep
 // IWYU pragma : no_include <range/v3/view/indices.hpp>
 // IWYU pragma : no_include <range/v3/view/take_exactly.hpp>
+#if RANGE_V3_VERSION < 900
 auto range = ranges::view::indices;
+#else
+auto range = ranges::views::indices;
+#endif
 /// end of sugar
 
 BOOST_AUTO_TEST_CASE( basic_zip_and_selection_operations ) {
