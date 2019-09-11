@@ -93,6 +93,9 @@ namespace DeRichLocations {
     return {};
   }
 
+  /// Inactive PD condition locations
+  inline std::vector<std::string> inactivePDs() noexcept { return {"Rich1InactivePDs", "Rich2InactivePDs"}; }
+
   // ----------------------------------------------------------------------------------------
   // Utility methods
   // ----------------------------------------------------------------------------------------
@@ -101,13 +104,13 @@ namespace DeRichLocations {
    *  @param rad The radiator type
    *  @return The DDDB location of the detector element
    */
-  const std::string& location( const Rich::RadiatorType rad );
+  const std::string location( const Rich::RadiatorType rad );
 
   /** Gives the DDDB location of the detector element for the given radiator type
    *  @param det The RICH detector type
    *  @return The DDDB location of the detector element
    */
-  const std::string& location( const Rich::DetectorType det );
+  const std::string location( const Rich::DetectorType det );
 
 } // namespace DeRichLocations
 

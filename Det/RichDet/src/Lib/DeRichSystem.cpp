@@ -60,56 +60,33 @@ StatusCode DeRichSystem::initialize() {
 
   _ri_debug << "Initialize " << name() << endmsg;
 
-  // get the version number
-  if ( exists( "systemVersion" ) ) { m_version = param<int>( "systemVersion" ); }
-  _ri_debug << "System version:" << systemVersion() << endmsg;
-
-  // get rich detectors
-  std::vector<std::string> deRichLocs = getDeRichLocations();
-
-  // get condition names for detector numbers
-  // std::vector<std::string> detCondNames;
-  const std::string str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
-  const std::string str_PhotoDetConfigValue = "DetectorConfiguration";
-  if ( hasCondition( str_PhotoDetConfig ) ) {
-    const auto deRC = condition( str_PhotoDetConfig );
-    if ( deRC->exists( str_PhotoDetConfigValue ) )
-      m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
-  }
-
-  const auto detCondNames = DeRichLocations::detectorNumberings( m_photDetConf );
-  if ( detCondNames.empty() ) { return Error( "Unknown detector configuration." ); }
-
-  // check if the numbers match.
-  if ( 0 != detCondNames.size() % deRichLocs.size() ) {
-    return Error( "Number of rich detector does not match detector number conditions" );
-  }
-
-  // for version 1 there are separate conditions for inactive PDs
-  std::vector<std::string> inactiveCondNames;
-  if ( systemVersion() == 1 ) {
-    inactiveCondNames.push_back( "Rich1InactivePDs" );
-    inactiveCondNames.push_back( "Rich2InactivePDs" );
-  }
-
-  // loop over detectors and conditions to set things up
-  for ( unsigned int i = 0; i < deRichLocs.size(); ++i ) {
-    m_detNumConds[(Rich::DetectorType)i] = detCondNames[i];
-
-    updMgrSvc()->registerCondition( this, condition( detCondNames[i] ).path(), &DeRichSystem::buildPDMappings );
-    _ri_debug << "Registered:" << condition( detCondNames[i] ).path() << endmsg;
-
-    if ( systemVersion() == 1 ) {
-      m_inactivePDConds[(Rich::DetectorType)i] = inactiveCondNames[i];
-      updMgrSvc()->registerCondition( this, condition( inactiveCondNames[i] ).path(), &DeRichSystem::buildPDMappings );
-      _ri_debug << "Registered:" << condition( inactiveCondNames[i] ).path() << endmsg;
-    }
-  }
+  // photon detector config
+  setupPhotDetConf();
 
   // Load the RICH detectors
   for ( const auto rich : Rich::detectors() ) {
     SmartDataPtr<DeRich> deR( dataSvc(), DeRichLocations::location( rich ) );
     m_deRich[rich] = deR;
+  }
+
+  // locations for detector numbering conditions
+  const auto detNumCondLocs = DeRichLocations::detectorNumberings( m_photDetConf );
+  if ( detNumCondLocs.empty() ) { return Error( "Unknown detector configuration" ); }
+
+  // register readout conditions
+  for ( const auto loc : detNumCondLocs ) {
+    const auto c = condition( loc ).path();
+    updMgrSvc()->registerCondition( this, c, &DeRichSystem::buildPDMappings );
+    _ri_debug << "Registered: " << c << endmsg;
+  }
+
+  // for version 1 there are separate conditions for inactive PDs
+  if ( systemVersion() == 1 ) {
+    for ( const auto loc : DeRichLocations::inactivePDs() ) {
+      const auto c = condition( loc ).path();
+      updMgrSvc()->registerCondition( this, c, &DeRichSystem::buildPDMappings );
+      _ri_debug << "Registered: " << c << endmsg;
+    }
   }
 
   // Run first update
@@ -122,9 +99,27 @@ StatusCode DeRichSystem::initialize() {
 }
 
 //=========================================================================
-//  buildPDMappings
+// setup photon detector configuration
+//=========================================================================
+void DeRichSystem::setupPhotDetConf() noexcept {
+  // assume HPD by default
+  m_photDetConf = Rich::HPDConfig;
+  // get condition names for detector numbers
+  const std::string str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
+  const std::string str_PhotoDetConfigValue = "DetectorConfiguration";
+  if ( hasCondition( str_PhotoDetConfig ) ) {
+    const auto deRC = condition( str_PhotoDetConfig );
+    if ( deRC->exists( str_PhotoDetConfigValue ) ) {
+      m_photDetConf = ( Rich::RichPhDetConfigType )( deRC->param<int>( str_PhotoDetConfigValue ) );
+    }
+  }
+}
+
+//=========================================================================
+// build PD Mappings
 //=========================================================================
 StatusCode DeRichSystem::buildPDMappings() {
+
   _ri_debug << "Update triggered for PD numbering maps" << endmsg;
 
   // clear maps and containers
@@ -155,9 +150,12 @@ StatusCode DeRichSystem::buildPDMappings() {
   m_l1LogToHard = {{}};
   m_l1HardToLog.clear();
 
+  // photon detector config
+  setupPhotDetConf();
+
   // Fill the maps for each RICH
   for ( const auto rich : Rich::detectors() ) {
-    const StatusCode sc = fillMaps( rich );
+    const auto sc = fillMaps( rich );
     if ( !sc ) { return sc; }
   }
 
@@ -168,17 +166,8 @@ StatusCode DeRichSystem::buildPDMappings() {
 //  fillMaps
 //=========================================================================
 StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
+
   _ri_debug << "Building Mappings for " << rich << endmsg;
-
-  const std::string str_PhotoDetConfig      = "RichPhotoDetectorConfiguration";
-  const std::string str_PhotoDetConfigValue = "DetectorConfiguration";
-
-  if ( hasCondition( str_PhotoDetConfig ) ) {
-    const auto deRC = condition( str_PhotoDetConfig );
-    if ( deRC->exists( str_PhotoDetConfigValue ) ) {
-      m_photDetConf = (Rich::RichPhDetConfigType)deRC->param<int>( str_PhotoDetConfigValue );
-    }
-  }
 
   std::string str_NumberOfPDs                  = "";
   std::string str_PDSmartIDs                   = "";
@@ -221,20 +210,23 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich ) {
   }
 
   // load conditions
-  _ri_debug << "Loading Conditions from " << m_detNumConds[rich] << endmsg;
-  const auto numbers = condition( m_detNumConds[rich] );
-  _ri_debug << m_detNumConds[rich] << " since:" << numbers->validSince().format( true )
+  const auto detNumCondLocs = DeRichLocations::detectorNumberings( m_photDetConf );
+  if ( detNumCondLocs.empty() ) { return Error( "Unknown detector configuration" ); }
+  _ri_debug << "Loading Conditions from " << detNumCondLocs[rich] << endmsg;
+  const auto numbers = condition( detNumCondLocs[rich] );
+  _ri_debug << detNumCondLocs[rich] << " since:" << numbers->validSince().format( true )
             << " till:" << numbers->validTill().format( true ) << endmsg;
-
   SmartRef<Condition> inactives;
   if ( systemVersion() == 1 ) {
-    inactives = condition( m_inactivePDConds[rich] );
+    const auto inactiveLocs = DeRichLocations::inactivePDs();
+    if ( inactiveLocs.empty() ) { return Error( "No inactive PD conditions found" ); }
+    inactives = condition( inactiveLocs[rich] );
     _ri_debug << "Inactive list since:" << inactives->validSince().format( true )
               << " till:" << inactives->validTill().format( true ) << endmsg;
   }
 
-  // local typedefs for vector from Conditions
-  typedef std::vector<LHCb::RichSmartID::KeyType> CondData;
+  // local type for vector from Conditions
+  using CondData = std::vector<LHCb::RichSmartID::KeyType>;
 
   // number of PDs
   const unsigned int nPDs = numbers->param<int>( str_NumberOfPDs );
@@ -694,7 +686,6 @@ Rich::DetectorType DeRichSystem::richDetector( const Rich::DAQ::Level1HardwareID
     throw GaudiException( "Unknown RICH Level1 board ID " + (std::string)l1ID, "DeRichSystem::richDetector()",
                           StatusCode::FAILURE );
   }
-
   // Found, so return RICH
   return ( *rich ).second;
 }
@@ -802,27 +793,6 @@ std::string DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) co
     const auto cNumber = copyNumber( smartID );
     return loc + "/HPD:" + std::string( cNumber );
   }
-}
-
-//=========================================================================
-//  getDeRichLocations
-//=========================================================================
-std::vector<std::string> DeRichSystem::getDeRichLocations() {
-  // find the Rich detectos
-  SmartDataPtr<DetectorElement> afterMag( dataSvc(), "/dd/Structure/LHCb/AfterMagnetRegion" );
-  if ( !afterMag ) {
-    throw GaudiException( "Could not load AfterMagnetRegion ", "DeRichBase::deRichSys()", StatusCode::FAILURE );
-  }
-
-  std::vector<std::string> deRichLocs;
-  if ( afterMag->exists( "RichDetectorLocations" ) ) {
-    deRichLocs = afterMag->paramVect<std::string>( "RichDetectorLocations" );
-  } else {
-    deRichLocs.push_back( DeRichLocations::Rich1 );
-    deRichLocs.push_back( DeRichLocations::Rich2 );
-  }
-
-  return deRichLocs;
 }
 
 //===========================================================================

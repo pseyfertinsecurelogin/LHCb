@@ -278,7 +278,6 @@ public:
   /// Is a 'large' PD
   inline bool isLargePD( const LHCb::RichSmartID pdID ) const { return dePDPanel( pdID )->isLargePD( pdID ); }
 
-public:
   /**
    * Retrieves the location of the PD/PMT in the detector store, so it can be
    * loaded using the getDet<DeRichPD> method.
@@ -286,12 +285,8 @@ public:
    */
   std::string getDePDLocation( const LHCb::RichSmartID& smartID ) const;
 
-public:
   /// The photon detector type
   inline Rich::RichPhDetConfigType RichPhotoDetConfig() const noexcept { return m_photDetConf; }
-
-  /// The version of RichSystem
-  inline int systemVersion() const noexcept { return m_version; }
 
 private:
   // definitions
@@ -314,7 +309,7 @@ private:
 
   /// Save information to a map, checking first it is not already set
   template <class SOURCE, class TARGET, class MAP>
-  bool safeMapFill( const SOURCE& source, const TARGET& target, MAP& map ) {
+  inline bool safeMapFill( const SOURCE& source, const TARGET& target, MAP& map ) {
     auto p = map.insert( typename MAP::value_type( source, target ) );
     if ( UNLIKELY( !p.second ) ) {
       error() << "Error filling map '" << System::typeinfoName( typeid( map ) ) << "' source "
@@ -324,24 +319,28 @@ private:
     return p.second;
   }
 
-  /// Get the locations of the rich detectors
-  std::vector<std::string> getDeRichLocations();
+  /// setup photon detector configuration
+  void setupPhotDetConf() noexcept;
 
-private: // data
+  /// The version of RichSystem
+  inline int systemVersion() const noexcept {
+    return ( exists( "systemVersion" ) ? param<int>( "systemVersion" ) : 0 );
+  }
+
+private:
+  // data
+
   /// RICH PhotoDetector Configuration (assume HPD by default)
   Rich::RichPhDetConfigType m_photDetConf = Rich::HPDConfig;
 
-  /// Type for mapping from RichSmartID to Rich::DAQ::PDHardwareID
-  using SoftToHard = MyMap<const LHCb::RichSmartID, Rich::DAQ::PDHardwareID>;
-  SoftToHard m_soft2hard; ///< Software ID to hardware ID map
+  /// mapping from RichSmartID to Rich::DAQ::PDHardwareID
+  MyMap<const LHCb::RichSmartID, Rich::DAQ::PDHardwareID> m_soft2hard;
 
-  /// Type for mapping from Rich::DAQ::PDHardwareID to RichSmartID
-  using HardToSoft = MyMap<const Rich::DAQ::PDHardwareID, LHCb::RichSmartID>;
-  HardToSoft m_hard2soft; ///< HPD Hardware ID to software ID map
+  /// mapping from Rich::DAQ::PDHardwareID to RichSmartID
+  MyMap<const Rich::DAQ::PDHardwareID, LHCb::RichSmartID> m_hard2soft;
 
-  /// Type for mapping from Rich::DAQ::PDHardwareID to RichSmartID
-  using L0HardToSoft = MyMap<const Rich::DAQ::Level0ID, LHCb::RichSmartID>;
-  L0HardToSoft m_l0hard2soft; ///< Level0 Hardware ID to software ID map
+  /// mapping from Rich::DAQ::PDHardwareID to RichSmartID
+  MyMap<const Rich::DAQ::Level0ID, LHCb::RichSmartID> m_l0hard2soft;
 
   /// List of all active PD RichSmartIDs
   LHCb::RichSmartID::Vector m_activePDSmartIDs;
@@ -361,81 +360,61 @@ private: // data
   /// List of all PD hardware IDs
   Rich::DAQ::PDHardwareIDs m_allPDHardIDs;
 
-  /// Typedef for mapping from RichSmartID to Level0 ID
-  using SmartIDToL0 = MyMap<const LHCb::RichSmartID, Rich::DAQ::Level0ID>;
-  SmartIDToL0 m_smartid2L0; ///< PD RichSmartID to L0 ID map
+  /// mapping from RichSmartID to Level0 ID
+  MyMap<const LHCb::RichSmartID, Rich::DAQ::Level0ID> m_smartid2L0;
 
-  /// Typedef for mapping from PD Hardware ID to Level0 ID
-  using HardIDToL0 = MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::Level0ID>;
-  HardIDToL0 m_hardid2L0; ///< PD Hardware ID to L0 ID map
+  /// mapping from PD Hardware ID to Level0 ID
+  MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::Level0ID> m_hardid2L0;
 
-  /// Typedef for mapping from Level0 to Level1 ID
-  using L0ToL1 = MyMap<const Rich::DAQ::Level0ID, Rich::DAQ::Level1HardwareID>;
-  L0ToL1 m_l0ToL1; ///< PD Level0 to L1 ID map
+  /// mapping from Level0 to Level1 ID
+  MyMap<const Rich::DAQ::Level0ID, Rich::DAQ::Level1HardwareID> m_l0ToL1;
 
-  /// Typedef for mapping from RichSmartID to Level1 ID
-  using SmartIDToL1 = MyMap<const LHCb::RichSmartID, Rich::DAQ::Level1HardwareID>;
-  SmartIDToL1 m_smartid2L1; ///< PD RichSmartID to L1 ID map
+  /// mapping from RichSmartID to Level1 ID
+  MyMap<const LHCb::RichSmartID, Rich::DAQ::Level1HardwareID> m_smartid2L1;
 
-  /// Typedef for mapping from PD Hardware ID to Level1 ID
-  using HardIDToL1 = MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::Level1HardwareID>;
-  HardIDToL1 m_hardid2L1; ///< PD Hardware ID to L1 ID map
+  /// mapping from PD Hardware ID to Level1 ID
+  MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::Level1HardwareID> m_hardid2L1;
 
-  /// Typedef for mapping from RichSmartID to Level1 input number
-  using SmartIDToL1In = MyMap<const LHCb::RichSmartID, Rich::DAQ::HPD::Level1Input>;
-  SmartIDToL1In m_smartid2L1In; ///< PD RichSmartID to L1 input number map
+  /// mapping from RichSmartID to Level1 input number
+  MyMap<const LHCb::RichSmartID, Rich::DAQ::HPD::Level1Input> m_smartid2L1In;
 
-  /// Typedef for mapping from PD Hardware ID to Level1 input number
-  using HardIDToL1In = MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::HPD::Level1Input>;
-  HardIDToL1In m_hardid2L1In; ///< PD Hardware ID to L1 input number map
+  /// mapping from PD Hardware ID to Level1 input number
+  MyMap<const Rich::DAQ::PDHardwareID, Rich::DAQ::HPD::Level1Input> m_hardid2L1In;
 
-  /// Typedef for mapping between L1 boards and RICH detector
-  using L1ToRICH = MyMap<const Rich::DAQ::Level1HardwareID, Rich::DetectorType>;
-  L1ToRICH m_l1ToRich; ///< L1 to RICH map
+  /// mapping between L1 boards and RICH detector
+  MyMap<const Rich::DAQ::Level1HardwareID, Rich::DetectorType> m_l1ToRich;
 
-  Rich::DAQ::L1ToSmartIDs m_l12smartids; ///< L1 ID to RichSmartIDs map
-  Rich::DAQ::L1ToHardIDs  m_l12hardids;  ///< L1 ID to PD hardware IDs map
+  /// L1 ID to RichSmartIDs map
+  Rich::DAQ::L1ToSmartIDs m_l12smartids;
+
+  /// L1 ID to PD hardware IDs map
+  Rich::DAQ::L1ToHardIDs m_l12hardids;
 
   /// L1 hardware ID + Input number pair
-  typedef std::pair<const Rich::DAQ::Level1HardwareID, const Rich::DAQ::HPD::Level1Input> L1HardIDAndInput;
-  /// Typedef for mapping L1 HardwareID + L1 input number to PD Hardware ID
-  using L1HardIDAndInputToPDHardID = Rich::Map<L1HardIDAndInput, Rich::DAQ::PDHardwareID>;
-  L1HardIDAndInputToPDHardID m_L1HardIDAndInputToPDHardID;
+  using L1HardIDAndInput = std::pair<const Rich::DAQ::Level1HardwareID, const Rich::DAQ::HPD::Level1Input>;
+  /// mapping L1 HardwareID + L1 input number to PD Hardware ID
+  Rich::Map<L1HardIDAndInput, Rich::DAQ::PDHardwareID> m_L1HardIDAndInputToPDHardID;
 
   /// List of all valid Level1 IDs
   Rich::DAQ::Level1HardwareIDs m_l1IDs;
 
   /// smartID to copy number map
-  using SmartIDToCopyN = MyMap<const LHCb::RichSmartID, Rich::DAQ::PDCopyNumber>;
-  SmartIDToCopyN m_smartid2copyNumber;
+  MyMap<const LHCb::RichSmartID, Rich::DAQ::PDCopyNumber> m_smartid2copyNumber;
 
   /// copy number to smartID map
-  using CopyNToSmartID = MyMap<const Rich::DAQ::PDCopyNumber, LHCb::RichSmartID>;
-  CopyNToSmartID m_copyNumber2smartid;
+  MyMap<const Rich::DAQ::PDCopyNumber, LHCb::RichSmartID> m_copyNumber2smartid;
 
   /// L1 Logical ID to L1 Copy Number
-  using L1HIDToCopyN = MyMap<const Rich::DAQ::Level1HardwareID, Rich::DAQ::Level1CopyNumber>;
-  L1HIDToCopyN m_l1H2CopyN;
+  MyMap<const Rich::DAQ::Level1HardwareID, Rich::DAQ::Level1CopyNumber> m_l1H2CopyN;
 
   /// Rich1 & Rich2 detector elements
   Rich::DetectorArray<DeRich*> m_deRich = {{}};
 
-  /// Location of RICH Numbering schemes in Conditions DB
-  std::map<Rich::DetectorType, std::string> m_detNumConds;
-
-  /// Location of inactive PDs in Conditions DB
-  std::map<Rich::DetectorType, std::string> m_inactivePDConds;
+  /// Logical to hardware L1 ID map
+  Rich::DetectorArray<MyMap<const Rich::DAQ::Level1LogicalID, Rich::DAQ::Level1HardwareID>> m_l1LogToHard;
 
   /// Logical to hardware L1 ID map
-  using L1LogToHard = MyMap<const Rich::DAQ::Level1LogicalID, Rich::DAQ::Level1HardwareID>;
-  Rich::DetectorArray<L1LogToHard> m_l1LogToHard;
-
-  /// Logical to hardware L1 ID map
-  using L1HardToLog         = MyMap<const Rich::DAQ::Level1HardwareID, Rich::DAQ::Level1LogicalID>;
-  L1HardToLog m_l1HardToLog = {{}};
-
-  /// version number
-  int m_version{0};
+  MyMap<const Rich::DAQ::Level1HardwareID, Rich::DAQ::Level1LogicalID> m_l1HardToLog;
 };
 
 //=========================================================================
