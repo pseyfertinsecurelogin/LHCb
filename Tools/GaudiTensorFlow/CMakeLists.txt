@@ -15,7 +15,9 @@
 gaudi_subdir(GaudiTensorFlow v1r0)
 gaudi_depends_on_subdirs(GaudiAlg)
 
-set(TENSORFLOW_REPOSITORY https://storage.googleapis.com/tensorflow/libtensorflow
+set(TENSORFLOW_REPOSITORY
+    # https://storage.googleapis.com/tensorflow/libtensorflow
+    http://lhcb-rpm.web.cern.ch/lhcb-rpm/misc/libtensorflow
     CACHE STRING "HTTP repository for tensorflow" )
 
 set(TENSORFLOW_TAG "1.12.0" CACHE STRING "Version of TensorFlow binaries" )
