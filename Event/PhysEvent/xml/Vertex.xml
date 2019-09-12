@@ -68,12 +68,6 @@
       <location name="Production" place="Phys/Prod/Vertices"/>
 
       <constructor
-        argList="Vertex rhs"
-        desc="Copy constructor, note that the product particles are cloned"
-	initList="VertexBase(rhs), m_technique ( rhs.m_technique ), m_outgoingParticles( rhs.m_outgoingParticles )"
-	/>
-
-      <constructor
 	argList="int key"
 	explicit = "TRUE"
         desc="create a vertex with a selected key"
