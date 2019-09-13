@@ -22,6 +22,7 @@
 #include "MuonDet/DeMuonDetector.h"
 #include "MuonDet/MuonBasicGeometry.h"
 
+#include "range/v3/iterator_range.hpp"
 #include "range/v3/view/drop_exactly.hpp"
 #include "range/v3/view/map.hpp"
 #include "range/v3/view/remove_if.hpp"
@@ -127,9 +128,11 @@ namespace {
 
   /// Copy MuonTileID from digits to coord by crossing the digits
   template <typename Iterator>
-  Iterator addCoordsCrossingMap( const DeMuonDetector& det, Iterator first, Iterator last,
-                                 std::vector<LHCb::MuonCoord>& retVal ) {
+  Iterator addCoordsCrossingMap( Iterator first, Iterator pivot, Iterator last, std::vector<LHCb::MuonCoord>& retVal ) {
     assert( first != last );
+    assert( first <= pivot );
+    assert( pivot <= last );
+
     static_assert( std::is_same_v<typename std::iterator_traits<Iterator>::value_type, Digit> );
     using namespace ranges;
 
@@ -138,10 +141,7 @@ namespace {
 
     // partition into the two directions of digits
     // vertical and horizontal stripes
-    const auto N = std::distance(
-        first, std::partition( first, last, [layout = makeStripLayout<0>( det, first->tile )]( const Digit& digit ) {
-          return digit.tile.layout() == layout;
-        } ) );
+    const auto N = std::distance( first, pivot );
 
     auto usedAndDigits = view::zip( used, iterator_range{first, last} );
     auto digitsOne     = ( usedAndDigits | view::take_exactly( N ) );
@@ -207,6 +207,7 @@ private:
   mutable Gaudi::Accumulators::AveragingCounter<> m_coords{this, "#coords"};
   // TODO: add min/max to m_deltaEstimate...
   mutable Gaudi::Accumulators::AveragingCounter<> m_deltaEstimate{this, "#digits - estimated # digits"};
+  mutable Gaudi::Accumulators::BinomialCounter<>  m_estNotOK{this, "#digits > estimated # digits"};
 };
 
 DECLARE_COMPONENT( MuonRawToCoord )
@@ -249,7 +250,8 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const DeMuonDetector& m
         std::back_inserter( decoding ) );
   }
 
-  m_deltaEstimate += decoding.size() - est_nDigits;
+  m_deltaEstimate += static_cast<int>( decoding.size() ) - est_nDigits;
+  m_estNotOK += ( static_cast<int>( decoding.size() ) > est_nDigits );
   m_digits += decoding.size();
   if ( decoding.empty() ) {
     error() << "Error in decoding the muon raw data ";
@@ -260,7 +262,11 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()( const DeMuonDetector& m
   while ( first != last ) {
     std::nth_element( first, first, last, orderByProjection( stationRegion ) );
     auto next = std::partition( std::next( first ), last, hasEqualProjection( stationRegion, *first ) );
-    first     = addCoordsCrossingMap( muonDet, first, next, coords );
+    auto pivot =
+        std::partition( first, next, [layout = makeStripLayout<0>( muonDet, first->tile )]( const Digit& digit ) {
+          return digit.tile.layout() == layout;
+        } );
+    first = addCoordsCrossingMap( first, pivot, next, coords );
   }
   m_coords += coords.size();
   return coords;
