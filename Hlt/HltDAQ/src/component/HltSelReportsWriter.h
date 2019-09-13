@@ -84,7 +84,7 @@ private:
     if ( const auto p = m_hltANNSvc->value( major, key ); p ) {
       return p->second;
     } else {
-      return {};
+      return std::nullopt;
     }
   }
 
@@ -92,7 +92,7 @@ private:
     if ( auto i = map.find( key ); i != std::end( map ) ) {
       return i->second;
     } else {
-      return {};
+      return std::nullopt;
     }
   }
 };
