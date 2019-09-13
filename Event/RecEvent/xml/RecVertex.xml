@@ -73,11 +73,6 @@
         access="PUBLIC"
 	/>
 
-      <constructor
-        argList="RecVertex rhs"
-        desc="Copy constructor, note that the tracks are cloned"
-	initList="VertexBase(rhs),m_technique(rhs.m_technique),m_tracks(rhs.m_tracks),m_weights(rhs.m_weights)"
-	/>
 
       <constructor
         argList="int key"
