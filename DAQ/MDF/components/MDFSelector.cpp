@@ -74,9 +74,9 @@ namespace LHCb {
       if ( m_data.second > 0 ) {
         /// Check if trigger and/or veto masks should be processed
         if ( m_trgMask || m_vetoMask ) {
-          RawBank*            b   = (RawBank*)m_data.first;
-          MDFHeader*          h   = b->begin<MDFHeader>();
-          const unsigned int* msk = h->subHeader().H1->triggerMask();
+          RawBank*   b   = reinterpret_cast<RawBank*>( m_data.first );
+          MDFHeader* h   = b->begin<MDFHeader>();
+          auto       msk = h->subHeader().H1->triggerMask();
           if ( m_vetoMask ) {
             for ( size_t i = 0; i < 4 && i < m_vetoMask->size(); ++i )
               if ( ( m_vetoMask->at( i ) & msk[i] ) != 0 ) goto Next;
