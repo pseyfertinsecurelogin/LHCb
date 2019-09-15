@@ -314,7 +314,7 @@ void CaloFillPrsSpdRawBuffer::fillPackedBank() {
 
       for ( std::vector<LHCb::CaloCellID>::const_iterator itId = ids.begin(); ids.end() != itId; ++itId ) {
         LHCb::CaloCellID id = *itId;
-        LHCb::CaloCellID id2( 0, id.area(), id.row(), id.col() );
+        LHCb::CaloCellID id2( CaloCellCode::CaloIndex::SpdCalo, id.area(), id.row(), id.col() );
         int              mask = 0;
         if ( 0 != prs->object( id.all() ) ) mask |= 0x40;
         if ( 0 != spd->object( id2.all() ) ) mask |= 0x80;

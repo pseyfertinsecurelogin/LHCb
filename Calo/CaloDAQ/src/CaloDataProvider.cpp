@@ -565,7 +565,7 @@ bool CaloDataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
                     << "/" << isSpd << endmsg;
 
         if ( 0 != isSpd ) {
-          LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
+          LHCb::CaloCellID spdId( CaloCellCode::CaloIndex::SpdCalo, id.area(), id.row(), id.col() );
           if ( 0 != spdId.index() ) fillAdc( {spdId, 1}, sourceID );
         }
       }

@@ -54,8 +54,8 @@ StatusCode MCReconstructible::initialize() {
 
   // Calorimeter geometry
   DeCalorimeter*   m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
-  LHCb::CaloCellID refOut = LHCb::CaloCellID( 2, 0, 6, 0 );
-  LHCb::CaloCellID refInn = LHCb::CaloCellID( 2, 2, 25, 23 );
+  LHCb::CaloCellID refOut = LHCb::CaloCellID( CaloCellCode::CaloIndex::EcalCalo, 0, 6, 0 );
+  LHCb::CaloCellID refInn = LHCb::CaloCellID( CaloCellCode::CaloIndex::EcalCalo, 2, 25, 23 );
   m_xECALInn              = std::abs( m_calo->cellX( refInn ) );
   m_yECALInn              = std::abs( m_calo->cellY( refInn ) );
   m_xECALOut              = std::abs( m_calo->cellX( refOut ) );

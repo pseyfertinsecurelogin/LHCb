@@ -14,7 +14,6 @@
 #include "Event/CaloAdc.h"
 #include "Event/CaloCluster.h"
 #include "Event/CaloDigit.h"
-#include "Event/CaloHypo.h"
 #include "Event/ProtoParticle.h"
 #include "Event/RawBankReadoutStatus.h"
 #include "GaudiKernel/IRegistry.h"

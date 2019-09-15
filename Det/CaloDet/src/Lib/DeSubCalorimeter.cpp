@@ -41,8 +41,8 @@ StatusCode DeSubCalorimeter::initialize() {
   StatusCode sc = DetectorElement::initialize();
   if ( sc.isFailure() ) { return sc; }
 
-  int         index  = CaloCellCode::CaloNumFromName( name() );
-  std::string myName = CaloCellCode::CaloNameFromNum( index ) + "SubDet";
+  auto        index  = CaloCellCode::CaloNumFromName( name() );
+  std::string myName = CaloCellCode::caloName( index ) + "SubDet";
   MsgStream   msg( msgSvc(), myName );
 
   auto pars = paramNames();

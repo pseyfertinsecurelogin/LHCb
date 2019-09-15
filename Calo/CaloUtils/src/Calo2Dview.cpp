@@ -83,9 +83,9 @@ StatusCode Calo2Dview::initialize() {
                      0,
                      127,
                      {
-                         LHCb::CaloCellID( 0, 0, 6, 0 ),  // outer
-                         LHCb::CaloCellID( 0, 1, 12, 0 ), // middle
-                         LHCb::CaloCellID( 0, 2, 14, 8 )  // inner
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::SpdCalo, 0, 6, 0 ),  // outer
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::SpdCalo, 1, 12, 0 ), // middle
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::SpdCalo, 2, 14, 8 )  // inner
                      },
                      {},
                      {}};
@@ -97,9 +97,9 @@ StatusCode Calo2Dview::initialize() {
                      0,
                      127,
                      {
-                         LHCb::CaloCellID( 1, 0, 6, 0 ),  // outer
-                         LHCb::CaloCellID( 1, 1, 12, 0 ), // middle
-                         LHCb::CaloCellID( 1, 2, 14, 8 )  // inner
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::PrsCalo, 0, 6, 0 ),  // outer
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::PrsCalo, 1, 12, 0 ), // middle
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::PrsCalo, 2, 14, 8 )  // inner
                      },
                      {},
                      {}};
@@ -111,9 +111,9 @@ StatusCode Calo2Dview::initialize() {
                      128,
                      351,
                      {
-                         LHCb::CaloCellID( 2, 0, 6, 0 ),  // outer
-                         LHCb::CaloCellID( 2, 1, 12, 0 ), // middle
-                         LHCb::CaloCellID( 2, 2, 14, 8 )  // inner
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::EcalCalo, 0, 6, 0 ),  // outer
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::EcalCalo, 1, 12, 0 ), // middle
+                         LHCb::CaloCellID( CaloCellCode::CaloIndex::EcalCalo, 2, 14, 8 )  // inner
                      },
                      {},
                      {}};
@@ -124,7 +124,8 @@ StatusCode Calo2Dview::initialize() {
                      2,
                      352,
                      415,
-                     {LHCb::CaloCellID( 3, 0, 3, 0 ), LHCb::CaloCellID( 3, 1, 2, 0 )},
+                     {LHCb::CaloCellID( CaloCellCode::CaloIndex::HcalCalo, 0, 3, 0 ),
+                      LHCb::CaloCellID( CaloCellCode::CaloIndex::HcalCalo, 1, 2, 0 )},
                      {},
                      {}};
 
@@ -144,7 +145,7 @@ StatusCode Calo2Dview::initialize() {
 //==============================================================================
 
 void Calo2Dview::bookCalo2D( const HistoID& unit, const std::string title, const std::string name, int area ) const {
-  const int calo = CaloCellCode::CaloNumFromName( name );
+  const auto calo = CaloCellCode::CaloNumFromName( name );
   if ( calo < 0 ) {
     error() << "Calo name : " << name << "is unknown " << endmsg;
     return;
@@ -155,7 +156,8 @@ void Calo2Dview::bookCalo2D( const HistoID& unit, const std::string title, const
 
 //==============================================================================
 
-void Calo2Dview::bookCalo2D( const HistoID& unit, const std::string title, unsigned int calo, int area ) const {
+void Calo2Dview::bookCalo2D( const HistoID& unit, const std::string title, CaloCellCode::CaloIndex calo,
+                             int area ) const {
 
   const auto& cp = m_caloParams[calo];
   if ( cp.calo == nullptr ) {
@@ -362,7 +364,7 @@ void Calo2Dview::fillCalo2D( const HistoID& unit, const LHCb::CaloCellID& id, do
   }
 
   // get calo number
-  const unsigned int calo = id.calo();
+  const auto         calo = id.calo();
   const unsigned int area = id.area();
 
   // book histo if not found
@@ -378,8 +380,8 @@ void Calo2Dview::fillCalo2D( const HistoID& unit, const LHCb::CaloCellID& id, do
   // check the cellID is consistent with the calo
   if ( m_caloViewMap[unit] != calo ) {
     if ( msgLevel( MSG::DEBUG ) )
-      debug() << "Cannot put the  CaloCellID " << id << " in the "
-              << CaloCellCode::CaloNameFromNum( m_caloViewMap[unit] ) << " view '" << unit << "'" << endmsg;
+      debug() << "Cannot put the  CaloCellID " << id << " in the " << caloName( m_caloViewMap[unit] ) << " view '"
+              << unit << "'" << endmsg;
     return;
   }
 
@@ -493,8 +495,8 @@ void Calo2Dview::fillCaloPin2D( const HistoID& unit, const LHCb::CaloCellID& id,
     // check the cellID is consistent with the calo
     if ( m_caloViewMap[(HistoID)lun] != id.calo() ) {
       if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Cannot put the CaloCellID " << id << " in the "
-                << CaloCellCode::CaloNameFromNum( m_caloViewMap[(HistoID)lun] ) << " view " << unit << endmsg;
+        debug() << "Cannot put the CaloCellID " << id << " in the " << caloName( m_caloViewMap[(HistoID)lun] )
+                << " view " << unit << endmsg;
       return;
     }
 

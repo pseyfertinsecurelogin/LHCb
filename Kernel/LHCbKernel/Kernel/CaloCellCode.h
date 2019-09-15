@@ -138,19 +138,12 @@ namespace CaloCellCode {
     CaloNums = 4 // total number of NAMED Calorimeters
   };
   // ==========================================================================
-  /** @typedef CALONAMES
-   *  the actual type for the container of Calorimeetr names
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  typedef std::array<std::string, CaloNums> CALONAMES;
-  // ==========================================================================
   /** @var CaloNames
    *  The actual list of Calorimter names
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline const CALONAMES CaloNames = {{"Spd", "Prs", "Ecal", "Hcal"}};
+  inline const std::array<std::string, CaloNums> CaloNames = {{"Spd", "Prs", "Ecal", "Hcal"}};
   // ==========================================================================
   /// the calorimeter names:
   inline const std::string_view SpdName  = {CaloNames[SpdCalo]};  //  Spd
@@ -164,7 +157,7 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline const std::string& caloName( const int num ) {
+  inline const std::string& caloName( CaloIndex num ) {
     return num < 0 ? s_BadName : num < CaloNums ? CaloNames[num] : s_BadName;
   }
   // ==========================================================================
@@ -174,7 +167,9 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline const std::string& CaloNameFromNum( const int num ) { return caloName( num ); }
+  [[deprecated( "please use caloName instead" )]] inline const std::string& CaloNameFromNum( int num ) {
+    return caloName( static_cast<CaloIndex>( num ) );
+  }
   // ==========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!
    *  @param name (INPUT) the calorimeter name (can be long string)

@@ -71,7 +71,7 @@
 
   <constructor
     desc     = "Explicit constructor from Calo, Area, Row and Column"
-    argList  = "unsigned int Calo, unsigned int Area, unsigned int Row, unsigned int Column "
+    argList  = "CaloCellCode::CaloIndex Calo, unsigned int Area, unsigned int Row, unsigned int Column "
     initList = "m_all( 0 )">
     <code>
       setCalo ( Calo   ) ;
@@ -81,38 +81,14 @@
     </code>
   </constructor>
 
-  <constructor
-    desc     = "Explicit constructor from Calo, Area, Row and Column"
-    argList  = "const std::string&amp; Calo, unsigned int Area, unsigned int Row, unsigned int Column "
-    initList = "m_all( 0 )">
-    <code>
-      setCalo ( Calo   ) ;
-      setArea ( Area   ) ;
-      setRow  ( Row    ) ;
-      setCol  ( Column ) ;
-    </code>
-  </constructor>
 
   <constructor
     desc     = "Explicit constructor from Calo, Area, Row and Column"
-    argList  = "unsigned int Calo, const std::string&amp; Area, unsigned int Row, unsigned int Column "
+    argList  = "CaloCellCode::CaloIndex Calo, const std::string&amp; Area, unsigned int Row, unsigned int Column "
     initList = "m_all( 0 )">
     <code>
       setCalo ( Calo   ) ;
       setArea ( calo () , Area   ) ;
-      setRow  ( Row    ) ;
-      setCol  ( Column ) ;
-    </code>
-  </constructor>
-
-
-  <constructor
-    desc     = "Explicit constructor from Calo, Area, Row and Column"
-    argList  = "const std::string&amp; Calo, const std::string&amp; Area, unsigned int Row, unsigned int Column "
-    initList = "m_all( 0 )">
-    <code>
-      setCalo ( Calo   ) ;
-      setArea ( calo() , Area   ) ;
       setRow  ( Row    ) ;
       setCol  ( Column ) ;
     </code>
@@ -143,11 +119,11 @@
   <method
     desc   = "Decoding function to extract calorimeter identifier"
     name   = "calo"
-    type   = "unsigned int"
+    type   = "CaloCellCode::CaloIndex"
     const  = "TRUE"
     access = "PUBLIC" >
     <code>
-      return ( contents() &amp; CaloCellCode::MaskCalo ) &gt;&gt; CaloCellCode::ShiftCalo ;
+      return static_cast&lt;CaloCellCode::CaloIndex&gt;( ( contents() &amp; CaloCellCode::MaskCalo ) &gt;&gt; CaloCellCode::ShiftCalo );
     </code>
   </method>
 
@@ -258,19 +234,10 @@
     type      = "LHCb::CaloCellID&amp;"
     const     = "FALSE"
     access    = "PUBLIC" >
-    <arg name = "Calo" type = "unsigned int" inout = "INPUT" />
+    <arg name = "Calo" type = "CaloCellCode::CaloIndex"  inout = "BYVALUE" />
     <code>
       return set( Calo  , CaloCellCode::ShiftCalo , CaloCellCode::MaskCalo ) ;
     </code>
-  </method>
-
-  <method
-    desc      = "Update Calorimeter identifier"
-    name      = "setCalo"
-    type      = "LHCb::CaloCellID&amp;"
-    const     = "FALSE"
-    access    = "PUBLIC" >
-    <arg name = "CaloName" type = "const std::string" inout = "INPUT" />
   </method>
 
   <method
