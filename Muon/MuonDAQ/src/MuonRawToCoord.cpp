@@ -22,12 +22,25 @@
 #include "MuonDet/DeMuonDetector.h"
 #include "MuonDet/MuonBasicGeometry.h"
 
-#include "range/v3/iterator_range.hpp"
 #include "range/v3/view/drop_exactly.hpp"
 #include "range/v3/view/map.hpp"
 #include "range/v3/view/remove_if.hpp"
 #include "range/v3/view/take_exactly.hpp"
 #include "range/v3/view/zip.hpp"
+
+#include "range/v3/version.hpp"
+#if RANGE_V3_VERSION < 900
+#  include "range/v3/iterator_range.hpp"
+namespace ranges {
+  template <typename... Args>
+  auto make_subrange( Args&&... args ) {
+    return make_iterator_range( std::forward<Args>( args )... );
+  }
+} // namespace ranges
+#else
+#  include "range/v3/view/subrange.hpp"
+#endif
+
 #include <functional>
 #include <optional>
 
@@ -134,7 +147,6 @@ namespace {
     assert( pivot <= last );
 
     static_assert( std::is_same_v<typename std::iterator_traits<Iterator>::value_type, Digit> );
-    using namespace ranges;
 
     // used flags
     std::vector<bool> used( last - first, false );
@@ -143,9 +155,9 @@ namespace {
     // vertical and horizontal stripes
     const auto N = std::distance( first, pivot );
 
-    auto usedAndDigits = view::zip( used, iterator_range{first, last} );
-    auto digitsOne     = ( usedAndDigits | view::take_exactly( N ) );
-    auto digitsTwo     = ( usedAndDigits | view::drop_exactly( N ) );
+    auto usedAndDigits = ranges::view::zip( used, ranges::make_subrange( first, last ) );
+    auto digitsOne     = ( usedAndDigits | ranges::view::take_exactly( N ) );
+    auto digitsTwo     = ( usedAndDigits | ranges::view::drop_exactly( N ) );
 
     // check how many cross
     retVal.reserve( digitsOne.size() * digitsTwo.size() + ( last - first ) );
@@ -161,7 +173,7 @@ namespace {
     }
     // copy over "uncrossed" digits
     for ( const Digit& digit :
-          usedAndDigits | view::remove_if( []( const auto& p ) { return p.first; } ) | view::values ) {
+          usedAndDigits | ranges::view::remove_if( []( const auto& p ) { return p.first; } ) | ranges::view::values ) {
       retVal.emplace_back( digit.tile, digit.tdc );
     }
     return last;
