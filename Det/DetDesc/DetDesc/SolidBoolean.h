@@ -19,7 +19,17 @@
 #include "DetDesc/SolidChild.h"
 #include "DetDesc/SolidTicks.h"
 
-#include "range/v3/span.hpp"
+// make range v3 include used version specific.
+#include "range/v3/version.hpp"
+#if RANGE_V3_VERSION < 900
+#  include "range/v3/span.hpp"
+// upstream has renamed namespace ranges::view ranges::views
+namespace ranges::views {
+  using namespace ranges::view;
+}
+#else
+#  include "range/v3/view/span.hpp"
+#endif
 #include "range/v3/view/const.hpp"
 #include "range/v3/view/indirect.hpp"
 
@@ -139,7 +149,7 @@ public:
   /** acess to range of const children
    *  @return "range"
    */
-  auto children() const { return ranges::span( m_sb_childrens ) | ranges::view::indirect | ranges::view::const_; }
+  auto children() const { return ranges::span( m_sb_childrens ) | ranges::views::indirect | ranges::views::const_; }
 
   /** access to the childrens by index
    *  @param index index of child solid
@@ -203,7 +213,7 @@ protected:
   /** acess to range of children
    *  @return "range"
    */
-  auto children() { return ranges::span( m_sb_childrens ) | ranges::view::indirect; }
+  auto children() { return ranges::span( m_sb_childrens ) | ranges::views::indirect; }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
