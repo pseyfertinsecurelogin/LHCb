@@ -38,7 +38,7 @@ public:
   /// Standard constructor
   VeloErrorBank( const int numberOfTELL1 ) : KeyedObject<int>( numberOfTELL1 ), m_evtInfoData( numberOfTELL1 ) {}
 
-  void               setEvtInfoSection( EvtInfo& inInfo );
+  void               setEvtInfoSection( EvtInfo&& inInfo );
   void               setErrorInfoSection( VeloTELL1::allError& inSec );
   void               setErrorSources( VeloTELL1::dataVec& sources );
   void               setBankLength( const unsigned int bl );
@@ -75,7 +75,7 @@ private:
   unsigned int        m_magicPattern;
 };
 //
-inline void VeloErrorBank::setEvtInfoSection( EvtInfo& inInfo ) { m_evtInfoData = inInfo; }
+inline void VeloErrorBank::setEvtInfoSection( EvtInfo&& inInfo ) { m_evtInfoData = std::move( inInfo ); }
 //
 inline void VeloErrorBank::setBankLength( unsigned int bl ) { m_bankLength = bl; }
 //

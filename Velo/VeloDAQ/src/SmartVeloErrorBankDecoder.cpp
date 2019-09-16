@@ -227,7 +227,7 @@ StatusCode SmartVeloErrorBankDecoder::storeErrorRawBanks() {
       evtInfoData.push_back( anInfo );
     }
     anEvtInfo.setEvtInfo( evtInfoData );
-    err->setEvtInfoSection( anEvtInfo );
+    err->setEvtInfoSection( std::move( anEvtInfo ) );
     err->setErrorInfoSection( errorInfoData );
     if ( m_isDebug )
       debug() << " bank lenght: " << m_bankLength[bankIT->first] << " for tell1: " << ( bankIT->first ) << endmsg;

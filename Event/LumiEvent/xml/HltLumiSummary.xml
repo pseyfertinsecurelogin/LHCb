@@ -38,7 +38,6 @@
       &DataObject;
       <base name="DataObject"/>
 
-
       <method
         name="clone"
         desc="Clone LumiSummary"
@@ -50,7 +49,6 @@
           return new HltLumiSummary(*this);
 	</code>
       </method>
-
 
       <attribute
         name="extraInfo"

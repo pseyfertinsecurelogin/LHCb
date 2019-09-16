@@ -70,10 +70,15 @@ namespace LoKi {
     AuxFunBase( const AuxFunBase& right ); // copy constructor
     // assignment
     AuxFunBase& operator=( const AuxFunBase& right ) = default; // copy constructor
+    // do NOT implement move, as this class is intended to be used as a virtual baseclass,
+    // and in case of multiple inheritance this may cause move to be called more than
+    // once on the same (virtual!) base instance -- leading to a `move` from an already
+    // `moved` instance, overwriting the result of previous move and leaving the
+    // 'moved-to' instance in a 'moved-from' state...
     // move constructor
-    AuxFunBase( AuxFunBase&& rhs ) = default;
+    AuxFunBase( AuxFunBase&& rhs ) = delete;
     // move assignment
-    AuxFunBase& operator=( AuxFunBase&& rhs ) = default;
+    AuxFunBase& operator=( AuxFunBase&& rhs ) = delete;
     /// destructor
     virtual ~AuxFunBase(); // destructor
   public:
