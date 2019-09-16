@@ -59,7 +59,7 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  const std::string s_BadName = "????";
+  inline const std::string s_BadName = "????";
   // ==========================================================================
   /** @typedef ContentType
    *  the actual type for 32 bits representation of internal data
@@ -150,13 +150,13 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  extern const CALONAMES CaloNames;
+  inline const CALONAMES CaloNames = {{"Spd", "Prs", "Ecal", "Hcal"}};
   // ==========================================================================
   /// the calorimeter names:
-  extern const std::string SpdName;  //  Spd
-  extern const std::string PrsName;  //  Prs
-  extern const std::string EcalName; // Ecal
-  extern const std::string HcalName; // Hcal
+  inline const std::string_view SpdName  = {CaloNames[SpdCalo]};  //  Spd
+  inline const std::string_view PrsName  = {CaloNames[PrsCalo]};  //  Prs
+  inline const std::string_view EcalName = {CaloNames[EcalCalo]}; // Ecal
+  inline const std::string_view HcalName = {CaloNames[HcalCalo]}; // Hcal
   // ==========================================================================
   /** simple function to get the calorimeter name from number
    *  @param num (INPUT) calorimeter index
@@ -182,11 +182,11 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline int caloNum( std::string_view name ) {
+  inline CaloIndex caloNum( std::string_view name ) {
     auto begin = CaloNames.begin();
     auto end   = CaloNames.end();
     auto m     = std::find_if( begin, end, [=]( const auto& i ) { return name.find( i ) != std::string_view::npos; } );
-    return m != end ? static_cast<int>( m - begin ) : -1;
+    return static_cast<CaloIndex>( m != end ? m - begin : -1 );
   }
   // =========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!
@@ -195,29 +195,7 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline int CaloNumFromName( const std::string& name ) { return caloNum( name ); }
-  // ==========================================================================
-  /** get the calorimeter index from name, returns -1 for wrong name!
-   *  @param name (INPUT) the calorimeter name (can be long string)
-   *  @return calorimeter index from name, returns -1 for wrong name!
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  template <unsigned N>
-  inline int CaloNumFromName( const char ( &name )[N] ) {
-    return caloNum( name );
-  }
-  // ==========================================================================
-  /** get the calorimeter index from name, returns -1 for wrong name!
-   *  @param name (INPUT) the calorimeter name (can be long string)
-   *  @return calorimeter index from name, returns -1 for wrong name!
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  template <unsigned N>
-  inline int CaloNumFromName( char ( &name )[N] ) {
-    return caloNum( name );
-  }
+  inline CaloIndex CaloNumFromName( std::string_view name ) { return caloNum( name ); }
   // ==========================================================================
   /** get the area name from calorimeter index and number
    *  @attention function make heavy use of hadcoded structure of Calorimeter!

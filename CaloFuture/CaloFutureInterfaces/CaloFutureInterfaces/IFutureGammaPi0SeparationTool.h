@@ -28,15 +28,15 @@
  *  @author Miriam Calvo Gomez --
  *  @date   2019-03-28
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct IGammaPi0Separation : extend_interfaces<IAlgTool> {
 
     // Return the interface ID
     DeclareInterfaceID( IGammaPi0Separation, 1, 0 );
 
-    virtual std::optional<double>                   isPhoton( const LHCb::CaloHypo& hypo ) = 0;
-    virtual std::optional<double>                   isPhoton( LHCb::span<const double> )   = 0;
-    virtual const std::map<Enum::DataType, double>& inputDataMap()                         = 0;
+    virtual std::optional<double>                   isPhoton( const CaloHypo& hypo ) = 0;
+    virtual std::optional<double>                   isPhoton( span<const double> )   = 0;
+    virtual const std::map<Enum::DataType, double>& inputDataMap()                   = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // IFUTUREGAMMAPI0SEPARATIONTOOL_H

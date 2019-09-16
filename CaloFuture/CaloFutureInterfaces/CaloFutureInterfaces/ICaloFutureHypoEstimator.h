@@ -22,7 +22,7 @@
 #include "Event/Track.h"
 #include "GaudiKernel/IAlgTool.h"
 
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
 
   /** @class IHypoEstimator IHypoEstimator.h
    *
@@ -35,12 +35,12 @@ namespace Calo::Future::Interfaces {
     // Return the interface ID
     DeclareInterfaceID( IHypoEstimator, 1, 0 );
 
-    virtual std::optional<double> data( const LHCb::CaloCluster& cluster, Enum::DataType type ) const = 0;
-    virtual std::optional<double> data( const LHCb::CaloHypo& hypo, Enum::DataType type ) const       = 0;
-    virtual StatusCode            _setProperty( const std::string&, const std::string& )              = 0;
-    virtual IHypo2Calo*           hypo2Calo()                                                         = 0;
-    virtual bool                  status() const                                                      = 0;
-    virtual const LHCb::Track*    toTrack( Enum::MatchType match ) const                              = 0;
+    virtual std::optional<double> data( const CaloCluster& cluster, Enum::DataType type ) const = 0;
+    virtual std::optional<double> data( const CaloHypo& hypo, Enum::DataType type ) const       = 0;
+    virtual StatusCode            _setProperty( const std::string&, const std::string& )        = 0;
+    virtual IHypo2Calo*           hypo2Calo()                                                   = 0;
+    virtual bool                  status() const                                                = 0;
+    virtual const Track*          toTrack( Enum::MatchType match ) const                        = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREHYPOESTIMATOR_H

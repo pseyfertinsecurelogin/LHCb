@@ -36,22 +36,22 @@ namespace LHCb {
  *  @author Olivier Deschamps
  *  @date   2006-11-30
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct IElectron : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( Calo::Future::Interfaces::IElectron, 1, 0 );
+    DeclareInterfaceID( IElectron, 1, 0 );
 
-    virtual bool set( LHCb::ProtoParticle const* proto, std::string const& det = DeCalorimeterLocation::Ecal,
+    virtual bool set( ProtoParticle const* proto, std::string const& det = DeCalorimeterLocation::Ecal,
                       CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
 
-    virtual LHCb::State           caloState() const                                                         = 0;
-    virtual LHCb::State           closestState() const                                                      = 0;
-    virtual double                eOverP() const                                                            = 0;
-    virtual const LHCb::CaloHypo* electron() const                                                          = 0;
-    virtual const LHCb::CaloHypo* bremstrahlung() const                                                     = 0;
-    virtual LHCb::CaloMomentum    bremCaloFutureMomentum() const                                            = 0;
-    virtual double                caloTrajectoryL( CaloPlane::Plane refPlane = CaloPlane::ShowerMax ) const = 0;
+    virtual State           caloState() const                                                         = 0;
+    virtual State           closestState() const                                                      = 0;
+    virtual double          eOverP() const                                                            = 0;
+    virtual const CaloHypo* electron() const                                                          = 0;
+    virtual const CaloHypo* bremstrahlung() const                                                     = 0;
+    virtual CaloMomentum    bremCaloFutureMomentum() const                                            = 0;
+    virtual double          caloTrajectoryL( CaloPlane::Plane refPlane = CaloPlane::ShowerMax ) const = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREELECTRON_H

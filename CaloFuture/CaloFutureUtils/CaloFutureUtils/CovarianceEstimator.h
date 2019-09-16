@@ -181,27 +181,27 @@ public:
    *  @param cluster pointer to cluster
    *   @return status code
    */
-  inline StatusCode calculateCovarianceMatrix( LHCb::CaloCluster* cluster ) const { return ( *this )( cluster ); }
+  StatusCode calculateCovarianceMatrix( LHCb::CaloCluster* cluster ) const { return ( *this )( cluster ); }
 
   /** set new value for calorimeter
    *  @param Det pointer to calorimeter detector
    */
-  inline void setDetector( const DeCalorimeter* Det ) { m_detector = Det; }
+  void setDetector( const DeCalorimeter* Det ) { m_detector = Det; }
 
   /** simple accessor to DeCalorimeter object
    *  @return pointer to detector
    */
-  inline const DeCalorimeter* detector() const { return m_detector; }
+  const DeCalorimeter* detector() const { return m_detector; }
 
   /** set new resolution parameter
    *  @param A calorimeter resolution
    */
-  inline void setStochastic( std::vector<double> A ) { m_A = std::move( A ); }
+  void setStochastic( std::vector<double> A ) { m_A = std::move( A ); }
 
   /** calorimeter resolution (A*A*GeV)
    *  @return A*A*GeV resolution parameter
    */
-  inline double a2GeV( const LHCb::CaloCellID id ) const {
+  double a2GeV( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_A.size() ) return 0.;
     return m_A[id.area()] * m_A[id.area()] * Gaudi::Units::GeV;
   }
@@ -209,12 +209,12 @@ public:
   /** set error in gain
    *  @param GainS error in relative gain
    */
-  inline void setGainError( const std::vector<double> GainS ) { m_GainError = GainS; }
+  void setGainError( std::vector<double> GainS ) { m_GainError = std::move( GainS ); }
 
   /** get dispersion  of relative gain error
    *  @return dispersion of relative gain error
    */
-  inline double s2gain( const LHCb::CaloCellID id ) const {
+  double s2gain( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_GainError.size() ) return 0.;
     return m_GainError[id.area()] * m_GainError[id.area()];
   }
@@ -222,17 +222,17 @@ public:
   /** get  dispersion of noise (both coherent and incoherent
    *  @return overall noise dispersion
    */
-  inline double s2noise( const LHCb::CaloCellID id ) const { return s2incoherent( id ) + s2coherent( id ); }
+  double s2noise( const LHCb::CaloCellID id ) const { return s2incoherent( id ) + s2coherent( id ); }
 
   /** set new error in incoherent noise
    *  @param NoiseIn error in incoherent noise
    */
-  inline void setIncoherentNoise( const std::vector<double> NoiseIn ) { m_IncoherentNoise = NoiseIn; }
+  void setIncoherentNoise( std::vector<double> NoiseIn ) { m_IncoherentNoise = std::move( NoiseIn ); }
 
   /** get the dispersion of incoherent noise
    *  @return dispersion of incoherent noise
    */
-  inline double s2incoherent( const LHCb::CaloCellID id ) const {
+  double s2incoherent( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_IncoherentNoise.size() ) return 0.;
     return m_IncoherentNoise[id.area()] * m_IncoherentNoise[id.area()];
   }
@@ -240,30 +240,30 @@ public:
   /** set new error in coherent noise
    *  @param NoiseCo error in incoherent noise
    */
-  inline void setCoherentNoise( const std::vector<double> NoiseCo ) { m_CoherentNoise = NoiseCo; }
+  void setCoherentNoise( std::vector<double> NoiseCo ) { m_CoherentNoise = std::move( NoiseCo ); }
 
   /**  dispersion of coherent  noise
    *  @return dispersion of coherent noise
    */
-  inline double s2coherent( const LHCb::CaloCellID id ) const {
+  double s2coherent( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_CoherentNoise.size() ) return 0.;
     return m_CoherentNoise[id.area()] * m_CoherentNoise[id.area()];
   }
 
-  inline void   setConstantE( const std::vector<double> constE ) { m_ConstantE = constE; }
-  inline double s2E( const LHCb::CaloCellID id ) const {
+  void   setConstantE( std::vector<double> constE ) { m_ConstantE = std::move( constE ); }
+  double s2E( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantE.size() ) return 0.;
     return m_ConstantE[id.area()] * m_ConstantE[id.area()];
   }
 
-  inline void   setConstantX( const std::vector<double> constX ) { m_ConstantX = constX; }
-  inline double s2X( const LHCb::CaloCellID id ) const {
+  void   setConstantX( std::vector<double> constX ) { m_ConstantX = std::move( constX ); }
+  double s2X( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantX.size() ) return 0.;
     return m_ConstantX[id.area()] * m_ConstantX[id.area()];
   }
 
-  inline void   setConstantY( const std::vector<double> constY ) { m_ConstantY = constY; }
-  inline double s2Y( const LHCb::CaloCellID id ) const {
+  void   setConstantY( std::vector<double> constY ) { m_ConstantY = std::move( constY ); }
+  double s2Y( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantY.size() ) return 0.;
     return m_ConstantY[id.area()] * m_ConstantY[id.area()];
   }
@@ -281,6 +281,25 @@ public:
    */
   std::ostream& printOut( std::ostream& log = std::cout ) const;
 
+  /** printout operator to standard gaudi stream
+   *  @see MsgStream
+   *  @param stream the reference to the standard stream
+   *  @param object object to be printed
+   *  @return the reference to the standard stream
+   */
+  friend MsgStream& operator<<( MsgStream& stream, const CovarianceEstimator& object ) {
+    return object.printOut( stream );
+  }
+
+  /** printout operator to standard gaudi stream
+   *  @param stream the reference to the standard stream
+   *  @param object object to be printed
+   *  @return the reference to the standard stream
+   */
+  friend std::ostream& operator<<( std::ostream& stream, const CovarianceEstimator& object ) {
+    return object.printOut( stream );
+  }
+
 private:
   const DeCalorimeter* m_detector;        ///< pointer to DeCalorimeter object
   std::vector<double>  m_A;               ///< calorimeter resolution ((A**2)*GeV)
@@ -291,25 +310,6 @@ private:
   std::vector<double>  m_ConstantX;       // global constant term to Cov(EE)
   std::vector<double>  m_ConstantY;       // global constant term to Cov(EE)
 };
-
-/** printout operator to standard gaudi stream
- *  @see MsgStream
- *  @param stream the reference to the standard stream
- *  @param object object to be printed
- *  @return the reference to the standard stream
- */
-inline MsgStream& operator<<( MsgStream& stream, const CovarianceEstimator& object ) {
-  return object.printOut( stream );
-}
-
-/** printout operator to standard gaudi stream
- *  @param stream the reference to the standard stream
- *  @param object object to be printed
- *  @return the reference to the standard stream
- */
-inline std::ostream& operator<<( std::ostream& stream, const CovarianceEstimator& object ) {
-  return object.printOut( stream );
-}
 
 // ===========================================================================
 #endif ///< CALOFUTUREALGS_COVARIANCEESTIMATOR_H

@@ -47,8 +47,11 @@ private:
   std::string             m_detectorLocation;
   LHCb::RawBank::BankType m_bankType        = LHCb::RawBank::LastType;
   LHCb::RawBank::BankType m_triggerBankType = LHCb::RawBank::LastType;
-  int                     m_numberOfBanks   = 0;
-  int                     m_dataCodingType;
+  int                     m_numberOfBanks   = 1;
+  Gaudi::Property<int>    m_dataCodingType{this, "DataCodingType", 1, [this]( Property& ) {
+                                          if ( 2 < m_dataCodingType || 0 >= m_dataCodingType )
+                                            throw std::invalid_argument( "Invalid Data Coding Type" );
+                                        }};
 
   DeCalorimeter* m_calo = nullptr;
 
@@ -60,6 +63,6 @@ private:
   int                                    m_nbEvents    = 0;
   std::vector<std::vector<unsigned int>> m_banks;
   std::vector<std::vector<unsigned int>> m_trigBanks;
-  bool                                   m_pin;
+  bool                                   m_pin = false;
 };
 #endif // CALOFUTUREFILLRAWBUFFER_H

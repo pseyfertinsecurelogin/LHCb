@@ -83,8 +83,6 @@ public:
   typedef std::vector<const DeSubSubCalorimeter*> SubSubCalos;
   ///  Constructors
   DeCalorimeter( const std::string& name = "" );
-  ///  (dirtual) Destructor
-  ~DeCalorimeter() override = default;
   ///  object identification
   static const CLID& classID() { return CLID_DeCalorimeter; }
   ///  object identification
@@ -111,7 +109,7 @@ public:
   //--------
   const std::string& caloName() const { return m_caloDet; }
   /// calorimeter index, @see namespace CaloCellCode
-  int index() const { return m_caloIndex; }
+  CaloCellCode::CaloIndex index() const { return m_caloIndex; }
   // accessing the geometry parameters
   //----------------------------------
   // get constant access to subcalorimeters
@@ -296,8 +294,8 @@ private:
   DeCalorimeter& operator=( const DeCalorimeter& ) = delete;
 
   // Calo id
-  std::string m_caloDet;
-  int         m_caloIndex = -1;
+  std::string             m_caloDet;
+  CaloCellCode::CaloIndex m_caloIndex = static_cast<CaloCellCode::CaloIndex>( -1 );
 
   // init flag
   bool m_initialized = false;

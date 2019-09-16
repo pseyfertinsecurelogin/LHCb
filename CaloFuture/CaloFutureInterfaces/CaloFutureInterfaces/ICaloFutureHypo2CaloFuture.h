@@ -29,33 +29,33 @@
  *  @author Olivier Deschamps
  *  @date   2008-09-09
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct IHypo2Calo : extend_interfaces<IAlgTool> {
 
     // Return the interface ID
     DeclareInterfaceID( IHypo2Calo, 1, 0 );
 
-    virtual void                                 setCalos( const std::string& from, const std::string& to ) const = 0;
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloHypo& fromHypo,
-                                                          const std::string&    toCaloFuture ) const                 = 0;
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs( const LHCb::CaloCluster& fromCluster,
-                                                          const std::string&       toCaloFuture ) const                 = 0;
-    virtual const std::vector<LHCb::CaloCellID>& cellIDs() const                                                  = 0;
+    virtual void                           setCalos( const std::string& from, const std::string& to ) const = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloHypo&    fromHypo,
+                                                    const std::string& toCaloFuture ) const                 = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster& fromCluster,
+                                                    const std::string& toCaloFuture ) const                 = 0;
+    virtual const std::vector<CaloCellID>& cellIDs() const                                                  = 0;
 
-    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloCluster& fromCluster,
-                                                         const std::string&       toCaloFuture ) const = 0;
-    virtual const std::vector<LHCb::CaloDigit*>& digits( const LHCb::CaloHypo& fromHypo,
-                                                         const std::string&    toCaloFuture ) const = 0;
-    virtual const std::vector<LHCb::CaloDigit*>& digits() const                                  = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCluster& fromCluster,
+                                                   const std::string& toCaloFuture ) const = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloHypo&    fromHypo,
+                                                   const std::string& toCaloFuture ) const = 0;
+    virtual const std::vector<CaloDigit*>& digits() const                                  = 0;
 
-    virtual double energy( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual double energy( const LHCb::CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
-    virtual double energy() const                                                                        = 0;
+    virtual double energy( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
+    virtual double energy( const CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
+    virtual double energy() const                                                                  = 0;
 
-    virtual int        multiplicity( const LHCb::CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual int        multiplicity( const LHCb::CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
-    virtual int        multiplicity() const                                                                        = 0;
-    virtual StatusCode _setProperty( const std::string&, const std::string& )                                      = 0;
+    virtual int        multiplicity( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
+    virtual int        multiplicity( const CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
+    virtual int        multiplicity() const                                                                  = 0;
+    virtual StatusCode _setProperty( const std::string&, const std::string& )                                = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREHYPO2CALOFUTURE_H

@@ -53,7 +53,7 @@ namespace LHCb {
  *  @date   30/10/2001
  */
 
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
 
   struct ITrackMatch : extend_interfaces<IAlgTool> {
 
@@ -61,7 +61,7 @@ namespace Calo::Future::Interfaces {
       // this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
       Gaudi::Plane3D plane = Gaudi::Plane3D();
       // matching state - can be the same like "match_state" or different
-      LHCb::State state;
+      State state;
       // when true this means there is no point to check another tracks for this calo object
       bool skip_this_calo  = false;
       bool is_new_calo_obj = false;
@@ -85,9 +85,9 @@ namespace Calo::Future::Interfaces {
      *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
      *  @param old_match_results match results from last iteration step
      */
-    virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj,
+    virtual MatchResults match( const CaloPosition& calo_obj, const Track& track_obj,
                                 const MatchResults& old_match_results ) const = 0;
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRMATCH_H

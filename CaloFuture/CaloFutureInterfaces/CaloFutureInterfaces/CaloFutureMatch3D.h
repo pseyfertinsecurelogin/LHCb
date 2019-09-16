@@ -14,7 +14,7 @@
 #include <Math/SMatrix.h>
 #include <Math/SVector.h>
 
-namespace Calo::Future {
+namespace LHCb::Calo {
 
   class Match3D {
   public:
@@ -37,6 +37,6 @@ namespace Calo::Future {
     bool   m_ok = false; // flag for errors
   };
 
-} // namespace Calo::Future
+} // namespace LHCb::Calo
 
 #endif

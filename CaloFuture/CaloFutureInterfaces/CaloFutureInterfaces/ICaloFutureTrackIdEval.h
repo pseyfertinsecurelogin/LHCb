@@ -37,17 +37,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2002-11-10
  */
-namespace Calo::Future::Interfaces {
+namespace LHCb::Calo::Interfaces {
   struct ITrackIdEval : extend_interfaces<IAlgTool> {
-    // ==========================================================================
-    /** The main processing method
-     *  It evaluated the Track ID estimators using the calorimeter information
-     *  @param  track  pointer to the object to be processed
-     *  @param  digits calo digits
-     *  @return the value of the estimator
-     */
-    virtual std::optional<double> process( const LHCb::Track& track, const LHCb::CaloDigits& digits ) const = 0;
-
     // ==========================================================================
     /** static interface identification
      *  @see IInterface
@@ -55,7 +46,15 @@ namespace Calo::Future::Interfaces {
      */
     DeclareInterfaceID( ITrackIdEval, 1, 0 );
     // ==========================================================================
+    /** The main processing method
+     *  It evaluated the Track ID estimators using the calorimeter information
+     *  @param  track  pointer to the object to be processed
+     *  @param  digits calo digits
+     *  @return the value of the estimator
+     */
+    virtual std::optional<double> process( const Track& track, const CaloDigits& digits ) const = 0;
+    // ==========================================================================
   };
-} // namespace Calo::Future::Interfaces
+} // namespace LHCb::Calo::Interfaces
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRACKIDEVAL_H
