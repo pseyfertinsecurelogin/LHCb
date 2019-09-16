@@ -117,13 +117,16 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if comp_type == "Counters":
 
             # special case for efficiency counters
-            # these lines contain ')%' and look like look like :
+            # these lines contain ')%' and look like :
             #  | 10 | 10 |(  100.000 +- 10.0000  )%|...
             if len(ref) >= 3 and ')%' in ref[2]:
                 # check only number and sum, the other numbers are only a combination of these
                 if ref[0] != value[0]: return False
                 if ref[1] != value[1]: return False
                 return True
+            elif len(value) >= 3 and ')%' in value[2]:
+                # we got efficiency counters when the ref has regular ones...
+                return False
             else:
                 # first check count. No sensitivity there and it's always present
                 if ref[0] != value[0]: return False
