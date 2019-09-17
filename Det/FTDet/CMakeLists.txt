@@ -26,7 +26,8 @@ find_package(ROOT)
 find_package(XercesC)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS}
                            ${ROOT_INCLUDE_DIRS}
-                           ${XERCESC_INCLUDE_DIRS})
+                           ${XERCESC_INCLUDE_DIRS}
+                           ${XercesC_INCLUDE_DIRS})
 
 gaudi_add_library(FTDetLib
                   src/Lib/*.cpp
@@ -45,4 +46,3 @@ gaudi_add_dictionary(FTDet
                      INCLUDE_DIRS Boost Event/FTEvent
                      LINK_LIBRARIES Boost DetDescCnvLib MCEvent GaudiAlgLib GaudiKernel LHCbKernel LHCbMathLib FTDetLib
                      OPTIONS "-U__MINGW32__")
-

@@ -23,7 +23,7 @@ find_package(XercesC)
 find_package(VDT)
 find_package(VectorClass)
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
 
 gaudi_add_library(OTDetLib
                   src/Lib/*.cpp

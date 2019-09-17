@@ -15,7 +15,7 @@ gaudi_subdir(CaloDetXmlCnv)
 
 find_package(Boost)
 find_package(XercesC)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 gaudi_depends_on_subdirs(Det/CaloDet
                          Det/DetDescCnv)

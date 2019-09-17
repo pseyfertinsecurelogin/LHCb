@@ -23,7 +23,7 @@ find_package(Boost)
 gaudi_depends_on_subdirs(Tools/XmlTools)
 find_package(XercesC)
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 find_package(OpenSSL)
 if (NOT OPENSSL_CRYPTO_LIBRARY)
