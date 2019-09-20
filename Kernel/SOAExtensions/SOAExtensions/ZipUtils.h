@@ -37,6 +37,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <ostream>
 #include <type_traits>
 
 /** @namespace Zipping

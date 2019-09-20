@@ -14,6 +14,7 @@
 gaudi_subdir(DigiEvent)
 
 gaudi_depends_on_subdirs(GaudiObjDesc
+                         Det/UTDet
                          Kernel/LHCbKernel
                          Kernel/LHCbMath)
 
@@ -26,7 +27,7 @@ god_build_headers(xml/*.xml)
 god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
                      INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost LHCbKernel LHCbMathLib)
+                     LINK_LIBRARIES Boost LHCbKernel LHCbMathLib UTDetLib)
 
 gaudi_install_headers(Event)
 

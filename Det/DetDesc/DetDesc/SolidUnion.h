@@ -16,6 +16,7 @@
 
 /** DetDesc */
 #include "DetDesc/ISolid.h"
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidBoolean.h"
 #include "DetDesc/SolidBox.h"
 
