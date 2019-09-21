@@ -33,13 +33,5 @@ gaudi_add_module(CaloFutureDAQ
                  INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
                  LINK_LIBRARIES CaloFutureUtils CaloDetLib DAQEventLib DAQKernelLib L0Event RecEvent GaudiAlgLib)
 
-gaudi_add_dictionary(CaloFutureDAQ
-                     dict/CaloFutureDAQDict.h
-                     dict/CaloFutureDAQDict.xml
-                     INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
-                     LINK_LIBRARIES CaloFutureUtils CaloDetLib DAQEventLib L0Event RecEvent GaudiAlgLib
-                     OPTIONS "-U__MINGW32__ -DBOOST_DISABLE_ASSERTS")
-
-gaudi_install_headers(CaloFutureDAQ)
 gaudi_install_python_modules()
 
