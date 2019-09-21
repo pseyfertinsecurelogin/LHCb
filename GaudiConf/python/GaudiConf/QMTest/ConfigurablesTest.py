@@ -198,7 +198,7 @@ def compareConfigurables(reference,
     """
     rfile = reference
     reference = dict_from_file(reference)
-    if type(testoutput) is str:
+    if isinstance(testoutput, basestring):
         import os
         if os.path.exists(testoutput):
             testoutput = dict_from_file(testoutput)
