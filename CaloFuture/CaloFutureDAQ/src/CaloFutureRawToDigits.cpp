@@ -68,14 +68,12 @@ CaloFutureRawToDigits::CaloFutureRawToDigits( const std::string& name, ISvcLocat
           name, pSvcLocator,
           {KeyValue{"RawEventLocation", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Calo,
                                                                                 LHCb::RawEventLocation::Default )},
-           KeyValue{"DetectorName", name.substr( 6, 4 )}},
+           KeyValue{"DetectorLocation", LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( name.substr( 6, 4 ) )}},
           {KeyValue{"OutputAdcData", LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( name.substr( 6, 4 ) )},
            KeyValue{"OutputDigitData",
                     LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( name.substr( 6, 4 ) )},
            KeyValue{"OutputReadoutStatusData",
-                    LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( name.substr( 6, 4 ) )}} ) {
-  LHCb::CaloFutureAlgUtils::installDeCaloLocationHandler( *property( "DetectorName" ) );
-}
+                    LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( name.substr( 6, 4 ) )}} ) {}
 
 //=============================================================================
 // Initialisation. Check parameters

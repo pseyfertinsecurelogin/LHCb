@@ -73,13 +73,6 @@ namespace LHCb {
     bool                     StringMatcher( const std::vector<std::string>& refs, const std::string& name );
     bool                     StringMatcher( const std::string& ref, const std::string& name );
 
-    inline void installDeCaloLocationHandler( Gaudi::Details::PropertyBase& p ) {
-      p.declareUpdateHandler( []( Gaudi::Details::PropertyBase& p ) {
-         auto s = p.toString();
-         if ( !s.empty() && s.front() != '/' ) { p.fromString( DeCaloFutureLocation( s ) ).ignore(); }
-       } ).useUpdateHandler();
-    }
-
   } // namespace Calo::Utilities
 } // end of namespace LHCb
 

@@ -77,10 +77,9 @@ namespace LHCb::Calo::DAQ::Algorithms {
             name, pSvcLocator,
             {KeyValue{"InputDigitsLocation",
                       CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( name.substr( 0, 4 ) )},
-             KeyValue{"PVLocation", RecVertexLocation::Primary}, KeyValue{"DetectorName", name.substr( 0, 4 )}},
-            KeyValue{"FilteredDigitsLocation", CaloFutureAlgUtils::CaloFutureDigitLocation( name.substr( 0, 4 ) )} ) {
-    CaloFutureAlgUtils::installDeCaloLocationHandler( *property( "DetectorName" ) );
-  }
+             KeyValue{"PVLocation", RecVertexLocation::Primary},
+             KeyValue{"DetectorLocation", LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( name.substr( 0, 4 ) )}},
+            KeyValue{"FilteredDigitsLocation", CaloFutureAlgUtils::CaloFutureDigitLocation( name.substr( 0, 4 ) )} ) {}
 
   //=============================================================================
   // Main execution
