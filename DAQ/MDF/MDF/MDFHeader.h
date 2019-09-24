@@ -14,6 +14,7 @@
 
 // Framework include files
 #include "GaudiKernel/Kernel.h"
+#include "Kernel/STLExtensions.h"
 #include <stdexcept>
 #define DAQ_ERR_BANK_VERSION 0
 #define DAQ_STATUS_BANK 16
@@ -75,14 +76,16 @@ namespace LHCb {
 
     MDFHEADER_ALIGNED( struct ) HeaderTriggerMask {
       /// Trigger mask used for event selection
-      unsigned int m_trMask[4];
-      HeaderTriggerMask() { m_trMask[0] = m_trMask[1] = m_trMask[2] = m_trMask[3] = 0; }
+      unsigned int m_trMask[4] = {0, 0, 0, 0};
+      HeaderTriggerMask()      = default;
       /// Accessor: Number of bits in the trigger mask
       unsigned int maskBits() const { return sizeof( m_trMask ) * 8; }
       /// Accessor: trigger mask
-      const unsigned int* triggerMask() const { return m_trMask; }
+      std::array<const unsigned int, 4> triggerMask() const {
+        return {m_trMask[0], m_trMask[1], m_trMask[2], m_trMask[3]};
+      }
       /// Update the trigger mask of the event
-      void setTriggerMask( const unsigned int* mask ) {
+      void setTriggerMask( LHCb::span<const unsigned int, 4> mask ) {
         m_trMask[0] = mask[0];
         m_trMask[1] = mask[1];
         m_trMask[2] = mask[2];
@@ -92,14 +95,14 @@ namespace LHCb {
     MDFHEADER_ALIGNED( struct ) Header0 {
       typedef long long int int_64_t;
       /// Event type identifier
-      unsigned char m_evType;
+      unsigned char m_evType = 0;
       /// High part of the 40 bit L0 trigger number
-      unsigned char m_trH;
+      unsigned char m_trH = 0;
       /// Low part of the 40 bit L0 trigger number
-      unsigned int m_trL;
+      unsigned int m_trL = 0;
       /// Trigger mask used for event selection
-      unsigned int m_trMask[4];
-      Header0() : m_evType( 0 ), m_trH( 0 ), m_trL( 0 ) { m_trMask[0] = m_trMask[1] = m_trMask[2] = m_trMask[3] = 0; }
+      unsigned int m_trMask[4] = {0, 0, 0, 0};
+      Header0()                = default;
       /// Accessor: event type identifier
       unsigned char eventType() const { return m_evType; }
       /// Update the event type
@@ -114,9 +117,11 @@ namespace LHCb {
       /// Accessor: Number of bits in the trigger mask
       unsigned int maskBits() const { return sizeof( m_trMask ) * 8; }
       /// Accessor: trigger mask
-      const unsigned int* triggerMask() const { return m_trMask; }
+      std::array<const unsigned int, 4> triggerMask() const {
+        return {m_trMask[0], m_trMask[1], m_trMask[2], m_trMask[3]};
+      }
       /// Update the trigger mask of the event
-      void setTriggerMask( const unsigned int* mask ) {
+      void setTriggerMask( LHCb::span<const unsigned int, 4> mask ) {
         m_trMask[0] = mask[0];
         m_trMask[1] = mask[1];
         m_trMask[2] = mask[2];
