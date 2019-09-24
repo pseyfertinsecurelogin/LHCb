@@ -141,10 +141,7 @@ private:
   /// Hashmap for fast string access
   GaudiUtils::HashMap<std::string, Item*> m_pathMap;
 
-  void insertInMap( Item* it ) {
-    const std::pair<const std::string, Item*> tempS( it->path, it );
-    m_pathMap.insert( tempS );
-  }
+  void insertInMap( Item* it ) { m_pathMap.insert( {it->path, it} ); }
 
   /// Connects two items in a parent-child relationship through the give member function.
   inline void link( Item* parent, BaseObjectMemberFunction* mf, Item* child );

@@ -86,9 +86,10 @@ namespace LHCb::DetDesc {
 
     // Access the value of the condition, for a given condition context
     const T& get( const ConditionContext& /*ctx*/ ) const {
-        using namespace std::literals::string_literals;
-        if (!m_ptr) throw GaudiException("payload not present: "s + m_key.toString(),"ConditionAccessor::get",StatusCode::FAILURE);
-        return details::extract_payload<T>( m_ptr );
+      if ( !m_ptr )
+        throw GaudiException( "payload not present: " + m_key.toString(), "ConditionAccessor::get",
+                              StatusCode::FAILURE );
+      return details::extract_payload<T>( m_ptr );
     }
 
   private:

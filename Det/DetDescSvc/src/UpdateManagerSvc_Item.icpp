@@ -153,14 +153,14 @@ struct Item final {
   std::list<UserPtrType> user_dest_ptrs;
 
   inline StatusCode setUserPointers( DataObject* pObj, bool force = false ) {
-    for ( auto pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi ) {
+    for ( auto& pi : user_dest_ptrs ) {
       if ( !force ) {
-        if ( pi->first->isNull() ) {
-          pi->first->set( pObj );
-          if ( pi->first->isNull() ) return StatusCode::FAILURE; // cannot dynamic_cast
+        if ( pi.first->isNull() ) {
+          pi.first->set( pObj );
+          if ( pi.first->isNull() ) return StatusCode::FAILURE; // cannot dynamic_cast
         }
       } else {
-        pi->first->set( pObj );
+        pi.first->set( pObj );
       }
     }
     return StatusCode::SUCCESS;

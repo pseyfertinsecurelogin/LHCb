@@ -149,6 +149,20 @@ StatusCode UpdateManagerSvc::Item::update( IDataProviderSvc* dp, const Gaudi::Ti
     // no check because it shouldn't be necessary
     since = vdo->validSince();
     until = vdo->validTill();
+
+    if ( std::any_of( user_dest_ptrs.begin(), user_dest_ptrs.end(),
+                      []( const auto& p ) { return p.first->isNull(); } ) ) {
+      // this used to be impossible -- but now seems required, as there are cases
+      // in which 'path' was loaded by some other bit of code without us knowing
+      // about it...
+      if ( log.level() <= MSG::DEBUG )
+        log << MSG::DEBUG << "user_dest_ptrs for " << path << " not set -- who loaded this object?" << endmsg;
+      sc = setPointers( vdo );
+      if ( !sc.isSuccess() ) {
+        log << MSG::ERROR << "Failure setting the pointers for object at " << path << endmsg;
+        return sc;
+      }
+    }
   }
   // object internal data are up-to-date, now check what it depends on
   if ( log.level() <= MSG::VERBOSE ) log << MSG::VERBOSE << "Enter dependencies update loop" << endmsg;
