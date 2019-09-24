@@ -46,7 +46,7 @@ namespace LHCb {
 
     // -- For the moment, this is assigned here and overwritten in "computeGeometry" in case a geometry
     // -- version with a "wrong" sector ordering is used
-    static std::array<int, 64> mapQuarterSectorToSectorCentralRegion;
+    extern std::array<int, 64> mapQuarterSectorToSectorCentralRegion;
 
     constexpr static const auto mapSectorToSector = std::array{
         1,  2,  3,  4,  5,  0, 0, 0, 0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 0, 0, 0, 36, 37, 38, 39, 40,
