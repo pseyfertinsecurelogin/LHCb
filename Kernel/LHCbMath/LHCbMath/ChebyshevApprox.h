@@ -222,10 +222,10 @@ namespace ChebyshevApproxImpl {
 template <class FLT, unsigned NCOEFF>
 class ChebyshevApprox {
 protected:
-  FLT                     m_scale;  ///< needed for transforming [a, b] to [-1, 1]
-  FLT                     m_offset; ///< needed for transforming [a, b] to [-1, 1]
-  std::array<FLT, NCOEFF> m_coeffs; ///< Chebyshev coefficients
-  FLT                     m_errest; ///< error estimate
+  FLT                     m_scale  = 0;    ///< needed for transforming [a, b] to [-1, 1]
+  FLT                     m_offset = 0;    ///< needed for transforming [a, b] to [-1, 1]
+  std::array<FLT, NCOEFF> m_coeffs = {{}}; ///< Chebyshev coefficients
+  FLT                     m_errest = 0;    ///< error estimate
 
   /// default constructor
   ChebyshevApprox() {
@@ -382,7 +382,8 @@ public:
    */
   template <class FN, class IFLT, unsigned NSAMPLES = 128>
   static ChebyshevApprox<FLT, NCOEFF> inverse( IFLT a, IFLT b, const FN fn ) {
-    return implicit( a, b, []( IFLT x ) { return x; }, fn );
+    return implicit(
+        a, b, []( IFLT x ) { return x; }, fn );
   }
 
   /** @brief evaluate Chebyshev expansion
