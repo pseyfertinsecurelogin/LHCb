@@ -10,12 +10,11 @@
 \*****************************************************************************/
 
 #pragma once
-
+#include "Event/PrVeloHits.h"
+#include "Kernel/LHCbID.h"
+#include "Kernel/VPChannelID.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
-
-#include "PrVeloHits.h"
-
 #include "SOAExtensions/ZipUtils.h"
 
 /**
@@ -26,12 +25,11 @@
 
 namespace LHCb::Pr::Velo {
   class Tracks {
-    constexpr static int     max_tracks       = align_size( 1024 );
-    constexpr static int     max_hits         = 26;
-    constexpr static int     max_states       = 2;
-    constexpr static int     params_per_state = 11;
-    constexpr static int     other_params     = 1;
-    Zipping::ZipFamilyNumber m_zipIdentifier;
+    constexpr static int max_tracks       = align_size( 1024 );
+    constexpr static int max_hits         = 26;
+    constexpr static int max_states       = 2;
+    constexpr static int params_per_state = 11;
+    constexpr static int other_params     = 1;
 
   public:
     Tracks( Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
@@ -45,11 +43,10 @@ namespace LHCb::Pr::Velo {
     // Special constructor for zipping machinery
     Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& ) : Tracks( zipIdentifier ) {}
 
-    Tracks( Tracks&& other ) : m_zipIdentifier{other.m_zipIdentifier} {
-      m_data       = other.m_data;
-      other.m_data = nullptr;
-      m_size       = other.m_size;
-    }
+    Tracks( Tracks&& other )
+        : m_data{std::exchange( other.m_data, nullptr )}
+        , m_size{other.m_size}
+        , m_zipIdentifier{other.m_zipIdentifier} {}
 
     inline int               size() const { return m_size; }
     inline int&              size() { return m_size; }
@@ -102,6 +99,29 @@ namespace LHCb::Pr::Velo {
       m_size += simd::popcount( mask );
     }
 
+    /// Retrieve the (sorted) set of LHCbIDs
+    // This could be simplified if we had only one type of Velo hits
+    template <typename T>
+    std::vector<LHCb::LHCbID> lhcbIDs( int t, T const& hits ) const {
+      int n_hits = nHits<SIMDWrapper::scalar::types::int_v>( t ).cast();
+      // tracks are created by large z to small z, lhcbID ordered with increasing z, reverse iteration on hit buffer.
+      std::vector<LHCb::LHCbID> ids;
+      ids.reserve( n_hits );
+      for ( int i = n_hits - 1; i >= 0; i-- ) {
+        int  hit_index = hit<SIMDWrapper::scalar::types::int_v>( t, i ).cast();
+        auto lhcbid    = [&]() {
+          if constexpr ( std::is_same_v<T, LHCb::Pr::Velo::Hits> ) {
+            return LHCb::LHCbID(
+                LHCb::VPChannelID( hits.template ChannelId<SIMDWrapper::scalar::types::int_v>( hit_index ).cast() ) );
+          } else {
+            return LHCb::LHCbID( hits[hit_index].channelID() );
+          }
+        }();
+        ids.push_back( lhcbid );
+      }
+      return ids;
+    }
+
     ~Tracks() { std::free( m_data ); }
 
   private:
@@ -110,6 +130,7 @@ namespace LHCb::Pr::Velo {
       int   i;
     };
     alignas( 64 ) data_t* m_data;
-    int m_size = 0;
+    int                      m_size = 0;
+    Zipping::ZipFamilyNumber m_zipIdentifier;
   };
 } // namespace LHCb::Pr::Velo
