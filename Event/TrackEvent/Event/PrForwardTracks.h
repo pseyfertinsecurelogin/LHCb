@@ -10,6 +10,8 @@
 \*****************************************************************************/
 
 #pragma once
+#include "Event/PrUpstreamTracks.h"
+#include "Event/PrVeloTracks.h"
 
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
@@ -26,21 +28,27 @@ namespace LHCb::Pr::Forward {
     constexpr static int max_hits   = 40;
 
   public:
-    Tracks() {
-      const size_t size = max_tracks * ( max_hits + 9 );
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+    Tracks( Velo::Tracks const* velo_ancestors, Upstream::Tracks const* upstream_ancestors ) {
+      const size_t size    = max_tracks * ( max_hits + 9 );
+      m_data               = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
+      m_velo_ancestors     = velo_ancestors;
+      m_upstream_ancestors = upstream_ancestors;
     }
 
     Tracks( const Tracks& ) = delete;
 
-    Tracks( Tracks&& other ) {
-      m_data       = other.m_data;
-      other.m_data = nullptr;
-      m_size       = other.m_size;
-    }
+    Tracks( Tracks&& other )
+        : m_data{std::exchange( other.m_data, nullptr )}
+        , m_size{other.m_size}
+        , m_velo_ancestors{other.m_velo_ancestors}
+        , m_upstream_ancestors{other.m_upstream_ancestors} {}
 
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
+
+    // Return pointer to ancestor container
+    Velo::Tracks const*     getVeloAncestors() const { return m_velo_ancestors; };
+    Upstream::Tracks const* getUpstreamAncestors() const { return m_upstream_ancestors; };
 
     // Index in TracksVP container of the track's ancestor
     SOA_ACCESSOR( trackVP, &( m_data->i ) )
@@ -79,6 +87,19 @@ namespace LHCb::Pr::Forward {
       m_size += simd::popcount( mask );
     }
 
+    // These can be LHCbIDs from FT and UT. The latter only if the Forward was run with Velo tracks as input.
+    // And UT hits were added during the Forward tracking.
+    std::vector<LHCb::LHCbID> lhcbIDsFromForward( int t ) const {
+      int                       n_hits = nHits<SIMDWrapper::scalar::types::int_v>( t ).cast();
+      std::vector<LHCb::LHCbID> ids;
+      ids.reserve( n_hits );
+      for ( int i = 0; i < n_hits; i++ ) {
+        int lhcbid = hit<SIMDWrapper::scalar::types::int_v>( t, i ).cast();
+        ids.emplace_back( lhcbid );
+      }
+      return ids;
+    }
+
     ~Tracks() { std::free( m_data ); }
 
   private:
@@ -87,6 +108,8 @@ namespace LHCb::Pr::Forward {
       int   i;
     };
     alignas( 64 ) data_t* m_data;
-    int m_size = 0;
+    int                     m_size               = 0;
+    Velo::Tracks const*     m_velo_ancestors     = nullptr;
+    Upstream::Tracks const* m_upstream_ancestors = nullptr;
   };
 } // namespace LHCb::Pr::Forward

@@ -473,7 +473,7 @@ namespace LHCb::Event {
         return *this;
       };
 
-      /// Retrieve const  Container of (sorted) LHCbIDs
+      /// Retrieve const  Container of sorted and unique LHCbIDs
       auto const& lhcbIDs() const { return m_lhcbIDs; };
 
       /// Retrieve const  Container with pointers to all the states
@@ -505,7 +505,7 @@ namespace LHCb::Event {
       friend inline std::ostream& operator<<( std::ostream& s, const Track& tk ) { return tk.fillStream( s ); }
 
     private:
-      std::vector<LHCbID>       m_lhcbIDs{}; ///< Container of (sorted) LHCbIDs
+      std::vector<LHCbID>       m_lhcbIDs{}; ///< Container of sorted and unique LHCbIDs
       std::vector<State>        m_states{};  ///< Container with all the states
       Chi2PerDoF                m_chi2PerDoF{};
       unsigned int              m_flags{0}; ///< The variety of track flags

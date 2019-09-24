@@ -43,7 +43,7 @@ namespace LHCb::Pr::Velo {
 
     VEC3_SOA_ACCESSOR( pos, &( m_data->f ), &( m_data[max_hits].f ), &( m_data[2 * max_hits].f ) )
 
-    SOA_ACCESSOR( LHCbId, &m_data[3 * max_hits].i )
+    SOA_ACCESSOR( ChannelId, &m_data[3 * max_hits].i )
 
     ~Hits() { std::free( m_data ); }
 
