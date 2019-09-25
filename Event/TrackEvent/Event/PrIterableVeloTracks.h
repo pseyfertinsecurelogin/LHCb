@@ -40,6 +40,7 @@ namespace LHCb::Pr::Velo {
     auto size() const { return m_tracks->size(); }
 
     using FType = typename dType::float_v;
+    using IType = typename dType::int_v;
 
     decltype( auto ) closestToBeamStatePos() const {
       return this->m_tracks->template statePos<FType>( this->offset(), 0 );
@@ -48,6 +49,7 @@ namespace LHCb::Pr::Velo {
       return this->m_tracks->template stateDir<FType>( this->offset(), 0 );
     }
     auto closestToBeamState() const { return detail::State{closestToBeamStatePos(), closestToBeamStateDir()}; }
+    auto nHits() const { return this->m_tracks->template nHits<IType>( this->m_offset ); }
     decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
   };
 } // namespace LHCb::Pr::Velo
