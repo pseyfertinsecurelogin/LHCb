@@ -9,10 +9,15 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDAQ/UTDAQHelper.h"
+
+#include "DetDesc/SolidBox.h"
 #include "Event/RawBank.h"
 #include "SiDAQ/SiHeaderWord.h"
+
 #include <cmath>
 #include <limits>
+
+std::array<int, 64> LHCb::UTDAQ::mapQuarterSectorToSectorCentralRegion{};
 
 std::optional<unsigned int> LHCb::UTDAQ::nbUTClusters( LHCb::span<const RawBank*> banks, unsigned int maxNbClusters ) {
   size_t nbClusters = 0;
@@ -83,9 +88,6 @@ void LHCb::UTDAQ::findSectors( unsigned int layer, float x, float y, float xTol,
 void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                                      utDet,
                                    std::array<LHCb::UTDAQ::LayerInfo, UTInfo::TotalLayers>& layers,
                                    std::array<SectorsInStationZ, UTInfo::Stations>&         sectorsZ ) {
-
-  float xPos24( 0.0f ), xPos25( 0.0f );
-
   for ( int iStation = 0; iStation < UTInfo::Stations; ++iStation ) {
     for ( int iLayer = 0; iLayer < UTInfo::Layers; ++iLayer ) {
       // get layer
@@ -118,14 +120,6 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
           bottomMostRow = std::min( bottomMostRow, row );
         }
         if ( utSector->row() == bottomMostRow ) { biggestColumn = std::max( biggestColumn, column ); }
-
-        // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
-        // -- where some sector numbers in the inner region were swapped (see below).
-        // -- Given that this is not future proof, is a purely a temporary measure to allow development.
-        if ( sector->elementID().detRegion() == 2 && layerIndex == 0 ) {
-          if ( utSector->id() == 24 ) xPos24 = utSector->globalCentre().X();
-          if ( utSector->id() == 25 ) xPos25 = utSector->globalCentre().X();
-        }
       }
       // Second pass
       // find x and y values in the corners to deduce the geometry of the layer
@@ -157,14 +151,37 @@ void LHCb::UTDAQ::computeGeometry( const DeUTDetector&                          
       layers[layerIndex].dxDy               = ( biggestXFirstCol - smallestXFirstcol ) / ( YLastRow - YFirstRow );
     }
   }
-
-  // -- This is a hack to automatically correct for a wrong numbering scheme in older geometry versions
-  // -- where some sector numbers in the inner region were swapped.
-  // -- Given that this is not future proof, is a purely a temporary measure to allow development.
-  if ( xPos24 > xPos25 ) {
-    mapQuarterSectorToSectorCentralRegion =
-        std::array{6,  6,  9,  9,  10, 10, 13, 13, 7,  7,  8,  8,  11, 11, 12, 12, 25, 25, 26, 28, 31, 33,
-                   34, 34, 24, 24, 27, 29, 30, 32, 35, 35, 46, 46, 49, 51, 52, 54, 57, 57, 47, 47, 48, 50,
-                   53, 55, 56, 56, 69, 69, 70, 70, 73, 73, 74, 74, 68, 68, 71, 71, 72, 72, 75, 75};
+  // Fill the mapQuarterSectorToSectorCentralRegion array according to current geometry using layer 0 of station 0
+  auto&      info  = layers[0];
+  DeUTLayer* layer = utDet.layers()[0];
+  for ( const auto& utSector : layer->sectors() ) {
+    // check for middle region
+    if ( utSector->elementID().detRegion() == 2 ) {
+      // get the physical box representing the sector
+      auto solid = utSector->geometry()->lvolume()->solid();
+      if ( solid->typeName() != "SolidBox" ) { throw "Unable to parse UT geometry in UTDAQHelper. Giving up"; }
+      auto box = dynamic_cast<const SolidBox*>( solid );
+      // compute rows spanned by the sector
+      // check corners but take 5mm margin to avoid rounding issues
+      auto corner0   = utSector->toGlobal( Gaudi::XYZPoint( -box->xHalfLength() + 5, -box->yHalfLength() + 5, 0 ) );
+      auto corner1   = utSector->toGlobal( Gaudi::XYZPoint( box->xHalfLength() - 5, box->yHalfLength() - 5, 0 ) );
+      int  subrow0   = std::nearbyintf( corner0.Y() * info.invHalfSectorYSize - 0.5 );
+      int  subrow1   = std::nearbyintf( corner1.Y() * info.invHalfSectorYSize - 0.5 );
+      int  subrowmin = std::min( subrow0, subrow1 );
+      int  subrowmax = std::max( subrow0, subrow1 );
+      // check for central part of middle region
+      if ( subrowmax >= -4 && subrowmin < 4 ) {
+        int subcol0   = std::nearbyintf( corner0.X() * info.invHalfSectorXSize - 0.5 );
+        int subcol1   = std::nearbyintf( corner1.X() * info.invHalfSectorXSize - 0.5 );
+        int subcolmin = std::min( subcol0, subcol1 );
+        int subcolmax = std::max( subcol0, subcol1 );
+        for ( auto subrow = subrowmin; subrow <= subrowmax; subrow++ ) {
+          for ( auto subcol = subcolmin; subcol <= subcolmax; subcol++ ) {
+            auto index                                   = ( subcol + 4 ) * 8 + subrow + 4;
+            mapQuarterSectorToSectorCentralRegion[index] = utSector->id();
+          }
+        }
+      }
+    }
   }
 }
