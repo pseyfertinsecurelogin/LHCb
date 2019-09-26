@@ -111,22 +111,22 @@ namespace OTDet {
     inline RadiusWithError radiusWithError( float time ) const noexcept;
 
   private:
-    float              m_rmax;      ///< radius of inner edge straw wall [mm]
-    float              m_rconv;     ///< cached 1.f / m_rmax [1/mm]
+    float              m_rmax  = 0; ///< radius of inner edge straw wall [mm]
+    float              m_rconv = 0; ///< cached 1.f / m_rmax [1/mm]
     std::vector<float> m_tcoeff;    ///< coefficients of polynomial t(r/rmax) all in [ns]
     std::vector<float> m_dtdrcoeff; ///< coefficients of dt/dr(r/rmax) all in [ns/1]
     std::vector<float> m_terrcoeff; ///< coefficients of polynomial sigma_t(r/rmax) all in [ns]
 
-    float m_tmin; ///< cached t(r = 0) [ns]
-    float m_tmax; ///< cached t(r = m_rmax) [ns]
+    float m_tmin = 0; ///< cached t(r = 0) [ns]
+    float m_tmax = 0; ///< cached t(r = m_rmax) [ns]
 
     constexpr static unsigned               s_ChebTerms = 5; ///< number of terms in Chebyshev approximations
     ChebyshevApprox<float, s_ChebTerms>     m_rt;            ///< approximation to r(t) relation
     ChebyshevApprox<float, s_ChebTerms - 1> m_drdt;          ///< approximation to drdt(t) relation
     ChebyshevApprox<float, s_ChebTerms - 1> m_sigmar;        ///< approximation to sigma_r(t) relation
 
-    float m_drdtAtRmin; ///< dr/dt at r = 0
-    float m_drdtAtRmax; ///< dr/dt at r = rmax
+    float m_drdtAtRmin = 0; ///< dr/dt at r = 0
+    float m_drdtAtRmax = 0; ///< dr/dt at r = rmax
   };
 
   inline float RtRelation::drifttime( float radius ) const noexcept {
