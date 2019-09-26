@@ -85,7 +85,7 @@ private:
   std::string                   m_code   = "Code ";
   int                           m_side   = -1;
   int                           m_index  = -1;
-  int                           m_box;
+  int                           m_box    = -1;
   std::vector<int>              m_area;
   std::vector<int>              m_fCol;
   std::vector<int>              m_fRow;
