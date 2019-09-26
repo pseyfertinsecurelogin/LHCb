@@ -519,7 +519,7 @@ namespace LoKi {
       /// constructor from the run list
       BXId( std::vector<unsigned int> bxs );
       /// MANDATORY: clone method ("virtual constructor")
-      BXId* clone() const override { return new BXId( *this ); }
+      BXId* clone() const override;
       /// MANDATORY: The only one essential method:
       bool operator()( const LHCb::ODIN* o ) const override;
       /// OPTIONAL: the nice printout
