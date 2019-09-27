@@ -499,7 +499,7 @@ namespace SIMDWrapper {
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
-      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mul_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mullo_epi32( lhs, rhs ); }
 
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
@@ -760,7 +760,7 @@ namespace SIMDWrapper {
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
-      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mul_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mullo_epi32( lhs, rhs ); }
 
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
@@ -954,7 +954,7 @@ namespace SIMDWrapper {
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm512_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm512_sub_epi32( lhs, rhs ); }
-      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm512_mul_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm512_mullo_epi32( lhs, rhs ); }
 
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm512_and_si512( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm512_or_si512( lhs, rhs ); }
