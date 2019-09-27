@@ -20,7 +20,6 @@
   <class name    = "LHCb::Calo::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "ICaloFutureSubClusterTag"       />
-  <class name    = "LHCb::Calo::Interfaces::ITrackIdEval"         />
   <class name    = "LHCb::Calo::Interfaces::ITrackMatch"          />
   <class name    = "LHCb::Calo::Interfaces::IHypo2Calo"           />
   <class name    = "LHCb::Calo::Interfaces::IHypoEstimator"       />
