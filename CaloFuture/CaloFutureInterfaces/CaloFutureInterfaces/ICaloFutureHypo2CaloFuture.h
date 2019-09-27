@@ -33,29 +33,28 @@ namespace LHCb::Calo::Interfaces {
   struct IHypo2Calo : extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( IHypo2Calo, 1, 0 );
+    DeclareInterfaceID( IHypo2Calo, 2, 0 );
 
-    virtual void                           setCalos( const std::string& from, const std::string& to ) const = 0;
-    virtual const std::vector<CaloCellID>& cellIDs( const CaloHypo&    fromHypo,
-                                                    const std::string& toCaloFuture ) const                 = 0;
-    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster& fromCluster,
-                                                    const std::string& toCaloFuture ) const                 = 0;
-    virtual const std::vector<CaloCellID>& cellIDs() const                                                  = 0;
+    virtual void setCalos( CaloCellCode::CaloIndex from, CaloCellCode::CaloIndex to ) const = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloHypo&         fromHypo,
+                                                    CaloCellCode::CaloIndex toCalo ) const  = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster&      fromCluster,
+                                                    CaloCellCode::CaloIndex toCalo ) const  = 0;
+    virtual const std::vector<CaloCellID>& cellIDs() const                                  = 0;
 
-    virtual const std::vector<CaloDigit*>& digits( const CaloCluster& fromCluster,
-                                                   const std::string& toCaloFuture ) const = 0;
-    virtual const std::vector<CaloDigit*>& digits( const CaloHypo&    fromHypo,
-                                                   const std::string& toCaloFuture ) const = 0;
-    virtual const std::vector<CaloDigit*>& digits() const                                  = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCluster&      fromCluster,
+                                                   CaloCellCode::CaloIndex toCalo ) const                           = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual const std::vector<CaloDigit*>& digits() const                                                           = 0;
 
-    virtual double energy( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual double energy( const CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
-    virtual double energy() const                                                                  = 0;
+    virtual double energy( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual double energy( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
+    virtual double energy() const                                                                 = 0;
 
-    virtual int        multiplicity( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual int        multiplicity( const CaloHypo& fromHypo, const std::string& toCaloFuture ) const       = 0;
-    virtual int        multiplicity() const                                                                  = 0;
-    virtual StatusCode _setProperty( const std::string&, const std::string& )                                = 0;
+    virtual int        multiplicity( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual int        multiplicity( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
+    virtual int        multiplicity() const                                                                 = 0;
+    virtual StatusCode _setProperty( const std::string&, const std::string& )                               = 0;
   };
 } // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREHYPO2CALOFUTURE_H

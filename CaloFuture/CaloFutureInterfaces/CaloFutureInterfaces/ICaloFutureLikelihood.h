@@ -42,7 +42,7 @@ struct ICaloFutureLikelihood : extend_interfaces<IAlgTool> {
    */
   virtual const LHCb::CaloHypo::Hypothesis& hypothesis() const = 0;
 
-  /** evaluate the likelyhood of the cluster for the given hypotheses
+  /** evaluate the likelihood of the cluster for the given hypotheses
    *  @param  cluster pointer to cluster, to be evaluated (const!)
    *  @return likelyhood of the hypothesis
    */
@@ -51,7 +51,7 @@ struct ICaloFutureLikelihood : extend_interfaces<IAlgTool> {
   /** evaluate the likelyhood of the cluster for the given hypotheses
    *  (functor interface)
    *  @param  cluster pointer to cluster, to be evaluated (const!)
-   *  @return likelyhood of the hypothesis
+   *  @return likelihood of the hypothesis
    */
   virtual double operator()( const LHCb::CaloCluster* cluster ) const = 0;
 };

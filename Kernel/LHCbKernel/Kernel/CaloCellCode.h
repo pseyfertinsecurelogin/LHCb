@@ -18,6 +18,7 @@
 // ============================================================================
 #include <algorithm>
 #include <array>
+#include <iomanip>
 #include <set>
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -137,6 +139,11 @@ namespace CaloCellCode {
     /// total number of NAMED Calorimeters
     CaloNums = 4 // total number of NAMED Calorimeters
   };
+  std::string          toString( const CaloIndex& );
+  StatusCode           parse( CaloIndex&, const std::string& );
+  inline std::ostream& toStream( const CaloIndex& ci, std::ostream& os ) {
+    return os << std::quoted( toString( ci ), '\'' );
+  }
   // ==========================================================================
   /** @var CaloNames
    *  The actual list of Calorimter names
@@ -159,16 +166,6 @@ namespace CaloCellCode {
    */
   inline const std::string& caloName( CaloIndex num ) {
     return num < 0 ? s_BadName : num < CaloNums ? CaloNames[num] : s_BadName;
-  }
-  // ==========================================================================
-  /** simple function to get the calorimeter name from number
-   *  @param num (INPUT) calorimeter index
-   *  @return calorimeter name
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  [[deprecated( "please use caloName instead" )]] inline const std::string& CaloNameFromNum( int num ) {
-    return caloName( static_cast<CaloIndex>( num ) );
   }
   // ==========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!

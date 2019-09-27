@@ -39,27 +39,26 @@ namespace LHCb::Calo::Interfaces {
   struct ICalo2Calo : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( ICalo2Calo, 1, 0 );
+    DeclareInterfaceID( ICalo2Calo, 2, 0 );
 
-    virtual void setCalos( const std::string& from, const std::string& to ) const = 0;
+    virtual void setCalos( CaloCellCode::CaloIndex from, CaloCellCode::CaloIndex to ) const = 0;
 
-    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster& fromCluster,
-                                                    const std::string& toCaloFuture ) const = 0;
-    virtual const std::vector<CaloCellID>& cellIDs( const CaloCellID& fromId, const std::string& toCaloFuture,
-                                                    bool init = true ) const                = 0;
-    virtual const std::vector<CaloCellID>& cellIDs() const                                  = 0;
-    virtual const std::vector<CaloDigit*>& digits( const CaloCellID&  fromId,
-                                                   const std::string& toCaloFuture ) const  = 0;
-    virtual const std::vector<CaloDigit*>& digits( const CaloCluster& fromCluster,
-                                                   const std::string& toCaloFuture ) const  = 0;
-    virtual const std::vector<CaloDigit*>& digits() const                                   = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCluster&      fromCluster,
+                                                    CaloCellCode::CaloIndex toCalo ) const                          = 0;
+    virtual const std::vector<CaloCellID>& cellIDs( const CaloCellID& fromId, CaloCellCode::CaloIndex toCalo,
+                                                    bool init = true ) const                                        = 0;
+    virtual const std::vector<CaloCellID>& cellIDs() const                                                          = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCellID& fromId, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual const std::vector<CaloDigit*>& digits( const CaloCluster&      fromCluster,
+                                                   CaloCellCode::CaloIndex toCalo ) const                           = 0;
+    virtual const std::vector<CaloDigit*>& digits() const                                                           = 0;
     //
-    virtual double energy( const CaloCellID& fromId, const std::string& toCaloFuture ) const             = 0;
-    virtual double energy( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const       = 0;
-    virtual double energy() const                                                                        = 0;
-    virtual int    multiplicity( const CaloCellID& fromId, const std::string& toCaloFuture ) const       = 0;
-    virtual int    multiplicity( const CaloCluster& fromCluster, const std::string& toCaloFuture ) const = 0;
-    virtual int    multiplicity() const                                                                  = 0;
+    virtual double energy( const CaloCellID& fromId, CaloCellCode::CaloIndex toCalo ) const             = 0;
+    virtual double energy( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const       = 0;
+    virtual double energy() const                                                                       = 0;
+    virtual int    multiplicity( const CaloCellID& fromId, CaloCellCode::CaloIndex toCalo ) const       = 0;
+    virtual int    multiplicity( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual int    multiplicity() const                                                                 = 0;
 
     virtual bool isLocalMax( const CaloDigit& digit ) const = 0;
   };
