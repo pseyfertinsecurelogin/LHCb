@@ -13,7 +13,6 @@
   <class name    = "IFutureCounterLevel"            />
   <class name    = "LHCb::Calo::Interfaces::ICalo2Calo"               />
   <class name    = "ICaloFuture2MCTool"             />
-  <class name    = "ICaloFutureCorrection"          />
   <class name    = "ICaloFutureHypoLikelihood"      /> 
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "LHCb::Calo::Interfaces::ITrackMatch"          />

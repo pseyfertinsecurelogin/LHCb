@@ -13,7 +13,6 @@
 
 #include "CaloFutureInterfaces/ICaloFuture2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFuture2MCTool.h"
-#include "CaloFutureInterfaces/ICaloFutureCorrection.h"
 #include "CaloFutureInterfaces/ICaloFutureHypo2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoEstimator.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoLikelihood.h"
