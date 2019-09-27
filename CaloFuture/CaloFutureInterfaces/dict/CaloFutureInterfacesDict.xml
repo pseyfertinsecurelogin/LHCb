@@ -15,7 +15,6 @@
   <class name    = "ICaloFuture2MCTool"             />
   <class name    = "ICaloFutureCorrection"          />
   <class name    = "ICaloFutureHypoLikelihood"      /> 
-  <class name    = "LHCb::Calo::Interfaces::IProcessHypos"            />
   <class name    = "ICaloFutureLikelihood"          />
   <class name    = "LHCb::Calo::Interfaces::ITrackMatch"          />
   <class name    = "LHCb::Calo::Interfaces::IHypo2Calo"           />

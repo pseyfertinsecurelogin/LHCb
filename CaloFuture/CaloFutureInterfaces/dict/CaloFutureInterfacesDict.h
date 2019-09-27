@@ -17,7 +17,6 @@
 #include "CaloFutureInterfaces/ICaloFutureHypo2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoEstimator.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoLikelihood.h"
-#include "CaloFutureInterfaces/ICaloFutureHypoTool.h"
 #include "CaloFutureInterfaces/ICaloFutureLikelihood.h"
 #include "CaloFutureInterfaces/ICaloFutureRelationsGetter.h"
 #include "CaloFutureInterfaces/ICaloFutureTrackMatch.h"
