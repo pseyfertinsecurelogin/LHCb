@@ -13,7 +13,6 @@
 
 #include "CaloFutureInterfaces/ICaloFuture2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFuture2MCTool.h"
-#include "CaloFutureInterfaces/ICaloFutureClusterTool.h"
 #include "CaloFutureInterfaces/ICaloFutureCorrection.h"
 #include "CaloFutureInterfaces/ICaloFutureHypo2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoEstimator.h"
@@ -21,8 +20,6 @@
 #include "CaloFutureInterfaces/ICaloFutureHypoTool.h"
 #include "CaloFutureInterfaces/ICaloFutureLikelihood.h"
 #include "CaloFutureInterfaces/ICaloFutureRelationsGetter.h"
-#include "CaloFutureInterfaces/ICaloFutureShowerOverlapTool.h"
-#include "CaloFutureInterfaces/ICaloFutureSubClusterTag.h"
 #include "CaloFutureInterfaces/ICaloFutureTrackMatch.h"
 #include "CaloFutureInterfaces/IFutureCounterLevel.h"
 #include "CaloFutureInterfaces/IFutureGammaPi0SeparationTool.h"
