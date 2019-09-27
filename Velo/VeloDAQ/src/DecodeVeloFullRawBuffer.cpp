@@ -197,18 +197,16 @@ std::string DecodeVeloFullRawBuffer::evtInfoName() { return ( m_evtInfoLocation 
 StatusCode DecodeVeloFullRawBuffer::decodeData() {
   if ( m_isDebug ) debug() << " ==> decodeData() " << endmsg;
   //
-  VeloFullBanks::const_iterator sensIt;
-  //
   if ( adcDataFlag() ) {
     // decode both ADC and ADCHeaders
     //
-    for ( sensIt = m_veloADCs->begin(); sensIt != m_veloADCs->end(); sensIt++ ) {
-      m_ADCDecoder.decode( *sensIt, m_signADC );
-      m_HeaderDecoder.decode( *sensIt, m_signHeader );
+    for ( const auto& sens : *m_veloADCs ) {
+      m_ADCDecoder.decode( sens, m_signADC );
+      m_HeaderDecoder.decode( sens, m_signHeader );
       //
-      LHCb::VeloTELL1Data* adcData    = new LHCb::VeloTELL1Data( ( *sensIt )->key(), VeloFull );
-      LHCb::VeloTELL1Data* headerData = new LHCb::VeloTELL1Data( ( *sensIt )->key(), VeloHeader );
-      EvtInfo*             anInfo     = new EvtInfo( ( *sensIt )->key() );
+      LHCb::VeloTELL1Data* adcData    = new LHCb::VeloTELL1Data( ( sens )->key(), VeloFull );
+      LHCb::VeloTELL1Data* headerData = new LHCb::VeloTELL1Data( ( sens )->key(), VeloHeader );
+      EvtInfo*             anInfo     = new EvtInfo( ( sens )->key() );
       // data coming from TELL1 board is unsigned int
       // for the subsequent algorithms we required signed
       // values; change from unsigned int -> signed int
@@ -246,7 +244,7 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
         headerData->setDecodedData( m_signHeader );
       }
 
-      anInfo->setEvtInfo( ( *sensIt )->getEvtInfo() );
+      anInfo->setEvtInfo( sens->getEvtInfo() );
       //
       m_decodedADC->insert( adcData );
       m_decodedHeader->insert( headerData );
@@ -291,9 +289,9 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
 
   //
   if ( pedDataFlag() ) {
-    for ( sensIt = m_veloPeds->begin(); sensIt != m_veloPeds->end(); sensIt++ ) {
-      m_PedDecoder.decode( *sensIt, m_signPed );
-      LHCb::VeloTELL1Data* pedData = new LHCb::VeloTELL1Data( ( *sensIt )->key(), VeloPedestal );
+    for ( const auto& sens : *m_veloPeds ) {
+      m_PedDecoder.decode( sens, m_signPed );
+      auto pedData = std::make_unique<LHCb::VeloTELL1Data>( sens->key(), VeloPedestal );
 
       if ( true == m_sectorCorrection ) { // need to correct for wrong cabling
         int counter = 0;
@@ -308,7 +306,7 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
       } else { // no cable reordering requested
         pedData->setDecodedData( m_signPed );
       }
-      m_decodedPed->insert( pedData );
+      m_decodedPed->insert( pedData.release() );
     }
   }
   //
@@ -325,11 +323,9 @@ void DecodeVeloFullRawBuffer::sortAndWriteDecodedData() {
   //
   if ( adcDataFlag() ) {
     // sort the output containers by key (TELL1 number)
-    std::stable_sort( m_decodedADC->begin(), m_decodedADC->end(),
-                      VeloEventFunctor::Less_by_key<LHCb::VeloTELL1Data*>() );
-    std::stable_sort( m_decodedHeader->begin(), m_decodedHeader->end(),
-                      VeloEventFunctor::Less_by_key<LHCb::VeloTELL1Data*>() );
-    std::stable_sort( m_evtInfo->begin(), m_evtInfo->end(), VeloEventFunctor::Less_by_key<EvtInfo*>() );
+    std::stable_sort( m_decodedADC->begin(), m_decodedADC->end(), VeloEventFunctor::Less_by_key );
+    std::stable_sort( m_decodedHeader->begin(), m_decodedHeader->end(), VeloEventFunctor::Less_by_key );
+    std::stable_sort( m_evtInfo->begin(), m_evtInfo->end(), VeloEventFunctor::Less_by_key );
     // put the data to TES
     put( m_decodedADC, decADCName() );
     put( m_decodedHeader, decHeaderName() );
@@ -345,8 +341,7 @@ void DecodeVeloFullRawBuffer::sortAndWriteDecodedData() {
 
   if ( pedDataFlag() ) {
     // sort decoded pedestals
-    std::stable_sort( m_decodedPed->begin(), m_decodedPed->end(),
-                      VeloEventFunctor::Less_by_key<LHCb::VeloTELL1Data*>() );
+    std::stable_sort( m_decodedPed->begin(), m_decodedPed->end(), VeloEventFunctor::Less_by_key );
     // put decoded peds in TES
     put( m_decodedPed, decPedName() );
   }

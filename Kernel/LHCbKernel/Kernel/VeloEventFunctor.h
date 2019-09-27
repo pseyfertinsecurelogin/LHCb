@@ -25,23 +25,22 @@ namespace VeloEventFunctor {
 
   // functors
 
-  template <class TYPE1, class TYPE2 = TYPE1>
-  class Less_by_key {
-  public:
+  struct Less_by_key_t {
     /** compare the channel of one object with the
      *  channel of another object
      *  @param obj1   first  object
      *  @param obj2   second object
      *  @return  result of the comparision
      */
-    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+    template <class TYPE1, class TYPE2 = TYPE1>
+    bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
       return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->key() < obj2->key();
     }
-    ///
   };
 
-  template <class TYPE1, class TYPE2 = TYPE1>
-  struct Less_by_sensor {
+  inline constexpr auto Less_by_key = Less_by_key_t{};
+
+  struct Less_by_sensor_t {
 
     /** compare the channel of one object with the
      *  channel of another object
@@ -49,14 +48,15 @@ namespace VeloEventFunctor {
      *  @param obj2   second object
      *  @return  result of the comparision
      */
-    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+    template <class TYPE1, class TYPE2 = TYPE1>
+    bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
       return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->sensor() < obj2->sensor();
     }
-    ///
   };
 
-  template <class TYPE1, class TYPE2 = TYPE1>
-  struct Less_by_charge {
+  inline constexpr auto Less_by_sensor = Less_by_sensor_t{};
+
+  struct Less_by_charge_t {
 
     /** compare the dep charge of one object with the
      *  adc Value  of another object
@@ -64,14 +64,15 @@ namespace VeloEventFunctor {
      *  @param obj2   second object
      *  @return  result of the comparision
      */
-    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+    template <class TYPE1, class TYPE2 = TYPE1>
+    bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
       return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->charge() < obj2->charge();
     }
-    ///
   };
 
-  template <class TYPE1, class TYPE2 = TYPE1>
-  struct Less_by_adcValue {
+  inline constexpr auto Less_by_charge = Less_by_charge_t{};
+
+  struct Less_by_adcValue_t {
 
     /** compare the adc value of one object with the
      *  adc Value  of another object
@@ -79,59 +80,63 @@ namespace VeloEventFunctor {
      *  @param obj2   second object
      *  @return  result of the comparision
      */
-    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+    template <class TYPE1, class TYPE2 = TYPE1>
+    bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
       return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->adcValue() < obj2->adcValue();
     }
-    ///
   };
 
-  template <class TYPE>
+  inline constexpr auto Less_by_adcValue = Less_by_adcValue_t{};
+
   class key_eq {
 
-    /** compare the key of an object
-     */
+    // compare the key of an object
 
     LHCb::VeloChannelID aChan;
 
   public:
     explicit key_eq( const LHCb::VeloChannelID& testChan ) : aChan( testChan ) {}
-    inline bool operator()( TYPE obj ) const { return ( obj->channelID() ).key() == aChan.channelID(); }
+    template <class TYPE>
+    bool operator()( TYPE obj ) const {
+      return ( obj->channelID() ).key() == aChan.channelID();
+    }
   };
 
-  template <class TYPE>
   class sensor_eq {
 
-    /** compare the sensor number of an object
-     */
-
+    // compare the sensor number of an object
     long m_sensor;
 
   public:
-    explicit sensor_eq( const LHCb::VeloChannelID& testChan ) : m_sensor( testChan.sensor() ) {}
+    explicit sensor_eq( const LHCb::VeloChannelID& testChan ) : sensor_eq( testChan.sensor() ) {}
     explicit sensor_eq( const int testChan ) : m_sensor( testChan ) {}
-    inline bool operator()( TYPE obj ) const { return obj->channelID().sensor() == m_sensor; }
+    template <class TYPE>
+    bool operator()( TYPE obj ) const {
+      return obj->channelID().sensor() == m_sensor;
+    }
   };
 
-  template <class TYPE>
-  struct compBySensor_LB {
+  struct compBySensor_LB_t {
 
-    /** compare the sensor number of an object for lower bound
-     */
-    inline bool operator()( const TYPE& obj, const LHCb::VeloChannelID& testID ) const {
+    // compare the sensor number of an object for lower bound
+    template <class TYPE>
+    bool operator()( const TYPE& obj, const LHCb::VeloChannelID& testID ) const {
       return ( ( !obj ) ? false : testID.sensor() > obj->channelID().sensor() );
     }
   };
 
-  template <class TYPE>
-  struct compBySensor_UB {
+  inline constexpr auto compBySenor_LB = compBySensor_LB_t{};
 
-    /** compare the sensor number of an object for upper bound
-     */
+  struct compBySensor_UB_t {
 
-    inline bool operator()( const LHCb::VeloChannelID& testID, const TYPE& obj ) const {
+    // compare the sensor number of an object for upper bound
+    template <class TYPE>
+    bool operator()( const LHCb::VeloChannelID& testID, const TYPE& obj ) const {
       return ( ( !obj ) ? false : testID.sensor() > obj->channelID().sensor() );
     }
   };
+
+  inline constexpr auto compBySenor_UB = compBySensor_UB_t{};
 
 } // namespace VeloEventFunctor
 #endif // _VeloEventFunctor_H_
