@@ -1,0 +1,36 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+    (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>gaudirun.py</text></argument>
+  <argument name="timeout"><integer>2400</integer></argument>
+  <argument name="options"><text>
+
+from Configurables import LHCbApp, CondDB, ApplicationMgr
+CondDB().Upgrade = True
+
+
+from CaloFutureDAQ.CaloFutureDigits import caloDigits
+ApplicationMgr().TopAlg = [caloDigits() ]
+
+from Configurables import UpdateManagerSvc
+from Gaudi.Configuration import VERBOSE
+# UpdateManagerSvc().OutputLevel = VERBOSE
+
+from PRConfig import TestFileDB 
+def fix_filenames(db) :
+    import os
+    if os.path.isdir("/data/bfys") :
+        db.filenames = [ i.replace( "root://eoslhcb.cern.ch//eos/lhcb/grid/prod", "/data/bfys" ) for i in db.filenames ]
+    return db
+fix_filenames(TestFileDB.test_file_db['upgrade-baseline-FT61-digi']).run()
+</text></argument>
+</extension>

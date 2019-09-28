@@ -48,7 +48,8 @@ def caloDigits(createADCs=False,
         _log.debug('caloDigits : Ecal is added to the detector list')
         ecalSeq = GaudiSequencer('FutureEcalDigitsSeq', Context=_cntx)
         ecal = CaloFutureRawToDigits("FutureEcalZSup")
-        ecal.DetectorName = "Ecal"
+        from cppyy.gbl import DeCalorimeterLocation
+        ecal.DetectorLocation = DeCalorimeterLocation.Ecal
         ecal.ZSupMethod = "2D"
         ecal.ZSupThreshold = 20
         ecal.ZSupNeighbour = -5
@@ -67,7 +68,8 @@ def caloDigits(createADCs=False,
         _log.debug('caloDigits : Hcal is added to the detector list')
         hcalSeq = GaudiSequencer('FutureHcalDigitsSeq', Context=_cntx)
         hcal = CaloFutureRawToDigits("FutureHcalZSup")
-        hcal.DetectorName = "Hcal"
+        from cppyy.gbl import DeCalorimeterLocation
+        hcal.DetectorLocation = DeCalorimeterLocation.Hcal
         hcal.ZSupMethod = "1D"
         hcal.ZSupThreshold = 4
 

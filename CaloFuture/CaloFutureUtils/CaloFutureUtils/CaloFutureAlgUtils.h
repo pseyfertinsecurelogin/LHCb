@@ -12,6 +12,7 @@
 #ifndef CALOFUTUREUTILS_CALOFUTUREALGUTILS_H
 #define CALOFUTUREUTILS_CALOFUTUREALGUTILS_H 1
 #include "Event/CaloHypo.h"
+#include "GaudiKernel/Property.h"
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -71,6 +72,7 @@ namespace LHCb {
     const CaloCluster*       ClusterFromHypo( const CaloHypo* hypo, bool split = true );
     bool                     StringMatcher( const std::vector<std::string>& refs, const std::string& name );
     bool                     StringMatcher( const std::string& ref, const std::string& name );
+
   } // namespace Calo::Utilities
 } // end of namespace LHCb
 
