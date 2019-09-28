@@ -28,7 +28,14 @@ find_package(VectorClass)
 
 # Runtime requirement since LCG_96 (no longer bundled with ROOT)
 find_package(BLAS)
-
+# Runtime requirement since LCG_96ai
+# (note that a plain find_package(LAPACK) finds OpenBLAS)
+find_library(LAPACK_LIBRARY NAMES lapack)
+if(LAPACK_LIBRARY)
+  message(STATUS "Found ${LAPACK_LIBRARY}")
+  get_filename_component(LAPACK_LIBRARY_DIR "${LAPACK_LIBRARY}" PATH)
+  gaudi_env(PREPEND LD_LIBRARY_PATH "${LAPACK_LIBRARY_DIR}")
+endif()
 
 # hide warnings from some external projects
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
