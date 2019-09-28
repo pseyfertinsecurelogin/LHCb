@@ -116,8 +116,9 @@ LoKi::Odin::RunNumber* LoKi::Odin::RunNumber::clone() const { return new LoKi::O
 bool LoKi::Odin::RunNumber::operator()( const LHCb::ODIN* o ) const {
   //
   auto r = o->runNumber();
-  return dispatch_variant( m_runs, [&]( const run_range& rng ) { return rng.first <= r && r < rng.second; },
-                           [&]( const run_list& lst ) { return std::binary_search( lst.begin(), lst.end(), r ); } );
+  return dispatch_variant(
+      m_runs, [&]( const run_range& rng ) { return rng.first <= r && r < rng.second; },
+      [&]( const run_list& lst ) { return std::binary_search( lst.begin(), lst.end(), r ); } );
 }
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -154,13 +155,18 @@ LoKi::Odin::BXId::BXId( std::vector<unsigned int> bxs )
   std::sort( b.begin(), b.end() );
 }
 // ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::Odin::BXId* LoKi::Odin::BXId::clone() const { return new LoKi::Odin::BXId( *this ); }
+// ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
 bool LoKi::Odin::BXId::operator()( const LHCb::ODIN* o ) const {
   //
   auto bx = o->bunchId();
-  return dispatch_variant( m_bxs, [&]( const bx_range& rng ) { return rng.first <= bx && bx < rng.second; },
-                           [&]( const bx_vector& v ) { return std::binary_search( v.begin(), v.end(), bx ); } );
+  return dispatch_variant(
+      m_bxs, [&]( const bx_range& rng ) { return rng.first <= bx && bx < rng.second; },
+      [&]( const bx_vector& v ) { return std::binary_search( v.begin(), v.end(), bx ); } );
 }
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -225,8 +231,9 @@ LoKi::Odin::EvtNumber* LoKi::Odin::EvtNumber::clone() const { return new LoKi::O
 // ============================================================================
 bool LoKi::Odin::EvtNumber::operator()( const LHCb::ODIN* o ) const {
   event_type evt( o->eventNumber() );
-  return dispatch_variant( m_evts, [&]( const event_range& rng ) { return rng.first <= evt && evt < rng.second; },
-                           [&]( const event_list& lst ) { return lst.contains( evt ); } );
+  return dispatch_variant(
+      m_evts, [&]( const event_range& rng ) { return rng.first <= evt && evt < rng.second; },
+      [&]( const event_list& lst ) { return lst.contains( evt ); } );
 }
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -276,9 +283,9 @@ LoKi::Odin::RunEvtNumber* LoKi::Odin::RunEvtNumber::clone() const { return new L
 bool LoKi::Odin::RunEvtNumber::operator()( const LHCb::ODIN* o ) const {
   runevt_type runevt( o->runNumber(), o->eventNumber() );
   //
-  return dispatch_variant( m_runevts,
-                           [&]( const runevt_range& rng ) { return rng.first <= runevt && runevt < rng.second; },
-                           [&]( const runevt_list& lst ) { return lst.contains( runevt ); } );
+  return dispatch_variant(
+      m_runevts, [&]( const runevt_range& rng ) { return rng.first <= runevt && runevt < rng.second; },
+      [&]( const runevt_list& lst ) { return lst.contains( runevt ); } );
 }
 // ============================================================================
 // OPTIONAL: the nice printout
