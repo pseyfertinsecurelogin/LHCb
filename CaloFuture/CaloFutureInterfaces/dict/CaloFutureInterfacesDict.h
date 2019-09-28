@@ -11,7 +11,6 @@
 #ifndef DICT_CALOFUTUREINTERFACESDICT_H
 #define DICT_CALOFUTUREINTERFACESDICT_H 1
 
-#include "CaloFutureInterfaces/ICaloFuture2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFuture2MCTool.h"
 #include "CaloFutureInterfaces/ICaloFutureHypo2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoEstimator.h"

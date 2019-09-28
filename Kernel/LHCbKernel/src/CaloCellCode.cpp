@@ -201,8 +201,8 @@ namespace CaloCellCode {
    *  @date 2009-09-28
    */
   // ============================================================================
-  bool isPinArea( const int calo, const int area ) {
-    return (int)PinArea == area && ( (int)EcalCalo == calo || (int)HcalCalo == calo );
+  bool isPinArea( CaloIndex calo, const int area ) {
+    return (int)PinArea == area && ( CaloIndex::EcalCalo == calo || CaloIndex::HcalCalo == calo );
   }
   std::string toString( const CaloIndex& i ) { return caloName( i ); }
   StatusCode  parse( CaloIndex& i, const std::string& s ) {

@@ -51,10 +51,9 @@ namespace LHCb::Calo::Interfaces {
     virtual double energy( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
     virtual double energy() const                                                                 = 0;
 
-    virtual int        multiplicity( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
-    virtual int        multiplicity( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
-    virtual int        multiplicity() const                                                                 = 0;
-    virtual StatusCode _setProperty( const std::string&, const std::string& )                               = 0;
+    virtual int multiplicity( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
+    virtual int multiplicity( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
+    virtual int multiplicity() const                                                                 = 0;
   };
 } // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREHYPO2CALOFUTURE_H

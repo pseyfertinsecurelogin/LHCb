@@ -223,7 +223,7 @@ namespace CaloCellCode {
    *  @date 2009-09-28
    */
   GAUDI_API
-  bool isPinArea( const int calo, const int area );
+  bool isPinArea( CaloIndex calo, const int area );
   // ==========================================================================
   /** @enum CaloArea
    *  The actual enumeration for the calorimeter areas
