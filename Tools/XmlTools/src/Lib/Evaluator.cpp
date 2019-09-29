@@ -26,35 +26,16 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <variant>
 
 #define EVAL XmlTools::Evaluator
 
-//---------------------------------------------------------------------------
-#if defined( __clang__ ) && __clang_major__ < 7
-// clang 6 has a problem with the libstdc++ implementation of std::variant
-#  include "boost/variant.hpp"
 namespace {
-  using boost::variant;
-  template <typename... Args>
-  decltype( auto ) visit( Args&&... args ) {
-    return boost::apply_visitor( std::forward<Args>( args )... );
-  }
-} // namespace
-#else
-#  include <variant>
-namespace {
-  using std::variant;
-  using std::visit;
-} // namespace
-#endif
-//---------------------------------------------------------------------------
+  using FuncPtr = std::variant<double ( * )(), double ( * )( double ), double ( * )( double, double ),
+                               double ( * )( double, double, double ), double ( * )( double, double, double, double ),
+                               double ( * )( double, double, double, double, double )>;
 
-namespace {
-  using FuncPtr = variant<double ( * )(), double ( * )( double ), double ( * )( double, double ),
-                          double ( * )( double, double, double ), double ( * )( double, double, double, double ),
-                          double ( * )( double, double, double, double, double )>;
-
-  using Item     = variant<double, std::string, FuncPtr>;
+  using Item     = std::variant<double, std::string, FuncPtr>;
   using dic_type = std::unordered_map<std::string, Item>;
   using pchar    = const char*;
 } // namespace
@@ -143,19 +124,19 @@ static int variable( const std::string& name, double& result, const dic_type& di
 {
   auto iter = dictionary.find( name );
   return iter != dictionary.end()
-             ? visit( overloaded{[&result]( double x ) {
-                                   result = x;
-                                   return EVAL::OK;
-                                 },
-                                 [&]( const std::string& s ) {
-                                   auto exp_begin = s.c_str();
-                                   auto exp_end   = std::next( exp_begin, std::strlen( exp_begin ) - 1 );
-                                   return ( engine( exp_begin, exp_end, result, exp_end, dictionary ) == EVAL::OK )
-                                              ? EVAL::OK
-                                              : EVAL::ERROR_CALCULATION_ERROR;
-                                 },
-                                 []( FuncPtr ) { return EVAL::ERROR_CALCULATION_ERROR; }},
-                      iter->second )
+             ? std::visit( overloaded{[&result]( double x ) {
+                                        result = x;
+                                        return EVAL::OK;
+                                      },
+                                      [&]( const std::string& s ) {
+                                        auto exp_begin = s.c_str();
+                                        auto exp_end   = std::next( exp_begin, std::strlen( exp_begin ) - 1 );
+                                        return ( engine( exp_begin, exp_end, result, exp_end, dictionary ) == EVAL::OK )
+                                                   ? EVAL::OK
+                                                   : EVAL::ERROR_CALCULATION_ERROR;
+                                      },
+                                      []( FuncPtr ) { return EVAL::ERROR_CALCULATION_ERROR; }},
+                           iter->second )
              : EVAL::ERROR_UNKNOWN_VARIABLE;
 }
 
@@ -187,17 +168,13 @@ static int function( const std::string& name, std::stack<double>& par, double& r
     pp[npar - 1 - i] = par.top();
     par.pop();
   } // reverse the arguments
-  errno       = 0;
-  auto status = visit( overloaded{[&result, eval = InvokeFuncPtrWith( pp, npar )]( FuncPtr f ) {
-                                    auto r = visit( eval, f );
-                                    if ( !r ) return EVAL::ERROR_CALCULATION_ERROR;
-                                    result = r.value();
-                                    return EVAL::OK;
-                                  },
-                                  []( double ) { return EVAL::ERROR_CALCULATION_ERROR; },
-                                  []( const std::string& ) { return EVAL::ERROR_CALCULATION_ERROR; }},
-                       iter->second );
-  return errno != 0 ? EVAL::ERROR_CALCULATION_ERROR : status;
+  const FuncPtr* f = std::get_if<FuncPtr>( &iter->second );
+  if ( !f ) return EVAL::ERROR_CALCULATION_ERROR;
+  errno  = 0;
+  auto r = std::visit( InvokeFuncPtrWith( pp, npar ), *f );
+  if ( !r || errno != 0 ) return EVAL::ERROR_CALCULATION_ERROR;
+  result = r.value();
+  return EVAL::OK;
 }
 
 static int operand( pchar begin, pchar end, double& result, pchar& endp, const dic_type& dictionary )

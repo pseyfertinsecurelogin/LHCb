@@ -13,8 +13,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include <boost/variant.hpp>
 #include <memory>
+#include <variant>
 // ============================================================================
 // from CLHEP
 // ============================================================================
@@ -36,8 +36,8 @@
 namespace detail {
 
   auto dispatch_variant = []( auto&& variant, auto&&... lambdas ) -> decltype( auto ) {
-    return boost::apply_visitor( compose( std::forward<decltype( lambdas )>( lambdas )... ),
-                                 std::forward<decltype( variant )>( variant ) );
+    return std::visit( compose( std::forward<decltype( lambdas )>( lambdas )... ),
+                       std::forward<decltype( variant )>( variant ) );
   };
 }
 
@@ -251,8 +251,8 @@ namespace Genfun {
     public:
       /// dimensionality of the problem
       unsigned int dimensionality() const override {
-        return detail::dispatch_variant( m_func, []( Function1 ) { return 1ul; },
-                                         [&]( auto ) { return m_arg.size(); } );
+        return detail::dispatch_variant(
+            m_func, []( Function1 ) { return 1ul; }, [&]( auto ) { return m_arg.size(); } );
       }
       /// Does this function have an analytic derivative?
       bool hasAnalyticDerivative() const override { return true; }
@@ -264,8 +264,8 @@ namespace Genfun {
       Genfun::Derivative partial( unsigned int i ) const override;
 
     private:
-      boost::variant<Function1, Function2, Function3> m_func;
-      mutable std::vector<double>                     m_arg;
+      std::variant<Function1, Function2, Function3> m_func;
+      mutable std::vector<double>                   m_arg;
     };
     /// From CLHEP/GenericFunctions
     FUNCTION_OBJECT_IMP( SimpleFunction )
