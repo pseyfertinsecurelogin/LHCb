@@ -25,6 +25,10 @@ include(GaudiObjDesc)
 
 god_build_headers(xml/*.xml)
 
+gaudi_add_unit_test(test_CaloHypo_v2 tests/src/test_CaloHypo_v2.cpp
+   LINK_LIBRARIES GaudiKernel TrackEvent RecEvent
+                    TYPE Boost)
+
 gaudi_add_library(RecEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
@@ -35,4 +39,6 @@ god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
                      INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer
                      LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
+
+
 
