@@ -113,6 +113,7 @@ namespace LHCb::Pr::Fitted::Forward {
     }
 
     auto pseudoRapidity() const { return closestToBeamStateDir().eta(); }
+    auto phi() const { return closestToBeamStateDir().phi(); }
 
     auto momentum() const {
       auto const dir   = closestToBeamStateDir();
@@ -127,7 +128,7 @@ namespace LHCb::Pr::Fitted::Forward {
     auto chi2PerDoF() const { return cast( this->m_tracks->template chi2<FType>( this->offset() ) ); }
 
     auto lhcbIDs( LHCb::Pr::Velo::Hits const& velo_hits ) const {
-      return this->m_tracks->lhcbIDs( this->m_offset, velo_hits );
+      return this->m_tracks->template lhcbIDs<IType>( this->offset(), velo_hits );
     }
   };
 } // namespace LHCb::Pr::Fitted::Forward

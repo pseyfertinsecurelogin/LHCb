@@ -49,8 +49,9 @@ namespace LHCb::Pr::Velo {
       return this->m_tracks->template stateDir<FType>( this->offset(), 0 );
     }
     auto closestToBeamState() const { return detail::State{closestToBeamStatePos(), closestToBeamStateDir()}; }
-    auto nHits() const { return this->m_tracks->template nHits<IType>( this->m_offset ); }
+    auto nHits() const { return this->m_tracks->template nHits<IType>( this->offset() ); }
     decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
+    decltype( auto ) phi() const { return this->closestToBeamStateDir().phi(); }
   };
 } // namespace LHCb::Pr::Velo
 
