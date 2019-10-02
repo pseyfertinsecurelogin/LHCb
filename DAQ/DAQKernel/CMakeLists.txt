@@ -11,7 +11,7 @@
 ################################################################################
 # Package: DAQKernel
 ################################################################################
-gaudi_subdir(DAQKernel v1r1)
+gaudi_subdir(DAQKernel)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          GaudiAlg

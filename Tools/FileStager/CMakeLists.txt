@@ -41,16 +41,18 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 # only for the applications
 find_package(Boost COMPONENTS program_options)
+# work around issue when using ${Boost_LIBRARIES} from BoostConfig.cmake
+if(Boost_LIBRARIES MATCHES "Boost::system")
+  set(Boost_LIBRARIES Boost::program_options)
+endif()
 
 gaudi_add_executable(garbage
                      src/app/garbage.cpp
-                     INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost GaudiKernel FileStagerFunctions)
+                     LINK_LIBRARIES Boost FileStagerFunctions)
 
 gaudi_add_executable(hash_filename
                      src/app/hash_filename.cpp
-                     INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost GaudiKernel FileStagerFunctions)
+                     LINK_LIBRARIES Boost FileStagerFunctions)
 
 gaudi_install_python_modules()
 

@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichInterfaces
 ################################################################################
-gaudi_subdir(RichInterfaces v1r0)
+gaudi_subdir(RichInterfaces)
 
 gaudi_depends_on_subdirs(Kernel/LHCbKernel
                          Det/RichDet

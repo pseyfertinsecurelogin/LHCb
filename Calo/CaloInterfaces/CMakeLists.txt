@@ -11,7 +11,7 @@
 ################################################################################
 # Package: CaloInterfaces
 ################################################################################
-gaudi_subdir(CaloInterfaces v8r9)
+gaudi_subdir(CaloInterfaces)
 
 gaudi_depends_on_subdirs(Det/CaloDet
                          Event/DigiEvent

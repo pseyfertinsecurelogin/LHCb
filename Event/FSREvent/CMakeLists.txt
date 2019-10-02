@@ -11,7 +11,7 @@
 ################################################################################
 # Package: FSREvent
 ################################################################################
-gaudi_subdir(FSREvent v1r2)
+gaudi_subdir(FSREvent)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          GaudiObjDesc

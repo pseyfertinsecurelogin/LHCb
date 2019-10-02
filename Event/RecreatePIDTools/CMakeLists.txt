@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RecreatePIDTools
 ################################################################################
-gaudi_subdir(RecreatePIDTools v1r9)
+gaudi_subdir(RecreatePIDTools)
 
 gaudi_depends_on_subdirs(Event/RecEvent
                          GaudiAlg)

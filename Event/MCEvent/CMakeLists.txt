@@ -11,7 +11,7 @@
 ################################################################################
 # Package: MCEvent
 ################################################################################
-gaudi_subdir(MCEvent v3r4)
+gaudi_subdir(MCEvent)
 
 # hide warnings from some external projects
 find_package(ROOT)

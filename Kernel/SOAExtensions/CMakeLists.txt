@@ -11,7 +11,7 @@
 ################################################################################
 # Package: SOAExtensions
 ################################################################################
-gaudi_subdir(SOAExtensions v1r0)
+gaudi_subdir(SOAExtensions)
 
 gaudi_depends_on_subdirs(
   Kernel/SOAContainer

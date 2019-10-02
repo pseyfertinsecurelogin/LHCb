@@ -106,150 +106,118 @@ set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPow
                        tests/pow.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestBit
                        tests/bit.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestDigit
                        tests/digit.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestKine
                        tests/kinematics.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
  gaudi_add_executable(TestTruncate
                        tests/truncate.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestLomont
                        tests/TestLomontCompare.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestErrors
                        tests/withErrors.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestRound
                        tests/TestRound.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestLomont2
                        tests/TestLomontCPU.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestEigen
                        tests/TestEigen.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestBlind
                        tests/blind.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestAbs
                        tests/testAbs.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestChi2
                        tests/testChi2.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestHesse
                        tests/TestHesse.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestChi2Fit
                        tests/TestChi2Fit.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestLABug
                        tests/TestLABug.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestBloomFilter
                        tests/TestBloomFilter.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestSimilarity
                        tests/TestSimilarity.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestSimilarityTiming
                        tests/TestSimilarityTiming.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestEigenGeometry
                        tests/TestEigenGeometry.cpp
-                       INCLUDE_DIRS Boost GSL ROOT VDT Eigen
-                       LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestXYZTypes
                        tests/TestXYZTypes.cpp
-                       INCLUDE_DIRS Boost GSL ROOT VDT Eigen
-                       LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestPolynomials
                        tests/poly.cpp
-                       INCLUDE_DIRS Boost GSL ROOT
-                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
-                       INCLUDE_DIRS VDT
-                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX
                        tests/TestVDTMathAVX.cpp
-                       INCLUDE_DIRS VDT
-                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2
                        tests/TestVDTMathAVX2.cpp
-                       INCLUDE_DIRS VDT
-                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2FMA.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2FMA
                        tests/TestVDTMathAVX2FMA.cpp
-                       INCLUDE_DIRS VDT
-                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX512.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX512_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX512
                        tests/TestVDTMathAVX512.cpp
-                       INCLUDE_DIRS VDT
-                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+                       LINK_LIBRARIES LHCbMathLib)
 
   gaudi_add_executable(TestMathSpeedSSE4
                        tests/MathSpeedTests/main_sse4.cpp
-                       INCLUDE_DIRS ROOT Vc GSL VDT src
-                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+                       LINK_LIBRARIES LHCbMathLib )
   target_link_libraries( TestMathSpeedSSE4 -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_sse4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes ${SSE_BUILD_FLAGS}" )
 
   gaudi_add_executable(TestMathSpeedAVX
                        tests/MathSpeedTests/main_avx.cpp
-                       INCLUDE_DIRS ROOT Vc GSL VDT src
-                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+                       LINK_LIBRARIES LHCbMathLib )
   target_link_libraries( TestMathSpeedAVX -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_avx.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes ${AVX_BUILD_FLAGS} " )
 
   gaudi_add_executable(TestMathSpeedAVX2
                        tests/MathSpeedTests/main_avx2.cpp
-                       INCLUDE_DIRS ROOT Vc GSL VDT src
-                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+                       LINK_LIBRARIES LHCbMathLib )
   target_link_libraries( TestMathSpeedAVX2 -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_avx2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
 
   gaudi_add_executable(TestMathSpeedAVX2FMA
                        tests/MathSpeedTests/main_avx2fma.cpp
-                       INCLUDE_DIRS ROOT Vc GSL VDT src
-                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+                       LINK_LIBRARIES LHCbMathLib )
   target_link_libraries( TestMathSpeedAVX2FMA -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_avx2fma.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 
   gaudi_add_executable(TestMathSpeedAVX512
                        tests/MathSpeedTests/main_avx512.cpp
-                       INCLUDE_DIRS ROOT Vc GSL VDT src
-                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+                       LINK_LIBRARIES LHCbMathLib )
   target_link_libraries( TestMathSpeedAVX512 -lrt )
   set_property(SOURCE tests/MathSpeedTests/main_avx512.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX512_BUILD_FLAGS} )
 

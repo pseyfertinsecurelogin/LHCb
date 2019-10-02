@@ -11,7 +11,7 @@
 ################################################################################
 # Package: FTEvent
 ################################################################################
-gaudi_subdir(FTEvent v1r8)
+gaudi_subdir(FTEvent)
 
 gaudi_depends_on_subdirs(Event/EventBase
                          Event/MCEvent

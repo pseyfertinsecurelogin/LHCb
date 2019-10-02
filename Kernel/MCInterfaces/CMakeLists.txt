@@ -11,7 +11,7 @@
 ################################################################################
 # Package: MCInterfaces
 ################################################################################
-gaudi_subdir(MCInterfaces v1r19)
+gaudi_subdir(MCInterfaces)
 
 gaudi_depends_on_subdirs(Event/GenEvent
                          Event/MCEvent

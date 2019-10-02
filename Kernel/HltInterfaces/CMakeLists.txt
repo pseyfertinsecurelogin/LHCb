@@ -11,7 +11,7 @@
 ################################################################################
 # Package: HltInterfaces
 ################################################################################
-gaudi_subdir(HltInterfaces v6r6)
+gaudi_subdir(HltInterfaces)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/HltEvent

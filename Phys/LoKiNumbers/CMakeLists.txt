@@ -11,7 +11,7 @@
 ################################################################################
 # Package: LoKiNumbers
 ################################################################################
-gaudi_subdir(LoKiNumbers v10r9)
+gaudi_subdir(LoKiNumbers)
 
 gaudi_depends_on_subdirs(GaudiPython
                          Phys/LoKiCore)

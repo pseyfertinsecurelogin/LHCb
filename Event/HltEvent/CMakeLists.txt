@@ -11,7 +11,7 @@
 ################################################################################
 # Package: HltEvent
 ################################################################################
-gaudi_subdir(HltEvent v9r6)
+gaudi_subdir(HltEvent)
 
 gaudi_depends_on_subdirs(Event/PhysEvent
                          GaudiKernel

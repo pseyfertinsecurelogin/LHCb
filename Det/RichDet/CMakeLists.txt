@@ -11,7 +11,7 @@
 ################################################################################
 # Package: RichDet
 ################################################################################
-gaudi_subdir(RichDet v17r7)
+gaudi_subdir(RichDet)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
                          Rich/RichUtils)
@@ -24,7 +24,7 @@ find_package(XercesC)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GSL_INCLUDE_DIRS}
                            ${ROOT_INCLUDE_DIRS} ${Vc_INCLUDE_DIR}
-                           ${XERCESC_INCLUDE_DIRS})
+                           ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 gaudi_add_library(RichDetLib
                   src/Lib/*.cpp

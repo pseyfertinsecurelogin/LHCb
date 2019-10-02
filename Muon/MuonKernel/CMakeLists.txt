@@ -11,7 +11,7 @@
 ################################################################################
 # Package: MuonKernel
 ################################################################################
-gaudi_subdir(MuonKernel v5r0)
+gaudi_subdir(MuonKernel)
 
 gaudi_depends_on_subdirs(Kernel/LHCbKernel)
 

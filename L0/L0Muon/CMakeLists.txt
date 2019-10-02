@@ -11,7 +11,7 @@
 ################################################################################
 # Package: L0Muon
 ################################################################################
-gaudi_subdir(L0Muon v9r15)
+gaudi_subdir(L0Muon)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          Event/DAQEvent
@@ -29,7 +29,7 @@ find_package(Boost COMPONENTS system filesystem)
 find_package(XercesC)
 
 # hide warnings from some external projects
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 gaudi_add_module(L0Muon
                  src/component/*.cpp

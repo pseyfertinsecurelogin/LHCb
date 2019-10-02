@@ -11,7 +11,7 @@
 ################################################################################
 # Package: BcmDet
 ################################################################################
-gaudi_subdir(BcmDet v1r4)
+gaudi_subdir(BcmDet)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          Det/DetDescCnv
@@ -22,7 +22,8 @@ find_package(Boost)
 find_package(XercesC)
 include_directories(SYSTEM ${ROOT_INCLUDE_DIRS}
                            ${Boost_INCLUDE_DIRS}
-                           ${XERCESC_INCLUDE_DIRS})
+                           ${XERCESC_INCLUDE_DIRS}
+                           ${XercesC_INCLUDE_DIRS})
 
 gaudi_add_library(BcmDetLib
                   src/Lib/*.cpp
@@ -38,4 +39,3 @@ gaudi_add_dictionary(BcmDet
                      dict/BcmDetDict.xml
                      LINK_LIBRARIES DetDescLib DetDescCnvLib GaudiKernel BcmDetLib
                      OPTIONS "-U__MINGW32__")
-

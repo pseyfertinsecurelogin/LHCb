@@ -12,7 +12,7 @@
 # Package: GaudiTensorFlow
 ################################################################################
 
-gaudi_subdir(GaudiTensorFlow v1r0)
+gaudi_subdir(GaudiTensorFlow)
 gaudi_depends_on_subdirs(GaudiAlg)
 
 ### Find Boost 

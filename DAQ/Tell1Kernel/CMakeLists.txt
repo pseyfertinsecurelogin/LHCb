@@ -11,7 +11,7 @@
 ################################################################################
 # Package: Tell1Kernel
 ################################################################################
-gaudi_subdir(Tell1Kernel v1r13p1)
+gaudi_subdir(Tell1Kernel)
 
 gaudi_install_headers(Tell1Kernel)
 

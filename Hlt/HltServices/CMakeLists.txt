@@ -11,7 +11,7 @@
 ################################################################################
 # Package: HltServices
 ################################################################################
-gaudi_subdir(HltServices v2r14)
+gaudi_subdir(HltServices)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          Event/DAQEvent

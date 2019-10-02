@@ -11,7 +11,7 @@
 ################################################################################
 # Package: PartProp
 ################################################################################
-gaudi_subdir(PartProp v1r21)
+gaudi_subdir(PartProp)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          Kernel/LHCbMath)

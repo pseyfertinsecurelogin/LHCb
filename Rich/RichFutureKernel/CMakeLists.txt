@@ -12,7 +12,7 @@
 # Package: RichFutureKernel
 ################################################################################
 
-gaudi_subdir(RichFutureKernel v1r0)
+gaudi_subdir(RichFutureKernel)
 
 gaudi_depends_on_subdirs(GaudiAlg
                          GaudiUtils

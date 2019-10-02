@@ -11,7 +11,7 @@
 ################################################################################
 # Package: UTKernel
 ################################################################################
-gaudi_subdir(UTKernel v1r0)
+gaudi_subdir(UTKernel)
 
 gaudi_depends_on_subdirs(Det/UTDet
                          Event/DAQEvent

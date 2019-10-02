@@ -11,7 +11,7 @@
 ################################################################################
 # Package: DetDescSvc
 ################################################################################
-gaudi_subdir(DetDescSvc v4r1)
+gaudi_subdir(DetDescSvc)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          GaudiAlg
@@ -23,7 +23,7 @@ find_package(Boost)
 gaudi_depends_on_subdirs(Tools/XmlTools)
 find_package(XercesC)
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 find_package(OpenSSL)
 if (NOT OPENSSL_CRYPTO_LIBRARY)

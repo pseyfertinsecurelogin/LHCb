@@ -25,7 +25,8 @@ find_package(ROOT)
 find_package(CLHEP)
 find_package(XercesC)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
-                           ${CLHEP_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+                           ${CLHEP_INCLUDE_DIRS}
+                           ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 # Declare project name and version
 gaudi_project(LHCb v50r5
@@ -36,4 +37,4 @@ gaudi_project(LHCb v50r5
                    PRConfig
                    RawEventFormat
                    TCK/HltTCK
-		   TCK/L0TCK VERSION v5r*)
+                   TCK/L0TCK VERSION v5r*)

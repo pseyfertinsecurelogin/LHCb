@@ -11,7 +11,7 @@
 ################################################################################
 # Package: STTELL1Event
 ################################################################################
-gaudi_subdir(STTELL1Event v1r12)
+gaudi_subdir(STTELL1Event)
 
 gaudi_depends_on_subdirs(GaudiObjDesc
                          Kernel/LHCbKernel
