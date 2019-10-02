@@ -314,17 +314,13 @@ StatusCode DeRichPMTPanelClassic::geometryUpdate() {
     m_xyHalfSizeSIMD[1] = aOffsetY;
   }
   m_localOffset = aOffset;
-
-  m_detPlaneZ = aPon.z();
-  // m_detPlaneZ = geometry()->toLocal(aPon.z()); // it seems the local Z coord is to be saved,
-  // looking at the hpd version  ?
-  //  if so, uncomment this line and comment out the previous line.
+  m_detPlaneZ   = geometry()->toLocal( aPon ).z();
 
   //  const ROOT::Math::Translation3D localTranslation =
   //  ROOT::Math::Translation3D(aPon.x(),sign*aOffset,aPon.z());
   const ROOT::Math::Translation3D localTranslation =
-      ( rich() == Rich::Rich1 ? ROOT::Math::Translation3D( aPon.x(), sign * aOffset, aPon.z() )
-                              : ROOT::Math::Translation3D( sign * aOffset, aPon.y(), aPon.z() ) );
+      ( rich() == Rich::Rich1 ? ROOT::Math::Translation3D( aPon.x(), sign * aOffset, -detectPlaneZcoord() )
+                              : ROOT::Math::Translation3D( sign * aOffset, aPon.y(), -detectPlaneZcoord() ) );
 
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
   m_PDPanelToGlobalTransform = m_globalToPDPanelTransform.Inverse();
