@@ -70,8 +70,7 @@ CaloFutureRawToDigits::CaloFutureRawToDigits( const std::string& name, ISvcLocat
                                                                                 LHCb::RawEventLocation::Default )},
            KeyValue{"DetectorLocation", LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( name.substr( 6, 4 ) )}},
           {KeyValue{"OutputAdcData", LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( name.substr( 6, 4 ) )},
-           KeyValue{"OutputDigitData",
-                    LHCb::CaloFutureAlgUtils::CaloFutureUnfilteredDigitLocation( name.substr( 6, 4 ) )},
+           KeyValue{"OutputDigitData", LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation( name.substr( 6, 4 ) )},
            KeyValue{"OutputReadoutStatusData",
                     LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( name.substr( 6, 4 ) )}} ) {}
 
