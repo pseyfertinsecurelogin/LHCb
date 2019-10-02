@@ -359,11 +359,6 @@ namespace SIMDWrapper {
         return *this;
       }
 
-      float_v& operator=( const float_v& f ) {
-        data = f.data;
-        return *this;
-      }
-
       operator __m256() const { return data; }
 
       inline operator int_v() const;
