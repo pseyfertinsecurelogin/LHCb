@@ -141,7 +141,7 @@ namespace LHCb::Pr {
   struct Proxy {};
 
   /** This is the type returned by LHCb::Pr::make_zip */
-  template <typename def_simd, bool def_unwrap, typename... ContainerTypes>
+  template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
   class Zip {
     // Shorthand for the tuple of pointers to the underlying containers, these
     // are things like LHCb::Pr::Velo::Tracks const* and so on, which are
@@ -153,12 +153,13 @@ namespace LHCb::Pr {
 
     // This is needed so that we can have copy constructors that re-bind the
     // default SIMD and unwrapping settings to different values.
-    template <typename, bool, typename...>
+    template <SIMDWrapper::InstructionSet, bool, typename...>
     friend class Zip;
 
   public:
-    using default_simd                   = def_simd;
+    static constexpr auto default_simd   = def_simd;
     static constexpr bool default_unwrap = def_unwrap;
+    using default_simd_t                 = typename SIMDWrapper::type_map<def_simd>::type;
 
     // Make a new proxy type that inherits from all the component ones
     // The data structure looks something like:
@@ -237,7 +238,7 @@ namespace LHCb::Pr {
       }
     };
 
-    using value_type = proxy_type<default_simd, default_unwrap>;
+    using value_type = proxy_type<default_simd_t, default_unwrap>;
 
     /** Construct an iterable zip of the given containers. */
     template <typename std::enable_if_t<( detail::is_zippable_v<ContainerTypes> && ... ), int> = 0>
@@ -257,14 +258,14 @@ namespace LHCb::Pr {
     /** Move constructor that allows the vector and unwrapping behaviour to be
      *  changed.
      */
-    template <typename other_default_simd, bool other_default_unwrap>
+    template <SIMDWrapper::InstructionSet other_default_simd, bool other_default_unwrap>
     Zip( Zip<other_default_simd, other_default_unwrap, ContainerTypes...>&& other )
         : m_containers{std::move( other.m_containers )} {}
 
     /** Copy constructor that allows the vector and unwrapping behaviour to be
      *  changed.
      */
-    template <typename other_default_simd, bool other_default_unwrap>
+    template <SIMDWrapper::InstructionSet other_default_simd, bool other_default_unwrap>
     Zip( Zip<other_default_simd, other_default_unwrap, ContainerTypes...> const& other )
         : m_containers{other.m_containers} {}
 
@@ -273,7 +274,7 @@ namespace LHCb::Pr {
      *  after the lifetime of the iterable zip itself (Zip) has
      *  ended.
      */
-    template <typename dType = default_simd, bool unwrap = default_unwrap>
+    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
     Iterator<dType, unwrap> begin() const {
       return {m_containers, 0};
     }
@@ -282,7 +283,7 @@ namespace LHCb::Pr {
      *  As with begin(), the iterator only refers to the underlying containers
      *  and may be used after the lifetime of the iterable zip object has ended
      */
-    template <typename dType = default_simd, bool unwrap = default_unwrap>
+    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
     Iterator<dType, unwrap> end() const {
       // m_offset is incremented by dType::size each time, so repeatedly
       // incrementing begin() generally misses {m_tracks, m_tracks->size()}
@@ -296,7 +297,7 @@ namespace LHCb::Pr {
      *  'dType' then the proxy returned here will also yield vector outputs
      *  starting from the given offset.
      */
-    template <typename dType = default_simd, bool unwrap = default_unwrap>
+    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
     auto operator[]( int offset ) const {
       return std::make_from_tuple<proxy_type<dType, unwrap>>( std::tuple_cat( m_containers, std::tuple{offset} ) );
     }
@@ -315,7 +316,7 @@ namespace LHCb::Pr {
 
     /** Make a new structure by conditionally copying the underlying structures
      */
-    template <typename dType = default_simd, bool unwrap = default_unwrap, typename F>
+    template <typename dType = default_simd_t, bool unwrap = default_unwrap, typename F>
     auto filter( F filt ) const {
       detail::merged_t out{m_containers};
       out.reserve( this->size() );
@@ -330,7 +331,7 @@ namespace LHCb::Pr {
 
     /** Return a copy of ourself that has a different default vector backend.
      */
-    template <typename dType>
+    template <SIMDWrapper::InstructionSet dType>
     auto with() const {
       return Zip<dType, default_unwrap, ContainerTypes...>{*this};
     }
@@ -338,7 +339,7 @@ namespace LHCb::Pr {
     /** Return a version of ourself that behaves 'traditionally', i.e. provides
      *  scalar iteration and returns plain C++ data types from accessors.
      */
-    auto unwrap() const { return Zip<SIMDWrapper::scalar::types, true, ContainerTypes...>{*this}; }
+    auto unwrap() const { return Zip<SIMDWrapper::InstructionSet::Scalar, true, ContainerTypes...>{*this}; }
   };
 
   namespace detail {
@@ -354,7 +355,7 @@ namespace LHCb::Pr {
       static constexpr bool is_zippable_v = ( ::LHCb::Pr::detail::is_zippable_v<T> && ... );
     };
 
-    template <typename def_simd, bool def_unwrap, typename... T,
+    template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T,
               typename std::enable_if_t<( is_zippable_v<T> && ... ), int> = 0>
     auto make_zip( T const&... tracks ) {
       return Zip<def_simd, def_unwrap, T...>{tracks...};
@@ -372,7 +373,8 @@ namespace LHCb::Pr {
    *  special handling here ensures that `iterable( zip.filter(...) )` has the
    *  same type as `zip`.
    */
-  template <typename def_simd = SIMDWrapper::best::types, bool def_unwrap = false, typename... PrTracks,
+  template <SIMDWrapper::InstructionSet def_simd = SIMDWrapper::InstructionSet::Best, bool def_unwrap = false,
+            typename... PrTracks,
             typename std::enable_if_t<( detail::merged_object_helper<PrTracks>::is_zippable_v && ... ), int> = 0>
   auto make_zip( PrTracks const&... tracks ) {
     // If some of PrTracks... are merged_t<T...> then try to unpack, e.g.

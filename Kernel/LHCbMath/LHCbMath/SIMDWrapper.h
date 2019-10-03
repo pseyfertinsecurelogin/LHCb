@@ -44,7 +44,7 @@ namespace SIMDWrapper {
     return approx_log( x );
   }
 
-  enum InstructionSet { Scalar = 0, AVX2, AVX256, AVX512, EndOfList };
+  enum InstructionSet { Best = 0, Scalar, AVX2, AVX256, AVX512, EndOfList };
   inline std::string instructionSetName( InstructionSet set ) {
     switch ( set ) {
     case Scalar:
@@ -1033,6 +1033,34 @@ namespace SIMDWrapper {
     using types   = avx256::types;
     constexpr InstructionSet instructionSet() { return avx256::instructionSet(); }
   } // namespace best
+
+  template <InstructionSet>
+  struct type_map {};
+
+  template <>
+  struct type_map<InstructionSet::Best> {
+    using type = best::types;
+  };
+
+  template <>
+  struct type_map<InstructionSet::Scalar> {
+    using type = scalar::types;
+  };
+
+  template <>
+  struct type_map<InstructionSet::AVX2> {
+    using type = avx2::types;
+  };
+
+  template <>
+  struct type_map<InstructionSet::AVX256> {
+    using type = avx256::types;
+  };
+
+  template <>
+  struct type_map<InstructionSet::AVX512> {
+    using type = avx512::types;
+  };
 } // namespace SIMDWrapper
 
 // Helper to build SIMDWrapper accessors:
