@@ -95,8 +95,12 @@ namespace Gaudi {
                    operator()( val, CaloCellCode::setField( tmp, Value, Shift, Mask ) );
         }
         // ====================================================================
-        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_calo ) const { val.setCalo( v ); }
-        void operator()( LHCb::CaloCellID& val, const std::string& v, tag_calo ) const { val.setCalo( v ); }
+        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_calo ) const {
+          val.setCalo( static_cast<CaloCellCode::CaloIndex>( v ) );
+        }
+        void operator()( LHCb::CaloCellID& val, const std::string& v, tag_calo ) const {
+          val.setCalo( CaloCellCode::caloNum( v ) );
+        }
         void operator()( LHCb::CaloCellID& val, unsigned short v, tag_area ) const {
           match( val, v, CaloCellCode::ShiftArea, CaloCellCode::MaskArea );
         }

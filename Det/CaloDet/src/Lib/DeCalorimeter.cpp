@@ -76,7 +76,7 @@ StatusCode DeCalorimeter::initialize() {
 
   // naming
   m_caloIndex = CaloCellCode::CaloNumFromName( name() );
-  m_caloDet   = CaloCellCode::CaloNameFromNum( m_caloIndex ) + "Det";
+  m_caloDet   = CaloCellCode::caloName( m_caloIndex ) + "Det";
   MsgStream msg( msgSvc(), m_caloDet );
   if ( UNLIKELY( msg.level() <= MSG::DEBUG ) ) msg << MSG::DEBUG << "'INITIALIZE DeCalorimeter " << name() << endmsg;
 
@@ -212,7 +212,7 @@ StatusCode DeCalorimeter::initialize() {
       msg << MSG::DEBUG << "Found " << nGain << " channel(s) with null gain " << endmsg;
     // Verbosity
     if ( UNLIKELY( msg3.level() <= MSG::VERBOSE ) ) {
-      msg3 << MSG::VERBOSE << " ----------- List of " << CaloCellCode::CaloNameFromNum( m_caloIndex ) << " channels "
+      msg3 << MSG::VERBOSE << " ----------- List of " << CaloCellCode::caloName( m_caloIndex ) << " channels "
            << " ----------- " << endmsg;
       long k = 1;
       for ( const auto& ic : m_cells ) {
@@ -496,7 +496,7 @@ StatusCode DeCalorimeter::buildCards() {
 
     std::vector<LHCb::CaloCellID> cellids;
     // Update CellParam
-    LHCb::CaloCellID dummy( 0, 0, 0, 0 );
+    LHCb::CaloCellID dummy{};
     for ( int row = fRow; lRow >= row; ++row ) {
       for ( int col = fCol; lCol >= col; ++col ) {
         LHCb::CaloCellID id( m_caloIndex, area, row, col );
@@ -523,7 +523,7 @@ StatusCode DeCalorimeter::buildCards() {
       std::vector<int> map   = ( *it ).second;
       unsigned int     count = 0;
       for ( auto& elem : map ) {
-        LHCb::CaloCellID dummy2( 0, 0, 0, 0 );
+        LHCb::CaloCellID dummy2{};
         if ( elem < 0 ) {
           myCard.addID( dummy2 );
         } else if ( elem < (int)cellids.size() ) {
@@ -590,7 +590,7 @@ StatusCode DeCalorimeter::buildCards() {
     int cornerCard   = -1;
     int previousCard = -1;
 
-    LHCb::CaloCellID dummy( 0, 0, 0, 0 );
+    LHCb::CaloCellID dummy{};
     int              area  = card.area();
     int              fRow  = card.firstRow();
     int              lRow  = card.lastRow();
@@ -1244,8 +1244,8 @@ StatusCode DeCalorimeter::getNumericGains() {
 // ============================================================================
 std::ostream& DeCalorimeter::printOut( std::ostream& os ) const {
 
-  os << "\tDeCalorimeter index=" << m_caloIndex << ", name from index ='"
-     << CaloCellCode::CaloNameFromNum( m_caloIndex ) << "'"
+  os << "\tDeCalorimeter index=" << m_caloIndex << ", name from index ='" << CaloCellCode::caloName( m_caloIndex )
+     << "'"
      << ", fullname ='" << name() << "'";
   os << "\t Parameters" << std::endl << "\t\tEt value for maximum ADC value at theta(0) =  ";
   for ( unsigned int i = 0; i < m_nArea; i++ ) { os << "area= " << i << " :: " << m_maxEtInCenter[i] << " | "; }
@@ -1275,7 +1275,7 @@ std::ostream& DeCalorimeter::printOut( std::ostream& os ) const {
 // ============================================================================
 MsgStream& DeCalorimeter::printOut( MsgStream& os ) const {
   os << "\tDeCalorimeter index=" << std::setw( 2 ) << m_caloIndex << ", name from index='"
-     << CaloCellCode::CaloNameFromNum( m_caloIndex ) << "'"
+     << CaloCellCode::caloName( m_caloIndex ) << "'"
      << ", fullname ='" << name() << "'";
 
   os << "\t Parameters" << endmsg << "\t\tEt value for maximum ADC value at theta(0) =  " << m_maxEtInCenter << endmsg

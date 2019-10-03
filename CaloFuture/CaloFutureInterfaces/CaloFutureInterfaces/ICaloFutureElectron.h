@@ -13,15 +13,13 @@
 
 // Include files
 // from STL
-#include <string_view>
+#include <string>
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 // from LHCb
 #include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloPosition.h"
 #include "Event/State.h"
-#include "Event/Track.h"
 
 // Forward declarations
 namespace LHCb {
@@ -40,9 +38,9 @@ namespace LHCb::Calo::Interfaces {
   struct IElectron : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( IElectron, 1, 0 );
+    DeclareInterfaceID( IElectron, 2, 0 );
 
-    virtual bool set( ProtoParticle const* proto, std::string const& det = DeCalorimeterLocation::Ecal,
+    virtual bool set( ProtoParticle const& proto, std::string const& det = DeCalorimeterLocation::Ecal,
                       CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
 
     virtual State           caloState() const                                                         = 0;

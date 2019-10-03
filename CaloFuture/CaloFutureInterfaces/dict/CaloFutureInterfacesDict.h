@@ -11,20 +11,12 @@
 #ifndef DICT_CALOFUTUREINTERFACESDICT_H
 #define DICT_CALOFUTUREINTERFACESDICT_H 1
 
-#include "CaloFutureInterfaces/ICaloFuture2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFuture2MCTool.h"
-#include "CaloFutureInterfaces/ICaloFutureClusterSelector.h"
-#include "CaloFutureInterfaces/ICaloFutureClusterTool.h"
-#include "CaloFutureInterfaces/ICaloFutureCorrection.h"
 #include "CaloFutureInterfaces/ICaloFutureHypo2CaloFuture.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoEstimator.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoLikelihood.h"
-#include "CaloFutureInterfaces/ICaloFutureHypoTool.h"
 #include "CaloFutureInterfaces/ICaloFutureLikelihood.h"
 #include "CaloFutureInterfaces/ICaloFutureRelationsGetter.h"
-#include "CaloFutureInterfaces/ICaloFutureShowerOverlapTool.h"
-#include "CaloFutureInterfaces/ICaloFutureSubClusterTag.h"
-#include "CaloFutureInterfaces/ICaloFutureTrackIdEval.h"
 #include "CaloFutureInterfaces/ICaloFutureTrackMatch.h"
 #include "CaloFutureInterfaces/IFutureCounterLevel.h"
 #include "CaloFutureInterfaces/IFutureGammaPi0SeparationTool.h"

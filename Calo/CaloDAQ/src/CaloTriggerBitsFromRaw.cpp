@@ -291,7 +291,7 @@ bool CaloTriggerBitsFromRaw::getData( const LHCb::RawBank& bank ) {
         if ( 0 != id.index() ) {
           if ( 0 != isPrs ) m_data.first.push_back( id );
           if ( 0 != isSpd ) {
-            LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
+            LHCb::CaloCellID spdId( CaloCellCode::CaloIndex::SpdCalo, id.area(), id.row(), id.col() );
             m_data.second.push_back( spdId );
           }
         }

@@ -453,7 +453,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
         if ( 0 != id.index() ) {
           if ( details::DetectorName_t::Spd == m_detectorName ) {
-            LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
+            LHCb::CaloCellID spdId( CaloCellCode::CaloIndex::SpdCalo, id.area(), id.row(), id.col() );
             fillL0ADC( spdId, isSpd, sourceID );
           } else {
             fillL0ADC( id, isPrs, sourceID );

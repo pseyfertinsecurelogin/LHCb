@@ -91,118 +91,126 @@ static_assert( CaloCellCode::Outer < CaloCellCode::CaloAreaNums && CaloCellCode:
 static_assert( (unsigned int)CaloCellCode::PinArea < (unsigned int)CaloCellCode::CaloAreaNums,
                "PinArea < CaloAreaNums" );
 
-// ============================================================================
-/* get the area name from calorimeter index and number
- * @attention function make heavy use of hadcoded structure of Calorimeter!
- * @warning   different convention for Hcal
- * @param  calo (INPUT) calorimeter index
- * @param  area (INPUT) area index
- * @return name for the area
- * @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- * @date 2009-09-28
- */
-// ============================================================================
-const std::string& CaloCellCode::caloArea( const int calo, const int area ) {
-  switch ( calo ) {
-  case SpdCalo:
-  case PrsCalo:
-    switch ( area ) {
-    case 0:
-      return s_AreaName[Outer]; // Outer
-    case 1:
-      return s_AreaName[Middle]; // Middle
-    case 2:
-      return s_AreaName[Inner]; // Inner
+namespace CaloCellCode {
+  // ============================================================================
+  /* get the area name from calorimeter index and number
+   * @attention function make heavy use of hadcoded structure of Calorimeter!
+   * @warning   different convention for Hcal
+   * @param  calo (INPUT) calorimeter index
+   * @param  area (INPUT) area index
+   * @return name for the area
+   * @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   * @date 2009-09-28
+   */
+  // ============================================================================
+  const std::string& caloArea( const int calo, const int area ) {
+    switch ( calo ) {
+    case SpdCalo:
+    case PrsCalo:
+      switch ( area ) {
+      case 0:
+        return s_AreaName[Outer]; // Outer
+      case 1:
+        return s_AreaName[Middle]; // Middle
+      case 2:
+        return s_AreaName[Inner]; // Inner
+      default:
+        return s_BadName;
+      }
+    case EcalCalo:
+      switch ( area ) {
+      case 0:
+        return s_AreaName[Outer]; // Outer
+      case 1:
+        return s_AreaName[Middle]; // Middle
+      case 2:
+        return s_AreaName[Inner]; // Inner
+      case 3:
+        return s_AreaName[PinArea]; // Pin-Area
+      default:
+        return s_BadName;
+      }
+    case HcalCalo:
+      switch ( area ) {
+      case 0:
+        return s_AreaName[Outer]; // Outer
+      case 1:
+        return s_AreaName[Inner]; // Middle, return as Inner ! ATTENTION!
+      case 3:
+        return s_AreaName[PinArea]; // Pin-Area
+      default:
+        return s_BadName;
+      }
     default:
       return s_BadName;
     }
-  case EcalCalo:
-    switch ( area ) {
-    case 0:
-      return s_AreaName[Outer]; // Outer
-    case 1:
-      return s_AreaName[Middle]; // Middle
-    case 2:
-      return s_AreaName[Inner]; // Inner
-    case 3:
-      return s_AreaName[PinArea]; // Pin-Area
-    default:
-      return s_BadName;
-    }
-  case HcalCalo:
-    switch ( area ) {
-    case 0:
-      return s_AreaName[Outer]; // Outer
-    case 1:
-      return s_AreaName[Inner]; // Middle, return as Inner ! ATTENTION!
-    case 3:
-      return s_AreaName[PinArea]; // Pin-Area
-    default:
-      return s_BadName;
-    }
-  default:
-    return s_BadName;
   }
-}
-// ============================================================================
-/*  get the area index from calorimeter index and name
- *  @attention function make heavy use of hadcoded structure of Calorimeter!
- *  @warning   the different convention for Hcal
- *  @param  calo (INPUT) calorimeter index
- *  @param  area (INPUT) area name
- *  @return indx for the area
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2009-09-28
- */
-// ============================================================================
-int CaloCellCode::caloArea( const int calo, const std::string& area ) {
-  //
-  switch ( calo ) {
-  case HcalCalo:
-    switch ( _area( area ) ) {
-    case 0:
-      return Outer; // 0
-    case 1:
-      return -1; // ATTENTION!!!
-    case 2:
-      return Middle; // 1        // ATTENTION!!!
-    case 3:
-      return PinArea; // 3
+  // ============================================================================
+  /*  get the area index from calorimeter index and name
+   *  @attention function make heavy use of hadcoded structure of Calorimeter!
+   *  @warning   the different convention for Hcal
+   *  @param  calo (INPUT) calorimeter index
+   *  @param  area (INPUT) area name
+   *  @return indx for the area
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2009-09-28
+   */
+  // ============================================================================
+  int caloArea( const int calo, const std::string& area ) {
+    //
+    switch ( calo ) {
+    case HcalCalo:
+      switch ( _area( area ) ) {
+      case 0:
+        return Outer; // 0
+      case 1:
+        return -1; // ATTENTION!!!
+      case 2:
+        return Middle; // 1        // ATTENTION!!!
+      case 3:
+        return PinArea; // 3
+      default:
+        return -1;
+      }
+    case EcalCalo:
+      return _area( area );
+    case SpdCalo:
+    case PrsCalo:
+      switch ( _area( area ) ) {
+      case 0:
+        return Outer; // 0
+      case 1:
+        return Middle; // 1
+      case 2:
+        return Inner; // 2
+      default:
+        return -1;
+      }
     default:
       return -1;
     }
-  case EcalCalo:
-    return _area( area );
-  case SpdCalo:
-  case PrsCalo:
-    switch ( _area( area ) ) {
-    case 0:
-      return Outer; // 0
-    case 1:
-      return Middle; // 1
-    case 2:
-      return Inner; // 2
-    default:
-      return -1;
-    }
-  default:
-    return -1;
   }
-}
-// ============================================================================
-/*  Is the given area is Pin-diod area ?
- *  @attention It must be coherent with CaloCellCode::caloArea
- *  @see CaloCellCode::caloArea
- *  @param calo (INPUT) calorimeetr index
- *  @param area (INPUT) calorimeter index
- *  @reutrn true if the area is Pin-diod area
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2009-09-28
- */
-// ============================================================================
-bool CaloCellCode::isPinArea( const int calo, const int area ) {
-  return (int)PinArea == area && ( (int)EcalCalo == calo || (int)HcalCalo == calo );
-}
+  // ============================================================================
+  /*  Is the given area is Pin-diod area ?
+   *  @attention It must be coherent with CaloCellCode::caloArea
+   *  @see CaloCellCode::caloArea
+   *  @param calo (INPUT) calorimeetr index
+   *  @param area (INPUT) calorimeter index
+   *  @reutrn true if the area is Pin-diod area
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2009-09-28
+   */
+  // ============================================================================
+  bool isPinArea( CaloIndex calo, const int area ) {
+    return (int)PinArea == area && ( CaloIndex::EcalCalo == calo || CaloIndex::HcalCalo == calo );
+  }
+  std::string toString( const CaloIndex& i ) { return caloName( i ); }
+  StatusCode  parse( CaloIndex& i, const std::string& s ) {
+    i = caloNum( s );
+    return i == static_cast<CaloIndex>( -1 ) ? StatusCode::FAILURE : StatusCode::SUCCESS;
+  }
+
+} // namespace CaloCellCode
 // ============================================================================
 // The END
 // ============================================================================

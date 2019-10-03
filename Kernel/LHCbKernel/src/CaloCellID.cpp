@@ -31,14 +31,6 @@
  *  @date 2009-09-29
  */
 // ============================================================================
-// Set Calo form string
-// ============================================================================
-LHCb::CaloCellID& LHCb::CaloCellID::setCalo( const std::string& CaloName ) {
-  const int calo = CaloCellCode::caloNum( CaloName );
-  // BOOST_ASSERT ( 0 <= calo && "CaloCellID::setCalo Invalid Calorimeter Index" ) ;
-  return setCalo( calo );
-}
-// ============================================================================
 // Set Area from string
 // ============================================================================
 LHCb::CaloCellID& LHCb::CaloCellID::setArea( unsigned int Calo, const std::string& Area ) {

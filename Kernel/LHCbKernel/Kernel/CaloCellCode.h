@@ -18,6 +18,7 @@
 // ============================================================================
 #include <algorithm>
 #include <array>
+#include <iomanip>
 #include <set>
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -137,20 +139,18 @@ namespace CaloCellCode {
     /// total number of NAMED Calorimeters
     CaloNums = 4 // total number of NAMED Calorimeters
   };
-  // ==========================================================================
-  /** @typedef CALONAMES
-   *  the actual type for the container of Calorimeetr names
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  typedef std::array<std::string, CaloNums> CALONAMES;
+  std::string          toString( const CaloIndex& );
+  StatusCode           parse( CaloIndex&, const std::string& );
+  inline std::ostream& toStream( const CaloIndex& ci, std::ostream& os ) {
+    return os << std::quoted( toString( ci ), '\'' );
+  }
   // ==========================================================================
   /** @var CaloNames
    *  The actual list of Calorimter names
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline const CALONAMES CaloNames = {{"Spd", "Prs", "Ecal", "Hcal"}};
+  inline const std::array<std::string, CaloNums> CaloNames = {{"Spd", "Prs", "Ecal", "Hcal"}};
   // ==========================================================================
   /// the calorimeter names:
   inline const std::string_view SpdName  = {CaloNames[SpdCalo]};  //  Spd
@@ -164,17 +164,9 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  inline const std::string& caloName( const int num ) {
+  inline const std::string& caloName( CaloIndex num ) {
     return num < 0 ? s_BadName : num < CaloNums ? CaloNames[num] : s_BadName;
   }
-  // ==========================================================================
-  /** simple function to get the calorimeter name from number
-   *  @param num (INPUT) calorimeter index
-   *  @return calorimeter name
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  inline const std::string& CaloNameFromNum( const int num ) { return caloName( num ); }
   // ==========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!
    *  @param name (INPUT) the calorimeter name (can be long string)
@@ -231,7 +223,7 @@ namespace CaloCellCode {
    *  @date 2009-09-28
    */
   GAUDI_API
-  bool isPinArea( const int calo, const int area );
+  bool isPinArea( CaloIndex calo, const int area );
   // ==========================================================================
   /** @enum CaloArea
    *  The actual enumeration for the calorimeter areas

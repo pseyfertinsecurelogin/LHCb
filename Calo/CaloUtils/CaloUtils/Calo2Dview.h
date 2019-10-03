@@ -47,7 +47,7 @@ public:
   StatusCode initialize() override; ///< Algorithm initialization
 
   void bookCalo2D( const HistoID& unit, const std::string title, std::string name, int area = -1 ) const;
-  void bookCalo2D( const HistoID& unit, const std::string title, unsigned int calo, int area = -1 ) const;
+  void bookCalo2D( const HistoID& unit, const std::string title, CaloCellCode::CaloIndex calo, int area = -1 ) const;
   void fillCalo2D( const HistoID& unit, LHCb::MCCaloHit mchit, const std::string title = "" ) const;
   void fillCalo2D( const HistoID& unit, LHCb::MCCaloDigit mcdigit, const std::string title = "" ) const;
   void fillCalo2D( const HistoID& unit, LHCb::CaloDigit digit, const std::string title = "" ) const;
@@ -109,7 +109,7 @@ protected:
 private:
   std::string getTitle( std::string title, int calo, int area ) const;
   // Container of 4 subdectector params
-  std::array<CaloParams, 4>               m_caloParams;
-  mutable std::map<HistoID, unsigned int> m_caloViewMap;
+  std::array<CaloParams, 4>                          m_caloParams;
+  mutable std::map<HistoID, CaloCellCode::CaloIndex> m_caloViewMap;
 };
 #endif // CALODAQ_CALO2DVIEW_H

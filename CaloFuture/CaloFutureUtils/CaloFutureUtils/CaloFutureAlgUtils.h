@@ -12,7 +12,6 @@
 #ifndef CALOFUTUREUTILS_CALOFUTUREALGUTILS_H
 #define CALOFUTUREUTILS_CALOFUTUREALGUTILS_H 1
 #include "Event/CaloHypo.h"
-#include "GaudiKernel/Property.h"
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -21,6 +20,7 @@
 
 namespace LHCb {
   class CaloCluster;
+  class CaloHypo;
   namespace Calo::Utilities {
 
     namespace details {
@@ -59,7 +59,10 @@ namespace LHCb {
     }
 
     // Default location for CaloFutureObject as function of detector
-    std::string              DeCaloFutureLocation( std::string_view name );
+    std::string        DeCaloFutureLocation( std::string_view name );
+    inline std::string DeCaloFutureLocation( CaloCellCode::CaloIndex det ) {
+      return DeCaloFutureLocation( caloName( det ) );
+    }
     std::string              CaloFutureRawBankReadoutStatusLocation( std::string_view name );
     std::string              CaloFutureAdcLocation( std::string_view name );
     std::string              CaloFutureUnfilteredDigitLocation( std::string_view name );

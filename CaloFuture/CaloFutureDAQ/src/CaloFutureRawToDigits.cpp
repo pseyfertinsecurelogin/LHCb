@@ -99,7 +99,6 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   // ------------------------------------
   // --- Get RawBank AND ReadoutStatus
   // ------------------------------------
-
   auto indx = calo.index();
   assert( indx == CaloCellCode::CaloIndex::EcalCalo || indx == CaloCellCode::CaloIndex::HcalCalo );
 
@@ -165,9 +164,7 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
   for ( const auto& bank : banks ) {
     int sourceID = bank->sourceID();
 
-    auto it   = std::find( readSources.begin(), readSources.end(), sourceID );
-    bool read = ( it != readSources.end() );
-    if ( read ) {
+    if ( std::find( readSources.begin(), readSources.end(), sourceID ) != readSources.end() ) {
       warning() << "Another bank with same sourceID " << sourceID << " has already been read" << endmsg;
       status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Status::NonUnique );
       continue;
@@ -180,9 +177,8 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
         decode_<Decode::Cell>( *bank, status, calo ); // false is to get data, not pinData
     dataVec.insert( dataVec.end(), dataVecDec.begin(), dataVecDec.end() );
 
-    if ( dataVecDec.empty() )
-      if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Error when decoding bank " << sourceID << " -> incomplete data - May be corrupted" << endmsg;
+    if ( dataVecDec.empty() && msgLevel( MSG::DEBUG ) )
+      debug() << "Error when decoding bank " << sourceID << " -> incomplete data - May be corrupted" << endmsg;
   }
 
   // ------------------------------------
@@ -239,10 +235,9 @@ std::tuple<LHCb::CaloAdcs, LHCb::CaloDigits, LHCb::RawBankReadoutStatus> CaloFut
       status.addStatus( tell1, LHCb::RawBankReadoutStatus::Status::DuplicateEntry );
     }
 
-    if ( NeighbourFlag == caloFlags[index] )
-      verbose() << id << " added as Neighbour." << endmsg;
-    else
-      verbose() << id << " added as Seed.    " << endmsg;
+    if ( msgLevel( MSG::VERBOSE ) ) {
+      verbose() << id << " added as " << ( caloFlags[index] == NeighbourFlag ? "Neighbour." : "Seed." ) << endmsg;
+    }
   }
 
   if ( msgLevel( MSG::DEBUG ) ) {
