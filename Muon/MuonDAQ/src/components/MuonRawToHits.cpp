@@ -235,7 +235,8 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
         double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
         m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
 
-        commonHits.emplace_back( std::move( pad ), x, dx, y, dy, z, dz, 0, one.tdc, one.tdc - two.tdc );
+        commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc, one.tdc - two.tdc,
+                                 0 );
         used[i] = used[j] = true;
       }
       ++j;

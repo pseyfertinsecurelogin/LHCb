@@ -8,14 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef COMMONMUONSTATION_H_
-#define COMMONMUONSTATION_H_
-
-#include <vector>
-
-#include "GaudiKernel/Range.h"
+#pragma once
 #include "MuonDAQ/CommonMuonHit.h"
 #include "MuonDet/DeMuonDetector.h"
+
+#include <array>
+#include <vector>
 
 /** @class CommonMuonStation CommonMuonStation.h
  *  Class to hold regions of hits and provide some geometry information
@@ -67,4 +65,3 @@ private:
   double       m_ymax    = 0.;
   unsigned int m_station = 0;
 };
-#endif // COMMONMUONSTATION_H_

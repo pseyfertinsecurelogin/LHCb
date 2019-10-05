@@ -14,6 +14,7 @@ gaudi_subdir(MuonDAQ)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/MuonDet
+                         Kernel/LHCbKernel
                          Event/DAQEvent
                          Event/DigiEvent
                          Event/RecEvent
@@ -25,10 +26,15 @@ find_package(Boost)
 find_package(ROOT)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
+gaudi_add_library(MuonDAQLib
+                  src/*.cpp
+                  PUBLIC_HEADERS Event MuonDAQ
+                  LINK_LIBRARIES MuonDetLib LHCbKernel)
+
 gaudi_add_module(MuonDAQ
-                 src/*.cpp
+                 src/components/*.cpp
                  INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
-                 LINK_LIBRARIES MuonDetLib DAQEventLib DAQKernelLib RecEvent GaudiAlgLib MuonKernelLib)
+                 LINK_LIBRARIES MuonDetLib DAQEventLib DAQKernelLib RecEvent GaudiAlgLib MuonKernelLib MuonDAQLib)
 
 gaudi_add_dictionary(MuonDAQ
                      dict/MuonDAQDict.h
@@ -36,6 +42,3 @@ gaudi_add_dictionary(MuonDAQ
                      INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
                      LINK_LIBRARIES MuonDetLib DAQEventLib RecEvent GaudiAlgLib MuonKernelLib
                      OPTIONS "-U__MINGW32__ -DBOOST_DISABLE_ASSERTS")
-
-gaudi_install_headers(Event MuonDAQ)
-
