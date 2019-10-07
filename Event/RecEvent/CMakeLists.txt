@@ -19,7 +19,8 @@ gaudi_depends_on_subdirs(Event/DigiEvent
                          GaudiObjDesc
                          Kernel/LHCbMath
                          Kernel/PartProp
-                         Kernel/SOAContainer)
+                         Kernel/SOAContainer
+                         Kernel/SOAExtensions)
 
 include(GaudiObjDesc)
 
@@ -32,7 +33,7 @@ gaudi_add_unit_test(test_CaloHypo_v2 tests/src/test_CaloHypo_v2.cpp
 gaudi_add_library(RecEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer
+                  INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer Kernel/SOAExtensions
                   LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib)
 
 god_build_dictionary(xml/*.xml
@@ -40,5 +41,7 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer
                      LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
 
-
-
+gaudi_add_unit_test(TestMuonZipInfrastructure
+                    tests/src/TestMuonZipInfrastructure.cpp
+                    LINK_LIBRARIES LHCbMathLib
+                    TYPE Boost)

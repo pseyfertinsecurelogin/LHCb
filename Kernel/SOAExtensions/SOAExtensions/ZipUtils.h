@@ -31,6 +31,10 @@
 #endif
 #include "SOAContainer/SOAUtils.h"
 #include "ZipTraits.h" // IWYU pragma: keep
+
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+
 #include <atomic>
 #include <cstdint>
 #include <type_traits>
@@ -119,7 +123,8 @@ namespace Zipping {
   /**
    * @brief Helper function for runtime validation of zip behaviour
    *
-   * Validates if all arguments are from the same family of zip'able containers. Has the same behaviour in optimized and
+   * Validates if all arguments are from the same family of zip'able containers. Has the same behaviour in optimized
+   and
    * debug build, but the arguments might be constructed such that the optimized build will always true.
    *
    * @tparam FIRST Zipping::ZipContainer<...> type
@@ -129,10 +134,19 @@ namespace Zipping {
    *
    * @return true if all arguments belong to the same container family
    */
-  template <typename FIRST, typename... OTHERS,
-            typename = std::enable_if_t<std::conjunction_v<has_semantic_zip<FIRST>, has_semantic_zip<OTHERS>...>>>
+  template <typename FIRST, typename... OTHERS>
   bool areSemanticallyCompatible( FIRST& first, OTHERS&... others ) {
     return ( ... && ( others.zipIdentifier() == first.zipIdentifier() ) );
+  }
+
+  /** Helper to check that the given set of containers are all the same size.
+   */
+  template <typename FIRST, typename... OTHERS>
+  bool areSameSize( FIRST const& first, OTHERS const&... others ) {
+    // Check that converting to std::size_t won't cause problems
+    if ( UNLIKELY( ( first.size() < 0 ) || ( ... || ( others.size() < 0 ) ) ) ) return false;
+    // Check that all containers have the same size as the first one.
+    return ( ... && ( std::size_t( others.size() ) == std::size_t( first.size() ) ) );
   }
 
 } // namespace Zipping
