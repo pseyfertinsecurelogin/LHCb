@@ -14,6 +14,20 @@
 #include "LHCbMath/SIMDWrapper.h"
 #include "SOAExtensions/ZipUtils.h"
 
+namespace LHCb::Pr {
+  /** Helper for getting from container type -> proxy type. When proxies are
+   *  defined, specialisations of this template should also be added so that
+   *  they can be found.
+   */
+  template <typename>
+  struct Proxy {
+    /** This is only defined in the unspecialised Proxy struct, it is used to
+     *  detect whether or not LHCb::Pr::Proxy<T> is explicitly defined or not.
+     */
+    static constexpr bool unspecialised = true;
+  };
+} // namespace LHCb::Pr
+
 namespace LHCb::Pr::detail {
   /** Helper to determine if the given type has a reserve( std::size_t ) method
    */
@@ -41,13 +55,28 @@ namespace LHCb::Pr::detail {
   inline constexpr bool has_zipIdentifier_v =
       std::is_same_v<Gaudi::cpp17::detected_or_t<void, has_zipIdentifier_, T>, Zipping::ZipFamilyNumber>;
 
-  /** Helper that checks that the given type has .size() and .zipIdentifier()
-   *  methods, which is the basic criterion for make_zip() and the
-   *  LHCb::Pr::Zip constructor to be considered.
+  /** Helper to determine if the given type has an LHCb::Pr::Proxy
+   *  specialisation.
    */
   template <typename T>
-  inline constexpr bool is_zippable_v = has_size_v<T>&& has_zipIdentifier_v<T>;
+  using proxy_is_unspecialised_ = decltype( LHCb::Pr::Proxy<T>::unspecialised );
 
+  template <typename T>
+  inline constexpr bool has_proxy_specialisation_v = !Gaudi::cpp17::is_detected_v<proxy_is_unspecialised_, T>;
+} // namespace LHCb::Pr::detail
+
+namespace LHCb::Pr {
+  /** Helper that checks that the given type has .size() and .zipIdentifier()
+   *  methods, and a specialisation of LHCb:Pr::Proxy<>. These are the basic
+   *  criteria for make_zip() and the LHCb::Pr::Zip constructor to be
+   *  considered.
+   */
+  template <typename T>
+  inline constexpr bool       is_zippable_v =
+      detail::has_size_v<T>&& detail::has_zipIdentifier_v<T>&& detail::has_proxy_specialisation_v<T>;
+} // namespace LHCb::Pr
+
+namespace LHCb::Pr::detail {
   // This is a type that we can return if we conditionally copy from all
   // elements of the zip into a single new container representing the union
   // of all of these elements
@@ -113,13 +142,6 @@ namespace LHCb::Pr::detail {
 } // namespace LHCb::Pr::detail
 
 namespace LHCb::Pr {
-  /** Helper for getting from container type -> proxy type. When proxies are
-   *  defined, specialisations of this template should also be added so that
-   *  they can be found.
-   */
-  template <typename>
-  struct Proxy {};
-
   /** This is the type returned by LHCb::Pr::make_zip */
   template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
   class Zip {
@@ -221,7 +243,7 @@ namespace LHCb::Pr {
     using value_type = proxy_type<default_simd_t, default_unwrap>;
 
     /** Construct an iterable zip of the given containers. */
-    template <typename std::enable_if_t<( detail::is_zippable_v<ContainerTypes> && ... ), int> = 0>
+    template <typename std::enable_if_t<( is_zippable_v<ContainerTypes> && ... ), int> = 0>
     Zip( ContainerTypes const&... containers ) : m_containers{&containers...} {
       // We assume that size() and zipIdentifier() can just be taken from the
       // 0th container, now's the time to check that assumption...!
@@ -326,13 +348,13 @@ namespace LHCb::Pr {
     template <typename T>
     struct merged_object_helper {
       static auto           decompose( T const& x ) { return std::tie( x ); }
-      static constexpr bool is_zippable_v = ::LHCb::Pr::detail::is_zippable_v<T>;
+      static constexpr bool is_zippable_v = ::LHCb::Pr::is_zippable_v<T>;
     };
 
     template <typename... T>
     struct merged_object_helper<merged_t<T...>> {
       static auto           decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
-      static constexpr bool is_zippable_v = ( ::LHCb::Pr::detail::is_zippable_v<T> && ... );
+      static constexpr bool is_zippable_v = ( ::LHCb::Pr::is_zippable_v<T> && ... );
     };
 
     template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T,
