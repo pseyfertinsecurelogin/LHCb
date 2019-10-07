@@ -16,6 +16,9 @@
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
 #include <iostream>
+
+#include "SOAExtensions/ZipUtils.h"
+
 /**
  * Track data for exchanges between FT and Fit
  *
@@ -28,12 +31,16 @@ namespace LHCb::Pr::Forward {
     constexpr static int max_hits   = 40;
 
   public:
-    Tracks( Velo::Tracks const* velo_ancestors, Upstream::Tracks const* upstream_ancestors ) {
-      const size_t size    = max_tracks * ( max_hits + 9 );
-      m_data               = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-      m_velo_ancestors     = velo_ancestors;
-      m_upstream_ancestors = upstream_ancestors;
+    Tracks( Velo::Tracks const* velo_ancestors, Upstream::Tracks const* upstream_ancestors,
+            Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
+        : m_velo_ancestors{velo_ancestors}, m_upstream_ancestors{upstream_ancestors}, m_zipIdentifier{zipIdentifier} {
+      const size_t size = max_tracks * ( max_hits + 9 );
+      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
+
+    // Special constructor for zipping machinery
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& tracks )
+        : Tracks( tracks.getVeloAncestors(), tracks.getUpstreamAncestors(), zipIdentifier ) {}
 
     Tracks( const Tracks& ) = delete;
 
@@ -41,7 +48,8 @@ namespace LHCb::Pr::Forward {
         : m_data{std::exchange( other.m_data, nullptr )}
         , m_size{other.m_size}
         , m_velo_ancestors{other.m_velo_ancestors}
-        , m_upstream_ancestors{other.m_upstream_ancestors} {}
+        , m_upstream_ancestors{other.m_upstream_ancestors}
+        , m_zipIdentifier{other.m_zipIdentifier} {}
 
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
@@ -49,6 +57,10 @@ namespace LHCb::Pr::Forward {
     // Return pointer to ancestor container
     Velo::Tracks const*     getVeloAncestors() const { return m_velo_ancestors; };
     Upstream::Tracks const* getUpstreamAncestors() const { return m_upstream_ancestors; };
+    /** Identifier showing which family of containers these columns can be zipped
+     *  into.
+     */
+    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     // Index in TracksVP container of the track's ancestor
     SOA_ACCESSOR( trackVP, &( m_data->i ) )
@@ -75,7 +87,7 @@ namespace LHCb::Pr::Forward {
     template <typename T>
     inline T p( int t ) const {
       T qop = stateQoP<T>( t );
-      return 1 / qop;
+      return abs( 1 / qop );
     }
 
     template <typename simd, typename maskT>
@@ -108,8 +120,9 @@ namespace LHCb::Pr::Forward {
       int   i;
     };
     alignas( 64 ) data_t* m_data;
-    int                     m_size               = 0;
-    Velo::Tracks const*     m_velo_ancestors     = nullptr;
-    Upstream::Tracks const* m_upstream_ancestors = nullptr;
+    int                      m_size               = 0;
+    Velo::Tracks const*      m_velo_ancestors     = nullptr;
+    Upstream::Tracks const*  m_upstream_ancestors = nullptr;
+    Zipping::ZipFamilyNumber m_zipIdentifier;
   };
 } // namespace LHCb::Pr::Forward

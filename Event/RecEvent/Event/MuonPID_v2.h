@@ -12,7 +12,6 @@
 #define RecEvent_MuonPID_v2_H 1
 
 // Include files
-#include "Event/Track.h"
 #include "SOAContainer/SOAField.h"
 #include "SOAContainer/SOASkin.h"
 #include <ostream>
@@ -177,15 +176,15 @@ namespace LHCb::Event {
         IsMuonTightMask    = 0x10L
       };
 
-      double       m_MuonLLMu;
-      double       m_MuonLLBg;
-      int          m_NShared;
-      unsigned int m_Status;
-      float        m_chi2Corr;
-      float        m_muonMVA1;
-      float        m_muonMVA2;
-      float        m_muonMVA3;
-      float        m_muonMVA4;
+      double       m_MuonLLMu = -20.0;
+      double       m_MuonLLBg = 0.0;
+      int          m_NShared  = 0;
+      unsigned int m_Status   = 0;
+      float        m_chi2Corr = 0.f;
+      float        m_muonMVA1 = -999.f;
+      float        m_muonMVA2 = -999.f;
+      float        m_muonMVA3 = -999.f;
+      float        m_muonMVA4 = -999.f;
       //      SmartRef<LHCb::Track> m_IDTrack;
       //      SmartRef<LHCb::Track> m_muonTrack;
 

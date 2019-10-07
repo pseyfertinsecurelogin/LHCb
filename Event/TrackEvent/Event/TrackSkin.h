@@ -19,6 +19,7 @@
 namespace LHCb::Event::v2 {
   // clang-format off
   SOAFIELD( TrackField, Track, SOAFIELD_ACCESSORS( track )
+            auto p() const { return track().p(); }
             auto pt() const { return track().pt(); }
             auto pseudoRapidity() const { return track().pseudoRapidity(); }
             auto chi2PerDoF() const { return track().chi2PerDoF(); }
@@ -28,6 +29,9 @@ namespace LHCb::Event::v2 {
             }
             decltype( auto ) closestToBeamState() const {
               return track().closestToBeamState();
+            }
+            decltype( auto ) endScifiState() const {
+              return track().endScifiState();
             }
             decltype( auto ) closestToBeamStatePos() const {
               return closestToBeamState().position();

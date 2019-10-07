@@ -489,6 +489,13 @@ namespace LHCb::Event {
         return *state;
       }
 
+      /// Retrieve the state in the scifi, throwing an exception if it doesn't exist
+      auto const& endScifiState() const {
+        auto state = stateAt( LHCb::State::AtT );
+        if ( !state ) { throw GaudiException{"No ClosestToBeam state", "Track_v2.h", StatusCode::FAILURE}; }
+        return *state;
+      }
+
       Track& addToAncestors( const Track& ancestor ) {
         m_ancestors.push_back( &ancestor );
         return *this;

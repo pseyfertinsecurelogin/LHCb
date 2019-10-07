@@ -92,6 +92,46 @@ namespace Zipping {
     return retval;
   }
 
+  /** @brief Create a new container that can be zipped to an input container with a per-element operation
+   *
+   * The operation is performed on every element of the input container and the return of the operation
+   * is added to the output container with emplace_back.
+   * The operation will usually be a lambda, but can be any valid input for std::invoke.
+   * The operation is applied to all inputs.
+   * Only scalar operations are supported at the moment.
+   *
+   * @code
+   * LHCb::Pr::Forward::Tracks tracks{...};
+   * auto ismuon = [](auto proxy_track){ return muonid; };
+   * auto muonids = LHCb::Pr::transform<LHCb::Pr::Muon::PIDs>( tracks, ismuon );
+   * @endcode
+   *
+   * @tparam Output     output container
+   * @tparam Input      underlying storage template (auto deduced)
+   * @tparam Operation  type of the operation (auto deduced)
+   * @param input       input container
+   * @param operation   the per-element operation for the transformation
+   *
+   * @return a container that can be zipped to the input container
+   */
+  template <typename Output, typename Input, typename Operation>
+  Output transform( Input const& input, Operation&& operation ) {
+    Output output( input.zipIdentifier() );
+    output.reserve( input.size() );
+
+    for ( auto const in : input ) { output.emplace_back( std::invoke( operation, in ) ); }
+
+    // Check consistency
+    if ( !Zipping::areSemanticallyCompatible( input, output ) ) {
+      throw GaudiException{"Asked to zip containers that are not semantically compatible", "LHCb::Pr::Zip",
+                           StatusCode::FAILURE};
+    }
+    if ( !Zipping::areSameSize( input, output ) ) {
+      throw GaudiException{"Asked to zip containers that are not the same size", "LHCb::Pr::Zip", StatusCode::FAILURE};
+    }
+    return output;
+  }
+
   namespace details {
     template <typename IndexSize, typename INPUT, typename OUTPUT, typename Operation, typename SELECTION>
     auto transform( const INPUT& input, Operation&& operation, const SELECTION& sel, OUTPUT& retval ) {
