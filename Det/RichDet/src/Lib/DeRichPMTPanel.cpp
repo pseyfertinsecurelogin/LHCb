@@ -313,8 +313,8 @@ StatusCode DeRichPMTPanel::geometryUpdate() {
   //  const ROOT::Math::Translation3D localTranslation =
   //  ROOT::Math::Translation3D(aPon.x(),sign*aOffset,aPon.z());
   const ROOT::Math::Translation3D localTranslation =
-      ( rich() == Rich::Rich1 ? ROOT::Math::Translation3D( aPon.x(), sign * localOffset(), detectPlaneZcoord() )
-                              : ROOT::Math::Translation3D( sign * localOffset(), aPon.y(), detectPlaneZcoord() ) );
+      ( rich() == Rich::Rich1 ? ROOT::Math::Translation3D( aPon.x(), sign * localOffset(), -detectPlaneZcoord() )
+                              : ROOT::Math::Translation3D( sign * localOffset(), aPon.y(), -detectPlaneZcoord() ) );
 
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
   m_PDPanelToGlobalTransform = m_globalToPDPanelTransform.Inverse();
