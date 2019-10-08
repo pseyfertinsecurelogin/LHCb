@@ -45,20 +45,21 @@ namespace LHCb::Pr {
  *  REGISTER_PROXY( ContainerType, Some::Appropriate::Namespace::Proxy );
  */
 #define DECLARE_PROXY( Proxy )                                                                                         \
-  template <typename LHCb__Pr__MergedProxy, typename LHCb__Pr__Proxy__dType, bool LHCb__Pr__Proxy__unwrap__tparam>     \
+  template <typename LHCb__Pr__MergedProxy, SIMDWrapper::InstructionSet LHCb__Pr__Proxy__simd,                         \
+            bool LHCb__Pr__Proxy__unwrap__tparam>                                                                      \
   struct Proxy
 
 /** Define methods that are common to all proxy types.
  */
 #define PROXY_METHODS( dType, unwrap, Tracks, m_tracks )                                                               \
-  using dType                  = LHCb__Pr__Proxy__dType;                                                               \
+  using dType                  = typename SIMDWrapper::type_map<LHCb__Pr__Proxy__simd>::type;                          \
   static constexpr bool unwrap = LHCb__Pr__Proxy__unwrap__tparam;                                                      \
   Tracks const*         m_tracks{nullptr};                                                                             \
   Proxy( Tracks const* tracks ) : m_tracks{tracks} {}                                                                  \
   auto        offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                   \
   auto        size() const { return m_tracks->size(); }                                                                \
-  static auto mask_true() { return LHCb__Pr__Proxy__dType::mask_true(); }                                              \
-  static auto mask_false() { return LHCb__Pr__Proxy__dType::mask_false(); }
+  static auto mask_true() { return dType::mask_true(); }                                                               \
+  static auto mask_false() { return dType::mask_false(); }
 
 /** Register the given proxy type as being the one needed to iterate over the
  *  given key type. This must be called at global scope.
@@ -66,8 +67,8 @@ namespace LHCb::Pr {
 #define REGISTER_PROXY( KeyType, ProxyType )                                                                           \
   template <>                                                                                                          \
   struct LHCb::Pr::Proxy<KeyType> {                                                                                    \
-    template <typename MergedProxy, typename dType, bool unwrap>                                                       \
-    using type = ProxyType<MergedProxy, dType, unwrap>;                                                                \
+    template <typename MergedProxy, SIMDWrapper::InstructionSet simd, bool unwrap>                                     \
+    using type = ProxyType<MergedProxy, simd, unwrap>;                                                                 \
   };                                                                                                                   \
   static_assert( LHCb::Pr::is_zippable_v<KeyType>, "REGISTER_PROXY used with a non-zippable key type." )
 
@@ -224,39 +225,41 @@ namespace LHCb::Pr {
     // the offset (which is by construction valid into containers A and B) is
     // stored in the derived class. ProxyA and ProxyB access the offset using
     // CRTP.
-    template <typename dType, bool unwrap>
-    struct proxy_type : public Proxy<ContainerTypes>::template type<proxy_type<dType, unwrap>, dType, unwrap>... {
+    template <SIMDWrapper::InstructionSet simd, bool unwrap>
+    struct proxy_type : public Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap>, simd, unwrap>... {
       // Get the type of the first proxy type we inherit from, this lets us
       // query the size of the underlying containers via that proxy's pointer
       // to the underlying container. By construction all of the underlying
       // containers are the same length, this should be checked in the
       // constructor.
       using first_container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
-      using first_proxy_t = typename Proxy<first_container_t>::template type<proxy_type<dType, unwrap>, dType, unwrap>;
+      using first_proxy_t = typename Proxy<first_container_t>::template type<proxy_type<simd, unwrap>, simd, unwrap>;
+      using simd_t        = typename SIMDWrapper::type_map<simd>::type;
       static constexpr bool is_proxy{true};
       int                   m_offset{0};
-      auto                  width() const { return dType::size; }
+      auto                  width() const { return simd_t::size; }
       auto                  offset() const { return m_offset; }
       auto                  loop_mask() const {
         if constexpr ( unwrap ) {
           return true;
         } else {
-          return dType::loop_mask( m_offset, first_proxy_t::size() );
+          return simd_t::loop_mask( m_offset, first_proxy_t::size() );
         }
       }
 
       proxy_type( ContainerTypes const*... containers, int offset )
-          : Proxy<ContainerTypes>::template type<proxy_type<dType, unwrap>, dType, unwrap>( containers )...
+          : Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap>, simd, unwrap>( containers )...
           , m_offset{offset} {}
     };
 
-    template <typename dType, bool unwrap>
+    template <SIMDWrapper::InstructionSet simd, bool unwrap>
     struct Iterator {
-      using value_type        = proxy_type<dType, unwrap>;
+      using value_type        = proxy_type<simd, unwrap>;
       using pointer           = value_type const*;
       using reference         = value_type const&;
       using difference_type   = int;
       using iterator_category = std::random_access_iterator_tag;
+      using simd_t            = typename SIMDWrapper::type_map<simd>::type;
       container_ptr_tuple m_containers;
       int                 m_offset{0};
       Iterator( container_ptr_tuple containers, int offset ) : m_containers{containers}, m_offset{offset} {}
@@ -264,15 +267,15 @@ namespace LHCb::Pr {
         return std::make_from_tuple<value_type>( std::tuple_cat( m_containers, std::tuple{m_offset} ) );
       }
       Iterator operator++() {
-        m_offset += dType::size;
+        m_offset += simd_t::size;
         return *this;
       }
       Iterator operator--() {
-        m_offset -= dType::size;
+        m_offset -= simd_t::size;
         return *this;
       }
       Iterator& operator+=( difference_type n ) {
-        m_offset += n * dType::size;
+        m_offset += n * simd_t::size;
         return *this;
       }
       friend bool operator!=( Iterator const& lhs, Iterator const& rhs ) {
@@ -283,7 +286,7 @@ namespace LHCb::Pr {
       }
     };
 
-    using value_type = proxy_type<default_simd_t, default_unwrap>;
+    using value_type = proxy_type<default_simd, default_unwrap>;
 
     /** Construct an iterable zip of the given containers. */
     template <typename std::enable_if_t<( is_zippable_v<ContainerTypes> && ... ), int> = 0>
@@ -319,8 +322,8 @@ namespace LHCb::Pr {
      *  after the lifetime of the iterable zip itself (Zip) has
      *  ended.
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
-    Iterator<dType, unwrap> begin() const {
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
+    Iterator<simd, unwrap> begin() const {
       return {m_containers, 0};
     }
 
@@ -328,12 +331,13 @@ namespace LHCb::Pr {
      *  As with begin(), the iterator only refers to the underlying containers
      *  and may be used after the lifetime of the iterable zip object has ended
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
-    Iterator<dType, unwrap> end() const {
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
+    Iterator<simd, unwrap> end() const {
+      using simd_t = typename SIMDWrapper::type_map<simd>::type;
       // m_offset is incremented by dType::size each time, so repeatedly
       // incrementing begin() generally misses {m_tracks, m_tracks->size()}
-      int num_chunks = ( size() + dType::size - 1 ) / dType::size;
-      int max_offset = num_chunks * dType::size;
+      int num_chunks = ( size() + simd_t::size - 1 ) / simd_t::size;
+      int max_offset = num_chunks * simd_t::size;
       return {m_containers, max_offset};
     }
 
@@ -342,9 +346,9 @@ namespace LHCb::Pr {
      *  'dType' then the proxy returned here will also yield vector outputs
      *  starting from the given offset.
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
     auto operator[]( int offset ) const {
-      return std::make_from_tuple<proxy_type<dType, unwrap>>( std::tuple_cat( m_containers, std::tuple{offset} ) );
+      return std::make_from_tuple<proxy_type<simd, unwrap>>( std::tuple_cat( m_containers, std::tuple{offset} ) );
     }
 
     /** Get the size of the underlying container
@@ -361,24 +365,25 @@ namespace LHCb::Pr {
 
     /** Make a new structure by conditionally copying the underlying structures
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap, typename F>
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap, typename F>
     auto filter( F filt ) const {
+      using simd_t = typename SIMDWrapper::type_map<simd>::type;
       detail::merged_t out{m_containers};
       out.reserve( this->size() );
-      for ( auto iter = begin<dType, unwrap>(); iter != end<dType, unwrap>(); ++iter ) {
+      for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
         auto const& chunk     = *iter;
         auto        loop_mask = chunk.loop_mask();
         auto        filt_mask = std::invoke( filt, chunk );
-        out.template copy_back<dType>( m_containers, chunk.offset(), loop_mask && filt_mask );
+        out.template copy_back<simd_t>( m_containers, chunk.offset(), loop_mask && filt_mask );
       }
       return out;
     }
 
     /** Return a copy of ourself that has a different default vector backend.
      */
-    template <SIMDWrapper::InstructionSet dType>
+    template <SIMDWrapper::InstructionSet simd>
     auto with() const {
-      return Zip<dType, default_unwrap, ContainerTypes...>{*this};
+      return Zip<simd, default_unwrap, ContainerTypes...>{*this};
     }
 
     /** Return a version of ourself that behaves 'traditionally', i.e. provides
