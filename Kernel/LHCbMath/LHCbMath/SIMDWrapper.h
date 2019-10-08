@@ -83,19 +83,15 @@ namespace SIMDWrapper {
   } // namespace scalar
   namespace avx2 {
     using SIMDWrapper::log;
-    InstructionSet stackInstructionSet();
   } // namespace avx2
   namespace avx256 {
     using SIMDWrapper::log;
-    InstructionSet stackInstructionSet();
   } // namespace avx256
   namespace avx512 {
     using SIMDWrapper::log;
-    InstructionSet stackInstructionSet();
   } // namespace avx512
   namespace best {
     using SIMDWrapper::log;
-    InstructionSet stackInstructionSet();
   } // namespace best
 
   namespace scalar {
@@ -1035,26 +1031,36 @@ namespace SIMDWrapper {
   template <>
   struct type_map<InstructionSet::Best> {
     using type = best::types;
+    static constexpr InstructionSet instructionSet() { return best::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
   };
 
   template <>
   struct type_map<InstructionSet::Scalar> {
     using type = scalar::types;
+    static constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
   };
 
   template <>
   struct type_map<InstructionSet::AVX2> {
     using type = avx2::types;
+    static constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
   };
 
   template <>
   struct type_map<InstructionSet::AVX256> {
     using type = avx256::types;
+    static constexpr InstructionSet instructionSet() { return avx256::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
   };
 
   template <>
   struct type_map<InstructionSet::AVX512> {
     using type = avx512::types;
+    static constexpr InstructionSet instructionSet() { return avx512::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
   };
 } // namespace SIMDWrapper
 
