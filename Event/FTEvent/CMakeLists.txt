@@ -15,13 +15,9 @@ gaudi_subdir(FTEvent)
 
 gaudi_depends_on_subdirs(Event/EventBase
                          Event/MCEvent
-                         GaudiObjDesc)
+                         Kernel/LHCbKernel)
 
-include(GaudiObjDesc)
+gaudi_install_headers(Event)
 
-god_build_headers(xml/*.xml)
-
-god_build_dictionary(xml/*.xml
-                     INCLUDE_DIRS Event/EventBase
-                     LINK_LIBRARIES MCEvent GaudiObjDescLib)
+gaudi_add_dictionary(FTEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel MCEvent INCLUDE_DIRS Event/EventBase)
 

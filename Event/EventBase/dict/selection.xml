@@ -1,0 +1,22 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="LHCb::IntLink" id="000001f4-0000-0000-0000-000000000000"/>
+  <class name="LHCb::ProcessHeader" id="00000067-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::IntLink>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::ProcessHeader>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::IntLink>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::ProcessHeader>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<SmartRef<LHCb::IntLink> >"/>
+  <class name="std::vector<SmartRef<LHCb::ProcessHeader> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

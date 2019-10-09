@@ -1,0 +1,124 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  <!--- These should really be moved to GaudiKernel or Reflex -->
+  <class name = "Gaudi::Counter"  id = "00000096-0000-0000-0000-000000000000" />
+  <class name = "Gaudi::Counters" id = "00000097-0000-0000-0000-000000000000" />
+  <class name = "Gaudi::Numbers"  id = "00000098-0000-0000-0000-000000000000" />
+  <class name = "IAccept"                />
+  <class name = "IAlgorithmCorrelations" />
+  <class name = "IBIntegrator"         />
+  <class name = "ICheckTool"           />
+  <class name = "ICondDBInfo"          />
+  <class name = "ICountContainedObjects" />
+  <class name = "IDQFilter"            />
+  <class name = "IDQScanner"           />
+  <class name = "IEventCounter"        />
+  <class name = "IEventTupleTool"      />
+  <class name = "IEvtTypeSvc"          />
+  <class name = "ILHCbMagnetSvc"       />
+  <class name = "IMCVeloFEType"        />
+  <class name = "INormalizeTool"       />
+  <class name = "IReferenceRate"    />
+  <class name = "ISiAmplifierResponse" />
+  <class name = "ITrajPoca"            />
+  <class name = "IUsedLHCbID"          />
+  <class name = "IVeloCCEConfigTool" />
+  <class name = "LHCb::Inspector" />
+  <class name = "Rich::Detectors" />
+  <class name = "Rich::Particles" />
+  <class name = "Rich::RadIntersection" />
+  <class name = "Rich::RadIntersection::Sorter" />
+  <class name = "Rich::RadIntersection::Vector" />
+  <class name = "Rich::Radiators" />
+  <class name = "Rich::Sides" />
+  <class name = "std::pair<std::string,StatEntity>" />
+  <class name = "std::vector<std::pair<std::string,StatEntity> > " />
+  <class name = "std::vector<std::pair<std::string,double> >"      />
+  <class name ="std::map<std::pair<int,unsigned int>,unsigned int>"/>
+  <class name="LHCb::AlignTraj"/>
+  <class name="LHCb::CaloCellID"/>
+  <class name="LHCb::CircleTraj"/>
+  <class name="LHCb::FTChannelID"/>
+  <class name="LHCb::HCCellID"/>
+  <class name="LHCb::HitPattern"/>
+  <class name="LHCb::ITNames"/>
+  <class name="LHCb::LHCbID"/>
+  <class name="LHCb::MuonTileID"/>
+  <class name="LHCb::OTChannelID"/>
+  <class name="LHCb::ParabolaTraj"/>
+  <class name="LHCb::PlatformInfo"/>
+  <class name="LHCb::RichSmartID"/>
+  <class name="LHCb::RichSmartID::HPD"/>
+  <class name="LHCb::RichSmartID::MaPMT"/>
+  <class name="LHCb::RichSmartID::Vector"/>
+  <class name="LHCb::RichTraceMode"/>
+  <class name="LHCb::STChannelID"/>
+  <class name="LHCb::TTNames"/>
+  <class name="LHCb::UTChannelID"/>
+  <class name="LHCb::UTNames"/>
+  <class name="LHCb::VPChannelID"/>
+  <class name="LHCb::VeloChannelID"/>
+  <class name="MuonLayout"/>
+  <class name="std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>" />
+  <class name="std::pair<LHCb::HCCellID,int>"/>
+  <class name="std::pair<LHCb::MuonTileID,int>"/>
+  <class name="std::pair<LHCb::OTChannelID,int>"/>
+  <class name="std::pair<LHCb::STChannelID,int>"/>
+  <class name="std::pair<LHCb::VPChannelID,int>"/>
+  <class name="std::pair<LHCb::VeloChannelID,int>"/>
+  <class name="std::pair<double,LHCb::CaloCellID>"/>
+  <class name="std::vector<LHCb::CaloCellID>"/>
+  <class name="std::vector<LHCb::FTChannelID>"/>
+  <class name="std::vector<LHCb::HCCellID>"/>
+  <class name="std::vector<LHCb::LHCbID>"/>
+  <class name="std::vector<LHCb::LHCbID>::const_iterator"/>
+  <class name="std::vector<LHCb::MuonTileID>"/>
+  <class name="std::vector<LHCb::OTChannelID>"/>
+  <class name="std::vector<LHCb::STChannelID>"/>
+  <class name="std::vector<LHCb::UTChannelID>"/>
+  <class name="std::vector<LHCb::VPChannelID>"/>
+  <class name="std::vector<LHCb::VeloChannelID>"/>
+  <class name="std::vector<std::pair<LHCb::HCCellID,int> >"/>
+  <class name="std::vector<std::pair<LHCb::MuonTileID,int> >"/>
+  <class name="std::vector<std::pair<LHCb::OTChannelID,int> >"/>
+  <class name="std::vector<std::pair<LHCb::STChannelID,int> >"/>
+  <class name="std::vector<std::pair<LHCb::VPChannelID,int> >"/>
+  <class name="std::vector<std::pair<LHCb::VeloChannelID,int> >"/>
+  <class name="std::vector<std::pair<double,LHCb::CaloCellID> >"/>
+  <class pattern ="GaudiUtils::VectorMap<*>"/>
+  <class pattern ="LHCb::PixelPositionInfo<*>"/>
+  <class pattern ="LHCb::SiPositionInfo<*>"/>
+  <class pattern="LHCb::Trajectory<*>"/>
+  <enum  name="LHCb::RichSmartID::IDType"/>
+  <enum name = "Rich::DetectorType" />
+  <enum name = "Rich::ParticleIDType" />
+  <enum name = "Rich::RadiatorType" />
+  <enum name = "Rich::Side" />
+  <function name="LHCb::Packer::getBit"/>
+  <function name="LHCb::Packer::setBit"/>
+  <function pattern="Rich::detectors*" />
+  <function pattern="Rich::particles*" />
+  <function pattern="Rich::radiators*" />
+  <function pattern="Rich::sides*" />
+  <function pattern="Rich::text*" />
+  <variable name="Rich::NPDPanelsPerRICH"  />
+  <variable name="Rich::NParticleTypes"  />
+  <variable name="Rich::NRadiatorTypes"  />
+  <variable name="Rich::NRiches"  />
+  <variable name="Rich::NTotalPDPanels"  />
+<!-- Counters in TES -->
+<!--- Add here all interfaces from Kernel directory -->
+<!--- Next should really be in L0Event, is an L0DUReport return type -->
+  <exclusion>
+  </exclusion>
+</lcgdict>

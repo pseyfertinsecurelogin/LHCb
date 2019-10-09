@@ -1,0 +1,50 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  
+  <class name = "Gaudi::Range_< std::vector<const LHCb::Particle*> >" />
+  <class name = "LHCb::Particle::Range" />
+  <class name = "LHCb::Particle::Selection" />
+  <class name = "LHCb::RelatedInfoMap"       />
+  <class name = "LHCb::RelatedInfoMap::MAP"  />
+  <class name = "LHCb::RelatedInfoMap::VAL"  />
+  <class name = "LHCb::RelatedInfoMap::VECT" />
+  <class name = "std::vector<const LHCb::Particle*>" />
+  <class name = "std::vector<const LHCb::Particle*>::iterator" />
+  <class name = "std::vector<const LHCb::Vertex*>" />
+  <class name="KeyedContainer<LHCb::FlavourTag,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060325-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::Particle,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060321-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::Vertex,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060322-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::FlavourTag" id="00000325-0000-0000-0000-000000000000"/>
+  <class name="LHCb::Particle" id="00000321-0000-0000-0000-000000000000"/>
+  <class name="LHCb::Tagger"/>
+  <class name="LHCb::Vertex" id="00000322-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::FlavourTag>" id="00020325-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::Particle>" id="00020321-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::Vertex>" id="00020322-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::FlavourTag>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::Particle>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::Vertex>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::FlavourTag>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::Particle>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::Vertex>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::FlavourTag*>"/>
+  <class name="std::vector<LHCb::FlavourTag>"/>
+  <class name="std::vector<LHCb::Particle*>"/>
+  <class name="std::vector<LHCb::Tagger>"/>
+  <class name="std::vector<LHCb::Vertex*>"/>
+  <class name="std::vector<SmartRef<LHCb::FlavourTag> >"/>
+  <class name="std::vector<SmartRef<LHCb::Particle> >"/>
+  <class name="std::vector<SmartRef<LHCb::Vertex> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

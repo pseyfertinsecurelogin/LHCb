@@ -13,19 +13,15 @@
 ################################################################################
 gaudi_subdir(UTTELL1Event)
 
-gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel
+gaudi_depends_on_subdirs(Kernel/LHCbKernel
                          UT/UTKernel)
 
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml)
+gaudi_install_headers(Event)
 
 gaudi_add_library(UTTELL1Event
                   src/*.cpp
                   NO_PUBLIC_HEADERS
                   LINK_LIBRARIES LHCbKernel UTKernelLib)
 
-god_build_dictionary(xml/*.xml
-                     LINK_LIBRARIES LHCbKernel UTKernelLib UTTELL1Event)
+gaudi_add_dictionary(UTTELL1Event dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel UTKernelLib UTTELL1Event)
 

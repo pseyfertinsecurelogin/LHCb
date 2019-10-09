@@ -13,10 +13,7 @@
 ################################################################################
 gaudi_subdir(LinkerEvent)
 
-gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel)
-
-include(GaudiObjDesc)
+gaudi_depends_on_subdirs(Kernel/LHCbKernel)
 
 gaudi_add_library(LinkerEvent
                   src/*.cpp

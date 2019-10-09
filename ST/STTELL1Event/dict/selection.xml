@@ -1,0 +1,30 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="KeyedContainer<LHCb::STTELL1BoardErrorBank,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062335-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::STTELL1Data,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062332-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::STTELL1BoardErrorBank" id="00002335-0000-0000-0000-000000000000"> <field name="m_errorInfo" transient="true"/> </class>
+  <class name="LHCb::STTELL1Data" id="00002332-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STTELL1Error" id="00002334-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STTELL1EventInfo" id="00002333-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::STTELL1BoardErrorBank>" id="00022335-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::STTELL1Data>" id="00022332-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::STTELL1BoardErrorBank>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::STTELL1Data>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::STTELL1BoardErrorBank>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::STTELL1Data>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::STTELL1BoardErrorBank*>"/>
+  <class name="std::vector<LHCb::STTELL1Data*>"/>
+  <class name="std::vector<SmartRef<LHCb::STTELL1BoardErrorBank> >"/>
+  <class name="std::vector<SmartRef<LHCb::STTELL1Data> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

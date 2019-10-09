@@ -15,18 +15,14 @@ gaudi_subdir(HltEvent)
 
 gaudi_depends_on_subdirs(Event/PhysEvent
                          GaudiKernel
-                         GaudiObjDesc)
+                         Kernel/LHCbKernel)
 
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml)
+gaudi_install_headers(Event)
 
 gaudi_add_library(HltEvent
                   src/*.cpp
                   NO_PUBLIC_HEADERS
                   LINK_LIBRARIES PhysEvent GaudiKernel)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND dict/lcgDict.h
-                     LINK_LIBRARIES PhysEvent GaudiKernel HltEvent)
+gaudi_add_dictionary(HltEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES GaudiKernel HltEvent LHCbKernel PhysEvent)
 

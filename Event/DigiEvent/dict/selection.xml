@@ -1,0 +1,133 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+    <class name="FastClusterContainer<LHCb::STLiteCluster, int >"/> 
+    <class name="FastClusterContainer<LHCb::VeloLiteCluster, int >"/> 
+  <class name="KeyedContainer<LHCb::BcmDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060bb9-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::CaloAdc,Containers::KeyedObjectManager<Containers::hashmap> >" id="000607d7-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::CaloDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="000607d2-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::HCDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="000632c9-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MuonDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062b0d-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::OTTime,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061f41-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::RichDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00063077-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::STCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232c-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::STDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232b-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::UTCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232c-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::UTDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232b-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::VPCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061198-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::VPDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061197-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::VeloCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060fa6-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::VeloDigit,Containers::KeyedObjectManager<Containers::hashmap> >"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::CaloCellID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::HCCellID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::MuonTileID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::RichSmartID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::STChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::UTChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::VPChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::VeloChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="LHCb::BcmDigit" id="00000bb9-0000-0000-0000-000000000000"/>
+  <class name="LHCb::CaloAdc" id="000007d7-0000-0000-0000-000000000000"/>
+  <class name="LHCb::CaloDigit" id="000007d2-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HCDigit" id="000032c9-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MuonDigit" id="00002b0d-0000-0000-0000-000000000000"/>
+  <class name="LHCb::OTTime" id="00001f41-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RichDigit" id="00003077-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STCluster" id="0000232c-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STDigit" id="0000232b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STLiteCluster"/>
+  <class name="LHCb::UTCluster" id="0000232c-0000-0000-0000-000000000000"/>
+  <class name="LHCb::UTDigit" id="0000232b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::UTLiteCluster"/>
+  <class name="LHCb::VPCluster" id="00001198-0000-0000-0000-000000000000"/>
+  <class name="LHCb::VPDigit" id="00001197-0000-0000-0000-000000000000"/>
+  <class name="LHCb::VeloCluster" id="00000fa6-0000-0000-0000-000000000000"/>
+  <class name="LHCb::VeloDigit"/>
+  <class name="LHCb::VeloLiteCluster"/>
+  <class name="ObjectVector<LHCb::BcmDigit>" id="00020bb9-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::CaloAdc>" id="000207d7-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::CaloDigit>" id="000207d2-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::HCDigit>" id="000232c9-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MuonDigit>" id="00022b0d-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::OTTime>" id="00021f41-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::RichDigit>" id="00023077-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::STCluster>" id="0002232c-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::STDigit>" id="0002232b-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::UTCluster>" id="0002232c-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::UTDigit>" id="0002232b-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::VPCluster>" id="00021198-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::VPDigit>" id="00021197-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::VeloCluster>" id="00020fa6-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::VeloDigit>"/>
+  <class name="SmartRef<LHCb::BcmDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::CaloAdc>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::CaloDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HCDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MuonDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::OTTime>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RichDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::STCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::STDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::UTCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::UTDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::VPCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::VPDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::VeloCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::VeloDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::BcmDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::CaloAdc>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::CaloDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HCDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MuonDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::OTTime>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RichDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::STCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::STDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::UTCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::UTDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::VPCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::VPDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::VeloCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::VeloDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::BcmDigit*>"/>
+  <class name="std::vector<LHCb::CaloAdc*>"/>
+  <class name="std::vector<LHCb::CaloDigit*>"/>
+  <class name="std::vector<LHCb::HCDigit*>"/>
+  <class name="std::vector<LHCb::MuonDigit*>"/>
+  <class name="std::vector<LHCb::OTTime*>"/>
+  <class name="std::vector<LHCb::RichDigit*>"/>
+  <class name="std::vector<LHCb::STCluster*>"/>
+  <class name="std::vector<LHCb::STDigit*>"/>
+  <class name="std::vector<LHCb::UTCluster*>"/>
+  <class name="std::vector<LHCb::UTDigit*>"/>
+  <class name="std::vector<LHCb::VPCluster*>"/>
+  <class name="std::vector<LHCb::VPDigit*>"/>
+  <class name="std::vector<LHCb::VeloCluster*>"/>
+  <class name="std::vector<LHCb::VeloDigit*>"/>
+  <class name="std::vector<SmartRef<LHCb::BcmDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::CaloAdc> >"/>
+  <class name="std::vector<SmartRef<LHCb::CaloDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::HCDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MuonDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::OTTime> >"/>
+  <class name="std::vector<SmartRef<LHCb::RichDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::STCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::STDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::UTCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::UTDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::VPCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::VPDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::VeloCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::VeloDigit> >"/>
+  <enum name="LHCb::CaloDigitStatus::Mask"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

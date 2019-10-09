@@ -14,13 +14,9 @@
 gaudi_subdir(EventBase)
 
 gaudi_depends_on_subdirs(GaudiKernel
-                         GaudiObjDesc
                          Kernel/LHCbKernel)
 
-include(GaudiObjDesc)
+gaudi_install_headers(Event)
 
-god_build_headers(xml/*.xml)
-
-god_build_dictionary(xml/*.xml
-                     LINK_LIBRARIES GaudiKernel LHCbKernel)
+gaudi_add_dictionary(EventBase dict/dictionary.h dict/selection.xml LINK_LIBRARIES GaudiKernel LHCbKernel)
 

@@ -1,0 +1,204 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  <class name = "GaudiUtils::Map<LHCb::MCParticle*,unsigned int,std::map<LHCb::MCParticle*,unsigned int> > "/>    
+  <class name = "MCTrackInfo" />
+  <class name = "std::map<LHCb::MCParticle*,unsigned int> "/>
+  <class name = "std::pair<LHCb::MCParticle*,double>"/>
+  <class name = "std::vector<const LHCb::MCParticle*>" />
+  <class name = "std::vector<const LHCb::MCVertex*>" />
+  <class name="KeyedContainer<LHCb::MCBcmDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060bb8-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCCaloDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="000607d1-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCMuonDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062b0e-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCOTTime,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061f42-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCParticle,Containers::KeyedObjectManager<Containers::hashmap> >" id="000600d2-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCRichDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00063078-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCRichOpticalPhoton,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006307c-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCRichSegment,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006307e-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCRichTrack,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006307f-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCSTDeposit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062329-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCSTDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232a-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCUTDeposit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062329-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCUTDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006232a-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCVPDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061196-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCVeloFE,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060fa2-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCVertex,Containers::KeyedObjectManager<Containers::hashmap> >" id="000600dc-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::CaloCellID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::OTChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::STChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::UTChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::VPChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::VeloChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="LHCb::GhostTrackInfo"/>
+  <class name="LHCb::MCBcmDigit" id="00000bb8-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCCaloDigit" id="000007d1-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCCaloHit" id="000007d0-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCExtendedHit" id="000000e7-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCHeader" id="00000068-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCHit" id="000000e6-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCMuonDigit" id="00002b0e-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCMuonDigitInfo"/>
+  <class name="LHCb::MCMuonHitHistory"/>
+  <class name="LHCb::MCOTDeposit" id="00001f43-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCOTTime" id="00001f42-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCParticle" id="000000d2-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCProperty" id="0000012c-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichDigit" id="00003078-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichDigitHistoryCode"/>
+  <class name="LHCb::MCRichDigitHit"/>
+  <class name="LHCb::MCRichDigitSummary" id="00003079-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichHit" id="0000307d-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichOpticalPhoton" id="0000307c-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichSegment" id="0000307e-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCRichTrack" id="0000307f-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCSTDeposit" id="00002329-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCSTDigit" id="0000232a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCSensPlaneHit" id="000000e8-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCUTDeposit" id="00002329-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCUTDigit" id="0000232a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCVPDigit" id="00001196-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCVeloFE" id="00000fa2-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCVertex" id="000000dc-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCBcmDigit>" id="00020bb8-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCCaloDigit>" id="000207d1-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCCaloHit>" id="000207d0-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCExtendedHit>" id="000200e7-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCHit>" id="000200e6-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCMuonDigit>" id="00022b0e-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCOTDeposit>" id="00021f43-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCOTTime>" id="00021f42-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCParticle>" id="000200d2-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichDigit>" id="00023078-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichDigitSummary>" id="00023079-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichHit>" id="0002307d-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichOpticalPhoton>" id="0002307c-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichSegment>" id="0002307e-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCRichTrack>" id="0002307f-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCSTDeposit>" id="00022329-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCSTDigit>" id="0002232a-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCSensPlaneHit>" id="000200e8-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCUTDeposit>" id="00022329-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCUTDigit>" id="0002232a-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCVPDigit>" id="00021196-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCVeloFE>" id="00020fa2-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCVertex>" id="000200dc-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::MCBcmDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCCaloDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCCaloHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCExtendedHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCHeader>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCMuonDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCOTDeposit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCOTTime>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCParticle>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCProperty>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichDigitSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichOpticalPhoton>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichSegment>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCRichTrack>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCSTDeposit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCSTDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCSensPlaneHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCUTDeposit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCUTDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCVPDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCVeloFE>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCVertex>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCBcmDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCCaloDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCCaloHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCExtendedHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCHeader>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCMuonDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCOTDeposit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCOTTime>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCParticle>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCProperty>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichDigitSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichOpticalPhoton>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichSegment>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCRichTrack>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCSTDeposit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCSTDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCSensPlaneHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCUTDeposit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCUTDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCVPDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCVeloFE>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCVertex>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::MCBcmDigit*>"/>
+  <class name="std::vector<LHCb::MCCaloDigit*>"/>
+  <class name="std::vector<LHCb::MCCaloHit*>"/>
+  <class name="std::vector<LHCb::MCExtendedHit*>"/>
+  <class name="std::vector<LHCb::MCHit*>"/>
+  <class name="std::vector<LHCb::MCMuonDigit*>"/>
+  <class name="std::vector<LHCb::MCMuonDigitInfo>"/>
+  <class name="std::vector<LHCb::MCMuonHitHistory>"/>
+  <class name="std::vector<LHCb::MCOTDeposit*>"/>
+  <class name="std::vector<LHCb::MCOTTime*>"/>
+  <class name="std::vector<LHCb::MCParticle*>"/>
+  <class name="std::vector<LHCb::MCRichDigit*>"/>
+  <class name="std::vector<LHCb::MCRichDigitSummary*>"/>
+  <class name="std::vector<LHCb::MCRichHit*>"/>
+  <class name="std::vector<LHCb::MCRichOpticalPhoton*>"/>
+  <class name="std::vector<LHCb::MCRichSegment*>"/>
+  <class name="std::vector<LHCb::MCRichTrack*>"/>
+  <class name="std::vector<LHCb::MCSTDeposit*>"/>
+  <class name="std::vector<LHCb::MCSTDigit*>"/>
+  <class name="std::vector<LHCb::MCSensPlaneHit*>"/>
+  <class name="std::vector<LHCb::MCUTDeposit*>"/>
+  <class name="std::vector<LHCb::MCUTDigit*>"/>
+  <class name="std::vector<LHCb::MCVPDigit*>"/>
+  <class name="std::vector<LHCb::MCVeloFE*>"/>
+  <class name="std::vector<LHCb::MCVertex*>"/>
+  <class name="std::vector<SmartRef<LHCb::MCBcmDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCCaloDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCCaloHit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCExtendedHit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCHeader> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCHit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCMuonDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCOTDeposit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCOTTime> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCParticle> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCProperty> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichDigitSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichHit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichOpticalPhoton> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichSegment> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCRichTrack> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCSTDeposit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCSTDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCSensPlaneHit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCUTDeposit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCUTDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCVPDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCVeloFE> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCVertex> >"/>
+  <enum name="LHCb::MuonBXFlag::BXFlag"/>
+  <enum name="LHCb::MuonOriginFlag::OriginFlag"/>
+  <exclusion>
+    <class name = "KeyedObject<LHCb::CaloCellID>" />
+    <class name = "KeyedObject<LHCb::STChannelID>" />
+    <class name = "KeyedObject<LHCb::UTChannelID>" />
+    <class name = "KeyedObject<LHCb::VeloChannelID>" />
+    <class name = "KeyedObject<LHCb::VPChannelID>" />
+    <class name = "KeyedObject<LHCb::VLChannelID>" />
+  </exclusion>
+</lcgdict>

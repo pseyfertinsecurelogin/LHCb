@@ -14,17 +14,11 @@
 gaudi_subdir(FSREvent)
 
 gaudi_depends_on_subdirs(GaudiKernel
-                         GaudiObjDesc
                          Kernel/LHCbKernel)
 
 find_package(Boost)
 
-include(GaudiObjDesc)
+gaudi_install_headers(Event)
 
-god_build_headers(xml/*.xml)
-
-god_build_dictionary(xml/*.xml
-                     EXTEND xml/lcgdict/lcg_selection.h
-                     INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost GaudiKernel LHCbKernel)
+gaudi_add_dictionary(FSREvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES Boost GaudiKernel LHCbKernel INCLUDE_DIRS Boost)
 

@@ -1,0 +1,138 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  <class name = "Gaudi::SymMatrix9x9" />
+  <class name = "LHCb::RecVertex::TrackWithWeightVector" />
+  <class name = "std::vector<const LHCb::RecVertex*>"    />
+  <class name = "std::vector<const LHCb::VertexBase*>"   />
+  <class name = "std::vector<std::pair<int,float> >"     />
+  <class name="KeyedContainer<LHCb::CaloCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="000607d3-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::CaloHypo,Containers::KeyedObjectManager<Containers::hashmap> >" id="000607d4-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MuonCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062b21-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MuonCoord,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062b20-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MuonPID,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062b2a-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::ProtoParticle,Containers::KeyedObjectManager<Containers::hashmap> >" id="00060323-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::RecVertex,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006272e-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::RichPID,Containers::KeyedObjectManager<Containers::hashmap> >" id="00063072-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::RichSummaryTrack,Containers::KeyedObjectManager<Containers::hashmap> >" id="000630a3-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::TwoProngVertex,Containers::KeyedObjectManager<Containers::hashmap> >" id="00062738-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::VertexBase,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006032b-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::WeightsVector,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006272f-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::CaloCluster" id="000007d3-0000-0000-0000-000000000000"/>
+  <class name="LHCb::CaloClusterEntry"/>
+  <class name="LHCb::CaloHypo" id="000007d4-0000-0000-0000-000000000000"/>
+  <class name="LHCb::CaloPosition"/>
+  <class name="LHCb::MuonCluster" id="00002b21-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MuonCoord" id="00002b20-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MuonPID" id="00002b2a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::PrimaryVertex"/>
+  <class name="LHCb::PrimaryVertexTrack"/>
+  <class name="LHCb::ProcStatus" id="00001389-0000-0000-0000-000000000000"/>
+  <class name="LHCb::ProtoParticle" id="00000323-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RecHeader" id="00000069-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RecSummary" id="0000006a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RecVertex" id="0000272e-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RichPID" id="00003072-0000-0000-0000-000000000000"/>
+  <class name="LHCb::RichSummaryPhoton"/>
+  <class name="LHCb::RichSummaryRadSegment"/>
+  <class name="LHCb::RichSummaryTrack" id="000030a3-0000-0000-0000-000000000000"/>
+  <class name="LHCb::STSummary" id="0000232d-0000-0000-0000-000000000000"/>
+  <class name="LHCb::TwoProngVertex" id="00002738-0000-0000-0000-000000000000"/>
+  <class name="LHCb::UTSummary" id="0000232d-0000-0000-0000-000000000000"/>
+  <class name="LHCb::VertexBase" id="0000032b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::WeightsVector" id="0000272f-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::CaloCluster>" id="000207d3-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::CaloHypo>" id="000207d4-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MuonCluster>" id="00022b21-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MuonCoord>" id="00022b20-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MuonPID>" id="00022b2a-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::ProtoParticle>" id="00020323-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::RecVertex>" id="0002272e-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::RichPID>" id="00023072-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::RichSummaryTrack>" id="000230a3-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::TwoProngVertex>" id="00022738-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::VertexBase>" id="0002032b-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::WeightsVector>" id="0002272f-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::CaloCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::CaloHypo>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MuonCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MuonCoord>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MuonPID>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::ProcStatus>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::ProtoParticle>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RecHeader>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RecSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RecVertex>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RichPID>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::RichSummaryTrack>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::STSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::TwoProngVertex>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::UTSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::VertexBase>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::WeightsVector>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::CaloCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::CaloHypo>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MuonCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MuonCoord>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MuonPID>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::ProcStatus>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::ProtoParticle>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RecHeader>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RecSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RecVertex>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RichPID>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::RichSummaryTrack>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::STSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::TwoProngVertex>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::UTSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::VertexBase>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::WeightsVector>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::CaloCluster*>"/>
+  <class name="std::vector<LHCb::CaloClusterEntry>"/>
+  <class name="std::vector<LHCb::CaloHypo*>"/>
+  <class name="std::vector<LHCb::MuonCluster*>"/>
+  <class name="std::vector<LHCb::MuonCoord*>"/>
+  <class name="std::vector<LHCb::MuonPID*>"/>
+  <class name="std::vector<LHCb::ProtoParticle*>"/>
+  <class name="std::vector<LHCb::RecVertex*>"/>
+  <class name="std::vector<LHCb::RichPID*>"/>
+  <class name="std::vector<LHCb::RichSummaryPhoton>"/>
+  <class name="std::vector<LHCb::RichSummaryRadSegment>"/>
+  <class name="std::vector<LHCb::RichSummaryTrack*>"/>
+  <class name="std::vector<LHCb::TwoProngVertex*>"/>
+  <class name="std::vector<LHCb::VertexBase*>"/>
+  <class name="std::vector<LHCb::WeightsVector*>"/>
+  <class name="std::vector<SmartRef<LHCb::CaloCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::CaloHypo> >"/>
+  <class name="std::vector<SmartRef<LHCb::MuonCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::MuonCoord> >"/>
+  <class name="std::vector<SmartRef<LHCb::MuonPID> >"/>
+  <class name="std::vector<SmartRef<LHCb::ProcStatus> >"/>
+  <class name="std::vector<SmartRef<LHCb::ProtoParticle> >"/>
+  <class name="std::vector<SmartRef<LHCb::RecHeader> >"/>
+  <class name="std::vector<SmartRef<LHCb::RecSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::RecVertex> >"/>
+  <class name="std::vector<SmartRef<LHCb::RichPID> >"/>
+  <class name="std::vector<SmartRef<LHCb::RichSummaryTrack> >"/>
+  <class name="std::vector<SmartRef<LHCb::STSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::TwoProngVertex> >"/>
+  <class name="std::vector<SmartRef<LHCb::UTSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::VertexBase> >"/>
+  <class name="std::vector<SmartRef<LHCb::WeightsVector> >"/>
+  <exclusion>
+    <class pattern="ROOT::Math::SMatrix&lt;double,9,9,*&gt;">
+      <method proto_pattern="*::operator=(double const&amp;)"/>
+      <method proto_pattern="*::SMatrix(double const&amp;)"/>
+    </class>
+    <class name="ROOT::Math::SMatrix<double,9,9,ROOT::Math::MatRepSym<double,9> >"/>
+  </exclusion>
+</lcgdict>
