@@ -13,6 +13,7 @@
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 #include <Math/SMatrix.h>
 namespace LHCb::Pr::Fitted::Forward {
   namespace detail {
@@ -148,3 +149,13 @@ namespace LHCb::Pr::Iterable::Fitted::Forward {
 namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Fitted::Forward::Tracks>;
 } // namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward
+
+template <>
+struct LHCb::header_map<LHCb::Pr::Fitted::Forward::Tracks> {
+  constexpr static string_array value{"Event/PrIterableFittedForwardTracks.h"};
+};
+
+template <>
+struct LHCb::header_map<LHCb::Pr::Iterable::Scalar::Fitted::Forward::Tracks> {
+  constexpr static string_array value{"Event/PrIterableFittedForwardTracks.h"};
+};

@@ -11,6 +11,7 @@
 #pragma once
 #include "Event/PrVeloTracks.h"
 #include "Event/PrZip.h"
+#include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Velo {
   namespace detail {
@@ -60,4 +61,8 @@ template <>
 struct LHCb::Pr::Proxy<LHCb::Pr::Velo::Tracks> {
   template <typename MergedProxy, typename dType, bool>
   using type = LHCb::Pr::Velo::Proxy<MergedProxy, dType>;
+};
+template <>
+struct LHCb::header_map<LHCb::Pr::Velo::Tracks> {
+  constexpr static string_array value{"Event/PrIterableVeloTracks.h"};
 };

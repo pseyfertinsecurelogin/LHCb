@@ -13,6 +13,7 @@
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Forward {
   namespace detail {
@@ -81,6 +82,10 @@ template <>
 struct LHCb::Pr::Proxy<LHCb::Pr::Forward::Tracks> {
   template <typename MergedProxy, typename dType, bool unwrap>
   using type = LHCb::Pr::Forward::Proxy<MergedProxy, dType, unwrap>;
+};
+template <>
+struct LHCb::header_map<LHCb::Pr::Forward::Tracks> {
+  constexpr static string_array value{"Event/PrIterableForwardTracks.h"};
 };
 
 namespace LHCb::Pr::Iterable::Forward {

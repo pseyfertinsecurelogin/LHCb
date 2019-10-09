@@ -11,6 +11,7 @@
 #pragma once
 #include "Event/PrMuonPIDs.h"
 #include "Event/PrZip.h"
+#include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Muon {
   /** Proxy type for iterating over BestVertexRelations objects. */
@@ -40,3 +41,8 @@ namespace LHCb::Pr::Iterable::Muon {
 namespace LHCb::Pr::Iterable::Scalar::Muon {
   using PIDs = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Muon::PIDs>;
 } // namespace LHCb::Pr::Iterable::Scalar::Muon
+
+template <>
+struct LHCb::header_map<LHCb::Pr::Muon::PIDs> {
+  constexpr static string_array value{"Event/PrIterableMuonPIDs.h"};
+};

@@ -19,6 +19,7 @@
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include "Kernel/meta_enum.h"
@@ -546,3 +547,8 @@ namespace LHCb::Event {
 
   } // namespace v2
 } // namespace LHCb::Event
+
+template <>
+struct LHCb::header_map<LHCb::Event::v2::Track> {
+  constexpr static string_array value{"Event/Track_v2.h"};
+};
