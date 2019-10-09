@@ -14,12 +14,9 @@
 gaudi_subdir(DAQEvent)
 
 gaudi_depends_on_subdirs(GaudiKernel
-                         GaudiObjDesc
                          Kernel/LHCbKernel)
 
-include(GaudiObjDesc)
 
-god_build_headers(xml/*.xml)
 
 gaudi_add_library(DAQEventLib
                   src/*.cpp

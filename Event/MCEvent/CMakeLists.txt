@@ -19,13 +19,10 @@ include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
 
 
 gaudi_depends_on_subdirs(Event/EventBase
-                         GaudiObjDesc
                          Kernel/LHCbKernel
                          Kernel/PartProp)
 
-include(GaudiObjDesc)
 
-god_build_headers(xml/*.xml)
 
 gaudi_add_library(MCEvent
                   src/*.cpp
@@ -33,8 +30,5 @@ gaudi_add_library(MCEvent
                   INCLUDE_DIRS Event/EventBase
                   LINK_LIBRARIES LHCbKernel PartPropLib)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/EventBase
-                     LINK_LIBRARIES LHCbKernel PartPropLib MCEvent)
+gaudi_add_dictionary(MCEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel MCEvent PartPropLib INCLUDE_DIRS Event/EventBase)
 

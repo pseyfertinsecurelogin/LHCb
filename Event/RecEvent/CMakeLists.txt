@@ -16,19 +16,11 @@ gaudi_subdir(RecEvent)
 gaudi_depends_on_subdirs(Event/DigiEvent
                          Event/EventBase
                          Event/TrackEvent
-                         GaudiObjDesc
+                         Kernel/LHCbKernel
                          Kernel/LHCbMath
                          Kernel/PartProp
                          Kernel/SOAContainer
                          Kernel/SOAExtensions)
-
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml)
-
-gaudi_add_unit_test(test_CaloHypo_v2 tests/src/test_CaloHypo_v2.cpp
-   LINK_LIBRARIES GaudiKernel TrackEvent RecEvent
-                    TYPE Boost)
 
 gaudi_add_library(RecEvent
                   src/*.cpp
@@ -36,10 +28,11 @@ gaudi_add_library(RecEvent
                   INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer Kernel/SOAExtensions
                   LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer
-                     LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
+gaudi_add_unit_test(test_CaloHypo_v2 tests/src/test_CaloHypo_v2.cpp
+   LINK_LIBRARIES GaudiKernel TrackEvent RecEvent
+                    TYPE Boost)
+
+gaudi_add_dictionary(RecEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel LHCbMathLib PartPropLib RecEvent TrackEvent INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer)
 
 gaudi_add_unit_test(TestMuonZipInfrastructure
                     tests/src/TestMuonZipInfrastructure.cpp

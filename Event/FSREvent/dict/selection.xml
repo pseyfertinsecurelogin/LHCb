@@ -1,0 +1,23 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="KeyedContainer<LHCb::ProcessFSR,Containers::KeyedObjectManager<Containers::hashmap> >" id="000634c3-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::IOFSR" id="000034c2-0000-0000-0000-000000000000"/>
+  <class name="LHCb::ProcessFSR" id="000034c3-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::ProcessFSR>" id="000234c3-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::ProcessFSR>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::ProcessFSR>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::map<std::string, unsigned long long>"/>
+  <class name="std::vector<LHCb::ProcessFSR*>"/>
+  <class name="std::vector<SmartRef<LHCb::ProcessFSR> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

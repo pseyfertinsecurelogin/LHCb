@@ -1,0 +1,53 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="KeyedContainer<LHCb::LumiFSR,Containers::KeyedObjectManager<Containers::hashmap> >" id="000634bd-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::LumiIntegral,Containers::KeyedObjectManager<Containers::hashmap> >" id="000634be-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::TimeSpanFSR,Containers::KeyedObjectManager<Containers::hashmap> >" id="000634c0-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::EventCountFSR" id="000034bf-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltLumiSummary" id="00001d60-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltLumiSummary::ExtraInfo"/>
+  <class name="LHCb::LumiCounters" id="000034bc-0000-0000-0000-000000000000"/>
+  <class name="LHCb::LumiFSR" id="000034bd-0000-0000-0000-000000000000"/>
+  <class name="LHCb::LumiFSR::ExtraInfo"/>
+  <class name="LHCb::LumiFSR::ValuePair"/>
+  <class name="LHCb::LumiIntegral" id="000034be-0000-0000-0000-000000000000"/>
+  <class name="LHCb::LumiMethods" id="000034c1-0000-0000-0000-000000000000"/>
+  <class name="LHCb::TimeSpanFSR" id="000034c0-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::LumiFSR>" id="000234bd-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::LumiIntegral>" id="000234be-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::TimeSpanFSR>" id="000234c0-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::HltLumiSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::LumiCounters>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::LumiFSR>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::LumiIntegral>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::LumiMethods>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::TimeSpanFSR>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltLumiSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::LumiCounters>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::LumiFSR>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::LumiIntegral>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::LumiMethods>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::TimeSpanFSR>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::pair<int,std::pair<int,long long> >"/>
+  <class name="std::vector<LHCb::LumiFSR*>"/>
+  <class name="std::vector<LHCb::LumiIntegral*>"/>
+  <class name="std::vector<LHCb::TimeSpanFSR*>"/>
+  <class name="std::vector<SmartRef<LHCb::HltLumiSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::LumiCounters> >"/>
+  <class name="std::vector<SmartRef<LHCb::LumiFSR> >"/>
+  <class name="std::vector<SmartRef<LHCb::LumiIntegral> >"/>
+  <class name="std::vector<SmartRef<LHCb::LumiMethods> >"/>
+  <class name="std::vector<SmartRef<LHCb::TimeSpanFSR> >"/>
+  <class name="std::vector<std::pair<int,std::pair<int,long long> > >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

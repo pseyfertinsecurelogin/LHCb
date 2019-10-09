@@ -1,0 +1,42 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="KeyedContainer<LHCb::FTCluster,Containers::KeyedObjectManager<Containers::hashmap> >" id="000636b3-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::MCFTDigit,Containers::KeyedObjectManager<Containers::hashmap> >" id="000636b2-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedObject<LHCb::FTChannelID>" rootmap="false"> <field name="m_hasKey" transient="true"/> <field name="m_refCount" transient="true"/> </class>
+  <class name="LHCb::FTCluster" id="000036b3-0000-0000-0000-000000000000"/>
+  <class name="LHCb::FTLiteCluster"/>
+  <class name="LHCb::MCFTDeposit" id="000036b1-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCFTDigit" id="000036b2-0000-0000-0000-000000000000"/>
+  <class name="LHCb::MCFTPhoton" id="000036b5-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::FTCluster>" id="000236b3-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCFTDeposit>" id="000236b1-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCFTDigit>" id="000236b2-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::MCFTPhoton>" id="000236b5-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::FTCluster>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCFTDeposit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCFTDigit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::MCFTPhoton>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::FTCluster>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCFTDeposit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCFTDigit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::MCFTPhoton>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::FTCluster*>"/>
+  <class name="std::vector<LHCb::MCFTDeposit*>"/>
+  <class name="std::vector<LHCb::MCFTDigit*>"/>
+  <class name="std::vector<LHCb::MCFTPhoton*>"/>
+  <class name="std::vector<SmartRef<LHCb::FTCluster> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCFTDeposit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCFTDigit> >"/>
+  <class name="std::vector<SmartRef<LHCb::MCFTPhoton> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

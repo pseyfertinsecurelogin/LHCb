@@ -1,0 +1,143 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  <class name="KeyedContainer<LHCb::L0CaloAdc,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061776-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0DUConfig,Containers::KeyedObjectManager<Containers::hashmap> >"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0MuonCandidate,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061772-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0MuonCtrlError,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061778-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0MuonData,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061773-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0MuonError,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006177b-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0MuonProcError,Containers::KeyedObjectManager<Containers::hashmap> >" id="0006177a-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0ProcessorData,Containers::KeyedObjectManager<Containers::hashmap> >"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::L0PrsSpdHit,Containers::KeyedObjectManager<Containers::hashmap> >" id="00061777-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::L0CaloAdc" id="00001776-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0CaloCandidate" id="00001771-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0DUChannel"/>
+  <class name="LHCb::L0DUConfig"/>
+  <class name="LHCb::L0DUElementaryCondition"/>
+  <class name="LHCb::L0DUElementaryData"/>
+  <class name="LHCb::L0DUReport" id="00001774-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0DUTrigger"/>
+  <class name="LHCb::L0MuonCandidate" id="00001772-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0MuonCtrlError" id="00001778-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0MuonData" id="00001773-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0MuonError" id="0000177b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0MuonInfo" id="00001779-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0MuonProcError" id="0000177a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::L0ProcessorData"/>
+  <class name="LHCb::L0PrsSpdHit" id="00001777-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0CaloAdc>" id="00021776-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0CaloCandidate>" id="00021771-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0DUChannel>"/>
+  <class name="ObjectVector<LHCb::L0DUConfig>"/>
+  <class name="ObjectVector<LHCb::L0DUElementaryCondition>"/>
+  <class name="ObjectVector<LHCb::L0DUElementaryData>"/>
+  <class name="ObjectVector<LHCb::L0DUTrigger>"/>
+  <class name="ObjectVector<LHCb::L0MuonCandidate>" id="00021772-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0MuonCtrlError>" id="00021778-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0MuonData>" id="00021773-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0MuonError>" id="0002177b-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0MuonProcError>" id="0002177a-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::L0ProcessorData>"/>
+  <class name="ObjectVector<LHCb::L0PrsSpdHit>" id="00021777-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::L0CaloAdc>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0CaloCandidate>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUChannel>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUConfig>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUElementaryCondition>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUElementaryData>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUReport>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0DUTrigger>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonCandidate>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonCtrlError>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonData>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonError>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonInfo>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0MuonProcError>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0ProcessorData>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::L0PrsSpdHit>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0CaloAdc>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0CaloCandidate>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUChannel>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUConfig>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUElementaryCondition>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUElementaryData>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUReport>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0DUTrigger>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonCandidate>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonCtrlError>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonData>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonError>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonInfo>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0MuonProcError>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0ProcessorData>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::L0PrsSpdHit>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::map<int,unsigned int>"/>
+  <class name="std::map<std::string,LHCb::L0DUChannel*>"/>
+  <class name="std::map<std::string,LHCb::L0DUChannel*>::const_iterator"/>
+  <class name="std::map<std::string,LHCb::L0DUElementaryCondition*>"/>
+  <class name="std::map<std::string,LHCb::L0DUElementaryCondition*>::const_iterator"/>
+  <class name="std::map<std::string,LHCb::L0DUElementaryData*>"/>
+  <class name="std::map<std::string,LHCb::L0DUElementaryData*>::const_iterator"/>
+  <class name="std::map<std::string,LHCb::L0DUTrigger*>"/>
+  <class name="std::map<std::string,LHCb::L0DUTrigger*>::const_iterator"/>
+  <class name="std::pair<const std::string,LHCb::L0DUChannel*>"/>
+  <class name="std::pair<const std::string,LHCb::L0DUElementaryCondition*>"/>
+  <class name="std::pair<const std::string,LHCb::L0DUElementaryData*>"/>
+  <class name="std::pair<const std::string,LHCb::L0DUTrigger*>"/>
+  <class name="std::vector<LHCb::L0CaloAdc*>"/>
+  <class name="std::vector<LHCb::L0CaloCandidate*>"/>
+  <class name="std::vector<LHCb::L0DUChannel*>"/>
+  <class name="std::vector<LHCb::L0DUConfig*>"/>
+  <class name="std::vector<LHCb::L0DUElementaryCondition*>"/>
+  <class name="std::vector<LHCb::L0DUElementaryData*>"/>
+  <class name="std::vector<LHCb::L0DUTrigger*>"/>
+  <class name="std::vector<LHCb::L0MuonCandidate*>"/>
+  <class name="std::vector<LHCb::L0MuonCtrlError*>"/>
+  <class name="std::vector<LHCb::L0MuonData*>"/>
+  <class name="std::vector<LHCb::L0MuonError*>"/>
+  <class name="std::vector<LHCb::L0MuonProcError*>"/>
+  <class name="std::vector<LHCb::L0ProcessorData*>"/>
+  <class name="std::vector<LHCb::L0PrsSpdHit*>"/>
+  <class name="std::vector<SmartRef<LHCb::L0CaloAdc> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0CaloCandidate> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUChannel> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUConfig> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUElementaryCondition> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUElementaryData> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUReport> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0DUTrigger> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonCandidate> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonCtrlError> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonData> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonError> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonInfo> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0MuonProcError> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0ProcessorData> >"/>
+  <class name="std::vector<SmartRef<LHCb::L0PrsSpdHit> >"/>
+  <enum name="LHCb::L0DUDecision::Type"/>
+  <exclusion>
+    <class name = "KeyedObject<long>" />
+    <class name="std::pair<const std::string,LHCb::L0DUElementaryData*>">
+      <method name="swap"/>
+    </class>
+    <class name="std::pair<const std::string,LHCb::L0DUElementaryCondition*>">
+      <method name="swap"/>
+    </class>
+    <class name="std::pair<const std::string,LHCb::L0DUChannel*>">
+      <method name="swap"/>
+    </class>
+    <class name="std::pair<const std::string,LHCb::L0DUTrigger*>">
+      <method name="swap"/>
+    </class>
+  </exclusion>
+</lcgdict>

@@ -1,0 +1,55 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+
+  <class name = "LHCb::HltDecReports::Container" />
+  <class name = "LHCb::HltObjectSummary::Info" /> 
+  <class name = "LHCb::HltSelReports::Container" />
+  <class name = "LHCb::HltVertexReports::Container" />
+  <class name = "std::pair<std::string, LHCb::HltDecReport>" />
+  <class name = "std::pair<std::string, LHCb::HltObjectSummary>" />
+  <class name = "std::vector<const LHCb::HltObjectSummary*>" />
+  <class name = "std::vector<std::pair<std::string, LHCb::HltDecReport> >" />
+  <class name = "std::vector<std::pair<std::string, LHCb::HltObjectSummary> >" />
+  <class name="LHCb::HltDecReport"/>
+  <class name="LHCb::HltDecReports" id="00001d61-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltLumiResult" id="00001d5b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltObjectSummary" id="00001d6a-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltSelReports" id="00001d6b-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HltVertexReports" id="00001d7f-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::HltObjectSummary>" id="00021d6a-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::HltDecReports>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HltLumiResult>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HltObjectSummary>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HltSelReports>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HltVertexReports>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltDecReports>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltLumiResult>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltObjectSummary>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltSelReports>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HltVertexReports>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::vector<LHCb::HltObjectSummary*>"/>
+  <class name="std::vector<SmartRef<LHCb::HltDecReports> >"/>
+  <class name="std::vector<SmartRef<LHCb::HltLumiResult> >"/>
+  <class name="std::vector<SmartRef<LHCb::HltObjectSummary> >"/>
+  <class name="std::vector<SmartRef<LHCb::HltSelReports> >"/>
+  <class name="std::vector<SmartRef<LHCb::HltVertexReports> >"/>
+  <exclusion>
+    <class pattern = "*HltDecReport*">
+      <method name = "=="/>
+      <method name = "<"/>
+    </class>
+    <class pattern = "*HltObjectSummary*">
+      <method name = "=="/>
+      <method name = "<"/>
+    </class>
+  </exclusion>
+</lcgdict>

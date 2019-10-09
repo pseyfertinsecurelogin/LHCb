@@ -14,22 +14,17 @@
 gaudi_subdir(GenEvent)
 
 gaudi_depends_on_subdirs(Event/EventBase
-                         GaudiObjDesc)
+                         Kernel/LHCbKernel)
 
 find_package(HepMC)
 find_package(ROOT COMPONENTS GenVector)
 
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml)
+gaudi_install_headers(Event)
 
 gaudi_add_library(GenEvent
                   src/*.cpp
                   PUBLIC_HEADERS GenEvent
                   INCLUDE_DIRS HepMC ROOT Event/EventBase
-                  LINK_LIBRARIES HepMC ROOT GaudiObjDescLib)
+		  LINK_LIBRARIES HepMC ROOT LHCbKernel)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND xml/lcgdict/lcg_selection.h
-                     INCLUDE_DIRS HepMC ROOT Event/EventBase
-                     LINK_LIBRARIES HepMC ROOT GaudiObjDescLib GenEvent LHCbKernel)
+gaudi_add_dictionary(GenEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES GenEvent HepMC LHCbKernel ROOT INCLUDE_DIRS HepMC ROOT Event/EventBase)

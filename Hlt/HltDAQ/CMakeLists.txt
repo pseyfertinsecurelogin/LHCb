@@ -20,7 +20,7 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          Event/EventPacker
                          GaudiAlg
                          GaudiKernel
-                         GaudiObjDesc
+                         Kernel/LHCbKernel
                          Hlt/HltServices
                          Kernel/LHCbMath
                          Kernel/HltInterfaces
@@ -32,11 +32,6 @@ find_package(Boost COMPONENTS iostreams filesystem)
 find_package(ROOT)
 # hide warnings from some external projects
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
-
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml
-                  DESTINATION HltDAQ)
 
 gaudi_add_library(HltDAQLib
                  src/lib/*.cpp

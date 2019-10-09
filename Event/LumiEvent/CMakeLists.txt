@@ -17,21 +17,15 @@ gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/EventBase
                          GaudiAlg
                          GaudiKernel
-                         GaudiObjDesc
-			 DAQ/DAQKernel
+                         DAQ/DAQKernel
                          Kernel/LHCbKernel)
 
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml)
+gaudi_install_headers(Event)
 
 gaudi_add_module(LumiEvent
                  src/*.cpp
                  INCLUDE_DIRS Event/EventBase
                  LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib GaudiKernel LHCbKernel)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/EventBase
-                     LINK_LIBRARIES DAQEventLib GaudiAlgLib GaudiKernel LHCbKernel)
+gaudi_add_dictionary(LumiEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES DAQEventLib GaudiAlgLib GaudiKernel LHCbKernel INCLUDE_DIRS Event/EventBase)
 

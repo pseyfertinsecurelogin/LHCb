@@ -1,9 +1,0 @@
-
-pythonexe     = $(Python_home)\python.exe
-parsetool     = $(GAUDIOBJDESCROOT)\scripts\godII.py
-dest          = ..\$(tag)\dict\$(package)\
-
-${CONSTITUENT}_output = $(dest)
-
-${CONSTITUENT} :: $(dest)$(package).lcgdict
-	@echo "-----> ${CONSTITUENT} ok"

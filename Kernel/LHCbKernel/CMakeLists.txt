@@ -15,7 +15,6 @@ gaudi_subdir(LHCbKernel)
 
 gaudi_depends_on_subdirs(GaudiAlg
                          GaudiKernel
-                         GaudiObjDesc
                          Kernel/LHCbMath)
 
 find_package(Boost COMPONENTS system)
@@ -30,30 +29,19 @@ if(NOT CPP_GSL_INCLUDE_DIR)
        message(FATAL "required headers from C++ GSL missing")
 endif()
 
-
-include(GaudiObjDesc)
-
-god_build_headers(xml/*.xml
-                  DESTINATION Kernel)
-
 gaudi_add_library(LHCbKernel
                   src/*.cpp
-                  PUBLIC_HEADERS Kernel
+		  PUBLIC_HEADERS Kernel
                   INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR}
-                  LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
+                  LINK_LIBRARIES ROOT Boost VDT GaudiKernel LHCbMathLib GaudiAlgLib)
 set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 
-god_build_dictionary(xml/*.xml
-                     HEADERS_DESTINATION Kernel
-                     EXTEND dict/LHCbKernelDict.h
-                     INCLUDE_DIRS ROOT Boost
-                     LINK_LIBRARIES ROOT Boost GaudiKernel GaudiObjDescLib LHCbMathLib LHCbKernel)
+gaudi_add_dictionary(LHCbKernel dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel)
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(RichSmartIDTest
                        src/Test/RichSmartIDTest/*.cpp
-                       INCLUDE_DIRS ROOT Boost
-                       LINK_LIBRARIES ROOT Boost GaudiKernel GaudiObjDescLib LHCbMathLib LHCbKernel)
+                       LINK_LIBRARIES LHCbKernel)
 endif()
 
 gaudi_install_python_modules()
@@ -77,3 +65,6 @@ gaudi_add_unit_test(test_BrokenLineTrajectory tests/src/test_BrokenLineTrajector
 gaudi_add_unit_test(test_PiecewiseTrajectory tests/src/test_PiecewiseTrajectory.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 set_property(SOURCE tests/src/test_PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
+
+gaudi_add_unit_test(test_allocatorReleaser ../tests/src/test_allocatorReleaser.cpp
+                    LINK_LIBRARIES LHCbKernel)

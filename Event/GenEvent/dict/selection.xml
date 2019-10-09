@@ -1,0 +1,54 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <!--               while the more explicit version below does.  -->
+  <!-- <class name="std::map<std::string,HepMC::WeightContainer::size_type>" /> -->
+  <!-- @FIXME: (MCl) for some reason the type above does not work with gcc4.6, -->
+  <!-- Temporary, to be added to LCG 61++ /-->
+  <class name="KeyedContainer<LHCb::GenCollision,Containers::KeyedObjectManager<Containers::hashmap> >" id="000600cc-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="KeyedContainer<LHCb::HepMCEvent,Containers::KeyedObjectManager<Containers::hashmap> >" id="000600ca-0000-0000-0000-000000000000"> <field name="m_cont" transient="true"/> <field name="m_random" transient="true"/> </class>
+  <class name="LHCb::BeamParameters" id="000000c8-0000-0000-0000-000000000000"/>
+  <class name="LHCb::CrossSectionsFSR" id="00003522-0000-0000-0000-000000000000"/>
+  <class name="LHCb::GenCollision" id="000000cc-0000-0000-0000-000000000000"/>
+  <class name="LHCb::GenCountersFSR" id="00003521-0000-0000-0000-000000000000"/>
+  <class name="LHCb::GenFSR" id="00003520-0000-0000-0000-000000000000"/>
+  <class name="LHCb::GenHeader" id="00000066-0000-0000-0000-000000000000"/>
+  <class name="LHCb::HepMCEvent" id="000000ca-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::GenCollision>" id="000200cc-0000-0000-0000-000000000000"/>
+  <class name="ObjectVector<LHCb::HepMCEvent>" id="000200ca-0000-0000-0000-000000000000"/>
+  <class name="SmartRef<LHCb::BeamParameters>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::CrossSectionsFSR>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::GenCollision>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::GenCountersFSR>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::GenHeader>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRef<LHCb::HepMCEvent>"> <field name="m_target" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::BeamParameters>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::CrossSectionsFSR>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::GenCollision>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::GenCountersFSR>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::GenHeader>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="SmartRefVector<LHCb::HepMCEvent>"> <field name="m_contd" transient="true"/> <field name="m_data" transient="true"/> </class>
+  <class name="std::map<int, LHCb::GenFSR::CounterValues>"/>
+  <class name="std::map<int, LHCb::GenFSR::CrossValues>"/>
+  <class name="std::map<std::basic_string<char>,size_t>" />
+  <class name="std::map<std::string, int>" />
+  <class name="std::map<std::string, std::string>" />
+  <class name="std::vector<LHCb::GenCollision*>"/>
+  <class name="std::vector<LHCb::HepMCEvent*>"/>
+  <class name="std::vector<SmartRef<LHCb::BeamParameters> >"/>
+  <class name="std::vector<SmartRef<LHCb::CrossSectionsFSR> >"/>
+  <class name="std::vector<SmartRef<LHCb::GenCollision> >"/>
+  <class name="std::vector<SmartRef<LHCb::GenCountersFSR> >"/>
+  <class name="std::vector<SmartRef<LHCb::GenHeader> >"/>
+  <class name="std::vector<SmartRef<LHCb::HepMCEvent> >"/>
+  <exclusion>
+  </exclusion>
+</lcgdict>

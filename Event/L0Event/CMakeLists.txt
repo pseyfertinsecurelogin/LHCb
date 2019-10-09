@@ -13,14 +13,11 @@
 ################################################################################
 gaudi_subdir(L0Event)
 
-gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel)
+gaudi_depends_on_subdirs(Kernel/LHCbKernel)
 
 find_package(Boost)
 
-include(GaudiObjDesc)
 
-god_build_headers(xml/*.xml)
 
 gaudi_add_library(L0Event
                   src/*.cpp
@@ -28,8 +25,5 @@ gaudi_add_library(L0Event
                   INCLUDE_DIRS Boost
                   LINK_LIBRARIES Boost LHCbKernel)
 
-god_build_dictionary(xml/*.xml
-                     EXTEND xml/lcgdict/lcg_selection.h
-                     INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost LHCbKernel L0Event)
+gaudi_add_dictionary(L0Event dict/dictionary.h dict/selection.xml LINK_LIBRARIES Boost L0Event LHCbKernel INCLUDE_DIRS Boost)
 
