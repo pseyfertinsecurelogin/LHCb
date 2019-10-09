@@ -35,16 +35,9 @@ namespace LHCb::Pr::Forward {
   } // namespace detail
 
   /** Proxy for iterating over LHCb::Pr::Forward::Tracks objects. */
-  template <typename MergedProxy, typename dType, bool unwrap_tparam>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
-
-    static constexpr bool unwrap = unwrap_tparam;
-    using FType                  = typename dType::float_v;
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    using FType = typename dType::float_v;
 
     template <typename T>
     static constexpr auto cast( T x ) {
@@ -78,11 +71,8 @@ namespace LHCb::Pr::Forward {
 } // namespace LHCb::Pr::Forward
 
 // Allow the proxy type to be found from the track container type
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Forward::Tracks> {
-  template <typename MergedProxy, typename dType, bool unwrap>
-  using type = LHCb::Pr::Forward::Proxy<MergedProxy, dType, unwrap>;
-};
+REGISTER_PROXY( LHCb::Pr::Forward::Tracks, LHCb::Pr::Forward::Proxy );
+
 template <>
 struct LHCb::header_map<LHCb::Pr::Forward::Tracks> {
   constexpr static string_array value{"Event/PrIterableForwardTracks.h"};

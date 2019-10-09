@@ -28,6 +28,49 @@ namespace LHCb::Pr {
   };
 } // namespace LHCb::Pr
 
+/** Helper macros for defining LHCb::Pr::Proxy specialisations
+ */
+
+/** Start the class declaration of a proxy type
+ *
+ *  Typically a proxy declaration would look something like:
+ *
+ *  namespace Some::Appropriate::Namespace {
+ *    DECLARE_PROXY( Proxy ) {
+ *      PROXY_METHODS( dType, unwrap, ContainerType, m_container );
+ *      auto someField() const { return m_container->field<dType, unwrap>( this->offset() ); }
+ *    };
+ *  } // namespace Some::Appropriate::Namespace
+ *
+ *  REGISTER_PROXY( ContainerType, Some::Appropriate::Namespace::Proxy );
+ */
+#define DECLARE_PROXY( Proxy )                                                                                         \
+  template <typename LHCb__Pr__MergedProxy, typename LHCb__Pr__Proxy__dType, bool LHCb__Pr__Proxy__unwrap__tparam>     \
+  struct Proxy
+
+/** Define methods that are common to all proxy types.
+ */
+#define PROXY_METHODS( dType, unwrap, Tracks, m_tracks )                                                               \
+  using dType                  = LHCb__Pr__Proxy__dType;                                                               \
+  static constexpr bool unwrap = LHCb__Pr__Proxy__unwrap__tparam;                                                      \
+  Tracks const*         m_tracks{nullptr};                                                                             \
+  Proxy( Tracks const* tracks ) : m_tracks{tracks} {}                                                                  \
+  auto        offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                   \
+  auto        size() const { return m_tracks->size(); }                                                                \
+  static auto mask_true() { return LHCb__Pr__Proxy__dType::mask_true(); }                                              \
+  static auto mask_false() { return LHCb__Pr__Proxy__dType::mask_false(); }
+
+/** Register the given proxy type as being the one needed to iterate over the
+ *  given key type. This must be called at global scope.
+ */
+#define REGISTER_PROXY( KeyType, ProxyType )                                                                           \
+  template <>                                                                                                          \
+  struct LHCb::Pr::Proxy<KeyType> {                                                                                    \
+    template <typename MergedProxy, typename dType, bool unwrap>                                                       \
+    using type = ProxyType<MergedProxy, dType, unwrap>;                                                                \
+  };                                                                                                                   \
+  static_assert( LHCb::Pr::is_zippable_v<KeyType>, "REGISTER_PROXY used with a non-zippable key type." )
+
 namespace LHCb::Pr::detail {
   /** Helper to determine if the given type has a reserve( std::size_t ) method
    */

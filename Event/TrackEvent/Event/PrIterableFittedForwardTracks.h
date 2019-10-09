@@ -36,17 +36,11 @@ namespace LHCb::Pr::Fitted::Forward {
   } // namespace detail
 
   /** Proxy type for iterating over LHCb::Pr::Fitted::Forward::Tracks objects. */
-  template <typename MergedProxy, typename dType, bool unwrap_tparam>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    using IType = typename dType::int_v;
+    using FType = typename dType::float_v;
 
-    static constexpr bool unwrap = unwrap_tparam;
-    using IType                  = typename dType::int_v;
-    using FType                  = typename dType::float_v;
     // FIXME make this configurable or at least float. For now double is assumed elsewhere.
     using FTypeOut     = std::conditional_t<unwrap, double, FType>;
     using MatrixSym5x5 = ROOT::Math::SMatrix<FTypeOut, 5, 5, ROOT::Math::MatRepSym<FTypeOut, 5>>;
@@ -136,11 +130,8 @@ namespace LHCb::Pr::Fitted::Forward {
   };
 } // namespace LHCb::Pr::Fitted::Forward
 
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Fitted::Forward::Tracks> {
-  template <typename MergedProxy, typename dType, bool unwrap>
-  using type = LHCb::Pr::Fitted::Forward::Proxy<MergedProxy, dType, unwrap>;
-};
+// Allow the proxy type to be found from the track container type
+REGISTER_PROXY( LHCb::Pr::Fitted::Forward::Tracks, LHCb::Pr::Fitted::Forward::Proxy );
 
 namespace LHCb::Pr::Iterable::Fitted::Forward {
   using Tracks = LHCb::Pr::zip_t<LHCb::Pr::Fitted::Forward::Tracks>;

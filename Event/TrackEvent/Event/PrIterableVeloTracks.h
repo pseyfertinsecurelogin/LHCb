@@ -32,14 +32,8 @@ namespace LHCb::Pr::Velo {
   } // namespace detail
 
   /** Proxy for iterating over LHCb::Pr::Velo::Tracks objects. */
-  template <typename MergedProxy, typename dType>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
-
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
     using FType = typename dType::float_v;
     using IType = typename dType::int_v;
 
@@ -57,11 +51,8 @@ namespace LHCb::Pr::Velo {
 } // namespace LHCb::Pr::Velo
 
 // Allow the proxy type to be found from the track container type
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Velo::Tracks> {
-  template <typename MergedProxy, typename dType, bool>
-  using type = LHCb::Pr::Velo::Proxy<MergedProxy, dType>;
-};
+REGISTER_PROXY( LHCb::Pr::Velo::Tracks, LHCb::Pr::Velo::Proxy );
+
 template <>
 struct LHCb::header_map<LHCb::Pr::Velo::Tracks> {
   constexpr static string_array value{"Event/PrIterableVeloTracks.h"};
