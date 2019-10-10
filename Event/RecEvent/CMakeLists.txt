@@ -38,3 +38,8 @@ gaudi_add_unit_test(TestMuonZipInfrastructure
                     tests/src/TestMuonZipInfrastructure.cpp
                     LINK_LIBRARIES LHCbMathLib TrackEvent
                     TYPE Boost)
+
+gaudi_add_unit_test(TestPVZip
+                    tests/src/TestPVZip.cpp
+                    LINK_LIBRARIES GaudiAlgLib
+                    TYPE Boost)
