@@ -106,7 +106,7 @@ public:
    * @param aChannel channel
    * @return float noise of the strip
    */
-  float noise( const LHCb::UTChannelID& aChannel ) const;
+  float noise( LHCb::UTChannelID aChannel ) const;
 
   /** get the average noise in the sector
    * @return float average noise
@@ -117,26 +117,26 @@ public:
    * @param beetle beetle number (1-4)
    * @return float average noise
    */
-  float beetleNoise( const unsigned int& beetle ) const;
+  float beetleNoise( unsigned int beetle ) const;
 
   /** get the average noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
    * @return float average noise
    */
-  float portNoise( const unsigned int& beetle, const unsigned int& port ) const;
+  float portNoise( unsigned int beetle, unsigned int port ) const;
 
   /** set the Noise of the corresponding strip
    * @param strip strip number
    * @param value Noise value
    */
-  void setNoise( const unsigned int& strip, const float& value );
+  void setNoise( unsigned int strip, float value );
 
   /** set the Noise of the corresponding channel
    * @param chan channel
    * @param value Noise value
    */
-  void setNoise( const LHCb::UTChannelID& chan, const float& value );
+  void setNoise( LHCb::UTChannelID chan, float value );
 
   /** set the Noise vector
    * @param values Noise vector
@@ -147,7 +147,7 @@ public:
    * @param aChannel channel
    * @return float noise of the strip
    */
-  float rawNoise( const LHCb::UTChannelID& aChannel ) const;
+  float rawNoise( LHCb::UTChannelID aChannel ) const;
 
   /** get the average raw noise in the sector
    * @return float average noise
@@ -158,20 +158,20 @@ public:
    * @param beetle beetle number (1-4)
    * @return float average noise
    */
-  float rawBeetleNoise( const unsigned int& beetle ) const;
+  float rawBeetleNoise( unsigned int beetle ) const;
 
   /** get the average raw noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
    * @return float average noise
    */
-  float rawPortNoise( const unsigned int& beetle, const unsigned int& port ) const;
+  float rawPortNoise( unsigned int beetle, unsigned int port ) const;
 
   /** get the common mode noise of the corresponding strip
    * @param aChannel channel
    * @return float noise of the strip
    */
-  float cmNoise( const LHCb::UTChannelID& aChannel ) const;
+  float cmNoise( LHCb::UTChannelID aChannel ) const;
 
   /** get the average common noise in the sector
    * @return float average noise
@@ -182,26 +182,26 @@ public:
    * @param beetle beetle number (1-4)
    * @return float average noise
    */
-  float cmBeetleNoise( const unsigned int& beetle ) const;
+  float cmBeetleNoise( unsigned int beetle ) const;
 
   /** get the average common mode noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
    * @return float average noise
    */
-  float cmPortNoise( const unsigned int& beetle, const unsigned int& port ) const;
+  float cmPortNoise( unsigned int beetle, unsigned int port ) const;
 
   /** set the cmNoise of the corresponding strip
    * @param strip strip number
    * @param value cmNoise value
    */
-  void setCMNoise( const unsigned int& strip, const float& value );
+  void setCMNoise( unsigned int strip, float value );
 
   /** set the cmNoise of the corresponding channel
    * @param chan channel
    * @param value cmNoise value
    */
-  void setCMNoise( const LHCb::UTChannelID& chan, const float& value );
+  void setCMNoise( LHCb::UTChannelID chan, float value );
 
   /** set the cmNoise vector
    * @param values cmNoise vector
@@ -218,28 +218,28 @@ public:
    * @param aChannel channel
    * @return ADC count
    */
-  double toADC( const double& e, const LHCb::UTChannelID& aChannel ) const;
+  double toADC( double e, LHCb::UTChannelID aChannel ) const;
 
   /** get the ADC count from the electron number
    * @param e electron number
    * @param aStrip strip number
    * @return ADC count
    */
-  double toADC( const double& e, const unsigned int& aStrip ) const;
+  double toADC( double e, unsigned int aStrip ) const;
 
   /** get the electron number from the ADC count
    * @param val ADV count
    * @param aChannel channel
    * @return electron number
    */
-  double toElectron( const double& val, const LHCb::UTChannelID& aChannel ) const;
+  double toElectron( double val, LHCb::UTChannelID aChannel ) const;
 
   /** get the electron number from the ADC count
    * @param val ADV count
    * @param aStrip strip number
    * @return electron number
    */
-  double toElectron( const double& val, const unsigned int& aStrip ) const;
+  double toElectron( double val, unsigned int aStrip ) const;
 
   /** sector identfier
    * @return id
@@ -253,7 +253,7 @@ public:
    *  @param  aChannel channel
    *  @return bool
    */
-  bool contains( const LHCb::UTChannelID aChannel ) const override;
+  bool contains( LHCb::UTChannelID aChannel ) const override;
 
   /** detector pitch
    * @return pitch
@@ -269,12 +269,12 @@ public:
    * check if valid strip number
    *
    */
-  bool isStrip( const unsigned int strip ) const;
+  bool isStrip( unsigned int strip ) const;
 
   /** trajectory
    * @return trajectory for the fit
    */
-  LHCb::LineTraj<double> trajectory( const LHCb::UTChannelID& aChan, const double offset ) const;
+  LHCb::LineTraj<double> trajectory( LHCb::UTChannelID aChan, double offset ) const;
 
   /** trajectory
    * @return trajectory of the first strip
@@ -367,16 +367,16 @@ public:
   Status sectorStatus() const;
 
   /** Status of the Beetle corresponding to strip */
-  Status beetleStatus( const LHCb::UTChannelID& chan ) const;
+  Status beetleStatus( LHCb::UTChannelID chan ) const;
 
   /** Status of the Beetle with given id  1-3 (IT), 1-4 (TT) */
-  Status beetleStatus( const unsigned int id ) const;
+  Status beetleStatus( unsigned int id ) const;
 
   /** vector of beetle status */
   std::vector<DeUTSector::Status> beetleStatus() const;
 
   /** Status of channel */
-  Status stripStatus( const LHCb::UTChannelID& chan ) const;
+  Status stripStatus( LHCb::UTChannelID chan ) const;
 
   /** get vector of strip status for all strips in sector */
   std::vector<Status> stripStatus() const;
@@ -388,30 +388,30 @@ public:
    * @param unsigned int beetle [numbering from 1]
    * @param Status newStatus
    **/
-  void setBeetleStatus( const unsigned int beetle, const Status& newStatus );
+  void setBeetleStatus( unsigned int beetle, const Status& newStatus );
 
   /** set vector of beetleStatus
    * @param LHCb::UTChannelID chan id of beetle
    * @param Status newStatus
    **/
-  void setBeetleStatus( const LHCb::UTChannelID& chan, const Status& newStatus );
+  void setBeetleStatus( LHCb::UTChannelID chan, const Status& newStatus );
 
   /** set vector of beetleStatus
    * @param unsigned int strip [numbering from 1]
    * @param Status newStatus
    **/
-  void setStripStatus( const unsigned int strip, const Status& newStatus );
+  void setStripStatus( unsigned int strip, const Status& newStatus );
 
   /** set vector of beetleStatus
    * @param LHCb::UTChannelID chan id of strip
    * @param Status newStatus
    **/
-  void setStripStatus( const LHCb::UTChannelID& chan, const Status& newStatus );
+  void setStripStatus( LHCb::UTChannelID chan, const Status& newStatus );
 
   /** short cut for strip status ok
    * @return isOKStrip
    */
-  bool isOKStrip( const LHCb::UTChannelID& chan ) const;
+  bool isOKStrip( LHCb::UTChannelID chan ) const;
 
   /** strip to channel
    * @param strip
@@ -502,7 +502,7 @@ private:
   std::string  m_hybridType;
   std::string  m_conditionPathName;
 
-  std::string staveNumber( const unsigned int& chan, const unsigned int& reg ) const;
+  std::string staveNumber( unsigned int chan, unsigned int reg ) const;
 
   StatusCode             updateStatusCondition();
   StatusCode             updateNoiseCondition();
@@ -607,53 +607,51 @@ inline unsigned int DeUTSector::beetle( const unsigned int strip ) const {
 
 inline unsigned int DeUTSector::nBeetle() const { return nStrip() / LHCbConstants::nStripsInBeetle; }
 
-inline void DeUTSector::setNoise( const LHCb::UTChannelID& chan, const float& value ) {
+inline void DeUTSector::setNoise( LHCb::UTChannelID chan, float value ) {
   // just delegate
   setNoise( chan.strip(), value );
 }
 
-inline void DeUTSector::setCMNoise( const LHCb::UTChannelID& chan, const float& value ) {
+inline void DeUTSector::setCMNoise( LHCb::UTChannelID chan, float value ) {
   // just delegate
   setCMNoise( chan.strip(), value );
 }
 
 inline DeUTSector::Status DeUTSector::sectorStatus() const { return m_status; }
 
-inline DeUTSector::Status DeUTSector::beetleStatus( const LHCb::UTChannelID& chan ) const {
+inline DeUTSector::Status DeUTSector::beetleStatus( LHCb::UTChannelID chan ) const {
   return beetleStatus( beetle( chan ) );
 }
 
-inline void DeUTSector::setBeetleStatus( const LHCb::UTChannelID& chan, const DeUTSector::Status& newStatus ) {
+inline void DeUTSector::setBeetleStatus( LHCb::UTChannelID chan, const DeUTSector::Status& newStatus ) {
   // just delegate
   setBeetleStatus( beetle( chan ), newStatus );
 }
 
-inline void DeUTSector::setStripStatus( const LHCb::UTChannelID& chan, const DeUTSector::Status& newStatus ) {
+inline void DeUTSector::setStripStatus( LHCb::UTChannelID chan, const DeUTSector::Status& newStatus ) {
   // just delegate
   setStripStatus( chan.strip(), newStatus );
 }
 
-inline DeUTSector::Status DeUTSector::beetleStatus( const unsigned int id ) const {
+inline DeUTSector::Status DeUTSector::beetleStatus( unsigned int id ) const {
   DeUTSector::Status theStatus = sectorStatus();
   if ( theStatus == DeUTSector::OK ) {
-    DeUTSector::StatusMap::const_iterator iter = m_beetleStatus.find( id );
+    auto iter = m_beetleStatus.find( id );
     if ( iter != m_beetleStatus.end() ) theStatus = iter->second;
   }
   return theStatus;
 }
 
-inline DeUTSector::Status DeUTSector::stripStatus( const LHCb::UTChannelID& chan ) const {
+inline DeUTSector::Status DeUTSector::stripStatus( LHCb::UTChannelID chan ) const {
   DeUTSector::Status theStatus = beetleStatus( chan );
   if ( theStatus == DeUTSector::OK ) {
-    DeUTSector::StatusMap::const_iterator iter = m_stripStatus.find( chan.strip() );
+    auto iter = m_stripStatus.find( chan.strip() );
     if ( iter != m_stripStatus.end() ) theStatus = iter->second;
   }
   return theStatus;
 }
 
-inline bool DeUTSector::isOKStrip( const LHCb::UTChannelID& chan ) const {
-  return ( stripStatus( chan ) == DeUTSector::OK ? true : false );
-}
+inline bool DeUTSector::isOKStrip( LHCb::UTChannelID chan ) const { return stripStatus( chan ) == DeUTSector::OK; }
 
 inline std::vector<DeUTSector::Status> DeUTSector::beetleStatus() const {
   std::vector<Status> vec;
@@ -663,7 +661,7 @@ inline std::vector<DeUTSector::Status> DeUTSector::beetleStatus() const {
       vec[iBeetle - 1] = sectorStatus();
       continue;
     }
-    DeUTSector::StatusMap::const_iterator iter = m_beetleStatus.find( iBeetle );
+    auto iter = m_beetleStatus.find( iBeetle );
     if ( iter != m_beetleStatus.end() ) {
       vec[iBeetle - 1] = iter->second;
     } else {
@@ -686,7 +684,7 @@ inline std::vector<DeUTSector::Status> DeUTSector::stripStatus() const {
       vec[iStrip - 1] = beetleStatus( chan );
       continue;
     }
-    DeUTSector::StatusMap::const_iterator iter = m_stripStatus.find( iStrip );
+    auto iter = m_stripStatus.find( iStrip );
     if ( iter != m_stripStatus.end() ) {
       vec[iStrip - 1] = iter->second;
     } else {
@@ -696,7 +694,7 @@ inline std::vector<DeUTSector::Status> DeUTSector::stripStatus() const {
   return vec;
 }
 
-inline LHCb::UTChannelID DeUTSector::stripToChan( const unsigned int strip ) const {
+inline LHCb::UTChannelID DeUTSector::stripToChan( unsigned int strip ) const {
   return isStrip( strip ) ? LHCb::UTChannelID( elementID().type(), elementID().station(), elementID().layer(),
                                                elementID().detRegion(), elementID().sector(), strip )
                           : LHCb::UTChannelID( 0 );
