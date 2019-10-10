@@ -35,8 +35,6 @@ namespace LHCb::Calo::Interfaces {
     // Return the interface ID
     DeclareInterfaceID( IHypo2Calo, 2, 0 );
 
-    virtual void setCalos( CaloCellCode::CaloIndex from, CaloCellCode::CaloIndex to ) const = 0;
-
     virtual double energy( const CaloCluster& fromCluster, CaloCellCode::CaloIndex toCalo ) const = 0;
     virtual double energy( const CaloHypo& fromHypo, CaloCellCode::CaloIndex toCalo ) const       = 0;
 
