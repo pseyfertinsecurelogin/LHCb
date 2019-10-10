@@ -155,12 +155,17 @@ namespace LHCb::Pr::Muon {
     }
 
     template <typename dType, bool unwrap>
-    auto IsMuon( size_t offset ) const {
+    auto Status( std::size_t offset ) const {
       if constexpr ( unwrap ) {
-        return ( m_statuses[offset] & StatusMasks::IsMuon ) != 0;
+        return m_statuses[offset];
       } else {
-        return !( ( typename dType::int_v( &m_statuses[offset] ) & StatusMasks::IsMuon ) == 0 );
+        return typename dType::int_v{&m_statuses[offset]};
       }
+    }
+
+    template <typename dType, bool unwrap>
+    auto IsMuon( std::size_t offset ) const {
+      return !( ( Status<dType, unwrap>( offset ) & StatusMasks::IsMuon ) == 0 );
     }
 
     template <typename dType, bool unwrap>
