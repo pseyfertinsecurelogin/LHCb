@@ -19,15 +19,6 @@ namespace LHCb::Pr::Forward {
     /** Helper type for fitted track proxies */
     template <typename TrackProxy>
     struct ScifiState {
-      /** Helper to convert scalar::float_v -> float if requested. */
-      template <typename T>
-      static constexpr auto cast( T x ) {
-        if constexpr ( TrackProxy::unwrap ) {
-          return x.cast();
-        } else {
-          return x;
-        }
-      }
       TrackProxy const& m_proxy;
       ScifiState( TrackProxy const& proxy ) : m_proxy{proxy} {}
       decltype( auto ) qOverP() const { return m_proxy.qOverP(); }

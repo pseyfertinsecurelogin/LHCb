@@ -11,6 +11,7 @@
 #pragma once
 #include "Event/PrFittedForwardTracks.h"
 #include "Event/PrZip.h"
+#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include <Math/SMatrix.h>
 namespace LHCb::Pr::Fitted::Forward {
@@ -18,15 +19,6 @@ namespace LHCb::Pr::Fitted::Forward {
     /** Helper type for fitted track proxies */
     template <typename TrackProxy>
     struct FittedState {
-      /** Helper to convert scalar::float_v -> float if requested. */
-      template <typename T>
-      static constexpr auto cast( T x ) {
-        if constexpr ( TrackProxy::unwrap ) {
-          return x.cast();
-        } else {
-          return x;
-        }
-      }
       TrackProxy const& m_proxy;
       FittedState( TrackProxy const& proxy ) : m_proxy{proxy} {}
       decltype( auto ) qOverP() const { return m_proxy.qOverP(); }
@@ -34,11 +26,11 @@ namespace LHCb::Pr::Fitted::Forward {
       decltype( auto ) position() const { return m_proxy.closestToBeamStatePos(); }
       decltype( auto ) covariance() const { return m_proxy.closestToBeamStateCovariance(); }
       // TODO maybe stick these in a base class via CRTP if it gets a bit cumbersome?
-      decltype( auto ) x() const { return cast( position().x ); }
-      decltype( auto ) y() const { return cast( position().y ); }
-      decltype( auto ) z() const { return cast( position().z ); }
-      decltype( auto ) tx() const { return cast( slopes().x ); }
-      decltype( auto ) ty() const { return cast( slopes().y ); }
+      decltype( auto ) x() const { return position().X(); }
+      decltype( auto ) y() const { return position().Y(); }
+      decltype( auto ) z() const { return position().Z(); }
+      decltype( auto ) tx() const { return slopes().X(); }
+      decltype( auto ) ty() const { return slopes().Y(); }
     };
   } // namespace detail
 
@@ -68,11 +60,19 @@ namespace LHCb::Pr::Fitted::Forward {
     }
 
     decltype( auto ) closestToBeamStateDir() const {
-      return this->m_tracks->template beamStateDir<FType>( this->offset() );
+      auto dir = this->m_tracks->template beamStateDir<FType>( this->offset() );
+      if constexpr ( unwrap )
+        return Gaudi::XYZVectorF{cast( dir.x ), cast( dir.y ), cast( dir.z )};
+      else
+        return dir;
     }
 
     decltype( auto ) closestToBeamStatePos() const {
-      return this->m_tracks->template beamStatePos<FType>( this->offset() );
+      auto pos = this->m_tracks->template beamStatePos<FType>( this->offset() );
+      if constexpr ( unwrap )
+        return Gaudi::XYZPointF{cast( pos.x ), cast( pos.y ), cast( pos.z )};
+      else
+        return pos;
     }
 
     decltype( auto ) qOverP() const { return cast( this->m_tracks->template QoP<FType>( this->offset() ) ); }
@@ -108,18 +108,20 @@ namespace LHCb::Pr::Fitted::Forward {
     auto pt() const {
       auto const mom = p();
       auto const dir = closestToBeamStateDir();
-      auto const pt2 = mom * mom * ( dir.x * dir.x + dir.y * dir.y ) / dir.mag2();
-      return cast( sqrt( pt2 ) );
+      auto const pt2 = mom * mom * ( dir.X() * dir.X() + dir.Y() * dir.Y() ) / dir.mag2();
+      using std::sqrt;
+      return sqrt( pt2 );
     }
 
     auto pseudoRapidity() const { return closestToBeamStateDir().eta(); }
     auto phi() const { return closestToBeamStateDir().phi(); }
 
     auto momentum() const {
-      auto const dir   = closestToBeamStateDir();
-      auto const scale = p() / dir.mag();
+      auto const dir = closestToBeamStateDir();
+      using std::sqrt;
+      auto const scale = p() / sqrt( dir.mag2() );
       if constexpr ( unwrap ) {
-        return Gaudi::XYZVector{cast( scale * dir.x ), cast( scale * dir.y ), cast( scale * dir.z )};
+        return Gaudi::XYZVectorF{scale * dir.X(), scale * dir.Y(), scale * dir.Z()};
       } else {
         return Vec3<FType>{scale * dir.x, scale * dir.y, scale * dir.z};
       }
