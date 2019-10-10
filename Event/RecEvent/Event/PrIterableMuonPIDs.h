@@ -24,18 +24,12 @@ namespace LHCb::Pr::Muon {
 
 // Register the proxy as appropriate for the container.
 // Note that this must be done *before* we can write
-// LHCb::Pr::zip_t<LHCb::Pr::Muon::PIDs> just below.
+// LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Muon::PIDs> just below.
 REGISTER_PROXY( LHCb::Pr::Muon::PIDs, LHCb::Pr::Muon::Proxy );
-
-namespace LHCb::Pr::Iterable::Muon {
-  using PIDs = LHCb::Pr::zip_t<LHCb::Pr::Muon::PIDs>;
-} // namespace LHCb::Pr::Iterable::Muon
 
 namespace LHCb::Pr::Iterable::Scalar::Muon {
   using PIDs = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Muon::PIDs>;
 } // namespace LHCb::Pr::Iterable::Scalar::Muon
 
-template <>
-struct LHCb::header_map<LHCb::Pr::Muon::PIDs> {
-  constexpr static string_array value{"Event/PrIterableMuonPIDs.h"};
-};
+REGISTER_HEADER( LHCb::Pr::Muon::PIDs, "Event/PrIterableMuonPIDs.h" );
+REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Muon::PIDs, "Event/PrIterableMuonPIDs.h" );

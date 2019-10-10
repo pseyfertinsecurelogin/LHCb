@@ -80,3 +80,12 @@ namespace LHCb {
   template <typename T>
   inline constexpr auto header_map_v = header_map<T>::value;
 } // namespace LHCb
+
+/** Register the given header as being that defining the given key type.
+ *  This must be called at global scope.
+ */
+#define REGISTER_HEADER( KeyType, Header )                                                                             \
+  template <>                                                                                                          \
+  struct LHCb::header_map<KeyType> {                                                                                   \
+    constexpr static string_array value{Header};                                                                       \
+  }

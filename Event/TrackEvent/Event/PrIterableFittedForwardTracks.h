@@ -141,12 +141,5 @@ namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Fitted::Forward::Tracks>;
 } // namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward
 
-template <>
-struct LHCb::header_map<LHCb::Pr::Fitted::Forward::Tracks> {
-  constexpr static string_array value{"Event/PrIterableFittedForwardTracks.h"};
-};
-
-template <>
-struct LHCb::header_map<LHCb::Pr::Iterable::Scalar::Fitted::Forward::Tracks> {
-  constexpr static string_array value{"Event/PrIterableFittedForwardTracks.h"};
-};
+REGISTER_HEADER( LHCb::Pr::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );
+REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );

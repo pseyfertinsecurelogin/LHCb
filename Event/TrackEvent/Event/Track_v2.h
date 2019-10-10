@@ -547,8 +547,4 @@ namespace LHCb::Event {
 
   } // namespace v2
 } // namespace LHCb::Event
-
-template <>
-struct LHCb::header_map<LHCb::Event::v2::Track> {
-  constexpr static string_array value{"Event/Track_v2.h"};
-};
+REGISTER_HEADER( LHCb::Event::v2::Track, "Event/Track_v2.h" );
