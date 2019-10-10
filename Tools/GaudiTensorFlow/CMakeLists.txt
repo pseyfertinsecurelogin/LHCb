@@ -46,6 +46,8 @@ gaudi_add_library (GaudiTensorFlow
 
 gaudi_add_executable(testTensor
                      tests/testTensor.cpp
+                     # random guess
+                     INCLUDE_DIRS Boost GSL ${CPP_GSL_INCLUDE_DIR} ${TENSORFLOW_INCLUDE_DIR}
                      LINK_LIBRARIES GaudiTensorFlow
                      )
 
