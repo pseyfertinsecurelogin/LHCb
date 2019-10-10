@@ -26,13 +26,7 @@
  */
 
 namespace LHCb::Pr::Muon {
-  enum StatusMasks {
-    IsMuonMask         = 0x1,
-    InAcceptanceMask   = 0x2,
-    PreSelMomentumMask = 0x4,
-    IsMuonLooseMask    = 0x8,
-    IsMuonTightMask    = 0x10
-  };
+  enum StatusMasks { IsMuon = 0x1, InAcceptance = 0x2, PreSelMomentum = 0x4, IsMuonLoose = 0x8, IsMuonTight = 0x10 };
 
   namespace details {
     // Copied from SelUtils
@@ -151,7 +145,7 @@ namespace LHCb::Pr::Muon {
 
     template <typename IsMuon, typename Chi2Corr>
     void emplace_back( IsMuon&& isMuon, Chi2Corr&& chi2Corr ) {
-      m_statuses.emplace_back( details::setFlag<IsMuonMask>( 0x0, isMuon ) );
+      m_statuses.emplace_back( details::setFlag<StatusMasks::IsMuon>( 0x0, isMuon ) );
       m_chi2Corrs.emplace_back( chi2Corr );
     }
 
@@ -163,9 +157,9 @@ namespace LHCb::Pr::Muon {
     template <typename dType, bool unwrap>
     auto IsMuon( size_t offset ) const {
       if constexpr ( unwrap ) {
-        return ( m_statuses[offset] & IsMuonMask ) != 0;
+        return ( m_statuses[offset] & StatusMasks::IsMuon ) != 0;
       } else {
-        return !( ( typename dType::int_v( &m_statuses[offset] ) & IsMuonMask ) == 0 );
+        return !( ( typename dType::int_v( &m_statuses[offset] ) & StatusMasks::IsMuon ) == 0 );
       }
     }
 
