@@ -722,6 +722,14 @@ namespace LHCb::Pr {
 
 } // namespace LHCb::Pr
 
+namespace LHCb::Pr {
+  template <typename T>
+  inline constexpr bool is_zip_v = false;
+
+  template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
+  inline constexpr bool is_zip_v<LHCb::Pr::Zip<def_simd, def_unwrap, ContainerTypes...>> = true;
+} // namespace LHCb::Pr
+
 // Enable header lookup for non-owning zips
 template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
 struct LHCb::header_map<LHCb::Pr::Zip<def_simd, def_unwrap, ContainerTypes...>> {
