@@ -24,6 +24,7 @@
 #include "GaudiKernel/SharedObjectsContainer.h"
 #include "GaudiKernel/SmartRefVector.h"
 #include "GaudiKernel/VectorMap.h"
+#include "Kernel/HeaderMapping.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include <algorithm>
@@ -1506,3 +1507,4 @@ namespace LHCb::Event {
 // -----------------------------------------------------------------------------
 
 // Including forward declarations
+REGISTER_HEADER( LHCb::Event::v1::Track, "Event/Track_v1.h" );
