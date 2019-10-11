@@ -258,6 +258,11 @@ namespace LHCb::Pr {
           return simd_t::loop_mask( m_offset, first_proxy_t::size() );
         }
       }
+      // Make the static methods added by the PROXY_METHODS macro visible in
+      // the zipped proxy types -- it doesn't matter which parent type we take
+      // them from, the first one is simplest...
+      using first_proxy_t::mask_false;
+      using first_proxy_t::mask_true;
 
       proxy_type( ContainerTypes const*... containers, int offset )
           : Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap>, simd, unwrap>( containers )...
