@@ -40,10 +40,8 @@ namespace LHCb::Pr::Velo {
 
 // Allow the proxy type to be found from the track container type
 REGISTER_PROXY( LHCb::Pr::Velo::Tracks, LHCb::Pr::Velo::Proxy );
+REGISTER_HEADER( LHCb::Pr::Velo::Tracks, "Event/PrIterableVeloTracks.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Velo {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Velo::Tracks>;
 } // namespace LHCb::Pr::Iterable::Scalar::Velo
-
-REGISTER_HEADER( LHCb::Pr::Velo::Tracks, "Event/PrIterableVeloTracks.h" );
-REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Velo::Tracks, "Event/PrIterableVeloTracks.h" );

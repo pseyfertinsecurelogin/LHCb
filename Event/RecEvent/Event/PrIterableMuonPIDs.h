@@ -26,10 +26,8 @@ namespace LHCb::Pr::Muon {
 // Note that this must be done *before* we can write
 // LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Muon::PIDs> just below.
 REGISTER_PROXY( LHCb::Pr::Muon::PIDs, LHCb::Pr::Muon::Proxy );
+REGISTER_HEADER( LHCb::Pr::Muon::PIDs, "Event/PrIterableMuonPIDs.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Muon {
   using PIDs = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Muon::PIDs>;
 } // namespace LHCb::Pr::Iterable::Scalar::Muon
-
-REGISTER_HEADER( LHCb::Pr::Muon::PIDs, "Event/PrIterableMuonPIDs.h" );
-REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Muon::PIDs, "Event/PrIterableMuonPIDs.h" );

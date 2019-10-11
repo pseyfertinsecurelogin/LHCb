@@ -91,10 +91,8 @@ namespace LHCb::Pr::Forward {
 
 // Allow the proxy type to be found from the track container type
 REGISTER_PROXY( LHCb::Pr::Forward::Tracks, LHCb::Pr::Forward::Proxy );
+REGISTER_HEADER( LHCb::Pr::Forward::Tracks, "Event/PrIterableForwardTracks.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Forward::Tracks>;
 } // namespace LHCb::Pr::Iterable::Scalar::Forward
-
-REGISTER_HEADER( LHCb::Pr::Forward::Tracks, "Event/PrIterableForwardTracks.h" );
-REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Forward::Tracks, "Event/PrIterableForwardTracks.h" );

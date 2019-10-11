@@ -125,14 +125,8 @@ namespace LHCb::Pr::Fitted::Forward {
 
 // Allow the proxy type to be found from the track container type
 REGISTER_PROXY( LHCb::Pr::Fitted::Forward::Tracks, LHCb::Pr::Fitted::Forward::Proxy );
-
-namespace LHCb::Pr::Iterable::Fitted::Forward {
-  using Tracks = LHCb::Pr::zip_t<LHCb::Pr::Fitted::Forward::Tracks>;
-} // namespace LHCb::Pr::Iterable::Fitted::Forward
+REGISTER_HEADER( LHCb::Pr::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Fitted::Forward::Tracks>;
 } // namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward
-
-REGISTER_HEADER( LHCb::Pr::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );
-REGISTER_HEADER( LHCb::Pr::Iterable::Scalar::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );
