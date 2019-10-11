@@ -10,6 +10,7 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrFittedForwardTracks.h"
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
@@ -54,20 +55,12 @@ namespace LHCb::Pr::Fitted::Forward {
       }
     }
 
-    decltype( auto ) closestToBeamStateDir() const {
-      auto dir = this->m_tracks->template beamStateDir<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZVectorF{cast( dir.x ), cast( dir.y ), cast( dir.z )};
-      else
-        return dir;
+    auto closestToBeamStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template beamStateDir<FType>( this->offset() ) );
     }
 
-    decltype( auto ) closestToBeamStatePos() const {
-      auto pos = this->m_tracks->template beamStatePos<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZPointF{cast( pos.x ), cast( pos.y ), cast( pos.z )};
-      else
-        return pos;
+    auto closestToBeamStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template beamStatePos<FType>( this->offset() ) );
     }
 
     decltype( auto ) qOverP() const { return cast( this->m_tracks->template QoP<FType>( this->offset() ) ); }

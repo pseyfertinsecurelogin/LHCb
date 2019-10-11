@@ -9,44 +9,32 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #pragma once
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrVeloTracks.h"
 #include "Event/PrZip.h"
 #include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Velo {
-  namespace detail {
-    template <typename VecType>
-    struct State {
-      VecType m_position, m_slopes;
-      using F = typename VecType::value_type;
-      State( VecType position, VecType slopes )
-          : m_position( std::move( position ) ), m_slopes( std::move( slopes ) ) {}
-      VecType const& position() const { return m_position; }
-      VecType const& slopes() const { return m_slopes; }
-      auto           x() const { return position().x; }
-      auto           y() const { return position().y; }
-      auto           z() const { return position().z; }
-      auto           tx() const { return slopes().x; }
-      auto           ty() const { return slopes().y; }
-    };
-  } // namespace detail
-
   /** Proxy for iterating over LHCb::Pr::Velo::Tracks objects. */
   DECLARE_PROXY( Proxy ) {
     PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
     using FType = typename dType::float_v;
     using IType = typename dType::int_v;
 
-    decltype( auto ) closestToBeamStatePos() const {
-      return this->m_tracks->template statePos<FType>( this->offset(), 0 );
+    auto closestToBeamStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template statePos<FType>( this->offset(), 0 ) );
     }
-    decltype( auto ) closestToBeamStateDir() const {
-      return this->m_tracks->template stateDir<FType>( this->offset(), 0 );
+    auto closestToBeamStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template stateDir<FType>( this->offset(), 0 ) );
     }
-    auto closestToBeamState() const { return detail::State{closestToBeamStatePos(), closestToBeamStateDir()}; }
-    auto nHits() const { return this->m_tracks->template nHits<IType>( this->offset() ); }
-    decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
-    decltype( auto ) phi() const { return this->closestToBeamStateDir().phi(); }
+    auto closestToBeamState() const {
+      return LHCb::Pr::detail::VeloState{closestToBeamStatePos(), closestToBeamStateDir()};
+    }
+    auto nHits() const {
+      return LHCb::Pr::detail::cast<unwrap>( this->m_tracks->template nHits<IType>( this->offset() ) );
+    }
+    auto pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
+    auto phi() const { return this->closestToBeamStateDir().phi(); }
   };
 } // namespace LHCb::Pr::Velo
 

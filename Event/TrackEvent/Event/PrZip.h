@@ -58,8 +58,20 @@ namespace LHCb::Pr {
   Proxy( Tracks const* tracks ) : m_tracks{tracks} {}                                                                  \
   auto        offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                   \
   auto        size() const { return m_tracks->size(); }                                                                \
-  static auto mask_true() { return dType::mask_true(); }                                                               \
-  static auto mask_false() { return dType::mask_false(); }
+  static auto mask_true() {                                                                                            \
+    if constexpr ( unwrap ) {                                                                                          \
+      return true;                                                                                                     \
+    } else {                                                                                                           \
+      return dType::mask_true();                                                                                       \
+    }                                                                                                                  \
+  }                                                                                                                    \
+  static auto mask_false() {                                                                                           \
+    if constexpr ( unwrap ) {                                                                                          \
+      return false;                                                                                                    \
+    } else {                                                                                                           \
+      return dType::mask_false();                                                                                      \
+    }                                                                                                                  \
+  }
 
 /** Register the given proxy type as being the one needed to iterate over the
  *  given key type. This must be called at global scope.

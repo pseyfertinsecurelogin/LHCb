@@ -10,6 +10,7 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrForwardTracks.h"
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
@@ -37,35 +38,53 @@ namespace LHCb::Pr::Forward {
   /** Proxy for iterating over LHCb::Pr::Forward::Tracks objects. */
   DECLARE_PROXY( Proxy ) {
     PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    using IType = typename dType::int_v;
     using FType = typename dType::float_v;
 
-    template <typename T>
-    static constexpr auto cast( T x ) {
-      if constexpr ( unwrap ) {
-        return x.cast();
-      } else {
-        return x;
-      }
+    auto closestToBeamStatePos() const {
+      // Fail if we're asked to do this in vector mode...
+      static_assert( std::is_same_v<dType, SIMDWrapper::scalar::types>,
+                     "Forward->Velo links only supported in scalar mode." );
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->getVeloAncestors()->template statePos<FType>(
+          m_tracks->template trackVP<IType>( this->offset() ).cast(), 0 ) );
     }
+
+    auto closestToBeamStateDir() const {
+      // Fail if we're asked to do this in vector mode...
+      static_assert( std::is_same_v<dType, SIMDWrapper::scalar::types>,
+                     "Forward->Velo links only supported in scalar mode." );
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->getVeloAncestors()->template stateDir<FType>(
+          m_tracks->template trackVP<IType>( this->offset() ).cast(), 0 ) );
+    }
+
+    auto closestToBeamState() const {
+      return LHCb::Pr::detail::VeloState{closestToBeamStatePos(), closestToBeamStateDir()};
+    }
+
+    auto phi() const { return closestToBeamState().slopes().phi(); }
+    auto pseudoRapidity() const { return closestToBeamState().slopes().eta(); }
 
     auto endScifiState() const { return detail::ScifiState{*this}; }
 
-    auto p() const { return cast( this->m_tracks->template p<FType>( this->offset() ) ); }
-
-    decltype( auto ) endScifiStatePos() const {
-      auto pos = this->m_tracks->template statePos<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZPointF{cast( pos.x ), cast( pos.y ), cast( pos.z )};
-      else
-        return pos;
+    auto p() const { return LHCb::Pr::detail::cast<unwrap>( m_tracks->template p<FType>( this->offset() ) ); }
+    auto pt() const {
+      auto const mom = p();
+      auto const dir = closestToBeamStateDir();
+      auto const pt2 = mom * mom * ( dir.X() * dir.X() + dir.Y() * dir.Y() ) / dir.mag2();
+      using std::sqrt;
+      return sqrt( pt2 );
     }
 
-    decltype( auto ) endScifiStateDir() const {
-      auto dir = this->m_tracks->template stateDir<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZVectorF{cast( dir.x ), cast( dir.y ), cast( dir.z )};
-      else
-        return dir;
+    auto qOverP() const {
+      return LHCb::Pr::detail::cast<unwrap>( m_tracks->template stateQoP<FType>( this->offset() ) );
+    }
+
+    auto endScifiStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template statePos<FType>( this->offset() ) );
+    }
+
+    auto endScifiStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template stateDir<FType>( this->offset() ) );
     }
   };
 } // namespace LHCb::Pr::Forward
