@@ -89,3 +89,11 @@ namespace LHCb {
   struct LHCb::header_map<KeyType> {                                                                                   \
     constexpr static string_array value{Header};                                                                       \
   }
+
+/** Provide some generic definitions for STL types. Generally these definitions
+ *  can live in the relevant headers.
+ */
+template <typename T, typename A>
+struct LHCb::header_map<std::vector<T, A>> {
+  constexpr static auto value = LHCb::header_map_v<T> + "<vector>";
+};
