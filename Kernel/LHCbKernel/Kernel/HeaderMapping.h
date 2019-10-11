@@ -70,10 +70,8 @@ namespace LHCb {
   /** Helper that can be specialised by different event model types to
    *  advertise which headers must be included to use them.
    */
-  template <typename T>
-  struct header_map {
-    constexpr static string_array value{};
-  };
+  template <typename T, typename U = void>
+  struct header_map {};
 
   /** Shorthand for using LHCb::header_map<T>::value
    */
@@ -96,4 +94,13 @@ namespace LHCb {
 template <typename T, typename A>
 struct LHCb::header_map<std::vector<T, A>> {
   constexpr static auto value = LHCb::header_map_v<T> + "<vector>";
+};
+
+/** Specialise for fundamental types as those don't need headers. This means
+ *  that missing specialisations for user-defined types will trigger compile
+ *  errors.
+ */
+template <typename T>
+struct LHCb::header_map<T, std::enable_if_t<std::is_fundamental_v<T>>> {
+  constexpr static string_array value{};
 };
