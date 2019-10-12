@@ -26,35 +26,16 @@
  */
 
 namespace LHCb::Pr::Muon {
-
-  enum StatusBits {
-    IsMuonBits         = 0,
-    InAcceptanceBits   = 1,
-    PreSelMomentumBits = 2,
-    IsMuonLooseBits    = 3,
-    IsMuonTightBits    = 4
-  };
-
-  enum StatusMasks {
-    IsMuonMask         = 0x1L,
-    InAcceptanceMask   = 0x2L,
-    PreSelMomentumMask = 0x4L,
-    IsMuonLooseMask    = 0x8L,
-    IsMuonTightMask    = 0x10L
-  };
+  enum StatusMasks { IsMuon = 0x1, InAcceptance = 0x2, PreSelMomentum = 0x4, IsMuonLoose = 0x8, IsMuonTight = 0x10 };
 
   namespace details {
     // Copied from SelUtils
     constexpr int popcount( bool x ) { return x; }
 
-    inline int addIsMuonFlag( int input, bool value ) {
-      int val    = static_cast<int>( value );
-      int output = input;
-      output &= ~IsMuonMask;
-      output |= ( ( ( val ) << IsMuonBits ) & IsMuonMask );
-      return output;
+    template <StatusMasks Mask>
+    constexpr int setFlag( int input, bool value ) {
+      return input ^ ( ( -value ^ input ) & Mask );
     }
-
   } // namespace details
 
   /** @class LHCb::Pr::Muon::PID
@@ -164,7 +145,7 @@ namespace LHCb::Pr::Muon {
 
     template <typename IsMuon, typename Chi2Corr>
     void emplace_back( IsMuon&& isMuon, Chi2Corr&& chi2Corr ) {
-      m_statuses.emplace_back( details::addIsMuonFlag( 0, isMuon ) );
+      m_statuses.emplace_back( details::setFlag<StatusMasks::IsMuon>( 0x0, isMuon ) );
       m_chi2Corrs.emplace_back( chi2Corr );
     }
 
@@ -174,13 +155,17 @@ namespace LHCb::Pr::Muon {
     }
 
     template <typename dType, bool unwrap>
-    auto IsMuon( size_t offset ) const {
+    auto Status( std::size_t offset ) const {
       if constexpr ( unwrap ) {
-        return bool( ( m_statuses[offset] & IsMuonMask ) >> IsMuonBits );
+        return m_statuses[offset];
       } else {
-        auto ismuons = ( ( typename dType::int_v( &m_statuses[offset] ) & IsMuonMask ) >> IsMuonBits );
-        return ( ismuons == 1 );
+        return typename dType::int_v{&m_statuses[offset]};
       }
+    }
+
+    template <typename dType, bool unwrap>
+    auto IsMuon( std::size_t offset ) const {
+      return !( ( Status<dType, unwrap>( offset ) & StatusMasks::IsMuon ) == 0 );
     }
 
     template <typename dType, bool unwrap>
