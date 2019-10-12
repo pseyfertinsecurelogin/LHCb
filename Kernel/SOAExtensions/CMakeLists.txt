@@ -15,6 +15,7 @@ gaudi_subdir(SOAExtensions)
 
 gaudi_depends_on_subdirs(
   Kernel/SOAContainer
+  Kernel/LHCbMath
   Event/TrackEvent
   GaudiAlg
   )
@@ -33,10 +34,17 @@ gaudi_add_unit_test(TestZipSelection
                     LINK_LIBRARIES GaudiKernel
                     TYPE Boost)
 
+gaudi_add_unit_test(TestHanaAccessor
+                    tests/src/hana_soa_access.cpp
+                    INCLUDE_DIRS Kernel/LHCbMath
+                    Link_LIBRARIES LHCbMathLib
+                    TYPE Boost)
+
 gaudi_add_module( SOAExtensionExamples examples/src/*.cpp
   INCLUDE_DIRS GaudiAlg Kernel/SOAContainer Kernel/SOAExtensions Event/TrackEvent cppgsl
   LINK_LIBRARIES GaudiAlgLib
   )
+
 
 
 gaudi_add_test(QMTest QMTEST
@@ -44,4 +52,6 @@ gaudi_add_test(QMTest QMTEST
   BINARY_TAG=${BINARY_TAG}
   STDOPTS=${CMAKE_CURRENT_SOURCE_DIR}/options
   JOBOPTSEARCHPATH+=${CMAKE_CURRENT_SOURCE_DIR}/options
-  PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/tests/qmtest)
+  PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/tests/qmtest
+  )
+
