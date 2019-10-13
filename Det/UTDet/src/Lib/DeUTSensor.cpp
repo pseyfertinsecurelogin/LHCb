@@ -117,8 +117,8 @@ double DeUTSensor::localU( const unsigned int strip, const double offset ) const
 bool DeUTSensor::localInActive( const Gaudi::XYZPoint& point, Gaudi::XYZPoint tol ) const {
   const double u = point.x();
   const double v = point.y();
-  return ( ( u - tol.X() ) < ( m_uMaxLocal + ( 0.5 * m_pitch ) ) &&
-           ( u + tol.X() ) > ( m_uMinLocal - ( 0.5 * m_pitch ) ) && ( ( v - tol.Y() ) < m_vMaxLocal ) &&
+  return ( ( u - tol.X() ) < ( m_uMaxLocal + ( 0.5f * m_pitch ) ) &&
+           ( u + tol.X() ) > ( m_uMinLocal - ( 0.5f * m_pitch ) ) && ( ( v - tol.Y() ) < m_vMaxLocal ) &&
            ( ( v + tol.Y() ) > m_vMinLocal ) );
 }
 
@@ -148,8 +148,8 @@ StatusCode DeUTSensor::cacheInfo() {
   float yLower = m_vMinLocal;
   if ( m_yInverted ) std::swap( yUpper, yLower );
 
-  float xUpper = m_uMaxLocal - 0.5 * m_pitch;
-  float xLower = m_uMinLocal + 0.5 * m_pitch;
+  float xUpper = m_uMaxLocal - 0.5f * m_pitch;
+  float xLower = m_uMinLocal + 0.5f * m_pitch;
   if ( m_xInverted ) std::swap( xUpper, xLower );
 
   // direction
@@ -164,13 +164,13 @@ StatusCode DeUTSensor::cacheInfo() {
   m_midTraj.emplace( g3, g4 );
 
   // range ---> strip Length
-  m_range = std::make_pair( -0.5 * m_stripLength, 0.5 * m_stripLength );
+  m_range = std::make_pair( -0.5f * m_stripLength, 0.5f * m_stripLength );
 
   // plane
   m_plane = Gaudi::Plane3D( g1, g2, g4 );
 
-  m_entryPlane = Gaudi::Plane3D( m_plane.Normal(), globalPoint( 0., 0., -0.5 * m_thickness ) );
-  m_exitPlane  = Gaudi::Plane3D( m_plane.Normal(), globalPoint( 0., 0., 0.5 * m_thickness ) );
+  m_entryPlane = Gaudi::Plane3D( m_plane.Normal(), globalPoint( 0., 0., -0.5f * m_thickness ) );
+  m_exitPlane  = Gaudi::Plane3D( m_plane.Normal(), globalPoint( 0., 0., 0.5f * m_thickness ) );
 
   return StatusCode::SUCCESS;
 }
@@ -181,11 +181,11 @@ StatusCode DeUTSensor::initGeometryInfo() {
   const ILVolume* lv      = this->geometry()->lvolume();
   const SolidBox* mainBox = dynamic_cast<const SolidBox*>( lv->solid() );
 
-  m_uMaxLocal = 0.5 * ( m_pitch * m_nStrip );
+  m_uMaxLocal = 0.5f * ( m_pitch * m_nStrip );
   m_uMinLocal = -m_uMaxLocal;
 
   // and vMin, vMax
-  m_vMaxLocal = 0.5 * mainBox->ysize() - m_deadWidth;
+  m_vMaxLocal = 0.5f * mainBox->ysize() - m_deadWidth;
   m_vMinLocal = -m_vMaxLocal;
 
   m_stripLength = fabs( m_vMaxLocal - m_vMinLocal );

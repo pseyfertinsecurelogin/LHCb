@@ -142,14 +142,14 @@ public:
    * @param  tol   tolerance
    * @return bool if in bond gap
    */
-  bool localInBondGap( const double v, const double tol ) const;
+  bool localInBondGap( float v, float tol ) const;
 
   /** globalInActive
    * @param  point point in global frame
    * @param  tol   tolerance
    * @return bool in bondgap
    */
-  bool globalInBondGap( const Gaudi::XYZPoint& point, double tol = 0 ) const;
+  bool globalInBondGap( const Gaudi::XYZPoint& point, float tol = 0 ) const;
 
   /** thickness
    * @return float thickness
@@ -245,7 +245,7 @@ inline float DeUTSensor::activeHeight() const { return fabs( m_vMinLocal - m_vMa
 
 inline double DeUTSensor::capacitance() const {
   // by chance the CMS and LHCb sensors have same capacitance
-  static const double rho = 1.4 * Gaudi::Units::picofarad / Gaudi::Units::cm;
+  constexpr float rho = 1.4 * Gaudi::Units::picofarad / Gaudi::Units::cm;
   return rho * activeHeight();
 }
 
@@ -260,12 +260,12 @@ inline bool DeUTSensor::globalInActive( const Gaudi::XYZPoint& gpoint, Gaudi::XY
   return localInActive( lPoint, tol );
 }
 
-inline bool DeUTSensor::globalInBondGap( const Gaudi::XYZPoint& gpoint, double tol ) const {
+inline bool DeUTSensor::globalInBondGap( const Gaudi::XYZPoint& gpoint, float tol ) const {
   Gaudi::XYZPoint lPoint = toLocal( gpoint );
   return localInBondGap( lPoint.Y(), tol );
 }
 
-inline bool DeUTSensor::localInBondGap( const double v, double tol ) const {
+inline bool DeUTSensor::localInBondGap( float v, float tol ) const {
 
   return ( ( v + tol > m_uMinLocal ) && ( v - tol < m_uMaxLocal ) );
 }

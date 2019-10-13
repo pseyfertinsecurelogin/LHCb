@@ -28,8 +28,6 @@
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
-#include "boost/lexical_cast.hpp"
-
 using namespace LHCb;
 
 /** @file DeUTSector.cpp
@@ -78,104 +76,94 @@ StatusCode DeUTSector::initialize() {
   if ( sc.isFailure() ) {
     msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
     return sc;
+  }
+  m_pitch       = param<double>( "pitch" );
+  m_nStrip      = param<int>( "numStrips" );
+  m_capacitance = param<double>( "capacitance" );
+  m_type        = param<std::string>( "type" );
+
+  // version
+  if ( exists( "version" ) ) m_versionString = param<std::string>( "version" );
+
+  // guard ring
+  m_deadWidth = param<double>( "verticalGuardRing" );
+
+  m_noiseValues.assign( m_nStrip, 0 );
+  m_electronsPerADC.assign( m_nStrip, 1. );
+
+  assert( m_versionString != "DC06" );
+  sc = registerCondition( this, m_statusString, &DeUTSector::updateStatusCondition, true );
+  if ( sc.isFailure() ) {
+    msg << MSG::ERROR << "Failed to register status conditions" << endmsg;
+    return sc;
+  }
+
+  // Try to add the noise from the DB as well..
+  // Can't test the version string, it's unfortunalety not trustable
+  // it exists a DC07 version (why?) that doesn't contain Noise
+  assert( m_versionString != "DC07" );
+  sc = registerCondition( this, m_noiseString, &DeUTSector::updateNoiseCondition, true );
+
+  if ( sc.isFailure() ) {
+    msg << MSG::ERROR << "Failed to register noise conditions" << endmsg;
+    return sc;
+  }
+
+  // get the parent
+  m_parent = getParent<DeUTSector>();
+
+  unsigned int tSize = m_parent->numSectorsExpected();
+
+  // sub id
+  const unsigned subID = param<int>( "subID" );
+
+  // sector number needs info from mother
+  if ( m_parent->staveRotZ() == "No" ) {
+    setID( m_parent->firstSector() + subID - 1 );
   } else {
-    m_pitch       = param<double>( "pitch" );
-    m_nStrip      = param<int>( "numStrips" );
-    m_capacitance = param<double>( "capacitance" );
-    m_type        = param<std::string>( "type" );
+    setID( m_parent->firstSector() + tSize - subID );
+  }
 
-    // version
-    if ( exists( "version" ) == true ) m_versionString = param<std::string>( "version" );
+  // row..
+  m_row = id() - m_parent->firstSector() + 1;
 
-    // guard ring
-    m_deadWidth = param<double>( "verticalGuardRing" );
+  // build the id
+  const UTChannelID parentID = m_parent->elementID();
+  UTChannelID chan( UTChannelID::detType::typeUT, parentID.station(), parentID.layer(), parentID.detRegion(), id(), 0 );
+  setElementID( chan );
 
-    m_noiseValues.assign( m_nStrip, 0 );
-    m_electronsPerADC.assign( m_nStrip, 1. );
+  // get the nickname
+  m_nickname = UTNames().UniqueSectorToString( chan );
 
-    if ( m_versionString != "DC06" ) {
-      sc = registerCondition( this, m_statusString, &DeUTSector::updateStatusCondition, true );
-      if ( sc.isFailure() ) {
-        msg << MSG::ERROR << "Failed to register status conditions" << endmsg;
-        return StatusCode::FAILURE;
-      }
+  // see if stereo
+  const unsigned int layer = chan.layer();
+  m_isStereo               = ( ( chan.station() == UTNames::Station::UTa && layer == 2 ) ||
+                 ( chan.station() == UTNames::Station::UTb && layer == 1 ) );
 
-      // Try to add the noise from the DB as well..
-      // Can't test the version string, it's unfortunalety not trustable
-      // it exists a DC07 version (why?) that doesn't contain Noise
-      if ( m_versionString != "DC07" ) {
-        sc = registerCondition( this, m_noiseString, &DeUTSector::updateNoiseCondition, true );
+  // get the attached sensors
+  std::vector<DeUTSensor*> sensors = getChildren<DeUTSector>();
+  std::sort( sensors.begin(), sensors.end(), UTDetFun::SortByY() );
+  m_sensors.reserve( sensors.size() );
+  m_sensors.insert( m_sensors.begin(), sensors.begin(), sensors.end() );
+  m_thickness = m_sensors.front()->thickness();
 
-        if ( sc.isFailure() ) {
-          msg << MSG::ERROR << "Failed to register noise conditions" << endmsg;
-          return StatusCode::FAILURE;
-        }
-      }
+  m_hybridType = ( DeUTSector::type() == "Dual" ? "D" : DeUTSector::type() == "Quad" ? "Q" : "N" );
 
-    } // !DC06
+  std::string region = std::to_string( chan.detRegion() );
+  std::string col    = staveNumber( chan.detRegion(), parentID.station() );
+  std::string sector = std::to_string( subID );
 
-    // get the parent
-    m_parent = getParent<DeUTSector>();
+  m_conditionPathName = UTNames().UniqueLayerToString( chan ) + "LayerR" + region + "Stave" + col + "Sector" + sector;
 
-    unsigned int tSize = m_parent->numSectorsExpected();
-
-    // sub id
-    const unsigned subID = param<int>( "subID" );
-
-    // sector number needs info from mother
-    if ( m_parent->staveRotZ() == "No" ) {
-      setID( m_parent->firstSector() + subID - 1 );
-    } else {
-      setID( m_parent->firstSector() + tSize - subID );
-    }
-
-    // row..
-    m_row = id() - m_parent->firstSector() + 1;
-
-    // build the id
-    const UTChannelID parentID = m_parent->elementID();
-    UTChannelID chan( UTChannelID::detType::typeUT, parentID.station(), parentID.layer(), parentID.detRegion(), id(),
-                      0 );
-    setElementID( chan );
-
-    // get the nickname
-    m_nickname = UTNames().UniqueSectorToString( chan );
-
-    // see if stereo
-    const unsigned int layer = chan.layer();
-    m_isStereo               = false;
-    if ( ( chan.station() == UTNames::Station::UTa && layer == 2 ) ||
-         ( chan.station() == UTNames::Station::UTb && layer == 1 ) )
-      m_isStereo = true;
-
-    // get the attached sensors
-    std::vector<DeUTSensor*> sensors = getChildren<DeUTSector>();
-    std::sort( sensors.begin(), sensors.end(), UTDetFun::SortByY() );
-    m_sensors.reserve( sensors.size() );
-    m_sensors.insert( m_sensors.begin(), sensors.begin(), sensors.end() );
-    m_thickness = m_sensors.front()->thickness();
-
-    m_hybridType = "N";
-    if ( DeUTSector::type() == "Dual" ) m_hybridType = "D";
-    if ( DeUTSector::type() == "Quad" ) m_hybridType = "Q";
-
-    using namespace boost;
-    std::string region = lexical_cast<std::string>( chan.detRegion() );
-    std::string col    = staveNumber( chan.detRegion(), parentID.station() );
-    std::string sector = lexical_cast<std::string>( subID );
-
-    m_conditionPathName = UTNames().UniqueLayerToString( chan ) + "LayerR" + region + "Stave" + col + "Sector" + sector;
-
-    sc = registerConditionsCallbacks();
-    if ( sc.isFailure() ) {
-      msg << MSG::ERROR << "Failed to registerConditions call backs" << endmsg;
-      return sc;
-    }
-    sc = cacheInfo();
-    if ( sc.isFailure() ) {
-      msg << MSG::ERROR << "Failed to cache geometry" << endmsg;
-      return sc;
-    }
+  sc = registerConditionsCallbacks();
+  if ( sc.isFailure() ) {
+    msg << MSG::ERROR << "Failed to registerConditions call backs" << endmsg;
+    return sc;
+  }
+  sc = cacheInfo();
+  if ( sc.isFailure() ) {
+    msg << MSG::ERROR << "Failed to cache geometry" << endmsg;
+    return sc;
   }
 
   //   std::cout << " Sector :  "  << name()
@@ -202,7 +190,7 @@ StatusCode DeUTSector::initialize() {
   return StatusCode::SUCCESS;
 }
 
-float DeUTSector::noise( const LHCb::UTChannelID& aChannel ) const {
+float DeUTSector::noise( LHCb::UTChannelID aChannel ) const {
   // check strip is valid
   if ( !isStrip( aChannel.strip() ) ) return 999;
 
@@ -217,37 +205,37 @@ float DeUTSector::noise( const LHCb::UTChannelID& aChannel ) const {
   return 999;
 }
 
-float DeUTSector::rawNoise( const LHCb::UTChannelID& aChannel ) const {
-  return sqrt( noise( aChannel ) * noise( aChannel ) + cmNoise( aChannel ) * cmNoise( aChannel ) );
+float DeUTSector::rawNoise( LHCb::UTChannelID aChannel ) const {
+  return std::sqrt( noise( aChannel ) * noise( aChannel ) + cmNoise( aChannel ) * cmNoise( aChannel ) );
 }
 
 float DeUTSector::rawSectorNoise() const {
-  return sqrt( sectorNoise() * sectorNoise() + cmSectorNoise() * cmSectorNoise() );
+  return std::sqrt( sectorNoise() * sectorNoise() + cmSectorNoise() * cmSectorNoise() );
 }
 
-float DeUTSector::rawBeetleNoise( const unsigned int& beetle ) const {
-  return sqrt( beetleNoise( beetle ) * beetleNoise( beetle ) + cmBeetleNoise( beetle ) * cmBeetleNoise( beetle ) );
+float DeUTSector::rawBeetleNoise( unsigned int beetle ) const {
+  return std::sqrt( beetleNoise( beetle ) * beetleNoise( beetle ) + cmBeetleNoise( beetle ) * cmBeetleNoise( beetle ) );
 }
 
-float DeUTSector::rawPortNoise( const unsigned int& beetle, const unsigned int& port ) const {
-  return sqrt( portNoise( beetle, port ) * portNoise( beetle, port ) +
-               cmPortNoise( beetle, port ) * cmPortNoise( beetle, port ) );
+float DeUTSector::rawPortNoise( unsigned int beetle, unsigned int port ) const {
+  return std::sqrt( portNoise( beetle, port ) * portNoise( beetle, port ) +
+                    cmPortNoise( beetle, port ) * cmPortNoise( beetle, port ) );
 }
 
 float DeUTSector::sectorNoise() const {
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  float sum( 0.0 ), number( 0.0 );
+  float sum( 0 ), number( 0 );
 
   for ( unsigned int chan( 0 ); chan < m_nStrip; ++chan ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_noiseValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
+  if ( number < 1 )
+    return 999.99f;
   else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -256,31 +244,25 @@ float DeUTSector::sectorNoise() const {
   }
 }
 
-float DeUTSector::beetleNoise( const unsigned int& beetle ) const {
-  if ( beetle > nBeetle() ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle " << beetle << " but there are " << nBeetle() << " of them" << endmsg;
-    return 999.99;
-  } else if ( beetle == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle 0 but is starts at 1" << endmsg;
-    return 999.99;
+float DeUTSector::beetleNoise( unsigned int beetle ) const {
+  if ( beetle == 0 || beetle > nBeetle() ) {
+    throw std::out_of_range( "DeUTSector::beetleNoise: beetle out of range" );
   }
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  float sum( 0. ), number( 0. );
+  float sum( 0 ), number( 0 );
 
   for ( unsigned int chan( ( beetle - 1 ) * LHCbConstants::nStripsInBeetle );
         chan < beetle * LHCbConstants::nStripsInBeetle; chan++ ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_noiseValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
+  if ( number < 1 )
+    return 999.99f;
   else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -290,26 +272,10 @@ float DeUTSector::beetleNoise( const unsigned int& beetle ) const {
   }
 }
 
-float DeUTSector::portNoise( const unsigned int& beetle, const unsigned int& port ) const {
-  if ( beetle > nBeetle() ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle " << beetle << " but there are " << nBeetle() << " of them" << endmsg;
-    return 999.99;
-  } else if ( beetle == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle 0 but is starts at 1" << endmsg;
-    return 999.99;
-  }
+float DeUTSector::portNoise( unsigned int beetle, unsigned int port ) const {
+  if ( beetle == 0 || beetle > nBeetle() ) { throw std::out_of_range( "DeUTSector::portNoise: beetle out of range" ); }
 
-  if ( port > 4 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for port " << port << " but there are 4 of them" << endmsg;
-    return 999.99;
-  } else if ( port == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for port 0 but is starts at 1" << endmsg;
-    return 0.;
-  }
+  if ( port == 0 || port > 4 ) { throw std::out_of_range( "DeUTSector::portNoise: port out of range" ); }
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
@@ -320,12 +286,12 @@ float DeUTSector::portNoise( const unsigned int& beetle, const unsigned int& por
         chan < ( beetle - 1 ) * LHCbConstants::nStripsInBeetle + port * LHCbConstants::nStripsInPort; chan++ ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_noiseValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
+  if ( number < 1 )
+    return 999.99f;
   else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -335,9 +301,9 @@ float DeUTSector::portNoise( const unsigned int& beetle, const unsigned int& por
   }
 }
 
-void DeUTSector::setNoise( const unsigned int& strip, const float& value ) {
+void DeUTSector::setNoise( unsigned int strip, float value ) {
   Condition* aCon = condition( m_noiseString );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -349,7 +315,7 @@ void DeUTSector::setNoise( const unsigned int& strip, const float& value ) {
 
 void DeUTSector::setNoise( const std::vector<float>& values ) {
   Condition* aCon( condition( m_noiseString ) );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -359,9 +325,9 @@ void DeUTSector::setNoise( const std::vector<float>& values ) {
   }
 }
 
-void DeUTSector::setCMNoise( const unsigned int& strip, const float& value ) {
+void DeUTSector::setCMNoise( unsigned int strip, float value ) {
   Condition* aCon = condition( m_noiseString );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -373,7 +339,7 @@ void DeUTSector::setCMNoise( const unsigned int& strip, const float& value ) {
 
 void DeUTSector::setCMNoise( const std::vector<float>& values ) {
   Condition* aCon( condition( m_noiseString ) );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -385,7 +351,7 @@ void DeUTSector::setCMNoise( const std::vector<float>& values ) {
 
 void DeUTSector::setADCConversion( const std::vector<double>& values ) {
   Condition* aCon( condition( m_noiseString ) );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -395,7 +361,7 @@ void DeUTSector::setADCConversion( const std::vector<double>& values ) {
   }
 }
 
-float DeUTSector::cmNoise( const LHCb::UTChannelID& aChannel ) const {
+float DeUTSector::cmNoise( LHCb::UTChannelID aChannel ) const {
   // check strip is valid
   if ( !isStrip( aChannel.strip() ) ) return 999;
 
@@ -413,18 +379,18 @@ float DeUTSector::cmNoise( const LHCb::UTChannelID& aChannel ) const {
 float DeUTSector::cmSectorNoise() const {
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  float sum( 0.0 ), number( 0.0 );
+  float sum( 0 ), number( 0 );
 
   for ( unsigned int chan( 0 ); chan < m_nStrip; ++chan ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_cmModeValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
-  else {
+  if ( number < 1 ) {
+    return 999.99f;
+  } else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
       msg << MSG::DEBUG << number << " strips out of " << nStrip() << " are not taken into account" << endmsg;
@@ -432,15 +398,9 @@ float DeUTSector::cmSectorNoise() const {
   }
 }
 
-float DeUTSector::cmBeetleNoise( const unsigned int& beetle ) const {
-  if ( beetle > nBeetle() ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle " << beetle << " but there are " << nBeetle() << " of them" << endmsg;
-    return 999.99;
-  } else if ( beetle == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle 0 but is starts at 1" << endmsg;
-    return 999.99;
+float DeUTSector::cmBeetleNoise( unsigned int beetle ) const {
+  if ( beetle == 0 || beetle > nBeetle() ) {
+    throw std::out_of_range( "DeUTSector::cmBeetleNoise: beetle out of range" );
   }
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
@@ -451,12 +411,12 @@ float DeUTSector::cmBeetleNoise( const unsigned int& beetle ) const {
         chan < beetle * LHCbConstants::nStripsInBeetle; chan++ ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_cmModeValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
+  if ( number < 1 )
+    return 999.99f;
   else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -466,42 +426,27 @@ float DeUTSector::cmBeetleNoise( const unsigned int& beetle ) const {
   }
 }
 
-float DeUTSector::cmPortNoise( const unsigned int& beetle, const unsigned int& port ) const {
-  if ( beetle > nBeetle() ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle " << beetle << " but there are " << nBeetle() << " of them" << endmsg;
-    return 999.99;
-  } else if ( beetle == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for beetle 0 but is starts at 1" << endmsg;
-    return 999.99;
+float DeUTSector::cmPortNoise( unsigned int beetle, unsigned int port ) const {
+  if ( beetle == 0 || beetle > nBeetle() ) {
+    throw std::out_of_range( "DeUTSector::cmPortNoise: beetle out of range" );
   }
-
-  if ( port > 4 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for port " << port << " but there are 4 of them" << endmsg;
-    return 999.99;
-  } else if ( port == 0 ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << "You asked for port 0 but is starts at 1" << endmsg;
-    return 0.;
-  }
+  if ( port == 0 || port > 4 ) { throw std::out_of_range( "DeUTSector::cmPortNoise: port out of range" ); }
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  float sum( 0. ), number( 0. );
+  float sum( 0 ), number( 0 );
 
   for ( unsigned int chan( ( beetle - 1 ) * LHCbConstants::nStripsInBeetle +
                            ( port - 1 ) * LHCbConstants::nStripsInPort );
         chan < ( beetle - 1 ) * LHCbConstants::nStripsInBeetle + port * LHCbConstants::nStripsInPort; chan++ ) {
     if ( statusVector[chan] == DeUTSector::OK || statusVector[chan] == DeUTSector::Pinhole ) {
       sum += m_cmModeValues[chan];
-      number += 1.;
+      number += 1;
     }
   }
 
-  if ( number < 1. )
-    return 999.99;
+  if ( number < 1 )
+    return 999.99f;
   else {
     MsgStream msg( msgSvc(), name() );
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -511,23 +456,17 @@ float DeUTSector::cmPortNoise( const unsigned int& beetle, const unsigned int& p
   }
 }
 
-double DeUTSector::toADC( const double& e, const LHCb::UTChannelID& aChannel ) const {
-  return toADC( e, aChannel.strip() );
-}
+double DeUTSector::toADC( double e, LHCb::UTChannelID aChannel ) const { return toADC( e, aChannel.strip() ); }
 
-double DeUTSector::toADC( const double& e, const unsigned int& aStrip ) const {
-  return e / m_electronsPerADC[aStrip - 1];
-}
+double DeUTSector::toADC( double e, unsigned int aStrip ) const { return e / m_electronsPerADC[aStrip - 1]; }
 
-double DeUTSector::toElectron( const double& val, const LHCb::UTChannelID& aChannel ) const {
+double DeUTSector::toElectron( double val, LHCb::UTChannelID aChannel ) const {
   return toElectron( val, aChannel.strip() );
 }
 
-double DeUTSector::toElectron( const double& val, const unsigned int& aStrip ) const {
-  return val * m_electronsPerADC[aStrip - 1];
-}
+double DeUTSector::toElectron( double val, unsigned int aStrip ) const { return val * m_electronsPerADC[aStrip - 1]; }
 
-LHCb::LineTraj<double> DeUTSector::trajectory( const UTChannelID& aChan, const double offset ) const {
+LHCb::LineTraj<double> DeUTSector::trajectory( UTChannelID aChan, double offset ) const {
 
   if ( !contains( aChan ) ) {
     MsgStream msg( msgSvc(), name() );
@@ -543,7 +482,7 @@ LHCb::LineTraj<double> DeUTSector::trajectoryFirstStrip() const { return createT
 
 LHCb::LineTraj<double> DeUTSector::trajectoryLastStrip() const { return createTraj( nStrip(), 0. ); }
 
-LHCb::LineTraj<double> DeUTSector::createTraj( const unsigned int strip, const double offset ) const {
+LHCb::LineTraj<double> DeUTSector::createTraj( unsigned int strip, double offset ) const {
   const Sensors& theSensors = sensors();
   if ( theSensors.size() != 1 ) {
     MsgStream msg( msgSvc(), name() );
@@ -566,7 +505,7 @@ StatusCode DeUTSector::cacheInfo() {
 
   // direction
   Gaudi::XYZVector direction = g2 - g1;
-  m_stripLength              = sqrt( direction.Mag2() );
+  m_stripLength              = std::sqrt( direction.Mag2() );
   direction                  = direction.Unit();
 
   // cross with normal along z
@@ -781,7 +720,7 @@ void DeUTSector::setSectorStatus( const DeUTSector::Status& newStatus ) {
   }
 }
 
-void DeUTSector::setBeetleStatus( const unsigned int beetle, const DeUTSector::Status& newStatus ) {
+void DeUTSector::setBeetleStatus( unsigned int beetle, const DeUTSector::Status& newStatus ) {
 
   // update the beetle status properly...
   MsgStream msg( msgSvc(), name() );
@@ -809,7 +748,7 @@ void DeUTSector::setBeetleStatus( const unsigned int beetle, const DeUTSector::S
   }
 }
 
-void DeUTSector::setStripStatus( const unsigned int strip, const DeUTSector::Status& newStatus ) {
+void DeUTSector::setStripStatus( unsigned int strip, const DeUTSector::Status& newStatus ) {
   // update the strip status properly...
   MsgStream msg( msgSvc(), name() );
 
@@ -836,11 +775,11 @@ void DeUTSector::setStripStatus( const unsigned int strip, const DeUTSector::Sta
   }
 }
 
-void DeUTSector::setStatusCondition( const std::string& type, const unsigned int entry,
+void DeUTSector::setStatusCondition( const std::string& type, unsigned int entry,
                                      const DeUTSector::Status& newStatus ) {
   // Set the condition
   Condition* aCon = condition( m_statusString );
-  if ( aCon == nullptr ) {
+  if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -853,7 +792,7 @@ unsigned int DeUTSector::prodID() const { return m_parent->prodID(); }
 
 std::string DeUTSector::conditionsPathName() const { return m_conditionPathName; }
 
-std::string DeUTSector::staveNumber( const unsigned int& reg, const unsigned int& station ) const {
+std::string DeUTSector::staveNumber( unsigned int reg, unsigned int station ) const {
   using namespace boost;
 
   int col = 0;
@@ -885,5 +824,5 @@ std::string DeUTSector::staveNumber( const unsigned int& reg, const unsigned int
     }
   }
 
-  return lexical_cast<std::string>( col );
+  return std::to_string( col );
 }
