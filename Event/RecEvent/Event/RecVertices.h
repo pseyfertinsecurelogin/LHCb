@@ -59,6 +59,22 @@ namespace LHCb::Rec::PV {
     // TODO: understand
     PVs( Zipping::ZipFamilyNumber family, PVs const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
+    [[nodiscard]] const boost::container::small_vector<float, default_vertex_size>& fwdWeights( const int i ) const {
+      return m_fwdWeights[i];
+    }
+    [[nodiscard]] const boost::container::small_vector<float, default_vertex_size>& bkwWeights( const int i ) const {
+      return m_bkwWeights[i];
+    }
+    [[nodiscard]] const boost::container::small_vector<TrackRef, default_vertex_size>& fwdTracks( const int i ) const {
+      return m_fwdTracks[i];
+    }
+    [[nodiscard]] const boost::container::small_vector<TrackRef, default_vertex_size>& bkwTracks( const int i ) const {
+      return m_bkwTracks[i];
+    }
+
+    [[nodiscard]] Zipping::ZipFamilyNumber fwdZipIdentifier() const { return m_fwdTracksIdentifier; }
+    [[nodiscard]] Zipping::ZipFamilyNumber bkwZipIdentifier() const { return m_bkwTracksIdentifier; }
+
     // container interfaces
     [[nodiscard]] std::size_t size() const { return m_positions.size(); }
     void                      reserve( std::size_t capacity ) {
@@ -106,6 +122,11 @@ namespace LHCb::Rec::PV {
           m_bkwWeights.back().push_back( track.second );
         }
       }
+    }
+
+    // TODO soaify
+    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( int i ) const {
+      return m_chi2PerDoFs[i];
     }
 
     // transposes internally
