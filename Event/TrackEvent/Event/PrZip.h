@@ -390,15 +390,34 @@ namespace LHCb::Pr {
     template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap, typename F>
     auto filter( F filt ) const {
       using simd_t = typename SIMDWrapper::type_map<simd>::type;
-      detail::merged_t out{m_containers};
-      out.reserve( this->size() );
-      for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
-        auto const& chunk     = *iter;
-        auto        loop_mask = chunk.loop_mask();
-        auto        filt_mask = std::invoke( filt, chunk );
-        out.template copy_back<simd_t>( m_containers, chunk.offset(), loop_mask && filt_mask );
+      // If the current object is a zip of multiple containers, we need to
+      // return a detail::merged_t object. If there's only one container, we
+      // can just return a new one of those.
+      if constexpr ( sizeof...( ContainerTypes ) > 1 ) {
+        // Zip contains multiple inputs, need a custom output type merging them
+        // together.
+        detail::merged_t out{m_containers};
+        out.reserve( this->size() );
+        for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
+          auto const& chunk     = *iter;
+          auto        filt_mask = std::invoke( filt, chunk );
+          out.template copy_back<simd_t>( m_containers, chunk.offset(), chunk.loop_mask() && filt_mask );
+        }
+        return out;
+      } else {
+        // If we're a "zip" of just one container, we can directly output a new
+        // instance of that container instead of a merged_t wrapper around it
+        using container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
+        auto const& old_container{*std::get<0>( m_containers )};
+        container_t out{Zipping::generateZipIdentifier(), old_container};
+        if constexpr ( detail::has_reserve_v<container_t> ) out.reserve( this->size() );
+        for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
+          auto const& chunk     = *iter;
+          auto        filt_mask = std::invoke( filt, chunk );
+          out.template copy_back<simd_t>( old_container, chunk.offset(), chunk.loop_mask() && filt_mask );
+        }
+        return out;
       }
-      return out;
     }
 
     /** Return a copy of ourself that has a different default vector backend.
