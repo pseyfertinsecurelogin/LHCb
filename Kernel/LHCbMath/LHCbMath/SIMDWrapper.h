@@ -47,6 +47,8 @@ namespace SIMDWrapper {
   enum InstructionSet { Best = 0, Scalar, AVX2, AVX256, AVX512, EndOfList };
   inline std::string instructionSetName( InstructionSet set ) {
     switch ( set ) {
+    case Best:
+      return "Best";
     case Scalar:
       return "Scalar";
     case AVX2:
