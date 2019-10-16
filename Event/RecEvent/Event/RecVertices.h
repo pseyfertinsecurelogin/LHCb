@@ -16,13 +16,19 @@
 #include "Kernel/STLExtensions.h" // LHCb::span
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
+#include "SOAContainer/SOAField.h"  // for FieldBase, SOAFIELD_TRIVIAL
+#include "SOAContainer/SOASkin.h"   // for SOASkinCreatorSimple<>::type
 #include "SOAExtensions/ZipUtils.h" // zip identifiers
 #include <boost/container/small_vector.hpp>
 #include <cstddef> // std::size_t
 #include <vector>
 
 namespace LHCb::Rec::PV {
-  using TrackRef                        = std::size_t;
+  using TrackRef = std::size_t;
+  using weight_t = float;
+  SOAFIELD_TRIVIAL( ref_field, index, LHCb::Rec::PV::TrackRef );
+  SOAFIELD_TRIVIAL( wei_field, weight, weight_t );
+  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );
   const std::size_t default_vertex_size = 30;
   class PVs {
   private:
@@ -32,8 +38,8 @@ namespace LHCb::Rec::PV {
 
     std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_fwdTracks;
     std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_bkwTracks;
-    std::vector<boost::container::small_vector<float, default_vertex_size>>    m_fwdWeights;
-    std::vector<boost::container::small_vector<float, default_vertex_size>>    m_bkwWeights;
+    std::vector<boost::container::small_vector<weight_t, default_vertex_size>> m_fwdWeights;
+    std::vector<boost::container::small_vector<weight_t, default_vertex_size>> m_bkwWeights;
 
     Zipping::ZipFamilyNumber m_zipIdentifier{Zipping::generateZipIdentifier()};
 
@@ -59,10 +65,10 @@ namespace LHCb::Rec::PV {
     // TODO: understand
     PVs( Zipping::ZipFamilyNumber family, PVs const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
-    [[nodiscard]] const boost::container::small_vector<float, default_vertex_size>& fwdWeights( const int i ) const {
+    [[nodiscard]] const boost::container::small_vector<weight_t, default_vertex_size>& fwdWeights( const int i ) const {
       return m_fwdWeights[i];
     }
-    [[nodiscard]] const boost::container::small_vector<float, default_vertex_size>& bkwWeights( const int i ) const {
+    [[nodiscard]] const boost::container::small_vector<weight_t, default_vertex_size>& bkwWeights( const int i ) const {
       return m_bkwWeights[i];
     }
     [[nodiscard]] const boost::container::small_vector<TrackRef, default_vertex_size>& fwdTracks( const int i ) const {
@@ -100,8 +106,8 @@ namespace LHCb::Rec::PV {
 
     // fitting into current TrackBeamLineVertexFinderSoA
     void emplace_back( Gaudi::XYZPoint pos, Gaudi::SymMatrix3x3 poscov, LHCb::Event::v2::Track::Chi2PerDoF chi2perdof,
-                       std::vector<std::pair<int, float>> tracks // from namespace { struct Vertex TODO: make signed
-                                                                 // should not have a hard coded type here
+                       std::vector<std::pair<int, weight_t>> tracks // from namespace { struct Vertex TODO: make signed
+                                                                    // should not have a hard coded type here
     ) {
       // TODO:
       // push_back / emplace_back / move?
@@ -124,10 +130,8 @@ namespace LHCb::Rec::PV {
       }
     }
 
-    // TODO soaify
-    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( int i ) const {
-      return m_chi2PerDoFs[i];
-    }
+    template <typename dType = SIMDWrapper::best::types, bool unwrap = true, std::enable_if_t<unwrap>>
+    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( int i ) const { return m_chi2PerDoFs[i]; }
 
     // transposes internally
     template <typename dType, bool unwrap>
