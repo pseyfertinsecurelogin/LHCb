@@ -249,6 +249,9 @@ namespace LHCb::Pr::detail {
               containers )...
         , m_offset{offset} {}
   };
+
+  template <typename>
+  struct merged_object_helper;
 } // namespace LHCb::Pr::detail
 
 namespace LHCb::Pr {
@@ -267,6 +270,9 @@ namespace LHCb::Pr {
     // default SIMD and unwrapping settings to different values.
     template <SIMDWrapper::InstructionSet, bool, typename...>
     friend class Zip;
+
+    template <SIMDWrapper::InstructionSet, bool, typename...>
+    friend struct detail::merged_object_helper;
 
   public:
     static constexpr auto default_simd   = def_simd;
@@ -431,6 +437,11 @@ namespace LHCb::Pr {
      *  scalar iteration and returns plain C++ data types from accessors.
      */
     auto unwrap() const { return Zip<SIMDWrapper::InstructionSet::Scalar, true, ContainerTypes...>{*this}; }
+
+    /** Two zips are the same if they have the same type and they have the same
+     *  set of pointers to the actual owning containers.
+     */
+    friend bool operator==( Zip const& lhs, Zip const& rhs ) { return lhs.m_containers == rhs.m_containers; }
   };
 
   namespace detail {
@@ -444,6 +455,20 @@ namespace LHCb::Pr {
     struct merged_object_helper<merged_t<T...>> {
       static auto           decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
       static constexpr bool is_zippable_v = ( ::LHCb::Pr::is_zippable_v<T> && ... );
+    };
+
+    template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T>
+    struct merged_object_helper<::LHCb::Pr::Zip<def_simd, def_unwrap, T...>> {
+      // Convert std::tuple<A const*, ...> to std::tuple<A const&, ...>
+      template <std::size_t... Is>
+      static auto helper( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x, std::index_sequence<Is...> ) {
+        return std::tie( *std::get<Is>( x.m_containers )... );
+      }
+      static auto decompose( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x ) {
+        return helper( x, std::index_sequence_for<T...>{} );
+      }
+      // This was already a zip, so we know that the contents were zippable
+      static constexpr bool is_zippable_v = true;
     };
 
     template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T,
@@ -463,6 +488,14 @@ namespace LHCb::Pr {
    *  instances of merged_t. This is the type produced by filtering a zip. The
    *  special handling here ensures that `iterable( zip.filter(...) )` has the
    *  same type as `zip`.
+   *
+   *  There is also special handling for the case that some of the arguments
+   *  are instances of LHCb::Pr::Zip. The special handling ensures that if one
+   *  does
+   *    auto x = LHCb::Pr::make_zip( a, b );
+   *    auto y = LHCb::Pr::make_zip( x, c, d );
+   *    auto z = LHCb::Pr::make_zip( a, b, c, d );
+   *  then y and z should have the same type.
    */
   template <SIMDWrapper::InstructionSet def_simd = SIMDWrapper::InstructionSet::Best, bool def_unwrap = false,
             typename... PrTracks,
