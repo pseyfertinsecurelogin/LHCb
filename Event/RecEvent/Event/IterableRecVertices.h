@@ -16,12 +16,8 @@
 
 namespace LHCb::Rec::PV {
   // copy&pasted
-  template <typename MergedProxy, typename dType, bool unwrap>
-  struct Proxy {
-    PVs const* m_pvs{nullptr};
-    Proxy( PVs const* pvs ) : m_pvs{pvs} {}
-    [[nodiscard]] auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    [[nodiscard]] auto size() const { return m_pvs->size(); }
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, PVs, m_pvs );
 
     [[nodiscard]] auto x() const { return this->m_pvs->template pos_x<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto y() const { return this->m_pvs->template pos_y<dType, unwrap>( this->offset() ); }
@@ -30,11 +26,8 @@ namespace LHCb::Rec::PV {
   };
 } // namespace LHCb::Rec::PV
 
-template <>
-struct LHCb::Pr::Proxy<LHCb::Rec::PV::PVs> {
-  template <typename MergedProxy, typename dType, bool unwrap>
-  using type = LHCb::Rec::PV::Proxy<MergedProxy, dType, unwrap>;
-};
+REGISTER_PROXY( LHCb::Rec::PV::PVs, LHCb::Rec::PV::Proxy );
+REGISTER_HEADER( LHCb::Rec::PV::PVs, "Event/IterableRecVertices.h" );
 
 namespace LHCb::Rec::Iterable::PV {
   using PVs = LHCb::Pr::zip_t<LHCb::Rec::PV::PVs>;
