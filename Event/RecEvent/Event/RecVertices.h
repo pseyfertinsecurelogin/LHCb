@@ -130,8 +130,8 @@ namespace LHCb::Rec::PV {
       }
     }
 
-    template <typename dType = SIMDWrapper::best::types, bool unwrap = true, std::enable_if_t<unwrap>>
-    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( int i ) const { return m_chi2PerDoFs[i]; }
+    template <typename dType = SIMDWrapper::best::types, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
+    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( const std::size_t i ) const { return m_chi2PerDoFs[i]; }
 
     // transposes internally
     template <typename dType, bool unwrap>
