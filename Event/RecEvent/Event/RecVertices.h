@@ -133,9 +133,21 @@ namespace LHCb::Rec::PV {
     template <typename dType = SIMDWrapper::best::types, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
     [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( const std::size_t i ) const { return m_chi2PerDoFs[i]; }
 
+    // not implemented for unwrap = false
+    // would need (maybe exists?) a SOA 3x3 matrix
+    template <typename dType, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
+    [[nodiscard]] decltype( auto ) cov( const std::size_t i ) const {
+      if constexpr ( unwrap ) {
+        return m_covMatrices[i];
+
+      } else {
+        // not implemented
+      }
+    }
+
     // transposes internally
     template <typename dType, bool unwrap>
-    [[nodiscard]] decltype( auto ) pos( int i ) const {
+    [[nodiscard]] decltype( auto ) pos( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i];
       } else {
@@ -154,7 +166,7 @@ namespace LHCb::Rec::PV {
 
     // TODO: experimental function
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_x( int i ) const {
+    [[nodiscard]] typename dType::float_v pos_x( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].x();
       } else {
@@ -168,7 +180,7 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_y( int i ) const {
+    [[nodiscard]] typename dType::float_v pos_y( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].y();
       } else {
@@ -182,7 +194,7 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_z( int i ) const {
+    [[nodiscard]] typename dType::float_v pos_z( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].z();
       } else {
