@@ -271,7 +271,7 @@ namespace LHCb::Pr {
     template <SIMDWrapper::InstructionSet, bool, typename...>
     friend class Zip;
 
-    template <SIMDWrapper::InstructionSet, bool, typename...>
+    template <typename>
     friend struct detail::merged_object_helper;
 
   public:
