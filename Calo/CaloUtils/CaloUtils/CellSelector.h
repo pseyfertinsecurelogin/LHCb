@@ -16,6 +16,7 @@
 #include "CaloUtils/CellMatrix3x3.h"
 #include "CaloUtils/CellNeighbour.h"
 #include "CaloUtils/CellSwissCross.h"
+#include <iomanip>
 
 /** @class CellSelector CellSelector.h CaloUtils/CellSelector.h
  *
@@ -23,25 +24,33 @@
 
 class CellSelector final : public CellMatrix {
 public:
-  CellSelector( const DeCalorimeter* det = 0, std::string selector = "" );
+  enum class Selector { s3x3, s2x2, SwissCross, Neighbour };
+  friend StatusCode         parse( Selector&, const std::string& );
+  friend const std::string& toString( Selector );
+  friend std::ostream& toStream( Selector s, std::ostream& os ) { return os << std::quoted( toString( s ), '\'' ); }
+  friend std::ostream& operator<<( std::ostream& os, Selector s ) { return toStream( s, os ); }
 
-  void          setDet( const DeCalorimeter* det );
-  inline void   setSelector( std::string selector ) { m_selector = selector; };
-  inline double operator()( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const {
-    if ( "3x3" == m_selector )
+  CellSelector( const DeCalorimeter* det = nullptr, Selector = Selector{-1} );
+
+  void   setDet( const DeCalorimeter* det );
+  void   setSelector( Selector selector ) { m_selector = selector; };
+  double operator()( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const {
+    switch ( m_selector ) {
+    case Selector::s3x3:
       return m_cell3x3( seed, cell );
-    else if ( "2x2" == m_selector )
+    case Selector::s2x2:
       return m_cell2x2( seed, cell );
-    else if ( "SwissCross" == m_selector )
+    case Selector::SwissCross:
       return m_cellSwissCross( seed, cell );
-    else if ( "Neighbour" == m_selector )
+    case Selector::Neighbour:
       return m_cellNeighbour( seed, cell );
-    else
+    default:
       return 1.;
+    }
   };
 
 private:
-  std::string    m_selector;
+  Selector       m_selector;
   CellMatrix3x3  m_cell3x3;
   CellMatrix2x2  m_cell2x2;
   CellSwissCross m_cellSwissCross;
