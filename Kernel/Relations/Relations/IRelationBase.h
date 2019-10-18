@@ -44,10 +44,6 @@ public:
    *  @return the unique interface identifier
    */
   static const InterfaceID& interfaceID();
-
-protected:
-  /// virtual destructor
-  virtual ~IRelationBase();
 };
 
 // ============================================================================

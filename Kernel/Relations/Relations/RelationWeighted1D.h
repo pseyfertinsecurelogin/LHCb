@@ -48,24 +48,24 @@ namespace LHCb {
     /// short cut for interface
     typedef IRelationWeighted<FROM, TO, WEIGHT> IBase;
     /// import "Range" type from the base
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import "From"  type from the base
-    typedef typename IBase::From  From;
-    typedef typename IBase::From_ From_;
+    using From  = typename IBase::From;
+    using From_ = typename IBase::From_;
     /// import "To"    type from the base
-    typedef typename IBase::To  To;
-    typedef typename IBase::To_ To_;
+    using To  = typename IBase::To;
+    using To_ = typename IBase::To_;
     /// import "Weight" type from the base
-    typedef typename IBase::Weight  Weight;
-    typedef typename IBase::Weight_ Weight_;
+    using Weight  = typename IBase::Weight;
+    using Weight_ = typename IBase::Weight_;
     /// short cut for the actual implementation type
     typedef typename Relations::RelationWeighted<FROM, TO, WEIGHT> Base;
     // shortcut for "direct" interface
-    typedef typename IBase::DirectType IDirect;
+    using IDirect = typename IBase::DirectType;
     // shortcut for "inverse" interface
-    typedef typename IBase::InverseType IInverse;
+    using IInverse = typename IBase::InverseType;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     /// the standard/default constructor
@@ -100,13 +100,13 @@ namespace LHCb {
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~RelationWeighted1D() {
+    ~RelationWeighted1D() override {
 #ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().decrement( type() );
 #endif // COUNT_INSTANCES
     }
     /// the type name
-    const std::string& type() const {
+    [[nodiscard]] const std::string& type() const {
       static const std::string s_type( System::typeinfoName( typeid( OwnType ) ) );
       return s_type;
     }
@@ -116,7 +116,7 @@ namespace LHCb {
       return s_clid;
     }
     /// object identification (virtual method)
-    const CLID& clID() const override { return classID(); }
+    [[nodiscard]] const CLID& clID() const override { return classID(); }
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
@@ -253,7 +253,7 @@ namespace LHCb {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -278,7 +278,7 @@ namespace LHCb {
   private:
     // ========================================================================
     /// the assignment operator is disabled
-    RelationWeighted1D& operator=( const RelationWeighted1D& );
+    RelationWeighted1D& operator=( const RelationWeighted1D& ) = delete;
     // ========================================================================
   private:
     // ========================================================================

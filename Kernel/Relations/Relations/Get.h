@@ -10,12 +10,13 @@
 \*****************************************************************************/
 // ============================================================================
 #ifndef RELATIONS_GET_H
-#define RELATIONS_GET_H 1
+#define RELATIONS_GET_H
 // ============================================================================
 // Include files
 // ============================================================================
 // STD&STL
 // ============================================================================
+#include <numeric>
 #include <set>
 // ============================================================================
 // Relations
@@ -71,12 +72,8 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINK, class OUTPUT>
-  inline OUTPUT getTo( LINK first, LINK last, OUTPUT output ) {
-    for ( ; first != last; ++first ) {
-      *output = first->to(); //    FILL THE OUTPUT ITERATOR
-      ++output;              // ADVANCE THE OUTPUT ITERATOR
-    }
-    return output; //                      RETURN
+  OUTPUT getTo( LINK first, LINK last, OUTPUT output ) {
+    return std::transform( first, last, output, []( const auto& x ) { return x.to(); } );
   }
   // ==========================================================================
   /** simple function to extract all values of "TO"
@@ -109,7 +106,7 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINKS, class OUTPUT>
-  inline OUTPUT getTo( LINKS links, OUTPUT output ) {
+  OUTPUT getTo( LINKS links, OUTPUT output ) {
     return getTo( links.begin(), links.end(), output );
   }
   // ==========================================================================
@@ -146,12 +143,8 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINK, class OUTPUT>
-  inline OUTPUT getWeight( LINK first, LINK last, OUTPUT output ) {
-    for ( ; first != last; ++first ) {
-      *output = first->weight(); // FILL THE OUTPUT ITERATOR
-      ++output;                  // ADVANCE OUTPUT ITERATOR
-    }
-    return output;
+  OUTPUT getWeight( LINK first, LINK last, OUTPUT output ) {
+    return std::transform( first, last, output, []( const auto& x ) { return x.weight(); } );
   }
   // ==========================================================================
   /** Simple function to extract all values of "WEIGHT"
@@ -184,7 +177,7 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINKS, class OUTPUT>
-  inline OUTPUT getWeight( LINKS links, OUTPUT output ) {
+  OUTPUT getWeight( LINKS links, OUTPUT output ) {
     return getWeight( links.begin(), links.end(), output );
   }
   // ==========================================================================
@@ -210,10 +203,10 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINK, class WEIGHT>
-  inline WEIGHT sumWeight( LINK first, LINK last, WEIGHT weight ) {
-    static const std::plus<WEIGHT> _plus;
-    for ( ; first != last; ++first ) { weight = _plus( weight, first->weight() ); } // ACCUMULATE the weight
-    return weight;
+  WEIGHT sumWeight( LINK first, LINK last, WEIGHT weight ) {
+    // ACCUMULATE the weight
+    return std::accumulate( first, last, weight,
+                            [_plus = std::plus<>{}]( auto& w, const auto& obj ) { return _plus( w, obj.weight() ); } );
   }
   // ==========================================================================
   /** Simple function to extract all *UNIQUE* values of "TO"
@@ -260,18 +253,16 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINK, class CONTAINER>
-  inline size_t getUniqueTo( LINK first, LINK last, CONTAINER& cont ) {
+  size_t getUniqueTo( LINK first, LINK last, CONTAINER& cont ) {
     // store the current size
     const size_t size = cont.size();
-    for ( ; first != last; ++first ) { cont.push_back( first->to() ); }
-    typename CONTAINER::iterator begin = cont.begin();
-    typename CONTAINER::iterator end   = cont.end();
+    std::transform( first, last, std::back_inserter( cont ), []( const auto& p ) { return p.to(); } );
+    auto begin = cont.begin();
+    auto end   = cont.end();
     // sort the subsequence
     std::stable_sort( begin, end );
-    // find duplicates
-    begin = std::unique( begin, end );
-    // erase clones
-    if ( begin != end ) { cont.erase( begin, end ); }
+    // find duplicates, and erase them
+    cont.erase( std::unique( begin, end ), end );
     // return the new container size
     return cont.size() - size;
   }
@@ -313,7 +304,7 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINK, class OBJECT>
-  inline size_t getUniqueTo( LINK first, LINK last, std::set<OBJECT>& cont ) {
+  size_t getUniqueTo( LINK first, LINK last, std::set<OBJECT>& cont ) {
     // store the current size
     const size_t size = cont.size();
     for ( ; first != last; ++first ) { cont.insert( first->to() ); }
@@ -356,7 +347,7 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINKS, class CONTAINER>
-  inline size_t getUniqueTo( LINKS links, CONTAINER& cont ) {
+  size_t getUniqueTo( LINKS links, CONTAINER& cont ) {
     return getUniqueTo( links.begin(), links.end(), cont );
   }
   // ==========================================================================
@@ -381,15 +372,14 @@ namespace Relations {
    *  @date 2006-02-21
    */
   template <class LINKS, class WEIGHT>
-  inline WEIGHT sumWeight( LINKS links, WEIGHT weight ) {
+  WEIGHT sumWeight( LINKS links, WEIGHT weight ) {
     return sumWeight( links.begin(), links.end(), weight );
   }
   // ==========================================================================
   template <class ITERATOR, class COMPARE, class OUTPUT>
-  inline OUTPUT _getUniqueFrom( ITERATOR first, ITERATOR last, COMPARE cmp, OUTPUT output ) {
-    if ( first == last ) { return output; }
+  OUTPUT _getUniqueFrom( ITERATOR first, ITERATOR last, COMPARE cmp, OUTPUT output ) {
     // the previously selected element
-    ITERATOR prev = last;
+    auto prev = last;
     for ( ; first != last; ++first ) {
       if ( prev == last || cmp( *prev, *first ) ) {
         *output = first->from(); //    FILL THE OUTPUT ITERATOR
@@ -422,9 +412,9 @@ namespace Relations {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2009-05-24
    */
-  template <class FROM, class TO, class OUTPUT>
-  inline OUTPUT getUniqueFrom( typename Relations::RelationTypeTraits<FROM, TO>::iterator first,
-                               typename Relations::RelationTypeTraits<FROM, TO>::iterator last, OUTPUT output ) {
+  template <typename FROM, typename TO, typename OUTPUT>
+  OUTPUT getUniqueFrom( typename Relations::RelationTypeTraits<FROM, TO>::iterator first,
+                        typename Relations::RelationTypeTraits<FROM, TO>::iterator last, OUTPUT output ) {
     return _getUniqueFrom( first, last, typename Relations::RelationTypeTraits<FROM, TO>::LessByFrom(), output );
   }
   // ==========================================================================
@@ -451,9 +441,9 @@ namespace Relations {
    *  @date 2009-05-24
    */
   template <class FROM, class TO, class WEIGHT, class OUTPUT>
-  inline OUTPUT getUniqueFrom( typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::iterator first,
-                               typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::iterator last,
-                               OUTPUT                                                                     output ) {
+  OUTPUT getUniqueFrom( typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::iterator first,
+                        typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::iterator last,
+                        OUTPUT                                                                     output ) {
     return _getUniqueFrom( first, last, typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::LessByFrom(),
                            output );
   }
@@ -479,7 +469,7 @@ namespace Relations {
    *  @date 2009-05-24
    */
   template <class FROM, class TO, class OUTPUT>
-  inline OUTPUT getUniqueFrom( const typename Relations::RelationTypeTraits<FROM, TO>::Range& range, OUTPUT output ) {
+  OUTPUT getUniqueFrom( const typename Relations::RelationTypeTraits<FROM, TO>::Range& range, OUTPUT output ) {
     return _getUniqueFrom( range.begin(), range.end(), typename Relations::RelationTypeTraits<FROM, TO>::LessByFrom(),
                            output );
   }
@@ -505,7 +495,7 @@ namespace Relations {
    *  @date 2009-05-24
    */
   template <class FROM, class TO, class WEIGHT, class OUTPUT>
-  inline OUTPUT getUniqueFrom( const typename Relations::RelationTypeTraits<FROM, TO>::Range& range, OUTPUT output ) {
+  OUTPUT getUniqueFrom( const typename Relations::RelationTypeTraits<FROM, TO>::Range& range, OUTPUT output ) {
     return _getUniqueFrom( range.begin(), range.end(),
                            typename Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT>::LessByFrom(), output );
   }

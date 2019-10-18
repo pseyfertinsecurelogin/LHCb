@@ -15,7 +15,7 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <stddef.h>
+#include <cstddef>
 #include <vector>
 // ============================================================================
 
@@ -29,10 +29,10 @@ namespace Relations {
    *  @date   07/02/2002
    */
   template <class TYPE>
-  inline void reserve( TYPE& /* object */, const size_t /* size   */ ) {}
+  void reserve( TYPE&, size_t ) {}
 
   template <class TYPE>
-  inline void reserve( std::vector<TYPE>& object, const size_t size ) {
+  void reserve( std::vector<TYPE>& object, size_t size ) {
     object.reserve( size );
   }
 

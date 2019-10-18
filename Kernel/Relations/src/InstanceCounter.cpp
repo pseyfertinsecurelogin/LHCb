@@ -41,7 +41,7 @@ Relations::InstanceCounter::~InstanceCounter() {
 // ============================================================================
 Relations::InstanceCounter::counter Relations::InstanceCounter::report() const {
   counter total = 0;
-  for ( Counters::iterator record = m_counters.begin(); m_counters.end() != record; ++record ) {
+  for ( auto record = m_counters.begin(); m_counters.end() != record; ++record ) {
     if ( 0 == record->second ) { continue; }
     std::cout << "RelationUtils::InstanceCounter "
               << " WARNING \t #" << record->second << " objects of type \t '" << record->first << "' \t still alive "

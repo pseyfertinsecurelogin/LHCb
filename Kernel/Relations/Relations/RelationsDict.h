@@ -64,11 +64,11 @@ namespace GaudiDict {
     typedef typename LHCb::Relation1D<FROM, TO>        T1;
     typedef typename LHCb::Relation1D<FROM, TO>::Range T2;
     typedef typename LHCb::Relation1D<FROM, TO>::Base  T3;
-    typedef typename T3::Base                          T4;
-    typedef typename T4::Entry                         T5;
-    typedef typename T5::First                         T6;
-    typedef typename T5::Second                        T7;
-    typedef typename T4::TypeTraits                    T8;
+    using T4 = typename T3::Base;
+    using T5 = typename T4::Entry;
+    using T6 = typename T5::First;
+    using T7 = typename T5::Second;
+    using T8 = typename T4::TypeTraits;
     //
     T1 m_t1;
     T2 m_t2;
@@ -86,12 +86,12 @@ namespace GaudiDict {
     typedef typename LHCb::Relation2D<TO, FROM>        T1;
     typedef typename LHCb::Relation2D<TO, FROM>::Range T2;
     typedef typename LHCb::Relation2D<TO, FROM>::Base  T3;
-    typedef typename T3::Base                          T4;
-    typedef typename T4::Base                          T5;
-    typedef typename T5::Entry                         T6;
-    typedef typename T6::First                         T7;
-    typedef typename T6::Second                        T8;
-    typedef typename T5::TypeTraits                    T9;
+    using T4 = typename T3::Base;
+    using T5 = typename T4::Base;
+    using T6 = typename T5::Entry;
+    using T7 = typename T6::First;
+    using T8 = typename T6::Second;
+    using T9 = typename T5::TypeTraits;
     //
     T1 m_t1;
     T2 m_t2;
@@ -110,12 +110,12 @@ namespace GaudiDict {
     typedef typename LHCb::RelationWeighted1D<FROM, TO, WEIGHT>        T1;
     typedef typename LHCb::RelationWeighted1D<FROM, TO, WEIGHT>::Range T2;
     typedef typename LHCb::RelationWeighted1D<FROM, TO, WEIGHT>::Base  T3;
-    typedef typename T3::Base                                          T4;
-    typedef typename T4::Entry                                         T5;
-    typedef typename T5::First                                         T6;
-    typedef typename T5::Second                                        T7;
-    typedef typename T5::Third                                         T8;
-    typedef typename T4::TypeTraits                                    T9;
+    using T4 = typename T3::Base;
+    using T5 = typename T4::Entry;
+    using T6 = typename T5::First;
+    using T7 = typename T5::Second;
+    using T8 = typename T5::Third;
+    using T9 = typename T4::TypeTraits;
     //
     T1 m_t1;
     T2 m_t2;
@@ -134,13 +134,13 @@ namespace GaudiDict {
     typedef typename LHCb::RelationWeighted2D<TO, FROM, WEIGHT>        T1;
     typedef typename LHCb::RelationWeighted2D<TO, FROM, WEIGHT>::Range T2;
     typedef typename LHCb::RelationWeighted2D<TO, FROM, WEIGHT>::Base  T3;
-    typedef typename T3::Base                                          T4;
-    typedef typename T4::Base                                          T5;
-    typedef typename T5::Entry                                         T6;
-    typedef typename T6::First                                         T7;
-    typedef typename T6::Second                                        T8;
-    typedef typename T6::Third                                         T9;
-    typedef typename T5::TypeTraits                                    T10;
+    using T4  = typename T3::Base;
+    using T5  = typename T4::Base;
+    using T6  = typename T5::Entry;
+    using T7  = typename T6::First;
+    using T8  = typename T6::Second;
+    using T9  = typename T6::Third;
+    using T10 = typename T5::TypeTraits;
     //
     T1  m_t1;
     T2  m_t2;

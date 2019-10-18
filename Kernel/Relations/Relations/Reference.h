@@ -32,34 +32,32 @@ namespace Relations {
     /// Standard constructor
     Reference( TYPE& data ) : m_data( &data ){};
     /// destructor
-    ~Reference(){};
-    /// just to please the compiler: NO USE IS ALLOWED
-    Reference() : m_data( 0 ) {}
+    ~Reference() = default;
 
   public:
-    inline TYPE& get() const {
+    TYPE& get() const {
       assert( 0 != m_data && "Relations::Reference:get(): invalid pointer" );
       return *m_data;
     };
-    inline       operator TYPE&() const { return get(); }
-    inline TYPE& operator*() const { return get(); }
+          operator TYPE&() const { return get(); }
+    TYPE& operator*() const { return get(); }
 
   public:
-    inline Reference& operator=( const TYPE& value ) {
+    Reference& operator=( const TYPE& value ) {
       m_data = const_cast<TYPE*>( &value );
       return *this;
     };
 
   public:
     bool operator<( const Reference& right ) const {
-      static const std::less<TYPE> _less;
+      const std::less<> _less;
       return &right == this ? false
                             : m_data == right.m_data
                                   ? false
                                   : 0 == m_data ? true : 0 == right.m_data ? false : _less( *m_data, *right.m_data );
     };
     bool operator==( const Reference& right ) const {
-      static const std::equal_to<TYPE> _equal;
+      const std::equal_to<> _equal;
       return &right == this ? true
                             : m_data == right.m_data
                                   ? true
@@ -67,7 +65,7 @@ namespace Relations {
     }
 
   private:
-    TYPE* m_data;
+    TYPE* m_data = nullptr;
   };
 } // namespace Relations
 

@@ -14,11 +14,14 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include "GaudiKernel/detected.h"
+// ============================================================================
 // Relations
 // ============================================================================
 #include "Relations/IRelationBase.h"
 #include "Relations/RelationTypeTraits.h"
 #include "Relations/RelationUtils.h"
+#include "Relations/TraitsHelpers.h"
 // ============================================================================
 /** @class IRelation IRelation.h Relations/IRelation.h
  *  An absract interface for unidirectional templated relations
@@ -29,27 +32,30 @@
 template <class FROM, class TO>
 class IRelation : public IRelationBase {
 public:
+  enum Type { weighted = false };
   // ==========================================================================
   /// the type traits structure
-  typedef Relations::RelationTypeTraits<FROM, TO> TypeTraits;
+  using TypeTraits = Relations::RelationTypeTraits<FROM, TO>;
+  /// get the entry:
+  using Entry = Gaudi::cpp17::detected_or_t<Relations::Entry_<FROM, TO>, Relations::TraitsHelpers::Entry, TypeTraits>;
   /// "FROM" traits
-  typedef typename TypeTraits::From_ From_;
-  typedef typename TypeTraits::From  From;
+  using From_ = Gaudi::cpp17::detected_or_t<typename Entry::From_, Relations::TraitsHelpers::From_, TypeTraits>;
+  using From  = Gaudi::cpp17::detected_or_t<typename Entry::From, Relations::TraitsHelpers::From, TypeTraits>;
   /// "TO" traits
-  typedef typename TypeTraits::To_ To_;
-  typedef typename TypeTraits::To  To;
-  /// iterator type
-  typedef typename TypeTraits::iterator iterator;
-  /// iterator range
-  typedef typename TypeTraits::Range Range;
+  using To_ = Gaudi::cpp17::detected_or_t<typename Entry::To_, Relations::TraitsHelpers::To_, TypeTraits>;
+  using To  = Gaudi::cpp17::detected_or_t<typename Entry::To, Relations::TraitsHelpers::To, TypeTraits>;
   /// shortcut to own type
   typedef IRelation<FROM, TO> OwnType;
   /// shortcut to "direct" type
   typedef IRelation<FROM, TO> DirectType;
   /// shortcut to "inverse" type
   typedef IRelation<TO, FROM> InverseType;
-  /// get the entry:
-  typedef typename TypeTraits::Entry Entry;
+  /// entries
+  using Entries = Gaudi::cpp17::detected_or_t<std::vector<Entry>, Relations::TraitsHelpers::Entries, TypeTraits>;
+  /// iterator type
+  using iterator = typename Entries::const_iterator;
+  /// iterator range
+  using Range = Gaudi::cpp17::detected_or_t<Relations::Range_<Entries>, Relations::TraitsHelpers::Range, TypeTraits>;
   // ==========================================================================
 public:
   // ==========================================================================
@@ -165,11 +171,6 @@ public:
     static const InterfaceID s_iid = Relations::interfaceID( System::typeinfoName( typeid( OwnType ) ) );
     return s_iid;
   }
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// destructor (virtual and protected)
-  virtual ~IRelation() {}
   // ==========================================================================
 };
 // ============================================================================

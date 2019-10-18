@@ -22,6 +22,7 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/detected.h"
 // ============================================================================
 // Relation
 // ============================================================================
@@ -46,66 +47,60 @@ namespace Relations {
   template <class FROM, class TO>
   class RelationBase : BaseTable {
   public:
+    typedef RelationBase<TO, FROM> InvType;
+    /// shortcut to type traits structure
+    using TypeTraits = Relations::RelationTypeTraits<FROM, TO>;
+    /// Entry type
+    using Entry = Gaudi::cpp17::detected_or_t<Entry_<FROM, TO>, TraitsHelpers::Entry, TypeTraits>;
     // ========================================================================
     /// short cut to own type
     typedef RelationBase<FROM, TO> OwnType;
     /// short cut to type of inverse relations
-    typedef RelationBase<TO, FROM> InvType;
-    /// shortcut to type traits structure
-    typedef Relations::RelationTypeTraits<FROM, TO> TypeTraits;
     /// shortcut for "direct" interface
     typedef IRelation<FROM, TO> IDirect;
     /// shortcut for "inverse" interface
     typedef IRelation<TO, FROM> IInverse;
     /// actual "FROM" type
-    typedef typename TypeTraits::From_ From_;
+    using From_ = Gaudi::cpp17::detected_or_t<typename Entry::From_, Relations::TraitsHelpers::From_, TypeTraits>;
     /// actual "TO"   type
-    typedef typename TypeTraits::To_ To_;
-    /// Entry type
-    typedef typename TypeTraits::Entry Entry;
+    using To_ = Gaudi::cpp17::detected_or_t<typename Entry::To_, Relations::TraitsHelpers::To_, TypeTraits>;
     /// container  type
-    typedef typename TypeTraits::Entries Entries;
-    /// iterator type (internal)
-    typedef typename Entries::iterator iterator;
-    /// iterator type (internal)
-    typedef typename TypeTraits::IT IT;
-    /// iterator pair type type (internal)
-    typedef typename TypeTraits::IP IP;
-    /// const iterator type (internal)
-    typedef typename TypeTraits::CIT CIT;
+    using Entries = Gaudi::cpp17::detected_or_t<std::vector<Entry>, TraitsHelpers::Entries, TypeTraits>;
     /// the range
-    typedef typename TypeTraits::Range Range;
+    using Range = Gaudi::cpp17::detected_or_t<Range_<Entries>, TraitsHelpers::Range, TypeTraits>;
     /// size_type
-    typedef typename Entries::size_type size_type;
+    using size_type = typename Entries::size_type;
     // ========================================================================
   protected:
     // ========================================================================
     /// comparison criteria for sorting
-    typedef typename TypeTraits::Less Less;
+    using Less = Gaudi::cpp17::detected_or_t<std::less<>, TraitsHelpers::Less, TypeTraits>;
     /// comparison criteria ( "less" by "From" field )
-    typedef typename TypeTraits::LessByFrom Less1;
+    using LessF = Gaudi::cpp17::detected_or_t<typename Entry::LessF, TraitsHelpers::LessF, TypeTraits>;
+    using Less1 = Gaudi::cpp17::detected_or_t<TraitsHelpers::LessByFrom<LessF>, TraitsHelpers::Less1, TypeTraits>;
     /// equality criteria   ( "equal" by "To" field )
-    typedef typename TypeTraits::EqualByTo Equal;
+    using EqualT = Gaudi::cpp17::detected_or_t<typename Entry::EqualT, TraitsHelpers::EqualT, TypeTraits>;
+    using Equal  = Gaudi::cpp17::detected_or_t<TraitsHelpers::EqualByTo<EqualT>, TraitsHelpers::Equal, TypeTraits>;
     // ========================================================================
   public:
     // ========================================================================
     /// retrive all relations
-    inline IP i_relations() const { return IP( m_entries.begin(), m_entries.end() ); }
+    auto i_relations() const { return std::pair{m_entries.begin(), m_entries.end()}; }
     /// retrive all relations from the object
-    inline IP i_relations( From_ object ) const {
+    auto i_relations( From_ object ) const {
       return std::equal_range( m_entries.begin(), m_entries.end(), Entry( object ), Less1() );
     }
     /// make the relation between 2 objects
-    inline StatusCode i_relate( From_ object1, To_ object2 ) {
+    StatusCode i_relate( From_ object1, To_ object2 ) {
       // look for existing relations
       const Entry entry( object1, object2 );
       return i_add( entry );
     }
     /// add the entry
-    inline StatusCode i_add( const Entry& entry ) {
+    StatusCode i_add( const Entry& entry ) {
       static const Less _less_ = Less();
       // look for existing relations
-      iterator it = std::lower_bound( m_entries.begin(), m_entries.end(), entry, _less_ );
+      auto it = std::lower_bound( m_entries.begin(), m_entries.end(), entry, _less_ );
       // the relation does exist !
       if ( m_entries.end() != it && !_less_( entry, *it ) ) { return StatusCode( StatusCode::FAILURE, true ); }
       // insert new relation !
@@ -113,11 +108,11 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove the concrete relation between objects
-    inline StatusCode i_remove( From_ object1, To_ object2 ) {
+    StatusCode i_remove( From_ object1, To_ object2 ) {
       static const Less _less = Less();
       // look for existing relations
       const Entry ent( object1, object2 );
-      iterator    it = std::lower_bound( m_entries.begin(), m_entries.end(), ent, _less );
+      auto        it = std::lower_bound( m_entries.begin(), m_entries.end(), ent, _less );
       // the relation does not exist !
       if ( m_entries.end() == it || _less( ent, *it ) ) { return StatusCode( StatusCode::FAILURE, true ); }
       // remove existing relation
@@ -125,9 +120,9 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove all relations FROM the defined object
-    inline StatusCode i_removeFrom( From_ object ) {
+    StatusCode i_removeFrom( From_ object ) {
       // look for all existing relations from the given object
-      IP ip = i_relations( object );
+      auto ip = i_relations( object );
       // there are no relations
       if ( ip.second == ip.first ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
       // erase relations
@@ -135,13 +130,13 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove all relations TO the defined object
-    inline StatusCode i_removeTo( To_ object ) {
+    StatusCode i_removeTo( To_ object ) {
       // create the artificial entry
       Entry entry;
       entry.m_to = object;
       // use the predicate "Equal"
-      iterator it = std::remove_if( m_entries.begin(), m_entries.end(),
-                                    [&, eq = Equal{}]( auto&& arg ) { return eq( arg, entry ); } );
+      auto it = std::remove_if( m_entries.begin(), m_entries.end(),
+                                [&, eq = Equal{}]( auto&& arg ) { return eq( arg, entry ); } );
       // no relations are found!
       if ( m_entries.end() == it ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
       // erase the relations
@@ -149,23 +144,23 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove ALL relations from ALL  object to ALL objects
-    inline StatusCode i_clear() {
+    StatusCode i_clear() {
       m_entries.clear();
       return StatusCode::SUCCESS;
     }
     /// reserve the space for relations
-    inline StatusCode i_reserve( const size_t num ) {
+    StatusCode i_reserve( const size_t num ) {
       Relations::reserve( m_entries, num );
       return StatusCode::SUCCESS;
     }
     /// make the relation between 2 objects
-    inline void i_push( From_ object1, To_ object2 ) { m_entries.push_back( Entry( object1, object2 ) ); }
+    void i_push( From_ object1, To_ object2 ) { m_entries.push_back( Entry( object1, object2 ) ); }
     /** (re)sort the whole underlying container
      *  Call for this method is MANDATORY after usage of i_push
      */
-    inline void i_sort() { std::stable_sort( m_entries.begin(), m_entries.end(), Less() ); }
+    void i_sort() { std::stable_sort( m_entries.begin(), m_entries.end(), Less() ); }
     /// Access the number of relations
-    inline std::size_t size() const { return m_entries.size(); }
+    std::size_t size() const { return m_entries.size(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -177,7 +172,7 @@ namespace Relations {
     }
     /// constructor from any "direct" interface
     RelationBase( const IDirect& copy ) : BaseTable(), m_entries() {
-      typename IDirect::Range r = copy.relations();
+      auto r = copy.relations();
       m_entries.insert( m_entries.end(), r.begin(), r.end() );
     }
     /** constructor from any "inverse" interface
@@ -187,13 +182,11 @@ namespace Relations {
      */
     RelationBase( const IInverse& inv, const int /* flag */ ) : BaseTable(), m_entries() {
       // get all relations from "inv"
-      typename IInverse::Range r = inv.relations();
+      auto r = inv.relations();
       // reserve the space for relations
       i_reserve( r.size() ).ignore();
       // invert all relations
-      for ( typename IInverse::iterator entry = r.begin(); r.end() != entry; ++entry ) {
-        i_push( entry->to(), entry->from() );
-      }
+      for ( const auto& entry : r ) i_push( entry.to(), entry.from() );
       // final sort
       i_sort();
     }
@@ -246,9 +239,7 @@ namespace Relations {
           // use std::swap instead of assignement
           std::swap( m_entries, tmp );
         } else {
-          for ( typename Range::iterator ientry = range.begin(); range.end() != ientry; ++ientry ) {
-            this->i_add( *ientry ).ignore();
-          }
+          for ( const auto& entry : range ) this->i_add( entry ).ignore();
         }
       } // end of swich
       //
@@ -294,14 +285,10 @@ namespace Relations {
       default:
         //
         if ( range.size() > 0.1 * m_entries.size() ) {
-          for ( typename IInverse::iterator entry = range.begin(); range.end() != entry; ++entry ) {
-            i_push( entry->to(), entry->from() );
-          }
+          for ( const auto& entry : range ) i_push( entry.to(), entry.from() );
           i_sort();
         } else {
-          for ( typename IInverse::iterator entry = range.begin(); range.end() != entry; ++entry ) {
-            i_relate( entry->to(), entry->from() ).ignore();
-          }
+          for ( const auto& entry : range ) i_relate( entry.to(), entry.from() ).ignore();
         }
         //
       }

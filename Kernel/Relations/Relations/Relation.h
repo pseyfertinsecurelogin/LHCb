@@ -67,23 +67,23 @@ namespace Relations {
     /// shortcut for inverse base
     typedef typename Relations::RelationBase<TO, FROM> InvBase;
     /// shortcut for direct base type
-    typedef Base Direct;
+    using Direct = Base;
     /// shortcut for inverse base type
-    typedef InvBase Inverse;
+    using Inverse = InvBase;
     /// shortcut for direct  interface
-    typedef IBase IDirect;
+    using IDirect = IBase;
     /// shortcut for inverse base type
-    typedef typename IDirect::InverseType IInverse;
+    using IInverse = typename IDirect::InverseType;
     /// basic types from Interface
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// basic types from Interface
-    typedef typename IBase::From_ From_;
-    typedef typename IBase::From  From;
+    using From_ = typename IBase::From_;
+    using From  = typename IBase::From;
     /// basic types from Interface
-    typedef typename IBase::To_ To_;
-    typedef typename IBase::To  To;
+    using To_ = typename IBase::To_;
+    using To  = typename IBase::To;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -105,60 +105,60 @@ namespace Relations {
      */
     Relation( const OwnType& copy ) : BaseTable( copy ), IBase( copy ), m_direct( copy.m_direct ), m_inverse_aux( 0 ) {}
     /// destructor (virtual)
-    virtual ~Relation() {}
+    virtual ~Relation() = default;
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_relations( From_ object ) const {
-      typename Base::IP ip = m_direct.i_relations( object );
+    Range i_relations( From_ object ) const {
+      auto ip = m_direct.i_relations( object );
       return Range( ip.first, ip.second );
     }
     /// retrive all relations from ALL objects (fast,100% inline)
-    inline Range i_relations() const {
-      typename Base::IP ip = m_direct.i_relations();
+    Range i_relations() const {
+      auto ip = m_direct.i_relations();
       return Range( ip.first, ip.second );
     }
     /// make the relation between 2 objects (fast,100% inline method)
-    inline StatusCode i_relate( From_ object1, To_ object2 ) {
+    StatusCode i_relate( From_ object1, To_ object2 ) {
       const Entry entry( object1, object2 );
       return i_add( entry );
     }
     /// add the entry
-    inline StatusCode i_add( const Entry& entry ) {
+    StatusCode i_add( const Entry& entry ) {
       StatusCode sc = m_direct.i_add( entry );
       if ( sc.isFailure() || 0 == m_inverse_aux ) { return sc; }
       const typename Inverse::Entry ientry( entry.to(), entry.from() );
       return m_inverse_aux->i_add( ientry );
     }
     /// remove the concrete relation between objects (fast,100% inline method)
-    inline StatusCode i_remove( From_ object1, To_ object2 ) {
+    StatusCode i_remove( From_ object1, To_ object2 ) {
       StatusCode sc = m_direct.i_remove( object1, object2 );
       if ( sc.isFailure() || 0 == m_inverse_aux ) { return sc; }
       return m_inverse_aux->i_remove( object2, object1 );
     }
     /// remove all relations FROM the defined object (fast,100% inline method)
-    inline StatusCode i_removeFrom( From_ object ) {
+    StatusCode i_removeFrom( From_ object ) {
       StatusCode sc = m_direct.i_removeFrom( object );
       if ( sc.isFailure() || 0 == m_inverse_aux ) { return sc; }
       return m_inverse_aux->i_removeTo( object );
     }
     /// remove all relations TO the defined object (fast,100% inline method)
-    inline StatusCode i_removeTo( To_ object ) {
+    StatusCode i_removeTo( To_ object ) {
       StatusCode sc = m_direct.i_removeTo( object );
       if ( sc.isFailure() || 0 == m_inverse_aux ) { return sc; }
       return m_inverse_aux->i_removeFrom( object );
     }
     /// remove ALL relations form ALL  object to ALL objects (fast,100% inline)
-    inline StatusCode i_clear() {
+    StatusCode i_clear() {
       StatusCode sc = m_direct.i_clear();
       if ( sc.isFailure() || 0 == m_inverse_aux ) { return sc; }
       return m_inverse_aux->i_clear();
     }
     /// rebuild ALL relations form ALL  object to ALL objects (fast,100% inline)
-    inline StatusCode i_rebuild() {
-      typedef typename IBase::TypeTraits::Entry _Entry;
-      typedef typename std::vector<_Entry>      _Entries;
+    StatusCode i_rebuild() {
+      using _Entry   = typename IBase::Entry;
+      using _Entries = typename std::vector<_Entry>;
       // 1) get all relations
       Range r = i_relations();
       // 2) copy them into temporary storage
@@ -170,9 +170,7 @@ namespace Relations {
       sc = reserve( _e.size() );
       if ( sc.isFailure() ) { return sc; }
       // 5) build new relations
-      for ( typename _Entries::const_iterator entry = _e.begin(); _e.end() != entry; ++entry ) {
-        i_push( entry->from(), entry->to() );
-      }
+      for ( const auto& entry : _e ) i_push( entry.from(), entry.to() );
       // (re)sort
       i_sort();
       //
@@ -181,14 +179,14 @@ namespace Relations {
     /** make the relation between 2 objects (fast,100% inline method)
      *  - Call for i_sort() is mandatory!
      */
-    inline void i_push( From_ object1, To_ object2 ) {
+    void i_push( From_ object1, To_ object2 ) {
       m_direct.i_push( object1, object2 );
       if ( 0 != m_inverse_aux ) { m_inverse_aux->i_push( object2, object1 ); }
     }
     /** (re)sort of the table
      *   mandatory to use after i_push
      */
-    inline void i_sort() {
+    void i_sort() {
       m_direct.i_sort();
       if ( 0 != m_inverse_aux ) { m_inverse_aux->i_sort(); }
     }
@@ -251,7 +249,7 @@ namespace Relations {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -268,15 +266,15 @@ namespace Relations {
     /// release the reference counter (artificial)
     unsigned long release() override { return 1; }
     /// get the pointer to direct table
-    inline Direct* directBase() { return &m_direct; }
+    Direct* directBase() { return &m_direct; }
     /// get the reference to direct table
     const Direct& _direct() const { return m_direct; }
     /** set new inverse table
      *  @attention the method is not for public usage !!!
      */
-    inline void setInverseBase( Inverse* inverse ) { m_inverse_aux = inverse; }
+    void setInverseBase( Inverse* inverse ) { m_inverse_aux = inverse; }
     /// reserve the relations (for efficiency reasons)
-    inline StatusCode reserve( const size_t num ) {
+    StatusCode reserve( const size_t num ) {
       if ( 0 != m_inverse_aux ) { m_inverse_aux->i_reserve( num ); }
       return m_direct.i_reserve( num );
     }
@@ -284,12 +282,12 @@ namespace Relations {
   private:
     // ========================================================================
     /// assignement operator is private!
-    Relation& operator=( const OwnType& copy );
+    Relation& operator=( const OwnType& copy ) = delete;
     // ========================================================================
   public:
     // ========================================================================
     /// Access the size of the relations
-    inline std::size_t size() const { return m_direct.size(); }
+    [[nodiscard]] std::size_t size() const { return m_direct.size(); }
     // ========================================================================
   private:
     // ========================================================================
