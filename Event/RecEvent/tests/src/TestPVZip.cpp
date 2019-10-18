@@ -48,6 +48,9 @@ BOOST_AUTO_TEST_CASE( create_PVs ) {
 
   auto pvs = make_PVs( tracks );
 
+  static_assert(LHCb::Pr::is_zippable_v<decltype(pvs)>);
+  static_assert(LHCb::Pr::is_zippable_v<LHCb::Rec::PV::PVs>);
+
   auto iterable_pvs = LHCb::Pr::make_zip( pvs );
 
   std::cout << "pvs are of type " << System::typeinfoName( typeid( iterable_pvs ) ) << '\n';
