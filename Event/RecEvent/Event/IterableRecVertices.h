@@ -23,6 +23,8 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] auto y() const { return this->m_pvs->template pos_y<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto z() const { return this->m_pvs->template pos_z<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto pos() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto position() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto covMatrix() const { return this->m_pvs->template cov<dType, unwrap>( this->offset() ); }
   };
 } // namespace LHCb::Rec::PV
 
