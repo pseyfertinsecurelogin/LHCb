@@ -170,6 +170,8 @@ namespace SIMDWrapper {
       friend float_v copysign( const float_v& x, const float_v& y ) { return std::copysign( x.data, y.data ); }
 
       friend float_v sqrt( const float_v& v ) { return std::sqrt( v.data ); }
+      friend float_v rsqrt( const float_v& v ) { return 1.f / std::sqrt( v.data ); }
+      friend float_v rcp( const float_v& v ) { return 1.f / v.data; }
 
       friend float_v min( const float_v& lhs, const float_v& rhs ) { return std::min( lhs, rhs ); }
       friend float_v max( const float_v& lhs, const float_v& rhs ) { return std::max( lhs, rhs ); }
@@ -406,6 +408,8 @@ namespace SIMDWrapper {
       }
 
       friend float_v sqrt( const float_v& v ) { return _mm_sqrt_ps( v ); }
+      friend float_v rsqrt( const float_v& v ) { return _mm_rsqrt_ps( v ); }
+      friend float_v rcp( const float_v& v ) { return _mm_rcp_ps( v ); }
 
       friend mask_v        operator<( const float_v& lhs, const float_v& rhs ) { return _mm_cmplt_ps( lhs, rhs ); }
       friend mask_v        operator>( const float_v& lhs, const float_v& rhs ) { return _mm_cmpgt_ps( lhs, rhs ); }
@@ -701,6 +705,8 @@ namespace SIMDWrapper {
       }
 
       friend float_v sqrt( const float_v& v ) { return _mm256_sqrt_ps( v ); }
+      friend float_v rsqrt( const float_v& v ) { return _mm256_rsqrt_ps( v ); }
+      friend float_v rcp( const float_v& v ) { return _mm256_rcp_ps( v ); }
 
       friend float_v operator<( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps( lhs, rhs, _CMP_LT_OS );
@@ -991,6 +997,8 @@ namespace SIMDWrapper {
       }
 
       friend float_v sqrt( const float_v& v ) { return _mm256_sqrt_ps( v ); }
+      friend float_v rsqrt( const float_v& v ) { return _mm256_rsqrt_ps( v ); }
+      friend float_v rcp( const float_v& v ) { return _mm256_rcp_ps( v ); }
 
       friend mask_v operator<( const float_v& lhs, const float_v& rhs ) {
         return _mm256_cmp_ps_mask( lhs, rhs, _CMP_LT_OS );
@@ -1200,6 +1208,8 @@ namespace SIMDWrapper {
       }
 
       friend float_v sqrt( const float_v& v ) { return _mm512_sqrt_ps( v ); }
+      friend float_v rsqrt( const float_v& v ) { return _mm512_rsqrt14_ps( v ); }
+      friend float_v rcp( const float_v& v ) { return _mm512_rcp14_ps( v ); }
 
       friend mask_v operator<( const float_v& lhs, const float_v& rhs ) {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_LT_OS );
