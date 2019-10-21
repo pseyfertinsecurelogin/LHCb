@@ -15,6 +15,9 @@
 #include "LHCbMath/SIMDWrapper.h"
 #include "SOAExtensions/ZipUtils.h"
 
+#include <boost/mp11/algorithm.hpp>
+#include <boost/type_index/ctti_type_index.hpp>
+#include <tuple>
 namespace LHCb::Pr {
   /** Helper for getting from container type -> proxy type. When proxies are
    *  defined, specialisations of this template should also be added so that
@@ -39,7 +42,7 @@ namespace LHCb::Pr {
  *  namespace Some::Appropriate::Namespace {
  *    DECLARE_PROXY( Proxy ) {
  *      PROXY_METHODS( dType, unwrap, ContainerType, m_container );
- *      auto someField() const { return m_container->field<dType, unwrap>( this->offset() ); }
+ *      auto someField() const { return unwrap_helper<dType, unwrap>( m_container->field<dType>( this->offset() ) ); }
  *    };
  *  } // namespace Some::Appropriate::Namespace
  *
@@ -209,7 +212,7 @@ namespace LHCb::Pr::detail {
   //  ---------------------------
   // |           offset          |
   //  ---------------------------
-  //     Zip<A, B>::proxy_type
+  //       proxy_type<A, B>
   //
   // So the "zipped" proxy inherits from the two component proxy types, and
   // the offset (which is by construction valid into containers A and B) is
@@ -430,6 +433,8 @@ namespace LHCb::Pr {
      */
     template <SIMDWrapper::InstructionSet simd>
     auto with() const {
+      static_assert( !default_unwrap,
+                     "with() asked to change vector backend of an unwrapping zip. This doesn't make sense." );
       return Zip<simd, default_unwrap, ContainerTypes...>{*this};
     }
 
@@ -447,42 +452,107 @@ namespace LHCb::Pr {
   namespace detail {
     template <typename T>
     struct merged_object_helper {
-      static auto           decompose( T const& x ) { return std::tie( x ); }
+      using tuple_t = std::tuple<T>;
+      static constexpr auto decompose( T const& x ) { return std::tie( x ); }
       static constexpr bool is_zippable_v = ::LHCb::Pr::is_zippable_v<T>;
     };
 
     template <typename... T>
     struct merged_object_helper<merged_t<T...>> {
-      static auto           decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
+      using tuple_t = std::tuple<T...>;
+      static constexpr auto decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
       static constexpr bool is_zippable_v = ( ::LHCb::Pr::is_zippable_v<T> && ... );
     };
 
     template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T>
     struct merged_object_helper<::LHCb::Pr::Zip<def_simd, def_unwrap, T...>> {
+      using tuple_t = std::tuple<T...>;
       // Convert std::tuple<A const*, ...> to std::tuple<A const&, ...>
-      template <std::size_t... Is>
-      static auto helper( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x, std::index_sequence<Is...> ) {
-        return std::tie( *std::get<Is>( x.m_containers )... );
-      }
-      static auto decompose( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x ) {
-        return helper( x, std::index_sequence_for<T...>{} );
+      static constexpr auto decompose( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x ) {
+        return std::tie( *std::get<T const*>( x.m_containers )... );
       }
       // This was already a zip, so we know that the contents were zippable
       static constexpr bool is_zippable_v = true;
     };
 
-    template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T,
-              typename std::enable_if_t<( is_zippable_v<T> && ... ), int> = 0>
-    auto make_zip( T const&... tracks ) {
-      return Zip<def_simd, def_unwrap, T...>{tracks...};
-    }
+    /** Helper to sorting a std::tuple of const references according to a
+     *  different tuple type's ordering. e.g. given an instance of
+     *    std::tuple<A const&, B const&>
+     *  and the template parameter
+     *    std::tuple<B, A>
+     *  return an instance of std::tuple<B const&, A const&> populated from the
+     *  given instance. This only works if the types A, B, ... are unique in
+     *  each tuple.
+     */
+    template <typename>
+    struct tuple_sort {};
+
+    template <typename... SArgs>
+    struct tuple_sort<std::tuple<SArgs...>> {
+      template <typename... Args>
+      constexpr static auto apply( std::tuple<Args...>&& in ) {
+        return std::tuple<SArgs const&...>{std::get<SArgs const&>( std::move( in ) )...};
+      }
+    };
+
+    /** Comparison of two types using Boost CTTI
+     */
+    template <typename T1, typename T2>
+    struct ctti_sort {
+      using tidx                  = boost::typeindex::ctti_type_index;
+      constexpr static bool value = tidx::type_id<T1>() < tidx::type_id<T2>();
+    };
+
+    /** Do some template magic to figure get from some parameter pack Args...
+     *  that could be passed to make_zip() to the sorted list of unpacked types
+     *  that will be passed as a template parameter to Zip. This involves
+     *  applying unpacking rules for merged_t and Zip arguments and then
+     *  sorting the result using Boost CTTI.
+     *
+     *  e.g.
+     *    sorted_t<merged_t<B, C>, A>
+     *  might yield
+     *    std::tuple<A, B, C>
+     *  (although the actual ordering is unspecified, we rely on Boost to
+     *  ensure that it is stable)
+     */
+    template <typename... Args>
+    using sorted_t =
+        boost::mp11::mp_sort<boost::mp11::mp_append<typename detail::merged_object_helper<Args>::tuple_t...>,
+                             ctti_sort>;
+
+    /** Helper for full_zip_t
+     */
+    template <typename>
+    struct full_zip {};
+
+    template <typename... Ts>
+    struct full_zip<std::tuple<Ts...>> {
+      template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap>
+      using type = Zip<def_simd, def_unwrap, Ts...>;
+    };
+
+    /** Deduce the return type of make_zip from a parameter pack representing
+     *  its arguments. This is a relatively trivial wrapper around sorted_t.
+     *  The "full" in the name is because the user is required to explicitly
+     *  specify the extra template parameters def_simd and def_unwrap.
+     *
+     *  e.g.
+     *    full_zip_t<def_simd, def_unwrap, merged_t<B, C>, A>
+     *  might yield
+     *    Zip<def_simd, def_unwrap, A, B, C>
+     */
+    template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... Args>
+    using full_zip_t = typename full_zip<sorted_t<Args...>>::template type<def_simd, def_unwrap>;
   } // namespace detail
 
   /** Construct an appropriate iterable wrapper from the given container(s)
    *
-   *  e.g. transform LHCb::Pr::Velo::Tracks to an iterable wrapper around that,
-   *  this is just a helper function that saves writing out so many explicit
-   *  types...
+   *  e.g. transform LHCb::Pr::Velo::Tracks to an iterable wrapper around that
+   *
+   *  This is a helper function that avoids writing out too many explicit types
+   *  and handles various special cases to try and minimise the number of
+   *  different return types that we have to deal with.
    *
    *  There is some special handling in case some of the arguments are
    *  instances of merged_t. This is the type produced by filtering a zip. The
@@ -496,6 +566,11 @@ namespace LHCb::Pr {
    *    auto y = LHCb::Pr::make_zip( x, c, d );
    *    auto z = LHCb::Pr::make_zip( a, b, c, d );
    *  then y and z should have the same type.
+   *
+   *  Finally, there is a step that re-orders the template parameters
+   *  representing the types of a, b, etc. above so that the argument order
+   *  doesn't matter. Note that given the expansion behaviour discussed just
+   *  above, one could not always easily achieve this by hand.
    */
   template <SIMDWrapper::InstructionSet def_simd = SIMDWrapper::InstructionSet::Best, bool def_unwrap = false,
             typename... PrTracks,
@@ -510,23 +585,34 @@ namespace LHCb::Pr {
     //
     // (Note that merged_t<B, C> inherits from B and C)
 
-    // Unpack the arguments, as specified above, into a tuple of const&
+    // Get something like std::tuple<B, A, C> that has been unpacked following
+    // the rules above and sorted using CTTI. Reordering the arguments passed
+    // to this function (i.e. "tracks") would not affect sorted_t.
+    using sorted_t = detail::sorted_t<PrTracks...>;
+
+    // Get the full Zip<def_simd, def_unwrap, B, A, C> type that we'll return
+    using ret_t = typename detail::full_zip<sorted_t>::template type<def_simd, def_unwrap>;
+
+    // Unpack the arguments, as specified above, into a tuple of const&. This
+    // will generally not be ordered correctly (i.e. it will be something like
+    // std::tuple<A const&, B const&, C const&> that doesn't match sorted_t).
     auto expanded_tracks = std::tuple_cat( detail::merged_object_helper<PrTracks>::decompose( tracks )... );
 
-    // Finally unpack this tuple into the argument list of our helper function
-    return std::apply( []( auto const&... x ) { return detail::make_zip<def_simd, def_unwrap>( x... ); },
-                       expanded_tracks );
+    // Reorder to make a tuple of references in the order demanded by sorted_t
+    auto sorted_tracks = detail::tuple_sort<sorted_t>::apply( std::move( expanded_tracks ) );
+
+    // Finally, construct the zip object using this sorted list of references
+    return std::make_from_tuple<ret_t>( std::move( sorted_tracks ) );
   }
 
   // Helper to get the type of a zip of the types T...
   template <typename... T>
-  using zip_t = decltype( LHCb::Pr::make_zip( std::declval<T>()... ) );
+  using zip_t = detail::full_zip_t<SIMDWrapper::InstructionSet::Best, false, T...>;
 
   // Helper to get the type of an unwrapped (scalar, plain C++ data) version
   // of zip_t<T...>
   template <typename... T>
-  using unwrapped_zip_t = decltype( std::declval<zip_t<T...>>().unwrap() );
-
+  using unwrapped_zip_t = detail::full_zip_t<SIMDWrapper::InstructionSet::Scalar, true, T...>;
 } // namespace LHCb::Pr
 
 // Enable header lookup for non-owning zips
