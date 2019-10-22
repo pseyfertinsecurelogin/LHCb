@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef EVENT_CLUSTERCELLID_H
-#define EVENT_CLUSTERCELLID_H 1
+#define EVENT_CLUSTERCELLID_H
 // ============================================================================
 #include "Event/CaloDataFunctor.h"
 // ============================================================================

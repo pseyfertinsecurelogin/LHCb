@@ -58,36 +58,35 @@ namespace LHCb::Event::v2 {
     using ConstVector = std::vector<const RecVertex*>;
 
     /// constructor
-    RecVertex( const Gaudi::XYZPoint& position, const Gaudi::SymMatrix3x3& covMatrix,
-               const Track::Chi2PerDoF chi2PerDof )
-        : m_position( position ), m_covMatrix( covMatrix ), m_chi2PerDoF( chi2PerDof ) {}
+    RecVertex( Gaudi::XYZPoint position, const Gaudi::SymMatrix3x3& covMatrix, const Track::Chi2PerDoF chi2PerDof )
+        : m_position( std::move( position ) ), m_covMatrix( covMatrix ), m_chi2PerDoF( chi2PerDof ) {}
 
     /// Is the vertex a primary?
-    bool isPrimary() const { return RecVertexType::Primary == technique(); }
+    [[nodiscard]] bool isPrimary() const { return RecVertexType::Primary == technique(); }
 
     /// Retrieve const Position in LHCb reference system
-    const Gaudi::XYZPoint& position() const { return m_position; }
+    [[nodiscard]] const Gaudi::XYZPoint& position() const { return m_position; }
 
     /// Update  Position in LHCb reference system
     void setPosition( const Gaudi::XYZPoint& value ) { m_position = value; }
 
     /// Retrieve const  Covariance matrix containing errors on vertex position
-    const Gaudi::SymMatrix3x3& covMatrix() const { return m_covMatrix; };
+    [[nodiscard]] const Gaudi::SymMatrix3x3& covMatrix() const { return m_covMatrix; };
 
     /// Retrieve const covariance matrix containing errors on vertex position
-    const Gaudi::SymMatrix3x3& posCovMatrix() const { return m_covMatrix; };
+    [[nodiscard]] const Gaudi::SymMatrix3x3& posCovMatrix() const { return m_covMatrix; };
 
     /// Update  Covariance matrix containing errors on vertex position
     void setCovMatrix( const Gaudi::SymMatrix3x3& value ) { m_covMatrix = value; }
 
     /// Retrieve const  Chi square of vertex fit
-    auto chi2() const { return m_chi2PerDoF.chi2(); }
+    [[nodiscard]] auto chi2() const { return m_chi2PerDoF.chi2(); }
 
     /// Retrieve const  Number of degree of freedom
-    auto nDoF() const { return m_chi2PerDoF.nDoF; }
+    [[nodiscard]] auto nDoF() const { return m_chi2PerDoF.nDoF; }
 
     /// Retrieve the Chi^2/DoF of vertex
-    auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; }
+    [[nodiscard]] auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; }
 
     /// Set the Chi^2 and the DoF of the vertex (fit)
     void setChi2PerDoF( Track::Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
@@ -115,13 +114,13 @@ namespace LHCb::Event::v2 {
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  How the vertex was made
-    const RecVertexType& technique() const { return m_technique; }
+    [[nodiscard]] const RecVertexType& technique() const { return m_technique; }
 
     /// Update  How the vertex was made
     void setTechnique( const RecVertexType& value ) { m_technique = value; }
 
     /// Retrieve const Tracks this vertex was made from
-    const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
+    [[nodiscard]] const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
 
   private:
     /// Position in LHCb reference system

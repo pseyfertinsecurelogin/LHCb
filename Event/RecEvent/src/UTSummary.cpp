@@ -15,7 +15,7 @@
 std::ostream& LHCb::UTSummary::fillStream( std::ostream& s ) const {
 
   std::string syncStatus = "OK";
-  if ( !m_pcnSynch ) syncStatus = "Not" + syncStatus;
+  if ( !m_pcnSynch ) { syncStatus = "Not" + syncStatus; }
   s << "Summary Block " << std::endl;
   s << "# Clusters " << m_nClusters << " PCN " << m_pcn << " Sync status " << syncStatus;
   s << std::endl;

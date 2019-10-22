@@ -14,6 +14,7 @@
 #include "GaudiKernel/DataObject.h"
 #include <map>
 #include <ostream>
+#include <utility>
 #include <vector>
 
 // Forward declarations
@@ -45,8 +46,8 @@ namespace LHCb {
 
     /// special constructor
     UTSummary( unsigned int nClusters, unsigned int pcn, bool pcnSynch, unsigned int nBytes, unsigned int nFull,
-               unsigned int nPed, unsigned int nError, const std::vector<unsigned int>& corruptedBanks,
-               const std::vector<unsigned int>& missing, const RecoveredInfo& recoveredBanks )
+               unsigned int nPed, unsigned int nError, std::vector<unsigned int> corruptedBanks,
+               std::vector<unsigned int> missing, RecoveredInfo recoveredBanks )
         : m_nClusters( nClusters )
         , m_pcn( pcn )
         , m_pcnSynch( pcnSynch )
@@ -54,77 +55,66 @@ namespace LHCb {
         , m_nFullBanks( nFull )
         , m_nPedestalBanks( nPed )
         , m_nErrorBanks( nError )
-        , m_corruptedBanks( corruptedBanks )
-        , m_missingBanks( missing )
-        , m_recoveredBanks( recoveredBanks ) {}
+        , m_corruptedBanks( std::move( corruptedBanks ) )
+        , m_missingBanks( std::move( missing ) )
+        , m_recoveredBanks( std::move( recoveredBanks ) ) {}
 
     /// Default Constructor
-    UTSummary()
-        : m_nClusters( 0 )
-        , m_pcn( 0 )
-        , m_pcnSynch()
-        , m_rawBufferSize( 0 )
-        , m_nFullBanks( 0 )
-        , m_nPedestalBanks( 0 )
-        , m_nErrorBanks( 0 )
-        , m_corruptedBanks()
-        , m_missingBanks()
-        , m_recoveredBanks() {}
+    UTSummary() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override { return LHCb::UTSummary::classID(); }
+    static const CLID&        classID() { return CLID_UTSummary; }
 
     /// data is good or not
-    bool hasError() const;
+    [[nodiscard]] bool hasError() const { return !m_pcnSynch || !m_corruptedBanks.empty(); }
 
     /// Print in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  number of clusters
-    unsigned int nClusters() const;
+    [[nodiscard]] unsigned int nClusters() const { return m_nClusters; }
 
     /// Retrieve const  pcn
-    unsigned int pcn() const;
+    [[nodiscard]] unsigned int pcn() const { return m_pcn; }
 
     /// Retrieve const  pcn agree
-    bool pcnSynch() const;
+    [[nodiscard]] bool pcnSynch() const { return m_pcnSynch; }
 
     /// Retrieve const  data size of raw bank [bytes]
-    unsigned int rawBufferSize() const;
+    [[nodiscard]] unsigned int rawBufferSize() const { return m_rawBufferSize; }
 
     /// Retrieve const  # full banks
-    unsigned int nFullBanks() const;
+    [[nodiscard]] unsigned int nFullBanks() const { return m_nFullBanks; }
 
     /// Retrieve const  # pedestal banks
-    unsigned int nPedestalBanks() const;
+    [[nodiscard]] unsigned int nPedestalBanks() const { return m_nPedestalBanks; }
 
     /// Retrieve const  # of error banks
-    unsigned int nErrorBanks() const;
+    [[nodiscard]] unsigned int nErrorBanks() const { return m_nErrorBanks; }
 
     /// Retrieve const  banks with error
-    const std::vector<unsigned int>& corruptedBanks() const;
+    [[nodiscard]] const std::vector<unsigned int>& corruptedBanks() const { return m_corruptedBanks; }
 
     /// Retrieve const  banks missed
-    const std::vector<unsigned int>& missingBanks() const;
+    [[nodiscard]] const std::vector<unsigned int>& missingBanks() const { return m_missingBanks; }
 
     /// Retrieve const  banks recovered
-    const RecoveredInfo& recoveredBanks() const;
+    [[nodiscard]] const RecoveredInfo& recoveredBanks() const { return m_recoveredBanks; }
 
     friend std::ostream& operator<<( std::ostream& str, const UTSummary& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    unsigned int              m_nClusters;      ///< number of clusters
-    unsigned int              m_pcn;            ///< pcn
-    bool                      m_pcnSynch;       ///< pcn agree
-    unsigned int              m_rawBufferSize;  ///< data size of raw bank [bytes]
-    unsigned int              m_nFullBanks;     ///< # full banks
-    unsigned int              m_nPedestalBanks; ///< # pedestal banks
-    unsigned int              m_nErrorBanks;    ///< # of error banks
-    std::vector<unsigned int> m_corruptedBanks; ///< banks with error
-    std::vector<unsigned int> m_missingBanks;   ///< banks missed
-    RecoveredInfo             m_recoveredBanks; ///< banks recovered
+    unsigned int              m_nClusters{0};      ///< number of clusters
+    unsigned int              m_pcn{0};            ///< pcn
+    bool                      m_pcnSynch{};        ///< pcn agree
+    unsigned int              m_rawBufferSize{0};  ///< data size of raw bank [bytes]
+    unsigned int              m_nFullBanks{0};     ///< # full banks
+    unsigned int              m_nPedestalBanks{0}; ///< # pedestal banks
+    unsigned int              m_nErrorBanks{0};    ///< # of error banks
+    std::vector<unsigned int> m_corruptedBanks;    ///< banks with error
+    std::vector<unsigned int> m_missingBanks;      ///< banks missed
+    RecoveredInfo             m_recoveredBanks;    ///< banks recovered
 
   }; // class UTSummary
 
@@ -133,35 +123,3 @@ namespace LHCb {
 // -----------------------------------------------------------------------------
 // end of class
 // -----------------------------------------------------------------------------
-
-// Including forward declarations
-
-inline const CLID& LHCb::UTSummary::clID() const { return LHCb::UTSummary::classID(); }
-
-inline const CLID& LHCb::UTSummary::classID() { return CLID_UTSummary; }
-
-inline unsigned int LHCb::UTSummary::nClusters() const { return m_nClusters; }
-
-inline unsigned int LHCb::UTSummary::pcn() const { return m_pcn; }
-
-inline bool LHCb::UTSummary::pcnSynch() const { return m_pcnSynch; }
-
-inline unsigned int LHCb::UTSummary::rawBufferSize() const { return m_rawBufferSize; }
-
-inline unsigned int LHCb::UTSummary::nFullBanks() const { return m_nFullBanks; }
-
-inline unsigned int LHCb::UTSummary::nPedestalBanks() const { return m_nPedestalBanks; }
-
-inline unsigned int LHCb::UTSummary::nErrorBanks() const { return m_nErrorBanks; }
-
-inline const std::vector<unsigned int>& LHCb::UTSummary::corruptedBanks() const { return m_corruptedBanks; }
-
-inline const std::vector<unsigned int>& LHCb::UTSummary::missingBanks() const { return m_missingBanks; }
-
-inline const LHCb::UTSummary::RecoveredInfo& LHCb::UTSummary::recoveredBanks() const { return m_recoveredBanks; }
-
-inline bool LHCb::UTSummary::hasError() const {
-
-  bool good = m_pcnSynch & m_corruptedBanks.empty();
-  return !good;
-}

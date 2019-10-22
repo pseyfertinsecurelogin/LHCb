@@ -33,28 +33,28 @@ namespace LHCb {
   class RichSummaryPhoton final {
   public:
     /// Vector of RichSummaryPhotons
-    typedef std::vector<LHCb::RichSummaryPhoton> Vector;
+    using Vector = std::vector<LHCb::RichSummaryPhoton>;
 
     /// Default Constructor
-    RichSummaryPhoton() : m_cherenkovTheta( -999 ), m_cherenkovPhi( -999 ), m_smartID() {}
+    RichSummaryPhoton() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  The reconstructed Cherenkov theta value for this photon
-    float cherenkovTheta() const;
+    [[nodiscard]] float cherenkovTheta() const;
 
     /// Update  The reconstructed Cherenkov theta value for this photon
     void setCherenkovTheta( float value );
 
     /// Retrieve const  The reconstructed Cherenkov phi value for this photon
-    float cherenkovPhi() const;
+    [[nodiscard]] float cherenkovPhi() const;
 
     /// Update  The reconstructed Cherenkov phi value for this photon
     void setCherenkovPhi( float value );
 
     /// Retrieve const  RichSmartID for the RICH hit associated to this reconstructed photon
-    const LHCb::RichSmartID& smartID() const;
+    [[nodiscard]] const LHCb::RichSmartID& smartID() const;
 
     /// Update  RichSmartID for the RICH hit associated to this reconstructed photon
     void setSmartID( const LHCb::RichSmartID& value );
@@ -63,9 +63,9 @@ namespace LHCb {
 
   protected:
   private:
-    float             m_cherenkovTheta; ///< The reconstructed Cherenkov theta value for this photon
-    float             m_cherenkovPhi;   ///< The reconstructed Cherenkov phi value for this photon
-    LHCb::RichSmartID m_smartID;        ///< RichSmartID for the RICH hit associated to this reconstructed photon
+    float             m_cherenkovTheta{-999}; ///< The reconstructed Cherenkov theta value for this photon
+    float             m_cherenkovPhi{-999};   ///< The reconstructed Cherenkov phi value for this photon
+    LHCb::RichSmartID m_smartID;              ///< RichSmartID for the RICH hit associated to this reconstructed photon
 
   }; // class RichSummaryPhoton
 

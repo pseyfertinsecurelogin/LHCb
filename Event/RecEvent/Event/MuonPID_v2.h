@@ -19,184 +19,123 @@
 
 // Forward declarations
 
-namespace LHCb::Event {
+namespace LHCb::Event::v2 {
+  // Namespace for locations in TDS
+  namespace MuonPIDLocation {
+    inline std::string const Default = "Rec/Muon/MuonPID";
+    inline std::string const Offline = "Rec/Muon/MuonPID";
+    inline std::string const Hlt     = "Hlt/Muon/MuonPID";
+  } // namespace MuonPIDLocation
 
-  namespace v2 {
-    // Namespace for locations in TDS
-    namespace MuonPIDLocation {
-      inline std::string const Default = "Rec/Muon/MuonPID";
-      inline std::string const Offline = "Rec/Muon/MuonPID";
-      inline std::string const Hlt     = "Hlt/Muon/MuonPID";
-    } // namespace MuonPIDLocation
+  class MuonPID final {
+  public:
+    std::ostream& fillStream( std::ostream& s ) const {
+      s << "{ "
+        << "MuonLLMu :  " << (float)m_MuonLLMu << std::endl
+        << "MuonLLBg :  " << (float)m_MuonLLBg << std::endl
+        << "NShared :   " << m_NShared << std::endl
+        << "Status :    " << m_Status << std::endl
+        << "chi2Corr :  " << m_chi2Corr << std::endl
+        << "muonMVA1 :  " << m_muonMVA1 << std::endl
+        << "muonMVA2 :  " << m_muonMVA2 << std::endl
+        << "muonMVA3 :  " << m_muonMVA3 << std::endl
+        << "muonMVA4 :  " << m_muonMVA4 << std::endl
+        << " }";
+      return s;
+    };
 
-    class MuonPID final {
-    public:
-      /*      MuonPID(const LHCb::MuonPID& lhs) : KeyedObject<int>(),
-                                                m_MuonLLMu(lhs.m_MuonLLMu),
-                                                m_MuonLLBg(lhs.m_MuonLLBg),
-                                                m_NShared(lhs.m_NShared),
-                                                m_Status(lhs.m_Status),
-                                                m_chi2Corr(lhs.m_chi2Corr),
-                                                m_muonMVA1(lhs.m_muonMVA1),
-                                                m_muonMVA2(lhs.m_muonMVA2),
-                                                m_muonMVA3(lhs.m_muonMVA3),
-                                                m_muonMVA4(lhs.m_muonMVA4),
-      //                                          m_IDTrack(lhs.m_IDTrack),
-      //                                          m_muonTrack(lhs.m_muonTrack) {}
+    [[nodiscard]] double MuonLLMu() const { return m_MuonLLMu; };
 
-            MuonPID() : m_MuonLLMu(-20.0),
-                        m_MuonLLBg(0.0),
-                        m_NShared(0),
-                        m_Status(0),
-                        m_chi2Corr(0.0),
-                        m_muonMVA1(-999.0),
-                        m_muonMVA2(-999.0),
-                        m_muonMVA3(-999.0),
-                        m_muonMVA4(-999.0) {}
-      */
+    void setMuonLLMu( double value ) { m_MuonLLMu = value; };
 
-      std::ostream& fillStream( std::ostream& s ) const {
-        s << "{ "
-          << "MuonLLMu :  " << (float)m_MuonLLMu << std::endl
-          << "MuonLLBg :  " << (float)m_MuonLLBg << std::endl
-          << "NShared :   " << m_NShared << std::endl
-          << "Status :    " << m_Status << std::endl
-          << "chi2Corr :  " << m_chi2Corr << std::endl
-          << "muonMVA1 :  " << m_muonMVA1 << std::endl
-          << "muonMVA2 :  " << m_muonMVA2 << std::endl
-          << "muonMVA3 :  " << m_muonMVA3 << std::endl
-          << "muonMVA4 :  " << m_muonMVA4 << std::endl
-          << " }";
-        return s;
-      };
+    [[nodiscard]] double MuonLLBg() const { return m_MuonLLBg; };
 
-      double MuonLLMu() const { return m_MuonLLMu; };
+    void setMuonLLBg( double value ) { m_MuonLLBg = value; };
 
-      void setMuonLLMu( double value ) { m_MuonLLMu = value; };
+    [[nodiscard]] int nShared() const { return m_NShared; };
 
-      double MuonLLBg() const { return m_MuonLLBg; };
+    void setNShared( int value ) { m_NShared = value; };
 
-      void setMuonLLBg( double value ) { m_MuonLLBg = value; };
+    [[nodiscard]] unsigned int Status() const { return m_Status; };
 
-      int nShared() const { return m_NShared; };
+    void setStatus( unsigned int value ) { m_Status = value; };
 
-      void setNShared( int value ) { m_NShared = value; };
+    [[nodiscard]] bool IsMuon() const { return test<StatusMask::isMuon>(); }
 
-      unsigned int Status() const { return m_Status; };
+    void setIsMuon( bool value ) { set<StatusMask::isMuon>( value ); }
 
-      void setStatus( unsigned int value ) { m_Status = value; };
+    [[nodiscard]] bool InAcceptance() const { return test<StatusMask::inAcceptance>(); }
 
-      bool IsMuon() const { return 0 != ( ( m_Status & IsMuonMask ) >> IsMuonBits ); };
+    void setInAcceptance( bool value ) { set<StatusMask::inAcceptance>( value ); }
 
-      void setIsMuon( bool value ) {
-        unsigned int val = (unsigned int)value;
-        m_Status &= ~IsMuonMask;
-        m_Status |= ( ( ( (unsigned int)val ) << IsMuonBits ) & IsMuonMask );
-      };
+    [[nodiscard]] bool PreSelMomentum() const { return test<StatusMask::preSelMomentum>(); }
 
-      bool InAcceptance() const { return 0 != ( ( m_Status & InAcceptanceMask ) >> InAcceptanceBits ); };
+    void setPreSelMomentum( bool value ) { set<StatusMask::preSelMomentum>( value ); }
 
-      void setInAcceptance( bool value ) {
-        unsigned int val = (unsigned int)value;
-        m_Status &= ~InAcceptanceMask;
-        m_Status |= ( ( ( (unsigned int)val ) << InAcceptanceBits ) & InAcceptanceMask );
-      };
+    [[nodiscard]] bool IsMuonLoose() const { return test<StatusMask::isMuonLoose>(); }
 
-      bool PreSelMomentum() const { return 0 != ( ( m_Status & PreSelMomentumMask ) >> PreSelMomentumBits ); };
+    void setIsMuonLoose( bool value ) { set<StatusMask::isMuonLoose>( value ); }
 
-      void setPreSelMomentum( bool value ) {
-        unsigned int val = (unsigned int)value;
-        m_Status &= ~PreSelMomentumMask;
-        m_Status |= ( ( ( (unsigned int)val ) << PreSelMomentumBits ) & PreSelMomentumMask );
-      };
+    [[nodiscard]] bool IsMuonTight() const { return test<StatusMask::isMuonTight>(); }
 
-      bool IsMuonLoose() const { return 0 != ( ( m_Status & IsMuonLooseMask ) >> IsMuonLooseBits ); };
+    void setIsMuonTight( bool value ) { set<StatusMask::isMuonTight>( value ); }
 
-      void setIsMuonLoose( bool value ) {
-        unsigned int val = (unsigned int)value;
-        m_Status &= ~IsMuonLooseMask;
-        m_Status |= ( ( ( (unsigned int)val ) << IsMuonLooseBits ) & IsMuonLooseMask );
-      };
+    [[nodiscard]] float chi2Corr() const { return m_chi2Corr; };
 
-      bool IsMuonTight() const { return 0 != ( ( m_Status & IsMuonTightMask ) >> IsMuonTightBits ); };
+    void setChi2Corr( float value ) { m_chi2Corr = value; };
 
-      void setIsMuonTight( bool value ) {
-        unsigned int val = (unsigned int)value;
-        m_Status &= ~IsMuonTightMask;
-        m_Status |= ( ( ( (unsigned int)val ) << IsMuonTightBits ) & IsMuonTightMask );
-      };
+    [[nodiscard]] float muonMVA1() const { return m_muonMVA1; };
 
-      float chi2Corr() const { return m_chi2Corr; };
+    void setMuonMVA1( float value ) { m_muonMVA1 = value; };
 
-      void setChi2Corr( float value ) { m_chi2Corr = value; };
+    [[nodiscard]] float muonMVA2() const { return m_muonMVA2; };
 
-      float muonMVA1() const { return m_muonMVA1; };
+    void setMuonMVA2( float value ) { m_muonMVA2 = value; };
 
-      void setMuonMVA1( float value ) { m_muonMVA1 = value; };
+    [[nodiscard]] float muonMVA3() const { return m_muonMVA3; };
 
-      float muonMVA2() const { return m_muonMVA2; };
+    void setMuonMVA3( float value ) { m_muonMVA3 = value; };
 
-      void setMuonMVA2( float value ) { m_muonMVA2 = value; };
+    [[nodiscard]] float muonMVA4() const { return m_muonMVA4; };
 
-      float muonMVA3() const { return m_muonMVA3; };
+    void setMuonMVA4( float value ) { m_muonMVA4 = value; };
 
-      void setMuonMVA3( float value ) { m_muonMVA3 = value; };
+  private:
+    template <unsigned int mask>
+    void set( bool value ) {
+      m_Status = ( m_Status & ~mask ) | ( -value & mask );
+    }
+    template <unsigned int mask>
+    bool test() const {
+      return ( m_Status & mask ) != 0;
+    }
 
-      float muonMVA4() const { return m_muonMVA4; };
+    enum StatusMask : unsigned int {
+      isMuon         = 0x1U,
+      inAcceptance   = 0x2U,
+      preSelMomentum = 0x4U,
+      isMuonLoose    = 0x8U,
+      isMuonTight    = 0x10U
+    };
 
-      void setMuonMVA4( float value ) { m_muonMVA4 = value; };
+    double       m_MuonLLMu = -20.0;
+    double       m_MuonLLBg = 0.0;
+    int          m_NShared  = 0;
+    unsigned int m_Status   = 0;
+    float        m_chi2Corr = 0.F;
+    float        m_muonMVA1 = -999.F;
+    float        m_muonMVA2 = -999.F;
+    float        m_muonMVA3 = -999.F;
+    float        m_muonMVA4 = -999.F;
 
-      //      const LHCb::Track* LHCb::MuonPID::idTrack() const { return m_IDTrack; };
+  }; // class MuonPID
 
-      //      void setIDTrack(const SmartRef<LHCb::Track>& value) { m_IDTrack = value; };
-
-      //      void setIDTrack(const LHCb::Track* value) { m_IDTrack = value; };
-
-      //      const LHCb::Track* LHCb::MuonPID::muonTrack() const { return m_muonTrack; };
-
-      //      void setMuonTrack(const SmartRef<LHCb::Track>& value) { m_muonTrack = value; };
-
-      //      void setMuonTrack(const LHCb::Track* value) { m_muonTrack = value; };
-
-    protected:
-    private:
-      enum StatusBits {
-        IsMuonBits         = 0,
-        InAcceptanceBits   = 1,
-        PreSelMomentumBits = 2,
-        IsMuonLooseBits    = 3,
-        IsMuonTightBits    = 4
-      };
-
-      enum StatusMasks {
-        IsMuonMask         = 0x1L,
-        InAcceptanceMask   = 0x2L,
-        PreSelMomentumMask = 0x4L,
-        IsMuonLooseMask    = 0x8L,
-        IsMuonTightMask    = 0x10L
-      };
-
-      double       m_MuonLLMu = -20.0;
-      double       m_MuonLLBg = 0.0;
-      int          m_NShared  = 0;
-      unsigned int m_Status   = 0;
-      float        m_chi2Corr = 0.f;
-      float        m_muonMVA1 = -999.f;
-      float        m_muonMVA2 = -999.f;
-      float        m_muonMVA3 = -999.f;
-      float        m_muonMVA4 = -999.f;
-      //      SmartRef<LHCb::Track> m_IDTrack;
-      //      SmartRef<LHCb::Track> m_muonTrack;
-
-    }; // class MuonPID
-
-    // clang-format off
+  // clang-format off
     SOAFIELD( MuonPIDField, MuonPID, SOAFIELD_ACCESSORS( muonPID )
               auto IsMuon() const { return muonPID().IsMuon(); }
               );
-    // clang-format on
-    SOASKIN_TRIVIAL( MuonID, MuonPIDField );
-  } // namespace v2
-} // namespace LHCb::Event
+  // clang-format on
+  SOASKIN_TRIVIAL( MuonID, MuonPIDField );
+} // namespace LHCb::Event::v2
 
 #endif

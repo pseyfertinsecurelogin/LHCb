@@ -56,7 +56,7 @@ namespace LHCb {
     return Gaudi::XYZVector( pz * tx, pz * ty, pz );
   }
 
-  const Gaudi::SymMatrix9x9 TwoProngVertex::covMatrix9x9() const {
+  Gaudi::SymMatrix9x9 TwoProngVertex::covMatrix9x9() const {
     ///< Return the covariance matrix for position and track 1 & track 2 momenta
     Gaudi::SymMatrix9x9 covMatrix;
     covMatrix.Place_at( LHCb::VertexBase::covMatrix(), 0, 0 );
@@ -82,7 +82,7 @@ namespace LHCb {
     return covMatrix;
   }
 
-  const Gaudi::SymMatrix7x7 TwoProngVertex::covMatrix7x7( const double mass1, const double mass2 ) const {
+  Gaudi::SymMatrix7x7 TwoProngVertex::covMatrix7x7( const double mass1, const double mass2 ) const {
     //< Return the covariance matrix for the V0
 
     // the Jacobians to change momenta of daughters from tx,ty,qop to PxPyPzE space
@@ -110,8 +110,9 @@ namespace LHCb {
     // momentum part
     theMatrix.Place_at( covmommom, 3, 3 );
     // off diagonal elements
-    for ( int i = 0; i < 4; ++i )
-      for ( int j = 0; j < 3; ++j ) theMatrix( i + 3, j ) = covmompos( i, j );
+    for ( int i = 0; i < 4; ++i ) {
+      for ( int j = 0; j < 3; ++j ) { theMatrix( i + 3, j ) = covmompos( i, j ); }
+    }
 
     return theMatrix;
   }
@@ -170,15 +171,16 @@ namespace LHCb {
     // momentum part
     theMatrix.Place_at( covmommom, 3, 3 );
     // off diagonal elements
-    for ( int i = 0; i < 3; ++i )
-      for ( int j = 0; j < 3; ++j ) theMatrix( i + 3, j ) = covmompos( i, j );
+    for ( int i = 0; i < 3; ++i ) {
+      for ( int j = 0; j < 3; ++j ) { theMatrix( i + 3, j ) = covmompos( i, j ); }
+    }
 
     return theMatrix;
   }
 
   Gaudi::Math::ValueWithError TwoProngVertex::massWithError( const double mass1, const double mass2 ) const {
     // we could implement this much more efficiently but I am lazy now
-    Gaudi::SymMatrix4x4               p4cov = covMatrix7x7( mass1, mass2 ).Sub<Gaudi::SymMatrix4x4>( 3, 3 );
+    auto                              p4cov = covMatrix7x7( mass1, mass2 ).Sub<Gaudi::SymMatrix4x4>( 3, 3 );
     ROOT::Math::SMatrix<double, 1, 4> dMdP4;
     Gaudi::LorentzVector              p4sum = momentum( mass1, mass2 );
     double                            m     = p4sum.M();

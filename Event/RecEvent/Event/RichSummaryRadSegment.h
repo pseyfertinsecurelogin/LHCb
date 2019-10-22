@@ -37,13 +37,11 @@ namespace LHCb {
   class RichSummaryRadSegment final {
   public:
     /// Vector of RichSummaryRadSegments
-    typedef std::vector<LHCb::RichSummaryRadSegment> Vector;
+    using Vector = std::vector<LHCb::RichSummaryRadSegment>;
 
     /// Default Constructor
     RichSummaryRadSegment()
-        : m_bitPackedWord( 0 )
-        , m_photons()
-        , m_expectedCkTheta( Rich::NParticleTypes, 0 )
+        : m_expectedCkTheta( Rich::NParticleTypes, 0 )
         , m_expectedCkThetaError( Rich::NParticleTypes, 0 )
         , m_expectedNumPhotons( Rich::NParticleTypes, 0 ) {}
 
@@ -51,31 +49,31 @@ namespace LHCb {
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Returns the expected Cherenkov theta values for the given mass hypothesis
-    float expectedCkTheta( const Rich::ParticleIDType type ) const;
+    [[nodiscard]] float expectedCkTheta( Rich::ParticleIDType type ) const;
 
     /// Sets the expected Cherenkov theta values for the given mass hypothesis
-    void setExpectedCkTheta( const Rich::ParticleIDType type, const float ckTheta );
+    void setExpectedCkTheta( Rich::ParticleIDType type, float ckTheta );
 
     /// Returns the expected error on the Cherenkov theta values for the given mass hypothesis
-    float expectedCkThetaError( const Rich::ParticleIDType type ) const;
+    [[nodiscard]] float expectedCkThetaError( Rich::ParticleIDType type ) const;
 
     /// Sets the expected error on the Cherenkov theta values for the given mass hypothesis
-    void setExpectedCkThetaError( const Rich::ParticleIDType type, const float ckErr );
+    void setExpectedCkThetaError( Rich::ParticleIDType type, float ckErr );
 
     /// Returns the expected number of observed signal Cherenkov photons for each mass hypothesis
-    float expectedNumPhotons( const Rich::ParticleIDType type ) const;
+    [[nodiscard]] float expectedNumPhotons( Rich::ParticleIDType type ) const;
 
     /// Sets the expected number of observed signal Cherenkov photons for each mass hypothesis
-    void setExpectedNumPhotons( const Rich::ParticleIDType type, const float nPhots );
+    void setExpectedNumPhotons( Rich::ParticleIDType type, float nPhots );
 
     /// Retrieve The radiator type
-    Rich::RadiatorType radiator() const;
+    [[nodiscard]] Rich::RadiatorType radiator() const;
 
     /// Update The radiator type
     void setRadiator( const Rich::RadiatorType& value );
 
     /// Retrieve const  Vector of photons for this track segment
-    const LHCb::RichSummaryPhoton::Vector& photons() const;
+    [[nodiscard]] const LHCb::RichSummaryPhoton::Vector& photons() const;
 
     /// Update  Vector of photons for this track segment
     void setPhotons( const LHCb::RichSummaryPhoton::Vector& value );
@@ -92,11 +90,11 @@ namespace LHCb {
     /// Bitmasks for bitfield bitPackedWord
     enum bitPackedWordMasks { radiatorMask = 0x7L };
 
-    unsigned int                    m_bitPackedWord;   ///< Bit-packed information (radiator type etc.)
-    LHCb::RichSummaryPhoton::Vector m_photons;         ///< Vector of photons for this track segment
-    std::vector<float>              m_expectedCkTheta; ///< Expected Cherenkov theta values for each mass hypothesis
-    std::vector<float> m_expectedCkThetaError;         ///< Expected error on the Cherenkov theta values for each mass
-                                                       ///< hypothesis
+    unsigned int                    m_bitPackedWord{0}; ///< Bit-packed information (radiator type etc.)
+    LHCb::RichSummaryPhoton::Vector m_photons;          ///< Vector of photons for this track segment
+    std::vector<float>              m_expectedCkTheta;  ///< Expected Cherenkov theta values for each mass hypothesis
+    std::vector<float> m_expectedCkThetaError;          ///< Expected error on the Cherenkov theta values for each mass
+                                                        ///< hypothesis
     std::vector<float> m_expectedNumPhotons; ///< Expected number of observed signal Cherenkov photons for each mass
                                              ///< hypothesis
 
@@ -126,7 +124,7 @@ inline Rich::RadiatorType LHCb::RichSummaryRadSegment::radiator() const {
 }
 
 inline void LHCb::RichSummaryRadSegment::setRadiator( const Rich::RadiatorType& value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_bitPackedWord &= ~radiatorMask;
   m_bitPackedWord |= ( ( ( (unsigned int)val ) << radiatorBits ) & radiatorMask );
 }

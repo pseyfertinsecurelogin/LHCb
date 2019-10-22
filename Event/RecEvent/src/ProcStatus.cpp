@@ -28,7 +28,7 @@ void LHCb::ProcStatus::addAlgorithmStatus( const std::string& name, int status )
   if ( ialg != m_algs.end() ) {
     ialg->second = status;
   } else {
-    m_algs.emplace_back( AlgStatus( name, status ) );
+    m_algs.emplace_back( name, status );
   }
 }
 
@@ -51,7 +51,7 @@ void LHCb::ProcStatus::addAlgorithmStatus( const std::string& algName, const std
 
   // if event was aborted, set this as well.
   // (Don't set if false, since this will overwrite pre-existing aborts
-  if ( eventAborted ) setAborted( true );
+  if ( eventAborted ) { setAborted( true ); }
 }
 
 bool LHCb::ProcStatus::subSystemAbort( const std::string& subsystem ) const {
@@ -64,7 +64,7 @@ bool LHCb::ProcStatus::subSystemAbort( const std::string& subsystem ) const {
       if ( colon > 0 && S.first.substr( 0, colon ) == "ABORTED" ) {
         // This is an abort, but is it the correct subsystem ?
         const std::string tmpS = S.first.substr( colon + 1 );
-        colon                  = tmpS.find_first_of( ":" );
+        colon                  = tmpS.find_first_of( ':' );
         if ( colon > 0 && tmpS.substr( 0, colon ) == subsystem ) {
           isaborted = true;
           break;

@@ -26,7 +26,7 @@ namespace LHCb {
   using GaudiUtils::operator<<;
 
   // Class ID definition
-  static const CLID CLID_WeightsVector = 10031;
+  inline constexpr CLID CLID_WeightsVector = 10031;
 
   // Namespace for locations in TDS
   namespace WeightsVectorLocation {
@@ -45,35 +45,35 @@ namespace LHCb {
   class WeightsVector final : public KeyedObject<int> {
   public:
     /// typedef for KeyedContainer of WeightsVector
-    typedef KeyedContainer<WeightsVector, Containers::HashMap> Container;
+    using Container = KeyedContainer<WeightsVector, Containers::HashMap>;
 
     /// Type for storage of weight data
-    typedef std::pair<int, float> WeightData;
+    using WeightData = std::pair<int, float>;
     /// Vector of weight data
-    typedef std::vector<WeightData> WeightDataVector;
+    using WeightDataVector = std::vector<WeightData>;
 
     /// Copy constructor. Creates a new WeightsVector with the same information
     WeightsVector( const LHCb::WeightsVector& wvec ) : KeyedObject<int>(), m_weights( wvec.weights() ) {}
+    WeightsVector& operator=( const LHCb::WeightsVector& ) = delete;
 
     /// Default Constructor
-    WeightsVector() : m_weights() {}
+    WeightsVector() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override { return LHCb::WeightsVector::classID(); }
+    static const CLID&        classID() { return CLID_WeightsVector; }
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  List of track keys with weight
-    const std::vector<std::pair<int, float>>& weights() const;
+    [[nodiscard]] const std::vector<std::pair<int, float>>& weights() const { return m_weights; }
 
     /// Update  List of track keys with weight
-    void setWeights( const std::vector<std::pair<int, float>>& value );
+    void setWeights( const std::vector<std::pair<int, float>>& value ) { m_weights = value; }
 
     friend std::ostream& operator<<( std::ostream& str, const WeightsVector& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     std::vector<std::pair<int, float>> m_weights; ///< List of track keys with weight
 
@@ -82,25 +82,15 @@ namespace LHCb {
   /// Definition of Keyed Container for WeightsVector
   typedef KeyedContainer<WeightsVector, Containers::HashMap> WeightsVectors;
 
+  inline std::ostream& WeightsVector::fillStream( std::ostream& s ) const {
+    s << "{ "
+      << "weights :	" << m_weights << std::endl
+      << " }";
+    return s;
+  }
+
 } // namespace LHCb
 
 // -----------------------------------------------------------------------------
 // end of class
 // -----------------------------------------------------------------------------
-
-// Including forward declarations
-
-inline const CLID& LHCb::WeightsVector::clID() const { return LHCb::WeightsVector::classID(); }
-
-inline const CLID& LHCb::WeightsVector::classID() { return CLID_WeightsVector; }
-
-inline std::ostream& LHCb::WeightsVector::fillStream( std::ostream& s ) const {
-  s << "{ "
-    << "weights :	" << m_weights << std::endl
-    << " }";
-  return s;
-}
-
-inline const std::vector<std::pair<int, float>>& LHCb::WeightsVector::weights() const { return m_weights; }
-
-inline void LHCb::WeightsVector::setWeights( const std::vector<std::pair<int, float>>& value ) { m_weights = value; }

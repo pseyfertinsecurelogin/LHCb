@@ -36,21 +36,20 @@ namespace LHCb {
   class CaloClusterEntry final {
   public:
     /// Smart Reference to Calorimeter Digit object
-    typedef SmartRef<LHCb::CaloDigit> Digit;
+    using Digit = SmartRef<LHCb::CaloDigit>;
     /// Status of the digit (see the Mask enum in CaloDigitStatus.h)
-    typedef LHCb::CaloDigitStatus::Status Status;
+    using Status = LHCb::CaloDigitStatus::Status;
     /// Fraction of energy
-    typedef double Fraction;
+    using Fraction = double;
 
     /// Non-default constructor
-    CaloClusterEntry( const Digit& d, const Status& s, const Fraction& f )
-        : m_digit( d ), m_status( s ), m_fraction( f ) {}
+    CaloClusterEntry( const Digit& d, const Status& s, Fraction f ) : m_digit( d ), m_status( s ), m_fraction( f ) {}
 
     /// Non-default constructor
-    CaloClusterEntry( const Digit& d, const Status& s ) : m_digit( d ), m_status( s ), m_fraction( 1 ) {}
+    CaloClusterEntry( const Digit& d, const Status& s ) : m_digit( d ), m_status( s ) {}
 
     /// Default Constructor
-    CaloClusterEntry() : m_digit(), m_status( LHCb::CaloDigitStatus::Undefined ), m_fraction( 1 ) {}
+    CaloClusterEntry() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
@@ -89,9 +88,10 @@ namespace LHCb {
 
   protected:
   private:
-    Digit    m_digit;    ///< (Smart) Reference to the Calorimeter Digit object
-    Status   m_status;   ///< The status of Calorimeter Digit object in the Calorimeter Cluster
-    Fraction m_fraction; ///< The fraction of energy of Calorimeter Digit object
+    Digit  m_digit;                                    ///< (Smart) Reference to the Calorimeter Digit object
+    Status m_status{LHCb::CaloDigitStatus::Undefined}; ///< The status of Calorimeter Digit object in the Calorimeter
+                                                       ///< Cluster
+    Fraction m_fraction{1};                            ///< The fraction of energy of Calorimeter Digit object
 
   }; // class CaloClusterEntry
 

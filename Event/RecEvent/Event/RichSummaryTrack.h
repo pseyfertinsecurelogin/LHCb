@@ -47,14 +47,14 @@ namespace LHCb {
   class RichSummaryTrack final : public KeyedObject<int> {
   public:
     /// typedef for std::vector of RichSummaryTrack
-    typedef std::vector<RichSummaryTrack*>       Vector;
-    typedef std::vector<const RichSummaryTrack*> ConstVector;
+    using Vector      = std::vector<RichSummaryTrack*>;
+    using ConstVector = std::vector<const RichSummaryTrack*>;
 
     /// typedef for KeyedContainer of RichSummaryTrack
     typedef KeyedContainer<RichSummaryTrack, Containers::HashMap> Container;
 
     /// Default Constructor
-    RichSummaryTrack() : m_radSegments() {}
+    RichSummaryTrack() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
