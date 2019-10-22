@@ -14,7 +14,8 @@
 gaudi_subdir(TrackEvent)
 
 gaudi_depends_on_subdirs(Kernel/LHCbKernel
-                         Kernel/SOAContainer)
+                         Kernel/SOAContainer
+                         Kernel/SOAExtensions)
 
 find_package(Boost)
 find_package(GSL)
