@@ -19,6 +19,7 @@
 #include "Kernel/STChannelID.h"
 #include "Kernel/TTNames.h"
 #include <algorithm>
+#include <numeric>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -81,10 +82,10 @@ namespace LHCb {
     };
 
     /// Constructor with source id
-    STCluster( const STLiteCluster& lCluster, const ADCVector& strips, double neighbourSum, unsigned sourceID,
+    STCluster( const STLiteCluster& lCluster, ADCVector strips, double neighbourSum, unsigned sourceID,
                unsigned int tell1Chan, const LHCb::STCluster::Spill& spill )
         : m_liteCluster( lCluster )
-        , m_stripValues( strips )
+        , m_stripValues( std::move( strips ) )
         , m_neighbourSum( neighbourSum )
         , m_sourceID( sourceID )
         , m_tell1Channel( tell1Chan )
@@ -101,12 +102,11 @@ namespace LHCb {
         , m_spill( cluster.m_spill ) {}
 
     /// Default Constructor
-    STCluster()
-        : m_liteCluster(), m_stripValues(), m_neighbourSum( 0.0 ), m_sourceID( 0 ), m_tell1Channel( 0 ), m_spill() {}
+    STCluster() : m_liteCluster(), m_stripValues() {}
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// conversion of string to enum for type Spill
     static LHCb::STCluster::Spill SpillToType( const std::string& aName );
@@ -115,117 +115,116 @@ namespace LHCb {
     static const std::string& SpillToString( int aEnum );
 
     /// clone method
-    STCluster* clone() const;
+    [[nodiscard]] STCluster* clone() const;
 
     /// number of strips in cluster
-    unsigned int size() const;
+    [[nodiscard]] unsigned int size() const;
 
     /// adc value of strips in cluster
-    unsigned int adcValue( unsigned int num ) const;
+    [[nodiscard]] unsigned int adcValue( unsigned int num ) const;
 
     /// strip number of strip in cluster
-    int strip( unsigned int num ) const;
+    [[nodiscard]] int strip( unsigned int num ) const;
 
     /// The  Channel ID
-    STChannelID channelID() const;
+    [[nodiscard]] STChannelID channelID() const;
 
     /// total charge
-    double totalCharge() const;
+    [[nodiscard]] double totalCharge() const;
 
     /// position within a strip of cluster centre, quantized in xxths of a strip
-    double interStripFraction() const;
+    [[nodiscard]] double interStripFraction() const;
 
     /// number of strips in cluster, 3 means 3 or more
-    unsigned int pseudoSize() const;
+    [[nodiscard]] unsigned int pseudoSize() const;
 
     /// denotes a cluster with significant adc counts, less likely to be noise or spillover
-    bool highThreshold() const;
+    [[nodiscard]] bool highThreshold() const;
 
     /// first ST Channel ID
-    STChannelID firstChannel() const;
+    [[nodiscard]] STChannelID firstChannel() const;
 
     /// first ST Channel ID
-    STChannelID lastChannel() const;
+    [[nodiscard]] STChannelID lastChannel() const;
 
     /// channel IDs
-    std::vector<LHCb::STChannelID> channels() const;
+    [[nodiscard]] std::vector<LHCb::STChannelID> channels() const;
 
     /// check if channel is inside cluster
-    bool contains( const LHCb::STChannelID& chan ) const;
+    [[nodiscard]] bool contains( const LHCb::STChannelID& chan ) const;
 
     /// true if clusters have strips in common
     bool overlaps( const STCluster* testCluster ) const;
 
     /// maximum adc value of strips in a cluster
-    unsigned int maxADCValue() const;
+    [[nodiscard]] unsigned int maxADCValue() const;
 
     /// Print the cluster in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// check if TT type
-    bool isTT() const;
+    [[nodiscard]] bool isTT() const;
 
     /// check if IT type
-    bool isIT() const;
+    [[nodiscard]] bool isIT() const;
 
     /// short cut for station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// shortcut for layer
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// short cut for detRegion
-    unsigned int detRegion() const;
+    [[nodiscard]] unsigned int detRegion() const;
 
     /// short cut for sector
-    unsigned int sector() const;
+    [[nodiscard]] unsigned int sector() const;
 
     /// short cut for strip
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Print the unique sector name
-    std::string sectorName() const;
+    [[nodiscard]] std::string sectorName() const;
 
     /// Print the unique layer name
-    std::string layerName() const;
+    [[nodiscard]] std::string layerName() const;
 
     /// Print the unique det region name
-    std::string detRegionName() const;
+    [[nodiscard]] std::string detRegionName() const;
 
     /// Print the station name
-    std::string stationName() const;
+    [[nodiscard]] std::string stationName() const;
 
     /// Retrieve const  TELL1 cluster without ADC values
-    const LHCb::STLiteCluster& liteCluster() const;
+    [[nodiscard]] const LHCb::STLiteCluster& liteCluster() const;
 
     /// Retrieve const  strip numbers and their signals
-    const ADCVector& stripValues() const;
+    [[nodiscard]] const ADCVector& stripValues() const;
 
     /// Update  strip numbers and their signals
     void setStripValues( const ADCVector& value );
 
     /// Retrieve const  sum neighbour channels
-    double neighbourSum() const;
+    [[nodiscard]] double neighbourSum() const;
 
     /// Retrieve const  Identifier of the tell1 giving the cluster
-    unsigned int sourceID() const;
+    [[nodiscard]] unsigned int sourceID() const;
 
     /// Retrieve const  tell1 channel number
-    unsigned int tell1Channel() const;
+    [[nodiscard]] unsigned int tell1Channel() const;
 
     /// Retrieve const  spill the cluster corresponds to
-    const LHCb::STCluster::Spill& spill() const;
+    [[nodiscard]] const LHCb::STCluster::Spill& spill() const;
 
     friend std::ostream& operator<<( std::ostream& str, const STCluster& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    LHCb::STLiteCluster    m_liteCluster;  ///< TELL1 cluster without ADC values
-    ADCVector              m_stripValues;  ///< strip numbers and their signals
-    double                 m_neighbourSum; ///< sum neighbour channels
-    unsigned int           m_sourceID;     ///< Identifier of the tell1 giving the cluster
-    unsigned int           m_tell1Channel; ///< tell1 channel number
-    LHCb::STCluster::Spill m_spill;        ///< spill the cluster corresponds to
+    LHCb::STLiteCluster    m_liteCluster;       ///< TELL1 cluster without ADC values
+    ADCVector              m_stripValues;       ///< strip numbers and their signals
+    double                 m_neighbourSum{0.0}; ///< sum neighbour channels
+    unsigned int           m_sourceID{0};       ///< Identifier of the tell1 giving the cluster
+    unsigned int           m_tell1Channel{0};   ///< tell1 channel number
+    LHCb::STCluster::Spill m_spill{};           ///< spill the cluster corresponds to
 
     static const GaudiUtils::VectorMap<std::string, Spill>& s_SpillTypMap();
 
@@ -361,10 +360,8 @@ inline LHCb::STChannelID LHCb::STCluster::channelID() const { return m_liteClust
 
 inline double LHCb::STCluster::totalCharge() const {
 
-  double                    sum  = 0;
-  ADCVector::const_iterator iter = m_stripValues.begin();
-  for ( ; iter != m_stripValues.end(); ++iter ) { sum += iter->second; }
-  return sum;
+  return std::accumulate( m_stripValues.begin(), m_stripValues.end(), 0.,
+                          []( double sum, const auto& sv ) { return sum + sv.second; } );
 }
 
 inline double LHCb::STCluster::interStripFraction() const { return m_liteCluster.interStripFraction(); }
@@ -388,11 +385,11 @@ inline LHCb::STChannelID LHCb::STCluster::lastChannel() const {
 inline std::vector<LHCb::STChannelID> LHCb::STCluster::channels() const {
 
   std::vector<LHCb::STChannelID> chanCont;
-  STChannelID                    first = firstChannel();
+  chanCont.reserve( size() );
+  STChannelID first = firstChannel();
   for ( unsigned int i = 0; i < size(); ++i ) {
-    STChannelID aChan( first.type(), first.station(), first.layer(), first.detRegion(), first.sector(),
-                       first.strip() + i );
-    chanCont.push_back( aChan );
+    chanCont.emplace_back( first.type(), first.station(), first.layer(), first.detRegion(), first.sector(),
+                           first.strip() + i );
   }
   return chanCont;
 }
@@ -403,7 +400,7 @@ inline bool LHCb::STCluster::contains( const LHCb::STChannelID& chan ) const {
   if ( chan.uniqueSector() == channelID().uniqueSector() ) {
     const unsigned int firstStrip = channelID().strip() + stripValues().front().first;
     const unsigned int lastStrip  = channelID().strip() + stripValues().back().first;
-    if ( chan.strip() >= firstStrip && chan.strip() <= lastStrip ) inside = true;
+    inside                        = ( chan.strip() >= firstStrip && chan.strip() <= lastStrip );
   }
   return inside;
 }
@@ -412,24 +409,17 @@ inline bool LHCb::STCluster::overlaps( const STCluster* testCluster ) const {
 
   bool overlap = false;
   if ( channelID().uniqueSector() == testCluster->channelID().uniqueSector() ) {
-    std::vector<LHCb::STChannelID> testchans = testCluster->channels();
-    for ( std::vector<LHCb::STChannelID>::const_iterator iterC1 = testchans.begin();
-          iterC1 != testchans.end() && overlap == false; ++iterC1 ) {
-      if ( contains( *iterC1 ) == true ) overlap = true;
-    } // loop chans
-  }   // if
+    const auto& testchans = testCluster->channels();
+    overlap = std::any_of( testchans.begin(), testchans.end(), [&]( const auto& tc ) { return contains( tc ); } );
+  }
   return overlap;
 }
 
 inline unsigned int LHCb::STCluster::maxADCValue() const {
 
-  unsigned int                               maxCharge = 0u;
-  LHCb::STCluster::ADCVector::const_iterator iter      = stripValues().begin();
-  while ( iter != stripValues().end() ) {
-    if ( iter->second > maxCharge ) maxCharge = iter->second;
-    ++iter;
-  }
-  return maxCharge;
+  const auto& svs = stripValues();
+  return std::accumulate( svs.begin(), svs.end(), 0u,
+                          []( unsigned int maxCharge, const auto& sv ) { return std::max( maxCharge, sv.second ); } );
 }
 
 inline std::ostream& LHCb::STCluster::fillStream( std::ostream& s ) const {

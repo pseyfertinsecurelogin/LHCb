@@ -58,20 +58,20 @@ namespace LHCb {
     CaloAdc( const CaloAdc& src ) : KeyedObject<LHCb::CaloCellID>( src.cellID() ), m_adc( src.adc() ) {}
 
     /// Default Constructor
-    CaloAdc() : m_adc( 0 ) {}
+    CaloAdc() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve cell identifier/key @attention alias to Base::key() method!
-    const LHCb::CaloCellID& cellID() const;
+    [[nodiscard]] const LHCb::CaloCellID& cellID() const;
 
     /// Retrieve const  ADC value for the given cell
-    int adc() const;
+    [[nodiscard]] int adc() const;
 
     /// Update  ADC value for the given cell
     void setAdc( int value );
@@ -80,7 +80,7 @@ namespace LHCb {
 
   protected:
   private:
-    int m_adc; ///< ADC value for the given cell
+    int m_adc{0}; ///< ADC value for the given cell
 
   }; // class CaloAdc
 

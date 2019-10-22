@@ -43,40 +43,39 @@ namespace LHCb {
     typedef KeyedContainer<BcmDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    BcmDigit() : m_station( 0 ), m_sensor( 0 ), m_signal( 0.0 ) {}
+    BcmDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  Station number
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Update  Station number
     void setStation( unsigned int value );
 
     /// Retrieve const  Sensor number
-    unsigned int sensor() const;
+    [[nodiscard]] unsigned int sensor() const;
 
     /// Update  Sensor number
     void setSensor( unsigned int value );
 
     /// Retrieve const  Signal value
-    double signal() const;
+    [[nodiscard]] double signal() const;
 
     /// Update  Signal value
     void setSignal( double value );
 
     friend std::ostream& operator<<( std::ostream& str, const BcmDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    unsigned int m_station; ///< Station number
-    unsigned int m_sensor;  ///< Sensor number
-    double       m_signal;  ///< Signal value
+    unsigned int m_station{0};  ///< Station number
+    unsigned int m_sensor{0};   ///< Sensor number
+    double       m_signal{0.0}; ///< Signal value
 
   }; // class BcmDigit
 

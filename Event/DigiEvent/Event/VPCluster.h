@@ -15,6 +15,7 @@
 #include "GaudiKernel/KeyedObject.h"
 #include "Kernel/VPChannelID.h"
 #include <ostream>
+#include <utility>
 #include <vector>
 
 // Forward declarations
@@ -45,9 +46,9 @@ namespace LHCb {
     typedef KeyedContainer<VPCluster, Containers::HashMap> Container;
 
     /// Constructor
-    VPCluster( const std::pair<double, double>& fraction, const double x, const double y, const double z,
-               const std::vector<LHCb::VPChannelID>& pixels )
-        : m_fraction( fraction ), m_x( x ), m_y( y ), m_z( z ), m_pixels( pixels ) {}
+    VPCluster( std::pair<double, double> fraction, const double x, const double y, const double z,
+               std::vector<LHCb::VPChannelID> pixels )
+        : m_fraction( std::move( fraction ) ), m_x( x ), m_y( y ), m_z( z ), m_pixels( std::move( pixels ) ) {}
 
     /// Copy constructor
     VPCluster( const LHCb::VPCluster& cluster )
@@ -59,47 +60,47 @@ namespace LHCb {
         , m_pixels( cluster.m_pixels ) {}
 
     /// Default Constructor
-    VPCluster() : m_fraction(), m_x( 0.0 ), m_y( 0.0 ), m_z( 0.0 ), m_pixels() {}
+    VPCluster() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Clone method
-    VPCluster* clone() const;
+    [[nodiscard]] VPCluster* clone() const;
 
     /// Return the cluster channelID = key
-    VPChannelID channelID() const;
+    [[nodiscard]] VPChannelID channelID() const;
 
     /// Print the cluster key = channelID
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  inter-pixel fraction
-    const std::pair<double, double>& fraction() const;
+    [[nodiscard]] const std::pair<double, double>& fraction() const;
 
     /// Update  inter-pixel fraction
     void setFraction( const std::pair<double, double>& value );
 
     /// Retrieve const  global x coordinate
-    double x() const;
+    [[nodiscard]] double x() const;
 
     /// Update  global x coordinate
     void setX( double value );
 
     /// Retrieve const  global y coordinate
-    double y() const;
+    [[nodiscard]] double y() const;
 
     /// Update  global y coordinate
     void setY( double value );
 
     /// Retrieve const  global z coordinate
-    double z() const;
+    [[nodiscard]] double z() const;
 
     /// Update  global z coordinate
     void setZ( double value );
 
     /// Retrieve const  vector of channel IDs
-    const std::vector<LHCb::VPChannelID>& pixels() const;
+    [[nodiscard]] const std::vector<LHCb::VPChannelID>& pixels() const;
 
     /// Update  vector of channel IDs
     void setPixels( const std::vector<LHCb::VPChannelID>& value );
@@ -109,9 +110,9 @@ namespace LHCb {
   protected:
   private:
     std::pair<double, double>      m_fraction; ///< inter-pixel fraction
-    double                         m_x;        ///< global x coordinate
-    double                         m_y;        ///< global y coordinate
-    double                         m_z;        ///< global z coordinate
+    double                         m_x{0.0};   ///< global x coordinate
+    double                         m_y{0.0};   ///< global y coordinate
+    double                         m_z{0.0};   ///< global z coordinate
     std::vector<LHCb::VPChannelID> m_pixels;   ///< vector of channel IDs
 
   }; // class VPCluster

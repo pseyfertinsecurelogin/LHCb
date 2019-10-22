@@ -38,13 +38,13 @@ namespace LHCb {
   class VeloLiteCluster final {
   public:
     /// channelID type
-    typedef LHCb::VeloChannelID chan_type;
+    using chan_type = LHCb::VeloChannelID;
     /// fast container for light clusters
     typedef FastClusterContainer<LHCb::VeloLiteCluster, int> VeloLiteClusters;
     /// fast container for light clusters (old name: will be removed)
     typedef FastClusterContainer<LHCb::VeloLiteCluster, int> FastContainer;
     /// finding policy
-    typedef SiDataFunctor::CompareByChannel<LHCb::VeloLiteCluster> findPolicy;
+    using findPolicy = SiDataFunctor::CompareByChannel<LHCb::VeloLiteCluster>;
 
     /// Constructor
     VeloLiteCluster( const VeloChannelID& chan, double fracStrip, unsigned int size, bool secondThres,
@@ -55,31 +55,31 @@ namespace LHCb {
                      bool moreBitsInChannelID = false );
 
     /// Default Constructor
-    VeloLiteCluster() : m_liteCluster( 0 ) {}
+    VeloLiteCluster() = default;
 
     /// position within a strip of cluster centre
-    double interStripFraction() const;
+    [[nodiscard]] double interStripFraction() const;
 
     /// number of strips in cluster, 3 means 3 or more
-    unsigned int pseudoSize() const;
+    [[nodiscard]] unsigned int pseudoSize() const;
 
     /// The Channel
-    VeloChannelID channelID() const;
+    [[nodiscard]] VeloChannelID channelID() const;
 
     /// High Threshold
-    bool highThreshold() const;
+    [[nodiscard]] bool highThreshold() const;
 
     /// Retrieve whether it is with 25-bits for channelID or not
-    bool moreBitsInChannelID() const;
+    [[nodiscard]] bool moreBitsInChannelID() const;
 
     /// check if R type
-    bool isRType() const;
+    [[nodiscard]] bool isRType() const;
 
     /// check if Phi type
-    bool isPhiType() const;
+    [[nodiscard]] bool isPhiType() const;
 
     /// check if PileUp
-    bool isPileUp() const;
+    [[nodiscard]] bool isPileUp() const;
 
   protected:
   private:
@@ -101,7 +101,7 @@ namespace LHCb {
     };
 
     /// number between 0 and 7 /8ths of a strip
-    int fractionUnits() const;
+    [[nodiscard]] int fractionUnits() const;
 
     /// Offsets of bitfield liteCluster
     enum liteClusterBits { channelID0Bits = 0, interStripFraction0Bits = 24, size0Bits = 27, highThreshold0Bits = 28 };
@@ -114,7 +114,7 @@ namespace LHCb {
       highThreshold0Mask      = 0x10000000L
     };
 
-    unsigned int m_liteCluster; ///< lite Cluster
+    unsigned int m_liteCluster{0}; ///< lite Cluster
 
   }; // class VeloLiteCluster
 

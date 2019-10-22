@@ -61,34 +61,34 @@ namespace LHCb {
     typedef KeyedContainer<CaloDigit, Containers::HashMap> Container;
 
     /// vector of (const) Calo-digits
-    typedef std::vector<const LHCb::CaloDigit*> Vector;
+    using Vector = std::vector<const LHCb::CaloDigit*>;
     /// the set of unique (const) Calo-digits
-    typedef std::set<const LHCb::CaloDigit*> Set;
+    using Set = std::set<const LHCb::CaloDigit*>;
 
     /// Non-default constructor
     CaloDigit( const LHCb::CaloCellID& id, double e ) : Base( id ), m_e( e ) {}
 
     /// Default constructor
-    CaloDigit() : Base(), m_e( 0 ) {}
+    CaloDigit() : Base() {}
 
     /// Copy Constructor
     CaloDigit( const LHCb::CaloDigit& right ) : Base( right.cellID() ), m_e( right.e() ) {}
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve cell identifier/key @attention alias to Base::key() method!
-    const LHCb::CaloCellID& cellID() const;
+    [[nodiscard]] const LHCb::CaloCellID& cellID() const;
 
     /// update cell identifier/key @attention alias to Base::setKey() method!
     void setCellID( const LHCb::CaloCellID& CellID );
 
     /// Retrieve const  Energy deposition in the given cell
-    double e() const;
+    [[nodiscard]] double e() const;
 
     /// Update  Energy deposition in the given cell
     void setE( double value );
@@ -97,10 +97,10 @@ namespace LHCb {
 
   protected:
     /// Shortcut for own base class
-    typedef KeyedObject<LHCb::CaloCellID> Base;
+    using Base = KeyedObject<LHCb::CaloCellID>;
 
   private:
-    double m_e; ///< Energy deposition in the given cell
+    double m_e{0}; ///< Energy deposition in the given cell
 
   }; // class CaloDigit
 

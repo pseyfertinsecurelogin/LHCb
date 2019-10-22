@@ -48,25 +48,25 @@ namespace LHCb {
     VeloDigit( const LHCb::VeloDigit& digit ) : KeyedObject<LHCb::VeloChannelID>(), m_ADCValue( digit.m_ADCValue ) {}
 
     /// Default Constructor
-    VeloDigit() : m_ADCValue( 0 ) {}
+    VeloDigit() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// clone method
-    VeloDigit* clone() const;
+    [[nodiscard]] VeloDigit* clone() const;
 
     /// combined sensor and strip number ID
-    VeloChannelID channelID() const;
+    [[nodiscard]] VeloChannelID channelID() const;
 
     /// Sensor Number
-    long sensor() const;
+    [[nodiscard]] long sensor() const;
 
     ///
-    long strip() const;
+    [[nodiscard]] long strip() const;
 
     /// Retrieve const
-    short int adcValue() const;
+    [[nodiscard]] short int adcValue() const;
 
     /// Update
     void setADCValue( short int value );
@@ -75,7 +75,7 @@ namespace LHCb {
 
   protected:
   private:
-    short int m_ADCValue; ///<
+    short int m_ADCValue{0}; ///<
 
   }; // class VeloDigit
 
