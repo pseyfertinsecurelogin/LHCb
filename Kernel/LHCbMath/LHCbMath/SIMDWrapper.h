@@ -274,13 +274,15 @@ namespace SIMDWrapper {
     };
   } // namespace scalar
 
+#ifndef __SSE4_2__
   namespace sse {
-#ifndef __SSE__
     constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
     using float_v = scalar::float_v;
     using int_v   = scalar::int_v;
     using types   = scalar::types;
+  } // namespace sse
 #else
+  namespace sse {
     constexpr InstructionSet instructionSet() { return SSE; }
     // Permutation for sse compress, from https://github.com/lemire/simdprune
     alignas( 16 ) const uint8_t compress_mask128_epi32[] = {
@@ -568,21 +570,21 @@ struct LHCb::type_map<SIMDWrapper::sse::float_v> {
 
 namespace SIMDWrapper {
 #endif
-  } // namespace sse
+} // namespace SIMDWrapper
 
-  template <>
-  struct LHCb::type_map<SIMDWrapper::scalar::float_v> {
-    using int_t = SIMDWrapper::scalar::int_v;
-  };
+template <>
+struct LHCb::type_map<SIMDWrapper::scalar::float_v> {
+  using int_t = SIMDWrapper::scalar::int_v;
+};
 
-  namespace SIMDWrapper {
+namespace SIMDWrapper {
 #ifndef __AVX2__
-    namespace avx2 {
-      constexpr InstructionSet instructionSet() { return sse::instructionSet(); }
-      using float_v = sse::float_v;
-      using int_v   = sse::int_v;
-      using types   = sse::types;
-    } // namespace avx2
+  namespace avx2 {
+    constexpr InstructionSet instructionSet() { return sse::instructionSet(); }
+    using float_v = sse::float_v;
+    using int_v   = sse::int_v;
+    using types   = sse::types;
+  } // namespace avx2
 #else
   namespace avx2 {
     constexpr InstructionSet instructionSet() { return AVX2; }
@@ -878,19 +880,19 @@ namespace SIMDWrapper {
 #endif
 
 #ifndef __AVX512F__
-    namespace avx512 {
-      constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
-      using float_v = avx2::float_v;
-      using int_v   = avx2::int_v;
-      using types   = avx2::types;
-    } // namespace avx512
+  namespace avx512 {
+    constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
+    using float_v = avx2::float_v;
+    using int_v   = avx2::int_v;
+    using types   = avx2::types;
+  } // namespace avx512
 
-    namespace avx256 {
-      constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
-      using float_v = avx2::float_v;
-      using int_v   = avx2::int_v;
-      using types   = avx2::types;
-    } // namespace avx256
+  namespace avx256 {
+    constexpr InstructionSet instructionSet() { return avx2::instructionSet(); }
+    using float_v = avx2::float_v;
+    using int_v   = avx2::int_v;
+    using types   = avx2::types;
+  } // namespace avx256
 #else
   namespace avx256 {
     constexpr InstructionSet instructionSet() { return AVX256; }
@@ -1329,15 +1331,15 @@ struct LHCb::type_map<SIMDWrapper::avx512::float_v> {
 namespace SIMDWrapper {
 #endif
 
-    namespace best {
-      using float_v = avx256::float_v;
-      using int_v   = avx256::int_v;
-      using types   = avx256::types;
-      constexpr InstructionSet instructionSet() { return avx256::instructionSet(); }
-    } // namespace best
+  namespace best {
+    using float_v = avx256::float_v;
+    using int_v   = avx256::int_v;
+    using types   = avx256::types;
+    constexpr InstructionSet instructionSet() { return avx256::instructionSet(); }
+  } // namespace best
 
-    template <InstructionSet>
-    struct type_map {};
+  template <InstructionSet>
+  struct type_map {};
 
   template <>
   struct type_map<InstructionSet::Best> {
@@ -1421,38 +1423,38 @@ namespace SIMDWrapper {
     v.compressstore( mask, location + key );                                                                           \
   }
 
-  // Align size to AVX512 boundary
-  constexpr int align_size( int n ) { return ( n / 16 + 1 ) * 16; }
+// Align size to AVX512 boundary
+constexpr int align_size( int n ) { return ( n / 16 + 1 ) * 16; }
 
-  // Maths :
+// Maths :
 
-  template <typename T>
-  inline T faster_atan2( const T& y, const T& x ) { // error < 0.07 rad, no 0/0 security
-    const T c1    = M_PI / 4.0;
-    const T c2    = 3.0 * M_PI / 4.0;
-    T       abs_y = abs( y );
+template <typename T>
+inline T faster_atan2( const T& y, const T& x ) { // error < 0.07 rad, no 0/0 security
+  const T c1    = M_PI / 4.0;
+  const T c2    = 3.0 * M_PI / 4.0;
+  T       abs_y = abs( y );
 
-    T x_plus_y = x + abs_y;
-    T x_sub_y  = x - abs_y;
-    T y_sub_x  = abs_y - x;
+  T x_plus_y = x + abs_y;
+  T x_sub_y  = x - abs_y;
+  T y_sub_x  = abs_y - x;
 
-    T nom = signselect( x, x_sub_y, x_plus_y );
-    T den = signselect( x, x_plus_y, y_sub_x );
+  T nom = signselect( x, x_sub_y, x_plus_y );
+  T den = signselect( x, x_plus_y, y_sub_x );
 
-    T r     = nom / den;
-    T angle = signselect( x, c1, c2 ) - c1 * r;
+  T r     = nom / den;
+  T angle = signselect( x, c1, c2 ) - c1 * r;
 
-    return copysign( angle, y );
-  }
+  return copysign( angle, y );
+}
 
-  template <typename T>
-  inline T vapprox_log( const T& x ) {
-    return castToInt( x ) * 8.2629582881927490e-8f - 87.989971088f;
-  }
+template <typename T>
+inline T vapprox_log( const T& x ) {
+  return castToInt( x ) * 8.2629582881927490e-8f - 87.989971088f;
+}
 
-  template <typename M, typename T>
-  inline void swap( const M& mask, T& a, T& b ) {
-    T tmp = select( mask, b, a );
-    b     = select( mask, a, b );
-    a     = tmp;
-  }
+template <typename M, typename T>
+inline void swap( const M& mask, T& a, T& b ) {
+  T tmp = select( mask, b, a );
+  b     = select( mask, a, b );
+  a     = tmp;
+}
