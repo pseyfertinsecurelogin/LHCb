@@ -9,6 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "ConfigurableDummy.h"
+#include "GaudiKernel/FunctionalFilterDecision.h"
 
 DECLARE_COMPONENT( ConfigurableDummy )
 
@@ -47,7 +48,7 @@ StatusCode ConfigurableDummy::initialize() {
   return sc;
 }
 
-StatusCode ConfigurableDummy::execute() // the execution of the algorithm
+StatusCode ConfigurableDummy::execute( EventContext const& ) const // the execution of the algorithm
 {
 
   VERBOSE_MSG << "inputs number: " << m_inputHandles.size() << endmsg;
@@ -67,7 +68,6 @@ StatusCode ConfigurableDummy::execute() // the execution of the algorithm
     outputHandle->put( std::make_unique<DataObject>() );
   }
 
-  setFilterPassed( m_CFD );
-
-  return StatusCode::SUCCESS;
+  if ( m_CFD ) return Gaudi::Functional::FilterDecision::PASSED;
+  return Gaudi::Functional::FilterDecision::FAILED;
 }

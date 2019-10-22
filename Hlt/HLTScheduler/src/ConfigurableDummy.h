@@ -10,16 +10,17 @@
 \*****************************************************************************/
 #include <memory>
 
-#include "GaudiKernel/Algorithm.h"
+#include "Gaudi/Algorithm.h"
+#include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/DataObjectHandle.h"
 #include "GaudiKernel/RegistryEntry.h"
 
-class ConfigurableDummy : public Algorithm {
+class ConfigurableDummy : public Gaudi::Algorithm {
   using Algorithm::Algorithm;
 
 public:
   /// the execution of the algorithm
-  StatusCode execute() override;
+  StatusCode execute( EventContext const& ) const override;
   /// Its initialization
   StatusCode initialize() override;
 

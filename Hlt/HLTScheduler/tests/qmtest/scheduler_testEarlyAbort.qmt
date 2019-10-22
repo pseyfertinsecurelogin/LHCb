@@ -15,7 +15,7 @@
   <text>-v</text>
   <text>../../options/scheduler_testEarlyAbortion.py</text>
 </set></argument>
-<argument name="exit_code"><integer>1</integer></argument>
+<argument name="exit_code"><integer>3</integer></argument>
 <argument name="validator"><text>
 expected_lower = "LAZY_AND: moore  #=4       Sum=4           Eff=|( 100.0000 +- 0.00000 )%|"
 expected_upper = "LAZY_AND: moore  #=5       Sum=5           Eff=|( 100.0000 +- 0.00000 )%|"

@@ -156,6 +156,15 @@ private:
   Gaudi::Property<int> m_stopAfterNFailures{this, "StopAfterNFailures", 3,
                                             "Stop processing if this number of consecutive event failures happened"};
 
+  Gaudi::Property<bool> m_createTimingTable{
+      this, "CreateTimingTable", true,
+      "Activates the use of internal timing counters needed to create a final timing table"};
+  // this property is mainly needed to support execution of old algorithms that need to be called via SysExecute like
+  // the ones that inherit from DVCommonBase
+  Gaudi::Property<bool> m_EnableLegacyMode{
+      this, "EnableLegacyMode", false,
+      "Call SysExecute of an algorithm. If false algorithms will be called via execute which is faster."};
+
   /// Reference to the Event Data Service's IDataManagerSvc interface
   IDataManagerSvc* m_evtDataMgrSvc = nullptr;
   /// Reference to the Event Selector
@@ -182,10 +191,10 @@ private:
   std::unique_ptr<IEvtSelector::Context> m_evtSelContext;
 
   // state vectors for each event, once filled, then copied per event
-  std::vector<NodeState>                                      m_NodeStates;
-  std::vector<uint16_t>                                       m_AlgStates;
-  std::vector<Gaudi::Accumulators::Counter<uint32_t>>         m_AlgExecCounters;
-  std::vector<Gaudi::Accumulators::BinomialCounter<uint32_t>> m_NodeStateCounters;
+  std::vector<NodeState>                                       m_NodeStates;
+  std::vector<AlgState>                                        m_AlgStates;
+  std::vector<Gaudi::Accumulators::AveragingCounter<uint64_t>> m_TimingCounters;
+  std::vector<Gaudi::Accumulators::BinomialCounter<uint32_t>>  m_NodeStateCounters;
 
 public:
   using SchedulerStates = decltype( std::pair{m_NodeStates, m_AlgStates} );
@@ -213,7 +222,7 @@ private:
 public:
   template <typename printable>
   std::stringstream buildPrintableStateTree( std::vector<printable> const& states ) const;
-  std::stringstream buildAlgsWithStates( std::vector<uint16_t> const& states ) const;
+  std::stringstream buildAlgsWithStates( std::vector<AlgState> const& states ) const;
 
   // to be able to check which states belong to which node (from the outside)
   auto getNodeNamesWithIndices() {

@@ -51,6 +51,9 @@ else:
 # HLTControlFlowMgr().StartTimeAtEvt = -1
 # HLTControlFlowMgr().StopTimeAfterEvt = -1
 
+# use direct calls to execute to circumvent sysExecute and AlgExecState
+HLTControlFlowMgr().CallSysExecute = False
+
 #concurrency conf
 HLTControlFlowMgr().ThreadPoolSize = threads
 
