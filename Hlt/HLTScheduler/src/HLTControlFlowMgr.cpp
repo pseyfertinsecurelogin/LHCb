@@ -11,6 +11,9 @@
 #include "HLTControlFlowMgr.h"
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/SerializeSTL.h"
+#include <thread>
+#include <x86intrin.h>
+
 #ifdef NDEBUG
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -23,7 +26,17 @@
 
 namespace {
   constexpr bool use_debuggable_threadpool = false;
-}
+  double         rdtsc_ticks_per_millisecond() {
+    _mm_lfence();
+    uint64_t const start = __rdtsc();
+    _mm_lfence();
+    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+    _mm_lfence();
+    double const ticksPerMilliSecond = static_cast<double>( __rdtsc() - start ) / 500.0;
+    _mm_lfence();
+    return ticksPerMilliSecond;
+  }
+} // namespace
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
@@ -217,9 +230,24 @@ StatusCode HLTControlFlowMgr::finalize() {
   StatusCode sc = StatusCode::SUCCESS;
 
   // print the counters
-  info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count\n"};
-  for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_AlgExecCounters, m_AlgNames ) ) {
-    ctr.print( info(), name ) << '\n';
+  if ( m_createTimingTable ) {
+    double const ticksPerMilliSecond = rdtsc_ticks_per_millisecond();
+    info() << "WATCH OUT! HERE comes the T-T-T-T-T-TIMING TABLE!!!" << endmsg;
+    info() << "Average ticks per millisecond: " << static_cast<uint64_t>( ticksPerMilliSecond ) << endmsg;
+    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
+    for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
+      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{"| %15u | %15.3f | %16.3f |"} % static_cast<double>( ctr.nEntries() ) %
+                    ( static_cast<double>( ctr.sum() ) / ticksPerMilliSecond / 1e3 ) %
+                    ( ctr.mean() / ticksPerMilliSecond * 1e3 )
+             << '\n';
+    }
+  } else {
+    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count \n"};
+    for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
+      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{"| %15u"} % static_cast<double>( ctr.nEntries() ) << '\n';
+    }
   }
   info() << endmsg;
 
@@ -323,22 +351,31 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
     for ( AlgWrapper& toBeRun : m_definitlyRunTheseAlgs ) {
       try {
-        auto sc = toBeRun.execute( evtContext, AlgStates );
-        if ( UNLIKELY( !sc.isSuccess() ) ) {
-          m_algExecStateSvc->updateEventStatus( true, evtContext );
-          break;
+        if ( m_createTimingTable ) {
+          uint64_t const start = __rdtsc();
+          toBeRun.execute( evtContext, AlgStates );
+          m_TimingCounters[toBeRun.m_executedIndex] += __rdtsc() - start;
+        } else {
+          toBeRun.execute( evtContext, AlgStates );
+          // this is just so that we can use the counter to count executions
+          m_TimingCounters[toBeRun.m_executedIndex] += 0;
         }
+
       } catch ( ... ) {
         m_algExecStateSvc->updateEventStatus( true, evtContext );
         fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
-        Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::UnhandledException );
+        Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure );
+        break;
       }
     }
 
     for ( gsl::not_null<VNode*> execNode : m_orderedNodesVec ) {
-      std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates )]( BasicNode& bNode ) {
+
+      std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates ),
+                            ts = std::ref( m_TimingCounters )]( BasicNode& bNode ) {
                              if ( bNode.requested( ns.get() ) ) {
-                               bNode.execute( ns.get(), as.get(), evtContext, m_algExecStateSvc, appmgr );
+                               bNode.execute( ns.get(), as.get(), ts.get(), m_createTimingTable, evtContext,
+                                              m_algExecStateSvc, appmgr );
                                bNode.notifyParents( ns.get() );
                              }
                            },
@@ -352,10 +389,6 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
       verbose() << buildPrintableStateTree( NodeStates ).str() << endmsg;
       verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
     }
-
-    // update algorithm execution counters
-    for ( auto const& [ctr, as] : Gaudi::Functional::details::zip::range( m_AlgExecCounters, AlgStates ) )
-      if ( as ) ctr++;
 
     // update node state counters
     for ( auto const& [ctr, ns] : Gaudi::Functional::details::zip::range( m_NodeStateCounters, NodeStates ) )
@@ -696,7 +729,7 @@ void HLTControlFlowMgr::configureScheduling() {
   for ( std::string const& algname : m_definitlyRunThese ) {
     for ( Algorithm* alg : m_databroker->algorithmsRequiredFor( algname ) ) {
       if ( std::find( begin( allAlgos ), end( allAlgos ), alg ) == end( allAlgos ) ) {
-        m_definitlyRunTheseAlgs.emplace_back( alg, allAlgos.size() );
+        m_definitlyRunTheseAlgs.emplace_back( alg, allAlgos.size(), m_EnableLegacyMode );
         allAlgos.emplace_back( alg );
       }
     }
@@ -710,7 +743,8 @@ void HLTControlFlowMgr::configureScheduling() {
 
                            for ( Algorithm* alg : reqAlgs ) {
                              auto index = std::find( begin( allAlgos ), end( allAlgos ), alg );
-                             node.m_RequiredAlgs.emplace_back( alg, std::distance( begin( allAlgos ), index ) );
+                             node.m_RequiredAlgs.emplace_back( alg, std::distance( begin( allAlgos ), index ),
+                                                               m_EnableLegacyMode );
                              if ( index == end( allAlgos ) ) { allAlgos.emplace_back( alg ); }
                            }
 
@@ -736,9 +770,8 @@ void HLTControlFlowMgr::configureScheduling() {
   std::transform( begin( allAlgos ), end( allAlgos ), std::back_inserter( m_AlgNames ),
                   []( auto const* alg ) { return alg->name(); } );
 
-  m_AlgStates = decltype( m_AlgStates )( allAlgos.size() );
-
-  m_AlgExecCounters = decltype( m_AlgExecCounters )( allAlgos.size() );
+  m_AlgStates.assign( allAlgos.size(), {} );
+  m_TimingCounters.assign( allAlgos.size(), {} );
 
   // end of Data depdendency handling
 
@@ -769,17 +802,17 @@ void HLTControlFlowMgr::buildNodeStates() {
   for ( auto& vNode : m_allVNodes ) {
     std::visit( overload{[&]( BasicNode& node ) {
                            node.m_NodeID = helper_index++;
-                           m_NodeStates.emplace_back( 1, true );
+                           m_NodeStates.push_back( NodeState{1, true} );
                          },
                          [&]( auto& node ) {
                            node.m_NodeID = helper_index++;
-                           m_NodeStates.emplace_back( node.m_children.size(), true );
+                           m_NodeStates.push_back( NodeState{static_cast<uint16_t>( node.m_children.size() ), true} );
                          }},
                 vNode );
   }
 
   // prepare counters
-  m_NodeStateCounters = decltype( m_NodeStateCounters )( m_NodeStates.size() );
+  m_NodeStateCounters.assign( m_NodeStates.size(), {} );
 }
 
 // monitoring and printing functions --------------------------------------------------
@@ -835,11 +868,11 @@ template std::stringstream
 HLTControlFlowMgr::buildPrintableStateTree<NodeState>( std::vector<NodeState> const& states ) const;
 
 // build the AlgState printout
-std::stringstream HLTControlFlowMgr::buildAlgsWithStates( std::vector<uint16_t> const& states ) const {
+std::stringstream HLTControlFlowMgr::buildAlgsWithStates( std::vector<AlgState> const& states ) const {
   std::stringstream ss;
   ss << '\n';
   for ( auto const& [name, state] : Gaudi::Functional::details::zip::range( m_AlgNames, states ) ) {
-    ss << std::left << std::setw( 20 ) << name << state << '\n';
+    ss << std::left << std::setw( 20 ) << name << state.isExecuted << '\n';
   }
   return ss;
 }

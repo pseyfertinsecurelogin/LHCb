@@ -44,21 +44,29 @@ preprocessor = (
         repl=r'/lhcb//lhcb/') +
     LineSkipper([
         "EventSelector        INFO Stream:EventSelector.DataStreamTool",
-        "INFO Using TAG", "TimingAuditor.T", "RootDBase.open",
-        "INFO Opened magnetic field file", "INFO Connecting to database",
+        "INFO Using TAG",
+        "TimingAuditor.T",
+        "RootDBase.open",
+        "INFO Opened magnetic field file",
+        "INFO Connecting to database",
         "INFO Disconnect from database after being idle",
         "INFO Memory has changed from",
         "INFO Memory change after pool release",
         "Memory for the event exceeds 3*sigma",
-        "Mean 'delta-memory' exceeds 3*sigma", "INFO  'CnvServices':",
-        "DEBUG Property ['Name': Value] =  'IsIOBound':False", "#properties =",
+        "Mean 'delta-memory' exceeds 3*sigma",
+        "INFO  'CnvServices':",
+        "DEBUG Property ['Name': Value] =  'IsIOBound':False",
+        "#properties =",
         "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc",
         "Run numbers generated from 0 every 0 events",
         "############ CONFIGURING RawEventFormatConf!! ###############",
-        "INFO  resolving alias TCK/0x", "SUCCESS Number of counters : ",
-        "INFO Number of counters : "
+        "INFO  resolving alias TCK/0x",
+        "SUCCESS Number of counters : ",
+        "INFO Number of counters : ",
     ],
                 regexps=[
+                    r"HLTControlFlowMgr\s*INFO WATCH OUT! HERE comes the T-T-T-T-T-TIMING TABLE!!!",
+                    r"HLTControlFlowMgr\s*INFO Average ticks per millisecond:",
                     r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ]) +
     # Functional framework related

@@ -26,41 +26,64 @@
 #include <time.h>
 #include <variant>
 #include <vector>
+#include <x86intrin.h>
 
 // locals
 #include "CFNodeType.h"
 
 // GaudiCore
+#include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/AppReturnCode.h"
+#include "GaudiKernel/FunctionalFilterDecision.h"
 #include "GaudiKernel/MsgStream.h"
 
 struct NodeState {
   uint16_t executionCtr;
   bool     passed;
-  NodeState( uint16_t execounter, bool pass ) : executionCtr( execounter ), passed( pass ) {}
+};
+
+struct AlgState {
+  bool isExecuted;
+  bool filterPassed;
 };
 
 struct AlgWrapper {
   using Algorithm = Gaudi::Algorithm;
-  Algorithm* m_alg;
-  uint16_t   m_executedIndex;
+  Algorithm* m_alg{nullptr};
+  uint16_t   m_executedIndex{};
+  bool       m_callSysExecute{};
 
-  AlgWrapper( Algorithm* algo, uint16_t index ) : m_alg( algo ), m_executedIndex( index ) {
+  AlgWrapper( Algorithm* algo, uint16_t index, bool callSysExecute )
+      : m_alg( algo ), m_executedIndex( index ), m_callSysExecute( callSysExecute ) {
     assert( m_alg != nullptr );
   }
 
-  bool isExecuted( std::vector<uint16_t> const& AlgoStates ) const { return AlgoStates[m_executedIndex]; }
+  bool isExecuted( std::vector<AlgState> const& AlgoStates ) const { return AlgoStates[m_executedIndex].isExecuted; }
+  bool getFilterPassed( std::vector<AlgState> const& AlgoStates ) const {
+    return AlgoStates[m_executedIndex].filterPassed;
+  }
 
   void setIndex( uint16_t i ) { m_executedIndex = i; }
 
-  StatusCode execute( EventContext& evtCtx, std::vector<uint16_t>& AlgoStates ) const {
+  void execute( EventContext& evtCtx, std::vector<AlgState>& AlgoStates ) const {
     m_alg->whiteboard()->selectStore( evtCtx.valid() ? evtCtx.slot() : 0 ).ignore();
-    AlgoStates[m_executedIndex]++;
-    return m_alg->sysExecute( evtCtx );
-  }
 
-  bool passed() const { return m_alg->execState( Gaudi::Hive::currentContext() ).filterPassed(); }
+    auto ret = m_callSysExecute ? m_alg->sysExecute( evtCtx ) : m_alg->execute( evtCtx );
+
+    if ( ret == Gaudi::Functional::FilterDecision::PASSED or ret == Gaudi::Functional::FilterDecision::FAILED or
+         ret == StatusCode::SUCCESS ) {
+      bool filterpassed =
+          ret == Gaudi::Functional::FilterDecision::PASSED
+              ? true
+              : ( ret == Gaudi::Functional::FilterDecision::FAILED ? false
+                                                                   : m_alg->execState( evtCtx ).filterPassed() );
+
+      AlgoStates[m_executedIndex] = {true, filterpassed};
+      return;
+    }
+    throw GaudiException( "Error in algorithm execute", m_alg->name(), ret );
+  }
 
   std::string_view name() const { return m_alg->name(); }
 };
@@ -98,32 +121,40 @@ public:
 
   BasicNode( std::string const& name, MsgStream& msg ) : m_name( name ), m_msg( msg ){};
 
-  void execute( std::vector<NodeState>& NodeStates, std::vector<uint16_t>& AlgStates, EventContext& evtCtx,
-                IAlgExecStateSvc* aess, SmartIF<IProperty>& appmgr ) const {
+  void execute( std::vector<NodeState>& NodeStates, std::vector<AlgState>& AlgStates,
+                std::vector<Gaudi::Accumulators::AveragingCounter<uint64_t>>& TimingCounters,
+                bool const createTimingTable, EventContext& evtCtx, IAlgExecStateSvc* aess,
+                SmartIF<IProperty>& appmgr ) const {
     assert( aess != nullptr );
+
     // first, execute the required algorithms
     try {
       for ( AlgWrapper const& requiredAlg : m_RequiredAlgs ) {
         if ( !requiredAlg.isExecuted( AlgStates ) ) {
           // if one can guarantee, that every TopAlg is a data consumer, we could omit
           // the isExecuted call for the last element of m_RequiredAlgs
-          auto sc = requiredAlg.execute( evtCtx, AlgStates );
-          if ( UNLIKELY( !sc.isSuccess() ) ) {
-            aess->updateEventStatus( true, evtCtx );
-            break;
+          if ( createTimingTable ) {
+            uint64_t const start = __rdtsc();
+            requiredAlg.execute( evtCtx, AlgStates );
+            TimingCounters[requiredAlg.m_executedIndex] += __rdtsc() - start;
+          } else {
+            requiredAlg.execute( evtCtx, AlgStates );
+            // this is just so that we can use the counter to count executions
+            TimingCounters[requiredAlg.m_executedIndex] += 0;
           }
         }
       }
     } catch ( ... ) {
       aess->updateEventStatus( true, evtCtx );
       m_msg << MSG::FATAL << "Event failed in Node " << m_name << endmsg;
-      Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::UnhandledException );
+      Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure );
+      return;
     }
 
     // the last of m_requiredAlgs is our own Algorithm, depending on which we want to set
     // executionCtr and passed flag of this node
     NodeStates[m_NodeID].executionCtr--;
-    NodeStates[m_NodeID].passed = m_RequiredAlgs.back().passed();
+    NodeStates[m_NodeID].passed = m_RequiredAlgs.back().getFilterPassed( AlgStates );
 
   } // end of execute
 
