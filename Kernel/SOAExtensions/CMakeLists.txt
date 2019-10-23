@@ -16,7 +16,6 @@ gaudi_subdir(SOAExtensions)
 gaudi_depends_on_subdirs(
   Kernel/SOAContainer
   Kernel/LHCbMath
-  Event/TrackEvent
   GaudiAlg
   )
 
@@ -41,7 +40,7 @@ gaudi_add_unit_test(TestHanaAccessor
                     TYPE Boost)
 
 gaudi_add_module( SOAExtensionExamples examples/src/*.cpp
-  INCLUDE_DIRS GaudiAlg Kernel/SOAContainer Kernel/SOAExtensions Event/TrackEvent cppgsl
+  INCLUDE_DIRS GaudiAlg Kernel/SOAContainer Kernel/SOAExtensions cppgsl
   LINK_LIBRARIES GaudiAlgLib
   )
 
