@@ -28,8 +28,10 @@ namespace LHCb::Rec::PV {
   using weight_t = float;
   SOAFIELD_TRIVIAL( ref_field, index, LHCb::Rec::PV::TrackRef );
   SOAFIELD_TRIVIAL( wei_field, weight, weight_t );
-  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );
-  const std::size_t default_vertex_size = 30;
+  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );     // for reading convenience
+  const std::size_t default_vertex_size = 60;
+  // const std::size_t default_vertex_size = 0;
+  // const std::size_t default_vertex_size = 100;
   class PVs {
   private:
     std::vector<Gaudi::XYZPoint>                    m_positions;
@@ -105,12 +107,14 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     // fitting into current TrackBeamLineVertexFinderSoA
+    // @todo: tracks are taken as non-const reference!
     void emplace_back( Gaudi::XYZPoint pos, Gaudi::SymMatrix3x3 poscov, LHCb::Event::v2::Track::Chi2PerDoF chi2perdof,
-                       std::vector<std::pair<int, weight_t>> tracks // from namespace { struct Vertex TODO: make signed
-                                                                    // should not have a hard coded type here
+                       std::vector<std::pair<int, weight_t>>& tracks // from namespace { struct Vertex TODO: make signed
+                                                                     // should not have a hard coded type here
     ) {
       // TODO:
       // push_back / emplace_back / move?
+      // google style guide says push_back
       m_positions.emplace_back( std::move( pos ) );
       m_covMatrices.emplace_back( std::move( poscov ) );
       m_chi2PerDoFs.emplace_back( std::move( chi2perdof ) );
@@ -119,14 +123,18 @@ namespace LHCb::Rec::PV {
       m_bkwTracks.emplace_back();
       m_bkwWeights.emplace_back();
       // TODO: write other than with for loop
-      for ( auto track : tracks ) {
-        if ( track.first >= 0 ) {
-          m_fwdTracks.back().push_back( track.first );
-          m_fwdWeights.back().push_back( track.second );
-        } else {
-          m_bkwTracks.back().push_back( ( -1 ) - track.first );
-          m_bkwWeights.back().push_back( track.second );
-        }
+      auto pivot = std::partition( tracks.begin(), tracks.end(), []( auto track ) { return track.first < 0; } );
+      m_bkwTracks.reserve( pivot - tracks.begin() );
+      m_bkwWeights.reserve( pivot - tracks.begin() );
+      m_fwdTracks.reserve( tracks.end() - pivot );
+      m_fwdWeights.reserve( tracks.end() - pivot );
+      for ( auto it = tracks.begin() ; it != pivot ; it++ ) {
+          m_bkwTracks.back().push_back( ( -1 ) - it->first );
+          m_bkwWeights.back().push_back( it->second );
+      }
+      for ( auto it = pivot ; it != tracks.end() ; it++ ) {
+          m_fwdTracks.back().push_back( it->first );
+          m_fwdWeights.back().push_back( it->second );
       }
     }
 
@@ -166,7 +174,7 @@ namespace LHCb::Rec::PV {
 
     // TODO: experimental function
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_x( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_x( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].x();
       } else {
@@ -180,7 +188,7 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_y( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_y( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].y();
       } else {
@@ -194,7 +202,7 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename dType::float_v pos_z( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_z( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_positions[i].z();
       } else {
