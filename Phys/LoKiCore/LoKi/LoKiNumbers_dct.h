@@ -46,7 +46,6 @@
  */
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Functors {
     // ========================================================================
     // the specific printout
@@ -64,11 +63,9 @@ namespace LoKi {
     }
     // ========================================================================
   } // namespace Functors
-  // ==========================================================================
-} // end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Dicts {
     // ========================================================================
     /** the explicit full template specialzation of  LoKi::Dicts::FunCalls
@@ -80,9 +77,9 @@ namespace LoKi {
     template <>
     class FunCalls<double> {
     private:
-      typedef double                                Type;
-      typedef LoKi::BasicFunctors<double>::Function Fun;
-      typedef LoKi::details::result_t<Fun>          result_type;
+      using Type        = double;
+      using Fun         = LoKi::BasicFunctors<double>::Function;
+      using result_type = LoKi::details::result_t<Fun>;
 
     public:
       // ======================================================================
@@ -119,9 +116,9 @@ namespace LoKi {
     template <>
     class CutCalls<double> {
     private:
-      typedef double                                 Type;
-      typedef LoKi::BasicFunctors<double>::Predicate Fun;
-      typedef LoKi::details::result_t<Fun>           result_type;
+      using Type        = double;
+      using Fun         = LoKi::BasicFunctors<double>::Predicate;
+      using result_type = LoKi::details::result_t<Fun>;
 
     public:
       //
@@ -146,8 +143,8 @@ namespace LoKi {
     template <>
     class FunCalls<std::vector<double>> {
     private:
-      typedef std::vector<double>                 Type;
-      typedef LoKi::BasicFunctors<Type>::Function Fun;
+      using Type = std::vector<double>;
+      using Fun  = LoKi::BasicFunctors<Type>::Function;
 
     public:
       //
@@ -178,8 +175,8 @@ namespace LoKi {
     template <>
     class CutCalls<std::vector<double>> {
     private:
-      typedef std::vector<double>                  Type;
-      typedef LoKi::BasicFunctors<Type>::Predicate Fun;
+      using Type = std::vector<double>;
+      using Fun  = LoKi::BasicFunctors<Type>::Predicate;
 
     public:
       //
@@ -204,12 +201,12 @@ namespace LoKi {
     class PipeOps<double> {
     private:
       // ======================================================================
-      typedef double                                TYPE;
-      typedef double                                TYPE2;
-      typedef LoKi::BasicFunctors<TYPE>::Pipe       Pipe;
-      typedef LoKi::BasicFunctors<TYPE>::CutVal     CutVal;
-      typedef LoKi::BasicFunctors<TYPE2>::Function  Func;
-      typedef LoKi::BasicFunctors<TYPE2>::Predicate Cuts;
+      using TYPE   = double;
+      using TYPE2  = double;
+      using Pipe   = LoKi::BasicFunctors<TYPE>::Pipe;
+      using CutVal = LoKi::BasicFunctors<TYPE>::CutVal;
+      using Func   = LoKi::BasicFunctors<TYPE2>::Function;
+      using Cuts   = LoKi::BasicFunctors<TYPE2>::Predicate;
       // ======================================================================
     public:
       // ======================================================================
@@ -336,10 +333,10 @@ namespace LoKi {
     class FunValOps<double> {
     private:
       // ======================================================================
-      typedef double                               TYPE;
-      typedef LoKi::BasicFunctors<TYPE>::FunVal    FunVal;
-      typedef LoKi::BasicFunctors<TYPE>::Function  Func;
-      typedef LoKi::BasicFunctors<TYPE>::Predicate Cuts;
+      using TYPE   = double;
+      using FunVal = LoKi::BasicFunctors<TYPE>::FunVal;
+      using Func   = LoKi::BasicFunctors<TYPE>::Function;
+      using Cuts   = LoKi::BasicFunctors<TYPE>::Predicate;
       // ======================================================================
     public:
       // ======================================================================
@@ -378,16 +375,16 @@ namespace LoKi {
     class SourceOps<double> {
     private:
       // ======================================================================
-      typedef double                                TYPE;
-      typedef double                                TYPE2;
-      typedef LoKi::BasicFunctors<TYPE>::Source     Source;
-      typedef LoKi::BasicFunctors<TYPE>::Pipe       Pipe;
-      typedef LoKi::BasicFunctors<TYPE>::Map        Map;
-      typedef LoKi::BasicFunctors<TYPE>::FunVal     FunVal;
-      typedef LoKi::BasicFunctors<TYPE>::CutVal     CutVal;
-      typedef LoKi::BasicFunctors<TYPE2>::Function  Func;
-      typedef LoKi::BasicFunctors<TYPE2>::Predicate Cuts;
-      typedef LoKi::details::result_t<Source>       result_type;
+      using TYPE        = double;
+      using TYPE2       = double;
+      using Source      = LoKi::BasicFunctors<TYPE>::Source;
+      using Pipe        = LoKi::BasicFunctors<TYPE>::Pipe;
+      using Map         = LoKi::BasicFunctors<TYPE>::Map;
+      using FunVal      = LoKi::BasicFunctors<TYPE>::FunVal;
+      using CutVal      = LoKi::BasicFunctors<TYPE>::CutVal;
+      using Func        = LoKi::BasicFunctors<TYPE2>::Function;
+      using Cuts        = LoKi::BasicFunctors<TYPE2>::Predicate;
+      using result_type = LoKi::details::result_t<Source>;
       // ======================================================================
     public:
       // ======================================================================
@@ -485,8 +482,8 @@ namespace LoKi {
     template <>
     class FunCalls<void> {
     private:
-      typedef LoKi::BasicFunctors<void>::Function Fun;
-      typedef LoKi::details::result_t<Fun>        result_type;
+      using Fun         = LoKi::BasicFunctors<void>::Function;
+      using result_type = LoKi::details::result_t<Fun>;
 
     public:
       // ======================================================================
@@ -533,8 +530,8 @@ namespace LoKi {
     class CutCalls<void> {
     private:
       // ======================================================================
-      typedef LoKi::BasicFunctors<void>::Predicate Fun;
-      typedef LoKi::details::result_t<Fun>         result_type;
+      using Fun         = LoKi::BasicFunctors<void>::Predicate;
+      using result_type = LoKi::details::result_t<Fun>;
       // ======================================================================
     public:
       // ======================================================================
@@ -572,8 +569,7 @@ namespace LoKi {
     class CutsOps<void> : public CutsOps_<void> {};
     // ========================================================================
   } // namespace Dicts
-  // ==========================================================================
-} // end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 /// specify the proper printout for identity
 // ============================================================================

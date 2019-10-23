@@ -164,10 +164,10 @@ public:
     // locate the service
     StatusCode sc = service( "IncidentSvc", m_incidentSvc, true );
     if ( sc.isFailure() ) {
-      m_incidentSvc = 0;
+      m_incidentSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'IncidentSvc' could not be located", sc );
     }
-    if ( 0 == m_incidentSvc ) { LOKI_EXCEPTION( "LoKiSvc: IIncicentSvc* points to NULL", sc ); }
+    if ( !m_incidentSvc ) { LOKI_EXCEPTION( "LoKiSvc: IIncicentSvc* points to NULL", sc ); }
     //
     return m_incidentSvc;
   }
@@ -181,10 +181,10 @@ public:
     // locate the service
     StatusCode sc = service( "HistogramDataSvc", m_histoSvc, true );
     if ( sc.isFailure() ) {
-      m_histoSvc = 0;
+      m_histoSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'HistogramDataSvc' could not be located", sc );
     }
-    if ( 0 == m_histoSvc ) { LOKI_EXCEPTION( "LoKiSvc: IHistogramSvc* points to NULL", sc ); }
+    if ( !m_histoSvc ) { LOKI_EXCEPTION( "LoKiSvc: IHistogramSvc* points to NULL", sc ); }
     //
     return m_histoSvc;
   }
@@ -198,10 +198,10 @@ public:
     // locate the service
     StatusCode sc = service( "EventDataSvc", m_evtSvc, true );
     if ( sc.isFailure() ) {
-      m_evtSvc = 0;
+      m_evtSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'EventDataSvc' could not be located", sc );
     }
-    if ( 0 == m_evtSvc ) { LOKI_EXCEPTION( "LoKiSvc: IDataProviderSvc* points to NULL", sc ); }
+    if ( !m_evtSvc ) { LOKI_EXCEPTION( "LoKiSvc: IDataProviderSvc* points to NULL", sc ); }
     //
     return m_evtSvc;
   }
@@ -215,10 +215,10 @@ public:
     // locate the service
     StatusCode sc = service( "RndmGenSvc", m_rndmSvc, true );
     if ( sc.isFailure() ) {
-      m_rndmSvc = 0;
+      m_rndmSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'RndmGenSvc' could not be located", sc );
     }
-    if ( 0 == m_rndmSvc ) { LOKI_EXCEPTION( "LoKiSvc: IRndmGenSvc* points to NULL", sc ); }
+    if ( !m_rndmSvc ) { LOKI_EXCEPTION( "LoKiSvc: IRndmGenSvc* points to NULL", sc ); }
     //
     return m_rndmSvc;
   }
@@ -232,10 +232,10 @@ public:
     // locate the service
     StatusCode sc = service( "ChronoStatSvc", m_statSvc, true );
     if ( sc.isFailure() ) {
-      m_statSvc = 0;
+      m_statSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'ChronoStatSvc' could not be located", sc );
     }
-    if ( 0 == m_statSvc ) { LOKI_EXCEPTION( "LoKiSvc: IStatSvc* points to NULL", sc ); }
+    if ( !m_statSvc ) { LOKI_EXCEPTION( "LoKiSvc: IStatSvc* points to NULL", sc ); }
     //
     return m_statSvc;
   }
@@ -249,10 +249,10 @@ public:
     // locate the service
     StatusCode sc = service( "ChronoStatSvc", m_chronoSvc, true );
     if ( sc.isFailure() ) {
-      m_chronoSvc = 0;
+      m_chronoSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'ChronoStatSvc' could not be located", sc );
     }
-    if ( 0 == m_chronoSvc ) { LOKI_EXCEPTION( "LoKiSvc: IChronoSvc* points to NULL", sc ); }
+    if ( !m_chronoSvc ) { LOKI_EXCEPTION( "LoKiSvc: IChronoSvc* points to NULL", sc ); }
     //
     return m_chronoSvc;
   }
@@ -266,10 +266,10 @@ public:
     // locate the service
     StatusCode sc = service( "UpdateManagerSvc", m_updateSvc, true );
     if ( sc.isFailure() ) {
-      m_updateSvc = 0;
+      m_updateSvc = nullptr;
       LOKI_EXCEPTION( "LoKiSvc: 'UpdateManagerSvc' could not be located", sc );
     }
-    if ( 0 == m_updateSvc ) { LOKI_EXCEPTION( "LoKiSvc: IUpdateManagerSvc* points to NULL", sc ); }
+    if ( !m_updateSvc ) { LOKI_EXCEPTION( "LoKiSvc: IUpdateManagerSvc* points to NULL", sc ); }
     //
     return m_updateSvc;
   }
@@ -309,26 +309,26 @@ public:
     {
       /// subscribe the incident:
       IIncidentSvc* isvc = incidentSvc();
-      if ( 0 == isvc ) { return StatusCode::FAILURE; }
+      if ( !isvc ) { return StatusCode::FAILURE; }
       isvc->addListener( this, IncidentType::BeginEvent );
     }
     //
     {
       IToolSvc* svc = toolSvc();
-      if ( 0 == svc ) { return StatusCode::FAILURE; }
+      if ( !svc ) { return StatusCode::FAILURE; }
       sc = svc->retrieveTool( m_reporterName, m_reporter, this );
       if ( sc.isFailure() ) { return StatusCode::FAILURE; }
-      if ( 0 == m_reporter ) { return StatusCode::FAILURE; }
+      if ( !m_reporter ) { return StatusCode::FAILURE; }
     }
     //
     LoKi::Services& svc = LoKi::Services::instance();
-    if ( 0 == svc.lokiSvc() ) { svc.setLoKi( this ); }
+    if ( !svc.lokiSvc() ) { svc.setLoKi( this ); }
     //
     // validate AuxFunBase
     if ( !LoKi::AuxFunBase::lokiSvc() ) { LoKi::AuxFunBase::setLoKiSvc( this ); }
     //
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
-    if ( 0 == rep.reporter() && m_reporter ) { rep.setReporter( m_reporter ); }
+    if ( !rep.reporter() && m_reporter ) { rep.setReporter( m_reporter ); }
     //
     return StatusCode::SUCCESS;
   }
@@ -346,60 +346,60 @@ public:
     //
     if ( m_reporter && m_toolSvc ) { m_toolSvc->releaseTool( m_reporter ).ignore(); }
     //
-    m_reporter = 0;
+    m_reporter = nullptr;
     //
     {
       /// unsubscribe the incident:
       IIncidentSvc* isvc = incidentSvc();
-      if ( 0 == isvc ) { return StatusCode::FAILURE; } // RETURN
+      if ( !isvc ) { return StatusCode::FAILURE; } // RETURN
       isvc->removeListener( this );
     }
     // Invalidate AuxFunBase
-    if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) { LoKi::AuxFunBase::setLoKiSvc( 0 ); }
+    if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) { LoKi::AuxFunBase::setLoKiSvc( nullptr ); }
     //
     if ( m_toolSvc ) {
       m_toolSvc->release();
-      m_toolSvc = 0;
+      m_toolSvc = nullptr;
     }
     if ( m_ppSvc ) {
       m_ppSvc->release();
-      m_ppSvc = 0;
+      m_ppSvc = nullptr;
     }
     if ( m_contextSvc ) {
       m_contextSvc->release();
-      m_contextSvc = 0;
+      m_contextSvc = nullptr;
     }
     if ( m_incidentSvc ) {
       m_incidentSvc->release();
-      m_incidentSvc = 0;
+      m_incidentSvc = nullptr;
     }
     if ( m_histoSvc ) {
       m_histoSvc->release();
-      m_histoSvc = 0;
+      m_histoSvc = nullptr;
     }
     if ( m_evtSvc ) {
       m_evtSvc->release();
-      m_evtSvc = 0;
+      m_evtSvc = nullptr;
     }
     if ( m_rndmSvc ) {
       m_rndmSvc->release();
-      m_rndmSvc = 0;
+      m_rndmSvc = nullptr;
     }
     if ( m_statSvc ) {
       m_statSvc->release();
-      m_statSvc = 0;
+      m_statSvc = nullptr;
     }
     if ( m_chronoSvc ) {
       m_chronoSvc->release();
-      m_chronoSvc = 0;
+      m_chronoSvc = nullptr;
     }
     if ( m_updateSvc ) {
       m_updateSvc->release();
-      m_updateSvc = 0;
+      m_updateSvc = nullptr;
     }
     //
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
-    if ( rep.reporter() ) { rep.setReporter( 0 ).ignore(); }
+    if ( rep.reporter() ) { rep.setReporter( nullptr ).ignore(); }
     //
     if ( m_welcome.value() ) { // goodbye message
       auto& log = always() << '\n';
@@ -421,65 +421,65 @@ public:
     {
       /// unsubscribe the incident:
       IIncidentSvc* isvc = incidentSvc();
-      if ( 0 == isvc ) { return StatusCode::FAILURE; } // RETURN
+      if ( !isvc ) { return StatusCode::FAILURE; } // RETURN
       isvc->removeListener( this );
     }
     //
     // Invalidate AuxFunBase
-    if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) { LoKi::AuxFunBase::setLoKiSvc( 0 ); }
+    if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) { LoKi::AuxFunBase::setLoKiSvc( nullptr ); }
     //
     if ( m_toolSvc ) {
       m_toolSvc->release();
-      m_toolSvc = 0;
+      m_toolSvc = nullptr;
     }
     if ( m_ppSvc ) {
       m_ppSvc->release();
-      m_ppSvc = 0;
+      m_ppSvc = nullptr;
     }
     if ( m_contextSvc ) {
       m_contextSvc->release();
-      m_contextSvc = 0;
+      m_contextSvc = nullptr;
     }
     if ( m_incidentSvc ) {
       m_incidentSvc->release();
-      m_incidentSvc = 0;
+      m_incidentSvc = nullptr;
     }
     if ( m_histoSvc ) {
       m_histoSvc->release();
-      m_histoSvc = 0;
+      m_histoSvc = nullptr;
     }
     if ( m_evtSvc ) {
       m_evtSvc->release();
-      m_evtSvc = 0;
+      m_evtSvc = nullptr;
     }
     if ( m_rndmSvc ) {
       m_rndmSvc->release();
-      m_rndmSvc = 0;
+      m_rndmSvc = nullptr;
     }
     if ( m_statSvc ) {
       m_statSvc->release();
-      m_statSvc = 0;
+      m_statSvc = nullptr;
     }
     if ( m_chronoSvc ) {
       m_chronoSvc->release();
-      m_chronoSvc = 0;
+      m_chronoSvc = nullptr;
     }
     if ( m_updateSvc ) {
       m_updateSvc->release();
-      m_updateSvc = 0;
+      m_updateSvc = nullptr;
     }
     //
     {
       /// subscribe the incident:
       IIncidentSvc* isvc = incidentSvc();
-      if ( 0 == isvc ) { return StatusCode::FAILURE; } // RETURN
+      if ( !isvc ) { return StatusCode::FAILURE; } // RETURN
       isvc->addListener( this, IncidentType::BeginEvent );
     }
     //
     { // static services:
       LoKi::Services& svc = LoKi::Services::instance();
       svc.releaseAll();
-      if ( 0 == svc.lokiSvc() ) { svc.setLoKi( this ); }
+      if ( !svc.lokiSvc() ) { svc.setLoKi( this ); }
     }
     //
     // validate AuxFunBase
@@ -588,7 +588,7 @@ public:
   using Service::Service;
   // ==========================================================================
   /// virtual and protected destructor
-  ~LoKiSvc() {
+  ~LoKiSvc() override {
     if ( m_reporter && m_toolSvc ) { m_toolSvc->releaseTool( m_reporter ); }
     //
     if ( m_toolSvc ) { m_toolSvc->release(); }

@@ -41,8 +41,8 @@ StatusCode Decays::Parsers::parse( Decays::Parsers::Tree& tree, const std::strin
                                    const std::vector<std::string>& symbols, const std::vector<std::string>& particles,
                                    std::ostream& stream ) {
   // ==========================================================================
-  typedef std::string::const_iterator   Iterator;
-  typedef boost::spirit::qi::space_type Skipper;
+  using Iterator = std::string::const_iterator;
+  using Skipper  = boost::spirit::qi::space_type;
 
   Decays::Grammars::Tree<Iterator, Skipper> gr( symbols, particles );
   Iterator                                  begin = input.begin();

@@ -68,8 +68,8 @@ namespace LoKi {
         return next( out );
       }
       //
-      typedef typename LoKi::Combiner_<CONTAINER>::Select Select;
-      typedef typename Select::const_iterator             iterator;
+      using Select   = typename LoKi::Combiner_<CONTAINER>::Select;
+      using iterator = typename Select::const_iterator;
       //
       const Select& sel = m_combiner.current();
       for ( iterator ic = sel.begin(); sel.end() != ic; ++ic ) {

@@ -29,14 +29,6 @@
 #include "LoKi/AuxFunBase.h"
 // ============================================================================
 namespace LoKi {
-  // =========================================================================
-  /** @namespace LoKi::PidFunctions PidFunctions.h LoKi/PidFunctions.h
-   *  Collections of funtors dealing wioth LHCb::ParticleID
-   *  @see LHCb::ParticleID
-   *  @see LoKi::Particles
-   *  @author Vanya Belyaev  Ivan.Belyaev@itep.ru
-   *  @date   2015-01-18
-   */
   namespace Pids {
     // ========================================================================
     /** @class GetPids
@@ -83,7 +75,7 @@ namespace LoKi {
     };
     // ========================================================================
   } // namespace Pids
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

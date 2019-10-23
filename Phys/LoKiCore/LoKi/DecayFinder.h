@@ -56,13 +56,13 @@ namespace Decays {
   protected:
     // ========================================================================
     /// the type for collection
-    typedef typename Decays::iTree_<PARTICLE>::Collection Collection;
-    typedef typename Collection::const_iterator           iterator;
+    using Collection = typename Decays::iTree_<PARTICLE>::Collection;
+    using iterator   = typename Collection::const_iterator;
     // ========================================================================
   public:
     // ========================================================================
-    typedef Decays::iTree_<PARTICLE> iTree;
-    typedef Decays::Tree_<PARTICLE>  Tree;
+    using iTree = Decays::iTree_<PARTICLE>;
+    using Tree  = Decays::Tree_<PARTICLE>;
     // ========================================================================
   public:
     // ========================================================================
@@ -250,9 +250,9 @@ namespace Decays {
     /// cast operator to the underlyiong tree
     operator const iTree_<PARTICLE>&() const { return this->tree(); } // cast
     /// valid tree?
-    bool valid() const { return this->tree().valid(); }
+    [[nodiscard]] bool valid() const { return this->tree().valid(); }
     /// marked tree?
-    bool marked() const { return this->tree().marked(); }
+    [[nodiscard]] bool marked() const { return this->tree().marked(); }
     /// invalid tree?
     bool operator!() const { return !( this->valid() ); }
     /// validate the tree
@@ -261,7 +261,7 @@ namespace Decays {
   private:
     // ========================================================================
     // no default constructor
-    Finder_(); // no default constructor
+    Finder_() = delete; // no default constructor
     // ========================================================================
   private:
     // ========================================================================
@@ -272,18 +272,14 @@ namespace Decays {
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    template <class PARTICLE>
-    std::string toCpp( const Decays::Finder_<PARTICLE>& p ) {
-      return toCpp( p.tree() );
-    }
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  template <class PARTICLE>
+  std::string toCpp( const Decays::Finder_<PARTICLE>& p ) {
+    return toCpp( p.tree() );
+  }
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 // The END
 // ============================================================================

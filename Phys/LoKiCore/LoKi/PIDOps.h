@@ -25,7 +25,6 @@
 #include "LoKi/Operators.h"
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Dicts {
     // ========================================================================
     /** @class PIDOps PIDOps.h LoKi/PIDOps.h
@@ -36,10 +35,10 @@ namespace LoKi {
     class PIDOps {
     private:
       // ======================================================================
-      typedef FUNCTION                                                       Function;
-      typedef typename FUNCTION::argument_type                               Argument;
-      typedef typename LoKi::BasicFunctors<Argument>::PredicateFromPredicate Result;
-      typedef typename LoKi::BasicFunctors<Argument>::Function               Other;
+      using Function = FUNCTION;
+      using Argument = typename FUNCTION::argument_type;
+      using Result   = typename LoKi::BasicFunctors<Argument>::PredicateFromPredicate;
+      using Other    = typename LoKi::BasicFunctors<Argument>::Function;
       // ======================================================================
     public:
       // ======================================================================
@@ -80,8 +79,7 @@ namespace LoKi {
     };
     // ========================================================================
   } // namespace Dicts
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

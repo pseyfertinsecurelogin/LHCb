@@ -60,8 +60,8 @@ namespace LoKi {
     struct _ALL {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG;
-      inline bool                                           operator()( ARG /* arg */ ) const { return true; }
+      using ARG = typename boost::call_traits<TYPE>::param_type;
+      inline bool operator()( ARG /* arg */ ) const { return true; }
       // ======================================================================
     };
     // ========================================================================
@@ -74,8 +74,8 @@ namespace LoKi {
     struct _NONE {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG;
-      inline bool                                           operator()( ARG /* arg */ ) const { return false; }
+      using ARG = typename boost::call_traits<TYPE>::param_type;
+      inline bool operator()( ARG /* arg */ ) const { return false; }
       // ======================================================================
     };
     // ========================================================================
@@ -88,8 +88,8 @@ namespace LoKi {
     struct _ONE {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG;
-      inline int                                            operator()( ARG /* arg */ ) const { return 1; }
+      using ARG = typename boost::call_traits<TYPE>::param_type;
+      inline int operator()( ARG /* arg */ ) const { return 1; }
       // ======================================================================
     };
     // ========================================================================
@@ -102,8 +102,8 @@ namespace LoKi {
     struct _ZERO {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG;
-      inline int                                            operator()( ARG /* arg */ ) const { return 0; }
+      using ARG = typename boost::call_traits<TYPE>::param_type;
+      inline int operator()( ARG /* arg */ ) const { return 0; }
       // ======================================================================
     };
     // ========================================================================
@@ -116,8 +116,8 @@ namespace LoKi {
     struct _VALID {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG;
-      inline bool                                           operator()( ARG arg ) const { return LoKi::valid( arg ); }
+      using ARG = typename boost::call_traits<TYPE>::param_type;
+      inline bool operator()( ARG arg ) const { return LoKi::valid( arg ); }
       // ======================================================================
     };
     // ========================================================================

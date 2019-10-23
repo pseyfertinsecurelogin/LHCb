@@ -118,37 +118,37 @@ namespace LoKi {
   public:
     // ========================================================================
     /// constructors for Histogram service
-    Histo( const std::string& dir, const std::string& id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc = 0 );
-    Histo( const std::string& dir, const int id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc = 0 );
-    Histo( const std::string& dir, const GaudiAlg::ID& id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc = 0 );
-    Histo( const std::string& path, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc = 0 );
+    Histo( std::string dir, const std::string& id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc = nullptr );
+    Histo( std::string dir, const int id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc = nullptr );
+    Histo( std::string dir, const GaudiAlg::ID& id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc = nullptr );
+    Histo( std::string path, Gaudi::Histo1DDef hdef, IHistogramSvc* svc = nullptr );
     /// constructors for Context service
-    Histo( const Gaudi::Histo1DDef& hdef, const std::string& id, IAlgContextSvc* svc = 0 );
-    Histo( const Gaudi::Histo1DDef& hdef, const int id, IAlgContextSvc* svc = 0 );
-    Histo( const Gaudi::Histo1DDef& hdef, const GaudiAlg::ID& id, IAlgContextSvc* svc = 0 );
+    Histo( Gaudi::Histo1DDef hdef, const std::string& id, IAlgContextSvc* svc = nullptr );
+    Histo( Gaudi::Histo1DDef hdef, const int id, IAlgContextSvc* svc = nullptr );
+    Histo( Gaudi::Histo1DDef hdef, const GaudiAlg::ID& id, IAlgContextSvc* svc = nullptr );
     /// default constructor
     Histo();
     // ========================================================================
   public:
     // ========================================================================
-    const std::string&       path() const { return m_path; }
-    const GaudiAlg::ID&      id() const { return m_id; }
-    const Gaudi::Histo1DDef& hdef() const { return m_hdef; }
-    bool                     hcase() const { return m_case; }
-    bool                     valid() const { return m_valid; }
+    [[nodiscard]] const std::string&       path() const { return m_path; }
+    [[nodiscard]] const GaudiAlg::ID&      id() const { return m_id; }
+    [[nodiscard]] const Gaudi::Histo1DDef& hdef() const { return m_hdef; }
+    [[nodiscard]] bool                     hcase() const { return m_case; }
+    [[nodiscard]] bool                     valid() const { return m_valid; }
     // ========================================================================
-    IHistogramSvc*  histoSvc() const { return m_hsvc; }
-    IAlgContextSvc* contextSvc() const { return m_cntx; }
+    [[nodiscard]] IHistogramSvc*  histoSvc() const { return m_hsvc; }
+    [[nodiscard]] IAlgContextSvc* contextSvc() const { return m_cntx; }
     // ========================================================================
   private:
     //
     std::string       m_path;
     GaudiAlg::ID      m_id;
     Gaudi::Histo1DDef m_hdef;
-    bool              m_case;
-    bool              m_valid;
-    IHistogramSvc*    m_hsvc;
-    IAlgContextSvc*   m_cntx;
+    bool              m_case  = true;
+    bool              m_valid = true;
+    IHistogramSvc*    m_hsvc  = nullptr;
+    IAlgContextSvc*   m_cntx  = nullptr;
     // ========================================================================
   };
   // ==========================================================================
@@ -160,16 +160,16 @@ namespace LoKi {
   class GAUDI_API CounterDef {
   public:
     // ========================================================================
-    CounterDef( const std::string& group, const std::string& name, const LoKi::Monitoring::Flag flag );
-    CounterDef( const std::string& name = "", const LoKi::Monitoring::Flag f = LoKi::Monitoring::ContextSvc );
+    CounterDef( std::string group, std::string name, const LoKi::Monitoring::Flag flag );
+    CounterDef( std::string name = "", const LoKi::Monitoring::Flag f = LoKi::Monitoring::ContextSvc );
     // ========================================================================
   public:
     // ========================================================================
-    const std::string&     group() const { return m_group; }
-    const std::string&     name() const { return m_name; }
-    LoKi::Monitoring::Flag flag() const { return m_flag; }
+    [[nodiscard]] const std::string&     group() const { return m_group; }
+    [[nodiscard]] const std::string&     name() const { return m_name; }
+    [[nodiscard]] LoKi::Monitoring::Flag flag() const { return m_flag; }
     // ========================================================================
-    bool valid() const { return !m_name.empty(); }
+    [[nodiscard]] bool valid() const { return !m_name.empty(); }
     // ========================================================================
   private:
     // ========================================================================
@@ -181,17 +181,13 @@ namespace LoKi {
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    GAUDI_API std::string toCpp( const LoKi::Histo& o );
-    GAUDI_API std::string toCpp( const LoKi::CounterDef& o );
-    GAUDI_API std::string toCpp( const GaudiAlg::ID& o );
-    GAUDI_API std::string toCpp( const Gaudi::Histo1DDef& o );
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  GAUDI_API std::string toCpp( const LoKi::Histo& o );
+  GAUDI_API std::string toCpp( const LoKi::CounterDef& o );
+  GAUDI_API std::string toCpp( const GaudiAlg::ID& o );
+  GAUDI_API std::string toCpp( const Gaudi::Histo1DDef& o );
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 #endif // LOKI_MONITOR_H

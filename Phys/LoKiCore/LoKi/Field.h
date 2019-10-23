@@ -42,7 +42,7 @@ namespace LoKi {
   struct Field {
     // ========================================================================
     /// in general case it is a "reference"
-    typedef LoKi::Reference<TYPE> Type; // in general case it is a "reference"
+    using Type = LoKi::Reference<TYPE>; // in general case it is a "reference"
     // ========================================================================
   };
   // ==========================================================================
@@ -50,7 +50,7 @@ namespace LoKi {
   struct Field<const TYPE> {
     // ========================================================================
     /// for const-type it is a const-reference
-    typedef LoKi::ConstReference<TYPE> Type; //                const-reference
+    using Type = LoKi::ConstReference<TYPE>; //                const-reference
     // ========================================================================
   };
   // ==========================================================================
@@ -58,7 +58,7 @@ namespace LoKi {
   struct Field<TYPE*> {
     // ========================================================================
     /// in case of pointers it is a bare pointer
-    typedef TYPE* Type; // in case of pointers it is a bare pointer
+    using Type = TYPE*; // in case of pointers it is a bare pointer
     // ========================================================================
   };
   // ==========================================================================
@@ -66,7 +66,7 @@ namespace LoKi {
   struct Field<TYPE* const> {
     // ========================================================================
     /// skip the constness of pointer
-    typedef typename LoKi::Field<TYPE*>::Type Type;
+    using Type = typename LoKi::Field<TYPE*>::Type;
     // ========================================================================
   };
   // ==========================================================================
@@ -74,7 +74,7 @@ namespace LoKi {
   struct Field<TYPE&> {
     // ========================================================================
     /// skip the reference
-    typedef typename Field<TYPE>::Type Type; // skip the reference
+    using Type = typename Field<TYPE>::Type; // skip the reference
     // ========================================================================
   };
   // ==========================================================================
@@ -82,7 +82,7 @@ namespace LoKi {
   struct Field<const TYPE&> {
     // ========================================================================
     /// skip the reference
-    typedef typename Field<const TYPE>::Type Type; // skip the reference
+    using Type = typename Field<const TYPE>::Type; // skip the reference
     // ========================================================================
   };
   // ==========================================================================

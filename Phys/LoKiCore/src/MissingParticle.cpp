@@ -13,6 +13,8 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
+#include <utility>
+
 #include "LHCbMath/LHCbMath.h"
 // ============================================================================
 // LoKi
@@ -42,10 +44,14 @@ namespace {
  *  @param missing the mass of missing particle
  */
 // ============================================================================
-LoKi::Kinematics::MissingParticle::MissingParticle( const LoKi::LorentzVector& p4, const LoKi::ThreeVector& direction,
+LoKi::Kinematics::MissingParticle::MissingParticle( LoKi::LorentzVector p4, const LoKi::ThreeVector& direction,
                                                     const double mother, const double missing )
     //
-    : m_p4( p4 ), m_dir( direction.Unit() ), m_mother2( mother * mother ), m_missing2( missing * missing ), m_det( 0 ) {
+    : m_p4( std::move( p4 ) )
+    , m_dir( direction.Unit() )
+    , m_mother2( mother * mother )
+    , m_missing2( missing * missing )
+    , m_det( 0 ) {
   solve();
 }
 // ============================================================================

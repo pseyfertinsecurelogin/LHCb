@@ -47,7 +47,6 @@
  */
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace TES {
     // ========================================================================
     /** @class Get
@@ -71,7 +70,7 @@ namespace LoKi {
        */
       Get( const IDataProviderSvc* datasvc, const std::string& location );
       /// virtual destructor
-      virtual ~Get();
+      ~Get() override;
       // ======================================================================
       /// OPTIONAL: nice printout
       std::ostream& fillStream( std::ostream& s ) const override;
@@ -424,11 +423,9 @@ namespace LoKi {
     }
     // ========================================================================
   } // namespace TES
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Cuts {
     // ========================================================================
     /** @typedef CONTAINS
@@ -448,7 +445,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
-    typedef LoKi::TES::Contains CONTAINS;
+    using CONTAINS = LoKi::TES::Contains;
     // ========================================================================
     /** @typedef SIZE
      *  <code>DataHandle</code>-based functor
@@ -469,7 +466,7 @@ namespace LoKi {
      *  @see AnyDataWrapperBase
      *  @author Sascha Stahl
      */
-    typedef LoKi::TES::Size SIZE;
+    using SIZE = LoKi::TES::Size;
     // ========================================================================
 
     // /** @typedef HRCSUMADC
@@ -502,7 +499,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
-    typedef LoKi::TES::Exists EXISTS;
+    using EXISTS = LoKi::TES::Exists;
     // ========================================================================
     /** @typedef HASDATA
      *  <code>DataHandle</code>-based functor
@@ -512,7 +509,7 @@ namespace LoKi {
      *  @see LoKi::Cuts::EXISTS
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
-    typedef LoKi::TES::HasData HASDATA;
+    using HASDATA = LoKi::TES::HasData;
     // ========================================================================
     /** @typedef COUNTER
      *  Trivial accessor to the counter in TES
@@ -528,7 +525,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2011-02-12
      */
-    typedef LoKi::TES::Counter COUNTER;
+    using COUNTER = LoKi::TES::Counter;
     // ========================================================================
     /** @typedef STAT
      *  Trivial accessor to the counter in TES
@@ -546,11 +543,10 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2011-02-12
      */
-    typedef LoKi::TES::Stat STAT;
+    using STAT = LoKi::TES::Stat;
     // ========================================================================
   } // namespace Cuts
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

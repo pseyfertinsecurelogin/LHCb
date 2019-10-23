@@ -46,7 +46,6 @@
  */
 // ============================================================================
 namespace Decays {
-  // ==========================================================================
   namespace Grammars {
     // ========================================================================
     // Namespace Aliases
@@ -57,7 +56,7 @@ namespace Decays {
     namespace dn  = Decays::Nodes;
     // namespace rep = sp::repository;
     // Typedefs
-    typedef Decays::Nodes::_Node Node_;
+    using Node_ = Decays::Nodes::_Node;
     // typedef Decays::NodeList NodeList_ ;
     struct quarks : qi::symbols<char, LHCb::ParticleID::Quark> {
       // Constructor
@@ -76,8 +75,8 @@ namespace Decays {
     template <typename Iterator, typename Skipper>
     struct Node : qi::grammar<Iterator, Node_(), Skipper> {
       // ======================================================================
-      typedef Node_                    ResultT;
-      typedef std::vector<std::string> VectorOfStringsT;
+      using ResultT          = Node_;
+      using VectorOfStringsT = std::vector<std::string>;
       // ======================================================================
       struct tag_pid {};
       struct tag_symbol {};
@@ -123,10 +122,10 @@ namespace Decays {
       };
       // ======================================================================
       void make_symbols( qi::symbols<char, std::string>& output, const VectorOfStringsT& symbols ) {
-        for ( VectorOfStringsT::const_iterator curr = symbols.begin(); curr != symbols.end(); ++curr ) {
+        for ( const auto& symbol : symbols ) {
           // symbols_.add(curr->c_str(), curr->c_str());
           // std::cerr << "-> " << *curr << std::endl;
-          output.add( curr->c_str(), *curr );
+          output.add( symbol.c_str(), symbol );
         }
         // std::cerr << "<-" << std::endl;
       }
@@ -183,8 +182,7 @@ namespace Decays {
     };
     // ========================================================================
   } // namespace Grammars
-  // ==========================================================================
-} //                                                    end of namespace Decays
+} // namespace Decays
 // ============================================================================
 //                                                                      The END
 // ============================================================================

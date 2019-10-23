@@ -23,7 +23,6 @@
 #include "LoKi/KinTypes.h"
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Kinematics {
     // ========================================================================
     /** @class MissingParticle LoKi/MissingParticle.h
@@ -50,7 +49,7 @@ namespace LoKi {
        *  @param mother the mass of mother particle
        *  @param missing the mass of missing particle
        */
-      MissingParticle( const LoKi::LorentzVector& p4, const LoKi::ThreeVector& direction, const double mother,
+      MissingParticle( LoKi::LorentzVector p4, const LoKi::ThreeVector& direction, const double mother,
                        const double missing );
       /** constructor from all arguments
        *  @param mother the mass of mother particle
@@ -64,11 +63,11 @@ namespace LoKi {
     public:
       // ======================================================================
       // get number of solutions (0,1 or 2)
-      unsigned short nSolutions() const;
+      [[nodiscard]] unsigned short nSolutions() const;
       /// the first solution for 4-momentum of missing particle
-      const LoKi::LorentzVector& v1() const { return m_v1; }
+      [[nodiscard]] const LoKi::LorentzVector& v1() const { return m_v1; }
       /// the first solution for 4-momentum of missing particle
-      const LoKi::LorentzVector& v2() const { return m_v2; }
+      [[nodiscard]] const LoKi::LorentzVector& v2() const { return m_v2; }
       // ======================================================================
     private:
       // ======================================================================
@@ -96,8 +95,7 @@ namespace LoKi {
     };
     // =========================================================================
   } // namespace Kinematics
-  // ===========================================================================
-} //                                                       end of namespace LoKi
+} // namespace LoKi
 // =============================================================================
 //                                                                       The END
 // =============================================================================

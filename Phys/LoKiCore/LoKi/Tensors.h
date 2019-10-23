@@ -96,7 +96,7 @@ namespace LoKi {
     struct Delta {
       // ======================================================================
       /// Kroneker delta
-      inline int delta( const size_t i, const size_t j ) const { return i == j; }
+      [[nodiscard]] inline int delta( const size_t i, const size_t j ) const { return i == j; }
       /// Kroneker delta (functional form)
       inline int operator()( const size_t i, const size_t j ) const { return i == j; }
       // ======================================================================
@@ -166,7 +166,7 @@ namespace LoKi {
       /// the only one important function: get the metric
       inline int operator()( const size_t i, const size_t j ) const { return g( i, j ); }
       /// the only one important function: get the metric
-      inline int g( const size_t i, const size_t j ) const {
+      [[nodiscard]] inline int g( const size_t i, const size_t j ) const {
         return ( i != j ) ? 0 : ( LAST <= i ) ? 0 : ( T == i ) ? 1 : -1;
       }
       // ======================================================================
@@ -361,19 +361,19 @@ namespace LoKi {
       // ====================================================================
       template <class TYPE>
       struct _TYPES {
-        typedef long double iTYPE;
-        typedef double      rTYPE;
+        using iTYPE = long double;
+        using rTYPE = double;
       };
       template <class TYPE>
       struct _TYPES<std::complex<TYPE>> {
-        typedef std::complex<double> iTYPE;
-        typedef std::complex<double> rTYPE;
+        using iTYPE = std::complex<double>;
+        using rTYPE = std::complex<double>;
       };
       template <class COORDINATES>
       struct LVTYPES {
-        typedef typename _TYPES<typename COORDINATES::Scalar>::iTYPE iTYPE;
-        typedef typename _TYPES<typename COORDINATES::Scalar>::rTYPE rTYPE;
-        typedef ROOT::Math::LorentzVector<COORDINATES>               vTYPE;
+        using iTYPE = typename _TYPES<typename COORDINATES::Scalar>::iTYPE;
+        using rTYPE = typename _TYPES<typename COORDINATES::Scalar>::rTYPE;
+        using vTYPE = ROOT::Math::LorentzVector<COORDINATES>;
       };
       // ====================================================================
     } // namespace detail

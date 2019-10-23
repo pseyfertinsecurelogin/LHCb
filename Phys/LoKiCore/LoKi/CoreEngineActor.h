@@ -36,7 +36,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
 namespace LoKi {
-  // ==========================================================================
   namespace Hybrid {
     // ========================================================================
     /** @class CoreEngineActor LoKi/CoreEngine.h
@@ -98,7 +97,7 @@ namespace LoKi {
       /// Standard constructor
       CoreEngineActor();
       /// virtual & protected destrucutor
-      virtual ~CoreEngineActor(); // virtual & protected destrucutor
+      virtual ~CoreEngineActor(); // virtual & protected destructor
       // ======================================================================
     private:
       // ======================================================================
@@ -109,22 +108,21 @@ namespace LoKi {
     private:
       // ======================================================================
       // the copy contructor is disabled
-      CoreEngineActor( const CoreEngineActor& );
+      CoreEngineActor( const CoreEngineActor& ) = delete;
       // the assignement operator is disabled
-      CoreEngineActor& operator=( const CoreEngineActor& );
+      CoreEngineActor& operator=( const CoreEngineActor& ) = delete;
       // ======================================================================
     private:
       // ======================================================================
-      typedef LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> Tool;
-      typedef std::pair<Tool, LoKi::Context>                  Entry;
-      typedef std::stack<Entry>                               Stack;
+      using Tool = LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory>;
+      typedef std::pair<Tool, LoKi::Context> Entry;
+      using Stack = std::stack<Entry>;
       ///  the stack of active factories
       Stack m_stack{}; // the stack of active factories
       // ======================================================================
     };
     // ========================================================================
   } // namespace Hybrid
-  // ==========================================================================
 } // namespace LoKi
 // ============================================================================
 //                                                                      The END

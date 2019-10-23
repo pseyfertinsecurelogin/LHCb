@@ -44,14 +44,14 @@ namespace LoKi {
   class RangeList_ {
   public:
     // ========================================================================
-    typedef RANGE                           Range;
-    typedef std::vector<Range>              Ranges;
-    typedef typename Ranges::const_iterator iterator;
-    typedef typename Ranges::const_iterator const_iterator;
+    using Range          = RANGE;
+    using Ranges         = std::vector<Range>;
+    using iterator       = typename Ranges::const_iterator;
+    using const_iterator = typename Ranges::const_iterator;
     // ========================================================================
   protected:
     // ========================================================================
-    typedef RangeList_<RANGE> Self;
+    using Self = RangeList_<RANGE>;
     // ========================================================================
   public:
     // ========================================================================
@@ -74,14 +74,14 @@ namespace LoKi {
       m_ranges.push_back( range2 );
     };
     /// destructor
-    virtual ~RangeList_(){};
+    virtual ~RangeList_() = default;
     // ========================================================================
   public:
     // ========================================================================
     /// empty list ?
-    bool empty() const { return m_ranges.empty(); }
+    [[nodiscard]] bool empty() const { return m_ranges.empty(); }
     /// number of components
-    size_t size() const { return m_ranges.size(); }
+    [[nodiscard]] size_t size() const { return m_ranges.size(); }
     /// indexing operator
     const Range& operator[]( size_t index ) const { return m_ranges[index]; }
     /// indexing operator

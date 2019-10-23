@@ -64,7 +64,7 @@ namespace LoKi {
                const std::string& name,    //     the actual tool name
                const IInterface*  parent ); //               the parent
     /// virtual protected destructor
-    virtual ~DecayBase();
+    ~DecayBase() override;
     // ========================================================================
   protected:
     // ========================================================================

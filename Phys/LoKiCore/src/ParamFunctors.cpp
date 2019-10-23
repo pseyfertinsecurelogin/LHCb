@@ -12,6 +12,7 @@
 // Include files
 // ============================================================================
 #include <regex>
+#include <utility>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -53,14 +54,14 @@ namespace {
   typedef std::map<std::string, float>  MAP_F;
   typedef std::map<std::string, int>    MAP_I;
   //
-  typedef SimpleProperty<double> DPROP;
-  typedef SimpleProperty<MAP_D>  MPROP;
+  using DPROP = SimpleProperty<double>;
+  using MPROP = SimpleProperty<MAP_D>;
   //
   class MyAlgSel : public Gaudi::Utils::AlgSelector {
   public:
     // ========================================================================
-    MyAlgSel( const std::string& name, const std::string& prop, const std::string& key )
-        : m_name( name ), m_prop( prop ), m_key( key ) {}
+    MyAlgSel( std::string name, std::string prop, std::string key )
+        : m_name( std::move( name ) ), m_prop( std::move( prop ) ), m_key( std::move( key ) ) {}
     // ========================================================================
   public:
     // ========================================================================
@@ -75,7 +76,7 @@ namespace {
      */
     bool operator()( const IAlgorithm* a ) const override {
       //
-      if ( 0 == a ) { return false; }
+      if ( !a ) { return false; }
       //
       if ( !m_name.empty() ) {
         std::regex pattern( m_name );
@@ -83,7 +84,7 @@ namespace {
       }
       //
       const Property* p = Gaudi::Utils::getProperty( a, m_prop );
-      if ( 0 == p ) { return false; }
+      if ( !p ) { return false; }
       //
       DPROP dp;
       MPROP mp;
@@ -121,21 +122,21 @@ namespace {
   // ==========================================================================
   const Property* getProperty( const SmartIF<IAlgContextSvc>& cntx, const LoKi::Param& param ) {
     //
-    if ( !cntx ) { return 0; }
+    if ( !cntx ) { return nullptr; }
     //
     MyAlgSel sel( param.algorithm(), param.property(), param.key() );
 
     IAlgorithm* ialg = Gaudi::Utils::getAlgorithm( cntx, sel );
-    if ( 0 == ialg ) { return 0; }
+    if ( !ialg ) { return nullptr; }
     //
     return Gaudi::Utils::getProperty( ialg, param.property() );
   }
   // ==========================================================================
   const Property* getProperty( const LoKi::ILoKiSvc* svc, const LoKi::Param& param ) {
     //
-    if ( 0 == svc ) { return 0; }
+    if ( !svc ) { return nullptr; }
     //
-    LoKi::ILoKiSvc* svc0 = const_cast<LoKi::ILoKiSvc*>( svc );
+    auto* svc0 = const_cast<LoKi::ILoKiSvc*>( svc );
     // get the context service:
     SmartIF<IAlgContextSvc> cntx( svc0 );
     //
@@ -159,14 +160,14 @@ LoKi::Parameters::ParamBase::ParamBase( const Property& property )
  *  @param property the property description
  */
 // ============================================================================
-LoKi::Parameters::ParamBase::ParamBase( const LoKi::Param& property )
-    : LoKi::AuxFunBase(), m_param( property ), m_property( nullptr ) {
+LoKi::Parameters::ParamBase::ParamBase( LoKi::Param property )
+    : LoKi::AuxFunBase(), m_param( std::move( property ) ), m_property( nullptr ) {
   if ( gaudi() ) { getProp(); }
 }
 // ============================================================================
 void LoKi::Parameters::ParamBase::getProp() const {
   m_property = ::getProperty( *this, m_param );
-  Assert( 0 != m_property, "Unable to get property" );
+  Assert( nullptr != m_property, "Unable to get property" );
 }
 
 // ============================================================================
@@ -223,7 +224,7 @@ namespace {
   // ==========================================================================
   template <class TYPE>
   TYPE get( const Property* prop ) {
-    const PropertyWithValue<TYPE>* p = static_cast<const PropertyWithValue<TYPE>*>( prop );
+    const auto* p = static_cast<const PropertyWithValue<TYPE>*>( prop );
     return p->value();
   }
   // ==========================================================================
@@ -239,23 +240,23 @@ double LoKi::Parameters::Parameter::operator()() const {
   case prop_t::scalar_i:
     return get<int>( property() );
   case prop_t::map_d: {
-    const PropertyWithValue<MAP_D>* p  = static_cast<const PropertyWithValue<MAP_D>*>( property() );
-    const auto&                     m  = p->value();
-    auto                            it = m.find( param().key() );
+    const auto* p  = dynamic_cast<const PropertyWithValue<MAP_D>*>( property() );
+    const auto& m  = p->value();
+    auto        it = m.find( param().key() );
     Assert( m.end() != it, "No proper key is found" );
     return it->second;
   }
   case prop_t::map_f: {
-    const PropertyWithValue<MAP_F>* p  = static_cast<const PropertyWithValue<MAP_F>*>( property() );
-    const auto&                     m  = p->value();
-    auto                            it = m.find( param().key() );
+    const auto* p  = dynamic_cast<const PropertyWithValue<MAP_F>*>( property() );
+    const auto& m  = p->value();
+    auto        it = m.find( param().key() );
     Assert( m.end() != it, "No proper key is found" );
     return it->second;
   }
   case prop_t::map_i: {
-    const PropertyWithValue<MAP_I>* p  = static_cast<const PropertyWithValue<MAP_I>*>( property() );
-    const auto&                     m  = p->value();
-    auto                            it = m.find( param().key() );
+    const auto* p  = dynamic_cast<const PropertyWithValue<MAP_I>*>( property() );
+    const auto& m  = p->value();
+    auto        it = m.find( param().key() );
     Assert( m.end() != it, "No proper key is found" );
     return it->second;
   }

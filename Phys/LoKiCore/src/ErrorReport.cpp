@@ -39,7 +39,7 @@
 // ============================================================================
 //  standard (default) constructor
 // ============================================================================
-LoKi::ErrorReport::ErrorReport() : m_errors(), m_warnings(), m_exceptions(), m_reporter( 0 ) {
+LoKi::ErrorReport::ErrorReport() : m_errors(), m_warnings(), m_exceptions(), m_reporter( nullptr ) {
   LoKi::Welcome::instance();
 }
 // ============================================================================
@@ -55,19 +55,19 @@ StatusCode LoKi::ErrorReport::report() const {
     std::cout << " Exceptions/Errors/Warnings statistics:  " << m_exceptions.size() << "/" << m_errors.size() << "/"
               << m_warnings.size() << std::endl;
     // print exceptions counter
-    for ( Counter::const_iterator exc = m_exceptions.begin(); exc != m_exceptions.end(); ++exc ) {
+    for ( auto exc = m_exceptions.begin(); exc != m_exceptions.end(); ++exc ) {
       std::cout << "LoKi::ErrorReport\t";
       std::cout << "  ALWAYS ";
       std::cout << " #EXCEPTIONS= " << exc->second << " Message='" << exc->first << "'" << std::endl;
     }
     // print errors counter
-    for ( Counter::const_iterator error = m_errors.begin(); error != m_errors.end(); ++error ) {
+    for ( auto error = m_errors.begin(); error != m_errors.end(); ++error ) {
       std::cout << "LoKi::ErrorReport\t";
       std::cout << "  ALWAYS ";
       std::cout << " #ERRORS    = " << error->second << " Message='" << error->first << "'" << std::endl;
     }
     // print warnings
-    for ( Counter::const_iterator warning = m_warnings.begin(); warning != m_warnings.end(); ++warning ) {
+    for ( auto warning = m_warnings.begin(); warning != m_warnings.end(); ++warning ) {
       std::cout << "LoKi::ErrorReport\t";
       std::cout << "  ALWAYS ";
       std::cout << " #WARNINGS  = " << warning->second << " Message='" << warning->first << "'" << std::endl;
@@ -84,7 +84,7 @@ StatusCode LoKi::ErrorReport::report() const {
 // ============================================================================
 LoKi::ErrorReport::~ErrorReport() {
   // reset the reporter
-  m_reporter = 0;
+  m_reporter = nullptr;
   // make a report
   report();
 }
@@ -117,7 +117,7 @@ StatusCode LoKi::ErrorReport::setReporter( const LoKi::IReporter* reporter ) {
 // ============================================================================
 StatusCode LoKi::ErrorReport::Error( const std::string& msg, const StatusCode& st, const size_t mx ) const {
   st.ignore();
-  if ( 0 != m_reporter ) { return m_reporter->Error( msg, st, mx ); }
+  if ( m_reporter ) { return m_reporter->Error( msg, st, mx ); }
   const size_t ne = ++m_errors[msg];
   //
   const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxErrorPrint() );
@@ -134,7 +134,7 @@ StatusCode LoKi::ErrorReport::Error( const std::string& msg, const StatusCode& s
 // ============================================================================
 StatusCode LoKi::ErrorReport::Warning( const std::string& msg, const StatusCode& st, const size_t mx ) const {
   st.ignore();
-  if ( 0 != m_reporter ) { return m_reporter->Warning( msg, st, mx ); }
+  if ( m_reporter ) { return m_reporter->Warning( msg, st, mx ); }
   const size_t ne = ++m_warnings[msg];
   //
   const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxWarningPrint() );
@@ -152,7 +152,7 @@ StatusCode LoKi::ErrorReport::Warning( const std::string& msg, const StatusCode&
 // ============================================================================
 StatusCode LoKi::ErrorReport::Print( const std::string& msg, const StatusCode& st, const MSG::Level lev ) const {
   st.ignore();
-  if ( 0 != m_reporter ) { return m_reporter->Print( msg, st, lev ); }
+  if ( m_reporter ) { return m_reporter->Print( msg, st, lev ); }
   //
   std::cerr << "LoKi::ErrorReport\t";
   if ( MSG::ALWAYS == lev ) {
@@ -195,7 +195,7 @@ StatusCode LoKi::ErrorReport::Print( const std::string& msg, const StatusCode& s
 // ============================================================================
 void LoKi::ErrorReport::Exception( const std::string& msg, const GaudiException& exc, const StatusCode& sc ) const {
   sc.ignore();
-  if ( 0 != m_reporter ) {
+  if ( m_reporter ) {
     m_reporter->Exception( msg, exc, sc );
     return;
   }
@@ -209,7 +209,7 @@ void LoKi::ErrorReport::Exception( const std::string& msg, const GaudiException&
 // ============================================================================
 void LoKi::ErrorReport::Exception( const std::string& msg, const std::exception& exc, const StatusCode& sc ) const {
   sc.ignore();
-  if ( 0 != m_reporter ) {
+  if ( m_reporter ) {
     m_reporter->Exception( msg, exc, sc );
     return;
   }
@@ -223,7 +223,7 @@ void LoKi::ErrorReport::Exception( const std::string& msg, const std::exception&
 // ============================================================================
 void LoKi::ErrorReport::Exception( const std::string& msg, const StatusCode& sc ) const {
   sc.ignore();
-  if ( 0 != m_reporter ) {
+  if ( m_reporter ) {
     m_reporter->Exception( msg, sc );
     return;
   }

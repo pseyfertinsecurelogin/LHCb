@@ -47,7 +47,7 @@ namespace LoKi {
     /// copy  constructor
     Listener( const Listener& ); // copy constructor
     /// MANDATORY: virtual destructor
-    virtual ~Listener(); // MANDATORY: virtual destrcutor
+    ~Listener() override; // MANDATORY: virtual destrcutor
     // ========================================================================
   public:
     // ========================================================================

@@ -166,7 +166,7 @@ LoKi::TES::Contains* LoKi::TES::Contains::clone() const { return new LoKi::TES::
 // MANDATORY: the only one essential method
 // ============================================================================
 double LoKi::TES::Contains::operator()( /* LoKi::TES::Contains::argument */ ) const {
-  const ObjectContainerBase* obj = LoKi::TES::get_<ObjectContainerBase>( *this );
+  const auto* obj = LoKi::TES::get_<ObjectContainerBase>( *this );
   if ( !obj ) { return -1; }
   return obj->numberOfObjects();
 }
@@ -229,7 +229,7 @@ LoKi::TES::HrcSumAdc* LoKi::TES::HrcSumAdc::clone() const { return new LoKi::TES
 // ============================================================================
 double LoKi::TES::HrcSumAdc::operator()() const {
   //
-  const LHCb::HCDigits* digits = LoKi::TES::get_<LHCb::HCDigits>( *this );
+  const auto* digits = LoKi::TES::get_<LHCb::HCDigits>( *this );
   //
   if ( !digits ) { return 99999; } // RETURN
   // Determine the station ID (internal index)
@@ -306,7 +306,7 @@ LoKi::TES::Counter* LoKi::TES::Counter::clone() const { return new LoKi::TES::Co
 // ============================================================================
 double LoKi::TES::Counter::operator()() const {
   //
-  const Gaudi::Numbers* data = LoKi::TES::get_<Gaudi::Numbers>( *this );
+  const auto* data = LoKi::TES::get_<Gaudi::Numbers>( *this );
   if ( !data ) {
     Error( "No valid object is found for TES location, return 'bad'" );
     return m_bad;
@@ -338,7 +338,6 @@ std::ostream& LoKi::TES::Counter::fillStream( std::ostream& s ) const {
 }
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace TES {
     // =======================================================================-
     /** Helper class used to extract information from a \c StatEntity object.
@@ -358,7 +357,7 @@ namespace LoKi {
         /// Extract some data from a \c StatEntity object.
         virtual double operator()( const StatEntity& ent ) const = 0;
         /// Name of the data member of \c StatEntity that the helper gets.
-        virtual std::string name() const = 0;
+        [[nodiscard]] virtual std::string name() const = 0;
       };
 
       /// Helper used to actually access the content of \c StatEntity.
@@ -368,7 +367,7 @@ namespace LoKi {
         /// \c StatEntity object.
         double operator()( const StatEntity& ent ) const override;
         /// Return a string representing, essentially, the template argument.
-        std::string name() const override;
+        [[nodiscard]] std::string name() const override;
       };
 
       /// Commodity function to create a new specialized \c Helper instance.
@@ -416,7 +415,7 @@ namespace LoKi {
 
       /// Name of the \c StatEntity data member.
       /// Forwards the call to the \c Helper instance.
-      std::string name() const {
+      [[nodiscard]] std::string name() const {
         assert( m_helper.get() );
         return m_helper->name();
       }
@@ -434,7 +433,7 @@ namespace LoKi {
   }                                                                                                                    \
   template <>                                                                                                          \
   inline void StatEntityGetter::setHelper<StatEntityGetter::Fun>() {                                                   \
-    m_helper = std::make_shared<const Helper<Fun>>();                                                                  \
+    m_helper = std::make_shared<const Helper<( Fun )>>();                                                              \
   }
 
     SpecializedHelper( nEntries ) SpecializedHelper( sum ) SpecializedHelper( sum2 ) SpecializedHelper( mean )
@@ -538,11 +537,11 @@ LoKi::TES::Stat* LoKi::TES::Stat::clone() const { return new LoKi::TES::Stat( *t
 double LoKi::TES::Stat::operator()() const {
   //
   if ( counter().empty() ) {
-    const Gaudi::Counter* cnt = LoKi::TES::get_<Gaudi::Counter>( *this );
+    const auto* cnt = LoKi::TES::get_<Gaudi::Counter>( *this );
     if ( cnt ) return ( *m_getter )( cnt->counter() );
   }
   //
-  const Gaudi::Counters* data = LoKi::TES::get_<Gaudi::Counters>( *this );
+  const auto* data = LoKi::TES::get_<Gaudi::Counters>( *this );
   if ( !data ) {
     Error( "No valid object is found for TES location, return 'bad'" );
     return bad();

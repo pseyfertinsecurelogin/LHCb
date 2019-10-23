@@ -180,7 +180,7 @@ StatusCode LoKi::CounterAlg::updateItems() // update variables
 {
   try {
     // get the factory
-    LoKi::Hybrid::ICoreFactory* factory = tool<LoKi::Hybrid::ICoreFactory>( m_factory, this );
+    auto* factory = tool<LoKi::Hybrid::ICoreFactory>( m_factory, this );
     //
     m_items.clear();
     m_items.reserve( m_map.size() );

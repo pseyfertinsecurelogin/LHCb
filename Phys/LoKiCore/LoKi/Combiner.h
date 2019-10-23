@@ -114,37 +114,37 @@ namespace LoKi {
   public:
     // ========================================================================
     /// type for container itself
-    typedef CONTAINER Container;
+    using Container = CONTAINER;
     /// type for effective range
-    typedef Gaudi::Range_<Container> Range;
+    using Range = Gaudi::Range_<Container>;
     /// iterator type
-    typedef typename Range::const_iterator iterator;
+    using iterator = typename Range::const_iterator;
     /// definition of (multy)iterator
-    typedef std::vector<iterator> Select;
+    using Select = std::vector<iterator>;
     /// type for back-up
     typedef std::pair<Select, size_t> BackUp;
     /// container of back-ups
-    typedef std::vector<BackUp> BackUps;
+    using BackUps = std::vector<BackUp>;
     // ========================================================================
   private:
     // ========================================================================
     /// the Combiner_ itself
-    typedef std::vector<Range> Ranges;
+    using Ranges = std::vector<Range>;
     /// iterator over selected combination
-    typedef typename Select::iterator it;
+    using it = typename Select::iterator;
     /// iterator over selected combination (const version)
-    typedef typename Select::const_iterator cit;
+    using cit = typename Select::const_iterator;
     /// iterator over the Combiner_
-    typedef typename Ranges::iterator rit;
+    using rit = typename Ranges::iterator;
     /// iterator over the Combiner_ (cont version)
-    typedef typename Ranges::const_iterator rcit;
+    using rcit = typename Ranges::const_iterator;
     // ========================================================================
   public:
     // ========================================================================
     /** default constructor, constructs empty Combiner_
      *  the state in "invalid"!
      */
-    Combiner_() : m_size( 0 ), m_index( 0 ) {
+    Combiner_() {
       backup(); // make the backup of initial empty state
     }
     // ========================================================================
@@ -152,10 +152,10 @@ namespace LoKi {
     ~Combiner_() { clear(); } // destructor
     // ========================================================================
     /// current dimentions (=number of components)  of the Combiner_
-    size_t dim() const { return m_ranges.size(); }
+    [[nodiscard]] size_t dim() const { return m_ranges.size(); }
     // ========================================================================
     /// current size of the Combiner_  (include ALL combinations)
-    size_t size() const { return m_size; }
+    [[nodiscard]] size_t size() const { return m_size; }
     // ========================================================================
     /** add one more "container" to the existing Combiner_.
      *  @param range  the sequence range
@@ -230,12 +230,12 @@ namespace LoKi {
     /** end
      *  @return true if there is no more combinatios
      */
-    bool end() const { return !( m_index < m_size ); }
+    [[nodiscard]] bool end() const { return !( m_index < m_size ); }
     // ========================================================================
     /** check the validity of current (multi)iterator
      *  @return true if no "actual" sub-iterators are invalid
      */
-    bool valid() const { return m_size != 0 && m_index < m_size; }
+    [[nodiscard]] bool valid() const { return m_size != 0 && m_index < m_size; }
     // ========================================================================
     /** advance 'current' (multi)iterator.
      *  I guess it the most tricky funtion of the whole class.
@@ -293,7 +293,7 @@ namespace LoKi {
      *  @return true if current combination  is 'unique'
      *  @attention ut has no sence fro invalid combinations!
      */
-    bool unique() const {
+    [[nodiscard]] bool unique() const {
       // get the proper uniquiness criteria:
       return unique( std::not_equal_to<typename CONTAINER::value_type>() );
     }
@@ -345,9 +345,9 @@ namespace LoKi {
     /// "current" iterator
     Select m_current; // "current" iterator
     /// total number of combinations
-    size_t m_size; // total number of combinations
+    size_t m_size{0}; // total number of combinations
     /// index of current combination
-    size_t m_index; // index of current combination
+    size_t m_index{0}; // index of current combination
     /// 'State' of the combiner
     BackUps m_backups; // 'State' of the combiner
     // ========================================================================

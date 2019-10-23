@@ -48,13 +48,13 @@ namespace LoKi {
   struct ConstView : public std::pair<typename LoKi::ConstIterator<typename CONTAINER::const_iterator>,
                                       typename LoKi::ConstIterator<typename CONTAINER::const_iterator>> {
   public:
-    typedef LoKi::ConstIterator<typename CONTAINER::const_iterator> const_iterator;
-    typedef const_iterator                                          iterator;
-    typedef typename iterator::value_type                           value_type;
-    typedef typename iterator::reference                            const_reference;
-    typedef const_reference                                         reference;
-    typedef typename iterator::pointer                              pointer;
-    typedef typename CONTAINER::size_type                           size_type;
+    using const_iterator  = LoKi::ConstIterator<typename CONTAINER::const_iterator>;
+    using iterator        = const_iterator;
+    using value_type      = typename iterator::value_type;
+    using const_reference = typename iterator::reference;
+    using reference       = const_reference;
+    using pointer         = typename iterator::pointer;
+    using size_type       = typename CONTAINER::size_type;
 
   protected:
     typedef std::pair<iterator, iterator> _Base;
@@ -81,7 +81,7 @@ namespace LoKi {
     /// the last element : undefined for empty ranges
     const_reference back() const { return *( begin() + ( size() - 1 ) ); }
     /// empty sequence ?
-    bool empty() const { return _Base::first == _Base::second; }
+    [[nodiscard]] bool empty() const { return _Base::first == _Base::second; }
     /// number of elements in the sequence
     size_type size() const { return _Base::second - _Base::first; }
     /// get the element at the given index

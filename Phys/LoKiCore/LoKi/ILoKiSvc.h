@@ -60,13 +60,13 @@ namespace LoKi {
      *  @return pointer to Good error reporter
      *  @see LoKi::IReporter
      */
-    virtual LoKi::IReporter* reporter() const = 0;
+    [[nodiscard]] virtual LoKi::IReporter* reporter() const = 0;
     // ========================================================================
     /** The the sequential event number
      *  (needed for the proper synchronizations checks)
      *  @return the sequential event number
      */
-    virtual unsigned long long event() const = 0;
+    [[nodiscard]] virtual unsigned long long event() const = 0;
     // ========================================================================
   };
   // ==========================================================================

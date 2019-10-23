@@ -79,9 +79,9 @@ namespace LoKi {
     /** copy conctructor
      *  @param record the record to be copied
      */
-    Record( const Record& record ) : Tuples::Tuple( record ){};
+    Record( const Record& record ) = default;
     /// destructor
-    virtual ~Record();
+    ~Record() override;
 
   private:
     /// default constructor is private

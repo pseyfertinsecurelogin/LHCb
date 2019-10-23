@@ -71,7 +71,7 @@ namespace LoKi {
      */
     GAUDI_API
     AIDA::IHistogram1D* book( const std::string& dir, const std::string& id, const Gaudi::Histo1DDef& hist,
-                              IHistogramSvc* svc = 0 );
+                              IHistogramSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it books the histogram through IHistogramSvc
@@ -83,7 +83,7 @@ namespace LoKi {
      */
     GAUDI_API
     AIDA::IHistogram1D* book( const std::string& dir, const int id, const Gaudi::Histo1DDef& hist,
-                              IHistogramSvc* svc = 0 );
+                              IHistogramSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it books the histogram through IHistogramSvc
@@ -95,7 +95,7 @@ namespace LoKi {
      */
     GAUDI_API
     AIDA::IHistogram1D* book( const std::string& dir, const GaudiAlg::ID& id, const Gaudi::Histo1DDef& hist,
-                              IHistogramSvc* svc = 0 );
+                              IHistogramSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param alg  the algorithm, whcih owns the histogram
@@ -174,7 +174,8 @@ namespace LoKi {
      *  @return booked histogram
      */
     GAUDI_API
-    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const std::string& id, const IAlgContextSvc* svc = 0 );
+    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const std::string& id,
+                              const IAlgContextSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it looks for the appropriate Histo-algorithm within "context"
@@ -185,7 +186,7 @@ namespace LoKi {
      *  @return booked histogram
      */
     GAUDI_API
-    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const int id, const IAlgContextSvc* svc = 0 );
+    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const int id, const IAlgContextSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it looks for the appropriate Histo-algorithm within "context"
@@ -196,7 +197,8 @@ namespace LoKi {
      *  @return booked histogram
      */
     GAUDI_API
-    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const GaudiAlg::ID& id, const IAlgContextSvc* svc = 0 );
+    AIDA::IHistogram1D* book( const Gaudi::Histo1DDef& hist, const GaudiAlg::ID& id,
+                              const IAlgContextSvc* svc = nullptr );
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param hist histogram desctription

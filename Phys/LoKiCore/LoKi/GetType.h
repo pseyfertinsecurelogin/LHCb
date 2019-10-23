@@ -37,22 +37,22 @@ namespace LoKi {
    */
   template <class TYPE>
   struct GetType {
-    typedef TYPE Type;
+    using Type = TYPE;
   };
   // ==========================================================================
   template <class TYPE>
   struct GetType<const TYPE> {
-    typedef typename GetType<TYPE>::Type Type;
+    using Type = typename GetType<TYPE>::Type;
   };
   // ==========================================================================
   template <class TYPE>
   struct GetType<TYPE&> {
-    typedef typename GetType<TYPE>::Type Type;
+    using Type = typename GetType<TYPE>::Type;
   };
   // ==========================================================================
   template <class TYPE>
   struct GetType<TYPE*> {
-    typedef typename GetType<TYPE>::Type Type;
+    using Type = typename GetType<TYPE>::Type;
   };
   // ==========================================================================
 } // end of namespace LoKi

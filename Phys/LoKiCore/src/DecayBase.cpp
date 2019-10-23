@@ -63,7 +63,7 @@ LoKi::DecayBase::DecayBase( const std::string& type,   // the actual tool type (
                             const IInterface*  parent ) //               the parent
     : GaudiTool( type, name, parent )
     //
-    , m_ppSvc( 0 )
+    , m_ppSvc( nullptr )
     , m_default_node()
     , m_default_tree() {
   declareProperty( "DefaultNode", m_default_node, "The default node" );
@@ -72,12 +72,12 @@ LoKi::DecayBase::DecayBase( const std::string& type,   // the actual tool type (
 // =============================================================================
 // destructor
 // =============================================================================
-LoKi::DecayBase::~DecayBase() {}
+LoKi::DecayBase::~DecayBase() = default;
 // =============================================================================
 // finalize
 // =============================================================================
 StatusCode LoKi::DecayBase::finalize() {
-  m_ppSvc = 0;
+  m_ppSvc = nullptr;
   return GaudiTool::finalize();
 }
 // =============================================================================

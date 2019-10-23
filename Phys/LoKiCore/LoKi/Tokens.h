@@ -37,7 +37,7 @@
 namespace LoKi {
   // ==========================================================================
   /// useful typedef
-  typedef std::vector<std::string> Tokens;
+  using Tokens = std::vector<std::string>;
   // ==========================================================================
   /** Very simple tokenizer for LoKi
    *

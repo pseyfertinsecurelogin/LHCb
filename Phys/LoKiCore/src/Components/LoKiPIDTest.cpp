@@ -40,7 +40,7 @@ namespace LoKi {
       if ( sc.isFailure() ) { return sc; } // RETURN
       svc<LoKi::ILoKiSvc>( "LoKiSvc", true );
       m_svc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc", true );
-      Assert( 0 != m_svc, "Invalid pointer to  Particle Properety Service!" );
+      Assert( nullptr != m_svc, "Invalid pointer to  Particle Properety Service!" );
       return StatusCode::SUCCESS; // RETURN
     }
     // ========================================================================
@@ -48,11 +48,11 @@ namespace LoKi {
       // avoid long names
       using namespace LoKi::Particles;
       // check
-      Assert( 0 != m_svc, "Invalid pointer to  Particle Properety Service!" );
+      Assert( nullptr != m_svc, "Invalid pointer to  Particle Properety Service!" );
       // loop over properties:
-      for ( LHCb::IParticlePropertySvc::iterator ipp = m_svc->begin(); m_svc->end() != ipp; ++ipp ) {
+      for ( auto ipp = m_svc->begin(); m_svc->end() != ipp; ++ipp ) {
         const LHCb::ParticleProperty* pp = *ipp;
-        if ( 0 == pp ) { continue; } // RETURN
+        if ( !pp ) { continue; } // RETURN
         debug() << "Name/PID: "
                 << "'" << pp->particle() << "':" << pp->pdgID() << endmsg;
         // verify name -> pid map

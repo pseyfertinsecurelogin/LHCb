@@ -57,7 +57,7 @@ namespace LoKi {
       /// constructor from the numbers
       Numbers( const Rndm::Numbers& numbers );
       /// constructor from the generator and the service
-      Numbers( const IRndmGen::Param& param, IRndmGenSvc* service = 0 );
+      Numbers( const IRndmGen::Param& param, IRndmGenSvc* service = nullptr );
       /// constructor from the generator and the service
       Numbers( IRndmGenSvc* service, const IRndmGen::Param& param );
       /// copy constructor
@@ -122,11 +122,11 @@ namespace LoKi {
     public:
       // ======================================================================
       /// constructor  from the descriptor and the service
-      Uniform( const Rndm::Flat& flat, IRndmGenSvc* svc = 0 );
+      Uniform( const Rndm::Flat& flat, IRndmGenSvc* svc = nullptr );
       /// constructor from service and descriptor
       Uniform( IRndmGenSvc* svc, const Rndm::Flat& flat );
       /// constructor from low, high and service
-      Uniform( const double low = 0, const double high = 1, IRndmGenSvc* svc = 0 );
+      Uniform( const double low = 0, const double high = 1, IRndmGenSvc* svc = nullptr );
       /// constructor from service , low and high
       Uniform( IRndmGenSvc* svc, const double low = 0, const double high = 1 );
       /// MANDATORY: clone method ("virtual constructor")
@@ -177,11 +177,11 @@ namespace LoKi {
     public:
       // ======================================================================
       /// constructor  from the descriptor and the service
-      Gaussian( const Rndm::Gauss& gauss, IRndmGenSvc* svc = 0 );
+      Gaussian( const Rndm::Gauss& gauss, IRndmGenSvc* svc = nullptr );
       /// constructor from service and descriptor
       Gaussian( IRndmGenSvc* svc, const Rndm::Gauss& gauss );
       /// constructor from mean, sigma and service
-      Gaussian( const double mean = 0, const double sigma = 1, IRndmGenSvc* svc = 0 );
+      Gaussian( const double mean = 0, const double sigma = 1, IRndmGenSvc* svc = nullptr );
       /// constructor from service , mean and sigma
       Gaussian( IRndmGenSvc* svc, const double mean = 0, const double sigma = 1 );
       /// MANDATORY: clone method ("virtual constructor")
@@ -334,7 +334,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Numbers XRANDOM;
+    using XRANDOM = LoKi::Random::Numbers;
     // ========================================================================
     /** @typedef XRND
      *  Simple functor which produces the random numbers acording to
@@ -361,7 +361,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Uniform XRND;
+    using XRND = LoKi::Random::Uniform;
     // ========================================================================
     /** @var XRNDM
      *  Simple functor which produces the random numbers acording to
@@ -406,7 +406,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Gaussian XGAUS;
+    using XGAUS = LoKi::Random::Gaussian;
     // ========================================================================
     /** @var XGAUSS
      *  Simple functor whcih produces the random numbers acording to
@@ -466,7 +466,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-10-10
      */
-    typedef LoKi::Random::Blind BLIND;
+    using BLIND = LoKi::Random::Blind;
     // ==========================================================================
     /** @typedef XBLIND
      *  simple 'void'-function useful for various 'blind'-operations
@@ -488,7 +488,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-10-10
      */
-    typedef LoKi::Random::XBlind XBLIND;
+    using XBLIND = LoKi::Random::XBlind;
     // ========================================================================
   } // namespace Cuts
   // ==========================================================================

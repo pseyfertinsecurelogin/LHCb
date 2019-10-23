@@ -71,7 +71,7 @@ LoKi::Hybrid::CoreEngineActor::CoreEngineActor() : m_stack() {}
 // ============================================================================
 // destructor
 // ============================================================================
-LoKi::Hybrid::CoreEngineActor::~CoreEngineActor() {}
+LoKi::Hybrid::CoreEngineActor::~CoreEngineActor() = default;
 // ============================================================================
 // disconnect the tool
 // ============================================================================

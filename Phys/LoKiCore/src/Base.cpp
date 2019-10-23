@@ -13,6 +13,8 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <utility>
+
 #include "GaudiKernel/System.h"
 // ============================================================================
 // LHCbKernel
@@ -55,7 +57,7 @@ namespace {
 // ============================================================================
 // Standard constructor
 // ============================================================================
-LoKi::Base::Base( const std::string& name, const IReporter* reporter ) : m_name( name ), m_reporter( reporter ) {
+LoKi::Base::Base( std::string name, const IReporter* reporter ) : m_name( std::move( name ) ), m_reporter( reporter ) {
   s_BaseCounter.increment();
 }
 // ============================================================================

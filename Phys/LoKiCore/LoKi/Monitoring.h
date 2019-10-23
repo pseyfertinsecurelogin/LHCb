@@ -16,6 +16,8 @@
 // ============================================================================
 // AIDA
 // ============================================================================
+#include <utility>
+
 #include "AIDA/IHistogram1D.h"
 // ============================================================================
 // GaudiKernel
@@ -309,13 +311,13 @@ namespace LoKi {
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer( LoKi::FunctorFromFunctor<TYPE, TYPE2> fun, std::ostream& stream = std::cout,
-               const std::string& suffix = "\n", const std::string& prefix = "" )
+      Printer( LoKi::FunctorFromFunctor<TYPE, TYPE2> fun, std::ostream& stream = std::cout, std::string suffix = "\n",
+               std::string prefix = "" )
           : LoKi::AuxFunBase( std::tie( fun ) )
           , m_fun( std::move( fun ) )
           , m_stream( stream )
-          , m_suffix( suffix )
-          , m_prefix( prefix ) {}
+          , m_suffix( std::move( suffix ) )
+          , m_prefix( std::move( prefix ) ) {}
       // ======================================================================
       /** constructor from the functor, stream, suffix and prefix
        *  @param fun the functor
@@ -323,13 +325,13 @@ namespace LoKi {
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer( std::ostream& stream, LoKi::FunctorFromFunctor<TYPE, TYPE2> fun, const std::string& suffix = "\n",
-               const std::string& prefix = "" )
+      Printer( std::ostream& stream, LoKi::FunctorFromFunctor<TYPE, TYPE2> fun, std::string suffix = "\n",
+               std::string prefix = "" )
           : LoKi::AuxFunBase( std::tie( fun ) )
           , m_fun( std::move( fun ) )
           , m_stream( stream )
-          , m_suffix( suffix )
-          , m_prefix( prefix ) {}
+          , m_suffix( std::move( suffix ) )
+          , m_prefix( std::move( prefix ) ) {}
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Printer* clone() const override { return new Printer( *this ); }
@@ -346,7 +348,7 @@ namespace LoKi {
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream( std::ostream& s ) const override { return m_fun.fillStream( s ); }
       /// OPTIONAL: delegate ID:
-      std::size_t id() const override { return m_fun.id(); }
+      [[nodiscard]] std::size_t id() const override { return m_fun.id(); }
       // ======================================================================
     private:
       // ======================================================================
@@ -376,13 +378,13 @@ namespace LoKi {
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer( LoKi::FunctorFromFunctor<void, TYPE2> fun, std::ostream& stream = std::cout,
-               const std::string& suffix = "\n", const std::string& prefix = "" )
+      Printer( LoKi::FunctorFromFunctor<void, TYPE2> fun, std::ostream& stream = std::cout, std::string suffix = "\n",
+               std::string prefix = "" )
           : LoKi::AuxFunBase( std::tie( fun ) )
           , m_fun( std::move( fun ) )
           , m_stream( stream )
-          , m_suffix( suffix )
-          , m_prefix( prefix ) {}
+          , m_suffix( std::move( suffix ) )
+          , m_prefix( std::move( prefix ) ) {}
       // ======================================================================
       /** constructor from the functor, stream, suffix and prefix
        *  @param fun the functor
@@ -390,13 +392,13 @@ namespace LoKi {
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer( std::ostream& stream, LoKi::FunctorFromFunctor<void, TYPE2> fun, const std::string& suffix = "\n",
-               const std::string& prefix = "" )
+      Printer( std::ostream& stream, LoKi::FunctorFromFunctor<void, TYPE2> fun, std::string suffix = "\n",
+               std::string prefix = "" )
           : LoKi::AuxFunBase( std::tie( fun ) )
           , m_fun( std::move( fun ) )
           , m_stream( stream )
-          , m_suffix( suffix )
-          , m_prefix( prefix ) {}
+          , m_suffix( std::move( suffix ) )
+          , m_prefix( std::move( prefix ) ) {}
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Printer* clone() const override { return new Printer( *this ); }
@@ -413,7 +415,7 @@ namespace LoKi {
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream( std::ostream& s ) const override { return m_fun.fillStream( s ); }
       /// OPTIONAL: delegate ID:
-      std::size_t id() const override { return m_fun.id(); }
+      [[nodiscard]] std::size_t id() const override { return m_fun.id(); }
       // ======================================================================
     private:
       // ======================================================================

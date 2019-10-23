@@ -56,14 +56,14 @@ namespace LoKi {
   class Keeper : public KeeperBase {
   public:
     // ========================================================================
-    typedef std::vector<const OBJECT*>               Objects;
-    typedef typename Objects::const_iterator         iterator;
-    typedef iterator                                 const_iterator;
-    typedef typename Objects::const_reverse_iterator reverse_iterator;
-    typedef reverse_iterator                         const_reverse_iterator;
-    typedef typename Objects::value_type             value_type;
-    typedef typename Objects::reference              reference;
-    typedef typename Objects::const_reference        const_reference;
+    using Objects                = std::vector<const OBJECT*>;
+    using iterator               = typename Objects::const_iterator;
+    using const_iterator         = iterator;
+    using reverse_iterator       = typename Objects::const_reverse_iterator;
+    using const_reverse_iterator = reverse_iterator;
+    using value_type             = typename Objects::value_type;
+    using reference              = typename Objects::reference;
+    using const_reference        = typename Objects::const_reference;
     // ========================================================================
   public:
     // ========================================================================

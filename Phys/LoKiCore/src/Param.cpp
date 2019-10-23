@@ -51,7 +51,7 @@ namespace {
    *  @todo improve it for more flexibility
    *  @thanks Alexander MAZUROV
    */
-  const std::regex s_pattern( "(\\w+)\\s*(?:\\[\\s*(\\w+)\\s*\\])?\\s*(?:/\\s*(\\w+))?" );
+  const std::regex s_pattern( R"((\w+)\s*(?:\[\s*(\w+)\s*\])?\s*(?:/\s*(\w+))?)" );
   //
   bool parse( const std::string& input, std::string& property, std::string& key, std::string& alg ) {
     std::string::size_type r = input.rfind( '/' );

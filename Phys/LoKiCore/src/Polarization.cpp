@@ -40,7 +40,7 @@ namespace {
 // ============================================================================
 namespace {
   // ==========================================================================
-  typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<long double>> LV;
+  using LV = ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<long double>>;
   // ==========================================================================
   LoKi::Kinematics::Polarization::Frame _frame_( const long double az, const long double bz, const LV& AT, const LV& BT,
                                                  const LV&                                                  P,
@@ -69,7 +69,7 @@ namespace {
     const long double im = 1 / P.M();
     const LV          Y( LoKi::Tensors::Epsilon::epsilon( P, X, Z ) * -im );
     //
-    typedef LoKi::LorentzVector VL;
+    using VL = LoKi::LorentzVector;
     return {{VL( X ), VL( Y ), VL( Z ), VL( LoKi::Tensors::Epsilon::epsilon( X, Y, Z ) )}};
   }
   // ==========================================================================
@@ -211,11 +211,11 @@ LoKi::Kinematics::Polarization::angles( const LoKi::LorentzVector& p, const LoKi
 // ============================================================================
 LoKi::Kinematics::Polarization::PolVectors
 LoKi::Kinematics::Polarization::vectors( const LoKi::Kinematics::Polarization::Frame& f ) {
-  typedef LoKi::LorentzVector        VL;
-  typedef LoKi::ComplexLorentzVector CLV;
-  const VL&                          ax = f[0];
-  const VL&                          ay = f[1];
-  const VL&                          az = f[2];
+  using VL     = LoKi::LorentzVector;
+  using CLV    = LoKi::ComplexLorentzVector;
+  const VL& ax = f[0];
+  const VL& ay = f[1];
+  const VL& az = f[2];
   //
   static const double               s_isq2 = 1 / std::sqrt( 2.0 );
   static const std::complex<double> j{0, 1};

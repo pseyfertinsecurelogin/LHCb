@@ -60,9 +60,9 @@ LoKi::TES::HasRecSummary* LoKi::TES::HasRecSummary::clone() const { return new L
 // ============================================================================
 bool LoKi::TES::HasRecSummary::operator()() const {
   //
-  const LHCb::RecSummary* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
+  const auto* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
-  if ( NULL == summary ) {
+  if ( !summary ) {
     Error( "No LHCb::RecSummary is available at '" + location() + "'" );
     return false;
   }
@@ -105,9 +105,9 @@ LoKi::TES::RecSummary* LoKi::TES::RecSummary::clone() const { return new LoKi::T
 // ============================================================================
 double LoKi::TES::RecSummary::operator()() const {
   //
-  const LHCb::RecSummary* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
+  const auto* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
-  if ( NULL == summary ) {
+  if ( !summary ) {
     Error( "No LHCb::RecSummary is available at '" + location() + "'" );
     return m_bad;
   }

@@ -18,23 +18,19 @@
 #include "Kernel/Nodes.h"
 #include <ostream>
 #include <vector>
-namespace Decays {
-  // ==========================================================================
-  namespace Parsers {
-    // ========================================================================
-    /** parse the decay node
-     *  @param node      (OUTPUT) the decay node
-     *  @param input     (INPUT)  the input string to be parsed
-     *  @param symbols   (INPUT)  the list of known predefiend symbols
-     *  @param particles (INPUT)  the list of particle
-     *  @param stream    the sterem to report the errors
-     */
-    StatusCode parse( Decays::Node& node, const std::string& input, const std::vector<std::string>& symbols,
-                      const std::vector<std::string>& particles, std::ostream& stream );
-    // ========================================================================
-  } // namespace Parsers
-  // ==========================================================================
-} // end of namespace Decays
+namespace Decays::Parsers {
+  // ========================================================================
+  /** parse the decay node
+   *  @param node      (OUTPUT) the decay node
+   *  @param input     (INPUT)  the input string to be parsed
+   *  @param symbols   (INPUT)  the list of known predefiend symbols
+   *  @param particles (INPUT)  the list of particle
+   *  @param stream    the sterem to report the errors
+   */
+  StatusCode parse( Decays::Node& node, const std::string& input, const std::vector<std::string>& symbols,
+                    const std::vector<std::string>& particles, std::ostream& stream );
+  // ========================================================================
+} // namespace Decays::Parsers
 // ============================================================================
 // The END
 // ============================================================================

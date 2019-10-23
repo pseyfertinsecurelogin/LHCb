@@ -30,7 +30,7 @@ namespace LoKi {
   // ==========================================================================
   template <class T>
   struct CacheFactory {
-    typedef T                                                         CutType;
+    using CutType = T;
     typedef ::Gaudi::PluginService::LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*, LoKi::Context> Factory;
     static std::string id( unsigned int hash ) { return "loki_functor_" + std::to_string( hash ); }
   };
@@ -39,7 +39,7 @@ namespace LoKi {
     // ========================================================================
     template <class T, unsigned int HASH>
     struct CacheFactory : public ::LoKi::CacheFactory<T> {
-      typedef T                                                         CutType;
+      using CutType = T;
       typedef ::Gaudi::PluginService::LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*, LoKi::Context> Factory;
       // static typename Factory::ReturnType create();
       static typename Factory::ReturnType create( const LoKi::Context& context );
@@ -49,35 +49,21 @@ namespace LoKi {
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace PluginService {
-#if GAUDI_PLUGIN_SERVICE_USE_V2
-    namespace v1 {
-#endif
-      // ========================================================================
-      namespace Details {
-        // ======================================================================
-        template <class CutType, unsigned int HASH>
-        class Factory<LoKi::Details::CacheFactory<CutType, HASH>> {
-        public:
-          // template <typename S>
-          // static typename S::ReturnType create()
-          // { return LoKi::Details::CacheFactory<CutType, HASH>::create(); }
-          template <typename S, typename... Args>
-          static typename S::ReturnType create( Args... args ) {
-            return LoKi::Details::CacheFactory<CutType, HASH>::create( args... );
-          }
-        };
-        // ======================================================================
-      } // namespace Details
-#if GAUDI_PLUGIN_SERVICE_USE_V2
+namespace Gaudi::PluginService::v1::Details {
+  // ======================================================================
+  template <class CutType, unsigned int HASH>
+  class Factory<LoKi::Details::CacheFactory<CutType, HASH>> {
+  public:
+    // template <typename S>
+    // static typename S::ReturnType create()
+    // { return LoKi::Details::CacheFactory<CutType, HASH>::create(); }
+    template <typename S, typename... Args>
+    static typename S::ReturnType create( Args... args ) {
+      return LoKi::Details::CacheFactory<CutType, HASH>::create( args... );
     }
-#endif
-    // ========================================================================
-  } // namespace PluginService
-  // ==========================================================================
-} //                                                     end of namespace Gaudi
+  };
+  // ======================================================================
+} // namespace Gaudi::PluginService::v1::Details
 // ============================================================================
 #if GAUDI_PLUGIN_SERVICE_USE_V2
 #  define DECLARE_LOKI_FUNCTOR( CutType, Hash )                                                                        \

@@ -58,14 +58,14 @@ namespace LoKi {
   public: // STD (fake) signature
     // ========================================================================
     /// STL: the result value
-    typedef TYPE2 result_type;
+    using result_type = TYPE2;
     /// STL: the basic argument type
-    typedef TYPE argument_type;
+    using argument_type = TYPE;
     // ========================================================================
   public: // the actual signature
     // ========================================================================
     /// type for the argument
-    typedef typename boost::call_traits<const TYPE>::param_type argument;
+    using argument = typename boost::call_traits<const TYPE>::param_type;
     // ========================================================================
   public:
     // ========================================================================
@@ -78,7 +78,7 @@ namespace LoKi {
     /// clone method
     virtual Functor* clone() const = 0;
     /// virtual destructor
-    virtual ~Functor() = default;
+    ~Functor() override = default;
     // ========================================================================
   protected:
     // ========================================================================
@@ -142,11 +142,11 @@ namespace LoKi {
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override { return m_fun->fillStream( s ); };
     /// OPTIONAL: unique function ID, delegate to the underlying objects
-    std::size_t id() const override { return m_fun->id(); }
+    [[nodiscard]] std::size_t id() const override { return m_fun->id(); }
     /// OPTIONAL: delegate the object type
-    std::string objType() const override { return m_fun->objType(); }
+    [[nodiscard]] std::string objType() const override { return m_fun->objType(); }
     /// C++ printout: delegate
-    std::string toCpp() const override { return m_fun->toCpp(); }
+    [[nodiscard]] std::string toCpp() const override { return m_fun->toCpp(); }
     // ========================================================================
     /// evaluate the function
     auto fun( typename functor::argument a ) const { return std::invoke( *m_fun, a ); }
@@ -185,11 +185,11 @@ namespace LoKi {
   public:
     /// =======================================================================
     /// the result value
-    typedef TYPE2 result_type;
+    using result_type = TYPE2;
     /// the basic argument type
-    typedef void argument_type;
+    using argument_type = void;
     /// type for the argument
-    typedef void argument;
+    using argument = void;
     // ========================================================================
   public:
     // ========================================================================
@@ -202,7 +202,7 @@ namespace LoKi {
     /// clone method
     virtual Functor* clone() const = 0;
     /// virtual destructor
-    virtual ~Functor() = default;
+    ~Functor() override = default;
     // ========================================================================
   protected:
     // ========================================================================
@@ -262,11 +262,11 @@ namespace LoKi {
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override { return m_fun->fillStream( s ); };
     /// OPTIONAL: unique function ID, delegate to the underlying objects
-    std::size_t id() const override { return m_fun->id(); }
+    [[nodiscard]] std::size_t id() const override { return m_fun->id(); }
     /// OPTIONAL: delegate the object type
-    std::string objType() const override { return m_fun->objType(); }
+    [[nodiscard]] std::string objType() const override { return m_fun->objType(); }
     /// C++ printout: delegate
-    std::string toCpp() const override { return m_fun->toCpp(); }
+    [[nodiscard]] std::string toCpp() const override { return m_fun->toCpp(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -348,24 +348,22 @@ namespace LoKi {
     using signature_of_t = sig_t<type1_t<Fs...>, type2_t<Fs...>>;
   } // namespace details
 
-  namespace V2 {
-    namespace details {
+  namespace V2::details {
 
-      template <typename Arg>
-      using Param_t = typename boost::call_traits<std::add_const_t<Arg>>::param_type;
+    template <typename Arg>
+    using Param_t = typename boost::call_traits<std::add_const_t<Arg>>::param_type;
 
-      template <typename Signature>
-      struct sig_helper;
-      template <typename Result, typename... Args>
-      struct sig_helper<Result( Args... )> {
-        using result_of_t = Result;
-      };
+    template <typename Signature>
+    struct sig_helper;
+    template <typename Result, typename... Args>
+    struct sig_helper<Result( Args... )> {
+      using result_of_t = Result;
+    };
 
-      template <typename Signature>
-      using result_of_t = typename sig_helper<Signature>::result_of_t;
+    template <typename Signature>
+    using result_of_t = typename sig_helper<Signature>::result_of_t;
 
-    } // namespace details
-  }   // namespace V2
+  } // namespace V2::details
 
   // ========================================================================
 
@@ -381,7 +379,7 @@ namespace LoKi {
   public:
     // ========================================================================
     /// argument type
-    typedef typename boost::call_traits<TYPE2>::param_type T2;
+    using T2 = typename boost::call_traits<TYPE2>::param_type;
     // ========================================================================
   public:
     // ========================================================================
@@ -420,7 +418,7 @@ namespace LoKi {
   public:
     // ========================================================================
     /// argument type
-    typedef typename boost::call_traits<TYPE2>::param_type T2;
+    using T2 = typename boost::call_traits<TYPE2>::param_type;
     // ========================================================================
   public:
     // ========================================================================

@@ -267,7 +267,7 @@ namespace LoKi {
      */
     template <class K, class V, class A, class C>
     inline void addInfo( const GaudiUtils::VectorMap<K, V, A, C>& vmap, const int key, const double val ) {
-      GaudiUtils::VectorMap<K, V, A, C>& aux = const_cast<GaudiUtils::VectorMap<K, V, A, C>&>( vmap );
+      auto& aux = const_cast<GaudiUtils::VectorMap<K, V, A, C>&>( vmap );
       addInfo( aux, key, val );
     }
     // ========================================================================

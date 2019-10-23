@@ -54,16 +54,16 @@ int main() {
   std::vector<std::string> symbols, particles;
   syms.symbols( symbols );
 
-  particles.push_back( "B0" );
-  particles.push_back( "B+" );
-  particles.push_back( "B-" );
-  particles.push_back( "D0" );
-  particles.push_back( "D+" );
-  particles.push_back( "D-" );
-  particles.push_back( "chi_10" );
-  particles.push_back( "~chi_10" );
-  particles.push_back( "X(3872)+" );
-  particles.push_back( "X(3872)~+" );
+  particles.emplace_back( "B0" );
+  particles.emplace_back( "B+" );
+  particles.emplace_back( "B-" );
+  particles.emplace_back( "D0" );
+  particles.emplace_back( "D+" );
+  particles.emplace_back( "D-" );
+  particles.emplace_back( "chi_10" );
+  particles.emplace_back( "~chi_10" );
+  particles.emplace_back( "X(3872)+" );
+  particles.emplace_back( "X(3872)~+" );
 
   std::string input;
   std::cout << " Enter the tree " << std::endl;
