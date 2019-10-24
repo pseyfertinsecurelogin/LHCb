@@ -43,8 +43,7 @@ StatusCode DeUTStation::initialize() {
     msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   } else {
     // and the parent
-    m_id     = (unsigned int)param<int>( "stationID" );
-    m_parent = getParent<parent_type>();
+    m_id = (unsigned int)param<int>( "stationID" );
 
     UTChannelID aChan( UTChannelID::detType::typeUT, this->id(), 0, 0, 0, 0 );
     setElementID( aChan );

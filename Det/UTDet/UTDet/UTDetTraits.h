@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _UTDetTraits_H
-#define _UTDetTraits_H
+#pragma once
 
 /** @class UTDetTraits UTDetTraits.h "UTDet/UTDetTraits.h"
  *
@@ -26,45 +25,38 @@ class DeUTSector;
 class DeUTSensor;
 
 template <typename TYPE>
-class UTDetTraits {
-public:
-  typedef TYPE parent;
-  typedef TYPE child;
+struct UTDetTraits;
+
+template <>
+struct UTDetTraits<DeUTDetector> {
+  using child = DeUTStation;
 };
 
 template <>
-class UTDetTraits<DeUTStation> {
-public:
-  typedef DeUTDetector parent;
-  typedef DeUTLayer    child;
+struct UTDetTraits<DeUTStation> {
+  using parent = DeUTDetector;
+  using child  = DeUTLayer;
 };
 
 template <>
-class UTDetTraits<DeUTLayer> {
-public:
-  typedef DeUTStation parent;
-  typedef DeUTStave   child;
+struct UTDetTraits<DeUTLayer> {
+  using parent = DeUTStation;
+  using child  = DeUTStave;
 };
 
 template <>
-class UTDetTraits<DeUTStave> {
-public:
-  typedef DeUTLayer  parent;
-  typedef DeUTSector child;
+struct UTDetTraits<DeUTStave> {
+  using parent = DeUTLayer;
+  using child  = DeUTSector;
 };
 
 template <>
-class UTDetTraits<DeUTSector> {
-public:
-  typedef DeUTStave  parent;
-  typedef DeUTSensor child;
+struct UTDetTraits<DeUTSector> {
+  using parent = DeUTStave;
+  using child  = DeUTSensor;
 };
 
 template <>
-class UTDetTraits<DeUTSensor> {
-public:
-  typedef DeUTSector parent;
-  typedef DeUTSensor child;
+struct UTDetTraits<DeUTSensor> {
+  using parent = DeUTSector;
 };
-
-#endif
