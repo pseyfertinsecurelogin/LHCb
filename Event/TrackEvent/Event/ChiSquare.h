@@ -33,16 +33,16 @@ namespace LHCb {
     ChiSquare( const double chi2, int ndof ) : m_chi2( chi2 ), m_nDoF( ndof ) {}
 
     /// Default Constructor
-    ChiSquare() : m_chi2( 0.0 ), m_nDoF( 0 ) {}
+    ChiSquare() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// return chi2/ndof if ndof>0. returns zero otherwise.
-    double chi2PerDoF() const;
+    [[nodiscard]] double chi2PerDoF() const;
 
     /// return chisquare upper tail probability if ndof>0. returns zero otherwise.
-    double prob() const;
+    [[nodiscard]] double prob() const;
 
     /// addition operator
     ChiSquare& operator+=( const LHCb::ChiSquare& rhs );
@@ -57,17 +57,16 @@ namespace LHCb {
     ChiSquare operator-( const LHCb::ChiSquare& rhs ) const;
 
     /// Retrieve const  chi square
-    double chi2() const;
+    [[nodiscard]] double chi2() const;
 
     /// Retrieve const  number of degrees of freedom
-    int nDoF() const;
+    [[nodiscard]] int nDoF() const;
 
     friend std::ostream& operator<<( std::ostream& str, const ChiSquare& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    double m_chi2; ///< chi square
-    int    m_nDoF; ///< number of degrees of freedom
+    double m_chi2{0.0}; ///< chi square
+    int    m_nDoF{0};   ///< number of degrees of freedom
 
   }; // class ChiSquare
 

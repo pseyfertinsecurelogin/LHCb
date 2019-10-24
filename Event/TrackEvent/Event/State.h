@@ -47,8 +47,8 @@ namespace LHCb {
   class State final {
   public:
     /// typedef for std::vector of State
-    typedef std::vector<State*>       Vector;
-    typedef std::vector<const State*> ConstVector;
+    using Vector      = std::vector<State*>;
+    using ConstVector = std::vector<const State*>;
 
     /// typedef for KeyedContainer of State
     typedef KeyedContainer<State, Containers::HashMap> Container;
@@ -98,8 +98,8 @@ namespace LHCb {
     State( const LHCb::State::Location& location );
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const;
+    static const CLID&        classID();
 
     /// conversion of string to enum for type Location
     static LHCb::State::Location LocationToType( const std::string& aName );
@@ -108,7 +108,7 @@ namespace LHCb {
     static const std::string& LocationToString( int aEnum );
 
     /// Retrieve the number of state parameters
-    unsigned int nParameters() const;
+    [[nodiscard]] unsigned int nParameters() const;
 
     /// Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:0->2,mom:3-5) of the
     /// state
@@ -118,74 +118,74 @@ namespace LHCb {
     void positionAndMomentum( Gaudi::XYZPoint& pos, Gaudi::XYZVector& mom ) const;
 
     /// Retrieve the 3D-position vector (x,y,z) of the state
-    Gaudi::XYZPoint position() const;
+    [[nodiscard]] Gaudi::XYZPoint position() const;
 
     /// Retrieve the x-position of the state
-    double x() const;
+    [[nodiscard]] double x() const;
 
     /// Retrieve the y-position of the state
-    double y() const;
+    [[nodiscard]] double y() const;
 
     /// Retrieve the z-position of the state
-    double z() const;
+    [[nodiscard]] double z() const;
 
     /// Retrieve the slopes (Tx=dx/dz,Ty=dy/dz,1.) of the state
-    Gaudi::XYZVector slopes() const;
+    [[nodiscard]] Gaudi::XYZVector slopes() const;
 
     /// Retrieve the Tx=dx/dz slope of the state
-    double tx() const;
+    [[nodiscard]] double tx() const;
 
     /// Retrieve the Ty=dy/dz slope of the state
-    double ty() const;
+    [[nodiscard]] double ty() const;
 
     /// Retrieve the charge-over-momentum Q/P of the state
-    double qOverP() const;
+    [[nodiscard]] double qOverP() const;
 
     /// Retrieve the momentum of the state
-    double p() const;
+    [[nodiscard]] double p() const;
 
     /// Retrieve the transverse momentum of the state
-    double pt() const;
+    [[nodiscard]] double pt() const;
 
     /// Retrieve the momentum vector (px,py,pz) of the state
-    Gaudi::XYZVector momentum() const;
+    [[nodiscard]] Gaudi::XYZVector momentum() const;
 
     /// Retrieve the Q/Pperp (ratio of the charge to the component of the momentum transverse to the magnetic field) of
     /// the state
-    double qOverPperp() const;
+    [[nodiscard]] double qOverPperp() const;
 
     /// Retrieve the 6D (x,y,z,px,py,pz) covariance matrix of the state
-    Gaudi::SymMatrix6x6 posMomCovariance() const;
+    [[nodiscard]] Gaudi::SymMatrix6x6 posMomCovariance() const;
 
     /// Retrieve the errors on the 3D-position vector (x,y,z) of the state
-    Gaudi::SymMatrix3x3 errPosition() const;
+    [[nodiscard]] Gaudi::SymMatrix3x3 errPosition() const;
 
     /// Retrieve the squared error on the x-position of the state
-    double errX2() const;
+    [[nodiscard]] double errX2() const;
 
     /// Retrieve the squared error on the y-position of the state
-    double errY2() const;
+    [[nodiscard]] double errY2() const;
 
     /// Retrieve the errors on the slopes (Tx=dx/dz,Ty=dy/dz,1.) of the state
-    Gaudi::SymMatrix3x3 errSlopes() const;
+    [[nodiscard]] Gaudi::SymMatrix3x3 errSlopes() const;
 
     /// Retrieve the squared error on the x-slope Tx=dx/dz of the state
-    double errTx2() const;
+    [[nodiscard]] double errTx2() const;
 
     /// Retrieve the squared error on the y-slope Ty=dy/dz of the state
-    double errTy2() const;
+    [[nodiscard]] double errTy2() const;
 
     /// Retrieve the squared error on the charge-over-momentum Q/P of the state
-    double errQOverP2() const;
+    [[nodiscard]] double errQOverP2() const;
 
     /// Retrieve the squared error on the momentum (px,py,pz) of the state
-    double errP2() const;
+    [[nodiscard]] double errP2() const;
 
     /// Retrieve the errors on the momentum vector (px,py,pz) of the state
-    Gaudi::SymMatrix3x3 errMomentum() const;
+    [[nodiscard]] Gaudi::SymMatrix3x3 errMomentum() const;
 
     /// Retrieve the squared error on the Q/Pperp of the state
-    double errQOverPperp2() const;
+    [[nodiscard]] double errQOverPperp2() const;
 
     /// Update the state vector
     void setState( const Gaudi::TrackVector& state );
@@ -221,7 +221,7 @@ namespace LHCb {
     void setErrQOverP2( double value );
 
     /// Check if the state is at a predefined location
-    bool checkLocation( const LHCb::State::Location& value ) const;
+    [[nodiscard]] bool checkLocation( const LHCb::State::Location& value ) const;
 
     /// transport this state to a new z-position
     void linearTransportTo( double z );
@@ -230,25 +230,25 @@ namespace LHCb {
     std::ostream& fillStream( std::ostream& os ) const;
 
     /// Retrieve const  the variety of State flags
-    unsigned int flags() const;
+    [[nodiscard]] unsigned int flags() const;
 
     /// Update  the variety of State flags
     void setFlags( unsigned int value );
 
     /// Retrieve state location
-    LHCb::State::Location location() const;
+    [[nodiscard]] LHCb::State::Location location() const;
 
     /// Update state location
     void setLocation( const LHCb::State::Location& value );
 
     /// Retrieve const  the state vector
-    const Gaudi::TrackVector& stateVector() const;
+    [[nodiscard]] const Gaudi::TrackVector& stateVector() const;
 
     /// Retrieve  the state vector
     Gaudi::TrackVector& stateVector();
 
     /// Retrieve const  the state covariance matrix (indexes 0,...,4 for x, y, tx, ty, Q/p)
-    const Gaudi::TrackSymMatrix& covariance() const;
+    [[nodiscard]] const Gaudi::TrackSymMatrix& covariance() const;
 
     /// Retrieve  the state covariance matrix (indexes 0,...,4 for x, y, tx, ty, Q/p)
     Gaudi::TrackSymMatrix& covariance();
@@ -262,10 +262,10 @@ namespace LHCb {
     /// Bitmasks for bitfield flags
     enum flagsMasks { locationMask = 0xffffL };
 
-    unsigned int          m_flags;       ///< the variety of State flags
+    unsigned int          m_flags{0};    ///< the variety of State flags
     Gaudi::TrackVector    m_stateVector; ///< the state vector
     Gaudi::TrackSymMatrix m_covariance;  ///< the state covariance matrix (indexes 0,...,4 for x, y, tx, ty, Q/p)
-    double                m_z;           ///< the z-position of the state
+    double                m_z{0.0};      ///< the z-position of the state
 
   private:
     static const GaudiUtils::VectorMap<std::string, Location>& s_LocationTypMap();
@@ -336,10 +336,7 @@ namespace LHCb {
 
 // Including forward declarations
 
-inline LHCb::State::State() : m_flags( 0 ), m_stateVector(), m_covariance(), m_z( 0.0 ) {
-
-  setLocation( State::Location::LocationUnknown );
-}
+inline LHCb::State::State() : m_stateVector(), m_covariance() { setLocation( State::Location::LocationUnknown ); }
 
 inline LHCb::State::State( const Gaudi::TrackVector& stateVec, const Gaudi::TrackSymMatrix& cov, double z,
                            const LHCb::State::Location& location )
@@ -412,7 +409,7 @@ inline LHCb::State::Location LHCb::State::location() const {
 }
 
 inline void LHCb::State::setLocation( const LHCb::State::Location& value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_flags &= ~locationMask;
   m_flags |= ( ( ( (unsigned int)val ) << locationBits ) & locationMask );
 }

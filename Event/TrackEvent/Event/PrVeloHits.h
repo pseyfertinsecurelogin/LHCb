@@ -38,8 +38,8 @@ namespace LHCb::Pr::Velo {
       m_size       = other.m_size;
     }
 
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
+    [[nodiscard]] int size() const { return m_size; }
+    int&              size() { return m_size; }
 
     VEC3_SOA_ACCESSOR( pos, &( m_data->f ), &( m_data[max_hits].f ), &( m_data[2 * max_hits].f ) )
 

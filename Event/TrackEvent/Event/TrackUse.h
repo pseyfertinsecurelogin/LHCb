@@ -40,7 +40,7 @@ class AlgTool;
  */
 class TrackUse final {
 public:
-  typedef std::vector<int> Types;
+  using Types = std::vector<int>;
 
   /** declare 'own' properties for the Algorithm or AlgTool:
    *
@@ -87,18 +87,18 @@ public:
    *  @param track pointer to Track object
    *  @return decsion
    */
-  inline bool use( const LHCb::Track* track ) const;
+  bool use( const LHCb::Track* track ) const;
   /** the main method (STL functor interface)
    *  @param track pointer to Track object
    *  @return decsion
    */
-  inline bool operator()( const LHCb::Track* track ) const { return use( track ); }
+  bool operator()( const LHCb::Track* track ) const { return use( track ); }
 
   //
-  inline bool check() const { return m_check; }
-  inline bool skipClones() const { return m_skipClones; }
-  inline bool skipInvalid() const { return m_skipInvalid; }
-  inline bool skipBackward() const { return m_skipBackward; }
+  [[nodiscard]] bool check() const { return m_check; }
+  [[nodiscard]] bool skipClones() const { return m_skipClones; }
+  [[nodiscard]] bool skipInvalid() const { return m_skipInvalid; }
+  [[nodiscard]] bool skipBackward() const { return m_skipBackward; }
   /// get the list of accepted fit status
   size_t acceptedFitStatus( std::vector<LHCb::Track::FitStatus>& s ) const;
   /// get the list of accepted types
@@ -107,9 +107,9 @@ public:
   size_t rejectedHistory( std::vector<LHCb::Track::History>& h ) const;
 
 public:
-  inline bool acceptedFitStatus( const LHCb::Track::FitStatus v ) const;
-  inline bool acceptedType( const LHCb::Track::Types v ) const;
-  inline bool rejectedHistory( const LHCb::Track::History v ) const;
+  [[nodiscard]] bool acceptedFitStatus( const LHCb::Track::FitStatus v ) const;
+  [[nodiscard]] bool acceptedType( const LHCb::Track::Types v ) const;
+  [[nodiscard]] bool rejectedHistory( const LHCb::Track::History v ) const;
 
 public:
   /// printout to MsgStream

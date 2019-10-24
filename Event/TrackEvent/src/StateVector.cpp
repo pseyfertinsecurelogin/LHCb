@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-#include <math.h>
+#include <cmath>
 
 // from GaudiKernel
 #include "GaudiKernel/GenericMatrixTypes.h"

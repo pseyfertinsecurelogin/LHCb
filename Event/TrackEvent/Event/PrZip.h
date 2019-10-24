@@ -162,7 +162,7 @@ namespace LHCb::Pr::detail {
       copy_back<dType>( container_ptrs, offset, mask, index_seq{} );
     }
 
-    std::size_t size() const { return base_t<0>::size(); }
+    [[nodiscard]] std::size_t size() const { return base_t<0>::size(); }
 
     void reserve( std::size_t capacity ) { reserve( capacity, index_seq{} ); }
 
@@ -381,15 +381,17 @@ namespace LHCb::Pr {
 
     /** Get the size of the underlying container
      */
-    std::size_t size() const { return std::get<0>( m_containers )->size(); }
+    [[nodiscard]] std::size_t size() const { return std::get<0>( m_containers )->size(); }
 
     /** Check if the underlying container is empty
      */
-    bool empty() const { return !size(); }
+    [[nodiscard]] bool empty() const { return !size(); }
 
     /** Retrieve the zip family of the underlying container.
      */
-    Zipping::ZipFamilyNumber zipIdentifier() const { return std::get<0>( m_containers )->zipIdentifier(); }
+    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const {
+      return std::get<0>( m_containers )->zipIdentifier();
+    }
 
     /** Make a new structure by conditionally copying the underlying structures
      */

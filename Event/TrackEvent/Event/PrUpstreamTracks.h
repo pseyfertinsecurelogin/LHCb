@@ -44,11 +44,11 @@ namespace LHCb::Pr::Upstream {
         , m_size{other.m_size}
         , m_velo_ancestors{other.m_velo_ancestors} {}
 
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
+    [[nodiscard]] int size() const { return m_size; }
+    int&              size() { return m_size; }
 
     // Return pointer to ancestor container
-    Velo::Tracks const* getVeloAncestors() const { return m_velo_ancestors; };
+    [[nodiscard]] Velo::Tracks const* getVeloAncestors() const { return m_velo_ancestors; };
 
     // Index in TracksVP container of the track's ancestor
     SOA_ACCESSOR( trackVP, &m_data->i )
@@ -72,14 +72,14 @@ namespace LHCb::Pr::Upstream {
 
     /// Retrieve the momentum
     template <typename T>
-    inline T p( int t ) const {
+    T p( int t ) const {
       T qop = stateQoP<T>( t );
       return 1 / qop;
     }
 
     /// Retrieve the transverse momentum
     template <typename T>
-    inline T pt( int t ) const {
+    T pt( int t ) const {
       Vec3<T> dir  = stateDir<T>( t );
       T       qop  = stateQoP<T>( t );
       T       txy2 = dir.x * dir.x + dir.y * dir.y;
@@ -88,18 +88,18 @@ namespace LHCb::Pr::Upstream {
 
     /// Retrieve the pseudorapidity
     template <typename T>
-    inline T pseudoRapidity( int t ) const {
+    T pseudoRapidity( int t ) const {
       return stateDir<T>( t ).eta();
     }
 
     /// Retrieve the phi
     template <typename T>
-    inline T phi( int t ) const {
+    T phi( int t ) const {
       return stateDir<T>( t ).phi();
     }
 
     template <typename simd, typename maskT>
-    inline void copy_back( const Tracks& from, int at, maskT mask ) {
+    void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < max_hits + 11; i++ ) {
         intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
@@ -107,7 +107,7 @@ namespace LHCb::Pr::Upstream {
       m_size += simd::popcount( mask );
     }
 
-    std::vector<LHCb::LHCbID> lhcbIDsFromUT( int t ) const {
+    [[nodiscard]] std::vector<LHCb::LHCbID> lhcbIDsFromUT( int t ) const {
       int                       n_hits = nHits<SIMDWrapper::scalar::types::int_v>( t ).cast();
       std::vector<LHCb::LHCbID> ids;
       ids.reserve( n_hits );

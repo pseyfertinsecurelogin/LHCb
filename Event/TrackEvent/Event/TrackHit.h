@@ -14,13 +14,18 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include <limits>
+#include <utility>
 
 namespace LHCb {
 
   struct TrackHit {
     TrackHit() = default;
     TrackHit( Gaudi::XYZPointF beginPoint, Gaudi::XYZPointF endPoint, float errorx, float errory, int layer )
-        : beginPoint( beginPoint ), endPoint( endPoint ), errorx( errorx ), errory( errory ), layer( layer ) {}
+        : beginPoint( std::move( beginPoint ) )
+        , endPoint( std::move( endPoint ) )
+        , errorx( errorx )
+        , errory( errory )
+        , layer( layer ) {}
 
     Gaudi::XYZPointF beginPoint = {std::numeric_limits<float>::signaling_NaN(),
                                    std::numeric_limits<float>::signaling_NaN(),
