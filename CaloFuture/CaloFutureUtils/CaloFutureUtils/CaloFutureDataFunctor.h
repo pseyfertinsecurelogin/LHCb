@@ -36,7 +36,6 @@
 class DeCalorimeter;
 // ============================================================================
 namespace LHCb {
-  // ==========================================================================
   namespace CaloFutureDataFunctor {
     // ========================================================================
     /** check if the digit is local maxima
@@ -74,7 +73,10 @@ namespace LHCb {
     public:
       // ======================================================================
       /// constructor from detector and data
-      IsLocalMax( const DETECTOR* det, const DATA* data ) : m_det( det ), m_data( data ) {}
+      IsLocalMax( const DETECTOR* det, const DATA* data ) : m_det( det ), m_data( data ) {
+        assert( m_det != nullptr );
+        assert( m_data != nullptr );
+      }
       // ======================================================================
       // =====================================================================
       /// the only one essential method
@@ -83,15 +85,14 @@ namespace LHCb {
     private:
       // =====================================================================
       /// the detector
-      const DETECTOR* m_det; // the detector
+      const DETECTOR* m_det = nullptr; // the detector
       /// data
-      const DATA* m_data; //         data
+      const DATA* m_data = nullptr; //         data
       // =====================================================================
     };
     // ========================================================================
-  } // end of namespace CaloFutureDataFunctor
-  // ==========================================================================
-} // end of namespace LHCb
+  } // namespace CaloFutureDataFunctor
+} // namespace LHCb
 // ============================================================================
 // The End
 // ============================================================================

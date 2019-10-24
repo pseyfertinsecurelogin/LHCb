@@ -44,7 +44,7 @@ namespace GaudiUtils {
 
     size_t operator()( const LHCb::MCParticle* p ) const { return !p ? size_t( 0 ) : size_t( p->key() ); }
 
-    inline bool operator()( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2 ) const { return m_less( p1, p2 ); }
+    bool operator()( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2 ) const { return m_less( p1, p2 ); }
 
   private:
     std::less<const LHCb::MCParticle*> m_less;
@@ -193,12 +193,12 @@ namespace CaloFutureMCTools {
      *  indeed it is absolutely useless!
      *  @return status code 900 (always!)
      */
-    inline StatusCode operator()( const TYPE* /* object */ ) const { return StatusCode( 900 ); };
+    StatusCode operator()( const TYPE* /* object */ ) const { return StatusCode( 900 ); };
 
     /** Accessor to history map
      *  @return pointer to history map
      */
-    inline CaloFutureMCMap* mcmap() const { return m_mcmap; }
+    [[nodiscard]] CaloFutureMCMap* mcmap() const { return m_mcmap; }
 
   private:
     CaloFutureMCMap* m_mcmap;
@@ -282,9 +282,7 @@ namespace CaloFutureMCTools {
 
     // use it!
     //    std::for_each( hits.begin() , hits.end() , evaluator ) ;
-    for ( LHCb::MCCaloDigit::Hits::const_iterator ihit = hits.begin(); ihit != hits.end(); ihit++ ) {
-      evaluator( *ihit ).ignore();
-    }
+    for ( const auto& hit : hits ) { evaluator( hit ).ignore(); }
 
     return StatusCode::SUCCESS; // RETURN
   }
@@ -367,16 +365,12 @@ namespace CaloFutureMCTools {
     if ( !mcmap() ) { return StatusCode( 901 ); } // RETURN
     if ( !cluster ) { return StatusCode( 908 ); } // RETURN
 
-    const LHCb::CaloCluster::Entries& entries = cluster->entries();
-
-    if ( entries.empty() ) { return StatusCode::SUCCESS; } // RETURN
-
     // create the evaluator
     MCCaloFutureHistory<LHCb::CaloDigit> evaluator( mcmap() );
     // and use it!
-    for ( LHCb::CaloCluster::Entries::const_iterator entry = entries.begin(); entries.end() != entry; ++entry ) {
-      const LHCb::CaloDigit* digit = entry->digit();
-      if ( 0 != digit ) { evaluator( digit ); }
+    for ( const auto& entry : cluster->entries() ) {
+      const LHCb::CaloDigit* digit = entry.digit();
+      if ( digit ) { evaluator( digit ); }
     }
 
     return StatusCode::SUCCESS;
@@ -396,7 +390,7 @@ namespace CaloFutureMCTools {
     if ( !mcp ) { return StatusCode::FAILURE; }
 
     const LHCb::MCParticle* particle = mcp;
-    while ( 0 != particle ) {
+    while ( particle ) {
       const LHCb::MCVertex* vertex = particle->originVertex();
       if ( !vertex ) { return StatusCode::SUCCESS; }
       particle = vertex->mother();

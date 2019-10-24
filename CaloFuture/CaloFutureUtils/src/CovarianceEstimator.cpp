@@ -256,7 +256,7 @@ StatusCode CovarianceEstimator::operator()( LHCb::CaloCluster* cluster ) const {
 // ============================================================================
 MsgStream& CovarianceEstimator::printOut( MsgStream& log ) const {
   log << " Cluster Covariance Estimator: "
-      << " Detector is " << ( 0 == m_detector ? "INVALID" : "VALID" ) << std::endl
+      << " Detector is " << ( nullptr == m_detector ? "INVALID" : "VALID" ) << std::endl
       << "   Resolution       is [" << ( m_A ) << "]" << std::endl
       << "   Sigma Gain       is [" << ( m_GainError ) << "]" << std::endl
       << "   Incoherent Noise   is " << ( m_IncoherentNoise ) << "]" << std::endl
@@ -275,7 +275,7 @@ MsgStream& CovarianceEstimator::printOut( MsgStream& log ) const {
 // ============================================================================
 std::ostream& CovarianceEstimator::printOut( std::ostream& log ) const {
   log << " Cluster Covariance Estimator: "
-      << " Detector is " << ( 0 == m_detector ? "INVALID" : "VALID" ) << std::endl
+      << " Detector is " << ( nullptr == m_detector ? "INVALID" : "VALID" ) << std::endl
       << "   Resolution        is " << Gaudi::Utils::toString( m_A ) << "" << std::endl
       << "   Sigma Gain        is " << Gaudi::Utils::toString( m_GainError ) << "" << std::endl
       << "   Coherent Noise    is " << Gaudi::Utils::toString( m_CoherentNoise ) << "" << std::endl

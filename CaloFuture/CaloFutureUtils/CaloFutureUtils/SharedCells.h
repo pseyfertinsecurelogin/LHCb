@@ -52,7 +52,7 @@ namespace SharedCells {
     for ( typename L::iterator iC = List.begin(); List.end() != iC; ++iC ) {
       const LHCb::CaloCluster* cluster = iC->first;
       /// ignore artificial zeros
-      if ( 0 == cluster ) { continue; } ///< CONTINUE !!!
+      if ( !cluster ) { continue; } ///< CONTINUE !!!
       const unsigned index = iC - List.begin();
       const double   frac  = Weight[index] / wTot;
       iC->second->setFraction( frac );
@@ -84,7 +84,7 @@ namespace SharedCells {
     for ( auto iC = List.begin(); List.end() != iC; ++iC ) {
       const LHCb::CaloCluster* cluster = iC->first;
       /// ignore artificial zeros
-      if ( 0 == cluster ) { continue; } ///< CONTINUE !!!
+      if ( !cluster ) { continue; } ///< CONTINUE !!!
       const unsigned index = iC - List.begin();
       /// calculate the energy of each cluster
       const double eClu = LHCb::ClusterFunctors::energy( cluster->entries().begin(), cluster->entries().end() );
@@ -121,13 +121,13 @@ namespace SharedCells {
     for ( auto iC = List.begin(); List.end() != iC; ++iC ) {
       const LHCb::CaloCluster* cluster = iC->first;
       /// ignore artificial zeroes
-      if ( 0 == cluster ) { continue; }
+      if ( !cluster ) { continue; }
       /// locate (first) seed cell
       auto iSeed = LHCb::ClusterFunctors::locateDigit( cluster->entries().begin(), cluster->entries().end(), type );
       /// success ???
       if ( cluster->entries().end() == iSeed ) { return StatusCode( 220 ); }
       const LHCb::CaloDigit* seed = iSeed->digit();
-      if ( 0 == seed ) { return StatusCode( 221 ); }
+      if ( !seed ) { return StatusCode( 221 ); }
       /// get the energy of the seed cell
       const double e = seed->e();
       /// set the weight
@@ -171,13 +171,13 @@ namespace SharedCells {
     for ( auto iC = List.begin(); List.end() != iC; ++iC ) {
       const LHCb::CaloCluster* cluster = iC->first;
       /// ignore artificial zeroes
-      if ( 0 == cluster ) { continue; }
+      if ( !cluster ) { continue; }
       /// locate (first) seed cell
       auto iSeed = LHCb::ClusterFunctors::locateDigit( cluster->entries().begin(), cluster->entries().end(), type );
       /// success ???
       if ( cluster->entries().end() == iSeed ) { return StatusCode( 220 ); }
       const LHCb::CaloDigit* seed = iSeed->digit();
-      if ( 0 == seed ) { return StatusCode( 221 ); }
+      if ( !seed ) { return StatusCode( 221 ); }
       /// get the energy of the seed cell
       const double e = seed->e();
       /// calculate the distance between seed cell and give cell
@@ -226,8 +226,9 @@ namespace SharedCells {
     for ( auto iC = List.begin(); List.end() != iC; ++iC ) {
       const LHCb::CaloCluster* cluster = iC->first;
       /// ignore artificial zeroes
-      if ( 0 == cluster ) { continue; }
-      double     x, y, e;
+      if ( !cluster ) { continue; }
+      double x{std::numeric_limits<double>::signaling_NaN()}, y{std::numeric_limits<double>::signaling_NaN()},
+          e{std::numeric_limits<double>::signaling_NaN()};
       StatusCode sc =
           LHCb::ClusterFunctors::calculateEXY( cluster->entries().begin(), cluster->entries().end(), Det, e, x, y );
       /// success ???

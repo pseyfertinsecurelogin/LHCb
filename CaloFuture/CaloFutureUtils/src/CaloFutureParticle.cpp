@@ -113,7 +113,7 @@ void LHCb::CaloFutureParticle::CaloFutureParticleTree( const LHCb::Particle* par
     return;
   }
   if ( part->isBasicParticle() ) {
-    if ( 0 == part->proto() ) {
+    if ( nullptr == part->proto() ) {
       m_isCaloFuture = false;
     } else if ( part->proto()->calo().empty() ) {
       m_isCaloFuture = false;

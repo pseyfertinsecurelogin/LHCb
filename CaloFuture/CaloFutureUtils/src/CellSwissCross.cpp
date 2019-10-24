@@ -35,7 +35,7 @@
 // ============================================================================
 double CellSwissCross::treatDifferentAreas( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const {
   /// valid detector
-  if ( 0 == det() ) { Exception( "CellMatrix3x3::treatDifferentAreas: DeCaloFuture=0!" ); }
+  if ( nullptr == det() ) { Exception( "CellMatrix3x3::treatDifferentAreas: DeCaloFuture=0!" ); }
   /// both cells are valid?
   if ( !det()->valid( seed ) || !det()->valid( cell ) ) { return 0; }
   /// cell sizes

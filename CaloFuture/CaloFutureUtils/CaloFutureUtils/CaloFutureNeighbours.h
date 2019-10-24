@@ -32,29 +32,25 @@ class DeCalorimeter;
  *  @date   2009-08-05
  */
 // ============================================================================
-namespace LHCb {
-  // =========================================================================
-  namespace CaloFutureFunctors {
-    // ========================================================================
-    /** find all neighbours for the given set of cells for the givel level
-     *  @param cells    (UPDATE) list of cells
-     *  @param level    (INPUT)  level
-     *  @param detector (INPUT) the detector
-     *  @return true if neighbours are added
-     */
-    bool neighbours( LHCb::CaloCellID::Set& cells, const unsigned int level, const DeCalorimeter* detector );
-    // ========================================================================
-    /** find all neighbours for the given set of cells for the givel level
-     *  @param cells    (UPDATE) list of cells
-     *  @param level    (INPUT)  level
-     *  @param detector (INPUT)  the detector
-     *  @return true if neighbours are added
-     */
-    bool neighbours( LHCb::CaloCellID::Vector& cells, const unsigned int level, const DeCalorimeter* detector );
-    // ========================================================================
-  } // namespace CaloFutureFunctors
-  // ==========================================================================
-} //                                                      end of namespace LHCb
+namespace LHCb::CaloFutureFunctors {
+  // ========================================================================
+  /** find all neighbours for the given set of cells for the givel level
+   *  @param cells    (UPDATE) list of cells
+   *  @param level    (INPUT)  level
+   *  @param detector (INPUT) the detector
+   *  @return true if neighbours are added
+   */
+  bool neighbours( LHCb::CaloCellID::Set& cells, const unsigned int level, const DeCalorimeter* detector );
+  // ========================================================================
+  /** find all neighbours for the given set of cells for the givel level
+   *  @param cells    (UPDATE) list of cells
+   *  @param level    (INPUT)  level
+   *  @param detector (INPUT)  the detector
+   *  @return true if neighbours are added
+   */
+  bool neighbours( LHCb::CaloCellID::Vector& cells, const unsigned int level, const DeCalorimeter* detector );
+  // ========================================================================
+} // namespace LHCb::CaloFutureFunctors
 // ============================================================================
 // The END
 // ============================================================================

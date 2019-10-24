@@ -40,108 +40,82 @@
  *  @date 2009-09-29
  */
 // ============================================================================
-/*  put CellID into the output stream
- *  @see LHCb::CaloCellID
- *  @see LHCb::CaloCellID::fillStream
- *  @param object (INPUT)   object to be streamed
- *  @param stream (OUTPUT) the stream to be updated
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2009-09-29
- */
 // ============================================================================
-std::ostream& Gaudi::Utils::toStream( LHCb::CaloCellID& object, std::ostream& stream ) {
-  return object.fillStream( stream );
-}
-// ============================================================================
-/*  convert cellID into string
- *  @param object (INPUT)   object to be streamed
- *  @param stream (OUTPUT) the stream to be updated
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2009-09-29
- */
-// ============================================================================
-std::string Gaudi::Utils::toString( const LHCb::CaloCellID& object ) { return object.toString(); }
-// ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Parsers {
-    // ========================================================================
-    /** @class CCIDGrammar
-     *
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @author alexander.mazurov@gmail.com
-     *  @date 2011-08-29
-     */
-    template <typename Iterator, typename Skipper>
-    class CCIDGrammar : public qi::grammar<Iterator, LHCb::CaloCellID(), Skipper> {
-    public:
-      // ======================================================================
-      /// the actual type of parsed result
-      typedef LHCb::CaloCellID              ResultT; // the actual type of parsed result
-      typedef LHCb::CaloCellID::ContentType ContentT;
-      // ======================================================================
-    public:
-      // ======================================================================
-      struct tag_calo {};
-      struct tag_area {};
-      struct tag_row {};
-      struct tag_col {};
-      struct Operations {
-        // ====================================================================
-        void operator()( LHCb::CaloCellID& val, const ContentT v ) const { val.setAll( v ); }
-        void match( LHCb::CaloCellID& val, const unsigned short Value, const unsigned int Shift,
-                    const unsigned int Mask ) const {
-          ContentT tmp = val.all();
-                   operator()( val, CaloCellCode::setField( tmp, Value, Shift, Mask ) );
-        }
-        // ====================================================================
-        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_calo ) const {
-          val.setCalo( static_cast<CaloCellCode::CaloIndex>( v ) );
-        }
-        void operator()( LHCb::CaloCellID& val, const std::string& v, tag_calo ) const {
-          val.setCalo( CaloCellCode::caloNum( v ) );
-        }
-        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_area ) const {
-          match( val, v, CaloCellCode::ShiftArea, CaloCellCode::MaskArea );
-        }
-        void operator()( LHCb::CaloCellID& val, const std::string& v, tag_area ) const {
-          operator()( val, CaloCellCode::caloArea( val.calo(), v ), tag_area() );
-        }
-
-        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_row ) const {
-          match( val, v, CaloCellCode::ShiftRow, CaloCellCode::MaskRow );
-        }
-
-        void operator()( LHCb::CaloCellID& val, unsigned short v, tag_col ) const {
-          match( val, v, CaloCellCode::ShiftCol, CaloCellCode::MaskCol );
-        }
-        // ====================================================================
-      };
-
-    public:
-      // ======================================================================
-      CCIDGrammar() : CCIDGrammar::base_type( result ) {
-        max_limit %= qi::int_[qi::_a = qi::_1] >> qi::eps( qi::_a <= qi::_r1 && qi::_a >= 0 );
-        result = ( -( qi::lit( "LHCb.CaloCellID" ) | qi::lit( "CaloCellID" ) ) >> qi::lit( '(' ) >>
-                   ( max_limit( 4 )[op( qi::_val, qi::_1, tag_calo() )] | calo[op( qi::_val, qi::_1, tag_calo() )] ) >>
-                   ',' >>
-                   ( max_limit( 4 )[op( qi::_val, qi::_1, tag_area() )] | area[op( qi::_val, qi::_1, tag_area() )] ) >>
-                   ',' >> max_limit( 64 )[op( qi::_val, qi::_1, tag_row() )] >> ',' >>
-                   max_limit( 64 )[op( qi::_val, qi::_1, tag_col() )] >> qi::lit( ')' ) ) |
-                 ( qi::lit( '(' ) >> qi::int_[op( qi::_val, qi::_1 )] >> qi::lit( ')' ) ) |
-                 qi::int_[op( qi::_val, qi::_1 )];
+namespace Gaudi::Parsers {
+  // ========================================================================
+  /** @class CCIDGrammar
+   *
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @author alexander.mazurov@gmail.com
+   *  @date 2011-08-29
+   */
+  template <typename Iterator, typename Skipper>
+  class CCIDGrammar : public qi::grammar<Iterator, LHCb::CaloCellID(), Skipper> {
+  public:
+    // ======================================================================
+    /// the actual type of parsed result
+    using ResultT  = LHCb::CaloCellID; // the actual type of parsed result
+    using ContentT = LHCb::CaloCellID::ContentType;
+    // ======================================================================
+  public:
+    // ======================================================================
+    struct tag_calo {};
+    struct tag_area {};
+    struct tag_row {};
+    struct tag_col {};
+    struct Operations {
+      // ====================================================================
+      void operator()( LHCb::CaloCellID& val, const ContentT v ) const { val.setAll( v ); }
+      void match( LHCb::CaloCellID& val, const unsigned short Value, const unsigned int Shift,
+                  const unsigned int Mask ) const {
+        ContentT tmp = val.all();
+                 operator()( val, CaloCellCode::setField( tmp, Value, Shift, Mask ) );
       }
-      StringGrammar<Iterator, Skipper>                         area, calo;
-      qi::rule<Iterator, LHCb::CaloCellID(), Skipper>          result;
-      qi::rule<Iterator, int( int ), qi::locals<int>, Skipper> max_limit;
-      ph::function<Operations>                                 op;
-      // ======================================================================
+      // ====================================================================
+      void operator()( LHCb::CaloCellID& val, unsigned short v, tag_calo ) const {
+        val.setCalo( static_cast<CaloCellCode::CaloIndex>( v ) );
+      }
+      void operator()( LHCb::CaloCellID& val, const std::string& v, tag_calo ) const {
+        val.setCalo( CaloCellCode::caloNum( v ) );
+      }
+      void operator()( LHCb::CaloCellID& val, unsigned short v, tag_area ) const {
+        match( val, v, CaloCellCode::ShiftArea, CaloCellCode::MaskArea );
+      }
+      void operator()( LHCb::CaloCellID& val, const std::string& v, tag_area ) const {
+        operator()( val, CaloCellCode::caloArea( val.calo(), v ), tag_area() );
+      }
+
+      void operator()( LHCb::CaloCellID& val, unsigned short v, tag_row ) const {
+        match( val, v, CaloCellCode::ShiftRow, CaloCellCode::MaskRow );
+      }
+
+      void operator()( LHCb::CaloCellID& val, unsigned short v, tag_col ) const {
+        match( val, v, CaloCellCode::ShiftCol, CaloCellCode::MaskCol );
+      }
+      // ====================================================================
     };
-    REGISTER_GRAMMAR( LHCb::CaloCellID, CCIDGrammar );
-    // ========================================================================
-  } // namespace Parsers
-  // ==========================================================================
-} //                                                     end of namespace Gaudi
+
+  public:
+    // ======================================================================
+    CCIDGrammar() : CCIDGrammar::base_type( result ) {
+      max_limit %= qi::int_[qi::_a = qi::_1] >> qi::eps( qi::_a <= qi::_r1 && qi::_a >= 0 );
+      result =
+          ( -( qi::lit( "LHCb.CaloCellID" ) | qi::lit( "CaloCellID" ) ) >> qi::lit( '(' ) >>
+            ( max_limit( 4 )[op( qi::_val, qi::_1, tag_calo() )] | calo[op( qi::_val, qi::_1, tag_calo() )] ) >> ',' >>
+            ( max_limit( 4 )[op( qi::_val, qi::_1, tag_area() )] | area[op( qi::_val, qi::_1, tag_area() )] ) >> ',' >>
+            max_limit( 64 )[op( qi::_val, qi::_1, tag_row() )] >> ',' >>
+            max_limit( 64 )[op( qi::_val, qi::_1, tag_col() )] >> qi::lit( ')' ) ) |
+          ( qi::lit( '(' ) >> qi::int_[op( qi::_val, qi::_1 )] >> qi::lit( ')' ) ) | qi::int_[op( qi::_val, qi::_1 )];
+    }
+    StringGrammar<Iterator, Skipper>                         area, calo;
+    qi::rule<Iterator, LHCb::CaloCellID(), Skipper>          result;
+    qi::rule<Iterator, int( int ), qi::locals<int>, Skipper> max_limit;
+    ph::function<Operations>                                 op;
+    // ======================================================================
+  };
+  REGISTER_GRAMMAR( LHCb::CaloCellID, CCIDGrammar );
+  // ========================================================================
+} // namespace Gaudi::Parsers
 // ============================================================================
 /*  parse cellID from the string
  *  @param result (OUPUT) the parsed cellID

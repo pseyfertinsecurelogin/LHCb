@@ -49,19 +49,19 @@ namespace LHCb {
   public:
     // ========================================================================
     /// 4-momentum (px,py,pz,e)
-    typedef Gaudi::LorentzVector Vector;
+    using Vector = Gaudi::LorentzVector;
     ///  3D point (x0,y0,z0)
-    typedef Gaudi::XYZPoint Point;
+    using Point = Gaudi::XYZPoint;
     /// 4x4 Covariance matrix (px,py,pz,e)
-    typedef Gaudi::SymMatrix4x4 MomCovariance;
+    using MomCovariance = Gaudi::SymMatrix4x4;
     /// 3x3 Covariance matrix (x0,y0,z0)
-    typedef Gaudi::SymMatrix3x3 PointCovariance;
+    using PointCovariance = Gaudi::SymMatrix3x3;
     /// 4x3 pos-mom  covariance matrix off-diagonal block
-    typedef Gaudi::Matrix4x3 MomPointCovariance;
+    using MomPointCovariance = Gaudi::Matrix4x3;
     /// vector of CaloPositions
-    typedef std::vector<LHCb::CaloPosition> CaloPositions;
+    using CaloPositions = std::vector<LHCb::CaloPosition>;
     /// vector of CaloHypos
-    typedef std::vector<const LHCb::CaloHypo*> CaloHypos;
+    using CaloHypos = std::vector<const LHCb::CaloHypo*>;
     // ========================================================================
   public:
     // ========================================================================
@@ -109,20 +109,20 @@ namespace LHCb {
     /// Special constructors from CaloPosition class
     CaloMomentum( const LHCb::CaloPosition* calo );
     /// From CaloPosition + reference point (null covariance)
-    CaloMomentum( const LHCb::CaloPosition* calo, const Point& point );
+    CaloMomentum( const LHCb::CaloPosition* calo, Point point );
     /// From CaloPosition + reference point + covariance
-    CaloMomentum( const LHCb::CaloPosition* calo, const Point& point, const PointCovariance& cov );
+    CaloMomentum( const LHCb::CaloPosition* calo, Point point, const PointCovariance& cov );
     // ========================================================================
     /// Special constructors from ProtoParticle
     CaloMomentum( const LHCb::ProtoParticle* proto );
-    CaloMomentum( const LHCb::ProtoParticle* proto, const Point& point );
-    CaloMomentum( const LHCb::ProtoParticle* proto, const Point& point, const PointCovariance& cov );
+    CaloMomentum( const LHCb::ProtoParticle* proto, Point point );
+    CaloMomentum( const LHCb::ProtoParticle* proto, Point point, const PointCovariance& cov );
     // ========================================================================
     /// Special constructors from CaloHypo
     CaloMomentum( const std::vector<const LHCb::CaloHypo*> hypos );
     CaloMomentum( const LHCb::CaloHypo* hypo );
-    CaloMomentum( const LHCb::CaloHypo* hypo, const Point& point );
-    CaloMomentum( const LHCb::CaloHypo* hypo, const Point& point, const PointCovariance& cov );
+    CaloMomentum( const LHCb::CaloHypo* hypo, Point point );
+    CaloMomentum( const LHCb::CaloHypo* hypo, Point point, const PointCovariance& cov );
     // ========================================================================
     /// Special constrctor form the CaloCluster
     CaloMomentum( const LHCb::CaloCluster* cluster );
@@ -141,12 +141,12 @@ namespace LHCb {
     // ========================================================================
     // Getters (const)
     // ========================================================================
-    const CaloPositions&   caloPositions() const { return m_caloPositions; }
-    const Point&           referencePoint() const { return m_point; }
-    const PointCovariance& pointCovMatrix() const { return m_pointCovMatrix; }
-    unsigned int           multiplicity() const { return m_caloPositions.size(); }
-    int                    status() const { return m_status; }
-    int                    flag() const { return m_flag; }
+    [[nodiscard]] const CaloPositions&   caloPositions() const { return m_caloPositions; }
+    [[nodiscard]] const Point&           referencePoint() const { return m_point; }
+    [[nodiscard]] const PointCovariance& pointCovMatrix() const { return m_pointCovMatrix; }
+    [[nodiscard]] unsigned int           multiplicity() const { return m_caloPositions.size(); }
+    [[nodiscard]] int                    status() const { return m_status; }
+    [[nodiscard]] int                    flag() const { return m_flag; }
     // ========================================================================
   public:
     // ========================================================================

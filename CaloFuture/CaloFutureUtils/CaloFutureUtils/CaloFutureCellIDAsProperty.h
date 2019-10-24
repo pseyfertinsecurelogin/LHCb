@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef CALOFUTUREUTILS_CALOFUTURECELLIDASPROPERTY_H
-#define CALOFUTUREUTILS_CALOFUTURECELLIDASPROPERTY_H 1
+#pragma once
 // ============================================================================
 // Include files
 // ============================================================================
@@ -38,40 +37,9 @@
  *  @date 2009-09-29
  */
 // ============================================================================
-//                                                                    Streamers
-// ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    /** put CellID into the output stream
-     *  @see LHCb::CaloCellID
-     *  @see LHCb::CaloCellID::fillStream
-     *  @param object (INPUT)   object to be streamed
-     *  @param stream (OUTPUT) the stream to be updated
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date 2009-09-29
-     */
-    GAUDI_API
-    std::ostream& toStream( LHCb::CaloCellID& object, std::ostream& stream );
-    // ========================================================================
-    /** convert cellID into string
-     *  @param object (INPUT)   object to be streamed
-     *  @param stream (OUTPUT) the stream to be updated
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date 2009-09-29
-     */
-    GAUDI_API
-    std::string toString( const LHCb::CaloCellID& object );
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} //                                                     end of namespace Gaudi
-// ============================================================================
 //                                                                      Parsers
 // ============================================================================
 namespace Gaudi {
-  // ==========================================================================
   namespace Parsers {
     // ========================================================================
     /** parse cellID from the string
@@ -81,7 +49,6 @@ namespace Gaudi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-09-29
      */
-    GAUDI_API
     StatusCode parse( LHCb::CaloCellID& result, const std::string& input );
     // ========================================================================
     /** parse the vector of cellIDs from the string
@@ -125,8 +92,7 @@ namespace Gaudi {
     StatusCode parse( std::map<LHCb::CaloCellID, std::vector<double>>& result, const std::string& input );
     // ========================================================================
   } // namespace Parsers
-  // ==========================================================================
-} //                                                     end of namespace Gaudi
+} // namespace Gaudi
 // ============================================================================
 //                                                      Another name for parser
 // ============================================================================
@@ -189,4 +155,3 @@ namespace CaloFutureCellCode {
 // ============================================================================
 // The END
 // ============================================================================
-#endif // CALOFUTURECELLIDASPROPERTY_H

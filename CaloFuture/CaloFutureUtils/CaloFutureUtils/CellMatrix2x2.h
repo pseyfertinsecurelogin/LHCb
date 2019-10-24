@@ -33,7 +33,7 @@ public:
    *  @param Det  pointer to calorimeter
    *  @param Type sub-matrix type
    */
-  CellMatrix2x2( const DeCalorimeter* Det = 0, const SubMatrixType Type = UpperLeft )
+  CellMatrix2x2( const DeCalorimeter* Det = nullptr, const SubMatrixType Type = UpperLeft )
       : CellMatrix( Det ), m_type( Type ){};
 
   /** accessor to submatrix type

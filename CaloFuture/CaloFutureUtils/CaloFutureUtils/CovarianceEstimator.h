@@ -153,8 +153,6 @@ class MsgStream;
  */
 class CovarianceEstimator final {
 public:
-  typedef DeCalorimeter* DET;
-
   /** standard constructor
    *   @param  Det      pointer to DeCalorimeter object
    *  @param  A        intrinsic calo resolution
@@ -191,7 +189,7 @@ public:
   /** simple accessor to DeCalorimeter object
    *  @return pointer to detector
    */
-  const DeCalorimeter* detector() const { return m_detector; }
+  [[nodiscard]] const DeCalorimeter* detector() const { return m_detector; }
 
   /** set new resolution parameter
    *  @param A calorimeter resolution
@@ -201,7 +199,7 @@ public:
   /** calorimeter resolution (A*A*GeV)
    *  @return A*A*GeV resolution parameter
    */
-  double a2GeV( const LHCb::CaloCellID id ) const {
+  [[nodiscard]] double a2GeV( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_A.size() ) return 0.;
     return m_A[id.area()] * m_A[id.area()] * Gaudi::Units::GeV;
   }
@@ -214,7 +212,7 @@ public:
   /** get dispersion  of relative gain error
    *  @return dispersion of relative gain error
    */
-  double s2gain( const LHCb::CaloCellID id ) const {
+  [[nodiscard]] double s2gain( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_GainError.size() ) return 0.;
     return m_GainError[id.area()] * m_GainError[id.area()];
   }
@@ -222,7 +220,7 @@ public:
   /** get  dispersion of noise (both coherent and incoherent
    *  @return overall noise dispersion
    */
-  double s2noise( const LHCb::CaloCellID id ) const { return s2incoherent( id ) + s2coherent( id ); }
+  [[nodiscard]] double s2noise( const LHCb::CaloCellID id ) const { return s2incoherent( id ) + s2coherent( id ); }
 
   /** set new error in incoherent noise
    *  @param NoiseIn error in incoherent noise
@@ -232,7 +230,7 @@ public:
   /** get the dispersion of incoherent noise
    *  @return dispersion of incoherent noise
    */
-  double s2incoherent( const LHCb::CaloCellID id ) const {
+  [[nodiscard]] double s2incoherent( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_IncoherentNoise.size() ) return 0.;
     return m_IncoherentNoise[id.area()] * m_IncoherentNoise[id.area()];
   }
@@ -245,25 +243,25 @@ public:
   /**  dispersion of coherent  noise
    *  @return dispersion of coherent noise
    */
-  double s2coherent( const LHCb::CaloCellID id ) const {
+  [[nodiscard]] double s2coherent( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_CoherentNoise.size() ) return 0.;
     return m_CoherentNoise[id.area()] * m_CoherentNoise[id.area()];
   }
 
-  void   setConstantE( std::vector<double> constE ) { m_ConstantE = std::move( constE ); }
-  double s2E( const LHCb::CaloCellID id ) const {
+  void                 setConstantE( std::vector<double> constE ) { m_ConstantE = std::move( constE ); }
+  [[nodiscard]] double s2E( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantE.size() ) return 0.;
     return m_ConstantE[id.area()] * m_ConstantE[id.area()];
   }
 
-  void   setConstantX( std::vector<double> constX ) { m_ConstantX = std::move( constX ); }
-  double s2X( const LHCb::CaloCellID id ) const {
+  void                 setConstantX( std::vector<double> constX ) { m_ConstantX = std::move( constX ); }
+  [[nodiscard]] double s2X( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantX.size() ) return 0.;
     return m_ConstantX[id.area()] * m_ConstantX[id.area()];
   }
 
-  void   setConstantY( std::vector<double> constY ) { m_ConstantY = std::move( constY ); }
-  double s2Y( const LHCb::CaloCellID id ) const {
+  void                 setConstantY( std::vector<double> constY ) { m_ConstantY = std::move( constY ); }
+  [[nodiscard]] double s2Y( const LHCb::CaloCellID id ) const {
     if ( id.area() >= m_ConstantY.size() ) return 0.;
     return m_ConstantY[id.area()] * m_ConstantY[id.area()];
   }

@@ -13,6 +13,7 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <utility>
 #include <vector>
 // ============================================================================
 // Event
@@ -44,17 +45,17 @@ LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloPosition* calo ) { addCaloPosi
 // ============================================================================
 // From CaloPosition + reference point (null covariance)
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloPosition* calo, const LHCb::CaloMomentum::Point& point )
-    : m_point( point ), m_status( LHCb::CaloMomentum::OK ), m_flag( LHCb::CaloMomentum::Empty ) {
+LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloPosition* calo, LHCb::CaloMomentum::Point point )
+    : m_point( std::move( point ) ) {
   addCaloPosition( calo );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
 }
 // ============================================================================
 // From CaloPosition + reference point + covariance
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloPosition* calo, const LHCb::CaloMomentum::Point& point,
+LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloPosition* calo, LHCb::CaloMomentum::Point point,
                                   const LHCb::CaloMomentum::PointCovariance& cov )
-    : m_point( point ), m_pointCovMatrix( cov ) {
+    : m_point( std::move( point ) ), m_pointCovMatrix( cov ) {
   addCaloPosition( calo );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
   addToFlag( LHCb::CaloMomentum::NewPointCovariance );
@@ -66,17 +67,17 @@ LHCb::CaloMomentum::CaloMomentum( const LHCb::ProtoParticle* proto ) { addCaloPo
 // ============================================================================
 // From ProtoParticle +  XYZPoint
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::ProtoParticle* proto, const LHCb::CaloMomentum::Point& point )
-    : m_point( point ) {
+LHCb::CaloMomentum::CaloMomentum( const LHCb::ProtoParticle* proto, LHCb::CaloMomentum::Point point )
+    : m_point( std::move( point ) ) {
   addCaloPosition( proto );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
 }
 // ============================================================================
 // From (ProtoParticle, XYZPoint, SymMatrix3x3)
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::ProtoParticle* proto, const LHCb::CaloMomentum::Point& point,
+LHCb::CaloMomentum::CaloMomentum( const LHCb::ProtoParticle* proto, LHCb::CaloMomentum::Point point,
                                   const LHCb::CaloMomentum::PointCovariance& cov )
-    : m_point( point ), m_pointCovMatrix( cov ) {
+    : m_point( std::move( point ) ), m_pointCovMatrix( cov ) {
   addCaloPosition( proto );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
   addToFlag( LHCb::CaloMomentum::NewPointCovariance );
@@ -94,17 +95,17 @@ LHCb::CaloMomentum::CaloMomentum( const std::vector<const LHCb::CaloHypo*> hypos
 // ============================================================================
 // From (CaloHypo, XYZPoint)
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloHypo* hypo, const LHCb::CaloMomentum::Point& point )
-    : m_point( point ) {
+LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloHypo* hypo, LHCb::CaloMomentum::Point point )
+    : m_point( std::move( point ) ) {
   addCaloPosition( hypo );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
 }
 // ============================================================================
 // From (CaloHypo,XYZPoint, SymMatrix3x3)
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloHypo* hypo, const LHCb::CaloMomentum::Point& point,
+LHCb::CaloMomentum::CaloMomentum( const LHCb::CaloHypo* hypo, LHCb::CaloMomentum::Point point,
                                   const LHCb::CaloMomentum::PointCovariance& cov )
-    : m_point( point ), m_pointCovMatrix( cov ) {
+    : m_point( std::move( point ) ), m_pointCovMatrix( cov ) {
   addCaloPosition( hypo );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint );
   addToFlag( LHCb::CaloMomentum::NewPointCovariance );
@@ -170,7 +171,7 @@ void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloHypo* hypo ) {
 void LHCb::CaloMomentum::addCaloPosition( const LHCb::ProtoParticle* proto ) {
   m_flag |= LHCb::CaloMomentum::FromProtoPart;
 
-  if ( 0 == proto ) {
+  if ( nullptr == proto ) {
     m_status |= LHCb::CaloMomentum::NullProtoPart;
     return;
   }

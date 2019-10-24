@@ -70,7 +70,7 @@ private:
    *  @return fraction of area of the second cell which fits inside
    *          3x3 matrix aroud the seed cell
    */
-  double treatDifferentAreas( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const;
+  [[nodiscard]] double treatDifferentAreas( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const;
 };
 
 // ============================================================================

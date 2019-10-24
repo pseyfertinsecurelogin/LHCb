@@ -112,7 +112,27 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const CaloCellID& obj ) { return obj.fillStream( str ); }
 
-  protected:
+    // ========================================================================
+    /** put CellID into the output stream
+     *  @see LHCb::CaloCellID
+     *  @see LHCb::CaloCellID::fillStream
+     *  @param object (INPUT)   object to be streamed
+     *  @param stream (OUTPUT) the stream to be updated
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-09-29
+     */
+    friend std::ostream& toStream( LHCb::CaloCellID& object, std::ostream& stream ) {
+      return object.fillStream( stream );
+    }
+    // ========================================================================
+    /** convert cellID into string
+     *  @param object (INPUT)   object to be streamed
+     *  @param stream (OUTPUT) the stream to be updated
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-09-29
+     */
+    friend std::string toString( const LHCb::CaloCellID& object ) { return object.toString(); }
+
   private:
     /// Update Calorimeter Area identifier
     CaloCellID& setArea( unsigned int Area );

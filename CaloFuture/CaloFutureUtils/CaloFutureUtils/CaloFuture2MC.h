@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef CALOFUTURE2MC_H
-#define CALOFUTURE2MC_H 1
+#pragma once
 #include "Event/CaloHypo.h"
 
 namespace LHCb {
@@ -27,7 +26,7 @@ class LinkedTo;
 namespace LHCb {
   template <class FROM, class TO, class WEIGHT>
   class RelationWeighted1D;
-}
+} // namespace LHCb
 
 /** @class CaloFuture2MC CaloFuture2MC.h Event/CaloFuture2MC.h
  *
@@ -35,24 +34,19 @@ namespace LHCb {
  *  @author Olivier Deschamps
  *  @date   2006-02-21
  */
-namespace LHCb {
-  namespace CaloFuture2MC {
-    typedef IRelationWeighted<LHCb::CaloCluster, LHCb::MCParticle, float>        IClusterTable;
-    typedef LHCb::RelationWeighted1D<LHCb::CaloCluster, LHCb::MCParticle, float> ClusterTable;
+namespace LHCb::CaloFuture2MC {
+  using IClusterTable = IRelationWeighted<LHCb::CaloCluster, LHCb::MCParticle, float>;
+  using ClusterTable  = RelationWeighted1D<LHCb::CaloCluster, LHCb::MCParticle, float>;
 
-    typedef IRelationWeighted<LHCb::CaloDigit, LHCb::MCParticle, float>        IDigitTable;
-    typedef LHCb::RelationWeighted1D<LHCb::CaloDigit, LHCb::MCParticle, float> DigitTable;
+  using IDigitTable = IRelationWeighted<LHCb::CaloDigit, LHCb::MCParticle, float>;
+  using DigitTable  = RelationWeighted1D<LHCb::CaloDigit, LHCb::MCParticle, float>;
 
-    typedef LinkerWithKey<LHCb::MCParticle, LHCb::CaloDigit> DigitLink;
-    typedef LinkedTo<LHCb::MCParticle, LHCb::CaloDigit>      DigitLinkTo;
+  using DigitLink   = LinkerWithKey<LHCb::MCParticle, LHCb::CaloDigit>;
+  using DigitLinkTo = LinkedTo<LHCb::MCParticle, LHCb::CaloDigit>;
 
-    typedef LinkerWithKey<LHCb::MCParticle, LHCb::CaloHypo> HypoLink;
-    typedef LinkedTo<LHCb::MCParticle, LHCb::CaloHypo>      HypoLinkTo;
+  using HypoLink   = LinkerWithKey<LHCb::MCParticle, LHCb::CaloHypo>;
+  using HypoLinkTo = LinkedTo<LHCb::MCParticle, LHCb::CaloHypo>;
 
-    //    typedef RelationWeighted1D<TrgCaloFutureCluster,MCParticle,float> TrgClusterTable ;
+  //    using TrgClusterTable = RelationWeighted1D<TrgCaloFutureCluster,MCParticle,float> ;
 
-  } // namespace CaloFuture2MC
-
-} // namespace LHCb
-
-#endif // CALOFUTURE2MC_H
+} // namespace LHCb::CaloFuture2MC
