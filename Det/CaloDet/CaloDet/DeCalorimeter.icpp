@@ -69,22 +69,21 @@ inline const CellParam* DeCalorimeter::Cell_( const Gaudi::XYZPoint& globalPoint
   if ( !geo->isInside( globalPoint ) ) { return 0; } // RETURN
   // find subcalorimeter
 
-  for ( SubCalos::const_iterator is = subCalos().begin(); is != subCalos().end(); ++is ) {
-    const IGeometryInfo* subGeo = ( *is )->geometry();
+  for ( auto const& sc : subCalos() ) {
+    const IGeometryInfo* subGeo = sc->geometry();
     if ( !subGeo->isInside( globalPoint ) ) continue;
-    int         side        = ( *is )->side();
-    SubSubCalos subSubCalos = ( *is )->subSubCalos();
-    for ( SubSubCalos::iterator iss = subSubCalos.begin(); iss != subSubCalos.end(); ++iss ) {
-      const IGeometryInfo* subSubGeo = ( *iss )->geometry();
+    int side = sc->side();
+    for ( auto const& ssc : sc->subSubCalos() ) {
+      const IGeometryInfo* subSubGeo = ssc->geometry();
       if ( !subSubGeo->isInside( globalPoint ) ) continue;
       Gaudi::XYZPoint localPoint( subSubGeo->toLocal( globalPoint ) );
       //
-      double    xOffset  = -side * ( *iss )->xSize() / 2.;
-      double    cellSize = ( *iss )->cellSize();
+      double    xOffset  = -side * ssc->xSize() / 2.;
+      double    cellSize = ssc->cellSize();
       const int Column   = (int)( ( localPoint.x() - xOffset ) / cellSize + m_firstRowUp );
       const int Row      = (int)( localPoint.y() / cellSize + m_firstRowUp );
       //
-      int Area = ( *iss )->area();
+      int Area = ssc->area();
       return &m_cells[LHCb::CaloCellID( m_caloIndex, Area, Row, Column )];
     }
   }
