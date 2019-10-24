@@ -15,6 +15,7 @@
 // ============================================================================
 #include <ostream>
 #include <sstream>
+#include <utility>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -56,12 +57,12 @@ void Gaudi::Utils::properties( const IInterface* cmp, const Gaudi::Utils::Names&
   // 1) clear the output container
   output.clear();
   // 2) check arguments
-  if ( 0 == cmp || names.empty() ) { return; } // RETURN
+  if ( nullptr == cmp || names.empty() ) { return; } // RETURN
   // 3) fill the output container
-  for ( Gaudi::Utils::Names::const_iterator item = names.begin(); names.end() != item; ++item ) {
+  for ( auto item = names.begin(); names.end() != item; ++item ) {
     // get the property
     const ::Property* p = Gaudi::Utils::getProperty( cmp, *item );
-    if ( 0 == p ) { continue; } // CONTINUE
+    if ( nullptr == p ) { continue; } // CONTINUE
     // put the proeprty into the output container
     output.push_back( p );
   }
@@ -97,10 +98,10 @@ namespace {
  *  @param props   list of properties to be inspected
  */
 // ============================================================================
-LHCb::Inspector::Inspector( const Gaudi::Utils::Names& props )
-    : m_members(), m_names( props ), m_algMgr( Gaudi::svcLocator() ) {
-  m_members.push_back( "Members" );
-  m_members.push_back( "TopAlg" );
+LHCb::Inspector::Inspector( Gaudi::Utils::Names props )
+    : m_members(), m_names( std::move( props ) ), m_algMgr( Gaudi::svcLocator() ) {
+  m_members.emplace_back( "Members" );
+  m_members.emplace_back( "TopAlg" );
 }
 // ============================================================================
 /* constructor the list of properties
@@ -108,11 +109,11 @@ LHCb::Inspector::Inspector( const Gaudi::Utils::Names& props )
  *  @param members list of structural properties
  */
 // ============================================================================
-LHCb::Inspector::Inspector( const Gaudi::Utils::Names& props, const Gaudi::Utils::Names& members )
-    : m_members( members ), m_names( props ), m_algMgr( Gaudi::svcLocator() ) {}
+LHCb::Inspector::Inspector( Gaudi::Utils::Names props, Gaudi::Utils::Names members )
+    : m_members( std::move( members ) ), m_names( std::move( props ) ), m_algMgr( Gaudi::svcLocator() ) {}
 // ============================================================================
 StatusCode LHCb::Inspector::inspect( const IInterface* component, std::ostream& stream, const size_t level ) const {
-  if ( 0 == component ) { return StatusCode( 500 ); } // REUTRN
+  if ( nullptr == component ) { return StatusCode( 500 ); } // REUTRN
   // ==========================================================================
   // create the format object:
   boost::format fmt1( s_fmt1 );
@@ -121,7 +122,7 @@ StatusCode LHCb::Inspector::inspect( const IInterface* component, std::ostream& 
   fmt1 % std::string( 3 * level + 1, ' ' ); // 2) indentation
   {
     // get the name
-    IInterface*              _cmp = const_cast<IInterface*>( component );
+    auto*                    _cmp = const_cast<IInterface*>( component );
     SmartIF<INamedInterface> inamed( _cmp );
     if ( !inamed ) {
       fmt1 % "<UNKNOWN>";
@@ -140,7 +141,7 @@ StatusCode LHCb::Inspector::inspect( const IInterface* component, std::ostream& 
     fmt2 % part1 % "";
     stream << fmt2 << std::endl;
   }
-  for ( Gaudi::Utils::Properties::const_iterator ip = props.begin(); props.end() != ip; ++ip ) {
+  for ( auto ip = props.begin(); props.end() != ip; ++ip ) {
     boost::format fmt2( s_fmt2 );
     fmt2 % part1 % ( **ip );
     stream << fmt2 << std::endl;
@@ -151,24 +152,24 @@ StatusCode LHCb::Inspector::inspect( const IInterface* component, std::ostream& 
   // no structural properties ?
   if ( members.empty() ) { return StatusCode( StatusCode::SUCCESS, true ); } // REUTRN
   //
-  for ( Gaudi::Utils::Properties::const_iterator im = members.begin(); members.end() != im; ++im ) {
+  for ( auto im = members.begin(); members.end() != im; ++im ) {
     const Property* m = *im;
-    if ( 0 == m ) { continue; } // CONTINUE
+    if ( nullptr == m ) { continue; } // CONTINUE
     // get the property
-    typedef std::vector<std::string> Members;
-    SimpleProperty<Members>          vm;
+    using Members = std::vector<std::string>;
+    SimpleProperty<Members> vm;
     // assign from the source:
     vm.assign( *m ); // ASSIGN PROPERTY
     // Loop over all "members" (or "TopAlgs")
     const Members& vct = vm.value();
-    for ( Members::const_iterator id = vct.begin(); vct.end() != id; ++id ) {
+    for ( auto id = vct.begin(); vct.end() != id; ++id ) {
       /// decode the string into "type" and "name" :
       Gaudi::Utils::TypeNameString item( *id );
       /// get the algorithm by name
-      IAlgorithm* alg = 0;
+      IAlgorithm* alg = nullptr;
       StatusCode  sc  = m_algMgr->getAlgorithm( item.name(), alg );
       if ( sc.isFailure() ) { return StatusCode{510 + sc.getCode()}; } // RETURN
-      if ( 0 == alg ) { return StatusCode{503}; }                      // RETURN
+      if ( nullptr == alg ) { return StatusCode{503}; }                // RETURN
       //
       // start the recursion here!!
       sc = inspect( alg, stream, level + 1 );

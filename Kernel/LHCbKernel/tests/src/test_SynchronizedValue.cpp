@@ -69,11 +69,11 @@ struct HasFun {
     BOOST_CHECK( dummy::state == dummy::State::Write );
     return 1;
   }
-  int g() const {
+  [[nodiscard]] int g() const {
     BOOST_CHECK( dummy::state == dummy::State::Read );
     return 2;
   }
-  int h( int i ) const {
+  [[nodiscard]] int h( int i ) const {
     BOOST_CHECK( dummy::state == dummy::State::Read );
     return 3 + i;
   }
@@ -81,7 +81,7 @@ struct HasFun {
     BOOST_CHECK( dummy::state == dummy::State::Write );
     return 4;
   }
-  int j() const noexcept {
+  [[nodiscard]] int j() const noexcept {
     BOOST_CHECK( dummy::state == dummy::State::Read );
     return 5;
   }

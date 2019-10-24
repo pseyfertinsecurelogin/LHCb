@@ -47,21 +47,21 @@ class FastClusterContainer final {
   // static_assert( std::is_trivially_destructible<VISIBLE>::value, "visible type must be trivially destructable");
   static_assert( !std::has_virtual_destructor<VISIBLE>::value, "visible type must not have a virtual destructor" );
   // ==========================================================================
-  typedef typename std::vector<VISIBLE> VD;
+  using VD = typename std::vector<VISIBLE>;
 
 public:
-  typedef typename VD::value_type             value_type;
-  typedef typename VD::iterator               iterator;
-  typedef typename VD::const_iterator         const_iterator;
-  typedef typename VD::reverse_iterator       reverse_iterator;
-  typedef typename VD::const_reverse_iterator const_reverse_iterator;
-  typedef typename VD::size_type              size_type;
-  typedef typename VD::difference_type        difference_type;
-  typedef typename VD::pointer                pointer;
-  typedef typename VD::const_pointer          const_pointer;
-  typedef typename VD::reference              reference;
-  typedef typename VD::const_reference        const_reference;
-  typedef typename VISIBLE::chan_type         chan_type;
+  using value_type             = typename VD::value_type;
+  using iterator               = typename VD::iterator;
+  using const_iterator         = typename VD::const_iterator;
+  using reverse_iterator       = typename VD::reverse_iterator;
+  using const_reverse_iterator = typename VD::const_reverse_iterator;
+  using size_type              = typename VD::size_type;
+  using difference_type        = typename VD::difference_type;
+  using pointer                = typename VD::pointer;
+  using const_pointer          = typename VD::const_pointer;
+  using reference              = typename VD::reference;
+  using const_reference        = typename VD::const_reference;
+  using chan_type              = typename VISIBLE::chan_type;
 
 private:
   /// Data holder
@@ -115,7 +115,7 @@ public:
   /// subscript nonmutable sequence with checking
   const_reference at( size_type i ) const { return ext().at( i ); }
   /// test if sequence is empty
-  bool empty() const { return m_data.empty(); }
+  [[nodiscard]] bool empty() const { return m_data.empty(); }
   /// return first element of mutable sequence
   reference front() { return ext().front(); }
   /// return first element of nonmutable sequence

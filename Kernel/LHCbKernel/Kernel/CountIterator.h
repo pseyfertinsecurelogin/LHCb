@@ -27,7 +27,7 @@ class count_iterator : public std::iterator<std::output_iterator_tag, void, void
 public:
   // ========================================================================
   /// Constructor
-  count_iterator() : m_count( 0 ) {}
+  count_iterator() {}
   //
   count_iterator& operator=( const TYPE& /* value */ ) {
     ++m_count;
@@ -42,11 +42,11 @@ public:
 public:
   // ==========================================================================
   /// the the counter
-  unsigned long count() const { return m_count; }
+  [[nodiscard]] unsigned long count() const { return m_count; }
   // ==========================================================================
 private:
   ///
-  unsigned long m_count;
+  unsigned long m_count{0};
   // ==========================================================================
 };
 // ============================================================================

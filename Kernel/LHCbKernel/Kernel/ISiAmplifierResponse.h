@@ -41,25 +41,25 @@ struct ISiAmplifierResponse : extend_interfaces<IAlgTool> {
    * @param  time time in ns
    * @return response
    */
-  virtual double response( const double time ) const = 0;
+  [[nodiscard]] virtual double response( const double time ) const = 0;
 
   /** The response is only valid for a certain capacitance, Vfs, etc.
    * This method allows you to find out when the curve is valid
    *
    * @return validity info
    */
-  virtual ISiAmplifierResponse::Info validity() const = 0;
+  [[nodiscard]] virtual ISiAmplifierResponse::Info validity() const = 0;
 
   /** calculate the remainder ie signal left after 25 ns
    * @param time time of sampling relative to peak [default is zero ]
    * @return response
    */
-  virtual double remainder( double time = 0 ) const = 0;
+  [[nodiscard]] virtual double remainder( double time = 0 ) const = 0;
 
   /** calculate the rise time [10 - 90 %]
    * @return ristime
    */
-  virtual double risetime() const = 0;
+  [[nodiscard]] virtual double risetime() const = 0;
 };
 
 #endif // _ISiAMPLIFIERRESPONSE_H

@@ -31,7 +31,7 @@ struct IEventCounter : extend_interfaces<IAlgTool> {
   /// InterfaceID
   DeclareInterfaceID( IEventCounter, 2, 0 );
 
-  virtual unsigned long long getEventCounter() const = 0; ///< Get Event Counter
+  [[nodiscard]] virtual unsigned long long getEventCounter() const = 0; ///< Get Event Counter
 
   virtual void incrementEventCounter() = 0; ///< Increment Event Counter
 

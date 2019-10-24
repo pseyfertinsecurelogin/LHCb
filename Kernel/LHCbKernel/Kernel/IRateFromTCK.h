@@ -30,13 +30,13 @@ struct IRateFromTCK : extend_interfaces<IAlgTool> {
   // Return the interface ID
   DeclareInterfaceID( IRateFromTCK, 3, 0 );
 
-  virtual unsigned int getTCK() const = 0; ///< retrieve TCK
+  [[nodiscard]] virtual unsigned int getTCK() const = 0; ///< retrieve TCK
 
   /// Get rate of rate limiting algorithm given its instance name (See TCKsh)
-  virtual double rateFromTCK( const std::string& instanceName ) const = 0;
+  [[nodiscard]] virtual double rateFromTCK( const std::string& instanceName ) const = 0;
 
   /// Get prescale of prescaler algorithm given its instance name (See TCKsh)
-  virtual double prescaleFromTCK( const std::string& instanceName ) const = 0;
+  [[nodiscard]] virtual double prescaleFromTCK( const std::string& instanceName ) const = 0;
 
   /// Update
   virtual StatusCode runUpdate() = 0;

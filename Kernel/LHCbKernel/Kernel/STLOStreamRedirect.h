@@ -11,8 +11,8 @@
 #ifndef KERNEL_STLOSTREAMREDIRECT_H
 #define KERNEL_STLOSTREAMREDIRECT_H 1
 
+#include <cstdio>
 #include <iostream>
-#include <stdio.h>
 #include <unistd.h>
 
 namespace STL {

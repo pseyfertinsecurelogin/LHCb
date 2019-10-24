@@ -43,21 +43,19 @@ namespace Gaudi {
   public:
     // ========================================================================
     /// constructor from counter
-    Counter( const StatEntity& cnt = StatEntity(), const std::string& desc = "" );
-    /// MANDATORY: virtual destructor
-    virtual ~Counter();
+    Counter( StatEntity cnt = StatEntity(), std::string desc = "" );
     // ========================================================================
   public: // get the description
     // ========================================================================
     /// the the description of the counter
-    const std::string& description() const { return m_description; }
+    [[nodiscard]] const std::string& description() const { return m_description; }
     // ========================================================================
   public:
     // ========================================================================
     // explicit access to the acual counter
-    inline StatEntity& counter() { return m_counter; }
+    StatEntity& counter() { return m_counter; }
     // explicit access to the acual counter (const-version)
-    inline const StatEntity& counter() const { return m_counter; }
+    [[nodiscard]] const StatEntity& counter() const { return m_counter; }
     // ========================================================================
   public:
     // ========================================================================
@@ -81,7 +79,7 @@ namespace Gaudi {
   public: //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    const CLID& clID() const override;
+    [[nodiscard]] const CLID& clID() const override;
     /// retrieve the unique object identifier  (static)
     static const CLID& classID();
     // ========================================================================
@@ -110,16 +108,14 @@ namespace Gaudi {
   public:
     // ========================================================================
     /// constructor from counter
-    Counters( const Map& m = Map() );
-    /// MANDATORY: virtual destructor
-    virtual ~Counters();
+    Counters( Map m = Map() );
     // ========================================================================
   public: // the counter-map
     // ========================================================================
     // explicit access to the acual counter
-    inline Map& counters() { return m_counters; }
+    Map& counters() { return m_counters; }
     // explicit access to the acual counter (const-version)
-    inline const Map& counters() const { return m_counters; }
+    [[nodiscard]] const Map& counters() const { return m_counters; }
     // ========================================================================
   public:
     // ========================================================================
@@ -136,7 +132,7 @@ namespace Gaudi {
   public:
     // ========================================================================
     /// get the number of counters
-    std::size_t size() const { return m_counters.size(); }
+    [[nodiscard]] std::size_t size() const { return m_counters.size(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -146,7 +142,7 @@ namespace Gaudi {
   public: //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    const CLID& clID() const override;
+    [[nodiscard]] const CLID& clID() const override;
     /// retrieve the unique object identifier  (static)
     static const CLID& classID();
     // ========================================================================
@@ -173,21 +169,19 @@ namespace Gaudi {
   public:
     // ========================================================================
     /// constructor from counter
-    Numbers( const Map& m = Map() );
-    /// MANDATORY: virtual destructor
-    virtual ~Numbers();
+    Numbers( Map m = Map() );
     // ========================================================================
   public: // the counter-map
     // ========================================================================
     // explicit access to the acual counter
-    inline Map& counters() { return m_counters; }
+    Map& counters() { return m_counters; }
     // explicit access to the acual counter (const-version)
-    inline const Map& counters() const { return m_counters; }
+    [[nodiscard]] const Map& counters() const { return m_counters; }
     // ========================================================================
     // explicit access to the acual counter
-    inline Map& numbers() { return counters(); }
+    Map& numbers() { return counters(); }
     // explicit access to the acual counter (const-version)
-    inline const Map& numbers() const { return counters(); }
+    [[nodiscard]] const Map& numbers() const { return counters(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -206,7 +200,7 @@ namespace Gaudi {
   public:
     // ========================================================================
     /// get the number of counters
-    std::size_t size() const { return m_counters.size(); }
+    [[nodiscard]] std::size_t size() const { return m_counters.size(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -216,7 +210,7 @@ namespace Gaudi {
   public: //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    const CLID& clID() const override;
+    [[nodiscard]] const CLID& clID() const override;
     /// retrieve the unique object identifier  (static)
     static const CLID& classID();
     // ========================================================================

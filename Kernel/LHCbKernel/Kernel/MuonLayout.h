@@ -53,12 +53,14 @@ public:
 
   /// Accessor to MuonLayout grid corresponding to the given MuonTileID
   /// reimplemented from IMuonLayout
-  std::pair<unsigned int, unsigned int> grid( const LHCb::MuonTileID& ) const override { return {xGrid(), yGrid()}; }
+  [[nodiscard]] std::pair<unsigned int, unsigned int> grid( const LHCb::MuonTileID& ) const override {
+    return {xGrid(), yGrid()};
+  }
 
   /// Accessor to X granularity
-  unsigned int xGrid() const { return m_xgrid; }
+  [[nodiscard]] unsigned int xGrid() const { return m_xgrid; }
   /// Accessor to Y granularity
-  unsigned int yGrid() const { return m_ygrid; }
+  [[nodiscard]] unsigned int yGrid() const { return m_ygrid; }
 
   /** find a vector of MuonTileID's defined in terms of this MuonLayout
       which are touched by an area around a given MuonTileID defined
@@ -67,7 +69,7 @@ public:
       @param pad   :  tile defining the area covered
   */
 
-  std::vector<LHCb::MuonTileID> tiles( const LHCb::MuonTileID& pad ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tiles( const LHCb::MuonTileID& pad ) const override;
 
   /** find a vector of MuonTileID's defined in terms of this MuonLayout
       which are touched by an area around a given MuonTileID defined
@@ -78,33 +80,34 @@ public:
       @param areaY : limits of the search area in Y
   */
 
-  std::vector<LHCb::MuonTileID> tilesInArea( const LHCb::MuonTileID& pad, int areaX, int areaY ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tilesInArea( const LHCb::MuonTileID& pad, int areaX,
+                                                           int areaY ) const override;
 
   /// returns a vector of its MuonTileID's.
   /// Implementation of the IMuonLayout	interface
-  std::vector<LHCb::MuonTileID> tiles() const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tiles() const override;
 
   /** returns a vector of its MuonTileID's in a given quarter
 
       @param quarter : the quarter number to look into
   */
-  std::vector<LHCb::MuonTileID> tiles( int quarter ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tiles( int quarter ) const override;
 
   /** returns a vector of its MuonTileID's in a given quarter and region
 
       @param quarter : the quarter number to look into
       @param region : the region number to look into
   */
-  std::vector<LHCb::MuonTileID> tiles( int quarter, int region ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tiles( int quarter, int region ) const override;
 
   /// find a tile containing the argument tile
-  LHCb::MuonTileID contains( const LHCb::MuonTileID& pad ) const override;
+  [[nodiscard]] LHCb::MuonTileID contains( const LHCb::MuonTileID& pad ) const override;
 
   /// Get tiles touched by pad defined in terms of pregion region number
-  std::vector<LHCb::MuonTileID> tilesInRegion( const LHCb::MuonTileID& pad, int pregion ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> tilesInRegion( const LHCb::MuonTileID& pad, int pregion ) const override;
 
   /// find all the MuonTileID's which are neighbours of the argument tile
-  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -112,7 +115,8 @@ public:
       @param   dirX  horizontal direction in which to look for neighbours
       @param   dirY  vertical direction in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX, int dirY ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX,
+                                                          int dirY ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -121,7 +125,8 @@ public:
       @param   dirY  vertical direction in which to look for neighbours
       @param   depth depth of the band in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX, int dirY, int depth ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX, int dirY,
+                                                          int depth ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction. This version takes into account that
@@ -133,14 +138,14 @@ public:
       @param   depthX depth of the band in which to look for neighbours
       @param   depthY depth of the band in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID> neighboursInArea( const LHCb::MuonTileID& pad, int dirX, int dirY, int depthX,
-                                                  int depthY ) const override;
+  [[nodiscard]] std::vector<LHCb::MuonTileID> neighboursInArea( const LHCb::MuonTileID& pad, int dirX, int dirY,
+                                                                int depthX, int depthY ) const override;
 
   /// check if the given MuonTileID is valid for this layout
-  bool isValidID( const LHCb::MuonTileID& mt ) const;
+  [[nodiscard]] bool isValidID( const LHCb::MuonTileID& mt ) const;
 
   /// check if the layout itself is defined
-  bool isDefined() const;
+  [[nodiscard]] bool isDefined() const;
 
   /// printout to std::ostream
   inline std::ostream& printOut( std::ostream& ) const;
@@ -150,13 +155,13 @@ public:
 
 private:
   /// find magnification factor of pads in the given region
-  int rfactor( unsigned int nr ) const { return 1 << nr; }
+  [[nodiscard]] int rfactor( unsigned int nr ) const { return 1 << nr; }
 
   /** find region for the given pad indices. The pad indices
       are given in terms of the most inner region. If the pad indices
       are not fitting into the layout, the result returned is -1
   */
-  int region( unsigned int bx, unsigned int by ) const;
+  [[nodiscard]] int region( unsigned int bx, unsigned int by ) const;
 
 private:
   unsigned int m_xgrid;

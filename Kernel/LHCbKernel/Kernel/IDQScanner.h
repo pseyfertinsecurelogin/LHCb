@@ -34,7 +34,7 @@ struct IDQScanner : extend_interfaces<IAlgTool> {
 
   /// Scan all the Data Quality flags in the give time range.
   /// @return merged list of DQ flags
-  virtual IDQFilter::FlagsType scan( const Gaudi::Time& since, const Gaudi::Time& until ) const = 0;
+  [[nodiscard]] virtual IDQFilter::FlagsType scan( const Gaudi::Time& since, const Gaudi::Time& until ) const = 0;
 };
 
 #endif // KERNEL_IDQSCANNER_H

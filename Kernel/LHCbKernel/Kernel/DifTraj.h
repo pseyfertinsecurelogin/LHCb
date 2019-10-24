@@ -38,16 +38,15 @@ namespace LHCb {
     using Trajectory<double>::Vector;
     using Trajectory<double>::Point;
 
-    typedef ROOT::Math::SMatrix<double, 3, N> Derivative;
-    typedef ROOT::Math::SVector<double, N>    Parameters;
-
     /// Retrieve the derivative of the point at fixed expansion parameter 'mu'
     /// with respect to the parameters used to describe the trajectory
+    using Derivative                                 = ROOT::Math::SMatrix<double, 3, N>;
     virtual Derivative derivative( double mu ) const = 0;
 
     /// Retrieve the parameters of the DifTraj -- these should be
     /// the values of the parameters with respect to which 'derivative'
     /// provides the derivatives...
+    using Parameters                      = ROOT::Math::SVector<double, N>;
     virtual Parameters parameters() const = 0;
 
     // update the parameters i.e.

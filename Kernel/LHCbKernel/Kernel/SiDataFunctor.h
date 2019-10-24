@@ -28,7 +28,7 @@ namespace SiDataFunctor {
   template <typename TYPE>
   struct CompareByChannel final {
 
-    typedef typename TYPE::chan_type comp_type;
+    using comp_type = typename TYPE::chan_type;
 
     bool operator()( const TYPE& obj, const comp_type& testID ) const { return ( testID > obj.channelID() ); }
 

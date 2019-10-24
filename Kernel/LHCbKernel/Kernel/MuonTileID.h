@@ -32,7 +32,7 @@ namespace LHCb {
   class MuonTileID final {
   public:
     /// Default constructor
-    MuonTileID() : m_muonid( 0 ) {}
+    MuonTileID() {}
 
     /// Constructor with all the arguments
     MuonTileID( int station, const IMuonLayout& lay, int region, int quarter, int x, int y );
@@ -54,31 +54,31 @@ namespace LHCb {
     operator long int() const;
 
     /// Function to extract station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Function to extract region
-    unsigned int region() const;
+    [[nodiscard]] unsigned int region() const;
 
     /// Function to extract quarter
-    unsigned int quarter() const;
+    [[nodiscard]] unsigned int quarter() const;
 
     /// Function to extract layout
-    MuonLayout layout() const;
+    [[nodiscard]] MuonLayout layout() const;
 
     /// Check if layout is horizontal
     bool isHorizontal() const;
 
     /// Function to extract index in x
-    unsigned int nX() const;
+    [[nodiscard]] unsigned int nX() const;
 
     /// Function to extract index in y
-    unsigned int nY() const;
+    [[nodiscard]] unsigned int nY() const;
 
     /// Function to extract lower part of the identifier
-    unsigned int index() const;
+    [[nodiscard]] unsigned int index() const;
 
     /// Function to extract lower part of the identifier with station information
-    unsigned int key() const;
+    [[nodiscard]] unsigned int key() const;
 
     /// comparison operator using key.
     bool operator<( const MuonTileID& id ) const;
@@ -90,31 +90,31 @@ namespace LHCb {
     bool operator!=( const MuonTileID& id ) const;
 
     /// Find the MuonTileID which is an interception of two MuonTileID's
-    MuonTileID intercept( const MuonTileID& id ) const;
+    [[nodiscard]] MuonTileID intercept( const MuonTileID& id ) const;
 
     /// Find the MuonTileID which is an interception of two MuonTileID's
-    MuonTileID interceptSameRegion( const MuonTileID& id ) const;
+    [[nodiscard]] MuonTileID interceptSameRegion( const MuonTileID& id ) const;
 
     /// Find the MuonTileID of a Tile of a given layout containing this pad
-    MuonTileID containerID( const IMuonLayout& layout ) const;
+    [[nodiscard]] MuonTileID containerID( const IMuonLayout& layout ) const;
 
     /// Find the MuonTileID of a Tile which is a neighbour of this pad
-    MuonTileID neighbourID( int dirX, int dirY ) const;
+    [[nodiscard]] MuonTileID neighbourID( int dirX, int dirY ) const;
 
     /// Get local offset X with respect to the container defined by the given IMuonLayout
-    int localX( const IMuonLayout& layout ) const;
+    [[nodiscard]] int localX( const IMuonLayout& layout ) const;
 
     /// Get local offset y with respect to the container defined by the given IMuonLayout
-    int localY( const IMuonLayout& layout ) const;
+    [[nodiscard]] int localY( const IMuonLayout& layout ) const;
 
     /// Check that the MuonTileID is consistent in terms of its layout
-    bool isValid() const;
+    [[nodiscard]] bool isValid() const;
 
     /// Check that the MuonTileID is defined. It means that its code is not 0
-    bool isDefined() const;
+    [[nodiscard]] bool isDefined() const;
 
     /// presents the MuonTileID as a readable string
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     /// update station identifier
     void setStation( const unsigned int station );
@@ -150,7 +150,7 @@ namespace LHCb {
     /// modify index in y
     void set( const unsigned int Value, const unsigned int Shift, const unsigned int Mask );
 
-    unsigned int m_muonid; ///< muon tile id
+    unsigned int m_muonid{0}; ///< muon tile id
 
   }; // class MuonTileID
 

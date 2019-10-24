@@ -31,7 +31,7 @@ namespace LHCb {
     double dy;
   };
 
-  typedef PixelPositionInfo<VPChannelID> VPPositionInfo;
+  using VPPositionInfo = PixelPositionInfo<VPChannelID>;
 
 } // namespace LHCb
 

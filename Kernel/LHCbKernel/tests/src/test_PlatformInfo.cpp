@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE( constructor ) {
 BOOST_AUTO_TEST_CASE( string_conversion ) {
   {
     PlatformInfo info;
-    Shadow*      s = reinterpret_cast<Shadow*>( &info );
+    auto*        s = reinterpret_cast<Shadow*>( &info );
 
     s->instr = 0;
     BOOST_CHECK( info.hostInstrSet() == "80386" );
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( string_conversion ) {
 BOOST_AUTO_TEST_CASE( copy ) {
   {
     PlatformInfo info;
-    Shadow*      s = reinterpret_cast<Shadow*>( &info );
+    auto*        s = reinterpret_cast<Shadow*>( &info );
 
     BOOST_CHECK( info.binaryTag() == STR( BINARY_TAG ) );
     BOOST_CHECK( info.hostInstrSetLevel() == System::instructionsetLevel() );

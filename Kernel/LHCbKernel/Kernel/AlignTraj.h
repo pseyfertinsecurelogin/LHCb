@@ -16,6 +16,8 @@
 #endif
 
 // Include files
+#include <utility>
+
 #include "Math/RotationX.h"
 #include "Math/RotationY.h"
 #include "Math/RotationZ.h"
@@ -51,14 +53,14 @@ namespace LHCb {
 
   public:
     // import types from parent...
-    typedef DifTraj<6>::Parameters Parameters;
-    typedef DifTraj<6>::Derivative Derivative;
-    typedef DifTraj<6>::Point      Point;
-    typedef DifTraj<6>::Vector     Vector;
+    using Parameters = DifTraj<6>::Parameters;
+    using Derivative = DifTraj<6>::Derivative;
+    using Point      = DifTraj<6>::Point;
+    using Vector     = DifTraj<6>::Vector;
 
     /// Constructors
-    AlignTraj( const Trajectory& traj, const Point& pivot )
-        : DifTraj<6>( traj.range() ), m_pivot( pivot ), m_traj( &traj ) {}
+    AlignTraj( const Trajectory& traj, Point pivot )
+        : DifTraj<6>( traj.range() ), m_pivot( std::move( pivot ) ), m_traj( &traj ) {}
 
     AlignTraj( const Trajectory& traj ) : DifTraj<6>( traj.range() ), m_pivot( 0, 0, 0 ), m_traj( &traj ) {}
 
@@ -74,12 +76,12 @@ namespace LHCb {
       m_trans.SetZ( p( 2 ) );
     }
 
-    AlignTraj( const Trajectory& traj, const Parameters& p, const Point& pivot )
+    AlignTraj( const Trajectory& traj, const Parameters& p, Point pivot )
         : DifTraj<6>( traj.range() )
         , m_rx( p( 3 ) )
         , m_ry( p( 4 ) )
         , m_rz( p( 5 ) )
-        , m_pivot( pivot )
+        , m_pivot( std::move( pivot ) )
         , m_traj( &traj ) {
       m_trans.SetX( p( 0 ) );
       m_trans.SetY( p( 1 ) );
@@ -87,33 +89,33 @@ namespace LHCb {
     }
 
     // clone thyself...
-    std::unique_ptr<Trajectory> clone() const override;
+    [[nodiscard]] std::unique_ptr<Trajectory> clone() const override;
 
     /// Retrieve the derivative of the point at fixed arclength 'arclength'
     /// with respect to the alignment parameters
-    Derivative derivative( double arclength ) const override;
+    [[nodiscard]] Derivative derivative( double arclength ) const override;
 
     /// Retrieve the alignment parameters
-    Parameters parameters() const override;
+    [[nodiscard]] Parameters parameters() const override;
 
     /// update the parameters
     AlignTraj& operator+=( const Parameters& delta ) override;
 
-    Point  position( double arclength ) const override;
-    Vector direction( double arclength ) const override;
-    Vector curvature( double arclength ) const override;
-    void   expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
+    [[nodiscard]] Point  position( double arclength ) const override;
+    [[nodiscard]] Vector direction( double arclength ) const override;
+    [[nodiscard]] Vector curvature( double arclength ) const override;
+    void                 expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
 
-    double muEstimate( const Point& ) const override;
+    [[nodiscard]] double muEstimate( const Point& ) const override;
 
-    double distTo1stError( double arclength, double tolerance, int pathDirection ) const override;
-    double distTo2ndError( double arclength, double tolerance, int pathDirection ) const override;
+    [[nodiscard]] double distTo1stError( double arclength, double tolerance, int pathDirection ) const override;
+    [[nodiscard]] double distTo2ndError( double arclength, double tolerance, int pathDirection ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because AlignTraj is parameterized in
     /// arclength.
     using DifTraj<6>::arclength;
-    double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
+    [[nodiscard]] double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
 
   private:
     template <typename T>

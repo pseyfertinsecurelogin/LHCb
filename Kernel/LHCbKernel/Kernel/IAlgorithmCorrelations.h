@@ -49,8 +49,8 @@ struct IAlgorithmCorrelations : extend_interfaces<IAlgTool> {
   virtual StatusCode endEvent() = 0;
 
   ///< Print correlation table
-  virtual StatusCode printTable( void ) = 0;
+  virtual StatusCode printTable() = 0;
   ///< Print list of results
-  virtual StatusCode printList( void ) = 0;
+  virtual StatusCode printList() = 0;
 };
 #endif // KERNEL_IALGORITHMCORRELATIONS_H

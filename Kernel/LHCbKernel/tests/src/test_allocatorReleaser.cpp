@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( test ) {
   BOOST_CHECK_EQUAL( EventModelClass::call_count, 1 );
   BOOST_CHECK_EQUAL( AnotherClass::call_count, 1 );
 
-  MsgStream log( 0, "test" );
+  MsgStream log( nullptr, "test" );
   // try once more, with logging
   log << MSG::INFO;
   Gaudi::MemoryPoolAllocatorReleaser::releaseMemory( log );

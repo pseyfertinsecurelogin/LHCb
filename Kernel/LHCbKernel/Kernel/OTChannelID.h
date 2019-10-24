@@ -46,7 +46,7 @@ namespace LHCb {
     OTChannelID( unsigned int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    OTChannelID() : m_channelID( 0 ) {}
+    OTChannelID() {}
 
     /// Comparison equality
     bool operator==( const OTChannelID& aChannel ) const;
@@ -61,70 +61,70 @@ namespace LHCb {
     operator unsigned int() const;
 
     /// Returns the geometrical part of the channelID
-    unsigned int geometry() const;
+    [[nodiscard]] unsigned int geometry() const;
 
     /// True if same geometric channel
-    bool sameGeometry( const OTChannelID& testChannel ) const;
+    [[nodiscard]] bool sameGeometry( const OTChannelID& testChannel ) const;
 
     /// true if same tdc counts
-    bool sameTime( const OTChannelID& testChannel ) const;
+    [[nodiscard]] bool sameTime( const OTChannelID& testChannel ) const;
 
     /// Returns a layer id in range [0,11]
-    unsigned int sequentialUniqueLayer() const;
+    [[nodiscard]] unsigned int sequentialUniqueLayer() const;
 
     /// Returns a quarter id in range [0,47]
-    unsigned int sequentialUniqueQuarter() const;
+    [[nodiscard]] unsigned int sequentialUniqueQuarter() const;
 
     /// Returns a module id in range [0,431]
-    unsigned int sequentialUniqueModule() const;
+    [[nodiscard]] unsigned int sequentialUniqueModule() const;
 
     /// Returns an otis id in range [0,1727]
-    unsigned int sequentialUniqueOtis() const;
+    [[nodiscard]] unsigned int sequentialUniqueOtis() const;
 
     /// Returns a straw id in range [0,55295]
-    unsigned int sequentialUniqueStraw() const;
+    [[nodiscard]] unsigned int sequentialUniqueStraw() const;
 
     /// Print this OTChannelID in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  OT Channel ID of straw
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  OT Channel ID of straw
     void setChannelID( unsigned int value );
 
     /// Retrieve TDC-time of hit
-    unsigned int tdcTime() const;
+    [[nodiscard]] unsigned int tdcTime() const;
 
     /// Update TDC-time of hit
     void setTdcTime( unsigned int value );
 
     /// Retrieve Straw id
-    unsigned int straw() const;
+    [[nodiscard]] unsigned int straw() const;
 
     /// Retrieve Module id
-    unsigned int module() const;
+    [[nodiscard]] unsigned int module() const;
 
     /// Retrieve Quarter id
-    unsigned int quarter() const;
+    [[nodiscard]] unsigned int quarter() const;
 
     /// Retrieve Layer id
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// Retrieve Station id
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Retrieve Unique layer id, i.e. this layer belong to this station
-    unsigned int uniqueLayer() const;
+    [[nodiscard]] unsigned int uniqueLayer() const;
 
     /// Retrieve Unique quarter id, i.e. this quarter belongs to this layer and station
-    unsigned int uniqueQuarter() const;
+    [[nodiscard]] unsigned int uniqueQuarter() const;
 
     /// Retrieve Unique module id, i.e. this module belongs to this quarter, layer and station
-    unsigned int uniqueModule() const;
+    [[nodiscard]] unsigned int uniqueModule() const;
 
     /// Retrieve Unique straw, i.e. this straw belongs to this module, quarter, layer and station
-    unsigned int uniqueStraw() const;
+    [[nodiscard]] unsigned int uniqueStraw() const;
 
     friend std::ostream& operator<<( std::ostream& str, const OTChannelID& obj ) { return obj.fillStream( str ); }
 
@@ -154,7 +154,7 @@ namespace LHCb {
       uniqueStrawMask   = strawMask + moduleMask + quarterMask + layerMask + stationMask
     };
 
-    unsigned int m_channelID; ///< OT Channel ID of straw
+    unsigned int m_channelID{0}; ///< OT Channel ID of straw
 
   }; // class OTChannelID
 
@@ -199,7 +199,7 @@ inline unsigned int LHCb::OTChannelID::tdcTime() const {
 }
 
 inline void LHCb::OTChannelID::setTdcTime( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~tdcTimeMask;
   m_channelID |= ( ( ( (unsigned int)val ) << tdcTimeBits ) & tdcTimeMask );
 }

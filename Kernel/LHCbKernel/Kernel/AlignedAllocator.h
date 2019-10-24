@@ -25,13 +25,13 @@
 template <typename T, std::size_t Alignment>
 class aligned_allocator {
 public:
-  typedef T value_type;
+  using value_type = T;
 
   T* address( T& r ) const { return &r; }
 
   const T* address( const T& s ) const { return &s; }
 
-  std::size_t max_size() const {
+  [[nodiscard]] std::size_t max_size() const {
     // The following has been carefully written to be independent of
     // the definition of size_t and to avoid signed/unsigned warnings.
     return ( static_cast<std::size_t>( 0 ) - static_cast<std::size_t>( 1 ) ) / sizeof( T );
@@ -52,14 +52,12 @@ public:
 
   // Default constructor, copy constructor, rebinding constructor, and destructor.
   // Empty for stateless allocators.
-  aligned_allocator() {}
+  aligned_allocator() = default;
 
-  aligned_allocator( const aligned_allocator& ) {}
+  aligned_allocator( const aligned_allocator& ) = default;
 
   template <typename U>
   aligned_allocator( const aligned_allocator<U, Alignment>& ) {}
-
-  ~aligned_allocator() {}
 
   // The following will be different for each allocator.
   T* allocate( const std::size_t n ) const {
@@ -69,7 +67,7 @@ public:
     // (the implementation can define malloc(0) to return NULL,
     // in which case the bad_alloc check below would fire).
     // All allocators can return NULL in this case.
-    if ( n == 0 ) { return NULL; }
+    if ( n == 0 ) { return nullptr; }
 
     // All allocators should contain an integer overflow check.
     // The Standardization Committee recommends that std::length_error
@@ -80,7 +78,7 @@ public:
     void* const pv = memalign( Alignment, n * sizeof( T ) );
 
     // Allocators should throw std::bad_alloc in the case of memory allocation failure.
-    if ( pv == NULL ) { throw std::bad_alloc(); }
+    if ( !pv ) { throw std::bad_alloc(); }
 
     return static_cast<T*>( pv );
   }

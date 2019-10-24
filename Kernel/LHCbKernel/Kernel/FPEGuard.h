@@ -11,7 +11,7 @@
 #ifndef FPEGUARD_H
 #define FPEGUARD_H 1
 #if defined( linux ) && defined( __GNUC__ )
-#  include <fenv.h>
+#  include <cfenv>
 #elif defined( _WIN32 )
 #  include <float.h>
 #endif
@@ -44,7 +44,7 @@ namespace FPE {
 
 #if defined( linux ) && defined( __GNUC__ )
     static const bool has_working_implementation = true;
-    typedef int       mask_type;
+    using mask_type                              = int;
     // make sure the FPU has caught up by explicitly issueing an fwait...
     inline mask_type get() {
       asm volatile( "fwait" );
@@ -179,7 +179,7 @@ namespace FPE {
 
   public:
     /// export the type of the FPE mask
-    typedef FPE::detail::mask_type mask_type;
+    using mask_type = FPE::detail::mask_type;
 
     /// Export whether a working implementation exists.
     /// In case it doesn't, the code (silently!) defaults

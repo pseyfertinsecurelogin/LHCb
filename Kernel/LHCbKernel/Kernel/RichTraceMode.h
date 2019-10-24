@@ -63,64 +63,64 @@ namespace LHCb {
         const bool aeroRefraction = false );
 
     /// Default Destructor
-    ~RichTraceMode() {}
+    ~RichTraceMode() = default;
 
     /// Tests if the given ray tracing result was successful, within the bounds presented by the configured mode
-    bool traceWasOK( const LHCb::RichTraceMode::RayTraceResult& result ) const;
+    [[nodiscard]] bool traceWasOK( const LHCb::RichTraceMode::RayTraceResult& result ) const;
 
     /// Print this RichTraceMode in a human readable way
     std::ostream& fillStream( std::ostream& os ) const;
 
     /// Retrieve const  Bit packed field containing the ray tracing configuration options
-    unsigned int data() const;
+    [[nodiscard]] unsigned int data() const;
 
     /// Update  Bit packed field containing the ray tracing configuration options
     void setData( unsigned int value );
 
     /// Retrieve The PD modelling precision to use
-    LHCb::RichTraceMode::DetectorPrecision detPrecision() const;
+    [[nodiscard]] LHCb::RichTraceMode::DetectorPrecision detPrecision() const;
 
     /// Update The PD modelling precision to use
     void setDetPrecision( const LHCb::RichTraceMode::DetectorPrecision& value );
 
     /// Retrieve The PD tube and panel acceptance mode
-    LHCb::RichTraceMode::DetectorPlaneBoundary detPlaneBound() const;
+    [[nodiscard]] LHCb::RichTraceMode::DetectorPlaneBoundary detPlaneBound() const;
 
     /// Update The PD tube and panel acceptance mode
     void setDetPlaneBound( const LHCb::RichTraceMode::DetectorPlaneBoundary& value );
 
     /// Retrieve Flag to force the side to use in the ray-tracing
-    bool forcedSide() const;
+    [[nodiscard]] bool forcedSide() const;
 
     /// Update Flag to force the side to use in the ray-tracing
     void setForcedSide( bool value );
 
     /// Retrieve Flag to respect the overall outer boundaries of the mirrors
-    bool outMirrorBoundary() const;
+    [[nodiscard]] bool outMirrorBoundary() const;
 
     /// Update Flag to respect the overall outer boundaries of the mirrors
     void setOutMirrorBoundary( bool value );
 
     /// Retrieve Flag to respect the individual mirror segment boundaries (i.e. the small gaps between them)
-    bool mirrorSegBoundary() const;
+    [[nodiscard]] bool mirrorSegBoundary() const;
 
     /// Update Flag to respect the individual mirror segment boundaries (i.e. the small gaps between them)
     void setMirrorSegBoundary( bool value );
 
     /// Retrieve Flag to turn on rejection of trajectories which intersect the beam pipe inside the RICH detectors
-    bool beamPipeIntersects() const;
+    [[nodiscard]] bool beamPipeIntersects() const;
 
     /// Update Flag to turn on rejection of trajectories which intersect the beam pipe inside the RICH detectors
     void setBeamPipeIntersects( bool value );
 
     /// Retrieve Flag to turn on the checking for shadowing by the PD kapton
-    bool hpdKaptonShadowing() const;
+    [[nodiscard]] bool hpdKaptonShadowing() const;
 
     /// Update Flag to turn on the checking for shadowing by the PD kapton
     void setHpdKaptonShadowing( bool value );
 
     /// Retrieve Flag to turn on the refraction correction at the exit of the Aerogel volume into the Rich1Gas
-    bool aeroRefraction() const;
+    [[nodiscard]] bool aeroRefraction() const;
 
     /// Update Flag to turn on the refraction correction at the exit of the Aerogel volume into the Rich1Gas
     void setAeroRefraction( bool value );
@@ -153,7 +153,7 @@ namespace LHCb {
       aeroRefractionMask     = 0x2000L
     };
 
-    unsigned int m_data; ///< Bit packed field containing the ray tracing configuration options
+    unsigned int m_data{0}; ///< Bit packed field containing the ray tracing configuration options
 
   }; // class RichTraceMode
 
@@ -206,7 +206,7 @@ namespace LHCb {
 
 // Including forward declarations
 
-inline LHCb::RichTraceMode::RichTraceMode() : m_data( 0 ) {
+inline LHCb::RichTraceMode::RichTraceMode() {
 
   setDetPlaneBound( LHCb::RichTraceMode::DetectorPlaneBoundary::IgnorePDAcceptance );
   setDetPrecision( LHCb::RichTraceMode::DetectorPrecision::FlatPDs );
@@ -238,7 +238,7 @@ inline LHCb::RichTraceMode::DetectorPrecision LHCb::RichTraceMode::detPrecision(
 }
 
 inline void LHCb::RichTraceMode::setDetPrecision( const LHCb::RichTraceMode::DetectorPrecision& value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~detPrecisionMask;
   m_data |= ( ( ( (unsigned int)val ) << detPrecisionBits ) & detPrecisionMask );
 }
@@ -248,7 +248,7 @@ inline LHCb::RichTraceMode::DetectorPlaneBoundary LHCb::RichTraceMode::detPlaneB
 }
 
 inline void LHCb::RichTraceMode::setDetPlaneBound( const LHCb::RichTraceMode::DetectorPlaneBoundary& value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~detPlaneBoundMask;
   m_data |= ( ( ( (unsigned int)val ) << detPlaneBoundBits ) & detPlaneBoundMask );
 }
@@ -256,7 +256,7 @@ inline void LHCb::RichTraceMode::setDetPlaneBound( const LHCb::RichTraceMode::De
 inline bool LHCb::RichTraceMode::forcedSide() const { return 0 != ( ( m_data & forcedSideMask ) >> forcedSideBits ); }
 
 inline void LHCb::RichTraceMode::setForcedSide( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~forcedSideMask;
   m_data |= ( ( ( (unsigned int)val ) << forcedSideBits ) & forcedSideMask );
 }
@@ -266,7 +266,7 @@ inline bool LHCb::RichTraceMode::outMirrorBoundary() const {
 }
 
 inline void LHCb::RichTraceMode::setOutMirrorBoundary( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~outMirrorBoundaryMask;
   m_data |= ( ( ( (unsigned int)val ) << outMirrorBoundaryBits ) & outMirrorBoundaryMask );
 }
@@ -276,7 +276,7 @@ inline bool LHCb::RichTraceMode::mirrorSegBoundary() const {
 }
 
 inline void LHCb::RichTraceMode::setMirrorSegBoundary( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~mirrorSegBoundaryMask;
   m_data |= ( ( ( (unsigned int)val ) << mirrorSegBoundaryBits ) & mirrorSegBoundaryMask );
 }
@@ -286,7 +286,7 @@ inline bool LHCb::RichTraceMode::beamPipeIntersects() const {
 }
 
 inline void LHCb::RichTraceMode::setBeamPipeIntersects( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~beamPipeIntersectsMask;
   m_data |= ( ( ( (unsigned int)val ) << beamPipeIntersectsBits ) & beamPipeIntersectsMask );
 }
@@ -296,7 +296,7 @@ inline bool LHCb::RichTraceMode::hpdKaptonShadowing() const {
 }
 
 inline void LHCb::RichTraceMode::setHpdKaptonShadowing( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~hpdKaptonShadowingMask;
   m_data |= ( ( ( (unsigned int)val ) << hpdKaptonShadowingBits ) & hpdKaptonShadowingMask );
 }
@@ -306,7 +306,7 @@ inline bool LHCb::RichTraceMode::aeroRefraction() const {
 }
 
 inline void LHCb::RichTraceMode::setAeroRefraction( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_data &= ~aeroRefractionMask;
   m_data |= ( ( ( (unsigned int)val ) << aeroRefractionBits ) & aeroRefractionMask );
 }

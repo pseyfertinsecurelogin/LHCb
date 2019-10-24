@@ -43,22 +43,22 @@ namespace LHCb {
     VeloChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    VeloChannelID() : m_channelID( 0 ) {}
+    VeloChannelID() {}
 
     /// Set sensor type bits
     void setType( const VeloChannelID::sensorType& type );
 
     /// Get sensor type
-    VeloChannelID::sensorType type() const;
+    [[nodiscard]] VeloChannelID::sensorType type() const;
 
     /// Is the channel in a pile up sensor
-    bool isPileUp() const;
+    [[nodiscard]] bool isPileUp() const;
 
     /// Is the channel in an R type sensor
-    bool isRType() const;
+    [[nodiscard]] bool isRType() const;
 
     /// Is the channel in a phi type sensor
-    bool isPhiType() const;
+    [[nodiscard]] bool isPhiType() const;
 
     /// cast
     operator long() const;
@@ -67,19 +67,19 @@ namespace LHCb {
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  VELO Channel ID
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  VELO Channel ID
     void setChannelID( unsigned int value );
 
     /// Retrieve Strip number
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Update Strip number
     void setStrip( unsigned int value );
 
     /// Retrieve Sensor number
-    unsigned int sensor() const;
+    [[nodiscard]] unsigned int sensor() const;
 
     /// Update Sensor number
     void setSensor( unsigned int value );
@@ -94,7 +94,7 @@ namespace LHCb {
     /// Bitmasks for bitfield channelID
     enum channelIDMasks { stripMask = 0x7ffL, sensorMask = 0x7f800L, typeMask = 0x180000L };
 
-    unsigned int m_channelID; ///< VELO Channel ID
+    unsigned int m_channelID{0}; ///< VELO Channel ID
 
   }; // class VeloChannelID
 
@@ -148,7 +148,7 @@ inline unsigned int LHCb::VeloChannelID::strip() const {
 }
 
 inline void LHCb::VeloChannelID::setStrip( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~stripMask;
   m_channelID |= ( ( ( (unsigned int)val ) << stripBits ) & stripMask );
 }
@@ -158,7 +158,7 @@ inline unsigned int LHCb::VeloChannelID::sensor() const {
 }
 
 inline void LHCb::VeloChannelID::setSensor( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~sensorMask;
   m_channelID |= ( ( ( (unsigned int)val ) << sensorBits ) & sensorMask );
 }

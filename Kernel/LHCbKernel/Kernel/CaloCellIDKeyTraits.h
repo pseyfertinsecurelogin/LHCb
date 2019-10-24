@@ -62,9 +62,9 @@ namespace Containers {
   template <>
   struct key_traits<LHCb::CaloCellID> {
     /// Declaration of key-type
-    typedef LHCb::CaloCellID key_type;
+    using key_type = LHCb::CaloCellID;
     /// Declaration of keyed object type
-    typedef KeyedObject<key_type> obj_type;
+    using obj_type = KeyedObject<key_type>;
 
     /** Create key from its full integer representation.
      *  Not implementing on specialization may inhibit the creation

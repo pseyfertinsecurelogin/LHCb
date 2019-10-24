@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #include "Kernel/SiLandauFun.h"
 #include "Kernel/LHCbConstants.h"
-#include <math.h>
+#include <cmath>
 
 double SiLandauFun::MPV( const double beta, const double gamma, const double pathlength ) {
 

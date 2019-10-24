@@ -32,7 +32,7 @@ struct GAUDI_API IAccept : extend_interfaces<IAlgTool> {
   DeclareInterfaceID( IAccept, 4, 0 );
   // ==========================================================================
   /// make a generic selection
-  virtual bool accept() const = 0;
+  [[nodiscard]] virtual bool accept() const = 0;
   // ==========================================================================
 };
 // ============================================================================

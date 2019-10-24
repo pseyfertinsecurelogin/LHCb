@@ -63,8 +63,8 @@ namespace {
 
 namespace {
   // ==========================================================================
-  typedef CaloCellCode::ContentType     _Type1;
-  typedef LHCb::CaloCellID::ContentType _Type2;
+  using _Type1 = CaloCellCode::ContentType;
+  using _Type2 = LHCb::CaloCellID::ContentType;
   // ==========================================================================
 } // namespace
 

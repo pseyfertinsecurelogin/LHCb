@@ -13,6 +13,8 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <utility>
+
 #include "GaudiKernel/StatEntity.h"
 #include "GaudiKernel/ToStream.h"
 // ============================================================================
@@ -62,12 +64,8 @@ namespace {
 // ============================================================================
 // constructor from counter
 // ============================================================================
-Gaudi::Counter::Counter( const StatEntity& counter, const std::string& description )
-    : DataObject(), m_counter( counter ), m_description( description ) {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Gaudi::Counter::~Counter() {}
+Gaudi::Counter::Counter( StatEntity counter, std::string description )
+    : DataObject(), m_counter( std::move( counter ) ), m_description( std::move( description ) ) {}
 // ============================================================================
 // retrieve the unique object identifier  (virtual)
 // ============================================================================
@@ -85,11 +83,7 @@ std::ostream& Gaudi::Counter::fillStream( std::ostream& o ) const { return o; }
 // ============================================================================
 // constructor from counters
 // ============================================================================
-Gaudi::Counters::Counters( const Gaudi::Counters::Map& counters ) : DataObject(), m_counters( counters ) {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Gaudi::Counters::~Counters() {}
+Gaudi::Counters::Counters( Gaudi::Counters::Map counters ) : DataObject(), m_counters( std::move( counters ) ) {}
 // ============================================================================
 // retrieve the unique object identifier  (virtual)
 // ============================================================================
@@ -106,11 +100,7 @@ std::ostream& Gaudi::Counters::fillStream( std::ostream& o ) const { return o; }
 // ============================================================================
 // constructor from counters
 // ============================================================================
-Gaudi::Numbers::Numbers( const Gaudi::Numbers::Map& counters ) : DataObject(), m_counters( counters ) {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Gaudi::Numbers::~Numbers() {}
+Gaudi::Numbers::Numbers( Gaudi::Numbers::Map counters ) : DataObject(), m_counters( std::move( counters ) ) {}
 // ============================================================================
 // retrieve the unique object identifier  (virtual)
 // ============================================================================

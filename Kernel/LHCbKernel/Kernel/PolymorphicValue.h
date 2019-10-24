@@ -41,124 +41,122 @@
  *
  */
 
-namespace LHCb {
-  namespace cxx {
+namespace LHCb::cxx {
 
-    namespace details {
+  namespace details {
 
-      template <typename Interface, typename Ret>
-      constexpr bool has_clone_v = std::is_convertible_v<decltype( std::declval<Interface const&>().clone() ), Ret>;
+    template <typename Interface, typename Ret>
+    constexpr bool has_clone_v = std::is_convertible_v<decltype( std::declval<Interface const&>().clone() ), Ret>;
 
-      template <typename Interface, typename T = void>
-      using require_clone_t =
-          std::enable_if_t<has_clone_v<Interface, Interface*> || has_clone_v<Interface, std::unique_ptr<Interface>>, T>;
+    template <typename Interface, typename T = void>
+    using require_clone_t =
+        std::enable_if_t<has_clone_v<Interface, Interface*> || has_clone_v<Interface, std::unique_ptr<Interface>>, T>;
 
-      template <typename Interface>
-      require_clone_t<Interface, std::unique_ptr<Interface>> clone( Interface const* i ) {
-        if constexpr ( has_clone_v<Interface, std::unique_ptr<Interface>> ) {
-          return i ? i->clone() : std::unique_ptr<Interface>{};
-        } else if constexpr ( has_clone_v<Interface, Interface*> ) {
-          return std::unique_ptr<Interface>{i ? i->clone() : nullptr};
-        }
+    template <typename Interface>
+    require_clone_t<Interface, std::unique_ptr<Interface>> clone( Interface const* i ) {
+      if constexpr ( has_clone_v<Interface, std::unique_ptr<Interface>> ) {
+        return i ? i->clone() : std::unique_ptr<Interface>{};
+      } else if constexpr ( has_clone_v<Interface, Interface*> ) {
+        return std::unique_ptr<Interface>{i ? i->clone() : nullptr};
       }
-    } // namespace details
+    }
+  } // namespace details
 
-    // (almost) drop-in replacement for a `std::unique_ptr<Interface>`
-    // which is copyable, _provided_ that `Interface` has a `clone()` function
+  // (almost) drop-in replacement for a `std::unique_ptr<Interface>`
+  // which is copyable, _provided_ that `Interface` has a `clone()` function
 
-    template <typename Interface, typename = details::require_clone_t<Interface>>
-    class PolymorphicValue final {
-      std::unique_ptr<Interface> m_ptr;
+  template <typename Interface, typename = details::require_clone_t<Interface>>
+  class PolymorphicValue final {
+    std::unique_ptr<Interface> m_ptr;
 
-    public:
-      PolymorphicValue() = default;
-      explicit PolymorphicValue( std::unique_ptr<Interface> ptr ) noexcept : m_ptr{std::move( ptr )} {}
-      PolymorphicValue( PolymorphicValue const& other ) : m_ptr{details::clone( other.m_ptr.get() )} {}
-      PolymorphicValue( PolymorphicValue&& other ) noexcept : m_ptr{std::move( other.m_ptr )} {}
-      PolymorphicValue& operator=( PolymorphicValue const& other ) {
-        m_ptr = details::clone( other.m_ptr.get() );
-        return *this;
-      }
-      PolymorphicValue& operator=( PolymorphicValue&& other ) noexcept {
-        m_ptr = std::move( other.m_ptr );
-        return *this;
-      }
-      PolymorphicValue& operator=( std::unique_ptr<Interface>&& other ) noexcept {
-        m_ptr = std::move( other );
-        return *this;
-      }
-
-      Interface*       ptr() noexcept { return m_ptr.get(); }
-      Interface const* ptr() const noexcept { return m_ptr.get(); }
-
-      Interface* operator->() noexcept {
-        assert( m_ptr.get() );
-        return m_ptr.get();
-      }
-      Interface const* operator->() const noexcept {
-        assert( m_ptr.get() );
-        return m_ptr.get();
-      }
-
-      Interface& operator*() noexcept( noexcept( *m_ptr ) ) {
-        assert( m_ptr.get() );
-        return *m_ptr;
-      }
-      Interface const& operator*() const noexcept( noexcept( *m_ptr ) ) {
-        assert( m_ptr.get() );
-        return *m_ptr;
-      }
-
-      friend void swap( PolymorphicValue& lhs, PolymorphicValue& rhs ) noexcept { swap( lhs.m_ptr, rhs.m_ptr ); }
-
-      explicit operator bool() const noexcept { return static_cast<bool>( m_ptr ); }
-
-      template <typename T, typename U>
-      friend bool operator==( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-      template <typename T, typename U>
-      friend bool operator!=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-      template <typename T, typename U>
-      friend bool operator<( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-      template <typename T, typename U>
-      friend bool operator>( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-      template <typename T, typename U>
-      friend bool operator<=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-      template <typename T, typename U>
-      friend bool operator>=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
-    };
-
-    template <typename T, typename U>
-    bool operator==( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr == rhs.m_ptr;
+  public:
+    PolymorphicValue() = default;
+    explicit PolymorphicValue( std::unique_ptr<Interface> ptr ) noexcept : m_ptr{std::move( ptr )} {}
+    PolymorphicValue( PolymorphicValue const& other ) : m_ptr{details::clone( other.m_ptr.get() )} {}
+    PolymorphicValue( PolymorphicValue&& other ) noexcept : m_ptr{std::move( other.m_ptr )} {}
+    PolymorphicValue& operator=( PolymorphicValue const& other ) {
+      m_ptr = details::clone( other.m_ptr.get() );
+      return *this;
+    }
+    PolymorphicValue& operator=( PolymorphicValue&& other ) noexcept {
+      m_ptr = std::move( other.m_ptr );
+      return *this;
+    }
+    PolymorphicValue& operator=( std::unique_ptr<Interface>&& other ) noexcept {
+      m_ptr = std::move( other );
+      return *this;
     }
 
-    template <typename T, typename U>
-    bool operator!=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr != rhs.m_ptr;
+    Interface*       ptr() noexcept { return m_ptr.get(); }
+    Interface const* ptr() const noexcept { return m_ptr.get(); }
+
+    Interface* operator->() noexcept {
+      assert( m_ptr.get() );
+      return m_ptr.get();
+    }
+    Interface const* operator->() const noexcept {
+      assert( m_ptr.get() );
+      return m_ptr.get();
     }
 
-    template <typename T, typename U>
-    bool operator<( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr < rhs.m_ptr;
+    Interface& operator*() noexcept( noexcept( *m_ptr ) ) {
+      assert( m_ptr.get() );
+      return *m_ptr;
+    }
+    Interface const& operator*() const noexcept( noexcept( *m_ptr ) ) {
+      assert( m_ptr.get() );
+      return *m_ptr;
     }
 
-    template <typename T, typename U>
-    bool operator>( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr > rhs.m_ptr;
-    }
+    friend void swap( PolymorphicValue& lhs, PolymorphicValue& rhs ) noexcept { swap( lhs.m_ptr, rhs.m_ptr ); }
+
+    explicit operator bool() const noexcept { return static_cast<bool>( m_ptr ); }
 
     template <typename T, typename U>
-    bool operator<=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr <= rhs.m_ptr;
-    }
-
+    friend bool operator==( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
     template <typename T, typename U>
-    bool operator>=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
-      return lhs.m_ptr >= rhs.m_ptr;
-    }
+    friend bool operator!=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
+    template <typename T, typename U>
+    friend bool operator<( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
+    template <typename T, typename U>
+    friend bool operator>( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
+    template <typename T, typename U>
+    friend bool operator<=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
+    template <typename T, typename U>
+    friend bool operator>=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept;
+  };
 
-  } // namespace cxx
-} // namespace LHCb
+  template <typename T, typename U>
+  bool operator==( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr == rhs.m_ptr;
+  }
+
+  template <typename T, typename U>
+  bool operator!=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr != rhs.m_ptr;
+  }
+
+  template <typename T, typename U>
+  bool operator<( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr < rhs.m_ptr;
+  }
+
+  template <typename T, typename U>
+  bool operator>( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr > rhs.m_ptr;
+  }
+
+  template <typename T, typename U>
+  bool operator<=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr <= rhs.m_ptr;
+  }
+
+  template <typename T, typename U>
+  bool operator>=( const PolymorphicValue<T>& lhs, const PolymorphicValue<U>& rhs ) noexcept {
+    return lhs.m_ptr >= rhs.m_ptr;
+  }
+
+} // namespace LHCb::cxx
 
 namespace std {
   template <typename IFace>

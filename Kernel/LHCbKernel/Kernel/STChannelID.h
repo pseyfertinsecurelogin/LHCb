@@ -40,55 +40,55 @@ namespace LHCb {
     explicit STChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    STChannelID() : m_channelID( 0 ) {}
+    STChannelID() {}
 
     /// cast
     operator int() const;
 
     /// Retrieve type
-    unsigned int type() const;
+    [[nodiscard]] unsigned int type() const;
 
     /// test whether TT or not
-    bool isTT() const;
+    [[nodiscard]] bool isTT() const;
 
     /// test whether IT or not
-    bool isIT() const;
+    [[nodiscard]] bool isIT() const;
 
     /// Retrieve sector
-    unsigned int sector() const;
+    [[nodiscard]] unsigned int sector() const;
 
     /// Retrieve detRegion
-    unsigned int detRegion() const;
+    [[nodiscard]] unsigned int detRegion() const;
 
     /// Retrieve layer
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// Retrieve unique layer
-    unsigned int uniqueLayer() const;
+    [[nodiscard]] unsigned int uniqueLayer() const;
 
     /// Retrieve unique detRegion
-    unsigned int uniqueDetRegion() const;
+    [[nodiscard]] unsigned int uniqueDetRegion() const;
 
     /// Print this STChannelID in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Print method for python NOT NEEDED + SLOW IN C++ use fillStream
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     /// Retrieve const  ST Channel ID
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  ST Channel ID
     void setChannelID( unsigned int value );
 
     /// Retrieve strip
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Retrieve station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Retrieve unique sector
-    unsigned int uniqueSector() const;
+    [[nodiscard]] unsigned int uniqueSector() const;
 
     friend std::ostream& operator<<( std::ostream& str, const STChannelID& obj ) { return obj.fillStream( str ); }
 
@@ -117,7 +117,7 @@ namespace LHCb {
       uniqueSectorMask    = sectorMask + detRegionMask + layerMask + stationMask
     };
 
-    unsigned int m_channelID; ///< ST Channel ID
+    unsigned int m_channelID{0}; ///< ST Channel ID
 
   }; // class STChannelID
 

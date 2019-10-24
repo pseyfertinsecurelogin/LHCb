@@ -34,7 +34,7 @@ struct IDQFilter : extend_interfaces<IAlgTool> {
 
   /// Check if a set of flags is acceptable according to the rules defined
   /// by the implementation.
-  virtual bool accept( const FlagsType& flags ) const = 0;
+  [[nodiscard]] virtual bool accept( const FlagsType& flags ) const = 0;
 };
 
 #endif // KERNEL_IDQFILTER_H
