@@ -61,19 +61,19 @@ namespace Rich::SIMD {
 
     public:
       /// X coordinate
-      inline TYPE X() const noexcept { return _X; }
+      [[nodiscard]] TYPE X() const noexcept { return _X; }
       /// Y coordinate
-      inline TYPE Y() const noexcept { return _Y; }
+      [[nodiscard]] TYPE Y() const noexcept { return _Y; }
       /// Z coordinate
-      inline TYPE Z() const noexcept { return _Z; }
+      [[nodiscard]] TYPE Z() const noexcept { return _Z; }
 
     public:
       /// X coordinate
-      inline TYPE x() const noexcept { return X(); }
+      [[nodiscard]] TYPE x() const noexcept { return X(); }
       /// Y coordinate
-      inline TYPE y() const noexcept { return Y(); }
+      [[nodiscard]] TYPE y() const noexcept { return Y(); }
       /// Z coordinate
-      inline TYPE z() const noexcept { return Z(); }
+      [[nodiscard]] TYPE z() const noexcept { return Z(); }
 
     public:
       /// send to std::ostream
@@ -119,10 +119,10 @@ namespace Rich::SIMD {
 
     public:
       /// Normal Vector
-      inline const Vector<TYPE>& Normal() const noexcept { return normal; }
+      [[nodiscard]] const Vector<TYPE>& Normal() const noexcept { return normal; }
       /// Distance to a point
       template <typename POINT>
-      inline decltype( auto ) Distance( const POINT& p ) const noexcept {
+      decltype( auto ) Distance( const POINT& p ) const noexcept {
         return ( ( normal.X() * p.X() ) + ( normal.Y() * p.Y() ) + ( normal.Z() * p.Z() ) + D );
       }
 
@@ -151,15 +151,15 @@ namespace Rich::SIMD {
 
   public:
     /// Get the SIMD RoC values for the current mirrors
-    inline const SIMDFP& getRoCs() const noexcept { return m_RoCs; }
+    [[nodiscard]] const SIMDFP& getRoCs() const noexcept { return m_RoCs; }
     /// Get the SIMD centreNormalPlane for the current mirrors
-    inline const Plane<SIMDFP>& getNormalPlane() const noexcept { return m_NormPs; }
+    [[nodiscard]] const Plane<SIMDFP>& getNormalPlane() const noexcept { return m_NormPs; }
     /// Get the SIM CoC for the current mirrors
-    inline const Point<SIMDFP>& getCoCs() const noexcept { return m_CoCs; }
+    [[nodiscard]] const Point<SIMDFP>& getCoCs() const noexcept { return m_CoCs; }
 
   public:
     /// Update the cached information for the given mirrors
-    inline void update( const Mirrors& mirrors ) noexcept {
+    void update( const Mirrors& mirrors ) noexcept {
       // loop over the scalar entries and update as needed
       for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
         // the mirror pointer
@@ -177,7 +177,7 @@ namespace Rich::SIMD {
 
   public:
     /// send to std::ostream
-    inline friend std::ostream& operator<<( std::ostream& s, const MirrorData& data ) {
+    friend std::ostream& operator<<( std::ostream& s, const MirrorData& data ) {
       return s << "{ Mirrors "
                //<< data.mirrors // ToDo FixMe
                << " RoCs " << data.getRoCs() << " CoCs " << data.getCoCs() << " Plane " << data.getNormalPlane()
