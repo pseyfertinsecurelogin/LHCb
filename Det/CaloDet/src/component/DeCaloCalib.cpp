@@ -143,11 +143,11 @@ StatusCode DeCaloCalib::execute() {
 
 void DeCaloCalib::update() {
   // update cellParams
-  CaloVector<CellParam>& cells = (CaloVector<CellParam>&)m_calo->cellParams(); // no-const conversion
-  std::vector<int>       cellids, cellind;
-  std::vector<double>    gains, dgains;
+  auto&               cells = const_cast<CaloVector<CellParam>&>( m_calo->cellParams() ); // no-const conversion
+  std::vector<int>    cellids, cellind;
+  std::vector<double> gains, dgains;
   for ( auto& cell : cells ) {
-    LHCb::CaloCellID id = ( cell ).cellID();
+    LHCb::CaloCellID id = cell.cellID();
     if ( !m_calo->valid( id ) ) continue;
     if ( m_calo->isPinId( id ) ) continue;
 
@@ -158,7 +158,7 @@ void DeCaloCalib::update() {
 
     if ( isDead( index ) ) {
       dt = 0.;
-      ( cell ).addQualityFlag( CaloCellQuality::Dead );
+      cell.addQualityFlag( CaloCellQuality::Dead );
     } else if ( m_method == "User" )
       dt = delta( index );
     else

@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef CALODET_CALOLED_H
-#define CALODET_CALOLED_H 1
+#pragma once
 
 // Include files
 #include "Kernel/CaloCellCode.h"
@@ -26,25 +25,25 @@ class CaloLed final {
 public:
   /** constructors
    */
-  CaloLed() : m_id( -1 ) {}
+  CaloLed() = default;
   CaloLed( int id ) : m_id( id ) {}
 
   // getters
-  int                                  number() const { return m_id; }
-  const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
-  LHCb::CaloCellID                     pin() const { return m_pin; }
+  [[nodiscard]] int                                  number() const { return m_id; }
+  [[nodiscard]] const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
+  [[nodiscard]] LHCb::CaloCellID                     pin() const { return m_pin; }
 
-  std::vector<int> firstRows() const { return m_fRow; }
-  std::vector<int> lastRows() const { return m_lRow; }
-  std::vector<int> firstColumns() const { return m_fCol; }
-  std::vector<int> lastColumns() const { return m_lCol; }
-  std::vector<int> areas() const { return m_area; }
-  int              firstRow() const { return *( m_fRow.begin() ); }
-  int              lastRow() const { return *( m_lRow.begin() ); }
-  int              firstColumn() const { return *( m_fCol.begin() ); }
-  int              lastColumn() const { return *( m_lCol.begin() ); }
-  int              area() const { return *( m_area.begin() ); }
-  int              index() const { return m_index; }
+  [[nodiscard]] std::vector<int> firstRows() const { return m_fRow; }
+  [[nodiscard]] std::vector<int> lastRows() const { return m_lRow; }
+  [[nodiscard]] std::vector<int> firstColumns() const { return m_fCol; }
+  [[nodiscard]] std::vector<int> lastColumns() const { return m_lCol; }
+  [[nodiscard]] std::vector<int> areas() const { return m_area; }
+  [[nodiscard]] int              firstRow() const { return *( m_fRow.begin() ); }
+  [[nodiscard]] int              lastRow() const { return *( m_lRow.begin() ); }
+  [[nodiscard]] int              firstColumn() const { return *( m_fCol.begin() ); }
+  [[nodiscard]] int              lastColumn() const { return *( m_lCol.begin() ); }
+  [[nodiscard]] int              area() const { return *( m_area.begin() ); }
+  [[nodiscard]] int              index() const { return m_index; }
 
   // setters
   void setNumber( int number ) { m_id = number; }
@@ -67,7 +66,7 @@ public:
   }
 
 private:
-  int                           m_id;
+  int                           m_id{-1};
   std::string                   m_region = "Region ";
   LHCb::CaloCellID              m_pin    = {};
   std::vector<int>              m_area;
@@ -78,5 +77,3 @@ private:
   int                           m_index = -1;
   std::vector<LHCb::CaloCellID> m_cells;
 };
-
-#endif // CALODET_CALOLED_H

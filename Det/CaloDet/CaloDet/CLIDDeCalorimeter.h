@@ -8,10 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef CALO_CLIDDECALORIMETER_H
-#define CALO_CLIDDECALORIMETER_H 1
+#pragma once
 #include "GaudiKernel/ClassID.h"
 
 static const CLID CLID_DeCalorimeter = 8900;
-
-#endif // CALO_CLIDDECALORIMETER_H

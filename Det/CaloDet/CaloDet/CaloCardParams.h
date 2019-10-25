@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef _CALOCARDPARAMS_H_
-#define _CALOCARDPARAMS_H_ 1
+#define _CALOCARDPARAMS_H_
 
 /// Defines some parameters for the front-end cards,
 /// shared by several pieces of code

@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef CALODET_DESUBSUBCALORIMETER_H
-#define CALODET_DESUBSUBCALORIMETER_H 1
+#define CALODET_DESUBSUBCALORIMETER_H
 #include "CaloDet/CLIDDeSubSubCalorimeter.h"
 #include "DetDesc/DetectorElement.h"
 #include "GaudiKernel/MsgStream.h"
@@ -28,9 +28,7 @@ class MsgStream;
 class DeSubSubCalorimeter : public DetectorElement {
 public:
   /// Constructors
-  DeSubSubCalorimeter( const std::string& name = "" );
-  /// Destructor
-  virtual ~DeSubSubCalorimeter();
+  DeSubSubCalorimeter( const std::string& name = "" ) : DetectorElement( name ) {}
   /// object identification
   static const CLID& classID() { return CLID_DeSubSubCalorimeter; }
   /// printout to standard STL stream
@@ -53,20 +51,20 @@ public:
   inline int  area() const { return m_area; };
   inline void setArea( const int a ) { m_area = a; }
   ///
+  friend std::ostream& operator<<( std::ostream& os, const DeSubSubCalorimeter& de ) { return de.printOut( os ); }
+  friend MsgStream&    operator<<( MsgStream& os, const DeSubSubCalorimeter& de ) { return de.printOut( os ); }
+
 private:
-  double m_cellSize; ///< Cell dimension
-  double m_xSize;
-  double m_ySize;
-  int    m_area; ///< Calo Area ID
+  double m_cellSize{0.0}; ///< Cell dimension
+  double m_xSize{0.0};
+  double m_ySize{0.0};
+  int    m_area{-1}; ///< Calo Area ID
 };
-// ============================================================================
-inline std::ostream& operator<<( std::ostream& os, const DeSubSubCalorimeter& de ) { return de.printOut( os ); }
 // ============================================================================
 inline std::ostream& operator<<( std::ostream& os, const DeSubSubCalorimeter* de ) {
   return de ? ( os << *de ) : ( os << " DeSubSubCalorimeter* points to NULL!" << std::endl );
 }
 // ============================================================================
-inline MsgStream& operator<<( MsgStream& os, const DeSubSubCalorimeter& de ) { return de.printOut( os ); }
 // ============================================================================
 inline MsgStream& operator<<( MsgStream& os, const DeSubSubCalorimeter* de ) {
   return de ? ( os << *de ) : ( os << " DeSubSubCalorimeter* points to NULL!" << endmsg );

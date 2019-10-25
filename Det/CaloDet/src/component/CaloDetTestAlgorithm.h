@@ -10,7 +10,7 @@
 \*****************************************************************************/
 // ============================================================================
 #ifndef CALODET_CALODETTESTALGORITHM_H
-#define CALODET_CALODETTESTALGORITHM_H 1
+#define CALODET_CALODETTESTALGORITHM_H
 // Include files
 // from STL
 #include <string>

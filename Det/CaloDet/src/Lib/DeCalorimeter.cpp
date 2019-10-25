@@ -9,8 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#define CALODET_DECALORIMETER_CPP 1
-// ============================================================================
 // STL
 // ============================================================================
 #include <algorithm>
@@ -88,7 +86,7 @@ StatusCode DeCalorimeter::initialize() {
     msg << MSG::DEBUG << " Number of subCalorimeter " << subdets.size() << endmsg;
   for ( auto child : subdets ) {
     if ( !child ) { continue; }
-    DeSubCalorimeter* sub = dynamic_cast<DeSubCalorimeter*>( child );
+    auto* sub = dynamic_cast<DeSubCalorimeter*>( child );
     Assert( sub, "no DeSubCalorimeter!" );
     m_subCalos.push_back( sub );
   }
@@ -197,7 +195,7 @@ StatusCode DeCalorimeter::initialize() {
       if ( cellGain( id ) <= 0 && !id.isPin() ) nGain++;
       if ( m_caloDet == "EcalDet" || m_caloDet == "HcalDet" ) {
         double ect = cellGain( id ) * m_cells[id].sine() / m_l0Et * 1024;
-        double act = (double)m_cells[id].l0Constant();
+        auto   act = (double)m_cells[id].l0Constant();
         double ag  = 0;
         if ( act > 0 ) ag = cellGain( id ) * m_cells[id].sine() / act * 1024;
         if ( UNLIKELY( msg2.level() <= MSG::VERBOSE ) )
@@ -257,14 +255,13 @@ StatusCode DeCalorimeter::buildCells() {
   std::vector<double> cellSize;
   //  loop over sub-calo (calo halves)
   for ( auto& elem : m_subCalos ) {
-    m_nArea = ( elem )->subSubCalos().size();
+    m_nArea = elem->subSubCalos().size();
     if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
-      msg << MSG::DEBUG << " SubCalos :  Side " << ( elem )->sideName() << " | #areas "
-          << ( elem )->subSubCalos().size() << endmsg;
-    int side = ( elem )->side();
+      msg << MSG::DEBUG << " SubCalos :  Side " << elem->sideName() << " | #areas " << elem->subSubCalos().size()
+          << endmsg;
+    int side = ( elem->side() == DeSubCalorimeter::Side::C ? -1 : +1 );
     // loop over sub-sub-calo (calo areas)
-    SubSubCalos subSubCalos = ( elem )->subSubCalos();
-    for ( auto& subSubCalo : subSubCalos ) {
+    for ( auto& subSubCalo : elem->subSubCalos() ) {
       unsigned int Area    = subSubCalo->area();
       double       xOffset = -side * subSubCalo->xSize() / 2.;
       if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
@@ -590,14 +587,13 @@ StatusCode DeCalorimeter::buildCards() {
     int cornerCard   = -1;
     int previousCard = -1;
 
-    LHCb::CaloCellID dummy{};
-    int              area  = card.area();
-    int              fRow  = card.firstRow();
-    int              lRow  = card.lastRow();
-    int              fCol  = card.firstColumn();
-    int              lCol  = card.lastColumn();
-    int              crate = card.crate();
-    int              slot  = card.slot();
+    int area  = card.area();
+    int fRow  = card.firstRow();
+    int lRow  = card.lastRow();
+    int fCol  = card.firstColumn();
+    int lCol  = card.lastColumn();
+    int crate = card.crate();
+    int slot  = card.slot();
 
     for ( int row = fRow; lRow >= row; ++row ) {
       for ( int col = fCol; lCol >= col; ++col ) {
@@ -805,8 +801,8 @@ StatusCode DeCalorimeter::buildMonitoring() {
       m_cells[pinId].setValid( true );
       m_cells[pinId].setFeCard( iCard, pinCol, pinRow );
       // update FE-Card
-      std::vector<LHCb::CaloCellID>& ids = (std::vector<LHCb::CaloCellID>&)m_feCards[iCard].ids(); // no-const
-      ids[channel]                       = pinId;
+      auto& ids    = const_cast<std::vector<LHCb::CaloCellID>&>( m_feCards[iCard].ids() );
+      ids[channel] = pinId;
       kk++;
       if ( UNLIKELY( msg.level() <= MSG::DEBUG ) ) msg << MSG::DEBUG << "PIN diode " << kk << "  ------" << endmsg;
     }
@@ -1549,4 +1545,38 @@ StatusCode DeCalorimeter::updNumGains() {
     ic.setNumericGain( 0.0 ); // same default as in CellParam.cpp
   } );
   return getNumericGains();
+}
+// ============================================================================
+/** return parameters of cell, which contains the global point.
+ *  the function shodul be a bit more fast and efficent,
+ *  @param globalPoint point to be checked
+ *  @return cell parameters (null if point is not in Calorimter
+ */
+// ============================================================================
+const CellParam* DeCalorimeter::Cell_( const Gaudi::XYZPoint& globalPoint ) const {
+  // if the point is outside calorimeter
+  const IGeometryInfo* geo = geometry();
+  Assert( 0 != geo, " Unable to extract IGeometryInfo* " );
+  if ( !geo->isInside( globalPoint ) ) { return 0; } // RETURN
+  // find subcalorimeter
+
+  for ( auto const& sc : subCalos() ) {
+    const IGeometryInfo* subGeo = sc->geometry();
+    if ( !subGeo->isInside( globalPoint ) ) continue;
+    int side = ( sc->side() == DeSubCalorimeter::Side::C ? -1 : +1 );
+    for ( auto const& ssc : sc->subSubCalos() ) {
+      const IGeometryInfo* subSubGeo = ssc->geometry();
+      if ( !subSubGeo->isInside( globalPoint ) ) continue;
+      Gaudi::XYZPoint localPoint( subSubGeo->toLocal( globalPoint ) );
+      //
+      double    xOffset  = -side * ssc->xSize() / 2.;
+      double    cellSize = ssc->cellSize();
+      const int Column   = (int)( ( localPoint.x() - xOffset ) / cellSize + m_firstRowUp );
+      const int Row      = (int)( localPoint.y() / cellSize + m_firstRowUp );
+      //
+      int Area = ssc->area();
+      return &m_cells[LHCb::CaloCellID( m_caloIndex, Area, Row, Column )];
+    }
+  }
+  return 0;
 }
