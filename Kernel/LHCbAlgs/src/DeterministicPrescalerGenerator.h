@@ -20,7 +20,7 @@ namespace {
   uint32_t mix( uint32_t state ) {
     // note: the constants below are _not_ arbitrary, but are picked
     //       carefully such that the bit shuffling has a large 'avalanche' effect...
-    //       See http://bretm.home.comcast.net/~bretm/hash/
+    //       See https://web.archive.org/web/20130918055434/http://bretm.home.comcast.net/~bretm/hash/
     //
     // note: as a result, you might call this a quasi-random (not to be confused
     //       with psuedo-random!) number generator, in that it generates an output
