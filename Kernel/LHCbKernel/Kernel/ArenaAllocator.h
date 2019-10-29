@@ -47,7 +47,8 @@ namespace LHCb::Allocators {
     bool is_inside( std::byte* p ) const noexcept { return m_buffer.data() <= p && p <= m_buffer.data() + size(); }
 
     DynamicArena( span<std::byte> buffer ) noexcept : m_current{buffer.data()}, m_buffer{buffer} {
-      assert( this + details::align_up<Alignment>( sizeof( DynamicArena ) ) == buffer.data() );
+      assert( reinterpret_cast<std::byte*>( this ) + details::align_up<Alignment>( sizeof( DynamicArena ) ) ==
+              buffer.data() );
     }
 
     struct DynamicArenaDeleter {
@@ -58,6 +59,11 @@ namespace LHCb::Allocators {
     };
 
   public:
+    template <typename T>
+    static constexpr std::size_t align_up( std::size_t N ) {
+      return details::align_up<Alignment>( N * sizeof( T ) );
+    }
+
     using Handle = std::unique_ptr<DynamicArena<Alignment>, DynamicArenaDeleter>;
 
     // create a dynamic arena with (at least) N bytes of storage...
@@ -69,21 +75,17 @@ namespace LHCb::Allocators {
                          DynamicArena<Alignment>( {buf + daSize, static_cast<span<std::byte>::index_type>( M )} ) );
     }
 
-    template <typename T>
-    static constexpr std::size_t align_up( std::size_t N ) {
-      return details::align_up<Alignment>( N * sizeof( T ) );
-    }
-
+    ~DynamicArena()                     = default;
     DynamicArena( const DynamicArena& ) = delete;
     DynamicArena& operator=( const DynamicArena& ) = delete;
     DynamicArena( DynamicArena&& rhs )             = delete;
     DynamicArena& operator=( DynamicArena&& rhs ) = delete;
 
     static constexpr std::size_t alignment = Alignment;
-    std::size_t                  size() const noexcept { return m_buffer.size(); }
+    [[nodiscard]] std::size_t    size() const noexcept { return m_buffer.size(); }
 
     // TODO: use CRTP to share the code below...
-    std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer.data() ); }
+    [[nodiscard]] std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer.data() ); }
 
     template <std::size_t ReqAlign>
     std::byte* allocate( std::size_t n ) {
@@ -106,7 +108,7 @@ namespace LHCb::Allocators {
   template <std::size_t N, std::size_t Alignment = alignof( std::max_align_t )>
   class StaticArena {
     std::byte* m_current = nullptr;
-    alignas( Alignment ) std::byte m_buffer[N];
+    alignas( Alignment ) std::byte m_buffer[N]{};
 
     bool is_inside( std::byte* p ) const noexcept { return m_buffer <= p && p <= m_buffer + size(); }
 
@@ -122,7 +124,7 @@ namespace LHCb::Allocators {
     static constexpr std::size_t size() noexcept { return N; }
 
     // TODO: use CRTP to share the code below...
-    std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer ); }
+    [[nodiscard]] std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer ); }
 
     template <std::size_t ReqAlign>
     std::byte* allocate( std::size_t n ) {
