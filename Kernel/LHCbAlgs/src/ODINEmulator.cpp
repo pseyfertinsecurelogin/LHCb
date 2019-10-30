@@ -58,6 +58,9 @@ namespace {
      use with care),
  * - whether to set filter passed based on the emulated event type
      (yes by default), and
+ * - whether to overwrite the event number with a new monotonically
+ *   increasing sequence. In multithreaded mode, the assignment of
+ *   numbers is not deterministic.
  * - the ODIN input location.
  *
  */
@@ -89,7 +92,7 @@ public:
   ODIN operator()( const ODIN& ) const override;
 
 private:
-  mutable Gaudi::Accumulators::Counter<uint64_t>  m_eventNumber{this, "Last event number."};
+  mutable Gaudi::Accumulators::Counter<uint64_t>  m_eventNumber{this, "Next event number."};
   std::map<unsigned int, std::array<uint32_t, 4>> m_initial;
   std::map<unsigned int, std::array<uint32_t, 4>> m_acc;
   mutable std::map<unsigned int, std::array<Gaudi::Accumulators::BinomialCounter<uint32_t>, 4>> m_counters;
@@ -100,6 +103,8 @@ private:
   Gaudi::Property<int>  m_overrideBXType{this, "OverrideBXType", -1,
                                         "If between 0 and 3, override the bunch crossing type for all events."};
   Gaudi::Property<bool> m_filter{this, "Filter", true, "Filter only selected events."};
+  Gaudi::Property<bool> m_setEventNumber{this, "SetEventNumber", false,
+                                         "Set event number using a new monitonically increasing sequence."};
 };
 
 StatusCode ODINEmulator::initialize() {
@@ -121,8 +126,7 @@ StatusCode ODINEmulator::initialize() {
 
 ODIN ODINEmulator::operator()( const ODIN& odin ) const {
   ODIN emulated{odin};
-
-  emulated.setEventNumber( ( m_eventNumber++ ).value() );
+  if ( m_setEventNumber ) { emulated.setEventNumber( ( m_eventNumber++ ).value() ); }
   if ( UNLIKELY( m_overrideBXType >= 0 && m_overrideBXType < 4 ) ) {
     emulated.setBunchCrossingType( static_cast<ODIN::BXTypes>( m_overrideBXType.value() ) );
   }
