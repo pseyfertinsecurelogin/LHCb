@@ -15,7 +15,7 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <stddef.h>
+#include <cstddef>
 #include <utility>
 // ============================================================================
 // Relations
@@ -34,22 +34,22 @@ namespace Relations {
    *  @date   27/01/2002
    */
   template <class ENTRIES>
-  struct Range_ : public Relations::BaseRange {
+  struct Range_ : Relations::BaseRange {
     // useful types
-    typedef typename ENTRIES::const_iterator         iterator;
-    typedef typename ENTRIES::const_iterator         const_iterator;
-    typedef typename ENTRIES::const_reverse_iterator const_reverse_iterator;
-    typedef typename ENTRIES::const_reverse_iterator reverse_iterator;
-    typedef typename ENTRIES::const_reference        reference;
-    typedef typename ENTRIES::const_reference        const_reference;
-    typedef typename ENTRIES::value_type             value_type;
+    using iterator               = typename ENTRIES::const_iterator;
+    using const_iterator         = typename ENTRIES::const_iterator;
+    using const_reverse_iterator = typename ENTRIES::const_reverse_iterator;
+    using reverse_iterator       = typename ENTRIES::const_reverse_iterator;
+    using reference              = typename ENTRIES::const_reference;
+    using const_reference        = typename ENTRIES::const_reference;
+    using value_type             = typename ENTRIES::value_type;
     /// default constructor
     Range_() : Relations::BaseRange(), m_begin(), m_end(){};
     /// constructor
-    Range_( iterator begin, iterator end ) : Relations::BaseRange(), m_begin( begin ), m_end( end ){};
-    Range_( const ENTRIES& e ) : Relations::BaseRange(), m_begin( e.begin() ), m_end( e.end() ) {}
+    Range_( iterator begin, iterator end ) : m_begin( begin ), m_end( end ){};
+    Range_( const ENTRIES& e ) : Range_{e.begin(), e.end()} {}
     template <class T1, class T2>
-    Range_( const std::pair<T1, T2>& r ) : Relations::BaseRange(), m_begin( r.first ), m_end( r.second ) {}
+    Range_( const std::pair<T1, T2>& r ) : Range_{r.first, r.second} {}
     /// begin-iterator (    const version)
     iterator begin() const { return this->m_begin; }
     /// end-iterator   (    const version)
@@ -63,9 +63,9 @@ namespace Relations {
     /// back  element (applied only for 'valid' ranges)
     const_reference back() const { return ( *this )( size() - 1 ); }
     /// number of relations
-    size_t size() const { return end() - begin(); }
+    [[nodiscard]] size_t size() const { return end() - begin(); }
     /// empty?
-    bool empty() const { return end() == begin(); }
+    [[nodiscard]] bool empty() const { return end() == begin(); }
     /// the access to the items by index
     const_reference operator()( const size_t index ) const { return *( begin() + index ); };
     /// the access to the items by index

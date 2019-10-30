@@ -60,28 +60,28 @@ namespace LHCb {
     /// shortcut for "inverse interface  interface
     typedef IRelationWeighted<TO, FROM, WEIGHT> IBase2;
     /// shortcut for direct subinterface
-    typedef typename IBase::DirectType DirectType;
+    using DirectType = typename IBase::DirectType;
     /// shortcut for inverse subinterface
-    typedef typename IBase::InverseType InverseType;
+    using InverseType = typename IBase::InverseType;
     /// import "Range" type from the base
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import "From"  type from the base
-    typedef typename IBase::From  From;
-    typedef typename IBase::From_ From_;
+    using From  = typename IBase::From;
+    using From_ = typename IBase::From_;
     /// import "To"    type from the base
-    typedef typename IBase::To  To;
-    typedef typename IBase::To_ To_;
+    using To  = typename IBase::To;
+    using To_ = typename IBase::To_;
     /// import "Weight" type from the base
-    typedef typename IBase::Weight  Weight;
-    typedef typename IBase::Weight_ Weight_;
+    using Weight  = typename IBase::Weight;
+    using Weight_ = typename IBase::Weight_;
     /// shortcut for actual implementation
     typedef Relations::Relation2Weighted<FROM, TO, WEIGHT> Base;
     // shortcut for "direct" interface
-    typedef typename IBase::DirectType IDirect;
+    using IDirect = typename IBase::DirectType;
     // shortcut for "inverse" interface
-    typedef typename IBase::InverseType IInverse;
+    using IInverse = typename IBase::InverseType;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -117,13 +117,13 @@ namespace LHCb {
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~RelationWeighted2D() {
+    ~RelationWeighted2D() override {
 #ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().decrement( type() );
 #endif // COUNT_INSTANCES
     }
     /// the type name
-    const std::string& type() const {
+    [[nodiscard]] const std::string& type() const {
       static const std::string s_type( System::typeinfoName( typeid( OwnType ) ) );
       return s_type;
     }
@@ -133,57 +133,55 @@ namespace LHCb {
       return s_clid;
     }
     /// object identification (virtual method)
-    const CLID& clID() const override { return classID(); }
+    [[nodiscard]] const CLID& clID() const override { return classID(); }
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_relations( From_ object ) const { return m_base.i_relations( object ); }
+    Range i_relations( From_ object ) const { return m_base.i_relations( object ); }
     /// retrive ALL relations from ALL objects (fast,100% inline)
-    inline Range i_relations() const { return m_base.i_relations(); }
+    Range i_relations() const { return m_base.i_relations(); }
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_relations( From_ object, Weight_ threshold, const bool flag ) const {
+    Range i_relations( From_ object, Weight_ threshold, const bool flag ) const {
       return m_base.i_relations( object, threshold, flag );
     }
     /// make the relation between 2 objects (fast,100% inline)
-    inline StatusCode i_relate( From_ object1, To_ object2, Weight_ weight ) {
+    StatusCode i_relate( From_ object1, To_ object2, Weight_ weight ) {
       const Entry entry( object1, object2, weight );
       return i_add( entry );
     }
     /// add the entry
-    inline StatusCode i_add( const Entry& entry ) { return m_base.i_add( entry ); }
+    StatusCode i_add( const Entry& entry ) { return m_base.i_add( entry ); }
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_inRange( From_ object, Weight_ low, Weight_ high ) const {
-      return m_base.i_inRange( object, low, high );
-    }
+    Range i_inRange( From_ object, Weight_ low, Weight_ high ) const { return m_base.i_inRange( object, low, high ); }
     /// remove the concrete relation between objects (fast,100% inline)
-    inline StatusCode i_remove( From_ object1, To_ object2 ) { return m_base.i_remove( object1, object2 ); }
+    StatusCode i_remove( From_ object1, To_ object2 ) { return m_base.i_remove( object1, object2 ); }
     /// remove all relations FROM the defined object (fast,100% inline)
-    inline StatusCode i_removeFrom( From_ object ) { return m_base.i_removeFrom( object ); }
+    StatusCode i_removeFrom( From_ object ) { return m_base.i_removeFrom( object ); }
     /// remove all relations TO the defined object (fast,100% inline)
-    inline StatusCode i_removeTo( To_ object ) { return m_base.i_removeTo( object ); }
+    StatusCode i_removeTo( To_ object ) { return m_base.i_removeTo( object ); }
     /// filter out the relations FROM the defined object (fast,100% inline)
-    inline StatusCode i_filterFrom( From_ object, Weight_ threshold, const bool flag ) {
+    StatusCode i_filterFrom( From_ object, Weight_ threshold, const bool flag ) {
       return m_base.i_filterFrom( object, threshold, flag );
     }
     /// filter out the relations TO the defined object (fast,100% inline)
-    inline StatusCode i_filterTo( To_ object, Weight_ threshold, const bool flag ) {
+    StatusCode i_filterTo( To_ object, Weight_ threshold, const bool flag ) {
       return m_base.i_filterTo( object, threshold, flag );
     }
     /// filter out all relations (fast,100% inline)
-    inline StatusCode i_filter( Weight_ threshold, const bool flag ) { return m_base.i_filter( threshold, flag ); }
+    StatusCode i_filter( Weight_ threshold, const bool flag ) { return m_base.i_filter( threshold, flag ); }
     /// remove ALL relations from ALL objects to ALL objects (fast,100% inline)
-    inline StatusCode i_clear() { return m_base.i_clear(); }
+    StatusCode i_clear() { return m_base.i_clear(); }
     /// rebuild ALL relations form ALL  object to ALL objects(fast,100% inline)
-    inline StatusCode i_rebuild() { return m_base.i_rebuild(); }
+    StatusCode i_rebuild() { return m_base.i_rebuild(); }
     /** make the relation between 2 objects (fast,100% inline)
      *  the call for i_sort() is mandatory after usage of this method!
      */
-    inline void i_push( From_ object1, To_ object2, Weight_ weight ) { m_base.i_push( object1, object2, weight ); }
+    void i_push( From_ object1, To_ object2, Weight_ weight ) { m_base.i_push( object1, object2, weight ); }
     /** (re)sort of the table
      *   mandatory to use after i_push
      */
-    inline void i_sort() { m_base.i_sort(); }
+    void i_sort() { m_base.i_sort(); }
     // ========================================================================
   public: // merge
     // ========================================================================
@@ -266,13 +264,13 @@ namespace LHCb {
   public:
     // ========================================================================
     /// get the "direct" interface
-    inline typename Base::Direct* i_direct() { return m_base.i_direct(); }
+    typename Base::Direct* i_direct() { return m_base.i_direct(); }
     /// get the "direct" interface  (const-version)
-    inline const typename Base::Direct* i_direct() const { return m_base.i_direct(); }
+    const typename Base::Direct* i_direct() const { return m_base.i_direct(); }
     /// get the "inverse" interface
-    inline typename Base::Inverse* i_inverse() { return m_base.i_inverse(); }
+    typename Base::Inverse* i_inverse() { return m_base.i_inverse(); }
     /// get the "inverse" interface  (const version)
-    inline const typename Base::Inverse* i_inverse() const { return m_base.i_inverse(); }
+    const typename Base::Inverse* i_inverse() const { return m_base.i_inverse(); }
     // ========================================================================
   public: // abstract methods from interface
     // ========================================================================
@@ -289,7 +287,7 @@ namespace LHCb {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( !ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -319,7 +317,7 @@ namespace LHCb {
   private:
     // ========================================================================
     // The assigenement opeartor is disabled
-    RelationWeighted2D& operator=( const RelationWeighted2D& ); // no assignement
+    RelationWeighted2D& operator=( const RelationWeighted2D& ) = delete; // no assignement
     // ========================================================================
   private:
     // ========================================================================

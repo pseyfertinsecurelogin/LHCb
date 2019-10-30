@@ -26,17 +26,17 @@ namespace Relations {
   template <class TYPE>
   class Pointer {
   public:
-    Pointer( const TYPE* data = 0 ) : m_data( const_cast<TYPE*>( data ) ){};
+    Pointer( const TYPE* data = nullptr ) : m_data( const_cast<TYPE*>( data ) ){};
     /// destructor
-    ~Pointer() {}
+    ~Pointer() = default;
 
   public:
-    inline TYPE* get() const { return m_data; }
-    inline       operator TYPE*() const { return get(); }
-    inline TYPE* operator->() const { return get(); }
+    TYPE* get() const { return m_data; }
+          operator TYPE*() const { return get(); }
+    TYPE* operator->() const { return get(); }
 
   public:
-    inline Pointer& operator=( const TYPE* value ) {
+    Pointer& operator=( const TYPE* value ) {
       m_data = const_cast<TYPE*>( value );
       return *this;
     };
@@ -53,9 +53,9 @@ namespace Relations {
   class Pointer<const TYPE> : public Pointer<TYPE> {
   public:
     /// constructor
-    Pointer( const TYPE* data = 0 ) : Pointer<TYPE>( data ) {}
+    Pointer( const TYPE* data = nullptr ) : Pointer( data ) {}
     /// destructor
-    ~Pointer() {}
+    ~Pointer() = default;
   };
 
 } // end of namespace Relations

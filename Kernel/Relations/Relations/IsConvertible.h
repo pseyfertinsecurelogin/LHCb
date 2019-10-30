@@ -25,12 +25,8 @@ namespace Relations {
    */
   template <class T, class U>
   struct IsConvertible {
-    enum { same = false, value = std::is_convertible<T, U>::value };
-  };
-  // ==========================================================================
-  template <class T>
-  struct IsConvertible<T, T> {
-    enum { same = true, value = true };
+    constexpr static bool same  = std::is_same_v<T, U>;
+    constexpr static bool value = std::is_convertible_v<T, U>;
   };
   // ==========================================================================
 } // end of namespace Relations

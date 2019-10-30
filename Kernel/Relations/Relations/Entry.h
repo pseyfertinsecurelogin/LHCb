@@ -35,55 +35,55 @@ namespace Relations {
   struct Entry_ {
   public:
     /// type traits for "FROM" object
-    typedef Relations::ObjectTypeTraits<FROM> FromTypes;
+    using FromTypes = Relations::ObjectTypeTraits<FROM>;
     /// type traits for "TO" object
-    typedef Relations::ObjectTypeTraits<TO> ToTypes;
+    using ToTypes = Relations::ObjectTypeTraits<TO>;
 
   public:
-    typedef typename FromTypes::Input  From_;
-    typedef typename FromTypes::Output From;
-    typedef typename FromTypes::Inner  FromInner;
-    typedef typename ToTypes::Input    To_;
-    typedef typename ToTypes::Output   To;
-    typedef typename ToTypes::Inner    ToInner;
+    using From_     = typename FromTypes::Input;
+    using From      = typename FromTypes::Output;
+    using FromInner = typename FromTypes::Inner;
+    using To_       = typename ToTypes::Input;
+    using To        = typename ToTypes::Output;
+    using ToInner   = typename ToTypes::Inner;
 
   public:
     /// "less" function object for "From" objects
-    typedef typename FromTypes::Less LessF;
+    using LessF = typename FromTypes::Less;
     /// "less" function object for "To" objects
-    typedef typename ToTypes::Less LessT;
+    using LessT = typename ToTypes::Less;
     /// "equality" function object for "To" objects
-    typedef typename std::equal_to<ToInner> EqualT;
+    using EqualT = typename std::equal_to<>;
 
   public:
-    typedef FromInner First;
-    typedef ToInner   Second;
+    using First  = FromInner;
+    using Second = ToInner;
 
   public:
     /// constructor
-    Entry_() : m_from(), m_to() {}
+    Entry_() = default;
     /// constructor
     Entry_( From_ f, To_ t ) : m_from( f ), m_to( t ) {}
     /// constructor
-    Entry_( From_ f ) : m_from( f ), m_to() {}
+    Entry_( From_ f ) : m_from( f ) {}
 
   public:
     /// accessor to the "FROM" object ( const     version )
-    inline From from() const { return m_from; }
+    From from() const { return m_from; }
     /// accessor to the "TO"   object ( const     version )
-    inline To to() const { return m_to; }
+    To to() const { return m_to; }
     /// the conversion operator       ( const     version )
-    inline operator To() const { return m_to; }
+    operator To() const { return m_to; }
 
   public:
     /// for Python @warning  "from" is reserved keyword in Python
-    inline From _from() const { return from(); }
+    From _from() const { return from(); }
     /// for Python
-    inline To _to() const { return to(); }
+    To _to() const { return to(); }
 
   public:
     /// comparison operator
-    inline bool operator<( const Entry_& entry ) const {
+    bool operator<( const Entry_& entry ) const {
       return LessF()( this->m_from, entry.m_from )
                  ? true
                  : LessF()( entry.m_from, this->m_from ) ? false : LessT()( this->m_to, entry.m_to );

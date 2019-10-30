@@ -62,26 +62,26 @@ namespace Relations {
     /// actual implementations of inverse type
     typedef RelationWeighted<TO, FROM, WEIGHT> InvBase;
     /// shortcut for direct base type
-    typedef Base Direct;
+    using Direct = Base;
     /// shortcut for inverse base type
-    typedef InvBase Inverse;
+    using Inverse = InvBase;
     /// shortcut for direct subinterface
-    typedef typename IBase::DirectType DirectType;
+    using DirectType = typename IBase::DirectType;
     /// shortcut for inverse subinterface
-    typedef typename IBase::InverseType InverseType;
+    using InverseType = typename IBase::InverseType;
     /// import basic types from Interface
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import basic types from Interface
-    typedef typename IBase::From  From;
-    typedef typename IBase::From_ From_;
+    using From  = typename IBase::From;
+    using From_ = typename IBase::From_;
     /// import basic types from Interface
-    typedef typename IBase::To  To;
-    typedef typename IBase::To_ To_;
+    using To  = typename IBase::To;
+    using To_ = typename IBase::To_;
     /// import basic types from Interface
-    typedef typename IBase::Weight  Weight;
-    typedef typename IBase::Weight_ Weight_;
+    using Weight  = typename IBase::Weight;
+    using Weight_ = typename IBase::Weight_;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -116,7 +116,8 @@ namespace Relations {
       m_inverse.setInverseBase( m_direct.directBase() );
     }
     /// destructor (virtual)
-    virtual ~Relation2Weighted(){};
+    virtual ~Relation2Weighted() = default;
+
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
@@ -277,7 +278,7 @@ namespace Relations {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -304,7 +305,7 @@ namespace Relations {
   private:
     // ========================================================================
     /// assignement operator is private!
-    Relation2Weighted& operator=( const Relation2Weighted& copy );
+    Relation2Weighted& operator=( const Relation2Weighted& copy ) = delete;
     // ========================================================================
   private:
     // ========================================================================

@@ -29,73 +29,73 @@ namespace Relations {
   public:
     // ========================================================================
     /// type traits for "FROM" object
-    typedef Relations::ObjectTypeTraits<FROM> FromTypes;
+    using FromTypes = Relations::ObjectTypeTraits<FROM>;
     /// type traits for "TO" object
-    typedef Relations::ObjectTypeTraits<TO> ToTypes;
+    using ToTypes = Relations::ObjectTypeTraits<TO>;
     /// type traits for "WEIGHT" object
-    typedef Relations::ObjectTypeTraits<WEIGHT> WeightTypes;
+    using WeightTypes = Relations::ObjectTypeTraits<WEIGHT>;
     // ========================================================================
   public:
     // ========================================================================
-    typedef typename FromTypes::Input    From_;
-    typedef typename FromTypes::Output   From;
-    typedef typename FromTypes::Inner    FromInner;
-    typedef typename ToTypes::Input      To_;
-    typedef typename ToTypes::Output     To;
-    typedef typename ToTypes::Inner      ToInner;
-    typedef typename WeightTypes::Input  Weight_;
-    typedef typename WeightTypes::Output Weight;
-    typedef typename WeightTypes::Inner  WeightInner;
+    using From_       = typename FromTypes::Input;
+    using From        = typename FromTypes::Output;
+    using FromInner   = typename FromTypes::Inner;
+    using To_         = typename ToTypes::Input;
+    using To          = typename ToTypes::Output;
+    using ToInner     = typename ToTypes::Inner;
+    using Weight_     = typename WeightTypes::Input;
+    using Weight      = typename WeightTypes::Output;
+    using WeightInner = typename WeightTypes::Inner;
     // ========================================================================
   public:
     // ========================================================================
     /// "less" function object for "From" objects
-    typedef typename FromTypes::Less LessF;
+    using LessF = typename FromTypes::Less;
     /// "less" function object for "To" objects
-    typedef typename ToTypes::Less LessT;
+    using LessT = typename ToTypes::Less;
     /// "less" function object for "Weight" objects
-    typedef typename WeightTypes::Less LessW;
+    using LessW = typename WeightTypes::Less;
     /// "equality" function object for "To" objects
-    typedef typename std::equal_to<ToInner> EqualT;
+    using EqualT = typename std::equal_to<ToInner>;
     // ========================================================================
   public:
     // ========================================================================
-    typedef FromInner   First;
-    typedef ToInner     Second;
-    typedef WeightInner Third;
+    using First  = FromInner;
+    using Second = ToInner;
+    using Third  = WeightInner;
     // ========================================================================
   public:
     // ========================================================================
     /// constructor
-    WEntry_() : m_from(), m_to(), m_weight(){};
-    WEntry_( From_ f ) : m_from( f ), m_to(), m_weight(){};
-    WEntry_( From_ f, To_ t ) : m_from( f ), m_to( t ), m_weight(){};
+    WEntry_() = default;
+    WEntry_( From_ f ) : m_from( f ){};
+    WEntry_( From_ f, To_ t ) : m_from( f ), m_to( t ){};
     WEntry_( From_ f, To_ t, Weight_ w ) : m_from( f ), m_to( t ), m_weight( w ){};
     // ========================================================================
   public:
     // ========================================================================
     /// accessor to the "FROM" object ( const     version )
-    inline From from() const noexcept { return m_from; }
+    From from() const noexcept { return m_from; }
     /// accessor to the "TO"   object ( const     version )
-    inline To to() const noexcept { return m_to; }
+    To to() const noexcept { return m_to; }
     /// accessor to the "WEIGHT"   object (     const version )
-    inline Weight weight() const noexcept { return m_weight; }
+    Weight weight() const noexcept { return m_weight; }
     /// the conversion operator       ( const     version )
-    inline operator To() const noexcept { return m_to; }
+    operator To() const noexcept { return m_to; }
     // ========================================================================
   public:
     // ========================================================================
     /// for Python @warning  "from" is reserved keyword in Python
-    inline From _from() const noexcept { return from(); }
+    From _from() const noexcept { return from(); }
     /// for Python
-    inline To _to() const noexcept { return to(); }
+    To _to() const noexcept { return to(); }
     /// for Python
-    inline Weight _weight() const noexcept { return weight(); }
+    Weight _weight() const noexcept { return weight(); }
     // ========================================================================
   public:
     // ========================================================================
     /// comparison operator
-    inline bool operator<( const WEntry_& entry ) const noexcept {
+    bool operator<( const WEntry_& entry ) const noexcept {
       static const LessF _lessF = LessF();
       static const LessW _lessW = LessW();
       return ( _lessF( this->m_from, entry.m_from )
@@ -105,9 +105,9 @@ namespace Relations {
     // ========================================================================
   public:
     // ========================================================================
-    mutable FromInner   m_from;
-    mutable ToInner     m_to;
-    mutable WeightInner m_weight;
+    mutable FromInner   m_from   = {};
+    mutable ToInner     m_to     = {};
+    mutable WeightInner m_weight = {};
     // ========================================================================
   };
   // ==========================================================================

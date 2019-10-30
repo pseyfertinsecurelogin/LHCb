@@ -52,27 +52,27 @@ namespace LHCb {
     /// shortcut for "inverse interface  interface
     typedef IRelation<TO, FROM> IBase2;
     /// shortcut for direct subinterface
-    typedef typename IBase::DirectType DirectType;
+    using DirectType = typename IBase::DirectType;
     /// shortcut for inverse subinterface
-    typedef typename IBase::InverseType InverseType;
+    using InverseType = typename IBase::InverseType;
     /// import "Range" type from the base
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import "From"  type from the base
-    typedef typename IBase::From From;
+    using From = typename IBase::From;
     /// import "From"  type from the base
-    typedef typename IBase::From_ From_;
+    using From_ = typename IBase::From_;
     /// import "To"    type from the base
-    typedef typename IBase::To_ To_;
+    using To_ = typename IBase::To_;
     /// import "To"    type from the base
-    typedef typename IBase::To To;
+    using To = typename IBase::To;
     /// shortcut for actual implementation
     typedef Relations::Relation2<FROM, TO> Base;
     // shortcut for "direct" interface
-    typedef typename IBase::DirectType IDirect;
+    using IDirect = typename IBase::DirectType;
     // shortcut for "inverse" interface
-    typedef typename IBase::InverseType IInverse;
+    using IInverse = typename IBase::InverseType;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -107,13 +107,13 @@ namespace LHCb {
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~Relation2D() {
+    ~Relation2D() override {
 #ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().decrement( type() );
 #endif // COUNT_INSTANCES
     }
     /// the type name
-    const std::string& type() const {
+    [[nodiscard]] const std::string& type() const {
       static const std::string s_type( System::typeinfoName( typeid( OwnType ) ) );
       return s_type;
     }
@@ -123,7 +123,7 @@ namespace LHCb {
       return s_clid;
     }
     /// object identification (virtual method)
-    const CLID& clID() const override { return classID(); }
+    [[nodiscard]] const CLID& clID() const override { return classID(); }
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
@@ -233,7 +233,7 @@ namespace LHCb {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -260,12 +260,12 @@ namespace LHCb {
   private:
     // ========================================================================
     /// assignment operator is disabled
-    Relation2D& operator=( const Relation2D& );
+    Relation2D& operator=( const Relation2D& ) = delete;
     // ========================================================================
   public:
     // ========================================================================
     /// Access the size of the relations
-    inline std::size_t size() const { return m_base.size(); }
+    [[nodiscard]] inline std::size_t size() const { return m_base.size(); }
     // ========================================================================
   private:
     // ========================================================================

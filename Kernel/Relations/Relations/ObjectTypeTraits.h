@@ -20,7 +20,6 @@
 // Boost
 // ============================================================================
 #include "boost/call_traits.hpp"
-#include "boost/static_assert.hpp"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -54,54 +53,54 @@ namespace Relations {
     // ========================================================================
     template <bool, class TYPE>
     struct _Types {
-      typedef typename boost::call_traits<TYPE>::param_type Input;
-      typedef const TYPE&                                   Output;
-      typedef TYPE                                          Inner;
+      using Input  = typename boost::call_traits<TYPE>::param_type;
+      using Output = const TYPE&;
+      using Inner  = TYPE;
     };
     // ========================================================================
     template <bool value, class TYPE>
     struct _Types<value, TYPE*> {
-      typedef const TYPE* const Input;
-      typedef TYPE*             Output;
-      typedef Pointer<TYPE>     Inner;
+      using Input  = const TYPE* const;
+      using Output = TYPE*;
+      using Inner  = Pointer<TYPE>;
     };
     // ========================================================================
     template <bool value, class TYPE>
     struct _Types<value, const TYPE*> {
-      typedef const TYPE* const Input;
-      typedef TYPE*             Output;
-      typedef Pointer<TYPE>     Inner;
+      using Input  = const TYPE* const;
+      using Output = TYPE*;
+      using Inner  = Pointer<TYPE>;
     };
     // ========================================================================
     template <bool value, class TYPE>
     struct _Types<value, TYPE&> {
-      typedef const TYPE&     Input;
-      typedef TYPE&           Output;
-      typedef Reference<TYPE> Inner;
+      using Input  = const TYPE&;
+      using Output = TYPE&;
+      using Inner  = Reference<TYPE>;
     };
     // ========================================================================
     template <bool value, class TYPE>
     struct _Types<value, const TYPE&> {
-      typedef const TYPE&     Input;
-      typedef const TYPE&     Output;
-      typedef Reference<TYPE> Inner;
+      using Input  = const TYPE&;
+      using Output = const TYPE&;
+      using Inner  = Reference<TYPE>;
     };
     // ========================================================================
     template <class TYPE>
     struct _Types<true, TYPE> {
-      typedef const TYPE* const Input;
-      typedef TYPE*             Output;
-      typedef SmartRef<TYPE>    Inner;
+      using Input  = const TYPE* const;
+      using Output = TYPE*;
+      using Inner  = SmartRef<TYPE>;
     };
     // ========================================================================
     template <class TYPE>
     struct _Types<true, TYPE*> {
-      BOOST_STATIC_ASSERT( sizeof( TYPE ) == 0 );
+      static_assert( sizeof( TYPE ) == 0 );
     };
     // ========================================================================
     template <class TYPE>
     struct _Types<true, TYPE&> {
-      BOOST_STATIC_ASSERT( sizeof( TYPE ) == 0 );
+      static_assert( sizeof( TYPE ) == 0 );
     };
     // ========================================================================
   } // namespace detail
@@ -132,17 +131,17 @@ namespace Relations {
   struct ObjectTypeTraits {
     // ========================================================================
     /// true type ( almost never used)
-    typedef OBJECT Type;
+    using Type = OBJECT;
     /// 'type'-provider, here it is own type
-    typedef ObjectTypeTraits<OBJECT> Traits;
+    using Traits = ObjectTypeTraits<OBJECT>;
     /// 'in'-type
-    typedef typename Types<Type>::Input Input;
+    using Input = typename Types<Type>::Input;
     /// 'out'-type
-    typedef typename Types<Type>::Output Output;
+    using Output = typename Types<Type>::Output;
     /// 'storable' type
-    typedef typename Types<Type>::Inner Inner;
+    using Inner = typename Types<Type>::Inner;
     /// comparison (strict ordering criteria)
-    typedef std::less<Inner> Less;
+    using Less = std::less<>;
     // ========================================================================
   };
   // ==========================================================================

@@ -13,6 +13,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include "GaudiKernel/detected.h"
+// ============================================================================
 // Relations
 // ============================================================================
 #include "Relations/IRelationWeightedBase.h"
@@ -33,29 +35,31 @@ template <class FROM, class TO, class WEIGHT>
 class IRelationWeighted : public IRelationWeightedBase {
 public:
   // ==========================================================================
+  enum Type { weighted = true };
   /// the type traits structure
   typedef Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT> TypeTraits;
+  /// get the entry:
+  using Entry =
+      Gaudi::cpp17::detected_or_t<Relations::WEntry_<FROM, TO, WEIGHT>, Relations::TraitsHelpers::Entry, TypeTraits>;
   /// actual "FROM" type
-  typedef typename TypeTraits::From_ From_;
-  typedef typename TypeTraits::From  From;
+  using From_ = Gaudi::cpp17::detected_or_t<typename Entry::From_, Relations::TraitsHelpers::From_, TypeTraits>;
+  using From  = Gaudi::cpp17::detected_or_t<typename Entry::From, Relations::TraitsHelpers::From, TypeTraits>;
   /// actual "TO" type
-  typedef typename TypeTraits::To_ To_;
-  typedef typename TypeTraits::To  To;
+  using To_ = Gaudi::cpp17::detected_or_t<typename Entry::To_, Relations::TraitsHelpers::To_, TypeTraits>;
+  using To  = Gaudi::cpp17::detected_or_t<typename Entry::To, Relations::TraitsHelpers::To, TypeTraits>;
   /// actual "WEIGHT" type
-  typedef typename TypeTraits::Weight_ Weight_;
-  typedef typename TypeTraits::Weight  Weight;
-  /// iterator type
-  typedef typename TypeTraits::iterator iterator;
+  using Weight_ = Gaudi::cpp17::detected_or_t<typename Entry::Weight_, Relations::TraitsHelpers::Weight_, TypeTraits>;
+  using Weight  = Gaudi::cpp17::detected_or_t<typename Entry::Weight, Relations::TraitsHelpers::Weight, TypeTraits>;
+  /// entries
+  using Entries = Gaudi::cpp17::detected_or_t<std::vector<Entry>, Relations::TraitsHelpers::Entries, TypeTraits>;
   /// iterator range
-  typedef typename TypeTraits::Range Range;
+  using Range = Gaudi::cpp17::detected_or_t<Relations::Range_<Entries>, Relations::TraitsHelpers::Range, TypeTraits>;
   /// shortcut to own type
   typedef IRelationWeighted<FROM, TO, WEIGHT> OwnType;
   /// shortcut to "direct" type
   typedef IRelationWeighted<FROM, TO, WEIGHT> DirectType;
   /// shortcut to "inverse" type
   typedef IRelationWeighted<TO, FROM, WEIGHT> InverseType;
-  /// get the entry:
-  typedef typename TypeTraits::Entry Entry;
   // ==========================================================================
 public:
   // ==========================================================================
@@ -289,11 +293,6 @@ public:
     static const InterfaceID s_iid = Relations::interfaceID( System::typeinfoName( typeid( OwnType ) ) );
     return s_iid;
   }
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// destructor (virtual and protected)
-  virtual ~IRelationWeighted() {}
   // ==========================================================================
 };
 // ============================================================================

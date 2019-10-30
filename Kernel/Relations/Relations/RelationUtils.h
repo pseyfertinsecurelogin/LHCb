@@ -87,7 +87,7 @@ namespace Relations {
   // ============================================================================
   class InstanceCounter {
   public:
-    typedef long                           counter;
+    using counter = long;
     typedef std::map<std::string, counter> Counters;
 
   public:

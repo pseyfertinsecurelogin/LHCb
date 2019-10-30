@@ -67,23 +67,23 @@ namespace LHCb {
     /// short cut for interface
     typedef IRelation<FROM, TO> IBase;
     /// import "Range" type from the base
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import "From"  type from the base
-    typedef typename IBase::From From;
+    using From = typename IBase::From;
     /// import "From"  type from the base
-    typedef typename IBase::From_ From_;
+    using From_ = typename IBase::From_;
     /// import "To"    type from the base
-    typedef typename IBase::To To;
+    using To = typename IBase::To;
     /// import "To"    type from the base
-    typedef typename IBase::To_ To_;
+    using To_ = typename IBase::To_;
     /// short cut for the actual implementation type
     typedef typename Relations::Relation<FROM, TO> Base;
     // shortcut for "direct" interface
-    typedef typename IBase::DirectType IDirect;
+    using IDirect = typename IBase::DirectType;
     // shortcut for "inverse" interface
-    typedef typename IBase::InverseType IInverse;
+    using IInverse = typename IBase::InverseType;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -118,13 +118,13 @@ namespace LHCb {
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~Relation1D() {
+    ~Relation1D() override {
 #ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().decrement( type() );
 #endif // COUNT_INSTANCES
     }
     /// the type name
-    const std::string& type() const {
+    [[nodiscard]] const std::string& type() const {
       static const std::string s_type( System::typeinfoName( typeid( OwnType ) ) );
       return s_type;
     }
@@ -134,39 +134,39 @@ namespace LHCb {
       return s_clid;
     }
     /// object identification (virtual method)
-    const CLID& clID() const override { return classID(); }
+    [[nodiscard]] const CLID& clID() const override { return classID(); }
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_relations( From_ object ) const { return m_base.i_relations( object ); }
+    Range i_relations( From_ object ) const { return m_base.i_relations( object ); }
     /// retrive all relations from ALL objects (fast,100% inline)
-    inline Range i_relations() const { return m_base.i_relations(); }
+    Range i_relations() const { return m_base.i_relations(); }
     /// make the relation between 2 objects (fast,100% inline method)
-    inline StatusCode i_relate( From_ object1, To_ object2 ) {
+    StatusCode i_relate( From_ object1, To_ object2 ) {
       const Entry entry( object1, object2 );
       return i_add( entry );
     }
     /// add entry
-    inline StatusCode i_add( const Entry& entry ) { return m_base.i_add( entry ); }
+    StatusCode i_add( const Entry& entry ) { return m_base.i_add( entry ); }
     /// remove the concrete relation between objects (fast,100% inline method)
-    inline StatusCode i_remove( From_ object1, To_ object2 ) { return m_base.i_remove( object1, object2 ); }
+    StatusCode i_remove( From_ object1, To_ object2 ) { return m_base.i_remove( object1, object2 ); }
     /// remove all relations FROM the defined object (fast,100% inline method)
-    inline StatusCode i_removeFrom( From_ object ) { return m_base.i_removeFrom( object ); }
+    StatusCode i_removeFrom( From_ object ) { return m_base.i_removeFrom( object ); }
     /// remove all relations TO the defined object (fast,100% inline method)
-    inline StatusCode i_removeTo( To_ object ) { return m_base.i_removeTo( object ); }
+    StatusCode i_removeTo( To_ object ) { return m_base.i_removeTo( object ); }
     /// remove ALL relations form ALL  object to ALL objects  (fast,100% inline)
-    inline StatusCode i_clear() { return m_base.i_clear(); }
+    StatusCode i_clear() { return m_base.i_clear(); }
     /// rebuild ALL relations form ALL  object to ALL objects(fast,100% inline)
-    inline StatusCode i_rebuild() { return m_base.i_rebuild(); }
+    StatusCode i_rebuild() { return m_base.i_rebuild(); }
     /** make the relation between 2 objects (fast,100% inline method)
      *   - the call for i_sort() is mandatory
      */
-    inline void i_push( From_ object1, To_ object2 ) { m_base.i_push( object1, object2 ); }
+    void i_push( From_ object1, To_ object2 ) { m_base.i_push( object1, object2 ); }
     /** (re)sort the table
      *   mandatory to use after i_push
      */
-    inline void i_sort() { m_base.i_sort(); }
+    void i_sort() { m_base.i_sort(); }
     // ========================================================================
   public: // merge
     // ========================================================================
@@ -222,7 +222,7 @@ namespace LHCb {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -247,12 +247,12 @@ namespace LHCb {
   private:
     // ========================================================================
     /// assignement is disabled
-    Relation1D& operator=( const Relation1D& ); // assignement is disabled
+    Relation1D& operator=( const Relation1D& ) = delete; // assignement is disabled
     // ========================================================================
   public:
     // ========================================================================
     /// Access the size of the relations
-    inline std::size_t size() const { return m_base.size(); }
+    [[nodiscard]] std::size_t size() const { return m_base.size(); }
     // ========================================================================
   private:
     // ========================================================================

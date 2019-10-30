@@ -70,25 +70,25 @@ namespace Relations {
     /// actual implementations of inverse type
     typedef Relation<TO, FROM> InvBase;
     /// shortcut for direct base type
-    typedef Base Direct;
+    using Direct = Base;
     /// shortcut for inverse base type
-    typedef InvBase Inverse;
+    using Inverse = InvBase;
     /// shortcut for direct subinterface
-    typedef typename IBase::DirectType DirectType;
+    using DirectType = typename IBase::DirectType;
     /// shortcut for inverse subinterface
-    typedef typename IBase::InverseType InverseType;
+    using InverseType = typename IBase::InverseType;
     /// import "Range" type from interface
-    typedef typename IBase::Range Range;
+    using Range = typename IBase::Range;
     /// import "From"  type from interface
-    typedef typename IBase::From From;
+    using From = typename IBase::From;
     /// import "From"  type from interface
-    typedef typename IBase::From_ From_;
+    using From_ = typename IBase::From_;
     /// import "To"    type from interface
-    typedef typename IBase::To To;
+    using To = typename IBase::To;
     /// import "To"    type from interface
-    typedef typename IBase::To_ To_;
+    using To_ = typename IBase::To_;
     /// the actual type of the entry
-    typedef typename IBase::Entry Entry;
+    using Entry = typename IBase::Entry;
     // ========================================================================
   public:
     // ========================================================================
@@ -125,7 +125,7 @@ namespace Relations {
       m_inverse.setInverseBase( m_direct.directBase() );
     }
     /// destructor (virtual)
-    virtual ~Relation2() {}
+    virtual ~Relation2() = default;
     // ========================================================================
   public: // major functional methods (fast, 100% inline)
     // ========================================================================
@@ -237,7 +237,7 @@ namespace Relations {
     // ========================================================================
     /// query the interface
     StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
-      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( nullptr == ret ) { return StatusCode::FAILURE; } // RETURN !!!
       if ( IInterface::interfaceID() == id ) {
         *ret = static_cast<IInterface*>( this );
       } else if ( IBase::interfaceID() == id ) {
@@ -264,12 +264,12 @@ namespace Relations {
   private:
     // ========================================================================
     /// assignement operator is private!
-    Relation2& operator=( const Relation2& copy );
+    Relation2& operator=( const Relation2& copy ) = delete;
     // ========================================================================
   public:
     // ========================================================================
     /// Access the size of the relations
-    inline std::size_t size() const { return m_direct.size(); }
+    [[nodiscard]] inline std::size_t size() const { return m_direct.size(); }
     // ========================================================================
   private:
     // ========================================================================

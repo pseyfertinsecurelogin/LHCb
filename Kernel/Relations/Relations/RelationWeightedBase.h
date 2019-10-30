@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <vector>
 // ============================================================================
+#include "GaudiKernel/detected.h"
+// ============================================================================
 // Relations
 // ============================================================================
 #include "Relations/IRelationWeighted.h"
@@ -43,52 +45,51 @@ namespace Relations {
   template <class FROM, class TO, class WEIGHT>
   class RelationWeightedBase : public BaseWeightedTable {
   public:
+    /// short cut for type traits
+    typedef Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT> TypeTraits;
     // ========================================================================
+    /// Entry type
+    using Entry =
+        Gaudi::cpp17::detected_or_t<Relations::WEntry_<FROM, TO, WEIGHT>, Relations::TraitsHelpers::Entry, TypeTraits>;
     /// shortcut for own type
     typedef RelationWeightedBase<FROM, TO, WEIGHT> OwnType;
     /// shortcut for inverse type
     typedef RelationWeightedBase<TO, FROM, WEIGHT> InvType;
-    /// short cut for type traits
-    typedef Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT> TypeTraits;
     /// shortcut for "direct" interface
     typedef IRelationWeighted<FROM, TO, WEIGHT> IDirect;
     /// shortcut for "inverse" interface
     typedef IRelationWeighted<TO, FROM, WEIGHT> IInverse;
     /// actual "FROM" type
-    typedef typename TypeTraits::From From;
+    using From = Gaudi::cpp17::detected_or_t<typename Entry::From, Relations::TraitsHelpers::From, TypeTraits>;
     /// actual "FROM" type
-    typedef typename TypeTraits::From_ From_;
+    using From_ = Gaudi::cpp17::detected_or_t<typename Entry::From_, Relations::TraitsHelpers::From_, TypeTraits>;
     /// actual "TO" type
-    typedef typename TypeTraits::To  To;
-    typedef typename TypeTraits::To_ To_;
+    using To  = Gaudi::cpp17::detected_or_t<typename Entry::To, Relations::TraitsHelpers::To, TypeTraits>;
+    using To_ = Gaudi::cpp17::detected_or_t<typename Entry::To_, Relations::TraitsHelpers::To_, TypeTraits>;
     /// actual "Weight" type
-    typedef typename TypeTraits::Weight  Weight;
-    typedef typename TypeTraits::Weight_ Weight_;
-    /// Entry type
-    typedef typename TypeTraits::Entry Entry;
+    using Weight  = Gaudi::cpp17::detected_or_t<typename Entry::Weight, Relations::TraitsHelpers::Weight, TypeTraits>;
+    using Weight_ = Gaudi::cpp17::detected_or_t<typename Entry::Weight_, Relations::TraitsHelpers::Weight_, TypeTraits>;
     /// container type
-    typedef typename TypeTraits::Entries Entries;
-    /// iterator type
-    typedef typename Entries::iterator iterator;
-    /// iterator type (internal)
-    typedef typename Entries::iterator IT;
-    /// iterator pair type (internal)
-    typedef typename TypeTraits::IP IP;
-    /// const_iterator type (internal)
-    typedef typename TypeTraits::CIT CIT;
+    using Entries = Gaudi::cpp17::detected_or_t<std::vector<Entry>, Relations::TraitsHelpers::Entries, TypeTraits>;
     /// range
-    typedef typename TypeTraits::Range Range;
+    using Range = Gaudi::cpp17::detected_or_t<Relations::Range_<Entries>, Relations::TraitsHelpers::Range, TypeTraits>;
     // ========================================================================
   protected:
     // ========================================================================
     /// comparison criteria for full ordering
-    typedef typename TypeTraits::Less Less;
+    using Less = Gaudi::cpp17::detected_or_t<std::less<>, Relations::TraitsHelpers::Less, TypeTraits>;
     /// comparison criteria ( "less" by "From" value)
-    typedef typename TypeTraits::LessByFrom Less1;
+    using LessF = Gaudi::cpp17::detected_or_t<typename Entry::LessF, Relations::TraitsHelpers::LessF, TypeTraits>;
+    using Less1 = Gaudi::cpp17::detected_or_t<Relations::TraitsHelpers::LessByFrom<LessF>,
+                                              Relations::TraitsHelpers::Less1, TypeTraits>;
     /// comparison criteria ( "less" by "Weight" value)
-    typedef typename TypeTraits::LessByWeight Less2;
+    using LessW = Gaudi::cpp17::detected_or_t<typename Entry::LessW, Relations::TraitsHelpers::LessW, TypeTraits>;
+    using Less2 = Gaudi::cpp17::detected_or_t<Relations::TraitsHelpers::LessByWeight<LessW>,
+                                              Relations::TraitsHelpers::Less2, TypeTraits>;
     /// equality criteria   ( "equal" by "To" value)
-    typedef typename TypeTraits::EqualByTo Equal;
+    using EqualT = Gaudi::cpp17::detected_or_t<typename Entry::EqualT, Relations::TraitsHelpers::EqualT, TypeTraits>;
+    using Equal  = Gaudi::cpp17::detected_or_t<Relations::TraitsHelpers::EqualByTo<EqualT>,
+                                              Relations::TraitsHelpers::Equal, TypeTraits>;
     /** @struct  Comp1
      *  comparison/ordering criteria using "Weight" and "To" fields
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -101,7 +102,7 @@ namespace Relations {
        *  @return true   if "Weight" field of the first entry is less
        *                 and "To" fields are equal!
        */
-      inline bool operator()( const Entry& entry1, const Entry& entry2 ) const {
+      bool operator()( const Entry& entry1, const Entry& entry2 ) const {
         return Equal()( entry1, entry2 ) && Less2()( entry1, entry2 );
       }
     };
@@ -117,7 +118,7 @@ namespace Relations {
        *  @return true   if "Weight" field of the first entry is less
        *                 and "To" fields are equal!
        */
-      inline bool operator()( const Entry& entry1, const Entry& entry2 ) const {
+      bool operator()( const Entry& entry1, const Entry& entry2 ) const {
         return Equal()( entry1, entry2 ) && !Less2()( entry1, entry2 );
       }
     };
@@ -125,50 +126,50 @@ namespace Relations {
   public:
     // ========================================================================
     /// retrive all relations from the given object
-    inline IP i_relations( From_ object ) const {
+    auto i_relations( From_ object ) const {
       return std::equal_range( m_entries.begin(), m_entries.end(), Entry( object ), Less1() );
     };
     /// retrive ALL relations from the ALL objects
-    inline IP i_relations() const { return IP( m_entries.begin(), m_entries.end() ); };
+    auto i_relations() const { return std::pair{m_entries.begin(), m_entries.end()}; };
     /// retrive all relations from the object which has weigth
-    inline IP i_relations( From_ object, Weight_ threshold, const bool flag ) const {
+    auto i_relations( From_ object, Weight_ threshold, const bool flag ) const {
       // find all relations from the given object
-      IP ip = i_relations( object );
+      auto ip = i_relations( object );
       // no relations are found !!!
       if ( ip.second == ip.first ) { return ip; } // RETURN !!!
       // find the appropriate relations
       Entry entry;
       entry.m_from   = object;
       entry.m_weight = threshold;
-      iterator it    = std::lower_bound( ip.first, ip.second, entry, Less2() );
-      return flag ? IP( it, ip.second ) : IP( ip.first, it );
+      auto it        = std::lower_bound( ip.first, ip.second, entry, Less2() );
+      return flag ? std::pair{it, ip.second} : std::pair{ip.first, it};
     }
     /// retrive all relations from the object which has weigth
-    inline IP i_inRange( From_ object, Weight_ low, Weight_ high ) const {
-      if ( low > high ) { return IP(); }
+    auto i_inRange( From_ object, Weight_ low, Weight_ high ) const {
+      if ( low > high ) { return std::pair<typename Entries::iterator, typename Entries::iterator>{}; }
       // find all relations from the given object
-      IP ip = i_relations( object );
+      auto ip = i_relations( object );
       // no relations are found !!!
-      if ( ip.second == ip.first ) { return ip; } // RETURN !!!
+      if ( ip.second == ip.first ) return ip; // RETURN !!!
       // find the appropriate relations
       Entry entry( object );
       entry.m_weight = low;
-      iterator it1   = std::lower_bound( ip.first, ip.second, entry, Less2() );
+      auto it1       = std::lower_bound( ip.first, ip.second, entry, Less2() );
       entry.m_weight = high;
-      iterator it2   = std::lower_bound( it1, ip.second, entry, Less2() );
-      return IP( it1, it2 );
+      auto it2       = std::lower_bound( it1, ip.second, entry, Less2() );
+      return std::pair{it1, it2};
     }
     /// make the relation between 2 objects
-    inline StatusCode i_relate( From_ object1, To_ object2, Weight_ weight ) {
+    StatusCode i_relate( From_ object1, To_ object2, Weight_ weight ) {
       const Entry entry( object1, object2, weight );
       return i_add( entry );
     }
     /// add the entry
-    inline StatusCode i_add( const Entry& entry ) {
+    StatusCode i_add( const Entry& entry ) {
       // get all existing relations from object1
-      IP ip = i_relations( entry.from() );
+      auto ip = i_relations( entry.from() );
       // does the given relation between object1 and object2 exist ?
-      iterator it = std::find_if( ip.first, ip.second, [&]( const Entry& lhs ) { return Equal()( lhs, entry ); } );
+      auto it = std::find_if( ip.first, ip.second, [&]( const Entry& lhs ) { return Equal()( lhs, entry ); } );
       if ( ip.second != it ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
       // find the place where to insert the relation and insert it!
       it = std::lower_bound( ip.first, ip.second, entry, Less2() );
@@ -176,11 +177,11 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove the concrete relation between objects
-    inline StatusCode i_remove( From_ object1, To_ object2 ) {
+    StatusCode i_remove( From_ object1, To_ object2 ) {
       // get all existing relations form object1
-      IP ip = i_relations( object1 );
+      auto ip = i_relations( object1 );
       // does the given relation between object1 and object1 exist ?
-      iterator it = std::find_if( ip.first, ip.second, [rhs = Entry( object1, object2 )]( const Entry& entry ) {
+      auto it = std::find_if( ip.first, ip.second, [rhs = Entry( object1, object2 )]( const Entry& entry ) {
         return Equal()( entry, rhs );
       } );
       if ( ip.second == it ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
@@ -189,9 +190,9 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove all relations FROM the defined object
-    inline StatusCode i_removeFrom( From_ object ) {
+    StatusCode i_removeFrom( From_ object ) {
       // get all existing relations form object1
-      IP ip = i_relations( object );
+      auto ip = i_relations( object );
       // no relations are found !!!
       if ( ip.second == ip.first ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
       // remove relations
@@ -199,7 +200,7 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove all relations TO the defined object
-    inline StatusCode i_removeTo( To_ object ) {
+    StatusCode i_removeTo( To_ object ) {
       // create the artificial entry
       Entry entry;
       entry.m_to = object;
@@ -214,9 +215,9 @@ namespace Relations {
     /** filter out the relations FROM the defined object, which
      *  have a weight larger(smaller)than the threshold weight
      */
-    inline StatusCode i_filterFrom( From_ object, Weight_ threshold, const bool flag ) {
+    StatusCode i_filterFrom( From_ object, Weight_ threshold, const bool flag ) {
       // get all relations from the object over/under the threshold
-      IP ip = i_relations( object, threshold, !flag );
+      auto ip = i_relations( object, threshold, !flag );
       // no relations are found!
       if ( ip.second == ip.first ) { return StatusCode( StatusCode::FAILURE, true ); } // RETURN !!!
       // erase relations
@@ -226,7 +227,7 @@ namespace Relations {
     /** filter out the relations TO the defined object, which
      *  have a weight larger/smaller than the threshold weight
      */
-    inline StatusCode i_filterTo( To_ object, Weight_ threshold, const bool flag ) {
+    StatusCode i_filterTo( To_ object, Weight_ threshold, const bool flag ) {
       Entry entry;
       entry.m_to     = object;
       entry.m_weight = threshold;
@@ -244,7 +245,7 @@ namespace Relations {
     /** filter out all relations which
      *  have a weight larger/smaller than the threshold weight
      */
-    inline StatusCode i_filter( Weight_ threshold, const bool flag ) {
+    StatusCode i_filter( Weight_ threshold, const bool flag ) {
       Entry entry;
       entry.m_weight = threshold;
       // remove using the predicates
@@ -259,12 +260,12 @@ namespace Relations {
       return StatusCode::SUCCESS;
     }
     /// remove ALL relations from ALL objects to ALL objects
-    inline StatusCode i_clear() {
+    StatusCode i_clear() {
       m_entries.clear();
       return StatusCode::SUCCESS;
     }
     /// reserve the space for relations
-    inline StatusCode i_reserve( const size_t num ) {
+    StatusCode i_reserve( const size_t num ) {
       Relations::reserve( m_entries, num );
       return StatusCode::SUCCESS;
     }
@@ -281,22 +282,22 @@ namespace Relations {
      *  @param  object2 smart reference to the second object
      *  @param  weight  weigth for the relation
      */
-    inline void i_push( From_ object1, To_ object2, Weight_ weight ) {
+    void i_push( From_ object1, To_ object2, Weight_ weight ) {
       m_entries.push_back( Entry( object1, object2, weight ) );
     }
     /** (re)sort the whole underlying container
      *  Call for this method is MANDATORY after usage of i_push
      */
-    inline void i_sort() { std::stable_sort( m_entries.begin(), m_entries.end(), Less() ); }
+    void i_sort() { std::stable_sort( m_entries.begin(), m_entries.end(), Less() ); }
     /// standard/default constructor
     RelationWeightedBase( const size_t reserve = 0 ) : BaseWeightedTable(), m_entries() {
       if ( 0 < reserve ) { i_reserve( reserve ).ignore(); }
     }
     /// destructor (virtual)
-    virtual ~RelationWeightedBase(){};
+    virtual ~RelationWeightedBase() = default;
     /// constructor from any "direct" interface
     RelationWeightedBase( const IDirect& copy ) : BaseWeightedTable(), m_entries() {
-      typename IDirect::Range r = copy.relations();
+      auto r = copy.relations();
       m_entries.insert( m_entries.end(), r.begin(), r.end() );
     }
     /** constructor from any inverse interface
@@ -306,13 +307,11 @@ namespace Relations {
      */
     RelationWeightedBase( const IInverse& inv, const int /* flag*/ ) : BaseWeightedTable(), m_entries() {
       // get all relations from "inv"
-      typename IInverse::Range r = inv.relations();
+      auto r = inv.relations();
       // reserve the space for relations
       i_reserve( r.size() ).ignore();
       // invert all relations
-      for ( typename IInverse::iterator entry = r.begin(); r.end() != entry; ++entry ) {
-        i_push( entry->to(), entry->from(), entry->weight() );
-      }
+      for ( const auto& entry : r ) i_push( entry.to(), entry.from(), entry.weight() );
       // final sort
       i_sort();
     }
@@ -364,9 +363,7 @@ namespace Relations {
           // use std::swap instead of assignement
           std::swap( m_entries, tmp );
         } else {
-          for ( typename Range::iterator ientry = range.begin(); range.end() != ientry; ++ientry ) {
-            this->i_add( *ientry ).ignore();
-          }
+          for ( const auto& entry : range ) this->i_add( entry ).ignore();
         }
       } // end of switch
       //
@@ -412,14 +409,10 @@ namespace Relations {
       default:
         //
         if ( range.size() > 0.1 * m_entries.size() ) {
-          for ( typename IInverse::iterator entry = range.begin(); range.end() != entry; ++entry ) {
-            i_push( entry->to(), entry->from(), entry->weight() );
-          }
+          for ( const auto& entry : range ) i_push( entry.to(), entry.from(), entry.weight() );
           i_sort();
         } else {
-          for ( typename IInverse::iterator entry = range.begin(); range.end() != entry; ++entry ) {
-            i_relate( entry->to(), entry->from(), entry->weight() ).ignore();
-          }
+          for ( const auto& entry : range ) i_relate( entry.to(), entry.from(), entry.weight() ).ignore();
         }
         //
       }
