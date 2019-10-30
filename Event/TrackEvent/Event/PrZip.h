@@ -609,6 +609,10 @@ namespace LHCb::Pr {
   template <typename... T>
   using zip_t = detail::full_zip_t<SIMDWrapper::InstructionSet::Best, false, T...>;
 
+  // Helper to get a scalar zip of the types T...
+  template <typename... T>
+  using scalar_zip_t = detail::full_zip_t<SIMDWrapper::InstructionSet::Scalar, false, T...>;
+
   // Helper to get the type of an unwrapped (scalar, plain C++ data) version
   // of zip_t<T...>
   template <typename... T>
