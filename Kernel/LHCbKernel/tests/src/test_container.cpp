@@ -43,6 +43,9 @@ BOOST_AUTO_TEST_CASE( test_MultiVector ) {
   LHCb::Kernel::MultiVector<int, double, char> c{64};
 
   BOOST_CHECK_EQUAL( alloc, 1 );
+  BOOST_CHECK_EQUAL( c.size(), 0 );
+  BOOST_CHECK_EQUAL( c.capacity(), N );
+  BOOST_CHECK( c.empty() );
 
   auto idc = c.emplace_back( 1, 2.5, 'a' );
   BOOST_CHECK_EQUAL( std::get<0>( idc ), 1 );
@@ -67,14 +70,16 @@ BOOST_AUTO_TEST_CASE( test_MultiVector ) {
   BOOST_CHECK_EQUAL( alloc, 1 );
 
   BOOST_CHECK( c[0] == std::make_tuple( 1, 2.5, 'a' ) );
+  BOOST_CHECK( c[0] == c.front() );
   BOOST_CHECK_EQUAL( c.column<0>()[0], 1 );
   BOOST_CHECK_EQUAL( c.column<char>().at( 0 ), 'a' );
   BOOST_CHECK_EQUAL( c.column<double>()[0], 2.5 );
 
   BOOST_CHECK_EQUAL( c.size(), 2 );
+  BOOST_CHECK( c[1] == c.back() );
 
   for ( int i = c.size(); i < static_cast<int>( N ); ++i ) {
-    c.emplace_back( i * 3, i * 1.5, 'c' );
+    c.emplace_back( i * 3, i * 1.5, 'A' + i );
     BOOST_CHECK_EQUAL( alloc, 1 );
   }
   BOOST_CHECK_EQUAL( c.size(), N );
@@ -147,12 +152,12 @@ BOOST_AUTO_TEST_CASE( test_MultiVector_piecewise_construct ) {
   LHCb::Kernel::MultiVector<int, Pieces> c{24};
 
   c.emplace_back( 3, Pieces{1, 1.5F, 2.5, 'a'} );
-  auto&& [ii, pp] = c.emplace_back( std::piecewise_construct, std::forward_as_tuple( 3 ),
-                                    std::forward_as_tuple( 2, 2.5F, 3.5, 'b' ) );
+  auto&& [ii, pp] = c.emplace_back( 3, std::forward_as_tuple( 2, 2.5F, 3.5, 'b' ) );
   BOOST_CHECK_EQUAL( ii, 3 );
   ii = 9;
   BOOST_CHECK_EQUAL( c.column<int>().back(), 9 );
   BOOST_CHECK_EQUAL( &c.column<int>().back(), &ii );
+  BOOST_CHECK_EQUAL( &c.column<0>().back(), &ii );
 
   auto p1 = Pieces{2, 2.5F, 3.5, 'b'};
   BOOST_CHECK( pp == p1 );
@@ -162,9 +167,37 @@ BOOST_AUTO_TEST_CASE( test_MultiVector_piecewise_construct ) {
   BOOST_CHECK_EQUAL( alloc, 1 );
   BOOST_CHECK_EQUAL( c.size(), 2 );
 
-  // the following do not compile, and maybe the last two should not -- but tweaking the error message
-  // might be nice...
-  // c.emplace_back( std::piecewise_construct,  3 , std::forward_as_tuple( 2, 2.5F, 3.5, 'b' ) );
-  // c.emplace_back(   3 , std::forward_as_tuple( 2, 2.5F, 3.5, 'b' ) );
-  // c.emplace_back(   3 , { 2, 2.5F, 3.5, 'b' } );
+  // c.emplace_back( 3 );
+
+  for ( auto i = c.size(); i < c.capacity(); ++i ) {
+    c.emplace_back( i, std::forward_as_tuple( 2 * i, 2.5F * i, 3.5 * i, 'a' + i ) );
+  }
+
+  BOOST_CHECK_EQUAL( alloc, 1 );
+  BOOST_CHECK_EQUAL( c.size(), 24 );
+  BOOST_CHECK_EQUAL( c.capacity(), 24 );
+}
+
+BOOST_AUTO_TEST_CASE( test_MultiVector_clear_pop_back ) {
+  memory = 0;
+  alloc  = 0;
+
+  LHCb::Kernel::MultiVector<int, double, char> c{64};
+
+  c.emplace_back( 1, 2.5, 'c' );
+  c.emplace_back( 2, 3.5, 'd' );
+  c.emplace_back( 3, 4.5, 'e' );
+
+  BOOST_CHECK_EQUAL( alloc, 1 );
+  BOOST_CHECK( !c.empty() );
+  BOOST_CHECK_EQUAL( c.size(), 3 );
+
+  c.pop_back();
+  BOOST_CHECK_EQUAL( c.size(), 2 );
+  c.clear();
+  BOOST_CHECK_EQUAL( c.size(), 0 );
+  BOOST_CHECK( c.empty() );
+
+  // auto c2 = c;
+  // c = {};
 }

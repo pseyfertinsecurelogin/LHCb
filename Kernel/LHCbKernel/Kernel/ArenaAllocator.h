@@ -44,7 +44,7 @@ namespace LHCb::Allocators {
     std::byte*      m_current;
     span<std::byte> m_buffer;
 
-    bool is_inside( std::byte* p ) const noexcept { return m_buffer.data() <= p && p <= m_buffer.data() + size(); }
+    bool is_inside( std::byte* p ) const noexcept { return m_buffer.data() <= p && p <= m_buffer.data() + capacity(); }
 
     DynamicArena( span<std::byte> buffer ) noexcept : m_current{buffer.data()}, m_buffer{buffer} {
       assert( reinterpret_cast<std::byte*>( this ) + details::align_up<Alignment>( sizeof( DynamicArena ) ) ==
@@ -82,7 +82,7 @@ namespace LHCb::Allocators {
     DynamicArena& operator=( DynamicArena&& rhs ) = delete;
 
     static constexpr std::size_t alignment = Alignment;
-    [[nodiscard]] std::size_t    size() const noexcept { return m_buffer.size(); }
+    [[nodiscard]] std::size_t    capacity() const noexcept { return m_buffer.size(); }
 
     // TODO: use CRTP to share the code below...
     [[nodiscard]] std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer.data() ); }
@@ -91,7 +91,7 @@ namespace LHCb::Allocators {
     std::byte* allocate( std::size_t n ) {
       static_assert( ReqAlign <= alignment, "alignment is too small for this arena" );
       auto const aligned_n = details::align_up<Alignment>( n );
-      if ( static_cast<decltype( aligned_n )>( m_buffer.data() + size() - m_current ) < aligned_n )
+      if ( static_cast<decltype( aligned_n )>( m_buffer.data() + capacity() - m_current ) < aligned_n )
         throw std::bad_alloc{};
       return std::exchange( m_current, m_current + aligned_n );
     }
@@ -110,7 +110,7 @@ namespace LHCb::Allocators {
     std::byte* m_current = nullptr;
     alignas( Alignment ) std::byte m_buffer[N]{};
 
-    bool is_inside( std::byte* p ) const noexcept { return m_buffer <= p && p <= m_buffer + size(); }
+    bool is_inside( std::byte* p ) const noexcept { return m_buffer <= p && p <= m_buffer + capacity(); }
 
   public:
     ~StaticArena() { m_current = nullptr; }
@@ -121,7 +121,7 @@ namespace LHCb::Allocators {
     StaticArena& operator=( StaticArena&& ) = delete;
 
     static constexpr std::size_t alignment = Alignment;
-    static constexpr std::size_t size() noexcept { return N; }
+    static constexpr std::size_t capacity() noexcept { return N; }
 
     // TODO: use CRTP to share the code below...
     [[nodiscard]] std::size_t used() const noexcept { return static_cast<std::size_t>( m_current - m_buffer ); }
@@ -130,7 +130,7 @@ namespace LHCb::Allocators {
     std::byte* allocate( std::size_t n ) {
       static_assert( ReqAlign <= alignment, "alignment is too small for this arena" );
       auto const aligned_n = details::align_up<Alignment>( n );
-      if ( static_cast<decltype( aligned_n )>( m_buffer + size() - m_current ) < aligned_n ) throw std::bad_alloc{};
+      if ( static_cast<decltype( aligned_n )>( m_buffer + capacity() - m_current ) < aligned_n ) throw std::bad_alloc{};
       return std::exchange( m_current, m_current + aligned_n );
     }
 
@@ -143,8 +143,8 @@ namespace LHCb::Allocators {
     void reset() noexcept { m_current = m_buffer; }
   };
 
-  template <class T, typename Arena>
-  class AllocatorWrapper {
+  template <typename T, typename Arena>
+  class ArenaAllocator {
   public:
     using value_type                = T;
     static auto constexpr alignment = Arena::alignment;
@@ -154,20 +154,20 @@ namespace LHCb::Allocators {
     arena_t* m_arena;
 
   public:
-    AllocatorWrapper( const AllocatorWrapper& ) = default;
-    AllocatorWrapper& operator=( const AllocatorWrapper& ) = delete;
+    ArenaAllocator( const ArenaAllocator& ) = default;
+    ArenaAllocator& operator=( const ArenaAllocator& ) = delete;
 
-    AllocatorWrapper( arena_t* a ) : m_arena( a ) {
-      if ( a->size() % alignment != 0 )
-        throw std::runtime_error( "AllocatorWrapper: size must be a multiple of alignment" );
+    ArenaAllocator( arena_t* a ) : m_arena( a ) {
+      if ( a->capacity() % alignment != 0 )
+        throw std::runtime_error( "ArenaAllocator: size must be a multiple of alignment" );
     }
 
-    template <class U>
-    AllocatorWrapper( const AllocatorWrapper<U, arena_t>& a ) noexcept : m_arena{a.m_arena} {}
+    template <typename U>
+    ArenaAllocator( const ArenaAllocator<U, arena_t>& a ) noexcept : m_arena{a.m_arena} {}
 
-    template <class U>
+    template <typename U>
     struct rebind {
-      using other = AllocatorWrapper<U, arena_t>;
+      using other = ArenaAllocator<U, arena_t>;
     };
 
     T* allocate( std::size_t n ) {
@@ -178,23 +178,23 @@ namespace LHCb::Allocators {
     }
 
     template <typename, typename>
-    friend class AllocatorWrapper;
+    friend class ArenaAllocator;
   };
 
-  template <class T, typename Arena1, class U, typename Arena2>
-  inline bool operator==( const AllocatorWrapper<T, Arena1>& x, const AllocatorWrapper<U, Arena2>& y ) noexcept {
-    return std::is_same_v<Arena1, Arena2> && x.m_arena == y.m_arena;
+  template <typename T, typename Arena1, typename U, typename Arena2>
+  inline bool operator==( const ArenaAllocator<T, Arena1>& lhs, const ArenaAllocator<U, Arena2>& rhs ) noexcept {
+    return std::is_same_v<Arena1, Arena2> && lhs.m_arena == rhs.m_arena;
   }
 
-  template <class T, typename Arena1, class U, typename Arena2>
-  inline bool operator!=( const AllocatorWrapper<T, Arena1>& x, const AllocatorWrapper<U, Arena2>& y ) noexcept {
-    return !( x == y );
+  template <typename T, typename Arena1, typename U, typename Arena2>
+  inline bool operator!=( const ArenaAllocator<T, Arena1>& lhs, const ArenaAllocator<U, Arena2>& rhs ) noexcept {
+    return !( lhs == rhs );
   }
 
-  template <class T, std::size_t N, std::size_t Align = alignof( std::max_align_t )>
-  using ArenaAllocator = AllocatorWrapper<T, StaticArena<N, Align>>;
+  template <typename T, std::size_t N, std::size_t Align = alignof( std::max_align_t )>
+  using StaticArenaAllocator = ArenaAllocator<T, StaticArena<N, Align>>;
 
-  template <class T, std::size_t Align = alignof( std::max_align_t )>
-  using DynamicArenaAllocator = AllocatorWrapper<T, DynamicArena<Align>>;
+  template <typename T, std::size_t Align = alignof( std::max_align_t )>
+  using DynamicArenaAllocator = ArenaAllocator<T, DynamicArena<Align>>;
 
 } // namespace LHCb::Allocators

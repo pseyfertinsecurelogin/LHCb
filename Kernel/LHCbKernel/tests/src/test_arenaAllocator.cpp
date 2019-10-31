@@ -40,7 +40,7 @@ void operator delete( void* p, size_t ) {
 //   And if we're wrong about that guess, it is a compile-time error, not
 //   a run time error.
 template <class T, std::size_t BufSize = 200>
-using SmallVector = std::vector<T, LHCb::Allocators::ArenaAllocator<T, BufSize, alignof( T )>>;
+using SmallVector = std::vector<T, LHCb::Allocators::StaticArenaAllocator<T, BufSize, alignof( T )>>;
 
 BOOST_AUTO_TEST_CASE( test_SmallVector ) {
 
@@ -48,70 +48,70 @@ BOOST_AUTO_TEST_CASE( test_SmallVector ) {
   alloc  = 0;
   // Create the stack-based arena from which to allocate
   SmallVector<int>::allocator_type::arena_t a;
-  BOOST_CHECK( a.used() == 0 );
+  BOOST_CHECK_EQUAL( a.used(), 0 );
   // Create the vector which uses that arena.
   SmallVector<int> v{&a};
   // Exercise the vector and note that new/delete are not getting called.
   v.push_back( 1 );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
-  BOOST_CHECK( a.used() == sizeof( int ) );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) );
   v.push_back( 2 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   v.push_back( 3 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   v.push_back( 4 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   // Yes, the correct values are actually in the vector
-  BOOST_CHECK( v[0] == 1 );
-  BOOST_CHECK( v[1] == 2 );
-  BOOST_CHECK( v[2] == 3 );
-  BOOST_CHECK( v[3] == 4 );
+  BOOST_CHECK_EQUAL( v[0], 1 );
+  BOOST_CHECK_EQUAL( v[1], 2 );
+  BOOST_CHECK_EQUAL( v[2], 3 );
+  BOOST_CHECK_EQUAL( v[3], 4 );
 
   // continue to use the arena for a second vector...
   SmallVector<int> v2{&a};
   v2.reserve( 10 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
   v2.push_back( 9 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
   v2.push_back( 99 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
   v2.push_back( 99 );
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
 
   {
     // check what happens after a move
     auto vd = v.data();
     auto v3 = std::move( v );
-    BOOST_CHECK( v3.data() == vd );
+    BOOST_CHECK_EQUAL( v3.data(), vd );
     BOOST_CHECK( v.empty() );
-    BOOST_CHECK( v3[0] == 1 );
-    BOOST_CHECK( v3[1] == 2 );
-    BOOST_CHECK( v3[2] == 3 );
-    BOOST_CHECK( v3[3] == 4 );
+    BOOST_CHECK_EQUAL( v3[0], 1 );
+    BOOST_CHECK_EQUAL( v3[1], 2 );
+    BOOST_CHECK_EQUAL( v3[2], 3 );
+    BOOST_CHECK_EQUAL( v3[3], 4 );
 
-    BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
-    BOOST_CHECK( memory == 0 );
-    BOOST_CHECK( alloc == 0 );
+    BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+    BOOST_CHECK_EQUAL( memory, 0 );
+    BOOST_CHECK_EQUAL( alloc, 0 );
 
     v3.push_back( 5 );
-    BOOST_CHECK( a.used() ==
-                 sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) + 8 * sizeof( int ) );
-    BOOST_CHECK( memory == 0 );
-    BOOST_CHECK( alloc == 0 );
+    BOOST_CHECK_EQUAL( a.used(),
+                       sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) + 8 * sizeof( int ) );
+    BOOST_CHECK_EQUAL( memory, 0 );
+    BOOST_CHECK_EQUAL( alloc, 0 );
   }
   // check deallocation by letting vd go out of scope, _after_ it allocated something...
-  BOOST_CHECK( a.used() == sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
+  BOOST_CHECK_EQUAL( a.used(), sizeof( int ) + 2 * sizeof( int ) + 4 * sizeof( int ) + 10 * sizeof( int ) );
 }
 
 template <class T, std::size_t BufSize = 256>
-using SmallList = std::list<T, LHCb::Allocators::ArenaAllocator<T, BufSize>>;
+using SmallList = std::list<T, LHCb::Allocators::StaticArenaAllocator<T, BufSize>>;
 
 BOOST_AUTO_TEST_CASE( test_SmallList ) {
 
@@ -120,26 +120,26 @@ BOOST_AUTO_TEST_CASE( test_SmallList ) {
   SmallList<int>::allocator_type::arena_t a;
   SmallList<int>                          v{&a};
   constexpr int                           node_size = 32;
-  BOOST_CHECK( a.used() == 0 );
+  BOOST_CHECK_EQUAL( a.used(), 0 );
   v.push_back( 1 );
-  BOOST_CHECK( a.used() == node_size );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), node_size );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   v.push_back( 2 );
-  BOOST_CHECK( a.used() == 2 * node_size );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), 2 * node_size );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   v.push_back( 3 );
-  BOOST_CHECK( a.used() == 3 * node_size );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), 3 * node_size );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
   v.push_back( 4 );
-  BOOST_CHECK( a.used() == 4 * node_size );
-  BOOST_CHECK( memory == 0 );
-  BOOST_CHECK( alloc == 0 );
+  BOOST_CHECK_EQUAL( a.used(), 4 * node_size );
+  BOOST_CHECK_EQUAL( memory, 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
 
-  BOOST_CHECK( v.front() == 1 );
-  BOOST_CHECK( v.back() == 4 );
+  BOOST_CHECK_EQUAL( v.front(), 1 );
+  BOOST_CHECK_EQUAL( v.back(), 4 );
 }
 
 template <size_t MaxEntries>
@@ -147,7 +147,7 @@ class StaticContainer {
   constexpr static std::size_t c_size = MaxEntries * ( sizeof( int ) + sizeof( double ) + sizeof( char ) );
   using Arena_t                       = LHCb::Allocators::StaticArena<c_size>;
   template <typename T>
-  using Allocator = LHCb::Allocators::ArenaAllocator<T, c_size>;
+  using Allocator = LHCb::Allocators::StaticArenaAllocator<T, c_size>;
 
   Arena_t                                m_buffer;
   std::vector<int, Allocator<int>>       is{&m_buffer};
@@ -191,10 +191,10 @@ BOOST_AUTO_TEST_CASE( test_StaticContainer ) {
   BOOST_CHECK( c.empty() );
   c.emplace_back( 1, 1.5, 'a' );
   c.emplace_back( 2, 4.5, 'b' );
-  BOOST_CHECK( c.size() == 2 );
+  BOOST_CHECK_EQUAL( c.size(), 2 );
   auto ex_1 = StaticContainer<32>::Data{1, 1.5, 'a'};
   BOOST_CHECK( c[0] == ex_1 );
 
-  BOOST_CHECK( alloc == 0 );
-  BOOST_CHECK( memory == 0 );
+  BOOST_CHECK_EQUAL( alloc, 0 );
+  BOOST_CHECK_EQUAL( memory, 0 );
 }

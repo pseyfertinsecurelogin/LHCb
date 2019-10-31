@@ -30,6 +30,9 @@ namespace LHCb::Kernel {
       return a;
     }
 
+    template <typename... T>
+    struct always_false : std::bool_constant<false> {};
+
     // assume that if T defines `std::tuple_size<T>::value`, that
     // std::get<I>(T) also works...
     template <typename T>
@@ -37,6 +40,20 @@ namespace LHCb::Kernel {
 
     template <typename T>
     constexpr bool is_tuple_like_v = Gaudi::cpp17::is_detected_v<has_tuplesize_t, T>;
+
+    template <typename C, typename Arg,
+              typename = std::enable_if_t<std::is_constructible_v<typename C::value_type, Arg> || is_tuple_like_v<Arg>>>
+    decltype( auto ) emplace_back( C& c, Arg&& arg ) {
+      if constexpr ( std::is_constructible_v<typename C::value_type, Arg> ) {
+        return c.emplace_back( std::forward<Arg>( arg ) );
+      } else if constexpr ( details::is_tuple_like_v<Arg> ) {
+        return std::apply(
+            [&c]( auto&&... args ) -> decltype( auto ) {
+              return c.emplace_back( std::forward<decltype( args )>( args )... );
+            },
+            std::forward<Arg>( arg ) );
+      }
+    }
 
   } // namespace details
 
@@ -61,54 +78,75 @@ namespace LHCb::Kernel {
       std::apply( [maxElements]( auto&... d ) { ( d.reserve( maxElements ), ... ); }, m_data );
     }
 
-    template <
-        typename... U,
-        typename = std::enable_if_t<sizeof...( U ) == N && ( !std::is_same_v<U, std::piecewise_construct_t> && ... )>,
-        typename = std::enable_if_t<( std::is_constructible_v<Args, U> && ... )>>
-    auto emplace_back( U&&... arg ) {
-      // C++20 std::apply( [..arg=std::forward<U>(arg)](auto&... d) { (d.emplace_back(std::forward<U>(arg)),...); },
-      // m_data);
+    template <typename... U>
+    auto emplace_back( U&&... args ) {
+      static_assert( sizeof...( U ) == N,
+                     "emplace_back takes exactly one argument per contained vector; if you need more than one argument "
+                     "to construct an element, combine them inside a call to `std::forward_as_tuple` " );
       return std::apply(
-          [&arg...]( auto&... d ) { return std::forward_as_tuple( d.emplace_back( std::forward<U>( arg ) )... ); },
-          m_data );
-    }
-
-    template <typename... U, typename = std::enable_if_t<sizeof...( U ) == N && ( details::is_tuple_like_v<U> && ... )>>
-    auto emplace_back( std::piecewise_construct_t, U&&... args ) {
-      return std::apply(
-          [&args...]( auto&... d ) {
-            return std::forward_as_tuple( std::apply(
-                [&d]( auto&&... arg1 ) -> decltype( auto ) {
-                  return d.emplace_back( std::forward<decltype( arg1 )>( arg1 )... );
-                },
-                args )... );
+          [&args...]( auto&... d ) { // C++20: [...args = std::forward<U>(args)]( auto& ... d )
+            return std::forward_as_tuple( details::emplace_back( d, std::forward<U>( args ) )... );
           },
           m_data );
     }
+    void clear() {
+      std::apply( []( auto&... d ) { ( d.clear(), ... ); }, m_data );
+    }
+    void pop_back() {
+      std::apply( []( auto&... d ) { ( d.pop_back(), ... ); }, m_data );
+    }
 
+    // accessors to a row across 'all' columns
+    auto front() const {
+      return std::apply( []( const auto&... d ) { return std::forward_as_tuple( d.front()... ); }, m_data );
+    }
     auto operator[]( int i ) const {
       return std::apply( [i]( const auto&... d ) { return std::forward_as_tuple( d[i]... ); }, m_data );
     }
+    auto back() const {
+      return std::apply( []( const auto&... d ) { return std::forward_as_tuple( d.back()... ); }, m_data );
+    }
 
+    // accessors to a row across  columns specified by index
+    template <size_t... I>
+    auto front() const {
+      return std::forward_as_tuple( std::get<I>( m_data ).front()... );
+    }
     template <size_t... I>
     auto get( int i ) const {
       return std::forward_as_tuple( std::get<I>( m_data )[i]... );
     }
+    template <size_t... I>
+    auto back() const {
+      return std::forward_as_tuple( std::get<I>( m_data ).back()... );
+    }
 
+    // accessors to a row across  columns specified by type
+    template <typename... T>
+    auto front() const {
+      return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data ).front()... );
+    }
     template <typename... T>
     auto get( int i ) const {
       return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data )[i]... );
     }
+    template <typename... T>
+    auto back() const {
+      return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data ).back()... );
+    }
 
+    // accessors to entire columns
     template <size_t I>
     const auto& column() const {
       return std::get<I>( m_data );
     }
-
     template <typename T>
     const auto& column() const {
       return std::get<std::vector<T, Allocator<T>>>( m_data );
     }
+
+    // container properties
+    size_t capacity() const { return std::get<0>( m_data ).capacity(); }
 
     size_t size() const { return std::get<0>( m_data ).size(); }
 
@@ -159,15 +197,6 @@ namespace LHCb::Kernel {
     template <typename T>
     const auto& column() const {
       return std::get<std::vector<T, Allocator<T>>>( m_data );
-    }
-
-    template <size_t I>
-    const auto& column( int i ) const {
-      return std::get<I>( m_data )[i];
-    }
-    template <typename T>
-    const auto& column( int i ) const {
-      return std::get<std::vector<T, Allocator<T>>>( m_data )[i];
     }
 
     bool empty() const {
