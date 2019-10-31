@@ -10,16 +10,9 @@
 \*****************************************************************************/
 #include "LHCbMath/SIMDWrapper.h"
 namespace SIMDWrapper {
-  namespace avx2 {
-    InstructionSet stackInstructionSet() { return avx2::instructionSet(); }
-  } // namespace avx2
-  namespace avx256 {
-    InstructionSet stackInstructionSet() { return avx256::instructionSet(); }
-  } // namespace avx256
-  namespace avx512 {
-    InstructionSet stackInstructionSet() { return avx512::instructionSet(); }
-  } // namespace avx512
-  namespace best {
-    InstructionSet stackInstructionSet() { return best::instructionSet(); }
-  } // namespace best
+  InstructionSet type_map<InstructionSet::Scalar>::stackInstructionSet() { return scalar::instructionSet(); }
+  InstructionSet type_map<InstructionSet::AVX2>::stackInstructionSet() { return avx2::instructionSet(); }
+  InstructionSet type_map<InstructionSet::AVX256>::stackInstructionSet() { return avx256::instructionSet(); }
+  InstructionSet type_map<InstructionSet::AVX512>::stackInstructionSet() { return avx512::instructionSet(); }
+  InstructionSet type_map<InstructionSet::Best>::stackInstructionSet() { return best::instructionSet(); }
 } // namespace SIMDWrapper

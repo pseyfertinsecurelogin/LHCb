@@ -10,9 +10,11 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrFittedForwardTracks.h"
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 #include <Math/SMatrix.h>
 namespace LHCb::Pr::Fitted::Forward {
   namespace detail {
@@ -35,17 +37,11 @@ namespace LHCb::Pr::Fitted::Forward {
   } // namespace detail
 
   /** Proxy type for iterating over LHCb::Pr::Fitted::Forward::Tracks objects. */
-  template <typename MergedProxy, typename dType, bool unwrap_tparam>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    using IType = typename dType::int_v;
+    using FType = typename dType::float_v;
 
-    static constexpr bool unwrap = unwrap_tparam;
-    using IType                  = typename dType::int_v;
-    using FType                  = typename dType::float_v;
     // FIXME make this configurable or at least float. For now double is assumed elsewhere.
     using FTypeOut     = std::conditional_t<unwrap, double, FType>;
     using MatrixSym5x5 = ROOT::Math::SMatrix<FTypeOut, 5, 5, ROOT::Math::MatRepSym<FTypeOut, 5>>;
@@ -59,20 +55,12 @@ namespace LHCb::Pr::Fitted::Forward {
       }
     }
 
-    decltype( auto ) closestToBeamStateDir() const {
-      auto dir = this->m_tracks->template beamStateDir<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZVectorF{cast( dir.x ), cast( dir.y ), cast( dir.z )};
-      else
-        return dir;
+    auto closestToBeamStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template beamStateDir<FType>( this->offset() ) );
     }
 
-    decltype( auto ) closestToBeamStatePos() const {
-      auto pos = this->m_tracks->template beamStatePos<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZPointF{cast( pos.x ), cast( pos.y ), cast( pos.z )};
-      else
-        return pos;
+    auto closestToBeamStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template beamStatePos<FType>( this->offset() ) );
     }
 
     decltype( auto ) qOverP() const { return cast( this->m_tracks->template QoP<FType>( this->offset() ) ); }
@@ -135,15 +123,9 @@ namespace LHCb::Pr::Fitted::Forward {
   };
 } // namespace LHCb::Pr::Fitted::Forward
 
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Fitted::Forward::Tracks> {
-  template <typename MergedProxy, typename dType, bool unwrap>
-  using type = LHCb::Pr::Fitted::Forward::Proxy<MergedProxy, dType, unwrap>;
-};
-
-namespace LHCb::Pr::Iterable::Fitted::Forward {
-  using Tracks = LHCb::Pr::zip_t<LHCb::Pr::Fitted::Forward::Tracks>;
-} // namespace LHCb::Pr::Iterable::Fitted::Forward
+// Allow the proxy type to be found from the track container type
+REGISTER_PROXY( LHCb::Pr::Fitted::Forward::Tracks, LHCb::Pr::Fitted::Forward::Proxy );
+REGISTER_HEADER( LHCb::Pr::Fitted::Forward::Tracks, "Event/PrIterableFittedForwardTracks.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Fitted::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Fitted::Forward::Tracks>;

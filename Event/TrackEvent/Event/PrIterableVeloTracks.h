@@ -9,55 +9,39 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #pragma once
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrVeloTracks.h"
 #include "Event/PrZip.h"
+#include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Velo {
-  namespace detail {
-    template <typename VecType>
-    struct State {
-      VecType m_position, m_slopes;
-      using F = typename VecType::value_type;
-      State( VecType position, VecType slopes )
-          : m_position( std::move( position ) ), m_slopes( std::move( slopes ) ) {}
-      VecType const& position() const { return m_position; }
-      VecType const& slopes() const { return m_slopes; }
-      auto           x() const { return position().x; }
-      auto           y() const { return position().y; }
-      auto           z() const { return position().z; }
-      auto           tx() const { return slopes().x; }
-      auto           ty() const { return slopes().y; }
-    };
-  } // namespace detail
-
   /** Proxy for iterating over LHCb::Pr::Velo::Tracks objects. */
-  template <typename MergedProxy, typename dType>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
-
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
     using FType = typename dType::float_v;
     using IType = typename dType::int_v;
 
-    decltype( auto ) closestToBeamStatePos() const {
-      return this->m_tracks->template statePos<FType>( this->offset(), 0 );
+    auto closestToBeamStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template statePos<FType>( this->offset(), 0 ) );
     }
-    decltype( auto ) closestToBeamStateDir() const {
-      return this->m_tracks->template stateDir<FType>( this->offset(), 0 );
+    auto closestToBeamStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template stateDir<FType>( this->offset(), 0 ) );
     }
-    auto closestToBeamState() const { return detail::State{closestToBeamStatePos(), closestToBeamStateDir()}; }
-    auto nHits() const { return this->m_tracks->template nHits<IType>( this->offset() ); }
-    decltype( auto ) pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
-    decltype( auto ) phi() const { return this->closestToBeamStateDir().phi(); }
+    auto closestToBeamState() const {
+      return LHCb::Pr::detail::VeloState{closestToBeamStatePos(), closestToBeamStateDir()};
+    }
+    auto nHits() const {
+      return LHCb::Pr::detail::cast<unwrap>( this->m_tracks->template nHits<IType>( this->offset() ) );
+    }
+    auto pseudoRapidity() const { return this->closestToBeamStateDir().eta(); }
+    auto phi() const { return this->closestToBeamStateDir().phi(); }
   };
 } // namespace LHCb::Pr::Velo
 
 // Allow the proxy type to be found from the track container type
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Velo::Tracks> {
-  template <typename MergedProxy, typename dType, bool>
-  using type = LHCb::Pr::Velo::Proxy<MergedProxy, dType>;
-};
+REGISTER_PROXY( LHCb::Pr::Velo::Tracks, LHCb::Pr::Velo::Proxy );
+REGISTER_HEADER( LHCb::Pr::Velo::Tracks, "Event/PrIterableVeloTracks.h" );
+
+namespace LHCb::Pr::Iterable::Scalar::Velo {
+  using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Velo::Tracks>;
+} // namespace LHCb::Pr::Iterable::Scalar::Velo

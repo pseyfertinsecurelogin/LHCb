@@ -11,8 +11,79 @@
 #pragma once
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/detected.h"
+#include "Kernel/HeaderMapping.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "SOAExtensions/ZipUtils.h"
+
+namespace LHCb::Pr {
+  /** Helper for getting from container type -> proxy type. When proxies are
+   *  defined, specialisations of this template should also be added so that
+   *  they can be found.
+   */
+  template <typename>
+  struct Proxy {
+    /** This is only defined in the unspecialised Proxy struct, it is used to
+     *  detect whether or not LHCb::Pr::Proxy<T> is explicitly defined or not.
+     */
+    static constexpr bool unspecialised = true;
+  };
+} // namespace LHCb::Pr
+
+/** Helper macros for defining LHCb::Pr::Proxy specialisations
+ */
+
+/** Start the class declaration of a proxy type
+ *
+ *  Typically a proxy declaration would look something like:
+ *
+ *  namespace Some::Appropriate::Namespace {
+ *    DECLARE_PROXY( Proxy ) {
+ *      PROXY_METHODS( dType, unwrap, ContainerType, m_container );
+ *      auto someField() const { return m_container->field<dType, unwrap>( this->offset() ); }
+ *    };
+ *  } // namespace Some::Appropriate::Namespace
+ *
+ *  REGISTER_PROXY( ContainerType, Some::Appropriate::Namespace::Proxy );
+ */
+#define DECLARE_PROXY( Proxy )                                                                                         \
+  template <typename LHCb__Pr__MergedProxy, SIMDWrapper::InstructionSet LHCb__Pr__Proxy__simd,                         \
+            bool LHCb__Pr__Proxy__unwrap__tparam>                                                                      \
+  struct Proxy
+
+/** Define methods that are common to all proxy types.
+ */
+#define PROXY_METHODS( dType, unwrap, Tracks, m_tracks )                                                               \
+  using dType                  = typename SIMDWrapper::type_map<LHCb__Pr__Proxy__simd>::type;                          \
+  static constexpr bool unwrap = LHCb__Pr__Proxy__unwrap__tparam;                                                      \
+  Tracks const*         m_tracks{nullptr};                                                                             \
+  Proxy( Tracks const* tracks ) : m_tracks{tracks} {}                                                                  \
+  auto        offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                   \
+  auto        size() const { return m_tracks->size(); }                                                                \
+  static auto mask_true() {                                                                                            \
+    if constexpr ( unwrap ) {                                                                                          \
+      return true;                                                                                                     \
+    } else {                                                                                                           \
+      return dType::mask_true();                                                                                       \
+    }                                                                                                                  \
+  }                                                                                                                    \
+  static auto mask_false() {                                                                                           \
+    if constexpr ( unwrap ) {                                                                                          \
+      return false;                                                                                                    \
+    } else {                                                                                                           \
+      return dType::mask_false();                                                                                      \
+    }                                                                                                                  \
+  }
+
+/** Register the given proxy type as being the one needed to iterate over the
+ *  given key type. This must be called at global scope.
+ */
+#define REGISTER_PROXY( KeyType, ProxyType )                                                                           \
+  template <>                                                                                                          \
+  struct LHCb::Pr::Proxy<KeyType> {                                                                                    \
+    template <typename MergedProxy, SIMDWrapper::InstructionSet simd, bool unwrap>                                     \
+    using type = ProxyType<MergedProxy, simd, unwrap>;                                                                 \
+  };                                                                                                                   \
+  static_assert( LHCb::Pr::is_zippable_v<KeyType>, "REGISTER_PROXY used with a non-zippable key type." )
 
 namespace LHCb::Pr::detail {
   /** Helper to determine if the given type has a reserve( std::size_t ) method
@@ -41,13 +112,28 @@ namespace LHCb::Pr::detail {
   inline constexpr bool has_zipIdentifier_v =
       std::is_same_v<Gaudi::cpp17::detected_or_t<void, has_zipIdentifier_, T>, Zipping::ZipFamilyNumber>;
 
-  /** Helper that checks that the given type has .size() and .zipIdentifier()
-   *  methods, which is the basic criterion for make_zip() and the
-   *  LHCb::Pr::Zip constructor to be considered.
+  /** Helper to determine if the given type has an LHCb::Pr::Proxy
+   *  specialisation.
    */
   template <typename T>
-  inline constexpr bool is_zippable_v = has_size_v<T>&& has_zipIdentifier_v<T>;
+  using proxy_is_unspecialised_ = decltype( LHCb::Pr::Proxy<T>::unspecialised );
 
+  template <typename T>
+  inline constexpr bool has_proxy_specialisation_v = !Gaudi::cpp17::is_detected_v<proxy_is_unspecialised_, T>;
+} // namespace LHCb::Pr::detail
+
+namespace LHCb::Pr {
+  /** Helper that checks that the given type has .size() and .zipIdentifier()
+   *  methods, and a specialisation of LHCb:Pr::Proxy<>. These are the basic
+   *  criteria for make_zip() and the LHCb::Pr::Zip constructor to be
+   *  considered.
+   */
+  template <typename T>
+  inline constexpr bool       is_zippable_v =
+      detail::has_size_v<T>&& detail::has_zipIdentifier_v<T>&& detail::has_proxy_specialisation_v<T>;
+} // namespace LHCb::Pr
+
+namespace LHCb::Pr::detail {
   // This is a type that we can return if we conditionally copy from all
   // elements of the zip into a single new container representing the union
   // of all of these elements
@@ -110,16 +196,65 @@ namespace LHCb::Pr::detail {
       if constexpr ( has_reserve_v<base_t<I>> ) { base_t<I>::reserve( capacity ); }
     }
   };
+
+  // Make a new proxy type that inherits from all the component ones
+  // The data structure looks something like:
+  //
+  //    ProxyA           ProxyB
+  //  ----------       ----------
+  // |    A*    |     |    B*    |
+  // |    a()   |     |    b()   |
+  //  ----------       ----------
+  //       |               |
+  //  ---------------------------
+  // |           offset          |
+  //  ---------------------------
+  //     Zip<A, B>::proxy_type
+  //
+  // So the "zipped" proxy inherits from the two component proxy types, and
+  // the offset (which is by construction valid into containers A and B) is
+  // stored in the derived class. ProxyA and ProxyB access the offset using
+  // CRTP.
+  template <SIMDWrapper::InstructionSet simd, bool unwrap, typename... ContainerTypes>
+  struct proxy_type
+      : public Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap, ContainerTypes...>, simd, unwrap>... {
+    // Get the type of the first proxy type we inherit from, this lets us
+    // query the size of the underlying containers via that proxy's pointer
+    // to the underlying container. By construction all of the underlying
+    // containers are the same length, this should be checked in the
+    // constructor.
+    using first_container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
+    using first_proxy_t =
+        typename Proxy<first_container_t>::template type<proxy_type<simd, unwrap, ContainerTypes...>, simd, unwrap>;
+    using simd_t = typename SIMDWrapper::type_map<simd>::type;
+    static constexpr bool is_proxy{true};
+    int                   m_offset{0};
+    auto                  width() const { return simd_t::size; }
+    auto                  offset() const { return m_offset; }
+    auto                  loop_mask() const {
+      if constexpr ( unwrap ) {
+        return true;
+      } else {
+        return simd_t::loop_mask( m_offset, first_proxy_t::size() );
+      }
+    }
+    // Make the static methods added by the PROXY_METHODS macro visible in
+    // the zipped proxy types -- it doesn't matter which parent type we take
+    // them from, the first one is simplest...
+    using first_proxy_t::mask_false;
+    using first_proxy_t::mask_true;
+
+    proxy_type( ContainerTypes const*... containers, int offset )
+        : Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap, ContainerTypes...>, simd, unwrap>(
+              containers )...
+        , m_offset{offset} {}
+  };
+
+  template <typename>
+  struct merged_object_helper;
 } // namespace LHCb::Pr::detail
 
 namespace LHCb::Pr {
-  /** Helper for getting from container type -> proxy type. When proxies are
-   *  defined, specialisations of this template should also be added so that
-   *  they can be found.
-   */
-  template <typename>
-  struct Proxy {};
-
   /** This is the type returned by LHCb::Pr::make_zip */
   template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
   class Zip {
@@ -136,62 +271,22 @@ namespace LHCb::Pr {
     template <SIMDWrapper::InstructionSet, bool, typename...>
     friend class Zip;
 
+    template <typename>
+    friend struct detail::merged_object_helper;
+
   public:
     static constexpr auto default_simd   = def_simd;
     static constexpr bool default_unwrap = def_unwrap;
     using default_simd_t                 = typename SIMDWrapper::type_map<def_simd>::type;
 
-    // Make a new proxy type that inherits from all the component ones
-    // The data structure looks something like:
-    //
-    //    ProxyA           ProxyB
-    //  ----------       ----------
-    // |    A*    |     |    B*    |
-    // |    a()   |     |    b()   |
-    //  ----------       ----------
-    //       |               |
-    //  ---------------------------
-    // |           offset          |
-    //  ---------------------------
-    //     Zip<A, B>::proxy_type
-    //
-    // So the "zipped" proxy inherits from the two component proxy types, and
-    // the offset (which is by construction valid into containers A and B) is
-    // stored in the derived class. ProxyA and ProxyB access the offset using
-    // CRTP.
-    template <typename dType, bool unwrap>
-    struct proxy_type : public Proxy<ContainerTypes>::template type<proxy_type<dType, unwrap>, dType, unwrap>... {
-      // Get the type of the first proxy type we inherit from, this lets us
-      // query the size of the underlying containers via that proxy's pointer
-      // to the underlying container. By construction all of the underlying
-      // containers are the same length, this should be checked in the
-      // constructor.
-      using first_container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
-      using first_proxy_t = typename Proxy<first_container_t>::template type<proxy_type<dType, unwrap>, dType, unwrap>;
-      static constexpr bool is_proxy{true};
-      int                   m_offset{0};
-      auto                  width() const { return dType::size; }
-      auto                  offset() const { return m_offset; }
-      auto                  loop_mask() const {
-        if constexpr ( unwrap ) {
-          return true;
-        } else {
-          return dType::loop_mask( m_offset, first_proxy_t::size() );
-        }
-      }
-
-      proxy_type( ContainerTypes const*... containers, int offset )
-          : Proxy<ContainerTypes>::template type<proxy_type<dType, unwrap>, dType, unwrap>( containers )...
-          , m_offset{offset} {}
-    };
-
-    template <typename dType, bool unwrap>
+    template <SIMDWrapper::InstructionSet simd, bool unwrap>
     struct Iterator {
-      using value_type        = proxy_type<dType, unwrap>;
+      using value_type        = detail::proxy_type<simd, unwrap, ContainerTypes...>;
       using pointer           = value_type const*;
       using reference         = value_type const&;
       using difference_type   = int;
       using iterator_category = std::random_access_iterator_tag;
+      using simd_t            = typename SIMDWrapper::type_map<simd>::type;
       container_ptr_tuple m_containers;
       int                 m_offset{0};
       Iterator( container_ptr_tuple containers, int offset ) : m_containers{containers}, m_offset{offset} {}
@@ -199,15 +294,15 @@ namespace LHCb::Pr {
         return std::make_from_tuple<value_type>( std::tuple_cat( m_containers, std::tuple{m_offset} ) );
       }
       Iterator operator++() {
-        m_offset += dType::size;
+        m_offset += simd_t::size;
         return *this;
       }
       Iterator operator--() {
-        m_offset -= dType::size;
+        m_offset -= simd_t::size;
         return *this;
       }
       Iterator& operator+=( difference_type n ) {
-        m_offset += n * dType::size;
+        m_offset += n * simd_t::size;
         return *this;
       }
       friend bool operator!=( Iterator const& lhs, Iterator const& rhs ) {
@@ -218,10 +313,10 @@ namespace LHCb::Pr {
       }
     };
 
-    using value_type = proxy_type<default_simd_t, default_unwrap>;
+    using value_type = detail::proxy_type<default_simd, default_unwrap, ContainerTypes...>;
 
     /** Construct an iterable zip of the given containers. */
-    template <typename std::enable_if_t<( detail::is_zippable_v<ContainerTypes> && ... ), int> = 0>
+    template <typename std::enable_if_t<( is_zippable_v<ContainerTypes> && ... ), int> = 0>
     Zip( ContainerTypes const&... containers ) : m_containers{&containers...} {
       // We assume that size() and zipIdentifier() can just be taken from the
       // 0th container, now's the time to check that assumption...!
@@ -254,8 +349,8 @@ namespace LHCb::Pr {
      *  after the lifetime of the iterable zip itself (Zip) has
      *  ended.
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
-    Iterator<dType, unwrap> begin() const {
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
+    Iterator<simd, unwrap> begin() const {
       return {m_containers, 0};
     }
 
@@ -263,12 +358,13 @@ namespace LHCb::Pr {
      *  As with begin(), the iterator only refers to the underlying containers
      *  and may be used after the lifetime of the iterable zip object has ended
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
-    Iterator<dType, unwrap> end() const {
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
+    Iterator<simd, unwrap> end() const {
+      using simd_t = typename SIMDWrapper::type_map<simd>::type;
       // m_offset is incremented by dType::size each time, so repeatedly
       // incrementing begin() generally misses {m_tracks, m_tracks->size()}
-      int num_chunks = ( size() + dType::size - 1 ) / dType::size;
-      int max_offset = num_chunks * dType::size;
+      int num_chunks = ( size() + simd_t::size - 1 ) / simd_t::size;
+      int max_offset = num_chunks * simd_t::size;
       return {m_containers, max_offset};
     }
 
@@ -277,9 +373,10 @@ namespace LHCb::Pr {
      *  'dType' then the proxy returned here will also yield vector outputs
      *  starting from the given offset.
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap>
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap>
     auto operator[]( int offset ) const {
-      return std::make_from_tuple<proxy_type<dType, unwrap>>( std::tuple_cat( m_containers, std::tuple{offset} ) );
+      return std::make_from_tuple<detail::proxy_type<simd, unwrap, ContainerTypes...>>(
+          std::tuple_cat( m_containers, std::tuple{offset} ) );
     }
 
     /** Get the size of the underlying container
@@ -296,43 +393,82 @@ namespace LHCb::Pr {
 
     /** Make a new structure by conditionally copying the underlying structures
      */
-    template <typename dType = default_simd_t, bool unwrap = default_unwrap, typename F>
+    template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap, typename F>
     auto filter( F filt ) const {
-      detail::merged_t out{m_containers};
-      out.reserve( this->size() );
-      for ( auto iter = begin<dType, unwrap>(); iter != end<dType, unwrap>(); ++iter ) {
-        auto const& chunk     = *iter;
-        auto        loop_mask = chunk.loop_mask();
-        auto        filt_mask = std::invoke( filt, chunk );
-        out.template copy_back<dType>( m_containers, chunk.offset(), loop_mask && filt_mask );
+      using simd_t = typename SIMDWrapper::type_map<simd>::type;
+      // If the current object is a zip of multiple containers, we need to
+      // return a detail::merged_t object. If there's only one container, we
+      // can just return a new one of those.
+      if constexpr ( sizeof...( ContainerTypes ) > 1 ) {
+        // Zip contains multiple inputs, need a custom output type merging them
+        // together.
+        detail::merged_t out{m_containers};
+        out.reserve( this->size() );
+        for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
+          auto const& chunk     = *iter;
+          auto        filt_mask = std::invoke( filt, chunk );
+          out.template copy_back<simd_t>( m_containers, chunk.offset(), chunk.loop_mask() && filt_mask );
+        }
+        return out;
+      } else {
+        // If we're a "zip" of just one container, we can directly output a new
+        // instance of that container instead of a merged_t wrapper around it
+        using container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
+        auto const& old_container{*std::get<0>( m_containers )};
+        container_t out{Zipping::generateZipIdentifier(), old_container};
+        if constexpr ( detail::has_reserve_v<container_t> ) out.reserve( this->size() );
+        for ( auto iter = begin<simd, unwrap>(); iter != end<simd, unwrap>(); ++iter ) {
+          auto const& chunk     = *iter;
+          auto        filt_mask = std::invoke( filt, chunk );
+          out.template copy_back<simd_t>( old_container, chunk.offset(), chunk.loop_mask() && filt_mask );
+        }
+        return out;
       }
-      return out;
     }
 
     /** Return a copy of ourself that has a different default vector backend.
      */
-    template <SIMDWrapper::InstructionSet dType>
+    template <SIMDWrapper::InstructionSet simd>
     auto with() const {
-      return Zip<dType, default_unwrap, ContainerTypes...>{*this};
+      return Zip<simd, default_unwrap, ContainerTypes...>{*this};
     }
 
     /** Return a version of ourself that behaves 'traditionally', i.e. provides
      *  scalar iteration and returns plain C++ data types from accessors.
      */
     auto unwrap() const { return Zip<SIMDWrapper::InstructionSet::Scalar, true, ContainerTypes...>{*this}; }
+
+    /** Two zips are the same if they have the same type and they have the same
+     *  set of pointers to the actual owning containers.
+     */
+    friend bool operator==( Zip const& lhs, Zip const& rhs ) { return lhs.m_containers == rhs.m_containers; }
   };
 
   namespace detail {
     template <typename T>
     struct merged_object_helper {
       static auto           decompose( T const& x ) { return std::tie( x ); }
-      static constexpr bool is_zippable_v = ::LHCb::Pr::detail::is_zippable_v<T>;
+      static constexpr bool is_zippable_v = ::LHCb::Pr::is_zippable_v<T>;
     };
 
     template <typename... T>
     struct merged_object_helper<merged_t<T...>> {
       static auto           decompose( merged_t<T...> const& x ) { return std::tie( static_cast<T const&>( x )... ); }
-      static constexpr bool is_zippable_v = ( ::LHCb::Pr::detail::is_zippable_v<T> && ... );
+      static constexpr bool is_zippable_v = ( ::LHCb::Pr::is_zippable_v<T> && ... );
+    };
+
+    template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T>
+    struct merged_object_helper<::LHCb::Pr::Zip<def_simd, def_unwrap, T...>> {
+      // Convert std::tuple<A const*, ...> to std::tuple<A const&, ...>
+      template <std::size_t... Is>
+      static auto helper( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x, std::index_sequence<Is...> ) {
+        return std::tie( *std::get<Is>( x.m_containers )... );
+      }
+      static auto decompose( ::LHCb::Pr::Zip<def_simd, def_unwrap, T...> const& x ) {
+        return helper( x, std::index_sequence_for<T...>{} );
+      }
+      // This was already a zip, so we know that the contents were zippable
+      static constexpr bool is_zippable_v = true;
     };
 
     template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... T,
@@ -352,6 +488,14 @@ namespace LHCb::Pr {
    *  instances of merged_t. This is the type produced by filtering a zip. The
    *  special handling here ensures that `iterable( zip.filter(...) )` has the
    *  same type as `zip`.
+   *
+   *  There is also special handling for the case that some of the arguments
+   *  are instances of LHCb::Pr::Zip. The special handling ensures that if one
+   *  does
+   *    auto x = LHCb::Pr::make_zip( a, b );
+   *    auto y = LHCb::Pr::make_zip( x, c, d );
+   *    auto z = LHCb::Pr::make_zip( a, b, c, d );
+   *  then y and z should have the same type.
    */
   template <SIMDWrapper::InstructionSet def_simd = SIMDWrapper::InstructionSet::Best, bool def_unwrap = false,
             typename... PrTracks,
@@ -384,3 +528,15 @@ namespace LHCb::Pr {
   using unwrapped_zip_t = decltype( std::declval<zip_t<T...>>().unwrap() );
 
 } // namespace LHCb::Pr
+
+// Enable header lookup for non-owning zips
+template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
+struct LHCb::header_map<LHCb::Pr::Zip<def_simd, def_unwrap, ContainerTypes...>> {
+  static constexpr auto value = ( LHCb::header_map_v<ContainerTypes> + ... ) + "Event/PrZip.h";
+};
+
+// Enable header lookup of non-owning zip proxies
+template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
+struct LHCb::header_map<typename LHCb::Pr::detail::proxy_type<def_simd, def_unwrap, ContainerTypes...>> {
+  static constexpr auto value = ( LHCb::header_map_v<ContainerTypes> + ... ) + "Event/PrZip.h";
+};

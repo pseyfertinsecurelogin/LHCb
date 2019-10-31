@@ -10,9 +10,11 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/PrForwardTracks.h"
+#include "Event/PrProxyHelpers.h"
 #include "Event/PrZip.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 
 namespace LHCb::Pr::Forward {
   namespace detail {
@@ -34,58 +36,62 @@ namespace LHCb::Pr::Forward {
   } // namespace detail
 
   /** Proxy for iterating over LHCb::Pr::Forward::Tracks objects. */
-  template <typename MergedProxy, typename dType, bool unwrap_tparam>
-  struct Proxy {
-    // TODO these next four lines could/should be macro'd
-    Tracks const* m_tracks{nullptr};
-    Proxy( Tracks const* tracks ) : m_tracks{tracks} {}
-    auto offset() const { return static_cast<MergedProxy const&>( *this ).offset(); }
-    auto size() const { return m_tracks->size(); }
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    using IType = typename dType::int_v;
+    using FType = typename dType::float_v;
 
-    static constexpr bool unwrap = unwrap_tparam;
-    using FType                  = typename dType::float_v;
-
-    template <typename T>
-    static constexpr auto cast( T x ) {
-      if constexpr ( unwrap ) {
-        return x.cast();
-      } else {
-        return x;
-      }
+    auto closestToBeamStatePos() const {
+      // Fail if we're asked to do this in vector mode...
+      static_assert( std::is_same_v<dType, SIMDWrapper::scalar::types>,
+                     "Forward->Velo links only supported in scalar mode." );
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->getVeloAncestors()->template statePos<FType>(
+          m_tracks->template trackVP<IType>( this->offset() ).cast(), 0 ) );
     }
+
+    auto closestToBeamStateDir() const {
+      // Fail if we're asked to do this in vector mode...
+      static_assert( std::is_same_v<dType, SIMDWrapper::scalar::types>,
+                     "Forward->Velo links only supported in scalar mode." );
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->getVeloAncestors()->template stateDir<FType>(
+          m_tracks->template trackVP<IType>( this->offset() ).cast(), 0 ) );
+    }
+
+    auto closestToBeamState() const {
+      return LHCb::Pr::detail::VeloState{closestToBeamStatePos(), closestToBeamStateDir()};
+    }
+
+    auto phi() const { return closestToBeamState().slopes().phi(); }
+    auto pseudoRapidity() const { return closestToBeamState().slopes().eta(); }
 
     auto endScifiState() const { return detail::ScifiState{*this}; }
 
-    auto p() const { return cast( this->m_tracks->template p<FType>( this->offset() ) ); }
-
-    decltype( auto ) endScifiStatePos() const {
-      auto pos = this->m_tracks->template statePos<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZPointF{cast( pos.x ), cast( pos.y ), cast( pos.z )};
-      else
-        return pos;
+    auto p() const { return LHCb::Pr::detail::cast<unwrap>( m_tracks->template p<FType>( this->offset() ) ); }
+    auto pt() const {
+      auto const mom = p();
+      auto const dir = closestToBeamStateDir();
+      auto const pt2 = mom * mom * ( dir.X() * dir.X() + dir.Y() * dir.Y() ) / dir.mag2();
+      using std::sqrt;
+      return sqrt( pt2 );
     }
 
-    decltype( auto ) endScifiStateDir() const {
-      auto dir = this->m_tracks->template stateDir<FType>( this->offset() );
-      if constexpr ( unwrap )
-        return Gaudi::XYZVectorF{cast( dir.x ), cast( dir.y ), cast( dir.z )};
-      else
-        return dir;
+    auto qOverP() const {
+      return LHCb::Pr::detail::cast<unwrap>( m_tracks->template stateQoP<FType>( this->offset() ) );
+    }
+
+    auto endScifiStatePos() const {
+      return LHCb::Pr::detail::castToPoint<unwrap>( m_tracks->template statePos<FType>( this->offset() ) );
+    }
+
+    auto endScifiStateDir() const {
+      return LHCb::Pr::detail::castToVector<unwrap>( m_tracks->template stateDir<FType>( this->offset() ) );
     }
   };
 } // namespace LHCb::Pr::Forward
 
 // Allow the proxy type to be found from the track container type
-template <>
-struct LHCb::Pr::Proxy<LHCb::Pr::Forward::Tracks> {
-  template <typename MergedProxy, typename dType, bool unwrap>
-  using type = LHCb::Pr::Forward::Proxy<MergedProxy, dType, unwrap>;
-};
-
-namespace LHCb::Pr::Iterable::Forward {
-  using Tracks = LHCb::Pr::zip_t<LHCb::Pr::Forward::Tracks>;
-} // namespace LHCb::Pr::Iterable::Forward
+REGISTER_PROXY( LHCb::Pr::Forward::Tracks, LHCb::Pr::Forward::Proxy );
+REGISTER_HEADER( LHCb::Pr::Forward::Tracks, "Event/PrIterableForwardTracks.h" );
 
 namespace LHCb::Pr::Iterable::Scalar::Forward {
   using Tracks = LHCb::Pr::unwrapped_zip_t<LHCb::Pr::Forward::Tracks>;

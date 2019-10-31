@@ -19,6 +19,7 @@
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
+#include "Kernel/HeaderMapping.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include "Kernel/meta_enum.h"
@@ -546,3 +547,4 @@ namespace LHCb::Event {
 
   } // namespace v2
 } // namespace LHCb::Event
+REGISTER_HEADER( LHCb::Event::v2::Track, "Event/Track_v2.h" );
