@@ -9,15 +9,16 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #pragma once
+#include "GaudiKernel/detected.h"
 #include "Kernel/ArenaAllocator.h"
 #include <array>
 #include <functional>
 #include <new>
 #include <numeric>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
-#include <type_traits>
 
 namespace LHCb::Kernel {
 
@@ -29,15 +30,14 @@ namespace LHCb::Kernel {
       return a;
     }
 
-    template<typename T, typename = void>
-    struct has_tuplesize_t : std::false_type {} ;
-
-    template<typename T>
-    struct has_tuplesize_t<T, std::void_t<decltype(std::tuple_size<T>::value)>>
-        : std::true_type {};
+    // assume that if T defines `std::tuple_size<T>::value`, that
+    // std::get<I>(T) also works...
+    template <typename T>
+    using has_tuplesize_t = std::void_t<decltype( std::tuple_size<T>::value )>;
 
     template <typename T>
-    constexpr bool is_tuple_like_v = has_tuplesize_t<T>::value;
+    constexpr bool is_tuple_like_v = Gaudi::cpp17::is_detected_v<has_tuplesize_t, T>;
+
   } // namespace details
 
   template <typename... Args>
@@ -61,11 +61,11 @@ namespace LHCb::Kernel {
       std::apply( [maxElements]( auto&... d ) { ( d.reserve( maxElements ), ... ); }, m_data );
     }
 
-    template <typename... U>
+    template <
+        typename... U,
+        typename = std::enable_if_t<sizeof...( U ) == N && ( !std::is_same_v<U, std::piecewise_construct_t> && ... )>,
+        typename = std::enable_if_t<( std::is_constructible_v<Args, U> && ... )>>
     auto emplace_back( U&&... arg ) {
-      static_assert( sizeof...( U ) == N,
-                     "emplace_back takes exactly one argument per contained vector. For more complex in-place "
-                     "construction please refer to the std::piecewise_construct overload of emplace_back" );
       // C++20 std::apply( [..arg=std::forward<U>(arg)](auto&... d) { (d.emplace_back(std::forward<U>(arg)),...); },
       // m_data);
       return std::apply(
@@ -73,10 +73,8 @@ namespace LHCb::Kernel {
           m_data );
     }
 
-    template <typename... U,
-              typename = std::enable_if_t< ( details::is_tuple_like_v<U> && ...   )  > >
+    template <typename... U, typename = std::enable_if_t<sizeof...( U ) == N && ( details::is_tuple_like_v<U> && ... )>>
     auto emplace_back( std::piecewise_construct_t, U&&... args ) {
-      static_assert( sizeof...( U ) == N );
       return std::apply(
           [&args...]( auto&... d ) {
             return std::forward_as_tuple( std::apply(
