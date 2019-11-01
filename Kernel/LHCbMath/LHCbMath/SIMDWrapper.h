@@ -122,6 +122,7 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return mask == 1; }
       friend bool none( const mask_v& mask ) { return mask == 0; }
       friend bool any( const mask_v& mask ) { return mask != 0; }
+      friend bool testbit( const mask_v& mask, const int ) { return mask == 1; }
 
     private:
       int data;
@@ -329,6 +330,9 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return _mm_movemask_ps( mask ) == 0xF; }
       friend bool none( const mask_v& mask ) { return _mm_movemask_ps( mask ) == 0x0; }
       friend bool any( const mask_v& mask ) { return _mm_movemask_ps( mask ) != 0x0; }
+      friend bool testbit( const mask_v& mask, const int bit ) {
+        return ( _mm_movemask_ps( mask ) & ( 1 << bit ) ) != 0;
+      }
 
       friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
         return print_vector<float, 4>( os, x, "sse" );
@@ -734,6 +738,9 @@ namespace SIMDWrapper {
       friend bool all( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0xFF; }
       friend bool none( const float_v& mask ) { return _mm256_movemask_ps( mask ) == 0x00; }
       friend bool any( const float_v& mask ) { return _mm256_movemask_ps( mask ) != 0x00; }
+      friend bool testbit( const float_v& mask, const int bit ) {
+        return ( _mm256_movemask_ps( mask ) & ( 1 << bit ) ) != 0;
+      }
 
       float hmax() const {
         __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
@@ -926,6 +933,7 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return mask == 0xFF; }
       friend bool none( const mask_v& mask ) { return mask == 0x00; }
       friend bool any( const mask_v& mask ) { return mask != 0x00; }
+      friend bool testbit( const mask_v& mask, const int bit ) { return ( mask & ( 1 << bit ) ) != 0; }
 
       friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
         return print_bitset<8>( os, x, "avx256" );
@@ -1153,6 +1161,8 @@ namespace SIMDWrapper {
       friend bool all( const mask_v& mask ) { return mask == 0xFFFF; }
       friend bool none( const mask_v& mask ) { return mask == 0x0000; }
       friend bool any( const mask_v& mask ) { return mask != 0x0000; }
+      friend bool testbit( const mask_v& mask, const int bit ) { return ( mask & ( 1 << bit ) ) != 0; }
+
       friend std::ostream& operator<<( std::ostream& os, mask_v const& x ) {
         return print_bitset<16>( os, x, "avx512" );
       }
