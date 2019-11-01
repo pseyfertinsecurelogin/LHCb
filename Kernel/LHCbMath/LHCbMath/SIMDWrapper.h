@@ -87,7 +87,6 @@ namespace SIMDWrapper {
   } // namespace scalar
   namespace sse {
     using SIMDWrapper::log;
-    InstructionSet stackInstructionSet();
   } // namespace sse
   namespace avx2 {
     using SIMDWrapper::log;
@@ -302,6 +301,8 @@ namespace SIMDWrapper {
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     };
 
+    class int_v;
+
     class mask_v {
     public:
       mask_v() {} // Constructor must be empty
@@ -314,7 +315,12 @@ namespace SIMDWrapper {
 
       void store( float* ptr ) const { _mm_storeu_ps( ptr, data ); } // Non-standard
 
-      operator __m128() const { return data; }
+             operator __m128() const { return data; }
+      inline operator int_v() const;
+
+      friend mask_v operator&( const mask_v& lhs, const mask_v& rhs ) { return _mm_and_ps( lhs, rhs ); }
+      friend mask_v operator|( const mask_v& lhs, const mask_v& rhs ) { return _mm_or_ps( lhs, rhs ); }
+      friend mask_v operator^( const mask_v& lhs, const mask_v& rhs ) { return _mm_xor_ps( lhs, rhs ); }
 
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return _mm_and_ps( lhs, rhs ); }
       friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return _mm_or_ps( lhs, rhs ); }
@@ -333,8 +339,6 @@ namespace SIMDWrapper {
     };
 
     inline int popcount( mask_v const& mask ) { return _mm_popcnt_u32( _mm_movemask_ps( mask ) ); }
-
-    class int_v;
 
     class float_v {
     public:
@@ -475,6 +479,12 @@ namespace SIMDWrapper {
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm_and_si128( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm_or_si128( lhs, rhs ); }
 
+      friend int_v operator<<( const int_v& lhs, const int rhs ) { return _mm_slli_epi32( lhs, rhs ); }
+      friend int_v operator>>( const int_v& lhs, const int rhs ) { return _mm_srli_epi32( lhs, rhs ); }
+
+      friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm_sll_epi32( lhs, rhs ); }
+      friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm_srl_epi32( lhs, rhs ); }
+
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm_castps_si128( _mm_blendv_ps( _mm_castsi128_ps( a ), _mm_castsi128_ps( b ), s < float_v( 0.f ) ) );
       }
@@ -500,6 +510,7 @@ namespace SIMDWrapper {
     };
 
     inline float_v::operator int_v() const { return int_v( _mm_cvttps_epi32( data ) ); }
+    inline mask_v:: operator int_v() const { return int_v( _mm_castps_si128( data ) ); }
 
     inline int_v castToInt( const float_v& x ) { return int_v( _mm_castps_si128( x ) ); }
 
@@ -1352,6 +1363,13 @@ namespace SIMDWrapper {
   struct type_map<InstructionSet::Scalar> {
     using type = scalar::types;
     static constexpr InstructionSet instructionSet() { return scalar::instructionSet(); }
+    static InstructionSet           stackInstructionSet();
+  };
+
+  template <>
+  struct type_map<InstructionSet::SSE> {
+    using type = sse::types;
+    static constexpr InstructionSet instructionSet() { return sse::instructionSet(); }
     static InstructionSet           stackInstructionSet();
   };
 
