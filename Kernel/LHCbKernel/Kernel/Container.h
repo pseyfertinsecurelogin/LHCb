@@ -11,6 +11,7 @@
 #pragma once
 #include "GaudiKernel/detected.h"
 #include "Kernel/ArenaAllocator.h"
+#include "boost/callable_traits.hpp"
 #include <array>
 #include <functional>
 #include <new>
@@ -53,6 +54,34 @@ namespace LHCb::Kernel {
             },
             std::forward<Arg>( arg ) );
       }
+    }
+
+    template <size_t i, typename Callable>
+    using arg_t = std::tuple_element_t<i, boost::callable_traits::args_t<Callable>>;
+    template <typename Callable>
+    constexpr auto arity_v = std::tuple_size_v<boost::callable_traits::args_t<Callable>>;
+
+    template <typename Fun, typename Tuple, std::size_t... iarg>
+    decltype( auto ) apply_helper( Fun&& f, const Tuple& data, int index, std::index_sequence<iarg...> ) {
+      return std::apply( f, data.template get<arg_t<iarg, Fun>...>( index ) );
+    }
+
+    template <typename Fun, typename Out, typename Tuple, std::size_t... iarg>
+    decltype( auto ) apply_binary_helper( Fun&& f, Out&& out, const Tuple& data, int index,
+                                          std::index_sequence<iarg...> ) {
+      return std::apply( f, std::tuple_cat( std::forward_as_tuple( std::forward<Out>( out ) ),
+                                            data.template get<arg_t<iarg, Fun>...>( index ) ) );
+    }
+
+    template <typename Fun, typename Data>
+    decltype( auto ) apply( Fun&& f, const Data& data, int index ) {
+      return apply_helper( std::forward<Fun>( f ), data, index, std::make_index_sequence<arity_v<Fun>>{} );
+    }
+
+    template <typename Fun, typename Out, typename Data>
+    decltype( auto ) apply_binary( Fun&& f, Out&& out, const Data& data, int index ) {
+      return apply_binary_helper( std::forward<Fun>( f ), std::forward<Out>( out ), data, index,
+                                  std::make_index_sequence<arity_v<Fun> - 1>{} );
     }
 
   } // namespace details
@@ -152,6 +181,42 @@ namespace LHCb::Kernel {
 
     bool empty() const { return std::get<0>( m_data ).empty(); }
   };
+
+  namespace details {
+    template <typename T>
+    struct isMultiVector : std::false_type {};
+    template <typename... Columns>
+    struct isMultiVector<MultiVector<Columns...>> : std::true_type {};
+  } // namespace details
+
+  template <typename T>
+  constexpr bool isMultiVector_v = details::isMultiVector<std::decay_t<T>>::value;
+
+  // transform
+  template <typename MultiVector, typename OutputIterator, typename Callable,
+            typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
+  OutputIterator transform( MultiVector const& in, OutputIterator out, Callable&& f ) {
+    for ( size_t i = 0; i != in.size(); ++i ) *out++ = details::apply( f, in, i );
+    return out;
+  }
+
+  // transform_reduce
+  template <typename MultiVector, typename Value, typename BinaryOp, typename UnaryOp,
+            typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
+  Value transform_reduce( MultiVector const& in, Value out, BinaryOp binaryOp, UnaryOp unaryOp ) {
+    for ( size_t i = 0; i != in.size(); ++i ) {
+      out = std::invoke( binaryOp, std::move( out ), details::apply( unaryOp, in, i ) );
+    }
+    return std::move( out );
+  }
+
+  // accumulate
+  template <typename MultiVector, typename Value, typename BinaryOp,
+            typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
+  Value accumulate( MultiVector const& in, Value out, BinaryOp&& f ) {
+    for ( size_t i = 0; i != in.size(); ++i ) out = std::move( details::apply_binary( f, std::move( out ), in, i ) );
+    return std::move( out );
+  }
 
   template <typename... Args>
   class MultiContainer {

@@ -201,3 +201,31 @@ BOOST_AUTO_TEST_CASE( test_MultiVector_clear_pop_back ) {
   // auto c2 = c;
   // c = {};
 }
+
+BOOST_AUTO_TEST_CASE( test_MultiVector_algorithms ) {
+  LHCb::Kernel::MultiVector<int, char> c{64};
+  c.emplace_back( 1, 'H' );
+  c.emplace_back( 2, 'e' );
+  c.emplace_back( 3, 'l' );
+  c.emplace_back( 4, 'l' );
+  c.emplace_back( 5, 'o' );
+
+  std::string s;
+  transform( c, std::back_inserter( s ), []( char c ) { return c; } );
+  BOOST_CHECK_EQUAL( s, "Hello" );
+
+  std::string s2 = transform_reduce(
+      c, std::string{},
+      []( std::string s, char c ) {
+        s.push_back( c );
+        return std::move( s );
+      },
+      []( char c ) { return c; } );
+  BOOST_CHECK_EQUAL( s2, "Hello" );
+
+  int sum = accumulate( c, 0, []( int i, int j ) { return i + j; } );
+  BOOST_CHECK_EQUAL( sum, 15 );
+
+  int sum2 = transform_reduce( c, 0, std::plus<>{}, []( int i ) { return i; } );
+  BOOST_CHECK_EQUAL( sum2, 15 );
+}
