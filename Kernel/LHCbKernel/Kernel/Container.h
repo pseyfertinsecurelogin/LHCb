@@ -78,11 +78,18 @@ namespace LHCb::Kernel {
       return apply_helper( std::forward<Fun>( f ), data, index, std::make_index_sequence<arity_v<Fun>>{} );
     }
 
+    template <std::size_t... Is, typename Fun, typename Data, typename = std::enable_if_t<( sizeof...( Is ) > 0 )>>
+    decltype( auto ) apply( Fun&& f, const Data& data, int index ) {
+      return std::apply( std::forward<Fun>( f ), data.template get<Is...>( index ) );
+    }
+
     template <typename Fun, typename Out, typename Data>
     decltype( auto ) apply_binary( Fun&& f, Out&& out, const Data& data, int index ) {
       return apply_binary_helper( std::forward<Fun>( f ), std::forward<Out>( out ), data, index,
                                   std::make_index_sequence<arity_v<Fun> - 1>{} );
     }
+
+    struct multiVectorView_tag {};
 
   } // namespace details
 
@@ -90,8 +97,8 @@ namespace LHCb::Kernel {
   class MultiVector {
     constexpr static auto N = sizeof...( Args );
     static_assert( N > 1 );
-    constexpr static auto alignment = std::max( {sizeof( Args )...} );
-    // constexpr static auto alignment = 64;
+    constexpr static std::size_t MinAlign  = 0;
+    constexpr static auto        alignment = std::max( {MinAlign, sizeof( Args )...} );
     template <typename T>
     using Allocator = LHCb::Allocators::DynamicArenaAllocator<T, alignment>;
     using Arena     = LHCb::Allocators::DynamicArena<alignment>;
@@ -101,6 +108,57 @@ namespace LHCb::Kernel {
 
     typename Arena::Handle m_buffer;
     Data                   m_data = std::make_from_tuple<Data>( details::distribute<N>( m_buffer.get() ) );
+
+    template <std::size_t... Is>
+    class indexView : public details::multiVectorView_tag {
+      const MultiVector* parent;
+      class Iterator {
+        const MultiVector* parent;
+        std::size_t        i;
+
+      public:
+        Iterator( const MultiVector* parent, std::size_t i ) : parent{parent}, i{i} {}
+        auto      operator*() const { return parent->template get<Is...>( i ); }
+        Iterator& operator++() {
+          ++i;
+          return *this;
+        }
+        friend bool operator!=( const Iterator& lhs, const Iterator& rhs ) {
+          return lhs.parent != rhs.parent || lhs.i != rhs.i;
+        }
+      };
+
+    public:
+      indexView( const MultiVector* parent ) : parent{parent} {}
+      Iterator begin() const { return {parent, 0}; }
+      Iterator end() const { return {parent, parent->size()}; }
+    };
+
+    template <typename... T>
+    class typeView : public details::multiVectorView_tag {
+      const MultiVector* parent;
+      class Iterator {
+        const MultiVector* parent;
+        std::size_t        i;
+
+      public:
+        using parent_t = MultiVector;
+        Iterator( const MultiVector* parent, std::size_t i ) : parent{parent}, i{i} {}
+        auto      operator*() const { return parent->template get<T...>( i ); }
+        Iterator& operator++() {
+          ++i;
+          return *this;
+        }
+        friend bool operator!=( const Iterator& lhs, const Iterator& rhs ) {
+          return lhs.parent != rhs.parent || lhs.i != rhs.i;
+        }
+      };
+
+    public:
+      typeView( const MultiVector* parent ) : parent{parent} {}
+      Iterator begin() const { return {parent, 0}; }
+      Iterator end() const { return {parent, parent->size()}; }
+    };
 
   public:
     MultiVector( std::size_t maxElements ) : m_buffer{Arena::create( n_bytes( maxElements ) )} {
@@ -129,7 +187,7 @@ namespace LHCb::Kernel {
     auto front() const {
       return std::apply( []( const auto&... d ) { return std::forward_as_tuple( d.front()... ); }, m_data );
     }
-    auto operator[]( int i ) const {
+    auto operator[]( std::size_t i ) const {
       return std::apply( [i]( const auto&... d ) { return std::forward_as_tuple( d[i]... ); }, m_data );
     }
     auto back() const {
@@ -142,7 +200,7 @@ namespace LHCb::Kernel {
       return std::forward_as_tuple( std::get<I>( m_data ).front()... );
     }
     template <size_t... I>
-    auto get( int i ) const {
+    auto get( std::size_t i ) const {
       return std::forward_as_tuple( std::get<I>( m_data )[i]... );
     }
     template <size_t... I>
@@ -156,7 +214,7 @@ namespace LHCb::Kernel {
       return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data ).front()... );
     }
     template <typename... T>
-    auto get( int i ) const {
+    auto get( std::size_t i ) const {
       return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data )[i]... );
     }
     template <typename... T>
@@ -164,14 +222,22 @@ namespace LHCb::Kernel {
       return std::forward_as_tuple( std::get<std::vector<T, Allocator<T>>>( m_data ).back()... );
     }
 
-    // accessors to entire columns
-    template <size_t I>
-    const auto& column() const {
-      return std::get<I>( m_data );
+    // accessors to entire column(s)
+    template <size_t I, size_t... Is>
+    decltype( auto ) column() const {
+      if constexpr ( sizeof...( Is ) != 0 ) {
+        return indexView<I, Is...>{this};
+      } else {
+        return std::get<I>( m_data );
+      }
     }
-    template <typename T>
-    const auto& column() const {
-      return std::get<std::vector<T, Allocator<T>>>( m_data );
+    template <typename T, typename... Ts>
+    decltype( auto ) column() const {
+      if constexpr ( sizeof...( Ts ) != 0 ) {
+        return typeView<T, Ts...>{this};
+      } else {
+        return std::get<std::vector<T, Allocator<T>>>( m_data );
+      }
     }
 
     // container properties
@@ -187,24 +253,38 @@ namespace LHCb::Kernel {
     struct isMultiVector : std::false_type {};
     template <typename... Columns>
     struct isMultiVector<MultiVector<Columns...>> : std::true_type {};
+
   } // namespace details
 
   template <typename T>
   constexpr bool isMultiVector_v = details::isMultiVector<std::decay_t<T>>::value;
 
+  template <typename T>
+  constexpr bool isMultiVectorView_v = std::is_base_of_v<details::multiVectorView_tag, std::decay_t<T>>;
+
   // transform
   template <typename MultiVector, typename OutputIterator, typename Callable,
             typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
   OutputIterator transform( MultiVector const& in, OutputIterator out, Callable&& f ) {
-    for ( size_t i = 0; i != in.size(); ++i ) *out++ = details::apply( f, in, i );
-    return out;
+    const auto N = in.size();
+    for ( size_t i = 0; i != N; ++i ) *out++ = details::apply( f, in, i );
+    return std::move( out );
+  }
+
+  template <typename MultiVectorView, typename OutputIterator, typename Callable,
+            typename = std::enable_if_t<isMultiVectorView_v<MultiVectorView>>>
+  OutputIterator transform( MultiVectorView in, OutputIterator out, Callable&& f ) {
+    return std::transform( in.begin(), in.end(), out, [f = std::forward<Callable>( f )]( auto&& tuple ) {
+      return std::apply( f, std::forward<decltype( tuple )>( tuple ) );
+    } );
   }
 
   // transform_reduce
   template <typename MultiVector, typename Value, typename BinaryOp, typename UnaryOp,
             typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
   Value transform_reduce( MultiVector const& in, Value out, BinaryOp binaryOp, UnaryOp unaryOp ) {
-    for ( size_t i = 0; i != in.size(); ++i ) {
+    const auto N = in.size();
+    for ( size_t i = 0; i != N; ++i ) {
       out = std::invoke( binaryOp, std::move( out ), details::apply( unaryOp, in, i ) );
     }
     return std::move( out );
@@ -214,7 +294,8 @@ namespace LHCb::Kernel {
   template <typename MultiVector, typename Value, typename BinaryOp,
             typename = std::enable_if_t<isMultiVector_v<MultiVector>>>
   Value accumulate( MultiVector const& in, Value out, BinaryOp&& f ) {
-    for ( size_t i = 0; i != in.size(); ++i ) out = std::move( details::apply_binary( f, std::move( out ), in, i ) );
+    const auto N = in.size();
+    for ( size_t i = 0; i != N; ++i ) out = details::apply_binary( f, std::move( out ), in, i );
     return std::move( out );
   }
 

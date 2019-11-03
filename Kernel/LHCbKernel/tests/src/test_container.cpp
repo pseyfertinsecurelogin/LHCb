@@ -229,3 +229,56 @@ BOOST_AUTO_TEST_CASE( test_MultiVector_algorithms ) {
   int sum2 = transform_reduce( c, 0, std::plus<>{}, []( int i ) { return i; } );
   BOOST_CHECK_EQUAL( sum2, 15 );
 }
+
+BOOST_AUTO_TEST_CASE( test_MultiVector_views ) {
+  LHCb::Kernel::MultiVector<int, char, unsigned> c{64};
+  c.emplace_back( 1, 'H', 1 );
+  c.emplace_back( 2, 'e', 1 );
+  c.emplace_back( 3, ' ', 0 );
+  c.emplace_back( 4, 'l', 1 );
+  c.emplace_back( 5, 'W', 0 );
+  c.emplace_back( 6, 'o', 0 );
+  c.emplace_back( 7, 'l', 1 );
+  c.emplace_back( 8, 'r', 0 );
+  c.emplace_back( 9, 'l', 0 );
+  c.emplace_back( 10, 'o', 1 );
+  c.emplace_back( 11, 'd', 0 );
+
+  std::string s;
+  for ( const auto& [ch, b] : c.column<1, 2>() ) {
+    if ( b ) s.push_back( ch );
+  }
+  BOOST_CHECK_EQUAL( s, "Hello" );
+
+  for ( const auto& [ch, b] : c.column<char, unsigned>() ) {
+    if ( !b ) s.push_back( ch );
+  }
+  BOOST_CHECK_EQUAL( s, "Hello World" );
+
+  const auto& cols_u = c.column<1, 2>();
+  std::string u;
+  std::transform( cols_u.begin(), cols_u.end(), std::back_inserter( u ), []( const auto& tup ) {
+    const auto& [ch, b] = tup;
+    return b ? ch : '_';
+  } );
+  BOOST_CHECK_EQUAL( u, "He_l__l__o_" );
+
+  auto cols_v = c.column<unsigned, char>();
+  static_assert( LHCb::Kernel::isMultiVectorView_v<decltype( cols_v )> );
+  std::string v1;
+  std::transform( cols_v.begin(), cols_v.end(), std::back_inserter( v1 ), []( const auto& tup ) {
+    const auto& [b, ch] = tup;
+    return b ? '_' : ch;
+  } );
+  BOOST_CHECK_EQUAL( v1, "__ _Wo_rl_d" );
+
+  std::string v2;
+  v2.reserve( c.size() );
+  transform( c.column<unsigned, char>(), std::back_inserter( v2 ), []( auto b, auto ch ) { return b ? '_' : ch; } );
+  BOOST_CHECK_EQUAL( v2, "__ _Wo_rl_d" );
+
+  std::string v3;
+  v3.reserve( c.size() );
+  transform( c.column<2, 1>(), std::back_inserter( v3 ), []( auto b, auto ch ) { return b ? ch : '_'; } );
+  BOOST_CHECK_EQUAL( v3, "He_l__l__o_" );
+}
