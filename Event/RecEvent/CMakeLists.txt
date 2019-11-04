@@ -36,5 +36,5 @@ gaudi_add_dictionary(RecEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIE
 
 gaudi_add_unit_test(TestMuonZipInfrastructure
                     tests/src/TestMuonZipInfrastructure.cpp
-                    LINK_LIBRARIES LHCbMathLib
+                    LINK_LIBRARIES LHCbMathLib TrackEvent
                     TYPE Boost)

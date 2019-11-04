@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#include "Event/GeneratePrFittedForwardTracks.h"
 #include "Event/MuonPID_v2.h"
 #include "Event/PrFittedForwardTracks.h"
 #include "Event/PrIterableFittedForwardTracks.h"
@@ -33,31 +34,6 @@
 
 using Tracks   = LHCb::Pr::Fitted::Forward::Tracks;
 using MuonPIDs = LHCb::Pr::Muon::PIDs;
-
-Tracks make_tracks( size_t ntracks ) {
-  using dType = SIMDWrapper::scalar::types;
-  using F     = dType::float_v;
-  using I     = dType::int_v;
-  std::mt19937                    gen( 42 ); // Random engine with fixed seed
-  std::normal_distribution<float> xy_dist{0.f, 0.1f}, z_dist{0.f, 1.f}, txy_dist{0.f, 5e-3f};
-  Tracks                          tracks{nullptr};
-  for ( unsigned int i = 0; i < ntracks; ++i ) {
-    F       x{xy_dist( gen )}, y{xy_dist( gen )}, z{z_dist( gen )}, tx{txy_dist( gen )}, ty{txy_dist( gen )};
-    Vec3<F> beam_pos{x, y, z}, beam_dir{tx, ty, 1.f},
-        covX{1e-5f /* x_err**2 */, 0.f /* cov(x, tx) */, 1e-8 /* tx_err**2 */},
-        covY{1e-5f /* y_err**2 */, 0.f /* cov(y, ty) */, 1e-8 /* ty_err**2 */};
-    tracks.store_trackFT( i, I{0} );     // Ancestor index.
-    tracks.store_QoP( i, F{1.f / 5e4} ); // q/p for q = +1, p = 50 GeV
-    tracks.store_beamStatePos( i, beam_pos );
-    tracks.store_beamStateDir( i, beam_dir );
-    tracks.store_chi2( i, F{1.f} );    // chi2/dof
-    tracks.store_chi2nDof( i, I{42} ); // chi2 dof
-    tracks.store_covX( i, covX );
-    tracks.store_covY( i, covY );
-    ++tracks.size();
-  }
-  return tracks;
-}
 
 BOOST_AUTO_TEST_CASE( test_emplace_back ) {
   using dType_scalar = SIMDWrapper::scalar::types;
@@ -111,7 +87,7 @@ std::tuple<size_t, MuonPIDs> create_muonids( Tracks const& tracks ) {
 
 BOOST_AUTO_TEST_CASE( test_transform_from_tracks ) {
   unsigned int ntracks    = 999;
-  auto         tracks     = make_tracks( ntracks );
+  auto         tracks     = LHCb::Pr::Fitted::Forward::generate_tracks( ntracks );
   auto [nmuons, muonPIDs] = create_muonids( tracks );
 
   // Check if counted correctly using vectorized version, compiler flag dependent.
@@ -123,7 +99,7 @@ BOOST_AUTO_TEST_CASE( test_transform_from_tracks ) {
 
 BOOST_AUTO_TEST_CASE( test_constructor_from_tracks_and_lambda ) {
   unsigned int ntracks                = 999;
-  auto         tracks                 = make_tracks( ntracks );
+  auto         tracks                 = LHCb::Pr::Fitted::Forward::generate_tracks( ntracks );
   auto         iterable_tracks_scalar = LHCb::Pr::make_zip<SIMDWrapper::InstructionSet::Scalar, true>( tracks );
 
   auto ismuon = []( int t ) { return ( t % 3 == 0 ); };
@@ -144,7 +120,7 @@ BOOST_AUTO_TEST_CASE( test_constructor_from_tracks_and_lambda ) {
 
 BOOST_AUTO_TEST_CASE( test_zipping_of_tracks_and_muonids ) {
   unsigned int ntracks    = 999;
-  auto         tracks     = make_tracks( ntracks );
+  auto         tracks     = LHCb::Pr::Fitted::Forward::generate_tracks( ntracks );
   auto [nmuons, muonPIDs] = create_muonids( tracks );
 
   // Test zipping
@@ -182,7 +158,7 @@ BOOST_AUTO_TEST_CASE( test_timing_of_ismuon ) {
   std::cout << "Test timing of scalar and vectorised loops" << std::endl;
 
   unsigned int ntracks    = 999;
-  auto         tracks     = make_tracks( ntracks );
+  auto         tracks     = LHCb::Pr::Fitted::Forward::generate_tracks( ntracks );
   auto [nmuons, muonPIDs] = create_muonids( tracks );
 
   auto iterable_muonPIDs = LHCb::Pr::make_zip( muonPIDs );

@@ -16,8 +16,7 @@ gaudi_subdir(SOAExtensions)
 gaudi_depends_on_subdirs(
   Kernel/SOAContainer
   Kernel/LHCbMath
-  GaudiAlg
-  )
+  GaudiAlg)
 
 gaudi_install_headers(SOAExtensions)
 # as transitive dependency, projects that include SOAExtensions must also include Kernel/SOAContainer
