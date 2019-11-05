@@ -61,7 +61,7 @@ private:
 
   mutable Gaudi::Accumulators::MsgCounter<MSG::ERROR>   m_corrupt{this, "Possibly corrupt data. Ignoring the cluster."};
   mutable Gaudi::Accumulators::MsgCounter<MSG::WARNING> m_nonExistingModule{
-      this, "Skipping cluste(s) for non-existing module."};
+      this, "Skipping cluster(s) for non-existing module."};
 };
 
 #endif // FTRAWBANKDECODER_H
