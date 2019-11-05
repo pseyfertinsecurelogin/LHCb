@@ -394,6 +394,13 @@ namespace LHCb::Pr {
      */
     Zipping::ZipFamilyNumber zipIdentifier() const { return std::get<0>( m_containers )->zipIdentifier(); }
 
+    /** Get a component of the zip.
+     */
+    template <typename T>
+    T const& get() const {
+      return *std::get<T const*>( m_containers );
+    }
+
     /** Make a new structure by conditionally copying the underlying structures
      */
     template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap, typename F>
