@@ -59,9 +59,18 @@ namespace LHCb::Pr {
   using dType                  = typename SIMDWrapper::type_map<LHCb__Pr__Proxy__simd>::type;                          \
   static constexpr bool unwrap = LHCb__Pr__Proxy__unwrap__tparam;                                                      \
   Tracks const*         m_tracks{nullptr};                                                                             \
+  static constexpr bool is_proxy{true};                                                                                \
   Proxy( Tracks const* tracks ) : m_tracks{tracks} {}                                                                  \
-  auto        offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                   \
-  auto        size() const { return m_tracks->size(); }                                                                \
+  auto size() const { return m_tracks->size(); }                                                                       \
+  auto offset() const { return static_cast<LHCb__Pr__MergedProxy const&>( *this ).offset(); }                          \
+  auto width() const { return dType::size; }                                                                           \
+  auto loop_mask() const {                                                                                             \
+    if constexpr ( unwrap ) {                                                                                          \
+      return true;                                                                                                     \
+    } else {                                                                                                           \
+      return dType::loop_mask( this->offset(), this->size() );                                                         \
+    }                                                                                                                  \
+  }                                                                                                                    \
   static auto mask_true() {                                                                                            \
     if constexpr ( unwrap ) {                                                                                          \
       return true;                                                                                                     \
@@ -229,28 +238,23 @@ namespace LHCb::Pr::detail {
     using first_container_t = typename std::tuple_element_t<0, std::tuple<ContainerTypes...>>;
     using first_proxy_t =
         typename Proxy<first_container_t>::template type<proxy_type<simd, unwrap, ContainerTypes...>, simd, unwrap>;
-    using simd_t = typename SIMDWrapper::type_map<simd>::type;
-    static constexpr bool is_proxy{true};
-    int                   m_offset{0};
-    auto                  width() const { return simd_t::size; }
-    auto                  offset() const { return m_offset; }
-    auto                  loop_mask() const {
-      if constexpr ( unwrap ) {
-        return true;
-      } else {
-        return simd_t::loop_mask( m_offset, first_proxy_t::size() );
-      }
-    }
-    // Make the static methods added by the PROXY_METHODS macro visible in
+    auto offset() const { return m_offset; }
+    // Make the [static] methods added by the PROXY_METHODS macro visible in
     // the zipped proxy types -- it doesn't matter which parent type we take
     // them from, the first one is simplest...
+    using first_proxy_t::is_proxy;
+    using first_proxy_t::loop_mask;
     using first_proxy_t::mask_false;
     using first_proxy_t::mask_true;
+    using first_proxy_t::width;
 
     proxy_type( ContainerTypes const*... containers, int offset )
         : Proxy<ContainerTypes>::template type<proxy_type<simd, unwrap, ContainerTypes...>, simd, unwrap>(
               containers )...
         , m_offset{offset} {}
+
+  private:
+    int m_offset{0};
   };
 
   template <typename>
