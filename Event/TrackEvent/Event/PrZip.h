@@ -482,7 +482,7 @@ namespace LHCb::Pr {
       static constexpr bool is_zippable_v = true;
     };
 
-    /** Helper to sorting a std::tuple of const references according to a
+    /** Helper to sort a std::tuple of const references according to a
      *  different tuple type's ordering. e.g. given an instance of
      *    std::tuple<A const&, B const&>
      *  and the template parameter
@@ -510,11 +510,11 @@ namespace LHCb::Pr {
       constexpr static bool value = tidx::type_id<T1>() < tidx::type_id<T2>();
     };
 
-    /** Do some template magic to figure get from some parameter pack Args...
-     *  that could be passed to make_zip() to the sorted list of unpacked types
-     *  that will be passed as a template parameter to Zip. This involves
-     *  applying unpacking rules for merged_t and Zip arguments and then
-     *  sorting the result using Boost CTTI.
+    /** Do some template magic to get from the parameter pack (Args...)
+     *  corresponding to the arguments of make_zip() to the sorted list of
+     *  unpacked types that will be passed to Zip as template parameters.
+     *  This involves applying unpacking rules for merged_t and Zip arguments
+     *  and then sorting the result using Boost CTTI.
      *
      *  e.g.
      *    sorted_t<merged_t<B, C>, A>
