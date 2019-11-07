@@ -16,12 +16,12 @@
 
 /** @class UTSoAHits UTSoAHits.h
  *  SoA Implementation of Upstream tracker hit for pattern recognition
- *  @author Michel De Cian, based on Arthur Hennequin's PrVeloHits 
+ *  @author Michel De Cian, based on Arthur Hennequin's PrVeloHits
  *  @date   2019-11-07
  */
 
 namespace UT {
-  
+
   class SoAHits {
     constexpr static int max_hits = align_size( 10000 );
 
@@ -42,11 +42,11 @@ namespace UT {
     inline int  size() const { return m_size; }
     inline int& size() { return m_size; }
 
-    SOA_ACCESSOR( chanID,  &m_data[0 * max_hits].i )
-    SOA_ACCESSOR( weight,  &m_data[1 * max_hits].f )
+    SOA_ACCESSOR( chanID, &m_data[0 * max_hits].i )
+    SOA_ACCESSOR( weight, &m_data[1 * max_hits].f )
     SOA_ACCESSOR( xAtYEq0, &m_data[2 * max_hits].f )
-    SOA_ACCESSOR( yBegin,  &m_data[3 * max_hits].f )
-    SOA_ACCESSOR( yEnd,    &m_data[4 * max_hits].f )
+    SOA_ACCESSOR( yBegin, &m_data[3 * max_hits].f )
+    SOA_ACCESSOR( yEnd, &m_data[4 * max_hits].f )
     SOA_ACCESSOR( zAtYEq0, &m_data[5 * max_hits].f )
 
     ~SoAHits() { std::free( m_data ); }
@@ -59,13 +59,6 @@ namespace UT {
     alignas( 64 ) data_t* m_data;
     int m_size = 0;
   };
-}
-
-
-
-
-
-
-
+} // namespace UT
 
 #endif // EVENT_UTHIT_H
