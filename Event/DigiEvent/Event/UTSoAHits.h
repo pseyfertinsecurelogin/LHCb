@@ -34,8 +34,8 @@ namespace UT {
     SoAHits( const SoAHits& ) = delete;
 
     SoAHits( SoAHits&& other ) : m_data{ std::exchange( other.m_data, nullptr }, m_size{ other.m_size}  { }
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
+    int  size() const { return m_size; }
+    int& size() { return m_size; }
 
     SOA_ACCESSOR( chanID, &m_data[0 * max_hits].i )
     SOA_ACCESSOR( weight, &m_data[1 * max_hits].f )
