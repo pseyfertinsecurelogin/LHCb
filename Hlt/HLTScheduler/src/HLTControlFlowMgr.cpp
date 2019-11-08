@@ -232,7 +232,7 @@ StatusCode HLTControlFlowMgr::finalize() {
   // print the counters
   if ( m_createTimingTable ) {
     double const ticksPerMilliSecond = rdtsc_ticks_per_millisecond();
-    info() << "WATCH OUT! HERE comes the T-T-T-T-T-TIMING TABLE!!!" << endmsg;
+    info() << "Timing table:" << endmsg;
     info() << "Average ticks per millisecond: " << static_cast<uint64_t>( ticksPerMilliSecond ) << endmsg;
     info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
     for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
