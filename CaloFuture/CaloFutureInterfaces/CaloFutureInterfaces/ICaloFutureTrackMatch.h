@@ -14,6 +14,7 @@
 // Include files
 // STD & STL
 #include <functional>
+#include <optional>
 #include <utility>
 #include <variant>
 // GaudiKernel
@@ -65,10 +66,9 @@ namespace LHCb::Calo::Interfaces {
       // when true this means there is no point to check another tracks for this calo object
       bool skip_this_calo  = false;
       bool is_new_calo_obj = false;
-      // when equal true means that the whole matching process finished with successful ( no fails )
-      bool match_successful = false;
-      // calculated chi2 value - if something goes bad this value is bad()
-      double chi2_value = -1;
+      // calculated chi2 value - if something goes bad this has no value, it is has, than
+      // the whole  matching process finished with successful ( no fails )
+      std::optional<double> chi2 = {};
       // Match matrix used by match method - contains only state of matrices calulated for calo object
       std::variant<Match2D, Match3D> matrix;
     };

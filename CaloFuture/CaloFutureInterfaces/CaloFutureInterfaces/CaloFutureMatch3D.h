@@ -24,9 +24,8 @@ namespace LHCb::Calo {
 
     /// constructor
     Match3D() = default;
-
-    Match3D( const Vector& params, const Matrix& matrix )
-        : m_params( params ), m_matrix( matrix ), m_ok( m_matrix.Invert() ) {}
+    Match3D( Vector params, Matrix matrix )
+        : m_params( std::move( params ) ), m_matrix( std::move( matrix ) ), m_ok( m_matrix.Invert() ) {}
 
     const Vector& params() const { return m_params; }
     const Matrix& matrix() const { return m_matrix; }
@@ -36,14 +35,13 @@ namespace LHCb::Calo {
       if ( !m1 || !m2 ) return std::nullopt;
 
       // evaluate the overall covariance matrix
-      Match3D::Matrix cov = m1.matrix() + m2.matrix();
-
+      Matrix cov = m1.matrix() + m2.matrix();
       if ( !cov.Invert() ) return std::nullopt;
 
       // get the weighted and mean parameters
       // Note: Cannot use `auto` here
-      Match3D::Vector pw = m1.matrix() * m1.params() + m2.matrix() * m2.params();
-      Match3D::Vector pm = cov * pw;
+      Vector pw = m1.matrix() * m1.params() + m2.matrix() * m2.params();
+      Vector pm = cov * pw;
 
       // evaluate chi2
       return ROOT::Math::Similarity( pm - m1.params(), m1.matrix() ) +
