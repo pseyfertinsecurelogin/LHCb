@@ -65,7 +65,7 @@ preprocessor = (
         "INFO Number of counters : ",
     ],
                 regexps=[
-                    r"HLTControlFlowMgr\s*INFO WATCH OUT! HERE comes the T-T-T-T-T-TIMING TABLE!!!",
+                    r"HLTControlFlowMgr\s*INFO Timing table:",
                     r"HLTControlFlowMgr\s*INFO Average ticks per millisecond:",
                     r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ]) +
