@@ -537,13 +537,13 @@ namespace SIMDWrapper {
     }
 
     inline int_v maskgather( const int* base, const int_v& idx, const mask_v& mask, const int_v& source ) {
-      int   idx_v[4];
-      int   val_v[4];
-      float m_v[4];
+      int idx_v[4];
+      int val_v[4];
+      int m_v = _mm_movemask_ps( mask );
       idx.store( idx_v );
-      mask.store( m_v );
       for ( int i = 0; i < 4; i++ ) {
-        if ( m_v[i] < 0.f ) val_v[i] = base[idx_v[i]];
+        if ( m_v & 1 ) val_v[i] = base[idx_v[i]];
+        m_v >>= 1;
       }
       return select( mask, int_v( val_v ), source );
     }
@@ -551,11 +551,11 @@ namespace SIMDWrapper {
     inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
       int   idx_v[4];
       float val_v[4];
-      float m_v[4];
+      int   m_v = _mm_movemask_ps( mask );
       idx.store( idx_v );
-      mask.store( m_v );
       for ( int i = 0; i < 4; i++ ) {
-        if ( m_v[i] < 0.f ) val_v[i] = base[idx_v[i]];
+        if ( m_v & 1 ) val_v[i] = base[idx_v[i]];
+        m_v >>= 1;
       }
       return select( mask, float_v( val_v ), source );
     }
