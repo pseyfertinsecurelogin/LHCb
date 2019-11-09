@@ -59,8 +59,19 @@ namespace LHCb {
     void findSectors( unsigned int layer, float x, float y, float xTol, float yTol, const LayerInfo& info,
                       boost::container::small_vector_base<std::pair<int, int>>& sectors );
 
-    void computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, UTInfo::TotalLayers>& layers,
-                          std::array<SectorsInStationZ, UTInfo::Stations>& sectorsZ );
+    struct GeomCache {
+      std::array<LayerInfo, UTInfo::TotalLayers>      layers;
+      std::array<SectorsInStationZ, UTInfo::Stations> sectorsZ;
+    };
+    GeomCache computeGeometry( const DeUTDetector& utDet );
+
+    // [[deprecated("Please use computeGeometry(const DeUTDetector&) instead")]]
+    inline void computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, UTInfo::TotalLayers>& layers,
+                                 std::array<SectorsInStationZ, UTInfo::Stations>& sectorsZ ) {
+      auto cache = computeGeometry( utDet );
+      layers     = cache.layers;
+      sectorsZ   = cache.sectorsZ;
+    }
 
   } // namespace UTDAQ
 
