@@ -27,10 +27,11 @@
 
 namespace LHCb::Pr::Forward {
   class Tracks {
+
+  public:
     constexpr static int max_tracks = align_size( 1024 );
     constexpr static int max_hits   = 40;
 
-  public:
     Tracks( Velo::Tracks const* velo_ancestors, Upstream::Tracks const* upstream_ancestors,
             Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
         : m_velo_ancestors{velo_ancestors}, m_upstream_ancestors{upstream_ancestors}, m_zipIdentifier{zipIdentifier} {
