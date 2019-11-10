@@ -23,7 +23,7 @@
 CommonMuonStation::CommonMuonStation( const DeMuonDetector& det, unsigned int station, std::array<double, 8> regions )
     : m_xboundaries{std::move( regions )}
     , m_hits{}
-    , m_index{nRegionsY * ( m_xboundaries.size() - 1 ) + 1}
+    , m_index{nRegionsY * ( m_xboundaries.size() - 1 ) + 2}
     , m_z{det.getStationZ( station )}
     , m_ymax{det.getOuterY( station )}
     , m_station{station} {}
@@ -31,7 +31,7 @@ CommonMuonStation::CommonMuonStation( const DeMuonDetector& det, unsigned int st
 CommonMuonStation::CommonMuonStation( const DeMuonDetector& det, unsigned int station, std::array<double, 8> regions,
                                       CommonMuonHits hits )
     : m_xboundaries{std::move( regions )}
-    , m_index{nRegionsY * ( m_xboundaries.size() - 1 ) + 1}
+    , m_index{nRegionsY * ( m_xboundaries.size() - 1 ) + 2}
     , m_z{det.getStationZ( station )}
     , m_ymax{det.getOuterY( station )}
     , m_station{station} {
@@ -84,8 +84,7 @@ void CommonMuonStation::setHits( CommonMuonHits&& hts ) {
     }
     assert( *id == imax ); // no invalid hits in y...
   }
-  // TODO: this assert is removed to fix the tests in dbg mode.
-  //       Need to check whether this can be reinserted
-  // assert(*id == std::end(m_hits));
+  *std::next( id ) = std::end( m_hits ); // last region contains hits outside boundaries
+  assert( *id == std::end( m_hits ) );
   assert( uint( std::distance( std::begin( m_index ), id ) ) == uint( m_index.size() - 1 ) );
 }

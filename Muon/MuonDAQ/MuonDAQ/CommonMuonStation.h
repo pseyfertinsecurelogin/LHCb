@@ -31,6 +31,11 @@ public:
 
   unsigned int station() const { return m_station; }
 
+  CommonMuonHitRange hits() const {
+    // return { m_hits.begin(), m_hits.end() }; // Correct
+    return {m_index[0], m_index[nRegions()]}; // Backward compatible
+  }
+
   CommonMuonHitRange hits( float xmin, unsigned int region ) const;
   CommonMuonHitRange hits( float xmin, float xmax, unsigned int region ) const;
 
