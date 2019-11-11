@@ -120,6 +120,7 @@ namespace LHCb::Pr::Fitted::Forward {
       }
     }
 
+    auto nDoF() const { return cast( this->m_tracks->template chi2nDof<IType>( this->offset() ) ); }
     auto chi2PerDoF() const { return cast( this->m_tracks->template chi2<FType>( this->offset() ) ); }
 
     auto lhcbIDs( LHCb::Pr::Velo::Hits const& velo_hits ) const {
