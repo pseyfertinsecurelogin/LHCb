@@ -37,7 +37,7 @@ namespace LHCb::Pr::UT {
     int  size() const { return m_size; }
     int& size() { return m_size; }
 
-    SOA_ACCESSOR( chanID, &m_data[0 * max_hits].i )
++    SOA_ACCESSOR( ChannelId, &m_data[0 * max_hits].i )
     SOA_ACCESSOR( weight, &m_data[1 * max_hits].f )
     SOA_ACCESSOR( xAtYEq0, &m_data[2 * max_hits].f )
     SOA_ACCESSOR( yBegin, &m_data[3 * max_hits].f )
