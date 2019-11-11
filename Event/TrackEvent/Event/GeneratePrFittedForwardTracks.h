@@ -16,5 +16,5 @@ namespace LHCb::Pr::Fitted::Forward {
    *  LHCb::Pr::Fitted::Forward::Tracks container that is populated with
    *  fake-but-sane data.
    */
-  Tracks generate_tracks( std::size_t nTracks );
+  Tracks generate_tracks( std::size_t nTracks, unsigned int seed = 0 );
 } // namespace LHCb::Pr::Fitted::Forward

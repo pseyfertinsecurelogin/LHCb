@@ -18,9 +18,10 @@ struct ProducePrFittedForwardTracks final : public base_t {
   ProducePrFittedForwardTracks( std::string const& name, ISvcLocator* svcLoc )
       : base_t( name, svcLoc, KeyValue{"Output", ""} ) {}
 
-  Tracks operator()() const override { return generate_tracks( m_nTracks ); }
+  Tracks operator()() const override { return generate_tracks( m_nTracks, ( m_eventCount++ ).value() ); }
 
 private:
+  mutable Gaudi::Accumulators::Counter<unsigned int> m_eventCount{this, "Event"};
   Gaudi::Property<std::size_t> m_nTracks{this, "NumberToGenerate", 100, "Number of objects to generate"};
 };
 
