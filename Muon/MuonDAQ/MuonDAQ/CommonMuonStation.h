@@ -52,11 +52,11 @@ public:
               ymax < y );
   }
 
-private:
   friend class CommonMuonHitManager;
 
   void setHits( CommonMuonHits&& hts );
 
+private:
   std::array<double, 8> m_xboundaries;
   CommonMuonHits        m_hits;
 
