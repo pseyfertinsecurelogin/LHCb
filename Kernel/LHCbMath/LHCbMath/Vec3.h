@@ -38,8 +38,17 @@ public:
   Vec3( Tx x, Ty y, Tz z ) : x( x ), y( y ), z( z ) {}
 
   friend Vec3<T> operator+( const Vec3<T>& a, const Vec3<T>& b ) { return {a.x + b.x, a.y + b.y, a.z + b.z}; }
+  friend Vec3<T> operator+( const Vec3<T>& a, const T& k ) { return {a.x + k, a.y + k, a.z + k}; }
+  friend Vec3<T> operator+( const T& k, const Vec3<T>& a ) { return {k + a.x, k + a.y, k + a.z}; }
+
   friend Vec3<T> operator-( const Vec3<T>& a, const Vec3<T>& b ) { return {a.x - b.x, a.y - b.y, a.z - b.z}; }
+  friend Vec3<T> operator-( const Vec3<T>& a, const T& k ) { return {a.x - k, a.y - k, a.z - k}; }
+  friend Vec3<T> operator-( const T& k, const Vec3<T>& a ) { return {k - a.x, k - a.y, k - a.z}; }
+
   friend Vec3<T> operator*( const Vec3<T>& a, const Vec3<T>& b ) { return {a.x * b.x, a.y * b.y, a.z * b.z}; }
+  friend Vec3<T> operator*( const Vec3<T>& a, const T& k ) { return {a.x * k, a.y * k, a.z * k}; }
+  friend Vec3<T> operator*( const T& k, const Vec3<T>& a ) { return {k * a.x, k * a.y, k * a.z}; }
+
   inline Vec3<T> cross( const Vec3<T>& b ) const { return {y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x}; }
   inline T       dot( const Vec3<T>& b ) const { return x * b.x + y * b.y + z * b.z; }
   inline T       mag2() const { return dot( *this ); }
@@ -48,6 +57,14 @@ public:
   inline T       rho() const { return sqrt( perp2() ); }
   inline T       theta() const { return faster_atan2( rho(), z ); }
   inline T       phi() const { return faster_atan2( y, x ); }
+  inline T       eta() const {
+    auto zs = z / rho();
+    return approx_log<T>( zs + sqrt( zs * zs + 1 ) );
+  }
+  inline Vec3<T> normalize() const {
+    const T invMag = rsqrt( mag2() );
+    return {x * invMag, y * invMag, z * invMag};
+  }
 
   // Compatibility with ROOT::Math::XYZVector and friends
   T       X() const { return x; }
@@ -55,11 +72,6 @@ public:
   T       Z() const { return z; }
   T       Rho() const { return rho(); }
   Vec3<T> Cross( Vec3<T> const& b ) const { return cross( b ); }
-
-  inline T eta() const {
-    auto zs = z / rho();
-    return approx_log<T>( zs + sqrt( zs * zs + 1 ) );
-  }
 };
 
 #define VEC3_SOA_ACCESSOR( name, locX, locY, locZ )                                                                    \
