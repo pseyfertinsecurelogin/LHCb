@@ -66,6 +66,8 @@ namespace LHCb::Pr::Forward {
 
     auto endScifiState() const { return detail::ScifiState{*this}; }
 
+    auto nHits() const { return m_tracks->template nHits<IType>( this->offset() ); }
+
     auto p() const { return LHCb::Pr::detail::cast<unwrap>( m_tracks->template p<FType>( this->offset() ) ); }
     auto pt() const {
       auto const mom = p();
