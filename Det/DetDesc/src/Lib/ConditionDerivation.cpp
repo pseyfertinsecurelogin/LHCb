@@ -31,7 +31,7 @@ namespace LHCb::DetDesc {
       DataObject* obj = nullptr;
       auto        sc  = dds->retrieveObject( in_path, obj );
       if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionDerivation", sc );
-      input = dynamic_cast<ParamValidDataObject*>( obj );
+      input = dynamic_cast<ValidDataObject*>( obj );
       if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionDerivation", sc );
 
       ums->registerCondition( this, in_path, &ConditionDerivation::i_handler, input );

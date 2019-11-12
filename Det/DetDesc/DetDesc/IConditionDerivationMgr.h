@@ -20,11 +20,11 @@
 #include <memory>
 #include <unordered_map>
 
-class ParamValidDataObject;
+class ValidDataObject;
 
 namespace LHCb::DetDesc {
   /// Class used to access the conditions accessible to the current transformation.
-  using ConditionUpdateContext = std::unordered_map<ConditionKey, ParamValidDataObject const*>;
+  using ConditionUpdateContext = std::unordered_map<ConditionKey, ValidDataObject const*>;
 
   /// Type for a user provided callback function.
   /// The first argument is the ConditionKey of the target and is used to be
