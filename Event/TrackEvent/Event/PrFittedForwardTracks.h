@@ -124,6 +124,28 @@ namespace LHCb::Pr::Fitted::Forward {
       return lhcbids;
     }
 
+    template <typename I, typename M>
+    I nHits( int t, const M mask ) const {
+      I           nHits   = 0;
+      auto const* forward = getForwardAncestors();
+      if ( forward ) {
+        auto forward_indices = trackFT<I>( t );
+        nHits                = nHits + forward->maskgather_nHits<I>( forward_indices, mask, 0 );
+        auto const* velo     = forward->getVeloAncestors();
+        if ( velo ) {
+          auto velo_indices = forward->maskgather_trackVP<I>( forward_indices, mask, 0 );
+          nHits             = nHits + velo->maskgather_nHits<I>( velo_indices, mask, 0 );
+        }
+
+        auto const* upstream = forward->getUpstreamAncestors();
+        if ( upstream ) {
+          auto upstream_indices = forward->maskgather_trackUT<I>( forward_indices, mask, 0 );
+          nHits                 = nHits + upstream->maskgather_nHits<I>( upstream_indices, mask, 0 );
+        }
+      }
+      return nHits;
+    }
+
     ~Tracks() { std::free( m_data ); }
 
   private:

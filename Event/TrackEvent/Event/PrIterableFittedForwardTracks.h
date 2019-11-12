@@ -24,6 +24,7 @@ namespace LHCb::Pr::Fitted::Forward {
       TrackProxy const& m_proxy;
       FittedState( TrackProxy const& proxy ) : m_proxy{proxy} {}
       decltype( auto ) qOverP() const { return m_proxy.qOverP(); }
+      decltype( auto ) momentum() const { return m_proxy.momentum(); }
       decltype( auto ) slopes() const { return m_proxy.closestToBeamStateDir(); }
       decltype( auto ) position() const { return m_proxy.closestToBeamStatePos(); }
       decltype( auto ) covariance() const { return m_proxy.closestToBeamStateCovariance(); }
@@ -64,6 +65,10 @@ namespace LHCb::Pr::Fitted::Forward {
     }
 
     decltype( auto ) qOverP() const { return cast( this->m_tracks->template QoP<FType>( this->offset() ) ); }
+
+    auto charge() const {
+      return cast( select( this->m_tracks->template QoP<FType>( this->offset() ) > FType{0.}, IType{1}, IType{-1} ) );
+    }
 
     auto closestToBeamStateCovariance() const {
       MatrixSym5x5 cov{ROOT::Math::SMatrixNoInit{}};
@@ -119,6 +124,11 @@ namespace LHCb::Pr::Fitted::Forward {
 
     auto lhcbIDs( LHCb::Pr::Velo::Hits const& velo_hits ) const {
       return this->m_tracks->template lhcbIDs<IType>( this->offset(), velo_hits );
+    }
+
+    auto nHits() const {
+      return cast( this->m_tracks->template nHits<IType>(
+          this->offset(), static_cast<LHCb__Pr__MergedProxy const&>( *this ).loop_mask() ) );
     }
   };
 } // namespace LHCb::Pr::Fitted::Forward
