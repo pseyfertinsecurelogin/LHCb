@@ -11,6 +11,8 @@
 #pragma once
 #include <array>
 #include <string_view>
+#include <tuple>
+#include <vector>
 
 namespace LHCb {
   namespace detail {

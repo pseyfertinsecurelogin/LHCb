@@ -32,7 +32,7 @@ endif()
 gaudi_add_library(LHCbKernel
                   src/*.cpp
 		  PUBLIC_HEADERS Kernel
-                  INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR}
+                  INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR} ${CPPGSL_INCLUDE_DIR}
                   LINK_LIBRARIES ROOT Boost VDT GaudiKernel LHCbMathLib GaudiAlgLib)
 set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 

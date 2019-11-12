@@ -27,7 +27,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 gaudi_add_library(TrackEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS GSL Boost Rangev3 Kernel/SOAContainer
+                  INCLUDE_DIRS GSL Boost Rangev3 Kernel/SOAContainer Kernel/SOAExtensions
                   LINK_LIBRARIES GSL Boost LHCbKernel )
 
 gaudi_add_unit_test(test_deref tests/src/test_deref.cpp

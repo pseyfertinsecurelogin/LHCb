@@ -13,14 +13,15 @@
 ################################################################################
 gaudi_subdir(DigiEvent)
 
-gaudi_depends_on_subdirs(Kernel/LHCbKernel
+gaudi_depends_on_subdirs(Det/UTDet
+                         Kernel/LHCbKernel
                          Kernel/LHCbMath)
 
 find_package(Boost)
 
 
 
-gaudi_add_dictionary(DigiEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES Boost LHCbKernel LHCbMathLib INCLUDE_DIRS Boost)
+gaudi_add_dictionary(DigiEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES Boost LHCbKernel LHCbMathLib UTDetLib INCLUDE_DIRS Boost Det/UTDet)
 
 gaudi_install_headers(Event)
 
