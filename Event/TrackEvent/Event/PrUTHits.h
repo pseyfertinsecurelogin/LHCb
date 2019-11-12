@@ -33,19 +33,19 @@ namespace LHCb::Pr::UT {
 
     Hits( const Hits& ) = delete;
 
-    Hits( Hits&& other ) : m_data{ std::exchange( other.m_data, nullptr }, m_size{ other.m_size}  { }
+    Hits( Hits&& other ) : m_data{ std::exchange( other.m_data, nullptr ) }, m_size{ other.m_size}  { }
     int  size() const { return m_size; }
     int& size() { return m_size; }
-
+    
     SOA_ACCESSOR( channelID, &m_data[0 * max_hits].i )
     SOA_ACCESSOR( weight, &m_data[1 * max_hits].f )
     SOA_ACCESSOR( xAtYEq0, &m_data[2 * max_hits].f )
     SOA_ACCESSOR( yBegin, &m_data[3 * max_hits].f )
     SOA_ACCESSOR( yEnd, &m_data[4 * max_hits].f )
     SOA_ACCESSOR( zAtYEq0, &m_data[5 * max_hits].f )
-
+    
     ~Hits() { std::free( m_data ); }
-
+    
   private:
     using data_t = union {
       float f;
