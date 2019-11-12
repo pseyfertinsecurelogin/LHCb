@@ -49,16 +49,6 @@ STATUSCODE_ENUM_DECL( MuonRawHits::ErrorCode )
 STATUSCODE_ENUM_IMPL( MuonRawHits::ErrorCode, MuonRawHits::ErrorCategory )
 
 namespace {
-  std::array<std::array<double, 8>, 4> m_xRegions{
-      {{-4900 * Gaudi::Units::mm, -2400 * Gaudi::Units::mm, -1200 * Gaudi::Units::mm, -600 * Gaudi::Units::mm,
-        600 * Gaudi::Units::mm, 1200 * Gaudi::Units::mm, 2400 * Gaudi::Units::mm, 4900 * Gaudi::Units::mm},
-       {-5252 * Gaudi::Units::mm, -2576 * Gaudi::Units::mm, -1288 * Gaudi::Units::mm, -644 * Gaudi::Units::mm,
-        644 * Gaudi::Units::mm, 1288 * Gaudi::Units::mm, 2576 * Gaudi::Units::mm, 5252 * Gaudi::Units::mm},
-       {-5668 * Gaudi::Units::mm, -2784 * Gaudi::Units::mm, -1392 * Gaudi::Units::mm, -696 * Gaudi::Units::mm,
-        696 * Gaudi::Units::mm, 1392 * Gaudi::Units::mm, 2784 * Gaudi::Units::mm, 5668 * Gaudi::Units::mm},
-       {-6052 * Gaudi::Units::mm, -2976 * Gaudi::Units::mm, -1488 * Gaudi::Units::mm, -744 * Gaudi::Units::mm,
-        744 * Gaudi::Units::mm, 1488 * Gaudi::Units::mm, 2976 * Gaudi::Units::mm, 6052 * Gaudi::Units::mm}}};
-
   int nDigits( const LHCb::RawBank& rb ) {
     auto range = rb.range<unsigned short>();
     if ( range.empty() ) return 0;
@@ -165,8 +155,7 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
     DigitsRange coordsPerRegQua = boost::make_iterator_range( itX, decode.end() );
     if ( coordsPerRegQua.size() != 0 ) addCoordsCrossingMap( coordsPerRegQua, commonHits );
 
-    auto region       = m_xRegions.size() - m_nStations + station;
-    stations[station] = CommonMuonStation{*m_muonDetector, station, m_xRegions[region], std::move( commonHits )};
+    stations[station] = CommonMuonStation{*m_muonDetector, station, std::move( commonHits )};
     station++;
   }
   return MuonHitContainer{std::move( stations )};
