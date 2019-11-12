@@ -15,6 +15,7 @@
 // Include files
 #include "GaudiKernel/IEvtSelector.h"
 #include "GaudiKernel/Service.h"
+#include "GaudiUtils/IIODataManager.h"
 #include "MDF/StreamDescriptor.h"
 #include <memory>
 #include <utility>
@@ -22,7 +23,6 @@
 // Forward declarations
 namespace Gaudi {
   class IIODataManager;
-  class IDataConnection;
 } // namespace Gaudi
 
 /*
