@@ -24,6 +24,7 @@
 
 // std include
 #include <iostream>
+#include <utility>
 
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
@@ -87,19 +88,19 @@ namespace Rich::Future {
 
     /** Set accessor for the Cherenkov theta angle
      *  @param theta the new value for the Cherenkov theta angle */
-    inline void setCherenkovTheta( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
+    void setCherenkovTheta( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
 
     /** Get accessor for the Cherenkov theta angle
      *  @return the current value of the Cherenkov theta angle */
-    inline Scalar CherenkovTheta() const noexcept { return m_CherenkovTheta; }
+    [[nodiscard]] Scalar CherenkovTheta() const noexcept { return m_CherenkovTheta; }
 
     /** Set accessor for Cherenkov phi angle
      *  @param phi the new value for the Cherenkov phi angle */
-    inline void setCherenkovPhi( const Scalar phi ) noexcept { m_CherenkovPhi = phi; }
+    void setCherenkovPhi( const Scalar phi ) noexcept { m_CherenkovPhi = phi; }
 
     /** Get accessor for Cherenkov phi angle
      *  @return the current value of the Cherenkov phi angle */
-    inline Scalar CherenkovPhi() const noexcept { return m_CherenkovPhi; }
+    [[nodiscard]] Scalar CherenkovPhi() const noexcept { return m_CherenkovPhi; }
 
     /**
      * Set accessor for the current active segment fraction.
@@ -108,7 +109,7 @@ namespace Rich::Future {
      *
      * @param fraction the new value for the active fraction
      */
-    inline void setActiveSegmentFraction( const Scalar fraction ) noexcept { m_activeSegmentFraction = fraction; }
+    void setActiveSegmentFraction( const Scalar fraction ) noexcept { m_activeSegmentFraction = fraction; }
 
     /**
      * Get accessor to the current active segment fraction.
@@ -117,21 +118,21 @@ namespace Rich::Future {
      *
      * @return the current value of the current active segment fraction.
      */
-    inline Scalar activeSegmentFraction() const noexcept { return m_activeSegmentFraction; }
+    [[nodiscard]] Scalar activeSegmentFraction() const noexcept { return m_activeSegmentFraction; }
 
     /** Set accessor for the RichSmartID
      *  @param id The new RichSmartID */
-    inline void setSmartID( const LHCb::RichSmartID id ) noexcept { m_smartID = id; }
+    void setSmartID( const LHCb::RichSmartID id ) noexcept { m_smartID = id; }
 
     /** Get accessor to RichSmartID
      *  @return the current value of RichSmartID */
-    inline const LHCb::RichSmartID& smartID() const noexcept { return m_smartID; }
+    [[nodiscard]] const LHCb::RichSmartID& smartID() const noexcept { return m_smartID; }
 
     /// Set the unambiguous photon flag
-    inline void setUnambiguousPhoton( const bool unambig ) noexcept { m_unambigPhot = unambig; }
+    void setUnambiguousPhoton( const bool unambig ) noexcept { m_unambigPhot = unambig; }
 
     /// Access the unambiguous photon flag
-    inline bool unambiguousPhoton() const noexcept { return m_unambigPhot; }
+    [[nodiscard]] bool unambiguousPhoton() const noexcept { return m_unambigPhot; }
 
   protected:
     /// Printout method
@@ -139,9 +140,7 @@ namespace Rich::Future {
 
   public:
     /// Implement ostream << method for GeomPhoton
-    friend inline std::ostream& operator<<( std::ostream& s, const RecoPhoton& photon ) {
-      return photon.fillStream( s );
-    }
+    friend std::ostream& operator<<( std::ostream& s, const RecoPhoton& photon ) { return photon.fillStream( s ); }
 
   private:
     // data
@@ -198,19 +197,19 @@ namespace Rich::Future {
      */
     GeomPhoton( const Scalar            theta,                            //
                 const Scalar            phi,                              //
-                const Gaudi::XYZPoint&  emissionPoint,                    //
-                const Gaudi::XYZVector& emissionDir,                      //
-                const Gaudi::XYZPoint&  detectionPoint,                   //
-                const Gaudi::XYZPoint&  sphMirrReflPoint,                 //
-                const Gaudi::XYZPoint&  flatMirrReflPoint,                //
+                Gaudi::XYZPoint         emissionPoint,                    //
+                Gaudi::XYZVector        emissionDir,                      //
+                Gaudi::XYZPoint         detectionPoint,                   //
+                Gaudi::XYZPoint         sphMirrReflPoint,                 //
+                Gaudi::XYZPoint         flatMirrReflPoint,                //
                 const LHCb::RichSmartID smartID    = LHCb::RichSmartID(), //
                 const Scalar            activeFrac = 0 )
         : RecoPhoton( theta, phi, smartID, activeFrac )
-        , m_emissionPoint( emissionPoint )
-        , m_emissionDir( emissionDir )
-        , m_detectionPoint( detectionPoint )
-        , m_sphMirReflectionPoint( sphMirrReflPoint )
-        , m_flatMirReflectionPoint( flatMirrReflPoint ) {}
+        , m_emissionPoint( std::move( emissionPoint ) )
+        , m_emissionDir( std::move( emissionDir ) )
+        , m_detectionPoint( std::move( detectionPoint ) )
+        , m_sphMirReflectionPoint( std::move( sphMirrReflPoint ) )
+        , m_flatMirReflectionPoint( std::move( flatMirrReflPoint ) ) {}
 
     /** Constructor from full photon information (without photon direction at emission).
      *
@@ -226,98 +225,96 @@ namespace Rich::Future {
      */
     GeomPhoton( const Scalar            theta,                            //
                 const Scalar            phi,                              //
-                const Gaudi::XYZPoint&  emissionPoint,                    //
-                const Gaudi::XYZPoint&  detectionPoint,                   //
-                const Gaudi::XYZPoint&  sphMirrReflPoint,                 //
-                const Gaudi::XYZPoint&  flatMirrReflPoint,                //
+                Gaudi::XYZPoint         emissionPoint,                    //
+                Gaudi::XYZPoint         detectionPoint,                   //
+                Gaudi::XYZPoint         sphMirrReflPoint,                 //
+                Gaudi::XYZPoint         flatMirrReflPoint,                //
                 const LHCb::RichSmartID smartID    = LHCb::RichSmartID(), //
                 const Scalar            activeFrac = 0 )
         : RecoPhoton( theta, phi, smartID, activeFrac )
-        , m_emissionPoint( emissionPoint )
-        , m_detectionPoint( detectionPoint )
-        , m_sphMirReflectionPoint( sphMirrReflPoint )
-        , m_flatMirReflectionPoint( flatMirrReflPoint ) {}
+        , m_emissionPoint( std::move( emissionPoint ) )
+        , m_detectionPoint( std::move( detectionPoint ) )
+        , m_sphMirReflectionPoint( std::move( sphMirrReflPoint ) )
+        , m_flatMirReflectionPoint( std::move( flatMirrReflPoint ) ) {}
 
   public:
     /**
      * Set accessor for the estimated emission point
      * @param emissionPoint the new value for the estimated emission point
      */
-    inline void setEmissionPoint( const Gaudi::XYZPoint& emissionPoint ) noexcept { m_emissionPoint = emissionPoint; }
+    void setEmissionPoint( const Gaudi::XYZPoint& emissionPoint ) noexcept { m_emissionPoint = emissionPoint; }
 
     /**
      * Const Get accessor for the estimated emission point
      * @return the current value of the estimated emission point
      */
-    inline const Gaudi::XYZPoint& emissionPoint() const noexcept { return m_emissionPoint; }
+    [[nodiscard]] const Gaudi::XYZPoint& emissionPoint() const noexcept { return m_emissionPoint; }
 
     /**
      * Get accessor for the estimated emission point
      * @return the current value of the estimated emission point
      */
-    inline Gaudi::XYZPoint& emissionPoint() noexcept { return m_emissionPoint; }
+    Gaudi::XYZPoint& emissionPoint() noexcept { return m_emissionPoint; }
 
     /**
      * Set accessor for the estimated photon direction at the emission point
      * @param emissionDir the new value for the estimated emission direction
      */
-    inline void setEmissionDir( const Gaudi::XYZVector& emissionDir ) noexcept { m_emissionDir = emissionDir; }
+    void setEmissionDir( const Gaudi::XYZVector& emissionDir ) noexcept { m_emissionDir = emissionDir; }
 
     /**
      * Const Get accessor for the estimated photon direction at the emission point
      * @return the current value of the estimated emission direction
      */
-    inline const Gaudi::XYZVector& emissionDir() const noexcept { return m_emissionDir; }
+    [[nodiscard]] const Gaudi::XYZVector& emissionDir() const noexcept { return m_emissionDir; }
 
     /**
      * Get accessor for the estimated photon direction at the emission point
      * @return the current value of the estimated emission direction
      */
-    inline Gaudi::XYZVector& emissionDir() noexcept { return m_emissionDir; }
+    Gaudi::XYZVector& emissionDir() noexcept { return m_emissionDir; }
 
     /**
      * Set accessor for the detection point
      * @param detectionPoint the new value for the detection point
      */
-    inline void setDetectionPoint( const Gaudi::XYZPoint& detectionPoint ) noexcept {
-      m_detectionPoint = detectionPoint;
-    }
+    void setDetectionPoint( const Gaudi::XYZPoint& detectionPoint ) noexcept { m_detectionPoint = detectionPoint; }
 
     /**
      * Const Get accessor for the detection point
      * @return the current value of the detection point
      */
-    inline const Gaudi::XYZPoint& detectionPoint() const noexcept { return m_detectionPoint; }
+    [[nodiscard]] const Gaudi::XYZPoint& detectionPoint() const noexcept { return m_detectionPoint; }
 
     /**
      * Get accessor for the detection point
      * @return the current value of the detection point
      */
-    inline Gaudi::XYZPoint& detectionPoint() noexcept { return m_detectionPoint; }
+    Gaudi::XYZPoint& detectionPoint() noexcept { return m_detectionPoint; }
 
     /// Set the associated primary mirror detector element
-    inline void setPrimaryMirror( const DeRichSphMirror* mirror ) noexcept { m_primaryMirror = mirror; }
+    void setPrimaryMirror( const DeRichSphMirror* mirror ) noexcept { m_primaryMirror = mirror; }
 
     /// Access the associated primary mirror detector element
-    inline const DeRichSphMirror* primaryMirror() const noexcept { return m_primaryMirror; }
+    [[nodiscard]] const DeRichSphMirror* primaryMirror() const noexcept { return m_primaryMirror; }
 
     /// Set the associated secondary mirror detector element
-    inline void setSecondaryMirror( const DeRichSphMirror* mirror ) noexcept { m_secondaryMirror = mirror; }
+    void setSecondaryMirror( const DeRichSphMirror* mirror ) noexcept { m_secondaryMirror = mirror; }
 
     /// Access the associated secondary mirror detector element
-    inline const DeRichSphMirror* secondaryMirror() const noexcept { return m_secondaryMirror; }
+    [[nodiscard]] const DeRichSphMirror* secondaryMirror() const noexcept { return m_secondaryMirror; }
 
     /// Set the associated photon detector
-    inline void setPhotonDetector( const DeRichPD* pd ) noexcept { m_pd = pd; }
+    void setPhotonDetector( const DeRichPD* pd ) noexcept { m_pd = pd; }
 
     /// Access the associated photon detector
-    inline const DeRichPD* photonDetector() const noexcept { return m_pd; }
+    [[nodiscard]] const DeRichPD* photonDetector() const noexcept { return m_pd; }
 
     /**
      * Set accessor for the spherical mirror reflection point
      * @param sphMirReflectionPoint the new value for the spherical mirror reflection point
      */
-    inline void setSphMirReflectionPoint( const Gaudi::XYZPoint& sphMirReflectionPoint ) noexcept {
+    void setSphMirReflectionPoint( const Gaudi::XYZPoint& sphMirReflectionPoint ) noexcept {
       m_sphMirReflectionPoint = sphMirReflectionPoint;
     }
 
@@ -325,19 +322,19 @@ namespace Rich::Future {
      * Const Get accessor for the spherical mirror reflection point
      * @return the current value of the spherical mirror reflection point
      */
-    inline const Gaudi::XYZPoint& sphMirReflectionPoint() const noexcept { return m_sphMirReflectionPoint; }
+    [[nodiscard]] const Gaudi::XYZPoint& sphMirReflectionPoint() const noexcept { return m_sphMirReflectionPoint; }
 
     /**
      * Get accessor for the spherical mirror reflection point
      * @return the current value of the spherical mirror reflection point
      */
-    inline Gaudi::XYZPoint& sphMirReflectionPoint() noexcept { return m_sphMirReflectionPoint; }
+    Gaudi::XYZPoint& sphMirReflectionPoint() noexcept { return m_sphMirReflectionPoint; }
 
     /**
      * Set accessor for the flat mirror reflection point
      * @param flatMirReflectionPoint the new value for the flat mirror reflection point
      */
-    inline void setFlatMirReflectionPoint( const Gaudi::XYZPoint& flatMirReflectionPoint ) noexcept {
+    void setFlatMirReflectionPoint( const Gaudi::XYZPoint& flatMirReflectionPoint ) noexcept {
       m_flatMirReflectionPoint = flatMirReflectionPoint;
     }
 
@@ -345,13 +342,13 @@ namespace Rich::Future {
      * Const Get accessor for the flat mirror reflection point
      * @return the current value of the flat mirror reflection point
      */
-    inline const Gaudi::XYZPoint& flatMirReflectionPoint() const noexcept { return m_flatMirReflectionPoint; }
+    [[nodiscard]] const Gaudi::XYZPoint& flatMirReflectionPoint() const noexcept { return m_flatMirReflectionPoint; }
 
     /**
      * Get accessor for the flat mirror reflection point
      * @return the current value of the flat mirror reflection point
      */
-    inline Gaudi::XYZPoint& flatMirReflectionPoint() noexcept { return m_flatMirReflectionPoint; }
+    Gaudi::XYZPoint& flatMirReflectionPoint() noexcept { return m_flatMirReflectionPoint; }
 
   private:
     /// Printout method
@@ -359,9 +356,7 @@ namespace Rich::Future {
 
   public:
     /// Implement ostream << method for GeomPhoton
-    friend inline std::ostream& operator<<( std::ostream& s, const GeomPhoton& photon ) {
-      return photon.fillStream( s );
-    }
+    friend std::ostream& operator<<( std::ostream& s, const GeomPhoton& photon ) { return photon.fillStream( s ); }
 
   private:
     // data

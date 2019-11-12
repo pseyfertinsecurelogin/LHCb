@@ -103,3 +103,13 @@
  *  @date   02/09/2007
  */
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/** @namespace Rich::Future::DAQ
+ *
+ *  Namespace for 'new' RICH DAQ software
+ *  (including symbols imported from the old Rich::DAQ namespace)
+ *
+ *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+ */
+//-----------------------------------------------------------------------------
