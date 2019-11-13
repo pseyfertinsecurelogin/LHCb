@@ -41,6 +41,8 @@
 struct Digit {
   LHCb::MuonTileID tile;
   unsigned int     tdc;
+
+  Digit( LHCb::MuonTileID tile, unsigned int tdc ) : tile{tile}, tdc{tdc} {} // C++20: please remove this line
 };
 using Digits      = std::vector<Digit>;
 using DigitsRange = boost::iterator_range<Digits::iterator>;
@@ -55,14 +57,12 @@ public:
 
 private:
   std::array<std::vector<Digit>, 4> decodeTileAndTDC( LHCb::span<const LHCb::RawBank*> ) const;
-
-  void addCoordsCrossingMap( DigitsRange&, CommonMuonHits& ) const;
+  void                              addCoordsCrossingMap( DigitsRange&, CommonMuonHits& ) const;
 
   DeMuonDetector*                    m_muonDetector = nullptr;
   PublicToolHandle<IMuonFastPosTool> m_muonPosTool{this, "PosTool", "MuonFastPosTool"};
 
-  size_t m_nStations = 0;
-
+  size_t                                    m_nStations = 0;
   std::array<std::array<MuonLayout, 2>, 16> layouts;
 };
 #endif // MUONRAWTOHITS_MUONRAWTOHITS_H

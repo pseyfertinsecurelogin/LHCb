@@ -123,7 +123,7 @@ public:
                                                   int depthY ) const override;
 
   /// check if the given LHCb::MuonTileID is valid for this layout
-  bool isValidID( const LHCb::MuonTileID& mt ) const override;
+  bool isValidID( const LHCb::MuonTileID& mt ) const;
 
 private:
   std::array<MuonLayout, 4> m_layouts;
