@@ -112,9 +112,6 @@ public:
   */
   virtual std::vector<LHCb::MuonTileID> neighboursInArea( const LHCb::MuonTileID& pad, int dirX, int dirY, int depthX,
                                                           int depthY ) const = 0;
-
-  /// check if the given MuonTileID is valid in the context of this layout
-  virtual bool isValidID( const LHCb::MuonTileID& mt ) const = 0;
 };
 
 #endif // KERNEL_IMUONLAYOUT_H

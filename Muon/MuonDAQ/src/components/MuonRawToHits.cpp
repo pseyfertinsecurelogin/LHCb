@@ -118,7 +118,6 @@ StatusCode MuonRawToHits::initialize() {
       }
     }
   }
-
   return !( m_muonDetector || m_muonPosTool )
              ? Error( "Could not read " + DeMuonLocation::Default + " or could not get MuonFastPosTool" )
              : sc;
@@ -134,10 +133,8 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
   std::array<CommonMuonStation, 4> stations;
   if ( mb.empty() ) return MuonHitContainer{std::move( stations )};
 
-  std::array<std::vector<Digit>, 4> decoding;
-
   // decode tha data
-  decoding = decodeTileAndTDC( mb );
+  auto decoding = decodeTileAndTDC( mb );
 
   if ( std::all_of( decoding.begin(), decoding.end(), []( const auto& v ) { return v.empty(); } ) ) {
     error() << "Error in decoding the muon raw data" << endmsg;
@@ -155,28 +152,19 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
   unsigned station = 0;
   for ( auto& decode : decoding ) {
     CommonMuonHits commonHits{};
+    commonHits.reserve( decode.size() * 2 );
 
-    if ( !decode.empty() ) {
-      commonHits.reserve( decode.size() );
-
-      std::array<DigitsRange, 16> perRegQua;
-
-      unsigned nReg = 0;
-      auto     it   = decode.begin();
-      for ( auto jt = it; jt != decode.end(); ++jt ) {
-        if ( regionAndQuarter( *jt ) != regionAndQuarter( *it ) ) {
-          perRegQua[nReg++] = boost::make_iterator_range( it, jt );
-          it                = jt;
-        }
-      }
-      perRegQua[nReg++] = boost::make_iterator_range( it, decode.end() );
-
-      // do the crossing
-      for ( auto& coordsPerRegQua : boost::make_iterator_range( perRegQua.begin(), perRegQua.begin() + nReg ) ) {
-        // return hits directly
+    auto itX = decode.begin();
+    for ( auto jtX = itX; jtX != decode.end(); ++jtX ) {
+      if ( regionAndQuarter( *jtX ) != regionAndQuarter( *itX ) ) {
+        DigitsRange coordsPerRegQua = boost::make_iterator_range( itX, jtX );
         addCoordsCrossingMap( coordsPerRegQua, commonHits );
+        itX = jtX;
       }
     }
+    DigitsRange coordsPerRegQua = boost::make_iterator_range( itX, decode.end() );
+    if ( coordsPerRegQua.size() != 0 ) addCoordsCrossingMap( coordsPerRegQua, commonHits );
+
     auto region       = m_xRegions.size() - m_nStations + station;
     stations[station] = CommonMuonStation{*m_muonDetector, station, m_xRegions[region], std::move( commonHits )};
     station++;
@@ -189,52 +177,38 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
 void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& commonHits ) const {
   // need to calculate the shape of the horizontal and vertical logical strips
 
-  // get local MuonLayouts for strips
-  const auto& [layoutOne, layoutTwo] = layouts[digits.front().tile.station() + 4 * digits.front().tile.region()];
-
   // used flags
-  std::vector<bool> used( digits.size(), false );
-
+  std::bitset<400> used; // (to be updated with new readout) the maximum # of channels per quadrant is currently 384
+                         // (from M2R2)
   // partition into the two directions of digits
   // vertical and horizontal stripes
-  const auto mid = std::partition( digits.begin(), digits.end(), [l = std::cref( layoutOne )]( const Digit& digit ) {
-    return digit.tile.layout() == l.get();
-  } );
+  const auto mid =
+      std::partition( digits.begin(), digits.end(), []( const Digit& digit ) { return digit.tile.isHorizontal(); } );
 
   auto digitsOne = boost::make_iterator_range( digits.begin(), mid );
   auto digitsTwo = boost::make_iterator_range( mid, digits.end() );
 
   // check how many cross
-  unsigned i         = 0;
-  int      thisGridX = layoutOne.xGrid();
-  int      thisGridY = layoutOne.yGrid();
+  int thisGridX = digitsOne.front().tile.layout().xGrid();
+  int thisGridY = digitsOne.front().tile.layout().yGrid();
 
-  int otherGridX = layoutTwo.xGrid();
-  int otherGridY = layoutTwo.yGrid();
+  int otherGridX = digitsTwo.front().tile.layout().xGrid();
+  int otherGridY = digitsTwo.front().tile.layout().yGrid();
+
+  unsigned i = 0;
   for ( const Digit& one : digitsOne ) {
-    unsigned j = mid - digits.begin();
+    unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
+    unsigned     j     = mid - digits.begin();
+
     for ( const Digit& two : digitsTwo ) {
-      if ( ( one.tile.nX() / thisGridX == two.tile.nX() / otherGridX ) &&
-           ( one.tile.nY() / thisGridY == two.tile.nY() / otherGridY ) ) {
-        unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
-        if ( calcX != two.tile.nX() ) {
-          ++j;
-          continue;
-        }
-
-        unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
-        if ( calcY != one.tile.nY() ) {
-          ++j;
-          continue;
-        }
-
+      unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
+      if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
         LHCb::MuonTileID pad( one.tile );
         pad.setY( two.tile.nY() );
         pad.setLayout( MuonLayout( thisGridX, otherGridY ) );
 
         double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
         m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
-
         commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc, one.tdc - two.tdc,
                                  0 );
         used[i] = used[j] = true;
@@ -243,32 +217,32 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
     }
     ++i;
   }
-  // copy over "uncrossed" digits
 
+  // copy over "uncrossed" digits
   unsigned m = 0;
   for ( const Digit& digit : digitsOne ) {
     if ( !used[m] ) {
-      double     x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
-      StatusCode sc;
+
+      double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
 
       if ( digit.tile.station() > ( m_nStations - 3 ) && digit.tile.region() == 0 ) {
-        sc = m_muonPosTool->calcTilePos( digit.tile, x, dx, y, dy, z, dz );
+        m_muonPosTool->calcTilePos( digit.tile, x, dx, y, dy, z, dz ).ignore();
       } else {
-        sc = m_muonPosTool->calcStripXPos( digit.tile, x, dx, y, dy, z, dz );
+        m_muonPosTool->calcStripXPos( digit.tile, x, dx, y, dy, z, dz ).ignore();
       }
       commonHits.emplace_back( digit.tile, x, dx, y, dy, z, dz, 1, digit.tdc, digit.tdc );
     }
     ++m;
   }
+
   for ( const Digit& digit : digitsTwo ) {
     if ( !used[m] ) {
-      double     x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
-      StatusCode sc;
+      double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
 
       if ( digit.tile.station() > ( m_nStations - 3 ) && digit.tile.region() == 0 ) {
-        sc = m_muonPosTool->calcTilePos( digit.tile, x, dx, y, dy, z, dz );
+        m_muonPosTool->calcTilePos( digit.tile, x, dx, y, dy, z, dz ).ignore();
       } else {
-        sc = m_muonPosTool->calcStripYPos( digit.tile, x, dx, y, dy, z, dz );
+        m_muonPosTool->calcStripYPos( digit.tile, x, dx, y, dy, z, dz ).ignore();
       }
       commonHits.emplace_back( digit.tile, x, dx, y, dy, z, dz, 1, digit.tdc, digit.tdc );
     }
@@ -282,6 +256,7 @@ std::array<std::vector<Digit>, 4> MuonRawToHits::decodeTileAndTDC( LHCb::span<co
   // each element of the array correspond to hits from a single station
   // this will ease the sorting after
   std::array<std::vector<Digit>, 4> storage;
+  constexpr auto stationOfTell1 = std::array{0, 0, 0, 0, 1, 1, 2, 2, 3, 3}; // to be updated with tell40
   for ( auto& decode : storage ) { decode.reserve( nDigits( mb ) ); }
 
   for ( const auto& r : mb ) {
@@ -290,7 +265,7 @@ std::array<std::vector<Digit>, 4> MuonRawToHits::decodeTileAndTDC( LHCb::span<co
     if ( tell1Number >= MuonDAQHelper_maxTell1Number ) { OOPS( MuonRawHits::ErrorCode::INVALID_TELL1 ); }
 
     // decide in which array put the digits according to the Tell1 they come from
-    const int inarray = ( tell1Number < 4 ? 0 : tell1Number < 6 ? 1 : tell1Number < 8 ? 2 : 3 );
+    int station = stationOfTell1[tell1Number];
 
     // minimum length is three 32 bit words --> 12 bytes -> 6 unsigned shorts
     if ( r->size() < 12 ) { OOPS( MuonRawHits::ErrorCode::BANK_TOO_SHORT ); }
@@ -309,7 +284,7 @@ std::array<std::vector<Digit>, 4> MuonRawToHits::decodeTileAndTDC( LHCb::span<co
         if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " add " << add << " " << tile << endmsg;
         if ( tile.isValid() ) {
           if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " valid add " << add << " " << tile << endmsg;
-          storage[inarray].emplace_back( Digit{tile, tdc_value} );
+          storage[station].emplace_back( tile, tdc_value );
         } else {
           info() << "invalid add " << add << " " << tile << endmsg;
         }
@@ -318,5 +293,6 @@ std::array<std::vector<Digit>, 4> MuonRawToHits::decodeTileAndTDC( LHCb::span<co
     }
     assert( range.size() < 2 );
   }
+
   return storage;
 }

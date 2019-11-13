@@ -65,6 +65,9 @@ namespace LHCb {
     /// Function to extract layout
     MuonLayout layout() const;
 
+    /// Check if layout is horizontal
+    bool isHorizontal() const;
+
     /// Function to extract index in x
     unsigned int nX() const;
 
@@ -230,6 +233,12 @@ inline MuonLayout LHCb::MuonTileID::layout() const {
   return MuonLayout( xg, yg );
 }
 
+inline bool LHCb::MuonTileID::isHorizontal() const {
+  int xg = ( m_muonid & MuonBase::MaskLayoutX ) >> MuonBase::ShiftLayoutX;
+  int yg = ( m_muonid & MuonBase::MaskLayoutY ) >> MuonBase::ShiftLayoutY;
+  return xg > yg;
+}
+
 inline unsigned int LHCb::MuonTileID::nX() const { return ( m_muonid & MuonBase::MaskX ) >> MuonBase::ShiftX; }
 
 inline unsigned int LHCb::MuonTileID::nY() const { return ( m_muonid & MuonBase::MaskY ) >> MuonBase::ShiftY; }
@@ -248,6 +257,17 @@ inline bool LHCb::MuonTileID::operator!=( const MuonTileID& id ) const { return 
 
 inline bool LHCb::MuonTileID::isDefined() const { return m_muonid != 0; }
 
+inline bool LHCb::MuonTileID::isValid() const {
+
+  if ( !isDefined() ) return false;
+  MuonLayout ml = layout();
+  int        nx = nX();
+  int        ny = nY();
+  int        xg = ml.xGrid();
+  int        yg = ml.yGrid();
+  return ( ( ny >= yg && ny < 2 * yg ) || ( nx >= xg && ny < yg ) ) && nx < 2 * xg;
+}
+
 inline void LHCb::MuonTileID::setStation( const unsigned int station ) {
   set( station, MuonBase::ShiftStation, MuonBase::MaskStation );
 }
@@ -265,12 +285,10 @@ inline void LHCb::MuonTileID::setX( const unsigned int x ) { set( x, MuonBase::S
 inline void LHCb::MuonTileID::setY( const unsigned int y ) { set( y, MuonBase::ShiftY, MuonBase::MaskY ); }
 
 inline void LHCb::MuonTileID::setLayout( const MuonLayout& layout ) {
-
   unsigned int lx, ly;
   lx = layout.xGrid();
   ly = layout.yGrid();
-  set( lx, MuonBase::ShiftLayoutX, MuonBase::MaskLayoutX );
-  set( ly, MuonBase::ShiftLayoutY, MuonBase::MaskLayoutY );
+  set( ( ly << MuonBase::BitsLayoutX ) | lx, MuonBase::ShiftLayoutX, MuonBase::MaskLayoutY | MuonBase::MaskLayoutX );
 }
 
 inline void LHCb::MuonTileID::deltaX( int dx ) { setX( nX() + dx ); }

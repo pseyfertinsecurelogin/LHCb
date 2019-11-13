@@ -46,13 +46,6 @@ LHCb::MuonTileID LHCb::MuonTileID::neighbourID( int dirX, int dirY ) const {
   return result;
 }
 
-bool LHCb::MuonTileID::isValid() const {
-
-  if ( !isDefined() ) return false;
-  MuonLayout ml = layout();
-  return ml.isValidID( *this );
-}
-
 LHCb::MuonTileID LHCb::MuonTileID::intercept( const LHCb::MuonTileID& otherID ) const {
 
   // check first that the two strips are really intercepting
