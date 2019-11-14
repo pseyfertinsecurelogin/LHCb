@@ -178,33 +178,35 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
   auto digitsTwo = boost::make_iterator_range( mid, digits.end() );
 
   // check how many cross
-  int thisGridX = digitsOne.front().tile.layout().xGrid();
-  int thisGridY = digitsOne.front().tile.layout().yGrid();
+  if ( !digitsOne.empty() && !digitsTwo.empty() ) {
+    int thisGridX = digitsOne.front().tile.layout().xGrid();
+    int thisGridY = digitsOne.front().tile.layout().yGrid();
 
-  int otherGridX = digitsTwo.front().tile.layout().xGrid();
-  int otherGridY = digitsTwo.front().tile.layout().yGrid();
+    int otherGridX = digitsTwo.front().tile.layout().xGrid();
+    int otherGridY = digitsTwo.front().tile.layout().yGrid();
 
-  unsigned i = 0;
-  for ( const Digit& one : digitsOne ) {
-    unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
-    unsigned     j     = mid - digits.begin();
+    unsigned i = 0;
+    for ( const Digit& one : digitsOne ) {
+      unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
+      unsigned     j     = mid - digits.begin();
 
-    for ( const Digit& two : digitsTwo ) {
-      unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
-      if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
-        LHCb::MuonTileID pad( one.tile );
-        pad.setY( two.tile.nY() );
-        pad.setLayout( MuonLayout( thisGridX, otherGridY ) );
+      for ( const Digit& two : digitsTwo ) {
+        unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
+        if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
+          LHCb::MuonTileID pad( one.tile );
+          pad.setY( two.tile.nY() );
+          pad.setLayout( MuonLayout( thisGridX, otherGridY ) );
 
-        double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
-        m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
-        commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc, one.tdc - two.tdc,
-                                 0 );
-        used[i] = used[j] = true;
+          double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
+          m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
+          commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc,
+                                   one.tdc - two.tdc, 0 );
+          used[i] = used[j] = true;
+        }
+        ++j;
       }
-      ++j;
+      ++i;
     }
-    ++i;
   }
 
   // copy over "uncrossed" digits
