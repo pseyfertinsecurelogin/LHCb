@@ -28,7 +28,7 @@ public:
   MuonHitContainer( std::array<CommonMuonStation, 4> stations ) : m_stations( std::move( stations ) ) {}
   MuonHitContainer( std::array<CommonMuonStation, 5> stations ) { // TODO: this should not be called in upgrade
                                                                   // conditions
-    for ( int s = 1; s < 5; s++ ) { m_stations[s] = stations[s]; }
+    for ( int s = 0; s < 4; s++ ) { m_stations[s] = stations[s]; }
   }
 
   CommonMuonHitRange hits( unsigned int station ) const { return m_stations[station].hits(); }
