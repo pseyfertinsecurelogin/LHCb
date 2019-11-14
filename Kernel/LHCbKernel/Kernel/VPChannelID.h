@@ -36,7 +36,7 @@ namespace LHCb {
     VPChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    VPChannelID() {}
+    VPChannelID() = default;
 
     /// Cast
     operator unsigned int() const;

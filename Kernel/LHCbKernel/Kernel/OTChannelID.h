@@ -46,7 +46,7 @@ namespace LHCb {
     OTChannelID( unsigned int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    OTChannelID() {}
+    OTChannelID() = default;
 
     /// Comparison equality
     bool operator==( const OTChannelID& aChannel ) const;
@@ -199,9 +199,8 @@ inline unsigned int LHCb::OTChannelID::tdcTime() const {
 }
 
 inline void LHCb::OTChannelID::setTdcTime( unsigned int value ) {
-  auto val = (unsigned int)value;
   m_channelID &= ~tdcTimeMask;
-  m_channelID |= ( ( ( (unsigned int)val ) << tdcTimeBits ) & tdcTimeMask );
+  m_channelID |= ( value << tdcTimeBits ) & tdcTimeMask;
 }
 
 inline unsigned int LHCb::OTChannelID::straw() const {

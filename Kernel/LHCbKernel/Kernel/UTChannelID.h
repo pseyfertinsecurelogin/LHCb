@@ -40,7 +40,7 @@ namespace LHCb {
     explicit UTChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    UTChannelID() {}
+    UTChannelID() = default;
 
     /// cast
     operator int() const;

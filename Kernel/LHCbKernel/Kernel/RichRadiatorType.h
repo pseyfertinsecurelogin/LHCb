@@ -66,7 +66,6 @@ namespace Rich {
 
   /// Type for container of radiator types
   using Radiators = std::vector<Rich::RadiatorType>;
-  // using Radiators = std::vector<Rich::RadiatorType>;
 
   /// Access a vector of all radiator types
   const Radiators& radiators() noexcept;

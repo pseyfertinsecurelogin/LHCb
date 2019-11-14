@@ -62,7 +62,6 @@ namespace Rich {
 
   /// Type for container of particle types
   using Particles = std::vector<ParticleIDType>;
-  // using Particles = std::vector<ParticleIDType>;
 
   /// Access a vector of all valid particle ID types
   const Particles& particles() noexcept;

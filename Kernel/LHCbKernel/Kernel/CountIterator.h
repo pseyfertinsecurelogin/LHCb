@@ -27,7 +27,7 @@ class count_iterator : public std::iterator<std::output_iterator_tag, void, void
 public:
   // ========================================================================
   /// Constructor
-  count_iterator() {}
+  count_iterator() = default;
   //
   count_iterator& operator=( const TYPE& /* value */ ) {
     ++m_count;

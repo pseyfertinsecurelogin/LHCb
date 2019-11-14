@@ -32,7 +32,7 @@ namespace LHCb {
   class MuonTileID final {
   public:
     /// Default constructor
-    MuonTileID() {}
+    MuonTileID() = default;
 
     /// Constructor with all the arguments
     MuonTileID( int station, const IMuonLayout& lay, int region, int quarter, int x, int y );

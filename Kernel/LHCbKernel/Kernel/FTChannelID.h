@@ -41,7 +41,7 @@ namespace LHCb {
     FTChannelID( unsigned int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    FTChannelID() {}
+    FTChannelID() = default;
 
     /// Operator overload, to cast channel ID to unsigned int.                         Used by linkers where the key
     /// (channel id) is an int

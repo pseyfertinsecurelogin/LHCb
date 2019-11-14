@@ -36,7 +36,7 @@ namespace LHCb {
     HCCellID( int id ) : m_cellID( id ) {}
 
     /// Default Constructor
-    HCCellID() {}
+    HCCellID() = default;
 
     /// Cast
     operator unsigned int() const;

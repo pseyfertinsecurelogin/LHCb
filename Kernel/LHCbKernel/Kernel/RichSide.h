@@ -77,7 +77,6 @@ namespace Rich {
 
   /// Type for container of of side types
   using Sides = std::vector<Side>;
-  // using Sides = std::vector<Side>;
 
   /// Access a vector of valid particle ID types
   const Sides& sides() noexcept;

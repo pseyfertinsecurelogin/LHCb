@@ -43,7 +43,7 @@ namespace LHCb {
     VeloChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    VeloChannelID() {}
+    VeloChannelID() = default;
 
     /// Set sensor type bits
     void setType( const VeloChannelID::sensorType& type );
