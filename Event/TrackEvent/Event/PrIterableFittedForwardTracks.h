@@ -126,10 +126,7 @@ namespace LHCb::Pr::Fitted::Forward {
       return this->m_tracks->template lhcbIDs<IType>( this->offset(), velo_hits );
     }
 
-    auto nHits() const {
-      return cast( this->m_tracks->template nHits<IType>(
-          this->offset(), static_cast<LHCb__Pr__MergedProxy const&>( *this ).loop_mask() ) );
-    }
+    auto nHits() const { return cast( this->m_tracks->template nHits<IType>( this->offset(), this->loop_mask() ) ); }
   };
 } // namespace LHCb::Pr::Fitted::Forward
 
