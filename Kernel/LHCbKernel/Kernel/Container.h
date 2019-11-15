@@ -268,7 +268,7 @@ namespace LHCb::Kernel {
   OutputIterator transform( MultiVector const& in, OutputIterator out, Callable&& f ) {
     const auto N = in.size();
     for ( size_t i = 0; i != N; ++i ) *out++ = details::apply( f, in, i );
-    return std::move( out );
+    return out;
   }
 
   template <typename MultiVectorView, typename OutputIterator, typename Callable,
@@ -287,7 +287,7 @@ namespace LHCb::Kernel {
     for ( size_t i = 0; i != N; ++i ) {
       out = std::invoke( binaryOp, std::move( out ), details::apply( unaryOp, in, i ) );
     }
-    return std::move( out );
+    return out;
   }
 
   // accumulate

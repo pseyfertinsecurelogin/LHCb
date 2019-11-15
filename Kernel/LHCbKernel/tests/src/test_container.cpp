@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE( test_MultiVector_algorithms ) {
       c, std::string{},
       []( std::string s, char c ) {
         s.push_back( c );
-        return std::move( s );
+        return s;
       },
       []( char c ) { return c; } );
   BOOST_CHECK_EQUAL( s2, "Hello" );
