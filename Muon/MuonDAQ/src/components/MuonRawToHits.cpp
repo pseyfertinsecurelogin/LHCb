@@ -49,16 +49,6 @@ STATUSCODE_ENUM_DECL( MuonRawHits::ErrorCode )
 STATUSCODE_ENUM_IMPL( MuonRawHits::ErrorCode, MuonRawHits::ErrorCategory )
 
 namespace {
-  std::array<std::array<double, 8>, 4> m_xRegions{
-      {{-4900 * Gaudi::Units::mm, -2400 * Gaudi::Units::mm, -1200 * Gaudi::Units::mm, -600 * Gaudi::Units::mm,
-        600 * Gaudi::Units::mm, 1200 * Gaudi::Units::mm, 2400 * Gaudi::Units::mm, 4900 * Gaudi::Units::mm},
-       {-5252 * Gaudi::Units::mm, -2576 * Gaudi::Units::mm, -1288 * Gaudi::Units::mm, -644 * Gaudi::Units::mm,
-        644 * Gaudi::Units::mm, 1288 * Gaudi::Units::mm, 2576 * Gaudi::Units::mm, 5252 * Gaudi::Units::mm},
-       {-5668 * Gaudi::Units::mm, -2784 * Gaudi::Units::mm, -1392 * Gaudi::Units::mm, -696 * Gaudi::Units::mm,
-        696 * Gaudi::Units::mm, 1392 * Gaudi::Units::mm, 2784 * Gaudi::Units::mm, 5668 * Gaudi::Units::mm},
-       {-6052 * Gaudi::Units::mm, -2976 * Gaudi::Units::mm, -1488 * Gaudi::Units::mm, -744 * Gaudi::Units::mm,
-        744 * Gaudi::Units::mm, 1488 * Gaudi::Units::mm, 2976 * Gaudi::Units::mm, 6052 * Gaudi::Units::mm}}};
-
   int nDigits( const LHCb::RawBank& rb ) {
     auto range = rb.range<unsigned short>();
     if ( range.empty() ) return 0;
@@ -165,8 +155,7 @@ MuonHitContainer MuonRawToHits::operator()( const LHCb::RawEvent& raw ) const {
     DigitsRange coordsPerRegQua = boost::make_iterator_range( itX, decode.end() );
     if ( coordsPerRegQua.size() != 0 ) addCoordsCrossingMap( coordsPerRegQua, commonHits );
 
-    auto region       = m_xRegions.size() - m_nStations + station;
-    stations[station] = CommonMuonStation{*m_muonDetector, station, m_xRegions[region], std::move( commonHits )};
+    stations[station] = CommonMuonStation{*m_muonDetector, station, std::move( commonHits )};
     station++;
   }
   return MuonHitContainer{std::move( stations )};
@@ -189,33 +178,35 @@ void MuonRawToHits::addCoordsCrossingMap( DigitsRange& digits, CommonMuonHits& c
   auto digitsTwo = boost::make_iterator_range( mid, digits.end() );
 
   // check how many cross
-  int thisGridX = digitsOne.front().tile.layout().xGrid();
-  int thisGridY = digitsOne.front().tile.layout().yGrid();
+  if ( !digitsOne.empty() && !digitsTwo.empty() ) {
+    int thisGridX = digitsOne.front().tile.layout().xGrid();
+    int thisGridY = digitsOne.front().tile.layout().yGrid();
 
-  int otherGridX = digitsTwo.front().tile.layout().xGrid();
-  int otherGridY = digitsTwo.front().tile.layout().yGrid();
+    int otherGridX = digitsTwo.front().tile.layout().xGrid();
+    int otherGridY = digitsTwo.front().tile.layout().yGrid();
 
-  unsigned i = 0;
-  for ( const Digit& one : digitsOne ) {
-    unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
-    unsigned     j     = mid - digits.begin();
+    unsigned i = 0;
+    for ( const Digit& one : digitsOne ) {
+      unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
+      unsigned     j     = mid - digits.begin();
 
-    for ( const Digit& two : digitsTwo ) {
-      unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
-      if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
-        LHCb::MuonTileID pad( one.tile );
-        pad.setY( two.tile.nY() );
-        pad.setLayout( MuonLayout( thisGridX, otherGridY ) );
+      for ( const Digit& two : digitsTwo ) {
+        unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
+        if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
+          LHCb::MuonTileID pad( one.tile );
+          pad.setY( two.tile.nY() );
+          pad.setLayout( MuonLayout( thisGridX, otherGridY ) );
 
-        double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
-        m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
-        commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc, one.tdc - two.tdc,
-                                 0 );
-        used[i] = used[j] = true;
+          double x = 0., dx = 0., y = 0., dy = 0., z = 0., dz = 0.;
+          m_muonPosTool->calcTilePos( pad, x, dx, y, dy, z, dz ).ignore();
+          commonHits.emplace_back( std::move( pad ), one.tile, two.tile, x, dx, y, dy, z, dz, one.tdc,
+                                   one.tdc - two.tdc, 0 );
+          used[i] = used[j] = true;
+        }
+        ++j;
       }
-      ++j;
+      ++i;
     }
-    ++i;
   }
 
   // copy over "uncrossed" digits

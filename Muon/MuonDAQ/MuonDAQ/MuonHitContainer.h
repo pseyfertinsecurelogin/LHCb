@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef MUONHITCONTAINER_H
-#define MUONHITCONTAINER_H
+#pragma once
 
 #include <array>
 #include <string>
@@ -27,16 +26,12 @@ namespace MuonHitContainerLocation {
 class MuonHitContainer final {
 public:
   MuonHitContainer( std::array<CommonMuonStation, 4> stations ) : m_stations( std::move( stations ) ) {}
-
-  // access hit
-  CommonMuonHitRange hits( double xmin, unsigned int station, unsigned int region ) const {
-    return m_stations[station].hits( xmin, region );
-  }
-  CommonMuonHitRange hits( double xmin, double xmax, unsigned int station, unsigned int region ) const {
-    return m_stations[station].hits( xmin, xmax, region );
+  MuonHitContainer( std::array<CommonMuonStation, 5> stations ) { // TODO: this should not be called in upgrade
+                                                                  // conditions
+    for ( int s = 0; s < 4; s++ ) { m_stations[s] = stations[s]; }
   }
 
-  unsigned int nRegions( unsigned int station ) const { return m_stations[station].nRegions(); };
+  CommonMuonHitRange hits( unsigned int station ) const { return m_stations[station].hits(); }
 
   const CommonMuonStation& station( unsigned int id ) const { return m_stations[id]; };
 
@@ -44,5 +39,3 @@ private:
   // data object stored in TES and to get from algorithms using muon coords
   std::array<CommonMuonStation, 4> m_stations;
 };
-
-#endif // MUONHITCONTAINER_H
