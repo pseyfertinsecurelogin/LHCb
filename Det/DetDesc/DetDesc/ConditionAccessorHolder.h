@@ -27,6 +27,20 @@
 class EventContext;
 
 namespace LHCb::DetDesc {
+
+  namespace details {
+    template <typename Transform>
+    struct invoke_constructor;
+
+    template <typename Ret, typename... Args>
+    struct invoke_constructor<Ret( Args... )> {
+      static_assert( std::is_constructible_v<Ret, Args...> );
+      static_assert( ( std::is_lvalue_reference_v<Args> && ... ) );
+      static_assert( ( std::is_const_v<std::remove_reference_t<Args>> && ... ) );
+      Ret operator()( Args... args ) const { return {args...}; }
+    };
+  } // namespace details
+
   // Wrapper around Algorithm or AlgTool that enables it to depend on
   // conditions via ConditionAccessors.
   //
@@ -89,6 +103,13 @@ namespace LHCb::DetDesc {
                                                                   Transform f ) const {
       return LHCb::DetDesc::addConditionDerivation( conditionDerivationMgr(), std::forward<InputKeys>( inputKeys ),
                                                     std::move( outputKey ), std::move( f ) );
+    }
+
+    template <typename Transform, typename InputKeys>
+    IConditionDerivationMgr::DerivationId addConditionDerivation( InputKeys&&  inputKeys,
+                                                                  ConditionKey outputKey ) const {
+      return addConditionDerivation( std::forward<InputKeys>( inputKeys ), std::move( outputKey ),
+                                     details::invoke_constructor<Transform>{} );
     }
 
   private:
