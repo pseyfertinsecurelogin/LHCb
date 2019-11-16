@@ -40,7 +40,7 @@ namespace LHCb {
     StateVector( const Gaudi::XYZPoint& position, const Gaudi::XYZVector& direction, double qOverP = 0 );
 
     /// Default Constructor
-    StateVector() : m_parameters() {}
+    StateVector() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
