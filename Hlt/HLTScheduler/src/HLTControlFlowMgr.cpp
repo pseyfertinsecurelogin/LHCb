@@ -229,23 +229,37 @@ StatusCode HLTControlFlowMgr::finalize() {
 
   StatusCode sc = StatusCode::SUCCESS;
 
+  // Determine the size of the algorithm name field to use
+  // Use max name size, clamped to 'reasonable' range
+  const auto maxNameS =
+      ( !m_AlgNames.empty()
+            ? std::clamp( 2u + std::max_element( m_AlgNames.begin(), m_AlgNames.end(),
+                                                 []( auto const& a, auto const& b ) { return a.size() < b.size(); } )
+                                   ->size(),
+                          std::size_t( 46u ), std::size_t( 100u ) )
+            : 46u );
+  const auto sf1 = std::to_string( maxNameS + 5 );
+  const auto sf2 = std::to_string( maxNameS + 4 );
+  const auto sf3 = std::to_string( maxNameS + 2 );
+
   // print the counters
   if ( m_createTimingTable ) {
     double const ticksPerMilliSecond = rdtsc_ticks_per_millisecond();
     info() << "Timing table:" << endmsg;
     info() << "Average ticks per millisecond: " << static_cast<uint64_t>( ticksPerMilliSecond ) << endmsg;
-    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
+    info() << boost::format{"\n | Name of Algorithm %|" + sf1 +
+                            "t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
     for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
-      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{" | %|-" + sf3 + "." + sf3 + "48s|%|" + sf2 + "t|"} % ( "\"" + name + "\"" );
       info() << boost::format{"| %15u | %15.3f | %16.3f |"} % static_cast<double>( ctr.nEntries() ) %
                     ( static_cast<double>( ctr.sum() ) / ticksPerMilliSecond / 1e3 ) %
                     ( ctr.mean() / ticksPerMilliSecond * 1e3 )
              << '\n';
     }
   } else {
-    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count \n"};
+    info() << boost::format{"\n | Name of Algorithm %|" + sf1 + "t| | Execution Count \n"};
     for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
-      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{" | %|-" + sf3 + "." + sf3 + "s|%|" + sf2 + "t|"} % ( "\"" + name + "\"" );
       info() << boost::format{"| %15u"} % static_cast<double>( ctr.nEntries() ) << '\n';
     }
   }
