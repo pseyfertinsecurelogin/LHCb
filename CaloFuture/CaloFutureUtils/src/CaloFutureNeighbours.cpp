@@ -27,9 +27,9 @@
 namespace {
   // ==========================================================================
   inline bool _neighbours( LHCb::CaloCellID::Set& cells, const unsigned int level, const DeCalorimeter* detector ) {
-    if ( 0 == detector ) { return false; } // RETURN
-    if ( 0 >= level ) { return true; }     // RETURN
-    if ( cells.empty() ) { return true; }  // RETURN
+    if ( nullptr == detector ) { return false; } // RETURN
+    if ( 0 >= level ) { return true; }           // RETURN
+    if ( cells.empty() ) { return true; }        // RETURN
     // local copy:
     std::set<LHCb::CaloCellID> local( cells );
     for ( auto iloc = local.begin(); local.end() != iloc; ++iloc ) {
@@ -62,9 +62,9 @@ bool LHCb::CaloFutureFunctors::neighbours( LHCb::CaloCellID::Set& cells, const u
 // ============================================================================
 bool LHCb::CaloFutureFunctors::neighbours( LHCb::CaloCellID::Vector& cells, const unsigned int level,
                                            const DeCalorimeter* detector ) {
-  if ( 0 == detector ) { return false; } // RETURN
-  if ( 0 == level ) { return true; }     // RETURN
-  if ( cells.empty() ) { return true; }  // RETURN
+  if ( nullptr == detector ) { return false; } // RETURN
+  if ( 0 == level ) { return true; }           // RETURN
+  if ( cells.empty() ) { return true; }        // RETURN
   // local copy:
   LHCb::CaloCellID::Set local;
   local.insert( cells.begin(), cells.end() );

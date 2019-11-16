@@ -37,7 +37,6 @@
  *
  */
 namespace CaloFuture {
-  // ==========================================================================
   namespace Kinematics {
     // ========================================================================
     /** evaluate 4-momentum of photon hypothesis
@@ -142,6 +141,5 @@ namespace CaloFuture {
                                               Gaudi::Matrix4x3& F11, Gaudi::Matrix4x3& F12 );
     // ========================================================================
   } // namespace Kinematics
-  // ==========================================================================
-} //                                                      end of namespace CaloFuture
+} // namespace CaloFuture
 #endif // CALOFUTUREUTILS_KINEMATICS_H

@@ -59,16 +59,13 @@ namespace {
  *  @param Det pointer to calorimeter detector
  */
 // ============================================================================
-SpreadEstimator::SpreadEstimator( const DeCalorimeter* Det ) : m_detector( Det ), m_et( Det ) {}
+SpreadEstimator::SpreadEstimator( const DeCalorimeter* Det ) : m_detector( Det ) {}
 // ============================================================================
 /*  set new value for calorimeter
  *  @param Det pointer to calorimeter detector
  */
 // ============================================================================
-void SpreadEstimator::setDetector( const DeCalorimeter* Det ) {
-  m_detector = Det;
-  m_et       = ET( detector() );
-}
+void SpreadEstimator::setDetector( const DeCalorimeter* Det ) { m_detector = Det; }
 // ============================================================================
 /*  calculation of cluster spread
  *
@@ -85,13 +82,12 @@ void SpreadEstimator::setDetector( const DeCalorimeter* Det ) {
 // ============================================================================
 StatusCode SpreadEstimator::operator()( LHCb::CaloCluster* cluster ) const {
   // ignore trivial cases
-  if ( 0 == cluster ) { return StatusCode::SUCCESS; }
+  if ( !cluster ) { return StatusCode::SUCCESS; }
   if ( cluster->entries().empty() ) { return StatusCode::SUCCESS; }
   /// detector?
-  if ( 0 == detector() ) { return StatusCode( 221 ); }
+  if ( !m_detector ) { return StatusCode( 221 ); }
 
-  // avoid long names
-  //  typedef LHCb::CaloCluster::Entries::const_iterator const_iterator;
+  auto et = LHCb::CaloDataFunctor::EnergyTransverse{m_detector};
 
   const double x_prec  = 0.2 * Gaudi::Units::mm;
   const double x_prec2 = x_prec * x_prec;
@@ -114,18 +110,17 @@ StatusCode SpreadEstimator::operator()( LHCb::CaloCluster* cluster ) const {
   double cellsize = -10;
   bool   first    = true;
 
-  const LHCb::CaloCluster::Entries& entries = cluster->entries();
-  for ( LHCb::CaloCluster::Entries::const_iterator entry = entries.begin(); entries.end() != entry; ++entry ) {
-    const LHCb::CaloDigit* digit = entry->digit();
-    if ( 0 == digit ) { continue; }
+  for ( const auto& entry : cluster->entries() ) {
+    const LHCb::CaloDigit* digit = entry.digit();
+    if ( !digit ) { continue; }
     ///
-    const double fraction = entry->fraction();
+    const double fraction = entry.fraction();
     ///
     const double energy = digit->e() * fraction;
     ///
-    const Gaudi::XYZPoint& pos = detector()->cellCenter( digit->cellID() );
+    const Gaudi::XYZPoint& pos = m_detector->cellCenter( digit->cellID() );
     ///
-    if ( entry->status() & LHCb::CaloDigitStatus::SeedCell ) cellsize = detector()->cellSize( digit->cellID() );
+    if ( entry.status() & LHCb::CaloDigitStatus::SeedCell ) cellsize = m_detector->cellSize( digit->cellID() );
     ///
     eall += energy;
     ///
@@ -219,7 +214,7 @@ StatusCode SpreadEstimator::operator()( LHCb::CaloCluster* cluster ) const {
     {
       // =======================================================================
       // the matrix must be modified a bit:
-      const double eT = round( m_et( cluster ), e_prec );
+      const double eT = round( et( cluster ), e_prec );
       m_ratio += (float)lambdaMin;
       m_energy += (float)( eT / Gaudi::Units::GeV );
       m_cells += ncells;

@@ -29,7 +29,7 @@ public:
   /** the standard constructor
    *  @param Det pointer to calorimeter detector
    */
-  CellMatrix3x3( const DeCalorimeter* Det = 0 ) : CellMatrix( Det ){};
+  CellMatrix3x3( const DeCalorimeter* Det = nullptr ) : CellMatrix( Det ){};
 
   /** the major method. It returns "true" if the cell
    *  belongs to 3x3 sub-matrix around the seed
@@ -64,7 +64,7 @@ protected:
    *  @return fraction of area of the second cell which fits inside
    *          3x3 matrix aroud the seed cell
    */
-  double treatDifferentAreas( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const;
+  [[nodiscard]] double treatDifferentAreas( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const;
 };
 
 // ============================================================================

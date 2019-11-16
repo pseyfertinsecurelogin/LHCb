@@ -37,14 +37,14 @@
 class Digit2ClustersConnector final {
 public:
   /// useful typedefs
-  typedef LHCb::CaloClusters                          Clusters;
-  typedef LHCb::CaloCluster::Entries::iterator        EntryPointer;
+  using Clusters     = LHCb::CaloClusters;
+  using EntryPointer = LHCb::CaloCluster::Entries::iterator;
   typedef std::pair<LHCb::CaloCluster*, EntryPointer> ClusterPair;
-  typedef std::vector<ClusterPair>                    ClusterPairs;
+  using ClusterPairs = std::vector<ClusterPair>;
 
   typedef GaudiUtils::Map<const LHCb::CaloDigit*, ClusterPairs> Map;
-  typedef Map::iterator                                         It;
-  typedef std::pair<It, It>                                     Pair;
+  using It = Map::iterator;
+  typedef std::pair<It, It> Pair;
 
 public:
   /** Constructor (in case of corrupted data, throw CaloException)
@@ -76,8 +76,8 @@ public:
     return sc;
   }
 
-  inline Map&       map() { return m_map; };
-  inline const Map& map() const { return m_map; };
+  inline Map&                     map() { return m_map; };
+  [[nodiscard]] inline const Map& map() const { return m_map; };
 
 private:
   /**  Add cluster to the map

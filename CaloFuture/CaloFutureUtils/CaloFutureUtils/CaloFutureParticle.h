@@ -57,14 +57,14 @@ namespace LHCb {
     // ========================================================================
     // Getters
     // ========================================================================
-    const std::vector<LHCb::Particle*>& particles() const { return m_parts; }
-    const LHCb::Vertex*                 originVertex() const { return m_vert; }
-    const LHCb::Particle::ConstVector&  caloEndTree() const { return m_caloEndTree; }
+    [[nodiscard]] const std::vector<LHCb::Particle*>& particles() const { return m_parts; }
+    [[nodiscard]] const LHCb::Vertex*                 originVertex() const { return m_vert; }
+    [[nodiscard]] const LHCb::Particle::ConstVector&  caloEndTree() const { return m_caloEndTree; }
     // get (the first) particle
-    LHCb::Particle* particle() const;
+    [[nodiscard]] LHCb::Particle* particle() const;
     // calo?
-    bool isCaloFuture() const { return m_isCaloFuture; }
-    bool isPureNeutralCaloFuture() const { return m_isCaloFuture && m_neutral; }
+    [[nodiscard]] bool isCaloFuture() const { return m_isCaloFuture; }
+    [[nodiscard]] bool isPureNeutralCaloFuture() const { return m_isCaloFuture && m_neutral; }
     // ========================================================================
   public:
     // ========================================================================

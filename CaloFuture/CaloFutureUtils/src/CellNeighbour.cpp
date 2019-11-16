@@ -38,7 +38,7 @@
 double CellNeighbour::operator()( const LHCb::CaloCellID& seed, const LHCb::CaloCellID& cell ) const {
   /// trivial case
   if ( seed == cell ) { return 1; }
-  if ( 0 == det() ) { Exception( "CellNeighbour:: Detector points to NULL!" ); }
+  if ( nullptr == det() ) { Exception( "CellNeighbour:: Detector points to NULL!" ); }
   ///
   if ( !det()->valid( seed ) || !det()->valid( cell ) ) { return 0; }
   ///

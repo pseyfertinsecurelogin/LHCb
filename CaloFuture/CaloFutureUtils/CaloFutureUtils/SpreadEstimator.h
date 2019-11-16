@@ -58,7 +58,7 @@ public:
    *  @param  cluster  pointer to cluster
    *  @return status code
    */
-  inline StatusCode calculateSpread( LHCb::CaloCluster* cluster ) const { return ( *this )( cluster ); }
+  StatusCode calculateSpread( LHCb::CaloCluster* cluster ) const { return ( *this )( cluster ); }
   // ==========================================================================
 public:
   // ==========================================================================
@@ -70,7 +70,7 @@ public:
   /** simple accessor to DeCalorimeter object
    *  @return pointer to detector
    */
-  inline const DeCalorimeter* detector() const { return m_detector; }
+  [[deprecated]] const DeCalorimeter* detector() const { return m_detector; }
   // ==========================================================================
   /// get the counter for problematic cases
   const StatEntity& invalidRatio() const { return m_ratio; }
@@ -85,16 +85,11 @@ private:
   const DeCalorimeter* m_detector; // the detector elemenet
   // ==========================================================================
   /// counter of invalid cells
-  mutable StatEntity m_cells; // counter for invaild cells
+  mutable StatEntity m_cells; // counter for invalid cells
   /// counter of invalid size ratio
-  mutable StatEntity m_ratio; // counter for invaild size ratio
+  mutable StatEntity m_ratio; // counter for invalid size ratio
   /// counter of invalid energy
-  mutable StatEntity m_energy; // counter for invaild energy
-  // ==========================================================================
-  typedef LHCb::CaloDataFunctor::EnergyTransverse<const DeCalorimeter*> ET;
-  /// transverse energy estimator
-  ET m_et; // transverse energy estimator
-  // ==========================================================================
+  mutable StatEntity m_energy; // counter for invalid energy
 };
 // ============================================================================
 // The END

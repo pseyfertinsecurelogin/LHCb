@@ -37,7 +37,7 @@
  */
 // ============================================================================
 double LHCb::ClusterFunctors::energy( const LHCb::CaloCluster* cl ) {
-  if ( 0 == cl || cl->entries().empty() ) { return 0; }
+  if ( !cl || cl->entries().empty() ) { return 0; }
   return ClusterFunctors::energy( cl->entries().begin(), cl->entries().end() );
 }
 
@@ -53,12 +53,12 @@ double LHCb::ClusterFunctors::energy( const LHCb::CaloCluster* cl ) {
  */
 // ===========================================================================
 bool LHCb::ClusterFunctors::overlapped( const LHCb::CaloCluster* cl1, const LHCb::CaloCluster* cl2 ) {
-  if ( 0 == cl1 || 0 == cl2 || cl1->entries().empty() || cl2->entries().empty() ) { return false; }
+  if ( !cl1 || !cl2 || cl1->entries().empty() || cl2->entries().empty() ) { return false; }
   ///
-  const_iterator_pair p = LHCb::ClusterFunctors::commonDigit( cl1->entries().begin(), cl1->entries().end(),
-                                                              cl2->entries().begin(), cl2->entries().end() );
+  auto p = LHCb::ClusterFunctors::commonDigit( cl1->entries().begin(), cl1->entries().end(), cl2->entries().begin(),
+                                               cl2->entries().end() );
   ///
-  return ( cl1->entries().end() == p.first ) ? false : true;
+  return cl1->entries().end() != p.first;
 }
 
 // ===========================================================================
@@ -79,7 +79,7 @@ StatusCode LHCb::ClusterFunctors::calculateEXY( const LHCb::CaloCluster* cl, con
   e = 0;
   x = 0;
   y = 0;
-  if ( 0 == cl || cl->entries().empty() ) { return StatusCode::FAILURE; }
+  if ( !cl || cl->entries().empty() ) { return StatusCode::FAILURE; }
   ///
   return ClusterFunctors::calculateEXY( cl->entries().begin(), cl->entries().end(), de, e, x, y );
 }
@@ -90,9 +90,6 @@ StatusCode LHCb::ClusterFunctors::calculateEXY( const LHCb::CaloCluster* cl, con
  *  @return status code (fictive)
  */
 // ===========================================================================
-StatusCode LHCb::ClusterFunctors::throwException( const std::string& message ) {
-  // throw the exception
-  if ( true ) { throw CaloException( " ClusterFunctors::" + message ); }
-  ///
-  return StatusCode::FAILURE;
+void LHCb::ClusterFunctors::throwException( const std::string& message ) {
+  throw CaloException( " ClusterFunctors::" + message );
 }

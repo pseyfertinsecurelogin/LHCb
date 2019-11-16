@@ -73,7 +73,7 @@ namespace {
     //
     // Jacobian-I:   d(px,py,pz,E)/d(xc,yc,E)
     //
-    if ( 0 != F11 ) {
+    if ( nullptr != F11 ) {
 
       Gaudi::Matrix4x3& f11 = *F11;
 
@@ -118,7 +118,7 @@ namespace {
     // Jacobian-II:   d(px,py,pz,E)/d(xv,yv,zv)
     //
 
-    if ( 0 != F12 ) {
+    if ( nullptr != F12 ) {
 
       Gaudi::Matrix4x3& f12 = *F12;
 
@@ -183,7 +183,7 @@ namespace {
  */
 // ============================================================================
 Gaudi::LorentzVector CaloFuture::Kinematics::momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin ) {
-  return _jacobians_( calo, origin, 0, 0 );
+  return _jacobians_( calo, origin, nullptr, nullptr );
 }
 // ============================================================================
 /*  evaluate 4-momentum of photon hythothesis
@@ -197,7 +197,7 @@ Gaudi::LorentzVector CaloFuture::Kinematics::momentum( const LHCb::CaloPosition&
 // ============================================================================
 void CaloFuture::Kinematics::momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
                                        Gaudi::LorentzVector& output ) {
-  output = _jacobians_( calo, origin, 0, 0 );
+  output = _jacobians_( calo, origin, nullptr, nullptr );
 }
 // ============================================================================
 /*  evaluate 4-momentum of photon hypothesis
@@ -227,7 +227,7 @@ void CaloFuture::Kinematics::momentum( const LHCb::CaloPosition& calo, const Gau
   //
 
   // evaluate the  momentum
-  output = _jacobians_( calo, origin, &F11, 0 );
+  output = _jacobians_( calo, origin, &F11, nullptr );
 
   // evaluate the covariance matrix matrix:
   matrix = Similarity( F11, S11 );
@@ -274,7 +274,7 @@ void CaloFuture::Kinematics::add2momentum( const LHCb::CaloPosition& calo, const
   //
 
   // update momentum
-  output += _jacobians_( calo, origin, &F11, 0 );
+  output += _jacobians_( calo, origin, &F11, nullptr );
 
   // update covariance matrix matrix:
   matrix += Similarity( F11, S11 );
@@ -306,7 +306,7 @@ void CaloFuture::Kinematics::add2momentum( const LHCb::CaloPosition& calo, const
 // ============================================================================
 Gaudi::LorentzVector CaloFuture::Kinematics::jacobian1( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
                                                         Gaudi::Matrix4x3& F11 ) {
-  return _jacobians_( calo, origin, &F11, 0 );
+  return _jacobians_( calo, origin, &F11, nullptr );
 }
 // ============================================================================
 /*  get the jacobian: d(px,py,pz,E)/d(xv,yv,zv)
@@ -320,7 +320,7 @@ Gaudi::LorentzVector CaloFuture::Kinematics::jacobian1( const LHCb::CaloPosition
 // ============================================================================
 Gaudi::LorentzVector CaloFuture::Kinematics::jacobian2( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
                                                         Gaudi::Matrix4x3& F12 ) {
-  return _jacobians_( calo, origin, 0, &F12 );
+  return _jacobians_( calo, origin, nullptr, &F12 );
 }
 // ============================================================================
 /*  get the jacobians: d(px,py,pz,E)/d(xc,yc,E) and d(px,py,pz,E)/d(xv,yv,zv)

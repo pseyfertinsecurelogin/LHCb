@@ -47,7 +47,7 @@ protected:
   /** accessor to calorimeter
    *  @return pointer to detector element
    */
-  const DeCalorimeter* det() const { return m_det; }
+  [[nodiscard]] const DeCalorimeter* det() const { return m_det; }
 
   /** calculate the intersection area for 2 squares on the plane
    *  @param   center1   center point of the first  square
@@ -56,8 +56,8 @@ protected:
    *  @param   halfsize2 half   size  of the second square
    *  @return the intersection area
    */
-  inline double area( const Gaudi::XYZPoint& center1, const double halfsize1, const Gaudi::XYZPoint& center2,
-                      const double halfsize2 ) const {
+  [[nodiscard]] inline double area( const Gaudi::XYZPoint& center1, const double halfsize1,
+                                    const Gaudi::XYZPoint& center2, const double halfsize2 ) const {
     /// check the sizes
     if ( halfsize1 <= 0 || halfsize2 <= 0 ) { return 0; } ///< RETURN
     const double xSize = std::min( center1.x() + halfsize1, center2.x() + halfsize2 ) -
