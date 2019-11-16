@@ -274,7 +274,7 @@ namespace LHCb::Event {
       Track( const Track& track, const int key );
 
       /// Default Constructor
-      Track() : m_lhcbIDs(), m_states(), m_fitResult(), m_extraInfo() {}
+      Track() = default;
 
       /// Track destructor
       ~Track() override;
