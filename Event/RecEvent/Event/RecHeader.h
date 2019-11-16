@@ -41,48 +41,40 @@ namespace LHCb {
 
   class RecHeader final : public ProcessHeader {
   public:
-    /// Copy constructor. Creates a new RecHeader with the same information.
-    RecHeader( const LHCb::RecHeader& head )
-        : ProcessHeader( head )
-        , m_evtNumber( head.evtNumber() )
-        , m_gpsTime( head.gpsTime() )
-        , m_rawID( head.rawID() ) {}
-
     /// Default Constructor
-    RecHeader() : m_evtNumber( 0 ), m_gpsTime( 0 ), m_rawID() {}
+    RecHeader() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  Event number (same as in ODIN)
-    long long evtNumber() const;
+    [[nodiscard]] long long evtNumber() const;
 
     /// Update  Event number (same as in ODIN)
     void setEvtNumber( long long value );
 
     /// Retrieve const  GPS Time (same as in ODIN, microseconds)
-    unsigned long long gpsTime() const;
+    [[nodiscard]] unsigned long long gpsTime() const;
 
     /// Update  GPS Time (same as in ODIN, microseconds)
     void setGpsTime( unsigned long long value );
 
     /// Retrieve const  UUID of the raw file to which this event belongs
-    const std::string& rawID() const;
+    [[nodiscard]] const std::string& rawID() const;
 
     /// Update  UUID of the raw file to which this event belongs
     void setRawID( const std::string& value );
 
     friend std::ostream& operator<<( std::ostream& str, const RecHeader& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    long long          m_evtNumber; ///< Event number (same as in ODIN)
-    unsigned long long m_gpsTime;   ///< GPS Time (same as in ODIN, microseconds)
-    std::string        m_rawID;     ///< UUID of the raw file to which this event belongs
+    long long          m_evtNumber{0}; ///< Event number (same as in ODIN)
+    unsigned long long m_gpsTime{0};   ///< GPS Time (same as in ODIN, microseconds)
+    std::string        m_rawID;        ///< UUID of the raw file to which this event belongs
 
   }; // class RecHeader
 

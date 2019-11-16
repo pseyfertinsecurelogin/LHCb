@@ -51,17 +51,17 @@ namespace LHCb {
   class TwoProngVertex : public LHCb::RecVertex {
   public:
     /// typedef for std::vector of TwoProngVertex
-    typedef std::vector<TwoProngVertex*>       Vector;
-    typedef std::vector<const TwoProngVertex*> ConstVector;
+    using Vector      = std::vector<TwoProngVertex*>;
+    using ConstVector = std::vector<const TwoProngVertex*>;
 
     /// typedef for KeyedContainer of TwoProngVertex
     typedef KeyedContainer<TwoProngVertex, Containers::HashMap> Container;
 
     /// For defining SharedObjectContainer
-    typedef SharedObjectsContainer<LHCb::TwoProngVertex> Selection;
+    using Selection = SharedObjectsContainer<LHCb::TwoProngVertex>;
     /// For accessing a list of L0CaloCandidates which is either a SharedObjectContainer, a KeyedContainer or a
     /// ConstVector
-    typedef Gaudi::NamedRange_<ConstVector> Range;
+    using Range = Gaudi::NamedRange_<ConstVector>;
 
     /// Additional information assigned to this V0. Contains Impact parameter information
     enum additionalInfo {
@@ -77,18 +77,7 @@ namespace LHCb {
     TwoProngVertex( const Gaudi::XYZPoint& position ) : LHCb::RecVertex( position ) {}
 
     /// Default Constructor
-    TwoProngVertex()
-        : m_momA()
-        , m_momcovA()
-        , m_momposcovA()
-        , m_momB()
-        , m_momcovB()
-        , m_momposcovB()
-        , m_mommomcov()
-        , m_compatiblePIDs() {}
-
-    /// Default Destructor
-    virtual ~TwoProngVertex() {}
+    TwoProngVertex() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -104,19 +93,19 @@ namespace LHCb {
     void addPID( LHCb::ParticleID& value );
 
     /// fitted p4 of first track
-    const Gaudi::LorentzVector p4A( double mass ) const;
+    Gaudi::LorentzVector p4A( double mass ) const;
 
     /// fitted p4 of second track
-    const Gaudi::LorentzVector p4B( double mass ) const;
+    Gaudi::LorentzVector p4B( double mass ) const;
 
     /// fitted mass of two-prong given mass hypothesis for 2 daughters
     double mass( double massA, double massB ) const;
 
     /// error on fitted mass of two-prong given mass hypothesis for 2 daughters
-    Gaudi::Math::ValueWithError massWithError( double massA, double massB ) const;
+    Gaudi::Math::ValueWithError massWithError( double mass1, double mass2 ) const;
 
     /// fitted momentum of two-prong given mass hypothesis for 2 daughters
-    const Gaudi::LorentzVector momentum( double massA, double massB ) const;
+    Gaudi::LorentzVector momentum( double massA, double massB ) const;
 
     /// fitted p3 of first track
     Gaudi::XYZVector p3A() const;
@@ -128,13 +117,13 @@ namespace LHCb {
     Gaudi::XYZVector p3() const;
 
     /// retrieve the  7x7 Covariance Martix, x, y, z, px, py, pz, E for the V0
-    const Gaudi::SymMatrix7x7 covMatrix7x7( const double mass1, const double mass2 ) const;
+    Gaudi::SymMatrix7x7 covMatrix7x7( double mass1, double mass2 ) const;
 
     /// retrieve the 6x6 covariance matrix, x, y, z, px, py, pz for the two-prong
     Gaudi::SymMatrix6x6 covMatrix6x6() const;
 
     /// retrieve the  9x9 full Covariance Martix, x, y, z, txA, tyA, qopA,txB, tyB, qopB for the V0 and tracks
-    const Gaudi::SymMatrix9x9 covMatrix9x9() const;
+    Gaudi::SymMatrix9x9 covMatrix9x9() const;
 
     /// Retrieve the first track easily
     const LHCb::Track* trackA() const;
@@ -146,7 +135,7 @@ namespace LHCb {
     static void throwError( char error[] );
 
     /// return the track type of the track at trackIndex
-    Track::Types TrackType( const unsigned int trackIndex ) const;
+    Track::Types TrackType( unsigned int trackIndex ) const;
 
     /// return the Armenteros_Podolanski variables - Pt(V0) and PPerp assymetry of the daughters
     void GetArmenteros_Podolanski( double& qT, double& alpha ) const;
@@ -311,13 +300,13 @@ inline LHCb::TwoProngVertex* LHCb::TwoProngVertex::clone() const { return new LH
 
 inline void LHCb::TwoProngVertex::addPID( LHCb::ParticleID& value ) { m_compatiblePIDs.push_back( value ); }
 
-inline const Gaudi::LorentzVector LHCb::TwoProngVertex::p4A( double mass ) const {
+inline Gaudi::LorentzVector LHCb::TwoProngVertex::p4A( double mass ) const {
 
   Gaudi::LorentzVector p4a;
   return Gaudi::Math::geo2LA( m_momA, mass, p4a );
 }
 
-inline const Gaudi::LorentzVector LHCb::TwoProngVertex::p4B( double mass ) const {
+inline Gaudi::LorentzVector LHCb::TwoProngVertex::p4B( double mass ) const {
 
   Gaudi::LorentzVector p4b;
   return Gaudi::Math::geo2LA( m_momB, mass, p4b );
@@ -328,7 +317,7 @@ inline double LHCb::TwoProngVertex::mass( double massA, double massB ) const {
   return ( p4A( massA ) + p4B( massB ) ).M();
 }
 
-inline const Gaudi::LorentzVector LHCb::TwoProngVertex::momentum( double massA, double massB ) const {
+inline Gaudi::LorentzVector LHCb::TwoProngVertex::momentum( double massA, double massB ) const {
 
   return ( p4A( massA ) + p4B( massB ) );
 }

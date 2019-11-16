@@ -59,26 +59,26 @@ namespace LHCb {
   class CaloHypo final : public KeyedObject<int> {
   public:
     /// typedef for std::vector of CaloHypo
-    typedef std::vector<CaloHypo*>       Vector;
-    typedef std::vector<const CaloHypo*> ConstVector;
+    using Vector      = std::vector<CaloHypo*>;
+    using ConstVector = std::vector<const CaloHypo*>;
 
     /// typedef for KeyedContainer of CaloHypo
     typedef KeyedContainer<CaloHypo, Containers::HashMap> Container;
 
     /// For defining SharedObjectContainer
-    typedef SharedObjectsContainer<LHCb::CaloHypo> Selection;
+    using Selection = SharedObjectsContainer<LHCb::CaloHypo>;
     /// For accessing a list of CaloHypos which is either a SharedObjectContainer, a KeyedContainer or a ConstVector
-    typedef Gaudi::NamedRange_<ConstVector> Range;
+    using Range = Gaudi::NamedRange_<ConstVector>;
     /// Shortcut for the type of Likelihood of CaloHypo object
-    typedef double Likelihood;
+    using Likelihood = double;
     /// Shortcut for the type of CaloPosition object
-    typedef LHCb::CaloPosition Position;
+    using Position = LHCb::CaloPosition;
     /// shortcut for references to Calorimeter Digits
-    typedef SmartRefVector<LHCb::CaloDigit> Digits;
+    using Digits = SmartRefVector<LHCb::CaloDigit>;
     /// Shortcut for references to Calorimeter Clusters
-    typedef SmartRefVector<LHCb::CaloCluster> Clusters;
+    using Clusters = SmartRefVector<LHCb::CaloCluster>;
     /// Shortcut for eferences to Calorimeter Hypothesis
-    typedef SmartRefVector<LHCb::CaloHypo> Hypos;
+    using Hypos = SmartRefVector<LHCb::CaloHypo>;
 
     /// Calo hypotheses
     enum Hypothesis {
@@ -117,10 +117,10 @@ namespace LHCb {
         , m_hypos( right.hypos() ) {}
 
     /// Default Constructor
-    CaloHypo() : m_hypothesis( CaloHypo::Hypothesis::Undefined ), m_lh( -1. ), m_position( 0 ) {}
+    CaloHypo() = default;
 
     /// Destructor
-    ~CaloHypo();
+    ~CaloHypo() override;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -214,15 +214,15 @@ namespace LHCb {
 
   protected:
     /// Shortcut for own base class
-    typedef KeyedObject<int> Base;
+    using Base = KeyedObject<int>;
 
   private:
-    LHCb::CaloHypo::Hypothesis        m_hypothesis; ///< The hypothesis's ID
-    LHCb::CaloHypo::Likelihood        m_lh;         ///< The Hypothesis's likelihood
-    LHCb::CaloHypo::Position*         m_position;   ///< The hypothesis's CaloPosition object
-    SmartRefVector<LHCb::CaloDigit>   m_digits;     ///< References to the Calorimeter Digits
-    SmartRefVector<LHCb::CaloCluster> m_clusters;   ///< References to the Calorimeter Clusters
-    SmartRefVector<LHCb::CaloHypo>    m_hypos;      ///< References to the Calorimeter Hypos
+    LHCb::CaloHypo::Hypothesis        m_hypothesis{CaloHypo::Hypothesis::Undefined}; ///< The hypothesis's ID
+    LHCb::CaloHypo::Likelihood        m_lh{-1.};                                     ///< The Hypothesis's likelihood
+    LHCb::CaloHypo::Position*         m_position{nullptr}; ///< The hypothesis's CaloPosition object
+    SmartRefVector<LHCb::CaloDigit>   m_digits;            ///< References to the Calorimeter Digits
+    SmartRefVector<LHCb::CaloCluster> m_clusters;          ///< References to the Calorimeter Clusters
+    SmartRefVector<LHCb::CaloHypo>    m_hypos;             ///< References to the Calorimeter Hypos
 
   }; // class CaloHypo
 

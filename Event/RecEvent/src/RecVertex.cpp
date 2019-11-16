@@ -11,7 +11,7 @@
 
 // STD
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 // Event model

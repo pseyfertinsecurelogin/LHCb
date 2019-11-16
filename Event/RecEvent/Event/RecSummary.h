@@ -74,11 +74,11 @@ namespace LHCb {
     };
 
     /// Default Constructor
-    RecSummary() : m_summaryData() {}
+    RecSummary() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// conversion of string to enum for type DataTypes
     static LHCb::RecSummary::DataTypes DataTypesToType( const std::string& aName );
@@ -87,23 +87,23 @@ namespace LHCb {
     static const std::string& DataTypesToString( int aEnum );
 
     /// Does the information exist for the given key
-    bool hasInfo( const int key ) const;
+    [[nodiscard]] bool hasInfo( int key ) const;
 
     /// Add or replace new information, associated with the specified key
-    bool addInfo( const int key, const int info );
+    bool addInfo( int key, int info );
 
     /// Extract the information associated with the specified key. If there is no such information the default value
     /// will be returned.
-    int info( const int key, const int def ) const;
+    [[nodiscard]] int info( int key, int def ) const;
 
     /// Erase the information associated with the specified key
-    RecSummary::SummaryData::size_type eraseInfo( const int key );
+    RecSummary::SummaryData::size_type eraseInfo( int key );
 
     /// Print this ProtoParticle in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  Storage of the summary data
-    const SummaryData& summaryData() const;
+    [[nodiscard]] const SummaryData& summaryData() const;
 
     friend std::ostream& operator<<( std::ostream& str, const RecSummary& obj ) { return obj.fillStream( str ); }
 
@@ -239,7 +239,7 @@ inline bool LHCb::RecSummary::addInfo( const int key, const int info ) {
 
 inline int LHCb::RecSummary::info( const int key, const int def ) const {
 
-  SummaryData::const_iterator i = m_summaryData.find( key );
+  auto i = m_summaryData.find( key );
   return m_summaryData.end() == i ? def : i->second;
 }
 

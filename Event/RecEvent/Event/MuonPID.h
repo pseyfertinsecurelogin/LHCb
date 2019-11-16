@@ -62,16 +62,7 @@ namespace LHCb {
         , m_muonTrack( lhs.m_muonTrack ) {}
 
     /// Default Constructor
-    MuonPID()
-        : m_MuonLLMu( -20.0 )
-        , m_MuonLLBg( 0.0 )
-        , m_NShared( 0 )
-        , m_Status( 0 )
-        , m_chi2Corr( 0.0 )
-        , m_muonMVA1( -999.0 )
-        , m_muonMVA2( -999.0 )
-        , m_muonMVA3( -999.0 )
-        , m_muonMVA4( -999.0 ) {}
+    MuonPID() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -184,7 +175,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MuonPID& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     /// Offsets of bitfield Status
     enum StatusBits {
@@ -204,17 +194,17 @@ namespace LHCb {
       IsMuonTightMask    = 0x10L
     };
 
-    double                m_MuonLLMu;  ///< Muon Likelihood for muons
-    double                m_MuonLLBg;  ///< Muon likelihood for non muons
-    int                   m_NShared;   ///< Number of tracks which share hits
-    unsigned int          m_Status;    ///< Status of MuonPID
-    float                 m_chi2Corr;  ///< chi2 using correlations of the hits
-    float                 m_muonMVA1;  ///< multi variate algorithm for MuonID with tune1
-    float                 m_muonMVA2;  ///< multi variate algorithm for MuonID with tune2
-    float                 m_muonMVA3;  ///< multi variate algorithm for MuonID with tune3
-    float                 m_muonMVA4;  ///< multi variate algorithm for MuonID with tune4
-    SmartRef<LHCb::Track> m_IDTrack;   ///< The track that has been IDed by the Muon system
-    SmartRef<LHCb::Track> m_muonTrack; ///< The track segment as reconstructed in the Muon system
+    double                m_MuonLLMu{-20.0};  ///< Muon Likelihood for muons
+    double                m_MuonLLBg{0.0};    ///< Muon likelihood for non muons
+    int                   m_NShared{0};       ///< Number of tracks which share hits
+    unsigned int          m_Status{0};        ///< Status of MuonPID
+    float                 m_chi2Corr{0.0};    ///< chi2 using correlations of the hits
+    float                 m_muonMVA1{-999.0}; ///< multi variate algorithm for MuonID with tune1
+    float                 m_muonMVA2{-999.0}; ///< multi variate algorithm for MuonID with tune2
+    float                 m_muonMVA3{-999.0}; ///< multi variate algorithm for MuonID with tune3
+    float                 m_muonMVA4{-999.0}; ///< multi variate algorithm for MuonID with tune4
+    SmartRef<LHCb::Track> m_IDTrack;          ///< The track that has been IDed by the Muon system
+    SmartRef<LHCb::Track> m_muonTrack;        ///< The track segment as reconstructed in the Muon system
 
   }; // class MuonPID
 
@@ -267,7 +257,7 @@ inline void LHCb::MuonPID::setStatus( unsigned int value ) { m_Status = value; }
 inline bool LHCb::MuonPID::IsMuon() const { return 0 != ( ( m_Status & IsMuonMask ) >> IsMuonBits ); }
 
 inline void LHCb::MuonPID::setIsMuon( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_Status &= ~IsMuonMask;
   m_Status |= ( ( ( (unsigned int)val ) << IsMuonBits ) & IsMuonMask );
 }
@@ -275,7 +265,7 @@ inline void LHCb::MuonPID::setIsMuon( bool value ) {
 inline bool LHCb::MuonPID::InAcceptance() const { return 0 != ( ( m_Status & InAcceptanceMask ) >> InAcceptanceBits ); }
 
 inline void LHCb::MuonPID::setInAcceptance( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_Status &= ~InAcceptanceMask;
   m_Status |= ( ( ( (unsigned int)val ) << InAcceptanceBits ) & InAcceptanceMask );
 }
@@ -285,7 +275,7 @@ inline bool LHCb::MuonPID::PreSelMomentum() const {
 }
 
 inline void LHCb::MuonPID::setPreSelMomentum( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_Status &= ~PreSelMomentumMask;
   m_Status |= ( ( ( (unsigned int)val ) << PreSelMomentumBits ) & PreSelMomentumMask );
 }
@@ -293,7 +283,7 @@ inline void LHCb::MuonPID::setPreSelMomentum( bool value ) {
 inline bool LHCb::MuonPID::IsMuonLoose() const { return 0 != ( ( m_Status & IsMuonLooseMask ) >> IsMuonLooseBits ); }
 
 inline void LHCb::MuonPID::setIsMuonLoose( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_Status &= ~IsMuonLooseMask;
   m_Status |= ( ( ( (unsigned int)val ) << IsMuonLooseBits ) & IsMuonLooseMask );
 }
@@ -301,7 +291,7 @@ inline void LHCb::MuonPID::setIsMuonLoose( bool value ) {
 inline bool LHCb::MuonPID::IsMuonTight() const { return 0 != ( ( m_Status & IsMuonTightMask ) >> IsMuonTightBits ); }
 
 inline void LHCb::MuonPID::setIsMuonTight( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_Status &= ~IsMuonTightMask;
   m_Status |= ( ( ( (unsigned int)val ) << IsMuonTightBits ) & IsMuonTightMask );
 }

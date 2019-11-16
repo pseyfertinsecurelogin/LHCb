@@ -55,8 +55,8 @@ namespace LHCb {
   class ProtoParticle final : public KeyedObject<int> {
   public:
     /// typedef for std::vector of ProtoParticle
-    typedef std::vector<ProtoParticle*>       Vector;
-    typedef std::vector<const ProtoParticle*> ConstVector;
+    using Vector      = std::vector<ProtoParticle*>;
+    using ConstVector = std::vector<const ProtoParticle*>;
 
     /// typedef for KeyedContainer of ProtoParticle
     typedef KeyedContainer<ProtoParticle, Containers::HashMap> Container;
@@ -184,7 +184,7 @@ namespace LHCb {
         , m_muonPID( proto.muonPID() ) {}
 
     /// Default Constructor
-    ProtoParticle() : m_extraInfo() {}
+    ProtoParticle() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -200,17 +200,17 @@ namespace LHCb {
     ProtoParticle* clone() const;
 
     /// Does this protoparticle have information for the specified key
-    bool hasInfo( const int key ) const;
+    bool hasInfo( int key ) const;
 
     /// Add new information, associated with the specified key
-    bool addInfo( const int key, const double info );
+    bool addInfo( int key, double info );
 
     /// Extract the information associated with the specified key. If there is no such information the default value
     /// will be returned.
-    double info( const int key, const double def ) const;
+    double info( int key, double def ) const;
 
     /// Erase the information associated with the specified key
-    ProtoParticle::ExtraInfo::size_type eraseInfo( const int key );
+    ProtoParticle::ExtraInfo::size_type eraseInfo( int key );
 
     /// Returns the measured particle charge
     int charge() const;
@@ -716,7 +716,7 @@ inline bool LHCb::ProtoParticle::addInfo( const int key, const double info ) {
 
 inline double LHCb::ProtoParticle::info( const int key, const double def ) const {
 
-  ExtraInfo::const_iterator i = m_extraInfo.find( key );
+  auto i = m_extraInfo.find( key );
   return m_extraInfo.end() == i ? def : i->second;
 }
 
@@ -725,4 +725,4 @@ inline LHCb::ProtoParticle::ExtraInfo::size_type LHCb::ProtoParticle::eraseInfo(
   return m_extraInfo.erase( key );
 }
 
-inline int LHCb::ProtoParticle::charge() const { return ( track() != NULL ? track()->charge() : 0 ); }
+inline int LHCb::ProtoParticle::charge() const { return ( track() != nullptr ? track()->charge() : 0 ); }

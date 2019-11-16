@@ -39,7 +39,7 @@ namespace LHCb {
     H( 0, 0 ) = H( 1, 1 ) = 1;
     H( 2, 0 )             = -m_state( 2 );
     H( 2, 1 )             = -m_state( 3 );
-    Vector2 res           = m_state.Sub<Vector2>( 0 );
+    auto res              = m_state.Sub<Vector2>( 0 );
     m_halfD2Chi2DX2       = ROOT::Math::Similarity( H, m_invcov );
     m_halfDChi2DX         = ( H * m_invcov ) * res;
     m_chi2                = ROOT::Math::Similarity( res, m_invcov );

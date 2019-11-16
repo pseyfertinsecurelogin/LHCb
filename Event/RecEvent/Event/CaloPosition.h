@@ -35,41 +35,40 @@ namespace LHCb {
   class CaloPosition final {
   public:
     /// 3-vector of parameters (E,X,Y)
-    typedef Gaudi::Vector3 Parameters;
+    using Parameters = Gaudi::Vector3;
     /// 3x3 Covariance matrix (E,X,Y)
-    typedef Gaudi::SymMatrix3x3 Covariance;
+    using Covariance = Gaudi::SymMatrix3x3;
     /// 2-vector of parameters (X,Y)
-    typedef Gaudi::Vector2 Center;
+    using Center = Gaudi::Vector2;
     /// 2x2 Covariance matrix (X,Y)
-    typedef Gaudi::SymMatrix2x2 Spread;
+    using Spread = Gaudi::SymMatrix2x2;
 
     /// indices to access X,Y and E
     enum Index { X = 0, Y = 1, E = 2 };
 
     /// Default Constructor
-    CaloPosition()
-        : m_z( -1 * Gaudi::Units::km ), m_parameters( 0., 0., 0. ), m_covariance(), m_center( 0., 0. ), m_spread() {}
+    CaloPosition() : m_z( -1 * Gaudi::Units::km ), m_parameters( 0., 0., 0. ), m_center( 0., 0. ) {}
 
     /// retrieve the x-position @attention alias method!
-    double x() const;
+    [[nodiscard]] double x() const;
 
     /// retrieve the y-position @attention alias method!
-    double y() const;
+    [[nodiscard]] double y() const;
 
     /// retrieve the energy @attention alias method!
-    double e() const;
+    [[nodiscard]] double e() const;
 
     /// Print this CaloPosition data object in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  Z-position where cluster parameters are estimated
-    double z() const;
+    [[nodiscard]] double z() const;
 
     /// Update  Z-position where cluster parameters are estimated
     void setZ( double value );
 
     /// Retrieve const  vector of major cluster parameters
-    const Parameters& parameters() const;
+    [[nodiscard]] const Parameters& parameters() const;
 
     /// Retrieve  vector of major cluster parameters
     Parameters& parameters();
@@ -78,7 +77,7 @@ namespace LHCb {
     void setParameters( const Parameters& value );
 
     /// Retrieve const  covariance matrix of major cluster parameters (3x3)
-    const Covariance& covariance() const;
+    [[nodiscard]] const Covariance& covariance() const;
 
     /// Retrieve  covariance matrix of major cluster parameters (3x3)
     Covariance& covariance();
@@ -87,7 +86,7 @@ namespace LHCb {
     void setCovariance( const Covariance& value );
 
     /// Retrieve const  cluster center of gravity position (2D)
-    const Center& center() const;
+    [[nodiscard]] const Center& center() const;
 
     /// Retrieve  cluster center of gravity position (2D)
     Center& center();
@@ -96,7 +95,7 @@ namespace LHCb {
     void setCenter( const Center& value );
 
     /// Retrieve const  cluster spread matrix (2x2)
-    const Spread& spread() const;
+    [[nodiscard]] const Spread& spread() const;
 
     /// Retrieve  cluster spread matrix (2x2)
     Spread& spread();

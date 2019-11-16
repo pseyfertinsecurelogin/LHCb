@@ -85,7 +85,7 @@ namespace LHCb::Pr::Muon {
     PIDs( PIDs&& other ) = default;
 
     /** Return the size of our containers. */
-    std::size_t size() const { return m_statuses.size(); }
+    [[nodiscard]] std::size_t size() const { return m_statuses.size(); }
 
     /** Make sure our containers have at least this capacity, rounded up to be a
      *  multiple of the vector unit size so that compressstore() will never write
@@ -110,7 +110,7 @@ namespace LHCb::Pr::Muon {
     /** Identifier showing which family of containers these columns can be zipped
      *  into.
      */
-    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
+    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     template <typename dType, typename Mask>
     void copy_back( PIDs const& from, int at, Mask mask ) {
@@ -131,8 +131,8 @@ namespace LHCb::Pr::Muon {
       F( &from.m_chi2Corrs[at] ).compressstore( mask, m_chi2Corrs.data() + old_size );
     }
 
-    auto const& statuses() const { return m_statuses; }
-    auto const& chi2Corrs() const { return m_chi2Corrs; }
+    [[nodiscard]] auto const& statuses() const { return m_statuses; }
+    [[nodiscard]] auto const& chi2Corrs() const { return m_chi2Corrs; }
 
     // TODO remove, helps in transition
     void push_back( LHCb::Event::v2::MuonPID const& pid ) {

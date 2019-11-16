@@ -37,7 +37,8 @@ struct ExampleCaloHypos {
 
     BOOST_TEST_MESSAGE( "setup example calohypos" );
 
-    LHCb::CaloDigit                       digit1, digit2;
+    LHCb::CaloDigit                       digit1;
+    LHCb::CaloDigit                       digit2;
     std::vector<LHCb::CaloDigit>          digits{digit1, digit2};
     LHCb::CaloCluster                     cluster;
     std::vector<const LHCb::CaloCluster*> clusters{&cluster};

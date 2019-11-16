@@ -58,30 +58,30 @@ namespace LHCb {
   class CaloCluster final : public KeyedObject<int> {
   public:
     /// typedef for std::vector of CaloCluster
-    typedef std::vector<CaloCluster*>       Vector;
-    typedef std::vector<const CaloCluster*> ConstVector;
+    using Vector      = std::vector<CaloCluster*>;
+    using ConstVector = std::vector<const CaloCluster*>;
 
     /// typedef for KeyedContainer of CaloCluster
     typedef KeyedContainer<CaloCluster, Containers::HashMap> Container;
 
     /// For defining SharedObjectContainer
-    typedef SharedObjectsContainer<LHCb::CaloCluster> Selection;
+    using Selection = SharedObjectsContainer<LHCb::CaloCluster>;
     /// For accessing a list of CaloClusters which is either a SharedObjectContainer, a KeyedContainer or a ConstVector
-    typedef Gaudi::NamedRange_<ConstVector> Range;
+    using Range = Gaudi::NamedRange_<ConstVector>;
     /// The shortcut for CaloClusterEntry class
-    typedef LHCb::CaloClusterEntry Entry;
+    using Entry = LHCb::CaloClusterEntry;
     /// Container with references to digits
-    typedef std::vector<LHCb::CaloClusterEntry> Entries;
+    using Entries = std::vector<LHCb::CaloClusterEntry>;
     /// The shortcut for container of CaloClusterEntry object
-    typedef LHCb::CaloCluster::Entries Digits;
+    using Digits = LHCb::CaloCluster::Entries;
     /// The shortcut for CaloPosition type
-    typedef LHCb::CaloPosition Position;
+    using Position = LHCb::CaloPosition;
 
     /// CaloCluster type
     enum Type { Undefined = 0, Invalid, CellularAutomaton, Area3x3, Area2x3x3 };
 
     /// Default constructor
-    CaloCluster() : m_type( LHCb::CaloCluster::Type::Undefined ), m_seed(), m_entries(), m_position() {}
+    CaloCluster() = default;
 
     /// Copy Constructor
     CaloCluster( const LHCb::CaloCluster& right )
@@ -92,29 +92,29 @@ namespace LHCb {
         , m_position( right.position() ) {}
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve the energy @attention it is just a shortcut!
-    double e() const;
+    [[nodiscard]] double e() const;
 
     /// Retrieve const  The type of the cluster
-    const LHCb::CaloCluster::Type& type() const;
+    [[nodiscard]] const LHCb::CaloCluster::Type& type() const;
 
     /// Update  The type of the cluster
     void setType( const LHCb::CaloCluster::Type& value );
 
     /// Retrieve const  The cellID of the seed digit for the cluster
-    const LHCb::CaloCellID& seed() const;
+    [[nodiscard]] const LHCb::CaloCellID& seed() const;
 
     /// Update  The cellID of the seed digit for the cluster
     void setSeed( const LHCb::CaloCellID& value );
 
     /// Retrieve const  The cluster contents itself - entries : digits with their statuses
-    const std::vector<LHCb::CaloClusterEntry>& entries() const;
+    [[nodiscard]] const std::vector<LHCb::CaloClusterEntry>& entries() const;
 
     /// Retrieve  The cluster contents itself - entries : digits with their statuses
     std::vector<LHCb::CaloClusterEntry>& entries();
@@ -123,7 +123,7 @@ namespace LHCb {
     void setEntries( const std::vector<LHCb::CaloClusterEntry>& value );
 
     /// Retrieve const  Cluster parameters: the position and the spread
-    const LHCb::CaloCluster::Position& position() const;
+    [[nodiscard]] const LHCb::CaloCluster::Position& position() const;
 
     /// Retrieve  Cluster parameters: the position and the spread
     LHCb::CaloCluster::Position& position();
@@ -135,13 +135,13 @@ namespace LHCb {
 
   protected:
     /// Shortcut for own base class
-    typedef KeyedObject<int> Base;
+    using Base = KeyedObject<int>;
 
   private:
     /// Assignment operator
-    CaloCluster& operator=( const LHCb::CaloCluster& rhs );
+    CaloCluster& operator=( const LHCb::CaloCluster& rhs ) = delete;
 
-    LHCb::CaloCluster::Type             m_type;    ///< The type of the cluster
+    LHCb::CaloCluster::Type             m_type{LHCb::CaloCluster::Type::Undefined}; ///< The type of the cluster
     LHCb::CaloCellID                    m_seed;    ///< The cellID of the seed digit for the cluster
     std::vector<LHCb::CaloClusterEntry> m_entries; ///< The cluster contents itself - entries : digits with their
                                                    ///< statuses

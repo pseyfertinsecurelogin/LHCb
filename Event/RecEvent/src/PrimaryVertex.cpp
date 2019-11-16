@@ -66,16 +66,18 @@ namespace LHCb {
     // add all tracks. may want to use a 'zip' construction here ... in the future
     const auto N = recvertex.tracks().size();
     m_tracks.reserve( N );
-    for ( size_t i = 0; i < N; ++i )
-      if ( recvertex.tracks()[i] )
+    for ( size_t i = 0; i < N; ++i ) {
+      if ( recvertex.tracks()[i] ) {
         m_tracks.push_back( PrimaryVertexTrack( *( recvertex.tracks()[i] ), recvertex.weights()[i], m_refZ ) );
+      }
+    }
     setNDoF( 2 * m_tracks.size() - 3 );
     // sort the tracks by ID
     std::sort( m_tracks.begin(), m_tracks.end() );
     // compute the derivatives by adding everything up
     initCache();
     // refit if requested
-    if ( refit ) fit();
+    if ( refit ) { fit(); }
   }
 
   void PrimaryVertex::initCache() {
@@ -126,7 +128,7 @@ namespace LHCb {
     if ( nremoved > 0 ) {
       setNDoF( this->nDoF() - 2 * nremoved );
       const bool success = fit();
-      if ( !success ) nremoved = -1;
+      if ( !success ) { nremoved = -1; }
     }
     return nremoved;
   }
@@ -172,7 +174,7 @@ namespace LHCb {
                                        Gaudi::SymMatrix3x3& cov ) const {
     const auto                 N = tracksToRemove.size();
     std::vector<VeloSegmentID> idsToRemove( N );
-    for ( unsigned int i = 0; i < N; ++i ) idsToRemove[i] = uniqueVeloSegmentID( *tracksToRemove[i] );
+    for ( unsigned int i = 0; i < N; ++i ) { idsToRemove[i] = uniqueVeloSegmentID( *tracksToRemove[i] ); }
     return unbiasedPosition( idsToRemove, pos, cov );
   }
 

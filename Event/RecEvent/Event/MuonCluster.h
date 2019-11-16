@@ -53,16 +53,7 @@ namespace LHCb {
     MuonCluster( const MuonCluster& clu );
 
     /// Default Constructor
-    MuonCluster()
-        : m_x( 0.0 )
-        , m_y( 0.0 )
-        , m_z( 0.0 )
-        , m_xmin( 0.0 )
-        , m_ymin( 0.0 )
-        , m_zmin( 0.0 )
-        , m_xmax( 0.0 )
-        , m_ymax( 0.0 )
-        , m_zmax( 0.0 ) {}
+    MuonCluster() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -157,18 +148,17 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MuonCluster& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    float                           m_x;      ///< average x position of the cluster
-    float                           m_y;      ///< average y position of the cluster
-    float                           m_z;      ///< average z position of the cluster
-    float                           m_xmin;   ///< left x position of the cluster
-    float                           m_ymin;   ///< left y position of the cluster
-    float                           m_zmin;   ///< left z position of the cluster
-    float                           m_xmax;   ///< right x position of the cluster
-    float                           m_ymax;   ///< right y position of the cluster
-    float                           m_zmax;   ///< right z position of the cluster
-    SmartRefVector<LHCb::MuonCoord> m_coords; ///< References to the MuonCoords
+    float                           m_x{0.0};    ///< average x position of the cluster
+    float                           m_y{0.0};    ///< average y position of the cluster
+    float                           m_z{0.0};    ///< average z position of the cluster
+    float                           m_xmin{0.0}; ///< left x position of the cluster
+    float                           m_ymin{0.0}; ///< left y position of the cluster
+    float                           m_zmin{0.0}; ///< left z position of the cluster
+    float                           m_xmax{0.0}; ///< right x position of the cluster
+    float                           m_ymax{0.0}; ///< right y position of the cluster
+    float                           m_zmax{0.0}; ///< right z position of the cluster
+    SmartRefVector<LHCb::MuonCoord> m_coords;    ///< References to the MuonCoords
 
   }; // class MuonCluster
 
@@ -282,46 +272,38 @@ inline void LHCb::MuonCluster::clearCoords() { m_coords.clear(); }
 inline void LHCb::MuonCluster::addPad( LHCb::MuonCoord* coord, float x, float dx, float y, float dy, float z,
                                        float dz ) {
 
-  if ( checkPad( coord ) ) return;
+  if ( checkPad( coord ) ) { return; }
   addToCoords( coord );
-  if ( m_xmin > x - dx ) m_xmin = x - dx;
-  if ( m_ymin > y - dy ) m_ymin = y - dy;
-  if ( m_zmin > z - dz ) m_zmin = z - dz;
-  if ( m_xmax > x + dx ) m_xmax = x + dx;
-  if ( m_ymax > y + dy ) m_ymax = y + dy;
-  if ( m_zmax > z + dz ) m_zmax = z + dz;
+  if ( m_xmin > x - dx ) { m_xmin = x - dx; }
+  if ( m_ymin > y - dy ) { m_ymin = y - dy; }
+  if ( m_zmin > z - dz ) { m_zmin = z - dz; }
+  if ( m_xmax > x + dx ) { m_xmax = x + dx; }
+  if ( m_ymax > y + dy ) { m_ymax = y + dy; }
+  if ( m_zmax > z + dz ) { m_zmax = z + dz; }
 }
 
 inline void LHCb::MuonCluster::addPad( LHCb::MuonCoord* coord ) {
 
-  if ( checkPad( coord ) ) return;
-  addToCoords( coord );
+  if ( !checkPad( coord ) ) { addToCoords( coord ); }
 }
 
 inline bool LHCb::MuonCluster::checkPad( const LHCb::MuonCoord* coord ) {
 
-  SmartRefVector<LHCb::MuonCoord>::iterator it;
-  for ( it = m_coords.begin(); it != m_coords.end(); it++ ) {
-    LHCb::MuonCoord* mycoord = *it;
-    if ( mycoord->key() == coord->key() ) return true;
-  }
-  return false;
+  return std::any_of( m_coords.begin(), m_coords.end(),
+                      [&]( const LHCb::MuonCoord* c ) { return c->key() == coord->key(); } );
 }
 
 inline void LHCb::MuonCluster::mergeCluster( LHCb::MuonCluster* cluster ) {
 
-  if ( cluster->xmin() < m_xmin ) m_xmin = cluster->xmin();
-  if ( cluster->ymin() < m_ymin ) m_ymin = cluster->ymin();
-  if ( cluster->zmin() < m_zmin ) m_zmin = cluster->zmin();
-  if ( cluster->xmax() > m_xmax ) m_xmax = cluster->xmax();
-  if ( cluster->ymax() > m_ymax ) m_ymax = cluster->ymax();
-  if ( cluster->zmax() > m_zmax ) m_zmax = cluster->zmax();
-  SmartRefVector<LHCb::MuonCoord>::const_iterator it;
+  if ( cluster->xmin() < m_xmin ) { m_xmin = cluster->xmin(); }
+  if ( cluster->ymin() < m_ymin ) { m_ymin = cluster->ymin(); }
+  if ( cluster->zmin() < m_zmin ) { m_zmin = cluster->zmin(); }
+  if ( cluster->xmax() > m_xmax ) { m_xmax = cluster->xmax(); }
+  if ( cluster->ymax() > m_ymax ) { m_ymax = cluster->ymax(); }
+  if ( cluster->zmax() > m_zmax ) { m_zmax = cluster->zmax(); }
 
-  for ( it = cluster->coords().begin(); it != cluster->coords().end(); it++ ) {
-
-    const LHCb::MuonCoord* mycoord = *it;
-    if ( checkPad( mycoord ) ) continue;
-    addToCoords( mycoord );
+  for ( const auto& c : cluster->coords() ) {
+    if ( checkPad( c ) ) { continue; }
+    addToCoords( c );
   }
 }

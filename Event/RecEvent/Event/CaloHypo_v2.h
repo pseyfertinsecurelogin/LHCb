@@ -68,7 +68,7 @@ namespace LHCb::Event {
       using Hypothesis = Enum::CaloHypo::Hypothesis;
 
       /// Shortcut for the type of CaloPosition object
-      typedef LHCb::CaloPosition Position;
+      using Position = LHCb::CaloPosition;
 
       /// Constructor
       CaloHypo( Hypothesis hypothesis, double lh, Position pos, std::vector<CaloDigit> digits,
@@ -96,30 +96,30 @@ namespace LHCb::Event {
       std::ostream& fillStream( std::ostream& s ) const;
 
       /// Retrieve const  The hypothesis's ID
-      const Hypothesis& hypothesis() const { return m_hypothesis; }
+      [[nodiscard]] const Hypothesis& hypothesis() const { return m_hypothesis; }
 
       /// Update  The hypothesis's ID
       void setHypothesis( const Hypothesis& value ) { m_hypothesis = value; }
 
       /// Retrieve const  The Hypothesis's likelihood
-      float likelihood() const { return m_lh; }
+      [[nodiscard]] float likelihood() const { return m_lh; }
 
       /// Update  The Hypothesis's likelihood
       void setLikelihood( const double& value ) { m_lh = value; };
 
       /// Retrieve const  The hypothesis's CaloPosition object
-      const auto& position() const { return m_position; }
+      [[nodiscard]] const auto& position() const { return m_position; }
 
       /// Update the hypothesis's CaloPosition object.
       void setPosition( Position pos ) { m_position = std::move( pos ); }
 
       // /// Retrieve the energy @attention it is just a shortcut!
       // double e() const { return m_position.e() ? m_position.e() : 0; }
-      double e() const { return m_position.e(); }
+      [[nodiscard]] double e() const { return m_position.e(); }
 
       // retrive the digits
-      const std::vector<CaloDigit>& digits() const { return m_digits; }
-      std::vector<CaloDigit>&       digits() { return m_digits; }
+      [[nodiscard]] const std::vector<CaloDigit>& digits() const { return m_digits; }
+      std::vector<CaloDigit>&                     digits() { return m_digits; }
 
       /// reserve space for n CaloDigits
       void reserveToDigits( unsigned int n = 9 ) {
@@ -131,13 +131,13 @@ namespace LHCb::Event {
       void addToDigits( CaloDigit value ) { m_digits.emplace_back( std::move( value ) ); }
 
       /// Retrieve const the CaloCluster object
-      const std::vector<const CaloCluster*>& clusters() const { return m_clusters; }
+      [[nodiscard]] const std::vector<const CaloCluster*>& clusters() const { return m_clusters; }
 
       /// Update the hypothesis's CaloClusterr object.
       void setClusters( CaloCluster* value ) { m_clusters.emplace_back( value ); }
 
       // retrieve the hypos for merged \piz
-      const std::vector<const CaloHypo*>& hypos() const { return m_hypos; }
+      [[nodiscard]] const std::vector<const CaloHypo*>& hypos() const { return m_hypos; }
 
       /// reserve space for n CaloHypos
       void reserveToHypos( unsigned int n = 2 ) {

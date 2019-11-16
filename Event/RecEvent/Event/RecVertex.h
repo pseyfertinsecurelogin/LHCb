@@ -48,20 +48,20 @@ namespace LHCb {
   class RecVertex : public VertexBase {
   public:
     /// typedef for std::vector of RecVertex
-    typedef std::vector<RecVertex*>       Vector;
-    typedef std::vector<const RecVertex*> ConstVector;
+    using Vector      = std::vector<RecVertex*>;
+    using ConstVector = std::vector<const RecVertex*>;
 
     /// typedef for KeyedContainer of RecVertex
     typedef KeyedContainer<RecVertex, Containers::HashMap> Container;
 
     /// Container type for shared PVs (without ownership)
-    typedef SharedObjectsContainer<LHCb::RecVertex> Selection;
+    using Selection = SharedObjectsContainer<LHCb::RecVertex>;
     /// For uniform access to containers in TES (KeyedContainer,SharedContainer)
-    typedef Gaudi::NamedRange_<ConstVector> Range;
+    using Range = Gaudi::NamedRange_<ConstVector>;
     /// Type for storing a Track pointer with its associated weight
     typedef std::pair<const LHCb::Track*, float> TrackWithWeight;
     /// Type for a vector of TrackWithWeight objects
-    typedef std::vector<TrackWithWeight> TrackWithWeightVector;
+    using TrackWithWeightVector = std::vector<TrackWithWeight>;
 
     /// Describe how the vertex was made (NEED MORE)
     enum RecVertexType {
@@ -74,16 +74,13 @@ namespace LHCb {
     };
 
     /// create a vertex with a selected key
-    explicit RecVertex( int key ) : VertexBase( key ), m_technique( RecVertex::RecVertexType::Unknown ) {}
+    explicit RecVertex( int key ) : VertexBase( key ) {}
 
     /// Constructor from a point
-    RecVertex( const Gaudi::XYZPoint& point ) : VertexBase( point ), m_technique( RecVertex::RecVertexType::Unknown ) {}
+    RecVertex( const Gaudi::XYZPoint& point ) : VertexBase( point ) {}
 
     /// Default Constructor
-    RecVertex() : m_technique( RecVertex::RecVertexType::Unknown ), m_tracks(), m_weights() {}
-
-    /// Default Destructor
-    virtual ~RecVertex() {}
+    RecVertex() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -102,7 +99,7 @@ namespace LHCb {
     void addToTracks( const LHCb::Track* track );
 
     /// Add a track to the track list, with the given weight
-    void addToTracks( const LHCb::Track* track, const float weight );
+    void addToTracks( const LHCb::Track* track, float weight );
 
     /// Remove the given track from the list of tracks and its associated weight
     void removeFromTracks( const LHCb::Track* track );
@@ -118,7 +115,7 @@ namespace LHCb {
 
     /// Set the weight for the given Track. Returns true if weight is successfuly set, false if the track is not part of
     /// this vertex
-    bool setTrackWeight( const LHCb::Track* track, const float weight );
+    bool setTrackWeight( const LHCb::Track* track, float weight );
 
     /// Returns a pair containing a bool, indicating if the track was part of this vertex or not, and its associated
     /// weight (0 if track not included)
@@ -143,9 +140,9 @@ namespace LHCb {
 
   protected:
   private:
-    RecVertexType               m_technique; ///< How the vertex was made
-    SmartRefVector<LHCb::Track> m_tracks;    ///< Tracks this vertex was made from
-    std::vector<float>          m_weights;   ///< vector of weights for each track in this PV
+    RecVertexType               m_technique{RecVertex::RecVertexType::Unknown}; ///< How the vertex was made
+    SmartRefVector<LHCb::Track> m_tracks;                                       ///< Tracks this vertex was made from
+    std::vector<float>          m_weights; ///< vector of weights for each track in this PV
 
   }; // class RecVertex
 

@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #include "Event/RecVertex_v2.h"
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <range/v3/view.hpp>
 
@@ -29,7 +29,7 @@ std::ostream& LHCb::Event::v2::RecVertex::fillStream( std::ostream& s ) const {
 
 bool LHCb::Event::v2::RecVertex::removeFromTracks( const RecVertex::Track* track ) {
   auto it = std::find_if( begin( m_tracks ), end( m_tracks ), [track]( auto& wt ) { return wt.track == track; } );
-  if ( it == end( m_tracks ) ) return false;
+  if ( it == end( m_tracks ) ) { return false; }
   m_tracks.erase( it );
   return true;
 }

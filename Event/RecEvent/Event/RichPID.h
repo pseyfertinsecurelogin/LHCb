@@ -18,6 +18,7 @@
 #include "Kernel/RichParticleIDType.h"
 #include "Kernel/RichRadiatorType.h"
 #include "gsl/gsl_sf_erf.h"
+#include <cmath>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -53,14 +54,14 @@ namespace LHCb {
   class RichPID : public KeyedObject<int> {
   public:
     /// typedef for std::vector of RichPID
-    typedef std::vector<RichPID*>       Vector;
-    typedef std::vector<const RichPID*> ConstVector;
+    using Vector      = std::vector<RichPID*>;
+    using ConstVector = std::vector<const RichPID*>;
 
     /// typedef for KeyedContainer of RichPID
     typedef KeyedContainer<RichPID, Containers::HashMap> Container;
 
     /// Constructor from data fields
-    RichPID( const Rich::ParticleIDType pid, const LHCb::Track* track, const std::vector<float>& dllValues );
+    RichPID( Rich::ParticleIDType pid, const LHCb::Track* track, std::vector<float> dllValues );
 
     /// Copy constructor. Creates a new RichPID object with the same pid information
     RichPID( const LHCb::RichPID& pid )
@@ -70,45 +71,42 @@ namespace LHCb {
         , m_track( pid.m_track ) {}
 
     /// Default Constructor
-    RichPID() : m_pidResultCode( 0 ), m_particleLLValues( Rich::NParticleTypes, 0 ) {}
-
-    /// Default Destructor
-    virtual ~RichPID() {}
+    RichPID() : m_particleLLValues( Rich::NParticleTypes, 0 ) {}
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    const CLID&        clID() const override { return LHCb::RichPID::classID(); }
+    static const CLID& classID() { return CLID_RichPID; }
 
     /// Returns the raw gaussian probability value for a given particle species
-    float particleRawProb( const Rich::ParticleIDType type ) const;
+    float particleRawProb( Rich::ParticleIDType type ) const;
 
     /// Returns the normalised gaussian probability value for a given particle species
-    float particleNormProb( const Rich::ParticleIDType type ) const;
+    float particleNormProb( Rich::ParticleIDType type ) const;
 
     /// Returns the delta LL value for a given hypothesis
-    float particleDeltaLL( const Rich::ParticleIDType type ) const;
+    float particleDeltaLL( Rich::ParticleIDType type ) const { return m_particleLLValues[type]; }
 
     /// Sets the particle delta LL value for the given hypothesis
-    void setParticleDeltaLL( const Rich::ParticleIDType type, const float deltaLL );
+    void setParticleDeltaLL( Rich::ParticleIDType type, float deltaLL ) { m_particleLLValues[type] = deltaLL; }
 
     /// Sets the particle delta LL value for the given hypothesis
-    void setParticleLLValues( std::vector<float>&& value );
+    void setParticleLLValues( std::vector<float>&& value ) { m_particleLLValues = std::move( value ); }
 
     /// Boolean method to check if the given radiator was used to create this PID result (i.e. if the associated track
     /// was found to traverse the radiator in a manner that would have produced detectable Cherenkov photons
-    bool traversedRadiator( const Rich::RadiatorType radiator ) const;
+    bool traversedRadiator( Rich::RadiatorType radiator ) const;
 
     /// Verify if a given hypothesis was above threshold and the associated track present in any radiator
-    bool isAboveThreshold( const Rich::ParticleIDType type ) const;
+    bool isAboveThreshold( Rich::ParticleIDType type ) const;
 
     /// Set a given hypothesis above threshold and the associated track present in any radiator
-    void setAboveThreshold( const Rich::ParticleIDType type, const bool flag );
+    void setAboveThreshold( Rich::ParticleIDType type, bool flag );
 
     /// Returns the signed sigma separation beween 2 particle hypotheses (first relative to last)
-    float nSigmaSeparation( const Rich::ParticleIDType firstPart, const Rich::ParticleIDType lastPart ) const;
+    float nSigmaSeparation( Rich::ParticleIDType firstPart, Rich::ParticleIDType lastPart ) const;
 
     /// Returns true if the given mass hypothesis is within the given number of sigmas separation from the best PID type
-    bool isConsistentNSigma( const Rich::ParticleIDType type, const float nsigma ) const;
+    bool isConsistentNSigma( Rich::ParticleIDType type, float nsigma ) const;
 
     /// Textual representation of PID type
     std::string pidType() const;
@@ -117,159 +115,153 @@ namespace LHCb {
     Rich::ParticleIDType bestParticleID() const;
 
     /// set the best particle ID
-    void setBestParticleID( const Rich::ParticleIDType type );
+    void setBestParticleID( Rich::ParticleIDType type );
 
     /// Print this RichPID data object in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  Bit-packed information (Best particle ID and History) for the RichPID result
-    unsigned int pidResultCode() const;
+    unsigned int pidResultCode() const { return m_pidResultCode; }
 
     /// Update  Bit-packed information (Best particle ID and History) for the RichPID result
-    void setPidResultCode( unsigned int value );
+    void setPidResultCode( unsigned int value ) { m_pidResultCode = value; }
 
     /// Retrieve Information from aerogel was used to form this PID result
-    bool usedAerogel() const;
+    bool usedAerogel() const { return test<usedAerogelMask>(); }
 
     /// Update Information from aerogel was used to form this PID result
-    void setUsedAerogel( bool value );
+    void setUsedAerogel( bool value ) { set<usedAerogelMask>( value ); }
 
     /// Retrieve Information from Rich1 gas was used to form this PID result
-    bool usedRich1Gas() const;
+    bool usedRich1Gas() const { return test<usedRich1GasMask>(); }
 
     /// Update Information from Rich1 gas was used to form this PID result
-    void setUsedRich1Gas( bool value );
+    void setUsedRich1Gas( bool value ) { set<usedRich1GasMask>( value ); }
 
     /// Retrieve Information from Rich2 gas was used to form this PID result
-    bool usedRich2Gas() const;
+    bool usedRich2Gas() const { return test<usedRich2GasMask>(); }
 
     /// Update Information from Rich2 gas was used to form this PID result
-    void setUsedRich2Gas( bool value );
+    void setUsedRich2Gas( bool value ) { set<usedRich2GasMask>( value ); }
 
     /// Retrieve The electron hypothesis is above threshold in at least one active radiator
-    bool electronHypoAboveThres() const;
+    bool electronHypoAboveThres() const { return test<electronHypoAboveThresMask>(); }
 
     /// Update The electron hypothesis is above threshold in at least one active radiator
-    void setElectronHypoAboveThres( bool value );
+    void setElectronHypoAboveThres( bool value ) { set<electronHypoAboveThresMask>( value ); }
 
     /// Retrieve The muon hypothesis is above threshold in at least one active radiator
-    bool muonHypoAboveThres() const;
+    bool muonHypoAboveThres() const { return test<muonHypoAboveThresMask>(); }
 
     /// Update The muon hypothesis is above threshold in at least one active radiator
-    void setMuonHypoAboveThres( bool value );
+    void setMuonHypoAboveThres( bool value ) { set<muonHypoAboveThresMask>( value ); }
 
     /// Retrieve The pion hypothesis is above threshold in at least one active radiator
-    bool pionHypoAboveThres() const;
+    bool pionHypoAboveThres() const { return test<pionHypoAboveThresMask>(); }
 
     /// Update The pion hypothesis is above threshold in at least one active radiator
-    void setPionHypoAboveThres( bool value );
+    void setPionHypoAboveThres( bool value ) { set<pionHypoAboveThresMask>( value ); }
 
     /// Retrieve The kaon hypothesis is above threshold in at least one active radiator
-    bool kaonHypoAboveThres() const;
+    bool kaonHypoAboveThres() const { return test<kaonHypoAboveThresMask>(); }
 
     /// Update The kaon hypothesis is above threshold in at least one active radiator
-    void setKaonHypoAboveThres( bool value );
+    void setKaonHypoAboveThres( bool value ) { set<kaonHypoAboveThresMask>( value ); }
 
     /// Retrieve The proton hypothesis is above threshold in at least one active radiator
-    bool protonHypoAboveThres() const;
+    bool protonHypoAboveThres() const { return test<protonHypoAboveThresMask>(); }
 
     /// Update The proton hypothesis is above threshold in at least one active radiator
-    void setProtonHypoAboveThres( bool value );
+    void setProtonHypoAboveThres( bool value ) { set<protonHypoAboveThresMask>( value ); }
 
     /// Retrieve RICH Offline Global PID result
-    bool offlineGlobal() const;
+    bool offlineGlobal() const { return test<offlineGlobalMask>(); }
 
     /// Update RICH Offline Global PID result
-    void setOfflineGlobal( bool value );
+    void setOfflineGlobal( bool value ) { return set<offlineGlobalMask>( value ); }
 
     /// Retrieve RICH Offline Local PID result
-    bool offlineLocal() const;
+    bool offlineLocal() const { return test<offlineLocalMask>(); }
 
     /// Update RICH Offline Local PID result
-    void setOfflineLocal( bool value );
+    void setOfflineLocal( bool value ) { set<offlineLocalMask>( value ); }
 
     /// Retrieve RICH Offline Ring Refit PID result
-    bool ringRefit() const;
+    bool ringRefit() const { return test<ringRefitMask>(); }
 
     /// Update RICH Offline Ring Refit PID result
-    void setRingRefit( bool value );
+    void setRingRefit( bool value ) { set<ringRefitMask>( value ); }
 
     /// Retrieve RICH HLT Local PID result
-    bool hltLocal() const;
+    bool hltLocal() const { return test<hltLocalMask>(); }
 
     /// Update RICH HLT Local PID result
-    void setHltLocal( bool value );
+    void setHltLocal( bool value ) { set<hltLocalMask>( value ); }
 
     /// Retrieve RICH HLT Global PID result
-    bool hltGlobal() const;
+    bool hltGlobal() const { return test<hltGlobalMask>(); }
 
     /// Update RICH HLT Global PID result
-    void setHltGlobal( bool value );
+    void setHltGlobal( bool value ) { set<hltGlobalMask>( value ); }
 
     /// Retrieve The deuteron hypothesis is above threshold in at least one active radiator
-    bool deuteronHypoAboveThres() const;
+    bool deuteronHypoAboveThres() const { return test<deuteronHypoAboveThresMask>(); }
 
     /// Update The deuteron hypothesis is above threshold in at least one active radiator
-    void setDeuteronHypoAboveThres( bool value );
+    void setDeuteronHypoAboveThres( bool value ) { set<deuteronHypoAboveThresMask>( value ); }
 
     /// Retrieve const  Vector of particle hypothesis log likelihood values
-    const std::vector<float>& particleLLValues() const;
+    const std::vector<float>& particleLLValues() const { return m_particleLLValues; }
 
     /// Update  Vector of particle hypothesis log likelihood values
-    void setParticleLLValues( const std::vector<float>& value );
+    void setParticleLLValues( const std::vector<float>& value ) { m_particleLLValues = value; }
 
     /// Retrieve (const)  Associated reconstructed Track
-    const LHCb::Track* track() const;
+    const LHCb::Track* track() const { return m_track; }
 
     /// Update  Associated reconstructed Track
-    void setTrack( const SmartRef<LHCb::Track>& value );
+    void setTrack( const SmartRef<LHCb::Track>& value ) { m_track = value; }
 
     /// Update (pointer)  Associated reconstructed Track
-    void setTrack( const LHCb::Track* value );
+    void setTrack( const LHCb::Track* value ) { m_track = value; }
 
     friend std::ostream& operator<<( std::ostream& str, const RichPID& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
+    template <unsigned int mask>
+    void set( bool value ) {
+      m_pidResultCode = ( m_pidResultCode & ~mask ) | ( -value & mask );
+    }
+    template <unsigned int mask>
+    bool test() const {
+      return ( m_pidResultCode & mask ) != 0;
+    }
+
     /// Offsets of bitfield pidResultCode
     enum pidResultCodeBits {
-      packedBestParticleIDBits   = 0,
-      usedAerogelBits            = 4,
-      usedRich1GasBits           = 5,
-      usedRich2GasBits           = 6,
-      electronHypoAboveThresBits = 7,
-      muonHypoAboveThresBits     = 8,
-      pionHypoAboveThresBits     = 9,
-      kaonHypoAboveThresBits     = 10,
-      protonHypoAboveThresBits   = 11,
-      offlineGlobalBits          = 12,
-      offlineLocalBits           = 13,
-      ringRefitBits              = 14,
-      hltLocalBits               = 15,
-      hltGlobalBits              = 16,
-      deuteronHypoAboveThresBits = 17
+      packedBestParticleIDBits = 0,
     };
 
     /// Bitmasks for bitfield pidResultCode
-    enum pidResultCodeMasks {
-      packedBestParticleIDMask   = 0xfL,
-      usedAerogelMask            = 0x10L,
-      usedRich1GasMask           = 0x20L,
-      usedRich2GasMask           = 0x40L,
-      electronHypoAboveThresMask = 0x80L,
-      muonHypoAboveThresMask     = 0x100L,
-      pionHypoAboveThresMask     = 0x200L,
-      kaonHypoAboveThresMask     = 0x400L,
-      protonHypoAboveThresMask   = 0x800L,
-      offlineGlobalMask          = 0x1000L,
-      offlineLocalMask           = 0x2000L,
-      ringRefitMask              = 0x4000L,
-      hltLocalMask               = 0x8000L,
-      hltGlobalMask              = 0x10000L,
-      deuteronHypoAboveThresMask = 0x20000L
+    enum pidResultCodeMasks : unsigned int {
+      packedBestParticleIDMask   = 0xfU,
+      usedAerogelMask            = 0x10U,
+      usedRich1GasMask           = 0x20U,
+      usedRich2GasMask           = 0x40U,
+      electronHypoAboveThresMask = 0x80U,
+      muonHypoAboveThresMask     = 0x100U,
+      pionHypoAboveThresMask     = 0x200U,
+      kaonHypoAboveThresMask     = 0x400U,
+      protonHypoAboveThresMask   = 0x800U,
+      offlineGlobalMask          = 0x1000U,
+      offlineLocalMask           = 0x2000U,
+      ringRefitMask              = 0x4000U,
+      hltLocalMask               = 0x8000U,
+      hltGlobalMask              = 0x10000U,
+      deuteronHypoAboveThresMask = 0x20000U
     };
 
-    unsigned int m_pidResultCode; ///< Bit-packed information (Best particle ID and History) for the RichPID result
+    unsigned int m_pidResultCode{0}; ///< Bit-packed information (Best particle ID and History) for the RichPID result
     std::vector<float>    m_particleLLValues; ///< Vector of particle hypothesis log likelihood values
     SmartRef<LHCb::Track> m_track;            ///< Associated reconstructed Track
 
@@ -286,169 +278,16 @@ namespace LHCb {
 
 // Including forward declarations
 
-inline LHCb::RichPID::RichPID( const Rich::ParticleIDType pid, const LHCb::Track* track,
-                               const std::vector<float>& dllValues )
-    : m_pidResultCode( 0 ), m_particleLLValues( dllValues ), m_track( track ) {
+inline LHCb::RichPID::RichPID( const Rich::ParticleIDType pid, const LHCb::Track* track, std::vector<float> dllValues )
+    : m_pidResultCode( 0 ), m_particleLLValues( std::move( dllValues ) ), m_track( track ) {
 
   setBestParticleID( pid );
 }
 
-inline const CLID& LHCb::RichPID::clID() const { return LHCb::RichPID::classID(); }
-
-inline const CLID& LHCb::RichPID::classID() { return CLID_RichPID; }
-
-inline unsigned int LHCb::RichPID::pidResultCode() const { return m_pidResultCode; }
-
-inline void LHCb::RichPID::setPidResultCode( unsigned int value ) { m_pidResultCode = value; }
-
-inline bool LHCb::RichPID::usedAerogel() const {
-  return 0 != ( ( m_pidResultCode & usedAerogelMask ) >> usedAerogelBits );
-}
-
-inline void LHCb::RichPID::setUsedAerogel( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~usedAerogelMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << usedAerogelBits ) & usedAerogelMask );
-}
-
-inline bool LHCb::RichPID::usedRich1Gas() const {
-  return 0 != ( ( m_pidResultCode & usedRich1GasMask ) >> usedRich1GasBits );
-}
-
-inline void LHCb::RichPID::setUsedRich1Gas( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~usedRich1GasMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << usedRich1GasBits ) & usedRich1GasMask );
-}
-
-inline bool LHCb::RichPID::usedRich2Gas() const {
-  return 0 != ( ( m_pidResultCode & usedRich2GasMask ) >> usedRich2GasBits );
-}
-
-inline void LHCb::RichPID::setUsedRich2Gas( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~usedRich2GasMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << usedRich2GasBits ) & usedRich2GasMask );
-}
-
-inline bool LHCb::RichPID::electronHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & electronHypoAboveThresMask ) >> electronHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setElectronHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~electronHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << electronHypoAboveThresBits ) & electronHypoAboveThresMask );
-}
-
-inline bool LHCb::RichPID::muonHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & muonHypoAboveThresMask ) >> muonHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setMuonHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~muonHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << muonHypoAboveThresBits ) & muonHypoAboveThresMask );
-}
-
-inline bool LHCb::RichPID::pionHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & pionHypoAboveThresMask ) >> pionHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setPionHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~pionHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << pionHypoAboveThresBits ) & pionHypoAboveThresMask );
-}
-
-inline bool LHCb::RichPID::kaonHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & kaonHypoAboveThresMask ) >> kaonHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setKaonHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~kaonHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << kaonHypoAboveThresBits ) & kaonHypoAboveThresMask );
-}
-
-inline bool LHCb::RichPID::protonHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & protonHypoAboveThresMask ) >> protonHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setProtonHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~protonHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << protonHypoAboveThresBits ) & protonHypoAboveThresMask );
-}
-
-inline bool LHCb::RichPID::offlineGlobal() const {
-  return 0 != ( ( m_pidResultCode & offlineGlobalMask ) >> offlineGlobalBits );
-}
-
-inline void LHCb::RichPID::setOfflineGlobal( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~offlineGlobalMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << offlineGlobalBits ) & offlineGlobalMask );
-}
-
-inline bool LHCb::RichPID::offlineLocal() const {
-  return 0 != ( ( m_pidResultCode & offlineLocalMask ) >> offlineLocalBits );
-}
-
-inline void LHCb::RichPID::setOfflineLocal( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~offlineLocalMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << offlineLocalBits ) & offlineLocalMask );
-}
-
-inline bool LHCb::RichPID::ringRefit() const { return 0 != ( ( m_pidResultCode & ringRefitMask ) >> ringRefitBits ); }
-
-inline void LHCb::RichPID::setRingRefit( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~ringRefitMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << ringRefitBits ) & ringRefitMask );
-}
-
-inline bool LHCb::RichPID::hltLocal() const { return 0 != ( ( m_pidResultCode & hltLocalMask ) >> hltLocalBits ); }
-
-inline void LHCb::RichPID::setHltLocal( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~hltLocalMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << hltLocalBits ) & hltLocalMask );
-}
-
-inline bool LHCb::RichPID::hltGlobal() const { return 0 != ( ( m_pidResultCode & hltGlobalMask ) >> hltGlobalBits ); }
-
-inline void LHCb::RichPID::setHltGlobal( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~hltGlobalMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << hltGlobalBits ) & hltGlobalMask );
-}
-
-inline bool LHCb::RichPID::deuteronHypoAboveThres() const {
-  return 0 != ( ( m_pidResultCode & deuteronHypoAboveThresMask ) >> deuteronHypoAboveThresBits );
-}
-
-inline void LHCb::RichPID::setDeuteronHypoAboveThres( bool value ) {
-  unsigned int val = (unsigned int)value;
-  m_pidResultCode &= ~deuteronHypoAboveThresMask;
-  m_pidResultCode |= ( ( ( (unsigned int)val ) << deuteronHypoAboveThresBits ) & deuteronHypoAboveThresMask );
-}
-
-inline const std::vector<float>& LHCb::RichPID::particleLLValues() const { return m_particleLLValues; }
-
-inline void LHCb::RichPID::setParticleLLValues( const std::vector<float>& value ) { m_particleLLValues = value; }
-
-inline const LHCb::Track* LHCb::RichPID::track() const { return m_track; }
-
-inline void LHCb::RichPID::setTrack( const SmartRef<LHCb::Track>& value ) { m_track = value; }
-
-inline void LHCb::RichPID::setTrack( const LHCb::Track* value ) { m_track = value; }
-
 inline float LHCb::RichPID::particleRawProb( const Rich::ParticleIDType type ) const {
 
   const auto dll = particleDeltaLL( type );
-  return (float)( dll > 0 ? 1.0 - (float)gsl_sf_erf( std::sqrt( dll ) ) : 1.0 );
+  return dll > 0 ? 1.0F - (float)gsl_sf_erf( std::sqrt( dll ) ) : 1.0F;
 }
 
 inline float LHCb::RichPID::particleNormProb( const Rich::ParticleIDType type ) const {
@@ -458,26 +297,11 @@ inline float LHCb::RichPID::particleNormProb( const Rich::ParticleIDType type ) 
   return ( norm > 0 ? particleRawProb( type ) / norm : 0 );
 }
 
-inline float LHCb::RichPID::particleDeltaLL( const Rich::ParticleIDType type ) const {
-
-  return m_particleLLValues[type];
-}
-
-inline void LHCb::RichPID::setParticleDeltaLL( const Rich::ParticleIDType type, const float deltaLL ) {
-
-  m_particleLLValues[type] = deltaLL;
-}
-
-inline void LHCb::RichPID::setParticleLLValues( std::vector<float>&& value ) {
-
-  m_particleLLValues = std::forward<std::vector<float>>( value );
-}
-
 inline float LHCb::RichPID::nSigmaSeparation( const Rich::ParticleIDType firstPart,
                                               const Rich::ParticleIDType lastPart ) const {
 
   const auto dLL = m_particleLLValues[lastPart] - m_particleLLValues[firstPart];
-  return (float)( std::sqrt( fabs( 2.0f * dLL ) ) * ( dLL > 0 ? 1.0f : -1.0f ) );
+  return std::sqrt( std::abs( 2.0F * dLL ) ) * ( dLL > 0 ? 1.0F : -1.0F );
 }
 
 inline bool LHCb::RichPID::isConsistentNSigma( const Rich::ParticleIDType type, const float nsigma ) const {

@@ -65,51 +65,61 @@ namespace LHCb {
         , m_digitTDC2{rhs.m_digitTDC2} {}
 
     /// Default Constructor
-    MuonCoord() : m_digitTile(), m_digitTDC1( 0 ), m_digitTDC2( 0 ) {}
+    MuonCoord() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override { return LHCb::MuonCoord::classID(); }
+    static const CLID&        classID() { return CLID_MuonCoord; }
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// true if this pad should have crossed another logic channel but did not
-    bool uncrossed() const;
+    [[nodiscard]] bool uncrossed() const { return m_digitTile.size() < 2; }
 
     /// Average Time of the coord in TDC bit unit
-    float AverageTime();
+    [[nodiscard]] float AverageTime() const {
+      return uncrossed() ? float( digitTDC1() ) : ( float( digitTDC1() + digitTDC2() ) / 2.0F );
+    }
 
     /// Average Time of the coord in ns
-    float AverageTime_ns();
+    [[nodiscard]] float AverageTime_ns() const { return 25.0F / 16.0F * AverageTime(); };
 
     /// Time spread of the coord in TDC bit unit
-    float timeSpread();
+    [[nodiscard]] float timeSpread() const { return uncrossed() ? 0.F : ( float( digitTDC1() - digitTDC2() ) / 2.0F ); }
 
     /// Time spread of the coord in ns
-    float timeSpread_ns() const;
+    [[nodiscard]] float timeSpread_ns() const { return 25.0F / 16.0F * timeSpread(); }
 
     /// Retrieve const  list of address of MuonDgit used to cretate this MuonCoord
-    const std::vector<LHCb::MuonTileID>& digitTile() const;
+    [[nodiscard]] const std::vector<LHCb::MuonTileID>& digitTile() const { return m_digitTile; }
 
     /// Retrieve const  TDC time of the first digit
-    unsigned int digitTDC1() const;
+    [[nodiscard]] unsigned int digitTDC1() const { return m_digitTDC1; }
 
     /// Retrieve const  TDC time of the second (if present) digit
-    unsigned int digitTDC2() const;
+    [[nodiscard]] unsigned int digitTDC2() const { return m_digitTDC2; }
 
     friend std::ostream& operator<<( std::ostream& str, const MuonCoord& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    std::vector<LHCb::MuonTileID> m_digitTile; ///< list of address of MuonDgit used to cretate this MuonCoord
-    unsigned int                  m_digitTDC1; ///< TDC time of the first digit
-    unsigned int                  m_digitTDC2; ///< TDC time of the second (if present) digit
+    std::vector<LHCb::MuonTileID> m_digitTile;    ///< list of address of MuonDgit used to cretate this MuonCoord
+    unsigned int                  m_digitTDC1{0}; ///< TDC time of the first digit
+    unsigned int                  m_digitTDC2{0}; ///< TDC time of the second (if present) digit
 
   }; // class MuonCoord
 
   /// Definition of Keyed Container for MuonCoord
-  typedef KeyedContainer<MuonCoord, Containers::HashMap> MuonCoords;
+  using MuonCoords = KeyedContainer<MuonCoord, Containers::HashMap>;
+
+  inline std::ostream& MuonCoord::fillStream( std::ostream& s ) const {
+    s << "{ "
+      << "digitTile :	" << m_digitTile << std::endl
+      << "digitTDC1 :	" << m_digitTDC1 << std::endl
+      << "digitTDC2 :	" << m_digitTDC2 << std::endl
+      << " }";
+    return s;
+  }
 
 } // namespace LHCb
 
@@ -118,50 +128,3 @@ namespace LHCb {
 // -----------------------------------------------------------------------------
 
 // Including forward declarations
-
-inline const CLID& LHCb::MuonCoord::clID() const { return LHCb::MuonCoord::classID(); }
-
-inline const CLID& LHCb::MuonCoord::classID() { return CLID_MuonCoord; }
-
-inline std::ostream& LHCb::MuonCoord::fillStream( std::ostream& s ) const {
-  s << "{ "
-    << "digitTile :	" << m_digitTile << std::endl
-    << "digitTDC1 :	" << m_digitTDC1 << std::endl
-    << "digitTDC2 :	" << m_digitTDC2 << std::endl
-    << " }";
-  return s;
-}
-
-inline const std::vector<LHCb::MuonTileID>& LHCb::MuonCoord::digitTile() const { return m_digitTile; }
-
-inline unsigned int LHCb::MuonCoord::digitTDC1() const { return m_digitTDC1; }
-
-inline unsigned int LHCb::MuonCoord::digitTDC2() const { return m_digitTDC2; }
-
-inline bool LHCb::MuonCoord::uncrossed() const { return m_digitTile.size() < 2; }
-
-inline float LHCb::MuonCoord::AverageTime() {
-  if ( uncrossed() ) {
-    return (float)digitTDC1();
-  } else {
-    return (float)( digitTDC1() + digitTDC2() ) / 2.0f;
-  }
-}
-
-inline float LHCb::MuonCoord::AverageTime_ns() {
-  if ( uncrossed() ) {
-    return 25.0f / 16.0f * digitTDC1();
-  } else {
-    return 25.0f / 16.0f * (float)( digitTDC1() + digitTDC2() ) / 2.0f;
-  }
-}
-
-inline float LHCb::MuonCoord::timeSpread() {
-
-  return uncrossed() ? 0.f : (float)( ( digitTDC1() - digitTDC2() ) / 2.0f );
-}
-
-inline float LHCb::MuonCoord::timeSpread_ns() const {
-
-  return uncrossed() ? 0.f : ( 25.0f / 16.0f * (float)( digitTDC1() - digitTDC2() ) / 2.0f );
-}
