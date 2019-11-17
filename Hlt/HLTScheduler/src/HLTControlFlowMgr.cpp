@@ -236,8 +236,8 @@ StatusCode HLTControlFlowMgr::finalize() {
             ? std::clamp( 2u + std::max_element( m_AlgNames.begin(), m_AlgNames.end(),
                                                  []( auto const& a, auto const& b ) { return a.size() < b.size(); } )
                                    ->size(),
-                          std::size_t( 46u ), std::size_t( 100u ) )
-            : 46u );
+                          m_minNameColWidth.value(), m_maxNameColWidth.value() )
+            : m_minNameColWidth.value() );
   const auto sf1 = std::to_string( maxNameS + 5 );
   const auto sf2 = std::to_string( maxNameS + 4 );
   const auto sf3 = std::to_string( maxNameS + 2 );
@@ -363,7 +363,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
     SmartIF<IProperty> appmgr( serviceLocator() );
 
-    for ( AlgWrapper& toBeRun : m_definitlyRunTheseAlgs ) {
+    for ( AlgWrapper& toBeRun : m_definitelyRunTheseAlgs ) {
       try {
         if ( m_createTimingTable ) {
           uint64_t const start = __rdtsc();
@@ -739,11 +739,11 @@ void HLTControlFlowMgr::configureScheduling() {
 
   std::vector<Algorithm*> allAlgos; // temporarily save/count all algorithms
   allAlgos.reserve( 1000 );         // whatever, 1000 is nice
-  // fill algorithms that should definitly run
-  for ( std::string const& algname : m_definitlyRunThese ) {
+  // fill algorithms that should definitely run
+  for ( std::string const& algname : m_definitelyRunThese ) {
     for ( Algorithm* alg : m_databroker->algorithmsRequiredFor( algname ) ) {
       if ( std::find( begin( allAlgos ), end( allAlgos ), alg ) == end( allAlgos ) ) {
-        m_definitlyRunTheseAlgs.emplace_back( alg, allAlgos.size(), m_EnableLegacyMode );
+        m_definitelyRunTheseAlgs.emplace_back( alg, allAlgos.size(), m_EnableLegacyMode );
         allAlgos.emplace_back( alg );
       }
     }

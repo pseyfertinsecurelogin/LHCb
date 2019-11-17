@@ -142,9 +142,9 @@ private:
   Gaudi::Property<std::vector<std::vector<std::string>>> m_userDefinedEdges{
       this, "AdditionalCFEdges", {}, "Additional Control Flow Edges defined by the User \
                                       (format: [ [before, after], [before2, after2] ])"};
-  Gaudi::Property<std::set<std::string>> m_definitlyRunThese{
+  Gaudi::Property<std::set<std::string>> m_definitelyRunThese{
       this, "AdditionalAlgs", {}, "Add algs that do not participate in the control flow but should\
-                                   definitly run, like e.g. a callgrindprofile"};
+                                   definitely run, like e.g. a callgrindprofile"};
 
   Gaudi::Property<int> m_startTimeAtEvt{this, "StartTimeAtEvt", -1, "start timing at this event. Counting from 0. \
                                         Default choice is deduced from #slots and #evts \
@@ -155,6 +155,11 @@ private:
 
   Gaudi::Property<int> m_stopAfterNFailures{this, "StopAfterNFailures", 3,
                                             "Stop processing if this number of consecutive event failures happened"};
+
+  Gaudi::Property<std::size_t> m_minNameColWidth{this, "MinNameColumnWidth", 46u,
+                                                 "Minimum width of component name comlumn in timing table"};
+  Gaudi::Property<std::size_t> m_maxNameColWidth{this, "MaxNameColumnWidth", 100u,
+                                                 "Maximum width of component name comlumn in timing table"};
 
   Gaudi::Property<bool> m_createTimingTable{
       this, "CreateTimingTable", true,
@@ -207,7 +212,7 @@ private:
   // highest node
   VNode* m_motherOfAllNodes = nullptr;
 
-  std::vector<AlgWrapper> m_definitlyRunTheseAlgs;
+  std::vector<AlgWrapper> m_definitelyRunTheseAlgs;
 
   // for printing
   // printable dependency tree (will be built during initialize
@@ -215,8 +220,8 @@ private:
   std::vector<std::string> m_AlgNames;
   // map order of print to order of m_NodeStates and m_allVNodes
   std::vector<int> m_mapPrintToNodeStateOrder;
-  // maximum width of the dependencytree
-  int m_maxTreeWidth;
+  // maximum width of the dependency tree
+  int m_maxTreeWidth{};
 
   // runtime adding of states to print tree and states
 public:
