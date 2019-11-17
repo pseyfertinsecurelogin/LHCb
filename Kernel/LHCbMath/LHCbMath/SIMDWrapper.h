@@ -156,7 +156,7 @@ namespace SIMDWrapper {
       float hmax() const { return data; }
       float hmin() const { return data; }
       float hadd() const { return data; }
-      float hmax( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::min(); }
+      float hmax( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::lowest(); }
       float hmin( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::max(); }
       float hadd( float mask ) const { return ( mask ) ? data : 0; }
 
@@ -385,7 +385,9 @@ namespace SIMDWrapper {
         r        = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      float hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
+      float hmax( const mask_v& mask ) const {
+        return select( mask, *this, std::numeric_limits<float>::lowest() ).hmax();
+      }
       float hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
       float hadd( const mask_v& mask ) const { return select( mask, *this, 0.f ).hadd(); }
 
@@ -760,7 +762,9 @@ namespace SIMDWrapper {
         r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      float hmax( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
+      float hmax( const __m256 mask ) const {
+        return select( mask, *this, std::numeric_limits<float>::lowest() ).hmax();
+      }
       float hmin( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
       float hadd( const __m256 mask ) const { return select( mask, *this, 0.f ).hadd(); }
 
@@ -985,7 +989,9 @@ namespace SIMDWrapper {
         r = _mm_add_ps( r, _mm_shuffle_ps( r, r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_cvtss_f32( r );
       }
-      float hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::min() ).hmax(); }
+      float hmax( const mask_v& mask ) const {
+        return select( mask, *this, std::numeric_limits<float>::lowest() ).hmax();
+      }
       float hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
       float hadd( const mask_v& mask ) const { return select( mask, *this, 0.f ).hadd(); }
 
