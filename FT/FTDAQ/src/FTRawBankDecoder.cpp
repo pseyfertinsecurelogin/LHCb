@@ -156,7 +156,7 @@ FTLiteClusters FTRawBankDecoder::decode<6>( LHCb::span<const LHCb::RawBank*> ban
             make_clusters( channel, c, c2 );
             ++it;
           } else { // this should never happen,
-            Error( "Possibly corrupt data. Ignoring the cluster." ).ignore();
+            ++m_corrupt;
           }
         }
       }
@@ -280,7 +280,7 @@ FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks,
       }
 
       if ( UNLIKELY( module > 5 ) ) {
-        Warning( "Skipping cluster(s) for non-existing module " + std::to_string( module ) ).ignore();
+        ++m_nonExistingModule;
         first += nClus;
         continue;
       }

@@ -16,6 +16,7 @@
 #include "Event/FTLiteCluster.h"
 #include "Event/RawEvent.h"
 #include "FTRawBankParams.h"
+#include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 #include "GaudiAlg/Transformer.h"
 #include "IFTReadoutTool.h"
@@ -31,7 +32,8 @@ using FTLiteClusters = LHCb::FTLiteCluster::FTLiteClusters;
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
-class FTRawBankDecoder : public Transformer<FTLiteClusters( const LHCb::RawEvent& )> {
+class FTRawBankDecoder : public Transformer<FTLiteClusters( const LHCb::RawEvent& ),
+                                            Gaudi::Functional::Traits::BaseClass_t<FixTESPath<Gaudi::Algorithm>>> {
 public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
@@ -56,6 +58,10 @@ private:
 
   template <unsigned int version>
   FTLiteClusters decode( LHCb::span<const LHCb::RawBank*>, unsigned int nClusters ) const;
+
+  mutable Gaudi::Accumulators::MsgCounter<MSG::ERROR>   m_corrupt{this, "Possibly corrupt data. Ignoring the cluster."};
+  mutable Gaudi::Accumulators::MsgCounter<MSG::WARNING> m_nonExistingModule{
+      this, "Skipping cluster(s) for non-existing module."};
 };
 
 #endif // FTRAWBANKDECODER_H
