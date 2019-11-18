@@ -47,10 +47,10 @@ namespace LHCb::Pr::detail {
         : m_position{std::move( position )}, m_slopes{std::move( slopes )} {}
     PosType const&   position() const { return m_position; }
     SlopeType const& slopes() const { return m_slopes; }
-    auto             x() const { return position().x; }
-    auto             y() const { return position().y; }
-    auto             z() const { return position().z; }
-    auto             tx() const { return slopes().x; }
-    auto             ty() const { return slopes().y; }
+    auto             x() const { return position().X(); }
+    auto             y() const { return position().Y(); }
+    auto             z() const { return position().Z(); }
+    auto             tx() const { return slopes().X(); }
+    auto             ty() const { return slopes().Y(); }
   };
 } // namespace LHCb::Pr::detail
