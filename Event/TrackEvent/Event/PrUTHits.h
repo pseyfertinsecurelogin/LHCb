@@ -27,7 +27,7 @@ namespace LHCb::Pr::UT {
 
   public:
     Hits() {
-      const size_t size = max_hits * 6;
+      const size_t size = max_hits * 8;
       m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
     }
 
@@ -43,6 +43,8 @@ namespace LHCb::Pr::UT {
     SOA_ACCESSOR( yBegin, &m_data[3 * max_hits].f )
     SOA_ACCESSOR( yEnd, &m_data[4 * max_hits].f )
     SOA_ACCESSOR( zAtYEq0, &m_data[5 * max_hits].f )
+    SOA_ACCESSOR( dxDy, &m_data[6 * max_hits].f )
+    SOA_ACCESSOR( cos, &m_data[7 * max_hits].f )
 
     ~Hits() { std::free( m_data ); }
 
