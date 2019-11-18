@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE( test_hits_size ) {
   using dType2 = SIMDWrapper::sse::types;
   using dType3 = SIMDWrapper::avx2::types;
 
-  BOOST_CHECK( myHits.size() == dType1::size + dType2::size + dType3::size );
+  BOOST_CHECK( ( myHits.size() == dType1::size + dType2::size + dType3::size ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_hits_constructors ) {
