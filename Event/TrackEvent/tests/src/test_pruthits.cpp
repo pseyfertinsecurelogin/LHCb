@@ -56,5 +56,5 @@ BOOST_AUTO_TEST_CASE( test_hits_size ) {
 BOOST_AUTO_TEST_CASE( test_hits_constructors ) {
   static_assert( std::is_default_constructible_v<Hits> );
   static_assert( std::is_move_constructible_v<Hits> );
-  static_assert( !std::is_copy_constructible_v<Hits> ); // this is disabled
+  static_assert( !std::is_copy_constructible_v<Hits> ); 
 }
