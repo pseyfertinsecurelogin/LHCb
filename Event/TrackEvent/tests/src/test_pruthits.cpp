@@ -35,6 +35,8 @@ BOOST_AUTO_TEST_CASE( test_hits_size ) {
   auto avx2_mask = dType3::loop_mask( 0, dType3::size );
   myHits.compressstore_channelID<dType3::int_v>( 0, avx2_mask, 12345 );
 
+  myHits.size() += dType1::popcount( mask ) + dType2::popcount( sse_mask ) + dType3::popcount( avx2_mask );
+
   BOOST_CHECK( ( myHits.size() == dType1::size + dType2::size + dType3::size ) );
 }
 
