@@ -29,11 +29,11 @@ struct ExampleHits {
     using dType1 = SIMDWrapper::scalar::types;
     bool mask    = true;
     hits.compressstore_channelID<dType1::int_v>( 0, mask, 12345 );
-    
-    using dType2 = SIMDWrapper::sse::types;
+
+    using dType2  = SIMDWrapper::sse::types;
     auto sse_mask = dType2::loop_mask( 0, dType2::size );
     hits.compressstore_channelID<dType2::int_v>( 0, sse_mask, 12345 );
-    
+
     using dType3   = SIMDWrapper::avx2::types;
     auto avx2_mask = dType3::loop_mask( 0, dType3::size );
     hits.compressstore_channelID<dType3::int_v>( 0, avx2_mask, 12345 );
@@ -50,13 +50,11 @@ BOOST_AUTO_TEST_CASE( test_hits_size ) {
   using dType2 = SIMDWrapper::sse::types;
   using dType3 = SIMDWrapper::avx2::types;
 
-  BOOST_CHECK( myHits.size() == dType1::size + dType2::size + dType3::size  );
+  BOOST_CHECK( myHits.size() == dType1::size + dType2::size + dType3::size );
 }
 
 BOOST_AUTO_TEST_CASE( test_hits_constructors ) {
   static_assert( std::is_default_constructible_v<Hits> );
   static_assert( std::is_move_constructible_v<Hits> );
   static_assert( !std::is_copy_constructible_v<Hits> ); // this is disabled
-  
 }
-
