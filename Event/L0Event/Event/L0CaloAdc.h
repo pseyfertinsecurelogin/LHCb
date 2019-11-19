@@ -45,7 +45,7 @@ namespace LHCb {
   class L0CaloAdc final : public KeyedObject<int> {
   public:
     /// typedef for KeyedContainer of L0CaloAdc
-    typedef KeyedContainer<L0CaloAdc, Containers::HashMap> Container;
+    using Container = KeyedContainer<L0CaloAdc, Containers::HashMap>;
 
     /// Usual constructor, specifies the cell and Et
     L0CaloAdc( const CaloCellID& ID, int adc ) : KeyedObject<int>( ID.all() ), m_adc( adc ) {}
@@ -54,7 +54,7 @@ namespace LHCb {
     L0CaloAdc( const L0CaloAdc& src ) : KeyedObject<int>( src.cellID().all() ), m_adc( src.adc() ) {}
 
     /// Default Constructor
-    L0CaloAdc() : m_adc( 0 ) {}
+    L0CaloAdc() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -71,14 +71,13 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const L0CaloAdc& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    int m_adc; ///< 8-bit transverse energy
+    int m_adc = 0; ///< 8-bit transverse energy
 
   }; // class L0CaloAdc
 
   /// Definition of Keyed Container for L0CaloAdc
-  typedef KeyedContainer<L0CaloAdc, Containers::HashMap> L0CaloAdcs;
+  using L0CaloAdcs = KeyedContainer<L0CaloAdc, Containers::HashMap>;
 
 } // namespace LHCb
 

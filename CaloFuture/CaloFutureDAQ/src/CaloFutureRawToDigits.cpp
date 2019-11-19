@@ -8,6 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
+#include "Event/CaloAdc.h"
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic pop
+#endif
 
 #include "CaloFutureRawToDigits.h"
 #include "CaloFutureUtils/CaloFutureAlgUtils.h"

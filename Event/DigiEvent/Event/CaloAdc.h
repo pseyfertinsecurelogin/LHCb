@@ -49,7 +49,7 @@ namespace LHCb {
   class CaloAdc final : public KeyedObject<LHCb::CaloCellID> {
   public:
     /// typedef for KeyedContainer of CaloAdc
-    typedef KeyedContainer<CaloAdc, Containers::HashMap> Container;
+    using Container = KeyedContainer<CaloAdc, Containers::HashMap>;
 
     /// Non-default constructor
     CaloAdc( const LHCb::CaloCellID& id, int adc ) : KeyedObject<LHCb::CaloCellID>( id ), m_adc( adc ) {}
@@ -78,14 +78,13 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const CaloAdc& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     int m_adc{0}; ///< ADC value for the given cell
 
   }; // class CaloAdc
 
   /// Definition of Keyed Container for CaloAdc
-  typedef KeyedContainer<CaloAdc, Containers::HashMap> CaloAdcs;
+  using CaloAdcs = KeyedContainer<CaloAdc, Containers::HashMap>;
 
 } // namespace LHCb
 

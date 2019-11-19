@@ -17,10 +17,17 @@
 #include <string>
 
 // Include files
-#include "GaudiKernel/KeyedContainer.h"
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
 #include "GaudiKernel/KeyedObject.h"
-#include "Tell1Kernel/VeloDecodeCore.h"
 #include "VeloEvent/EvtInfo.h"
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic pop
+#endif
+
+#include "Tell1Kernel/VeloDecodeCore.h"
 
 /** @class VeloErrorBank VeloErrorBank.h
  *
