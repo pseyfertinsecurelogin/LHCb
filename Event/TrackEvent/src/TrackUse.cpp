@@ -76,8 +76,8 @@ size_t TrackUse::rejectedHistory( std::vector<LHCb::Track::History>& h ) const {
 /// printout of the track into the stream
 // ============================================================================
 MsgStream& TrackUse::print( MsgStream& stream, const LHCb::Track* track ) const {
-  if ( !stream.isActive() ) { return stream; }        // RETURN
-  if ( 0 == track ) { return stream << "<INVALID>"; } // RETURN
+  if ( !stream.isActive() ) { return stream; }    // RETURN
+  if ( !track ) { return stream << "<INVALID>"; } // RETURN
   // Key
   if ( track->hasKey() ) { stream << "Key: " << track->key() << " "; }
   // Flag

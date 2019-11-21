@@ -144,7 +144,7 @@ namespace TrackFunctor {
   template <typename T, typename E>
   class HasKey {
   public:
-    typedef bool ( T::*ptr_memfun )( E ) const;
+    using ptr_memfun = bool ( T::* )( E ) const;
 
   private:
     ptr_memfun m_pmf;

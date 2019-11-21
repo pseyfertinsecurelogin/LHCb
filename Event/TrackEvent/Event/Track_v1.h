@@ -83,22 +83,22 @@ namespace LHCb::Event {
     class Track final : public KeyedObject<int> {
     public:
       /// typedef for std::vector of Track
-      typedef std::vector<Track*>       Vector;
-      typedef std::vector<const Track*> ConstVector;
+      using Vector      = std::vector<Track*>;
+      using ConstVector = std::vector<const Track*>;
 
       /// typedef for KeyedContainer of Track
       typedef KeyedContainer<Track, Containers::HashMap> Container;
 
       /// For defining SharedObjectContainer
-      typedef SharedObjectsContainer<Track> Selection;
+      using Selection = SharedObjectsContainer<Track>;
       /// For accessing a list of tracks which is either a SharedObjectContainer, a KeyedContainer or a ConstVector
-      typedef Gaudi::Range_<ConstVector> Range;
+      using Range = Gaudi::Range_<ConstVector>;
       /// Vector of additional information
       typedef GaudiUtils::VectorMap<int, double> ExtraInfo;
       /// Container for LHCbIDs on track
-      typedef std::vector<LHCbID> LHCbIDContainer;
+      using LHCbIDContainer = std::vector<LHCbID>;
       /// Container for States on track
-      typedef std::vector<State*> StateContainer;
+      using StateContainer = std::vector<State*>;
 
       /// Track history enumerations: each entry corresponds to the name of the pattern recognition algorithm that
       /// produced the Track
@@ -274,19 +274,10 @@ namespace LHCb::Event {
       Track( const Track& track, const int key );
 
       /// Default Constructor
-      Track()
-          : m_chi2PerDoF( 0.0 )
-          , m_nDoF( 0 )
-          , m_likelihood( 999 )
-          , m_ghostProbability( 999 )
-          , m_flags( 0 )
-          , m_lhcbIDs()
-          , m_states()
-          , m_fitResult()
-          , m_extraInfo() {}
+      Track() = default;
 
       /// Track destructor
-      ~Track();
+      ~Track() override;
 
       // Retrieve pointer to class definition structure
       const CLID&        clID() const override;
@@ -662,13 +653,13 @@ namespace LHCb::Event {
         specificMask     = 0xf0000000L
       };
 
-      double                           m_chi2PerDoF;       ///< Chi^2 per degree of freedom of the track
-      int                              m_nDoF;             ///< Number of degrees of freedom of the track
-      double                           m_likelihood;       ///< Likelihood variable
-      double                           m_ghostProbability; ///< ghost probability variable
-      unsigned int                     m_flags;            ///< The variety of track flags
-      std::vector<LHCbID>              m_lhcbIDs;          ///< Container of (sorted) LHCbIDs
-      std::vector<State*>              m_states;           ///< Container with pointers to all the states
+      double                           m_chi2PerDoF{0.0};       ///< Chi^2 per degree of freedom of the track
+      int                              m_nDoF{0};               ///< Number of degrees of freedom of the track
+      double                           m_likelihood{999};       ///< Likelihood variable
+      double                           m_ghostProbability{999}; ///< ghost probability variable
+      unsigned int                     m_flags{0};              ///< The variety of track flags
+      std::vector<LHCbID>              m_lhcbIDs;               ///< Container of (sorted) LHCbIDs
+      std::vector<State*>              m_states;                ///< Container with pointers to all the states
       std::unique_ptr<ITrackFitResult> m_fitResult; ///< Transient data related to track fit (nodes, material, etc)
       ExtraInfo m_extraInfo; ///< Additional pattern recognition information. Do not access directly, use *Info()
                              ///< methods instead.
@@ -1235,7 +1226,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setType( const Types& value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~typeMask;
       m_flags |= ( ( ( (unsigned int)val ) << typeBits ) & typeMask );
     }
@@ -1245,7 +1236,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setHistory( const History& value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~historyMask;
       m_flags |= ( ( ( (unsigned int)val ) << historyBits ) & historyMask );
     }
@@ -1255,7 +1246,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setFitHistory( const FitHistory& value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~fitHistoryMask;
       m_flags |= ( ( ( (unsigned int)val ) << fitHistoryBits ) & fitHistoryMask );
     }
@@ -1265,7 +1256,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setPatRecStatus( const PatRecStatus& value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~patRecStatusMask;
       m_flags |= ( ( ( (unsigned int)val ) << patRecStatusBits ) & patRecStatusMask );
     }
@@ -1275,7 +1266,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setFitStatus( const FitStatus& value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~fitStatusMask;
       m_flags |= ( ( ( (unsigned int)val ) << fitStatusBits ) & fitStatusMask );
     }
@@ -1289,7 +1280,7 @@ namespace LHCb::Event {
     }
 
     inline void LHCb::Event::v1::Track::setSpecific( unsigned int value ) {
-      unsigned int val = (unsigned int)value;
+      auto val = (unsigned int)value;
       m_flags &= ~specificMask;
       m_flags |= ( ( ( (unsigned int)val ) << specificBits ) & specificMask );
     }

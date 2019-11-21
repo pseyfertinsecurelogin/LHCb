@@ -30,8 +30,8 @@ namespace LHCb::Pr::Fitted::Forward {
     constexpr static int max_tracks = align_size( 1024 );
 
   public:
-    Tracks( LHCb::Pr::Forward::Tracks const* forward_ancestors,
-            Zipping::ZipFamilyNumber         zipIdentifier = Zipping::generateZipIdentifier() )
+    Tracks( Pr::Forward::Tracks const* forward_ancestors,
+            Zipping::ZipFamilyNumber   zipIdentifier = Zipping::generateZipIdentifier() )
         : m_forward_ancestors{forward_ancestors}, m_zipIdentifier{zipIdentifier} {
       const size_t size = max_tracks * 15;
       m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
@@ -50,12 +50,12 @@ namespace LHCb::Pr::Fitted::Forward {
         , m_forward_ancestors{other.m_forward_ancestors}
         , m_zipIdentifier{other.m_zipIdentifier} {}
 
-    bool                     empty() const { return m_size == 0; }
-    inline int               size() const { return m_size; }
-    inline int&              size() { return m_size; }
-    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
+    [[nodiscard]] bool                     empty() const { return m_size == 0; }
+    [[nodiscard]] inline int               size() const { return m_size; }
+    inline int&                            size() { return m_size; }
+    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
-    LHCb::Pr::Forward::Tracks const* getForwardAncestors() const { return m_forward_ancestors; };
+    [[nodiscard]] Pr::Forward::Tracks const* getForwardAncestors() const { return m_forward_ancestors; };
 
     // Index in TracksFT container of the track's ancestor
     SOA_ACCESSOR( trackFT, &( m_data->i ) )
@@ -99,9 +99,9 @@ namespace LHCb::Pr::Fitted::Forward {
     }
 
     template <typename I = SIMDWrapper::scalar::types::int_v>
-    std::vector<LHCb::LHCbID> lhcbIDs( int t, LHCb::Pr::Velo::Hits const& velo_hits ) const {
+    [[nodiscard]] std::vector<LHCbID> lhcbIDs( int t, Velo::Hits const& velo_hits ) const {
       auto const* forward_tracks = getForwardAncestors();
-      if ( !forward_tracks ) { return std::vector<LHCb::LHCbID>{}; }
+      if ( !forward_tracks ) { return std::vector<LHCbID>{}; }
       auto const* velo_tracks         = forward_tracks->getVeloAncestors();
       auto const* upstream_tracks     = forward_tracks->getUpstreamAncestors();
       auto        forward_track_index = trackFT<I>( t ).cast();
@@ -109,12 +109,12 @@ namespace LHCb::Pr::Fitted::Forward {
       auto velo_track_index           = forward_tracks->trackVP<I>( forward_track_index ).cast();
 
       // Get LHCb IDs
-      auto velo_lhcbids = velo_tracks ? velo_tracks->lhcbIDs<LHCb::Pr::Velo::Hits>( velo_track_index, velo_hits )
-                                      : std::vector<LHCb::LHCbID>{};
+      auto velo_lhcbids =
+          velo_tracks ? velo_tracks->lhcbIDs<Velo::Hits>( velo_track_index, velo_hits ) : std::vector<LHCbID>{};
       auto ut_lhcbids =
-          upstream_tracks ? upstream_tracks->lhcbIDsFromUT( upstream_track_index ) : std::vector<LHCb::LHCbID>{};
-      auto                      ft_lhcbids = forward_tracks->lhcbIDsFromForward( forward_track_index );
-      std::vector<LHCb::LHCbID> lhcbids;
+          upstream_tracks ? upstream_tracks->lhcbIDsFromUT( upstream_track_index ) : std::vector<LHCbID>{};
+      auto                ft_lhcbids = forward_tracks->lhcbIDsFromForward( forward_track_index );
+      std::vector<LHCbID> lhcbids;
       lhcbids.reserve( velo_lhcbids.size() + ut_lhcbids.size() + ft_lhcbids.size() );
       lhcbids.insert( end( lhcbids ), begin( velo_lhcbids ), end( velo_lhcbids ) );
       lhcbids.insert( end( lhcbids ), begin( ft_lhcbids ), end( ft_lhcbids ) );
@@ -154,8 +154,8 @@ namespace LHCb::Pr::Fitted::Forward {
       int   i;
     };
     alignas( 64 ) data_t* m_data;
-    int                              m_size              = 0;
-    LHCb::Pr::Forward::Tracks const* m_forward_ancestors = nullptr;
-    Zipping::ZipFamilyNumber         m_zipIdentifier;
+    int                        m_size              = 0;
+    Pr::Forward::Tracks const* m_forward_ancestors = nullptr;
+    Zipping::ZipFamilyNumber   m_zipIdentifier;
   };
 } // namespace LHCb::Pr::Fitted::Forward

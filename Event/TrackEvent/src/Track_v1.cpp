@@ -429,7 +429,7 @@ namespace LHCb::Event {
          << "\n chi2PerDoF : " << (float)m_chi2PerDoF << "\n nDoF       : " << m_nDoF
          << "\n GhostProb  : " << ghostProbability() << "\n Likelihood : " << likelihood() << "\n extraInfo : [";
       for ( const auto& i : extraInfo() ) {
-        const Track::AdditionalInfo info = static_cast<Track::AdditionalInfo>( i.first );
+        const auto info = static_cast<Track::AdditionalInfo>( i.first );
         os << " " << info << "=" << i.second << " ";
       }
       os << "]\n";

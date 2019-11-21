@@ -40,50 +40,50 @@ namespace LHCb {
     StateVector( const Gaudi::XYZPoint& position, const Gaudi::XYZVector& direction, double qOverP = 0 );
 
     /// Default Constructor
-    StateVector() : m_parameters(), m_z( 0.0 ) {}
+    StateVector() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve the number of state parameters
-    unsigned int nParameters() const;
+    [[nodiscard]] unsigned int nParameters() const;
 
     /// Retrieve the position and momentum vectors of the state
     void positionAndMomentum( Gaudi::XYZPoint& pos, Gaudi::XYZVector& mom ) const;
 
     /// Retrieve the 3D-position vector (x,y,z) of the state
-    Gaudi::XYZPoint position() const;
+    [[nodiscard]] Gaudi::XYZPoint position() const;
 
     /// Retrieve the x-position of the state
-    double x() const;
+    [[nodiscard]] double x() const;
 
     /// Retrieve the y-position of the state
-    double y() const;
+    [[nodiscard]] double y() const;
 
     /// Retrieve the slopes (Tx=dx/dz,Ty=dy/dz,1.) of the state
-    Gaudi::XYZVector slopes() const;
+    [[nodiscard]] Gaudi::XYZVector slopes() const;
 
     /// Retrieve the Tx=dx/dz slope of the state
-    double tx() const;
+    [[nodiscard]] double tx() const;
 
     /// Retrieve the Ty=dy/dz slope of the state
-    double ty() const;
+    [[nodiscard]] double ty() const;
 
     /// Retrieve the charge-over-momentum Q/P of the state
-    double qOverP() const;
+    [[nodiscard]] double qOverP() const;
 
     /// Retrieve the momentum of the state
-    double p() const;
+    [[nodiscard]] double p() const;
 
     /// Retrieve the transverse momentum of the state
-    double pt() const;
+    [[nodiscard]] double pt() const;
 
     /// Retrieve the momentum vector (px,py,pz) of the state
-    Gaudi::XYZVector momentum() const;
+    [[nodiscard]] Gaudi::XYZVector momentum() const;
 
     /// Retrieve the Q/Pperp (ratio of the charge to the component of the momentum transverse to the magnetic field) of
     /// the state
-    double qOverPperp() const;
+    [[nodiscard]] double qOverPperp() const;
 
     /// Update the x-position of the state
     void setX( double value );
@@ -107,20 +107,20 @@ namespace LHCb {
     MsgStream& fillStream( MsgStream& os ) const;
 
     /// Retrieve const  the parameter vector
-    const Gaudi::TrackVector& parameters() const;
+    [[nodiscard]] const Gaudi::TrackVector& parameters() const;
 
     /// Retrieve  the parameter vector
     Gaudi::TrackVector& parameters();
 
     /// Retrieve const  the z-position of the state
-    double z() const;
+    [[nodiscard]] double z() const;
 
     friend std::ostream& operator<<( std::ostream& str, const StateVector& obj ) { return obj.fillStream( str ); }
 
   protected:
   private:
     Gaudi::TrackVector m_parameters; ///< the parameter vector
-    double             m_z;          ///< the z-position of the state
+    double             m_z{0.0};     ///< the z-position of the state
 
   }; // class StateVector
 

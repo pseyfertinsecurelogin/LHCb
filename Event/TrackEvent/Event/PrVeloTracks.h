@@ -48,10 +48,10 @@ namespace LHCb::Pr::Velo {
         , m_size{other.m_size}
         , m_zipIdentifier{other.m_zipIdentifier} {}
 
-    inline int               size() const { return m_size; }
-    inline int&              size() { return m_size; }
-    bool                     empty() const { return m_size == 0; }
-    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
+    [[nodiscard]] int                      size() const { return m_size; }
+    int&                                   size() { return m_size; }
+    [[nodiscard]] bool                     empty() const { return m_size == 0; }
+    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     SOA_ACCESSOR( nHits, &( m_data->i ) )
     SOA_ACCESSOR_VAR( hit, &( m_data[( hit + other_params ) * max_tracks].i ), int hit )
@@ -80,18 +80,18 @@ namespace LHCb::Pr::Velo {
 
     /// Retrieve the pseudorapidity at the first state
     template <typename T>
-    inline T pseudoRapidity( int t ) const {
+    T pseudoRapidity( int t ) const {
       return stateDir<T>( t, 0 ).eta();
     }
 
     /// Retrieve the phi at the first state
     template <typename T>
-    inline T phi( int t ) const {
+    T phi( int t ) const {
       return stateDir<T>( t, 0 ).phi();
     }
 
     template <typename simd, typename maskT>
-    inline void copy_back( const Tracks& from, int at, maskT mask ) {
+    void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < max_hits + max_states * params_per_state + other_params; i++ ) {
         intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );

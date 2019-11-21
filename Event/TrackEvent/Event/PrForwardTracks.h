@@ -52,16 +52,16 @@ namespace LHCb::Pr::Forward {
         , m_upstream_ancestors{other.m_upstream_ancestors}
         , m_zipIdentifier{other.m_zipIdentifier} {}
 
-    inline int  size() const { return m_size; }
-    inline int& size() { return m_size; }
+    [[nodiscard]] int size() const { return m_size; }
+    int&              size() { return m_size; }
 
     // Return pointer to ancestor container
-    Velo::Tracks const*     getVeloAncestors() const { return m_velo_ancestors; };
-    Upstream::Tracks const* getUpstreamAncestors() const { return m_upstream_ancestors; };
+    [[nodiscard]] Velo::Tracks const*     getVeloAncestors() const { return m_velo_ancestors; };
+    [[nodiscard]] Upstream::Tracks const* getUpstreamAncestors() const { return m_upstream_ancestors; };
     /** Identifier showing which family of containers these columns can be zipped
      *  into.
      */
-    Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
+    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     // Index in TracksVP container of the track's ancestor
     SOA_ACCESSOR( trackVP, &( m_data->i ) )
@@ -86,13 +86,13 @@ namespace LHCb::Pr::Forward {
 
     /// Retrieve the momentum
     template <typename T>
-    inline T p( int t ) const {
+    T p( int t ) const {
       T qop = stateQoP<T>( t );
       return abs( 1 / qop );
     }
 
     template <typename simd, typename maskT>
-    inline void copy_back( const Tracks& from, int at, maskT mask ) {
+    void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
       for ( int i = 0; i < ( max_hits + 9 ); i++ ) {
         intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
@@ -102,9 +102,9 @@ namespace LHCb::Pr::Forward {
 
     // These can be LHCbIDs from FT and UT. The latter only if the Forward was run with Velo tracks as input.
     // And UT hits were added during the Forward tracking.
-    std::vector<LHCb::LHCbID> lhcbIDsFromForward( int t ) const {
-      int                       n_hits = nHits<SIMDWrapper::scalar::types::int_v>( t ).cast();
-      std::vector<LHCb::LHCbID> ids;
+    [[nodiscard]] std::vector<LHCbID> lhcbIDsFromForward( int t ) const {
+      int                 n_hits = nHits<SIMDWrapper::scalar::types::int_v>( t ).cast();
+      std::vector<LHCbID> ids;
       ids.reserve( n_hits );
       for ( int i = 0; i < n_hits; i++ ) {
         int lhcbid = hit<SIMDWrapper::scalar::types::int_v>( t, i ).cast();
