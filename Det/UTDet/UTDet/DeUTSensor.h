@@ -38,7 +38,7 @@ class DeUTSensor : public DeUTBaseElement {
 
 public:
   /** parent type */
-  typedef UTDetTraits<DeUTSensor>::parent parent_type;
+  using parent_type = UTDetTraits<DeUTSensor>::parent;
 
   /** Constructor */
   DeUTSensor( const std::string& name = "" );

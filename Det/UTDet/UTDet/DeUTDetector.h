@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <assert.h>
+#include <cassert>
 #include <memory>
 #include <string>
 #include <vector>
@@ -64,9 +64,9 @@ namespace {
 class DeUTDetector : public DetectorElement {
 
 public:
-  typedef std::vector<DeUTSector*>  Sectors;
-  typedef std::vector<DeUTLayer*>   Layers;
-  typedef std::vector<DeUTStation*> Stations;
+  using Sectors  = std::vector<DeUTSector*>;
+  using Layers   = std::vector<DeUTLayer*>;
+  using Stations = std::vector<DeUTStation*>;
 
   /** Constructor */
   DeUTDetector( const std::string& name = "" );

@@ -35,13 +35,13 @@ class DeUTStave : public DeUTBaseElement {
 
 public:
   /** parent type */
-  typedef UTDetTraits<DeUTStave>::parent parent_type;
+  using parent_type = UTDetTraits<DeUTStave>::parent;
 
   /** child type */
-  typedef UTDetTraits<DeUTStave>::child child_type;
+  using child_type = UTDetTraits<DeUTStave>::child;
 
   /** children */
-  typedef std::vector<child_type*> Children;
+  using Children = std::vector<child_type*>;
 
   /** Constructor */
   DeUTStave( const std::string& name = "" );

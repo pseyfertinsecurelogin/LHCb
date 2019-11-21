@@ -307,9 +307,9 @@ void DeUTSector::setNoise( unsigned int strip, float value ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::vector<float>& reference = aCon->param<std::vector<float>>( "SectorNoise" );
-    reference[strip - 1u]         = value;
-    m_noiseValues[strip - 1u]     = value;
+    auto& reference           = aCon->param<std::vector<float>>( "SectorNoise" );
+    reference[strip - 1u]     = value;
+    m_noiseValues[strip - 1u] = value;
   }
 }
 
@@ -319,7 +319,7 @@ void DeUTSector::setNoise( const std::vector<float>& values ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::vector<float>& reference = aCon->param<std::vector<float>>( "SectorNoise" );
+    auto& reference = aCon->param<std::vector<float>>( "SectorNoise" );
     reference.assign( values.begin(), values.end() );
     m_noiseValues = values;
   }
@@ -331,9 +331,9 @@ void DeUTSector::setCMNoise( unsigned int strip, float value ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::vector<float>& reference = aCon->param<std::vector<float>>( "cmNoise" );
-    reference[strip - 1u]         = value;
-    m_cmModeValues[strip - 1u]    = value;
+    auto& reference            = aCon->param<std::vector<float>>( "cmNoise" );
+    reference[strip - 1u]      = value;
+    m_cmModeValues[strip - 1u] = value;
   }
 }
 
@@ -343,7 +343,7 @@ void DeUTSector::setCMNoise( const std::vector<float>& values ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::vector<float>& reference = aCon->param<std::vector<float>>( "cmNoise" );
+    auto& reference = aCon->param<std::vector<float>>( "cmNoise" );
     reference.assign( values.begin(), values.end() );
     m_cmModeValues = values;
   }
@@ -355,7 +355,7 @@ void DeUTSector::setADCConversion( const std::vector<double>& values ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::vector<double>& reference = aCon->param<std::vector<double>>( "electronsPerADC" );
+    auto& reference = aCon->param<std::vector<double>>( "electronsPerADC" );
     reference.assign( values.begin(), values.end() );
     m_electronsPerADC = values;
   }
@@ -585,7 +585,7 @@ StatusCode DeUTSector::registerConditionsCallbacks() {
 
 StatusCode DeUTSector::updateStatusCondition() {
 
-  Condition* aCon = const_cast<Condition*>( statusCondition() );
+  auto* aCon = const_cast<Condition*>( statusCondition() );
   if ( aCon == nullptr ) {
     MsgStream msg( msgSvc(), name() );
     msg << "failed to find status condition" << endmsg;
@@ -595,11 +595,9 @@ StatusCode DeUTSector::updateStatusCondition() {
   const int tStatus = aCon->param<int>( "SectorStatus" );
   m_status          = Status( tStatus );
 
-  std::map<int, int> beetleMap = aCon->param<std::map<int, int>>( "BeetleStatus" );
-  toEnumMap( beetleMap, m_beetleStatus );
+  m_beetleStatus = toEnumMap( aCon->param<std::map<int, int>>( "BeetleStatus" ) );
 
-  std::map<int, int> stripMap = aCon->param<std::map<int, int>>( "StripStatus" );
-  toEnumMap( stripMap, m_stripStatus );
+  m_stripStatus = toEnumMap( aCon->param<std::map<int, int>>( "StripStatus" ) );
 
   if ( aCon->exists( "measuredEff" ) == true ) {
     m_measEff = aCon->param<double>( "measuredEff" );
@@ -619,7 +617,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
     return StatusCode::FAILURE;
   }
 
-  std::vector<double> tmpNoise = aCon->param<std::vector<double>>( "SectorNoise" );
+  const auto& tmpNoise = aCon->param<std::vector<double>>( "SectorNoise" );
 
   if ( tmpNoise.size() == m_nStrip )
     m_noiseValues.assign( tmpNoise.begin(), tmpNoise.end() );
@@ -629,7 +627,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
     return StatusCode::FAILURE;
   }
 
-  std::vector<double> tmpElectrons = aCon->param<std::vector<double>>( "electronsPerADC" );
+  const auto& tmpElectrons = aCon->param<std::vector<double>>( "electronsPerADC" );
 
   if ( tmpElectrons.size() == m_nStrip )
     m_electronsPerADC.assign( tmpElectrons.begin(), tmpElectrons.end() );
@@ -640,7 +638,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
   }
 
   if ( aCon->exists( "cmNoise" ) == true ) {
-    std::vector<double> tmpCM = aCon->param<std::vector<double>>( "cmNoise" );
+    const auto& tmpCM = aCon->param<std::vector<double>>( "cmNoise" );
     if ( tmpCM.size() == m_nStrip )
       m_cmModeValues.assign( tmpCM.begin(), tmpCM.end() );
     else {
@@ -658,10 +656,10 @@ StatusCode DeUTSector::updateNoiseCondition() {
   return StatusCode::SUCCESS;
 }
 
-void DeUTSector::toEnumMap( const std::map<int, int>& input, DeUTSector::StatusMap& output ) {
-  output.clear();
-  std::map<int, int>::const_iterator iterM = input.begin();
-  for ( ; iterM != input.end(); ++iterM ) { output[iterM->first] = Status( iterM->second ); } // iterM
+DeUTSector::StatusMap DeUTSector::toEnumMap( const std::map<int, int>& input ) {
+  DeUTSector::StatusMap output;
+  std::for_each( input.begin(), input.end(), [&output]( const auto& in ) { output[in.first] = Status( in.second ); } );
+  return output;
 }
 
 DeUTSensor* DeUTSector::findSensor( const Gaudi::XYZPoint& point ) const {
@@ -684,14 +682,8 @@ bool DeUTSector::globalInBondGap( const Gaudi::XYZPoint& point, double tol ) con
 double DeUTSector::fractionActive() const {
 
   // fraction of the sector that works
-  unsigned int                                    nActive      = 0u;
-  const std::vector<DeUTSector::Status>           statusVector = stripStatus();
-  std::vector<DeUTSector::Status>::const_iterator iter         = statusVector.begin();
-  for ( ; iter != statusVector.end(); ++iter ) {
-    if ( *iter == DeUTSector::OK ) ++nActive;
-  }
-
-  return nActive / double( nStrip() );
+  const auto& statusVector = stripStatus();
+  return std::count( statusVector.begin(), statusVector.end(), DeUTSector::OK ) / double( nStrip() );
 }
 
 void DeUTSector::setMeasEff( const double value ) {
@@ -701,8 +693,8 @@ void DeUTSector::setMeasEff( const double value ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    double& tvalue = aCon->param<double>( "measuredEff" );
-    tvalue         = double( value );
+    auto& tvalue = aCon->param<double>( "measuredEff" );
+    tvalue       = double( value );
   }
 }
 
@@ -783,8 +775,8 @@ void DeUTSector::setStatusCondition( const std::string& type, unsigned int entry
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    std::map<int, int>& condMap = aCon->param<std::map<int, int>>( type );
-    condMap[entry]              = int( newStatus );
+    auto& condMap  = aCon->param<std::map<int, int>>( type );
+    condMap[entry] = int( newStatus );
   }
 }
 
@@ -793,7 +785,6 @@ unsigned int DeUTSector::prodID() const { return m_parent->prodID(); }
 std::string DeUTSector::conditionsPathName() const { return m_conditionPathName; }
 
 std::string DeUTSector::staveNumber( unsigned int reg, unsigned int station ) const {
-  using namespace boost;
 
   int col = 0;
 

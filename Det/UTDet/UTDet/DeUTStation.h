@@ -38,14 +38,11 @@ static const CLID CLID_DeUTStation = 9302;
 class DeUTStation : public DeUTBaseElement {
 
 public:
-  /** parent type */
-  typedef UTDetTraits<DeUTStation>::parent parent_type;
-
   /** child type */
-  typedef UTDetTraits<DeUTStation>::child child_type;
+  using child_type = UTDetTraits<DeUTStation>::child;
 
   /** children */
-  typedef std::vector<child_type*> Children;
+  using Children = std::vector<child_type*>;
 
   /** Constructor */
   DeUTStation( std::string name = {} );
@@ -112,8 +109,7 @@ protected:
 private:
   unsigned int m_id = 0u;
 
-  parent_type* m_parent = nullptr;
-  Children     m_layers;
+  Children m_layers;
 };
 
 inline unsigned int DeUTStation::id() const { return m_id; }

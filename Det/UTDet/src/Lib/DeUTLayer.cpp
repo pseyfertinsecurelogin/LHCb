@@ -109,14 +109,9 @@ DeUTStave* DeUTLayer::findStave( const Gaudi::XYZPoint& point ) {
 }
 
 void DeUTLayer::flatten() {
-  DeUTLayer::Children::const_iterator iterStave = staves().begin();
-  for ( ; iterStave != staves().end(); ++iterStave ) {
-    DeUTStave*                          tStave     = *iterStave;
-    DeUTStave::Children::const_iterator iterSector = tStave->sectors().begin();
-    for ( ; iterSector != tStave->sectors().end(); ++iterSector ) {
-      DeUTSector* tSector = *iterSector;
-      m_sectors.push_back( tSector );
-    }
+  for ( auto* tStave : staves() ) {
+    const auto& sectors = tStave->sectors();
+    std::copy( sectors.begin(), sectors.end(), std::back_inserter( m_sectors ) );
   }
 }
 

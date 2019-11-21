@@ -36,16 +36,16 @@ static const CLID CLID_DeUTLayer = 9303;
 class DeUTLayer : public DeUTBaseElement {
 
 public:
-  typedef std::vector<DeUTSector*> Sectors;
+  using Sectors = std::vector<DeUTSector*>;
 
   /** parent type */
-  typedef UTDetTraits<DeUTLayer>::parent parent_type;
+  using parent_type = UTDetTraits<DeUTLayer>::parent;
 
   /** child type */
-  typedef UTDetTraits<DeUTLayer>::child child_type;
+  using child_type = UTDetTraits<DeUTLayer>::child;
 
   /** children */
-  typedef std::vector<child_type*> Children;
+  using Children = std::vector<child_type*>;
 
   /** Constructor */
   DeUTLayer( const std::string& name = "" );

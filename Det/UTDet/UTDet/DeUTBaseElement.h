@@ -72,8 +72,12 @@ public:
 
   /** get the parent of the detector element
   @return parenttype */
-  template <typename TYPE>
-  typename UTDetTraits<TYPE>::parent* getParent() const;
+  template <typename TYPE, typename ParentType = typename UTDetTraits<TYPE>::parent>
+  ParentType* getParent() const {
+    auto* parent = dynamic_cast<ParentType*>( this->parentIDetectorElement() );
+    if ( !parent ) { throw GaudiException( "Orphaned detector element", "DeUTBaseElement", StatusCode::FAILURE ); }
+    return parent;
+  }
 
   /** retrieve the children
    * @return children
@@ -128,16 +132,6 @@ inline Gaudi::XYZPoint DeUTBaseElement::toGlobal( const Gaudi::XYZPoint& point )
 
 inline Gaudi::XYZPoint DeUTBaseElement::globalCentre() const { return m_globalCentre; }
 
-template <typename TYPE>
-inline typename UTDetTraits<TYPE>::parent* DeUTBaseElement::getParent() const {
-
-  typedef typename UTDetTraits<TYPE>::parent parentType;
-  parentType*                                parent = dynamic_cast<parentType*>( this->parentIDetectorElement() );
-  if ( parent == 0 ) { throw GaudiException( "Orphaned detector element", "DeUTBaseElement", StatusCode::FAILURE ); }
-
-  return parent;
-}
-
 inline LHCb::UTChannelID DeUTBaseElement::elementID() const { return m_elementID; }
 
 inline void DeUTBaseElement::setElementID( const LHCb::UTChannelID& chanID ) { m_elementID = chanID; }
@@ -145,16 +139,15 @@ inline void DeUTBaseElement::setElementID( const LHCb::UTChannelID& chanID ) { m
 template <typename TYPE>
 inline std::vector<typename UTDetTraits<TYPE>::child*> DeUTBaseElement::getChildren() {
 
-  typedef typename UTDetTraits<TYPE>::child cType;
-  const unsigned int                        nElem = childIDetectorElements().size();
-  std::vector<cType*>                       childVector;
+  using cType               = typename UTDetTraits<TYPE>::child;
+  const unsigned int  nElem = childIDetectorElements().size();
+  std::vector<cType*> childVector;
   childVector.reserve( nElem );
   std::vector<std::string> names;
   names.reserve( nElem );
 
-  IDetectorElement::IDEContainer::const_iterator iChild = childBegin();
-  for ( ; this->childEnd() != iChild; ++iChild ) {
-    cType* aChild = dynamic_cast<cType*>( *iChild );
+  for ( auto iChild = childBegin(); this->childEnd() != iChild; ++iChild ) {
+    auto* aChild = dynamic_cast<cType*>( *iChild );
     if ( aChild != 0 ) {
       if ( duplicate( aChild->name(), names ) == false ) {
         names.push_back( aChild->name() );
@@ -174,8 +167,8 @@ inline std::vector<typename UTDetTraits<TYPE>::child*> DeUTBaseElement::getChild
 }
 
 inline bool DeUTBaseElement::duplicate( const std::string& testString, const std::vector<std::string>& names ) const {
-  std::vector<std::string>::const_iterator iter = std::find( names.begin(), names.end(), testString );
-  return ( iter == names.end() ? false : true );
+  auto iter = std::find( names.begin(), names.end(), testString );
+  return ( iter != names.end() );
 }
 
 template <typename CallerClass, typename ObjectClass>

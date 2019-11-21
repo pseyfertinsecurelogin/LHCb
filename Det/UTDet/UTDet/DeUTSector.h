@@ -61,11 +61,11 @@ public:
     UnknownStatus   = 100
   };
 
-  typedef std::vector<DeUTSensor*> Sensors;
-  typedef LHCb::LineTraj<double>   UTTraj;
+  using Sensors = std::vector<DeUTSensor*>;
+  using UTTraj  = LHCb::LineTraj<double>;
 
   /** parent type */
-  typedef UTDetTraits<DeUTSector>::parent parent_type;
+  using parent_type = UTDetTraits<DeUTSector>::parent;
 
   /** Constructor */
   DeUTSector( const std::string& name = "" );
@@ -506,7 +506,7 @@ private:
 
   StatusCode             updateStatusCondition();
   StatusCode             updateNoiseCondition();
-  void                   toEnumMap( const std::map<int, int>& input, DeUTSector::StatusMap& output );
+  DeUTSector::StatusMap  toEnumMap( const std::map<int, int>& input );
   LHCb::LineTraj<double> createTraj( const unsigned int strip, const double offset ) const;
   void setStatusCondition( const std::string& type, const unsigned int entry, const DeUTSector::Status& newStatus );
 
