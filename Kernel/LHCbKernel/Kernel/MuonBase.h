@@ -21,7 +21,7 @@
 
 namespace MuonBase {
 
-  typedef unsigned int ContentType;
+  using ContentType = unsigned int;
   //
   inline const unsigned int BitsX       = 7;
   inline const unsigned int BitsY       = 4;

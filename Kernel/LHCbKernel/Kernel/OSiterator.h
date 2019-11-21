@@ -30,18 +30,18 @@ class OS_iterator {
   ///
 public:
   ///
-  typedef std::output_iterator_tag iterator_category;
-  typedef void                     value_type;
-  typedef void                     difference_type;
-  typedef void                     pointer;
-  typedef void                     reference;
+  using iterator_category = std::output_iterator_tag;
+  using value_type        = void;
+  using difference_type   = void;
+  using pointer           = void;
+  using reference         = void;
   ///
-  typedef TYPE       Type;
-  typedef TERMINATOR Terminator;
-  typedef OSTREAM    Stream;
+  using Type       = TYPE;
+  using Terminator = TERMINATOR;
+  using Stream     = OSTREAM;
   ///
   typedef OS_iterator<TYPE, OSTREAM, TERMINATOR> MyType;
-  typedef Stream& ( *Manipulator )( Stream& );
+  using Manipulator = Stream& (*)( Stream& );
   ///
   OS_iterator( OSTREAM& s )
       : stream( &s ), terminator(), manipulator( 0 ), has_terminator( false ), has_manipulator( false ){};

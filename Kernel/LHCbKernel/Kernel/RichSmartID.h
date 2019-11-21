@@ -12,7 +12,7 @@
 #pragma once
 
 // STL
-#include <assert.h>
+#include <cassert>
 #include <cstdint>
 #include <ostream>
 #include <vector>
@@ -78,7 +78,7 @@ namespace LHCb {
     // data access
 
     /// Retrieve the bit-packed internal data word
-    inline constexpr KeyType key() const noexcept { return m_key; }
+    [[nodiscard]] inline constexpr KeyType key() const noexcept { return m_key; }
 
     /// implicit conversion to unsigned int
     inline constexpr operator uint32_t() const noexcept { return key(); }
@@ -125,7 +125,7 @@ namespace LHCb {
 
   public:
     /// Access the ID type
-    inline constexpr RichSmartID::IDType idType() const noexcept {
+    [[nodiscard]] inline constexpr RichSmartID::IDType idType() const noexcept {
       return ( RichSmartID::IDType )( ( key() & MaskIDType ) >> ShiftIDType );
     }
 
@@ -290,7 +290,7 @@ namespace LHCb {
 
   private:
     /// Reinterpret the internal unsigned representation as a signed 32 bit int
-    inline int32_t as_int() const noexcept { return reinterpret_cast<const int32_t&>( m_key ); }
+    [[nodiscard]] inline int32_t as_int() const noexcept { return reinterpret_cast<const int32_t&>( m_key ); }
 
     /// Set the given data into the given field, without validity bit
     inline void setData( const DataType    value, //
@@ -681,7 +681,7 @@ namespace LHCb {
 
   public:
     /// Decoding function to strip the sub-pixel information and return a pixel RichSmartID
-    inline constexpr LHCb::RichSmartID pixelID() const noexcept {
+    [[nodiscard]] inline constexpr LHCb::RichSmartID pixelID() const noexcept {
       return RichSmartID( LIKELY( MaPMTID == idType() ) //
                               ? key()
                               : key() & ~( HPD::MaskPixelSubRow + HPD::MaskPixelSubRowIsSet ) );
@@ -689,7 +689,7 @@ namespace LHCb {
 
     /// Decoding function to return an identifier for a single PD, stripping all pixel level
     /// information
-    inline constexpr LHCb::RichSmartID pdID() const noexcept {
+    [[nodiscard]] inline constexpr LHCb::RichSmartID pdID() const noexcept {
       return RichSmartID( key() &
                           ( LIKELY( MaPMTID == idType() )
                                 ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol + MaPMT::MaskPDCol +
@@ -700,7 +700,7 @@ namespace LHCb {
     }
 
     /// Decoding function to strip the photon-detector information and return a PD panel RichSmartID
-    inline constexpr LHCb::RichSmartID panelID() const noexcept {
+    [[nodiscard]] inline constexpr LHCb::RichSmartID panelID() const noexcept {
       return RichSmartID(
           key() &
           ( LIKELY( MaPMTID == idType() )
@@ -709,14 +709,14 @@ namespace LHCb {
     }
 
     /// Decoding function to strip all but the RICH information and return a RICH RichSmartID
-    inline constexpr LHCb::RichSmartID richID() const noexcept {
+    [[nodiscard]] inline constexpr LHCb::RichSmartID richID() const noexcept {
       return RichSmartID( key() &
                           ( LIKELY( MaPMTID == idType() ) ? ( MaPMT::MaskRich + MaPMT::MaskRichIsSet + MaskIDType )
                                                           : ( HPD::MaskRich + HPD::MaskRichIsSet + MaskIDType ) ) );
     }
 
     /// Returns only the data fields, with the validity bits stripped
-    inline constexpr LHCb::RichSmartID dataBitsOnly() const noexcept {
+    [[nodiscard]] inline constexpr LHCb::RichSmartID dataBitsOnly() const noexcept {
       return RichSmartID( key() & ( LIKELY( MaPMTID == idType() )
                                         ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol +
                                             MaPMT::MaskPDCol + MaPMT::MaskPixelRow + MaPMT::MaskPixelCol )
@@ -726,52 +726,52 @@ namespace LHCb {
 
   public:
     /// Retrieve The pixel sub-row (Alice mode) number
-    inline constexpr DataType pixelSubRow() const noexcept {
+    [[nodiscard]] inline constexpr DataType pixelSubRow() const noexcept {
       // Note MaPMTs have no sub-pixel ...
       return ( DataType )( UNLIKELY( HPDID == idType() ) ? ( ( key() & HPD::MaskPixelSubRow ) >> HPD::ShiftPixelSubRow )
                                                          : 0 );
     }
 
     /// Retrieve The pixel column number
-    inline constexpr DataType pixelCol() const noexcept {
+    [[nodiscard]] inline constexpr DataType pixelCol() const noexcept {
       return ( DataType )( LIKELY( MaPMTID == idType() ) ? ( ( key() & MaPMT::MaskPixelCol ) >> MaPMT::ShiftPixelCol )
                                                          : ( ( key() & HPD::MaskPixelCol ) >> HPD::ShiftPixelCol ) );
     }
 
     /// Retrieve The pixel row number
-    inline constexpr DataType pixelRow() const noexcept {
+    [[nodiscard]] inline constexpr DataType pixelRow() const noexcept {
       return ( DataType )( LIKELY( MaPMTID == idType() ) ? ( ( key() & MaPMT::MaskPixelRow ) >> MaPMT::ShiftPixelRow )
                                                          : ( ( key() & HPD::MaskPixelRow ) >> HPD::ShiftPixelRow ) );
     }
 
     /// Retrieve The PD number in column
-    inline constexpr DataType pdNumInCol() const noexcept {
+    [[nodiscard]] inline constexpr DataType pdNumInCol() const noexcept {
       return ( DataType )( LIKELY( MaPMTID == idType() )
                                ? ( ( key() & MaPMT::MaskPDNumInCol ) >> MaPMT::ShiftPDNumInCol )
                                : ( ( key() & HPD::MaskPDNumInCol ) >> HPD::ShiftPDNumInCol ) );
     }
 
     /// Retrieve The PD column number
-    inline constexpr DataType pdCol() const noexcept {
+    [[nodiscard]] inline constexpr DataType pdCol() const noexcept {
       return ( DataType )( LIKELY( MaPMTID == idType() ) ? ( ( key() & MaPMT::MaskPDCol ) >> MaPMT::ShiftPDCol )
                                                          : ( ( key() & HPD::MaskPDCol ) >> HPD::ShiftPDCol ) );
     }
 
     /// Retrieve The RICH panel
-    inline constexpr Rich::Side panel() const noexcept {
+    [[nodiscard]] inline constexpr Rich::Side panel() const noexcept {
       return ( Rich::Side )( LIKELY( MaPMTID == idType() ) ? ( ( key() & MaPMT::MaskPanel ) >> MaPMT::ShiftPanel )
                                                            : ( ( key() & HPD::MaskPanel ) >> HPD::ShiftPanel ) );
     }
 
     /// Retrieve The RICH Detector
-    inline constexpr Rich::DetectorType rich() const noexcept {
+    [[nodiscard]] inline constexpr Rich::DetectorType rich() const noexcept {
       return ( Rich::DetectorType )( LIKELY( MaPMTID == idType() ) ? ( ( key() & MaPMT::MaskRich ) >> MaPMT::ShiftRich )
                                                                    : ( ( key() & HPD::MaskRich ) >> HPD::ShiftRich ) );
     }
 
   public:
     /// Retrieve Pixel sub-row field is set
-    inline constexpr bool pixelSubRowIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool pixelSubRowIsSet() const noexcept {
       // Note MaPMTs have no sub-pixel ...
       return ( UNLIKELY( HPDID == idType() )
                    ? 0 != ( ( key() & HPD::MaskPixelSubRowIsSet ) >> HPD::ShiftPixelSubRowIsSet )
@@ -779,63 +779,65 @@ namespace LHCb {
     }
 
     /// Retrieve Pixel column field is set
-    inline constexpr bool pixelColIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool pixelColIsSet() const noexcept {
       return ( LIKELY( MaPMTID == idType() )
                    ? 0 != ( ( key() & MaPMT::MaskPixelColIsSet ) >> MaPMT::ShiftPixelColIsSet )
                    : 0 != ( ( key() & HPD::MaskPixelColIsSet ) >> HPD::ShiftPixelColIsSet ) );
     }
 
     /// Retrieve Pixel row field is set
-    inline constexpr bool pixelRowIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool pixelRowIsSet() const noexcept {
       return ( LIKELY( MaPMTID == idType() )
                    ? 0 != ( ( key() & MaPMT::MaskPixelRowIsSet ) >> MaPMT::ShiftPixelRowIsSet )
                    : 0 != ( ( key() & HPD::MaskPixelRowIsSet ) >> HPD::ShiftPixelRowIsSet ) );
     }
 
     /// Retrieve PD column field is set
-    inline constexpr bool pdIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool pdIsSet() const noexcept {
       return ( LIKELY( MaPMTID == idType() ) ? 0 != ( ( key() & MaPMT::MaskPDIsSet ) >> MaPMT::ShiftPDIsSet )
                                              : 0 != ( ( key() & HPD::MaskPDIsSet ) >> HPD::ShiftPDIsSet ) );
     }
 
     /// Retrieve RICH panel field is set
-    inline constexpr bool panelIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool panelIsSet() const noexcept {
       return ( LIKELY( MaPMTID == idType() ) ? 0 != ( ( key() & MaPMT::MaskPanelIsSet ) >> MaPMT::ShiftPanelIsSet )
                                              : 0 != ( ( key() & HPD::MaskPanelIsSet ) >> HPD::ShiftPanelIsSet ) );
     }
 
     /// Retrieve RICH detector field is set
-    inline constexpr bool richIsSet() const noexcept {
+    [[nodiscard]] inline constexpr bool richIsSet() const noexcept {
       return ( LIKELY( MaPMTID == idType() ) ? 0 != ( ( key() & MaPMT::MaskRichIsSet ) >> MaPMT::ShiftRichIsSet )
                                              : 0 != ( ( key() & HPD::MaskRichIsSet ) >> HPD::ShiftRichIsSet ) );
     }
 
   public:
     /// Returns true if the RichSmartID contains valid RICH detector data
-    inline constexpr bool richDataAreValid() const noexcept { return richIsSet(); }
+    [[nodiscard]] inline constexpr bool richDataAreValid() const noexcept { return richIsSet(); }
 
     /// Returns true if the RichSmartID contains valid PD data
-    inline constexpr bool pdDataAreValid() const noexcept { return ( pdIsSet() && panelIsSet() && richIsSet() ); }
+    [[nodiscard]] inline constexpr bool pdDataAreValid() const noexcept {
+      return ( pdIsSet() && panelIsSet() && richIsSet() );
+    }
 
     /// Returns true if the RichSmartID contains valid pixel data
-    inline constexpr bool pixelDataAreValid() const noexcept {
+    [[nodiscard]] inline constexpr bool pixelDataAreValid() const noexcept {
       return ( pixelColIsSet() && pixelRowIsSet() && pdDataAreValid() );
     }
 
     /// Returns true if the RichSmartID contains valid pixel sub-row (Alice mode) data
-    inline constexpr bool pixelSubRowDataIsValid() const noexcept {
+    [[nodiscard]] inline constexpr bool pixelSubRowDataIsValid() const noexcept {
       return ( pixelSubRowIsSet() && pixelDataAreValid() );
     }
 
     /// Returns true if at least one data field has been set
-    inline constexpr bool isValid() const noexcept {
+    [[nodiscard]] inline constexpr bool isValid() const noexcept {
       return ( richIsSet() || panelIsSet() || pdIsSet() || pixelRowIsSet() || pixelColIsSet() || pixelSubRowIsSet() );
     }
 
   public:
     /** Returns true if the SmartID is for a 'large' PMT.
      *  @attention Will always return false for HPDs... */
-    inline constexpr bool isLargePMT() const noexcept {
+    [[nodiscard]] inline constexpr bool isLargePMT() const noexcept {
       return ( UNLIKELY( HPDID == idType() ) ? false
                                              : 0 != ( ( key() & MaPMT::MaskLargePixel ) >> MaPMT::ShiftLargePixel ) );
     }
@@ -857,11 +859,13 @@ namespace LHCb {
 
     /** Return the output of the ostream printing of this object as a string.
      *  Mainly for use in GaudiPython. */
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
   public:
     /// Test if a given bit in the ID is on
-    inline constexpr bool isBitOn( const int32_t pos ) const noexcept { return ( 0 != ( key() & ( 1 << pos ) ) ); }
+    [[nodiscard]] inline constexpr bool isBitOn( const int32_t pos ) const noexcept {
+      return ( 0 != ( key() & ( 1 << pos ) ) );
+    }
 
     /// Print the ID as a series of bits (0/1)
     std::ostream& dumpBits( std::ostream& s ) const;

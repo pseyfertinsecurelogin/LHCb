@@ -40,10 +40,10 @@ namespace LHCb {
     enum Layer { UnknownLayer = 0, X1 = 1, U = 2, V = 3, X2 = 4 };
 
     /// Default Constructor
-    ITNames() {}
+    ITNames() = default;
 
     /// Default Destructor
-    ~ITNames() {}
+    ~ITNames() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;

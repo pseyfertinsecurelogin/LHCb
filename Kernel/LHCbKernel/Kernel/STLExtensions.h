@@ -161,8 +161,8 @@ namespace LHCb {
       constexpr const_pointer cbegin() const noexcept { return begin(); }
       constexpr const_pointer cend() const noexcept { return end(); }
 
-      constexpr std::size_t size() const noexcept { return 1; }
-      constexpr bool        empty() const noexcept { return false; }
+      [[nodiscard]] constexpr std::size_t size() const noexcept { return 1; }
+      [[nodiscard]] constexpr bool        empty() const noexcept { return false; }
 
       constexpr const_reference value() const& noexcept { return m_data; }
       constexpr reference       value() & noexcept { return m_data; }

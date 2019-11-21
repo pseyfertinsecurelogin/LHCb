@@ -55,42 +55,42 @@ namespace LHCb {
     void reserve( std::size_t s ) { m_traj.reserve( s ); }
 
     // clone thyself...
-    std::unique_ptr<Trajectory<double>> clone() const override;
+    [[nodiscard]] std::unique_ptr<Trajectory<double>> clone() const override;
 
     /// Point on the trajectory at mu
-    Point position( double mu ) const override;
+    [[nodiscard]] Point position( double mu ) const override;
 
     /// First derivative of the trajectory at mu
-    Vector direction( double mu ) const override;
+    [[nodiscard]] Vector direction( double mu ) const override;
 
     /// Second derivative of the trajectory at mu
-    Vector curvature( double mu ) const override;
+    [[nodiscard]] Vector curvature( double mu ) const override;
 
     /// Create a parabolic approximation to the trajectory
     /// at mu
     void expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
     /// Determine the distance in arclenghts to the
     /// closest point on the trajectory to a given point
-    double muEstimate( const Point& ) const override;
+    [[nodiscard]] double muEstimate( const Point& ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
-    double distTo1stError( double arclength, double tolerance, int pathDirection = +1 ) const override;
+    [[nodiscard]] double distTo1stError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
-    double distTo2ndError( double arclength, double tolerance, int pathDirection = +1 ) const override;
+    [[nodiscard]] double distTo2ndError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). .
     using Trajectory<double>::arclength;
-    double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
+    [[nodiscard]] double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
 
     // functions specific to a BrokenLineTrajectory
-    void         push_front( LineTraj<double> );
-    void         push_back( LineTraj<double> );
-    unsigned int size() const { return m_traj.size(); }
-    bool         empty() const { return m_traj.empty(); }
+    void                       push_front( LineTraj<double> );
+    void                       push_back( LineTraj<double> );
+    [[nodiscard]] unsigned int size() const { return m_traj.size(); }
+    [[nodiscard]] bool         empty() const { return m_traj.empty(); }
 
     std::ostream& print( std::ostream& ) const;
 
@@ -99,7 +99,7 @@ namespace LHCb {
     std::vector<std::pair<LineTraj<double>, double>> m_traj;
 
     // global -> local mapping
-    std::pair<const LineTraj<double>*, double> loc( double mu ) const;
+    [[nodiscard]] std::pair<const LineTraj<double>*, double> loc( double mu ) const;
 
     // generic forwarding to local trajectories
     template <typename FUN>

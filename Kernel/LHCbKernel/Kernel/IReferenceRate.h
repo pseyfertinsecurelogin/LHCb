@@ -25,7 +25,7 @@
 struct IReferenceRate : extend_interfaces<INamedInterface> {
   DeclareInterfaceID( IReferenceRate, 2, 0 );
 
-  virtual double rate() const = 0;
-  virtual size_t tick() const = 0;
+  [[nodiscard]] virtual double rate() const = 0;
+  [[nodiscard]] virtual size_t tick() const = 0;
 };
 #endif // IReferenceRate_h

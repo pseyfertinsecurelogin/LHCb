@@ -44,14 +44,14 @@ namespace LHCb {
     PlatformInfo( const PlatformInfo& rhs ) = default;
 
     /// Numeric id of the build time `BINARY_TAG` (defined by an internal map).
-    std::uint16_t binaryId() const { return m_binaryId; }
+    [[nodiscard]] std::uint16_t binaryId() const { return m_binaryId; }
     /// Instructions set level of the CPU (run time).
-    std::uint16_t hostInstrSetLevel() const { return m_hostInstrSetLevel; }
+    [[nodiscard]] std::uint16_t hostInstrSetLevel() const { return m_hostInstrSetLevel; }
 
     /// Build time string version of `BINARY_TAG` (AKA `CMTCONFIG`).
-    const std::string& binaryTag() const;
+    [[nodiscard]] const std::string& binaryTag() const;
     /// String name of the CPU instructions set.
-    const std::string& hostInstrSet() const;
+    [[nodiscard]] const std::string& hostInstrSet() const;
 
   private:
     PlatformInfo( std::uint16_t binaryId, std::uint16_t hostInstrSetLevel );

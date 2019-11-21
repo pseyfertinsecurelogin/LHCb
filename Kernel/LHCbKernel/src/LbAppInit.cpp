@@ -95,7 +95,7 @@ StatusCode LbAppInit::initialize() {
   m_appVersion = value;
 
   if ( m_preload ) {
-    IGenericTool* preloadTool = tool<IGenericTool>( "PreloadGeometryTool" );
+    auto* preloadTool = tool<IGenericTool>( "PreloadGeometryTool" );
     preloadTool->execute();
     release( preloadTool );
   }
@@ -129,7 +129,7 @@ void LbAppInit::checkMem() const {
     m_lastMem = System::virtualMemory();
   } else if ( UNLIKELY( 0 == m_evtCounter % m_increment && m_increment > 0 ) ) {
     unsigned long long mem     = System::virtualMemory();
-    const long long    memDiff = (long long)( mem - m_lastMem );
+    const auto         memDiff = (long long)( mem - m_lastMem );
     if ( UNLIKELY( std::abs( memDiff ) >= m_minMemDelta ) ) {
       info() << "Memory has changed from " << m_lastMem << " to " << mem << " KB"
              << " (" << memDiff << "KB, " << 100. * memDiff / m_lastMem << "%)"
@@ -162,7 +162,7 @@ void LbAppInit::printEventRun( long long event, int run, std::vector<long int>* 
     if ( m_printTime )
       info() << ", UTC time " << time.format( false, "%Y-%m-%d %H:%M:%S" ) << "." << time.nanoformat( 6 );
     info() << ",  Nr. in job = " << eventCounter();
-    if ( 0 != seeds ) info() << " with seeds " << *seeds;
+    if ( nullptr != seeds ) info() << " with seeds " << *seeds;
     info() << endmsg;
   }
 }

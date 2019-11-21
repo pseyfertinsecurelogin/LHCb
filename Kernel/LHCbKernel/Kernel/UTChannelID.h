@@ -40,52 +40,52 @@ namespace LHCb {
     explicit UTChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    UTChannelID() : m_channelID( 0 ) {}
+    UTChannelID() = default;
 
     /// cast
     operator int() const;
 
     /// Retrieve type
-    unsigned int type() const;
+    [[nodiscard]] unsigned int type() const;
 
     /// test whether UT or not
-    bool isUT() const;
+    [[nodiscard]] bool isUT() const;
 
     /// Retrieve sector
-    unsigned int sector() const;
+    [[nodiscard]] unsigned int sector() const;
 
     /// Retrieve detRegion
-    unsigned int detRegion() const;
+    [[nodiscard]] unsigned int detRegion() const;
 
     /// Retrieve layer
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// Retrieve unique layer
-    unsigned int uniqueLayer() const;
+    [[nodiscard]] unsigned int uniqueLayer() const;
 
     /// Retrieve unique detRegion
-    unsigned int uniqueDetRegion() const;
+    [[nodiscard]] unsigned int uniqueDetRegion() const;
 
     /// Print this UTChannelID in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Print method for python NOT NEEDED + SLOW IN C++ use fillStream
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     /// Retrieve const  UT Channel ID
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  UT Channel ID
     void setChannelID( unsigned int value );
 
     /// Retrieve strip
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Retrieve station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Retrieve unique sector
-    unsigned int uniqueSector() const;
+    [[nodiscard]] unsigned int uniqueSector() const;
 
     friend std::ostream& operator<<( std::ostream& str, const UTChannelID& obj ) { return obj.fillStream( str ); }
 
@@ -126,7 +126,7 @@ namespace LHCb {
       uniqueSectorMask    = sectorMask + detRegionMask + layerMask + stationMask
     };
 
-    unsigned int m_channelID; ///< UT Channel ID
+    unsigned int m_channelID{0}; ///< UT Channel ID
 
   }; // class UTChannelID
 

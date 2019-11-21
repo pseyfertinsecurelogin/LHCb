@@ -68,7 +68,7 @@ namespace CaloCellCode {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  typedef unsigned int ContentType;
+  using ContentType = unsigned int;
   // ==========================================================================
   // Coding of CaloCellID objects : Lengths, basic
   // ==========================================================================

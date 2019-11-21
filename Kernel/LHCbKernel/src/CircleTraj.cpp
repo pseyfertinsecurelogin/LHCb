@@ -15,6 +15,8 @@
 #  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
 
+#include <utility>
+
 #include "Kernel/CircleTraj.h"
 #include "LHCbMath/FastRoots.h"
 
@@ -29,17 +31,17 @@ using namespace Gaudi;
 
 std::unique_ptr<Trajectory<double>> CircleTraj::clone() const { return std::make_unique<CircleTraj>( *this ); }
 
-CircleTraj::CircleTraj( const Point& origin, const Vector& dir1, const Vector& dir2, double radius )
+CircleTraj::CircleTraj( Point origin, const Vector& dir1, const Vector& dir2, double radius )
     : Trajectory<double>( 0., radius * std::asin( ( dir1.unit() ).Cross( dir2.unit() ).r() ) )
-    , m_origin( origin )
+    , m_origin( std::move( origin ) )
     , m_normal( dir1.Cross( dir2 ).unit() )
     , m_dirStart( dir1.unit() )
     , m_radius( radius )
     , m_cbrt6radius2( std::cbrt( 6. * radius * radius ) ) {}
 
-CircleTraj::CircleTraj( const Point& origin, const Vector& normal, const Vector& origin2point, const Range& range )
+CircleTraj::CircleTraj( Point origin, const Vector& normal, const Vector& origin2point, const Range& range )
     : Trajectory<double>( range )
-    , m_origin( origin )
+    , m_origin( std::move( origin ) )
     , m_normal( normal.unit() )
     , m_dirStart( origin2point - origin2point.Dot( m_normal ) * m_normal )
     , m_radius( m_dirStart.r() )

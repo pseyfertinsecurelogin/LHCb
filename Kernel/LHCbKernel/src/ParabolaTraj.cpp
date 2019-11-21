@@ -11,8 +11,10 @@
 // Include files
 
 // local
-#include "Kernel/ParabolaTraj.h"
+#include <utility>
+
 #include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/ParabolaTraj.h"
 using namespace LHCb;
 
 std::unique_ptr<Trajectory<double>> ParabolaTraj::clone() const { return std::make_unique<ParabolaTraj>( *this ); }
@@ -22,8 +24,8 @@ std::unique_ptr<Trajectory<double>> ParabolaTraj::clone() const { return std::ma
 #endif
 
 /// Constructor from a (middle) point, a (unit) direction vector and a curvature
-ParabolaTraj::ParabolaTraj( const Point& point, const Vector& dir, const Vector& curv, const Range& range )
-    : Trajectory( range ), m_pos( point ), m_dir( dir.unit() ), m_curv( curv ) {}
+ParabolaTraj::ParabolaTraj( Point point, const Vector& dir, Vector curv, const Range& range )
+    : Trajectory( range ), m_pos( std::move( point ) ), m_dir( dir.unit() ), m_curv( std::move( curv ) ) {}
 
 /// Point on the trajectory at arclength from the starting point
 Trajectory<double>::Point ParabolaTraj::position( double arclength ) const {

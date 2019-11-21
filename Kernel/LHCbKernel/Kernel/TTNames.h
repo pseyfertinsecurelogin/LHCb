@@ -38,10 +38,10 @@ namespace LHCb {
     enum detRegion { UnknownRegion = 0, RegionC = 1, RegionB = 2, RegionA = 3 };
 
     /// Default Constructor
-    TTNames() {}
+    TTNames() = default;
 
     /// Default Destructor
-    ~TTNames() {}
+    ~TTNames() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;

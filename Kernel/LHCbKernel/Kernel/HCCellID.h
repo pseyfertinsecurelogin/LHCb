@@ -36,7 +36,7 @@ namespace LHCb {
     HCCellID( int id ) : m_cellID( id ) {}
 
     /// Default Constructor
-    HCCellID() : m_cellID( 0 ) {}
+    HCCellID() = default;
 
     /// Cast
     operator unsigned int() const;
@@ -45,19 +45,19 @@ namespace LHCb {
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  HC Cell ID
-    unsigned int cellID() const;
+    [[nodiscard]] unsigned int cellID() const;
 
     /// Update  HC Cell ID
     void setCellID( unsigned int value );
 
     /// Retrieve channel number
-    unsigned int channel() const;
+    [[nodiscard]] unsigned int channel() const;
 
     /// Update channel number
     void setChannel( unsigned int value );
 
     /// Retrieve crate number
-    unsigned int crate() const;
+    [[nodiscard]] unsigned int crate() const;
 
     /// Update crate number
     void setCrate( unsigned int value );
@@ -72,7 +72,7 @@ namespace LHCb {
     /// Bitmasks for bitfield cellID
     enum cellIDMasks { channelMask = 0x3fL, crateMask = 0x7c0L };
 
-    unsigned int m_cellID; ///< HC Cell ID
+    unsigned int m_cellID{0}; ///< HC Cell ID
 
   }; // class HCCellID
 
@@ -98,7 +98,7 @@ inline unsigned int LHCb::HCCellID::channel() const {
 }
 
 inline void LHCb::HCCellID::setChannel( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_cellID &= ~channelMask;
   m_cellID |= ( ( ( (unsigned int)val ) << channelBits ) & channelMask );
 }
@@ -106,7 +106,7 @@ inline void LHCb::HCCellID::setChannel( unsigned int value ) {
 inline unsigned int LHCb::HCCellID::crate() const { return (unsigned int)( ( m_cellID & crateMask ) >> crateBits ); }
 
 inline void LHCb::HCCellID::setCrate( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_cellID &= ~crateMask;
   m_cellID |= ( ( ( (unsigned int)val ) << crateBits ) & crateMask );
 }

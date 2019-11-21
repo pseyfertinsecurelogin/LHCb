@@ -72,7 +72,7 @@ protected:
    *  @param[in] seeds (optional) vector of seeds
    *  @param[in] time (optional) time of the event
    */
-  void printEventRun( long long evt, int run, std::vector<long int>* seeds = 0, Gaudi::Time time = 0 ) const;
+  void printEventRun( long long evt, int run, std::vector<long int>* seeds = nullptr, Gaudi::Time time = 0 ) const;
 
   /** Initialize the random number engine with the given seeds
    *  @param[in] seeds Vector of seeds
@@ -109,8 +109,8 @@ private:
   Gaudi::Property<long long>          m_minMemDelta{
       this, "MinMemoryDelta", 16, "The minimum change in memory usage (KB) to trigger a message"}; // defaults to 16KB
 
-  mutable SmartIF<IRndmGenSvc> m_randSvc;   ///< Pointer to random number service
-  mutable IRndmEngine*         m_engine{0}; ///< Pointer to random number engine
+  mutable SmartIF<IRndmGenSvc> m_randSvc;         ///< Pointer to random number service
+  mutable IRndmEngine*         m_engine{nullptr}; ///< Pointer to random number engine
   mutable std::once_flag       m_randSvc_init;
   mutable std::atomic_ullong   m_lastMem{0}; ///< Last memory usage
 

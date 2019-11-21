@@ -107,11 +107,11 @@ public:
   }
 
   // it would be better not to have to expose these details....
-  constexpr static int nBins( int i ) noexcept { return std::array{nBin...}[i]; }
-  constexpr float      min( int i ) const noexcept { return m_minVar[i]; }
-  constexpr float      max( int i ) const noexcept { return m_maxVar[i]; }
-  constexpr float      delta( int i ) const noexcept { return m_deltaVar[i]; }
-  const auto&          table() const { return m_table; }
+  constexpr static int          nBins( int i ) noexcept { return std::array{nBin...}[i]; }
+  [[nodiscard]] constexpr float min( int i ) const noexcept { return m_minVar[i]; }
+  [[nodiscard]] constexpr float max( int i ) const noexcept { return m_maxVar[i]; }
+  [[nodiscard]] constexpr float delta( int i ) const noexcept { return m_deltaVar[i]; }
+  const auto&                   table() const { return m_table; }
 
 private:
   constexpr static int to_offset( const std::array<int, nVar>& idx ) {

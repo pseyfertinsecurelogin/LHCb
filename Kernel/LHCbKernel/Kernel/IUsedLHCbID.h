@@ -30,7 +30,7 @@ struct IUsedLHCbID : extend_interfaces<IAlgTool> {
    * @param id to be test tested
    *  @return true if used
    */
-  virtual bool used( const LHCb::LHCbID id ) const = 0;
+  [[nodiscard]] virtual bool used( const LHCb::LHCbID id ) const = 0;
 };
 
 #endif

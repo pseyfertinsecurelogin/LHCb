@@ -35,14 +35,14 @@ namespace LHCb {
   class CaloCellID final {
   public:
     /// Representation type (presumably 32bits)
-    typedef CaloCellCode::ContentType ContentType;
+    using ContentType = CaloCellCode::ContentType;
     /// vector of cell IDs
-    typedef std::vector<LHCb::CaloCellID> Vector;
+    using Vector = std::vector<LHCb::CaloCellID>;
     /// the ordered set of unique of cell IDs
-    typedef std::set<LHCb::CaloCellID> Set;
+    using Set = std::set<LHCb::CaloCellID>;
 
     /// Default/empty constructor
-    CaloCellID() : m_all( 0 ) {}
+    CaloCellID() = default;
 
     /// Explicit constructor from Calo, Area, Row and Column
     CaloCellID( const CaloCellCode::CaloIndex& Calo, unsigned int Area, unsigned int Row, unsigned int Column );
@@ -51,64 +51,64 @@ namespace LHCb {
     CaloCellID( const CaloCellCode::CaloIndex& Calo, const std::string& Area, unsigned int Row, unsigned int Column );
 
     /// Explicit constructor from 32 bit representation
-    explicit CaloCellID( const ContentType& all );
+    explicit CaloCellID( const ContentType& all ) : m_all{all} {}
 
     /// Decoding function to extract index
-    unsigned int index() const;
+    [[nodiscard]] unsigned int index() const;
 
     /// Decoding function to extract calorimeter identifier
-    CaloCellCode::CaloIndex calo() const;
+    [[nodiscard]] CaloCellCode::CaloIndex calo() const;
 
     /// Decoding function to extract calorimeter area identifier
-    unsigned int area() const;
+    [[nodiscard]] unsigned int area() const;
 
     /// Decoding function to extract calorimeter row identifier
-    unsigned int row() const;
+    [[nodiscard]] unsigned int row() const;
 
     /// Decoding function to extract calorimeter column identifier
-    unsigned int col() const;
+    [[nodiscard]] unsigned int col() const;
 
     /// Comparison operator using 'index()' representation
-    bool operator<( const CaloCellID& ID ) const;
+    friend bool operator<( const CaloCellID& lhs, const CaloCellID& rhs ) { return lhs.index() < rhs.index(); }
 
     /// Equality operator using 'contents()' representation
-    bool operator==( const CaloCellID& ID ) const;
+    friend bool operator==( const CaloCellID& lhs, const CaloCellID& rhs ) { return lhs.contents() == rhs.contents(); }
 
     /// return true if the cellID corresponds to a PIN-diode readout channel
-    bool isPin() const;
+    [[nodiscard]] bool isPin() const { return CaloCellCode::isPinArea( calo(), area() ); }
 
     /// printOut to standard STD/STL output streams
     std::ostream& fillStream( std::ostream& os ) const;
 
     /// bit pattern as string
-    std::string bits( char del ) const;
+    [[nodiscard]] std::string bits( char delimeter ) const;
 
     /// bit pattern as string
-    std::string bits() const;
+    [[nodiscard]] std::string bits() const { return bits( ',' ); }
 
     /// Update Calorimeter identifier
     CaloCellID& setCalo( CaloCellCode::CaloIndex Calo );
 
     /// hash-function for python
-    std::size_t __hash__() const;
+    [[nodiscard]] std::size_t __hash__() const { return hash(); }
 
     /// hash-function
-    std::size_t hash() const;
+    [[nodiscard]] std::size_t hash() const { return index(); }
 
     /// convert to string representation
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     /// get the name of Calorimeter
-    const std::string& caloName() const;
+    [[nodiscard]] const std::string& caloName() const { return CaloCellCode::caloName( calo() ); }
 
     /// get the name of Calorimeteter detector area
-    const std::string& areaName() const;
+    [[nodiscard]] const std::string& areaName() const { return CaloCellCode::caloArea( calo(), area() ); }
 
     /// Retrieve const  all significant bits representation of CellID (32bits)
-    const ContentType& all() const;
+    [[nodiscard]] const ContentType& all() const { return m_all; }
 
     /// Update  all significant bits representation of CellID (32bits)
-    void setAll( const ContentType& value );
+    void setAll( const ContentType& value ) { m_all = value; }
 
     friend std::ostream& operator<<( std::ostream& str, const CaloCellID& obj ) { return obj.fillStream( str ); }
 
@@ -153,12 +153,12 @@ namespace LHCb {
     CaloCellID& set( const ContentType& Value, unsigned int Shift, unsigned int Mask );
 
     /// Extract 'the rest' - must be 0!
-    ContentType rest() const;
+    [[nodiscard]] ContentType rest() const;
 
     /// Extract the full content
-    ContentType contents() const;
+    [[nodiscard]] ContentType contents() const { return m_all; };
 
-    ContentType m_all; ///< all significant bits representation of CellID (32bits)
+    ContentType m_all{0}; ///< all significant bits representation of CellID (32bits)
 
   }; // class CaloCellID
 
@@ -190,12 +190,6 @@ inline LHCb::CaloCellID::CaloCellID( const CaloCellCode::CaloIndex& Calo, const 
   setCol( Column );
 }
 
-inline LHCb::CaloCellID::CaloCellID( const ContentType& all ) : m_all( 0 ) { m_all = all; }
-
-inline const LHCb::CaloCellID::ContentType& LHCb::CaloCellID::all() const { return m_all; }
-
-inline void LHCb::CaloCellID::setAll( const ContentType& value ) { m_all = value; }
-
 inline unsigned int LHCb::CaloCellID::index() const {
 
   return ( contents() & CaloCellCode::MaskIndex ) >> CaloCellCode::ShiftIndex;
@@ -221,26 +215,10 @@ inline unsigned int LHCb::CaloCellID::col() const {
   return ( contents() & CaloCellCode::MaskCol ) >> CaloCellCode::ShiftCol;
 }
 
-inline bool LHCb::CaloCellID::operator<( const CaloCellID& ID ) const { return index() < ID.index(); }
-
-inline bool LHCb::CaloCellID::operator==( const CaloCellID& ID ) const { return contents() == ID.contents(); }
-
-inline bool LHCb::CaloCellID::isPin() const { return CaloCellCode::isPinArea( calo(), area() ); }
-
-inline std::string LHCb::CaloCellID::bits() const { return bits( ',' ); }
-
 inline LHCb::CaloCellID& LHCb::CaloCellID::setCalo( CaloCellCode::CaloIndex Calo ) {
 
   return set( Calo, CaloCellCode::ShiftCalo, CaloCellCode::MaskCalo );
 }
-
-inline std::size_t LHCb::CaloCellID::__hash__() const { return hash(); }
-
-inline std::size_t LHCb::CaloCellID::hash() const { return index(); }
-
-inline const std::string& LHCb::CaloCellID::caloName() const { return CaloCellCode::caloName( calo() ); }
-
-inline const std::string& LHCb::CaloCellID::areaName() const { return CaloCellCode::caloArea( calo(), area() ); }
 
 inline LHCb::CaloCellID& LHCb::CaloCellID::setArea( unsigned int Area ) {
 
@@ -272,5 +250,3 @@ inline LHCb::CaloCellID::ContentType LHCb::CaloCellID::rest() const {
 
   return ( contents() & CaloCellCode::MaskRest ) >> CaloCellCode::ShiftRest;
 }
-
-inline LHCb::CaloCellID::ContentType LHCb::CaloCellID::contents() const { return m_all; }

@@ -57,7 +57,7 @@ namespace LHCb {
 
   public:
     /// Default constructor
-    constexpr FastAllocList() {}
+    constexpr FastAllocList() = default;
 
     /** Constructor with initial size
      *  @param size Initialisation size for list

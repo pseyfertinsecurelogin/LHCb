@@ -20,9 +20,9 @@ int main( int /*argc*/, char** /*argv*/ ) {
   bool OK = true;
 
   for ( unsigned int irich = 0; irich <= LHCb::RichSmartID::HPD::MaxRich; ++irich ) {
-    const Rich::DetectorType rich = (Rich::DetectorType)irich;
+    const auto rich = (Rich::DetectorType)irich;
     for ( unsigned int ipanel = 0; ipanel <= LHCb::RichSmartID::HPD::MaxPanel; ++ipanel ) {
-      const Rich::Side panel = (Rich::Side)ipanel;
+      const auto panel = (Rich::Side)ipanel;
       for ( unsigned int pdrow = 0; pdrow <= LHCb::RichSmartID::HPD::MaxPDNumInCol; ++pdrow ) {
         for ( unsigned int pdcol = 0; pdcol <= LHCb::RichSmartID::HPD::MaxPDCol; ++pdcol ) {
           for ( unsigned int pixrow = 0; pixrow <= LHCb::RichSmartID::HPD::MaxPixelRow; ++pixrow ) {
@@ -93,9 +93,9 @@ int main( int /*argc*/, char** /*argv*/ ) {
   }
 
   for ( unsigned int irich = 0; irich <= LHCb::RichSmartID::MaPMT::MaxRich; ++irich ) {
-    const Rich::DetectorType rich = (Rich::DetectorType)irich;
+    const auto rich = (Rich::DetectorType)irich;
     for ( unsigned int ipanel = 0; ipanel <= LHCb::RichSmartID::MaPMT::MaxPanel; ++ipanel ) {
-      const Rich::Side panel = (Rich::Side)ipanel;
+      const auto panel = (Rich::Side)ipanel;
       for ( unsigned int pdrow = 0; pdrow <= LHCb::RichSmartID::MaPMT::MaxPDNumInCol; ++pdrow ) {
         for ( unsigned int pdcol = 0; pdcol <= LHCb::RichSmartID::MaPMT::MaxPDCol; ++pdcol ) {
           for ( unsigned int pixrow = 0; pixrow <= LHCb::RichSmartID::MaPMT::MaxPixelRow; ++pixrow ) {

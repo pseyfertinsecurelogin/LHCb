@@ -21,17 +21,14 @@
  *
  */
 
-namespace LHCb {
-  // Forward declarations
-  namespace Packer {
-    /// generic get method for packed word
-    unsigned int getBit( unsigned int packedValue, unsigned int mask, unsigned int shift );
+namespace LHCb::Packer {
+  /// generic get method for packed word
+  unsigned int getBit( unsigned int packedValue, unsigned int mask, unsigned int shift );
 
-    /// generic set method for packed word
-    void setBit( unsigned int& origValue, unsigned int shift, unsigned int mask, unsigned int bitValue );
+  /// generic set method for packed word
+  void setBit( unsigned int& origValue, unsigned int shift, unsigned int mask, unsigned int bitValue );
 
-  } // namespace Packer
-} // namespace LHCb
+} // namespace LHCb::Packer
 
 // -----------------------------------------------------------------------------
 // end of namespace

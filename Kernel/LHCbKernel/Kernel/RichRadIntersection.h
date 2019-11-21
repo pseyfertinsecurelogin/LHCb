@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
+#include <utility>
 #include <vector>
 
 // Include files
@@ -53,12 +54,11 @@ namespace Rich {
 
   public:
     /// Definition of a vector of intersections
-    typedef std::vector<Rich::RadIntersection> Vector;
-    // using Vector = std::vector<Rich::RadIntersection>;
+    using Vector = std::vector<Rich::RadIntersection>;
 
   public:
     /// Default constructor
-    RadIntersection() {}
+    RadIntersection() = default;
 
     /// Default destructor
     ~RadIntersection() = default;
@@ -78,16 +78,16 @@ namespace Rich {
   public:
     /// Constructor from (copied) entry and exit points and momentum vectors, and a pointer to a
     /// DeRichRadiator
-    RadIntersection( const Gaudi::XYZPoint&  entryPoint, ///< The radiator entry point
-                     const Gaudi::XYZVector& entryVect,  ///< The direction vector at the entry point
-                     const Gaudi::XYZPoint&  exitPoint,  ///< The radiator exit point
-                     const Gaudi::XYZVector& exitVect,   ///< The direction vector at the exit point
-                     const DeRichRadiator*   rad         ///< Pointer to the intersected radiator volume
+    RadIntersection( Gaudi::XYZPoint       entryPoint, ///< The radiator entry point
+                     Gaudi::XYZVector      entryVect,  ///< The direction vector at the entry point
+                     Gaudi::XYZPoint       exitPoint,  ///< The radiator exit point
+                     Gaudi::XYZVector      exitVect,   ///< The direction vector at the exit point
+                     const DeRichRadiator* rad         ///< Pointer to the intersected radiator volume
                      )
-        : m_entryPoint( entryPoint )
-        , m_entryVect( entryVect )
-        , m_exitPoint( exitPoint )
-        , m_exitVect( exitVect )
+        : m_entryPoint( std::move( entryPoint ) )
+        , m_entryVect( std::move( entryVect ) )
+        , m_exitPoint( std::move( exitPoint ) )
+        , m_exitVect( std::move( exitVect ) )
         , m_radiator( rad ) {}
 
     /// Constructor from (moved) entry and exit points and momentum vectors, and a pointer to a
@@ -109,37 +109,37 @@ namespace Rich {
     inline void setEntryPoint( const Gaudi::XYZPoint& entryPoint ) noexcept { m_entryPoint = entryPoint; }
 
     /// Get the entry point to the radiator
-    inline const Gaudi::XYZPoint& entryPoint() const noexcept { return m_entryPoint; }
+    [[nodiscard]] inline const Gaudi::XYZPoint& entryPoint() const noexcept { return m_entryPoint; }
 
     /// Set the entry momentum vector to the radiator
     inline void setEntryMomentum( const Gaudi::XYZVector& entryV ) noexcept { m_entryVect = entryV; }
 
     /// Get the entry point to the radiator
-    inline const Gaudi::XYZVector& entryMomentum() const noexcept { return m_entryVect; }
+    [[nodiscard]] inline const Gaudi::XYZVector& entryMomentum() const noexcept { return m_entryVect; }
 
     /// Set the exit point of the radiator
     inline void setExitPoint( const Gaudi::XYZPoint& exitPoint ) noexcept { m_exitPoint = exitPoint; }
 
     /// Get the exit point to the radiator
-    inline const Gaudi::XYZPoint& exitPoint() const noexcept { return m_exitPoint; }
+    [[nodiscard]] inline const Gaudi::XYZPoint& exitPoint() const noexcept { return m_exitPoint; }
 
     /// Set the exit momentum vector to the radiator
     inline void setExitMomentum( const Gaudi::XYZVector& exitV ) noexcept { m_exitVect = exitV; }
 
     /// Get the entry point to the radiator
-    inline const Gaudi::XYZVector& exitMomentum() const noexcept { return m_exitVect; }
+    [[nodiscard]] inline const Gaudi::XYZVector& exitMomentum() const noexcept { return m_exitVect; }
 
     /// Set pointer to associated radiator detector element
     inline void setRadiator( const DeRichRadiator* radiator ) noexcept { m_radiator = radiator; }
 
     /// Get pointer to associated radiator detector element
-    inline const DeRichRadiator* radiator() const noexcept { return m_radiator; }
+    [[nodiscard]] inline const DeRichRadiator* radiator() const noexcept { return m_radiator; }
 
     /// Returns the path length (squared) in the given radiator
-    inline double pathLength2() const { return ( exitPoint() - entryPoint() ).Mag2(); }
+    [[nodiscard]] inline double pathLength2() const { return ( exitPoint() - entryPoint() ).Mag2(); }
 
     /// Returns the path length in the given radiator
-    inline double pathLength() const { return std::sqrt( pathLength2() ); }
+    [[nodiscard]] inline double pathLength() const { return std::sqrt( pathLength2() ); }
 
     /// Overload output to ostream
     friend inline std::ostream& operator<<( std::ostream& os, const Rich::RadIntersection& intersect ) {
@@ -195,7 +195,7 @@ namespace Rich {
 
     public:
       /// Constructor
-      Sorter() {}
+      Sorter() = default;
 
       /// Destructor
       ~Sorter() = default;

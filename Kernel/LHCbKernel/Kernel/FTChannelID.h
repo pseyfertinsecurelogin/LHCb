@@ -41,7 +41,7 @@ namespace LHCb {
     FTChannelID( unsigned int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    FTChannelID() : m_channelID( 0 ) {}
+    FTChannelID() = default;
 
     /// Operator overload, to cast channel ID to unsigned int.                         Used by linkers where the key
     /// (channel id) is an int
@@ -63,64 +63,64 @@ namespace LHCb {
     void addToChannel( const int offset );
 
     /// Return the SiPM number within the module (0-15)
-    unsigned int sipmInModule() const;
+    [[nodiscard]] unsigned int sipmInModule() const;
 
     /// Return the die number (0 or 1)
-    unsigned int die() const;
+    [[nodiscard]] unsigned int die() const;
 
     /// Return true if channelID is in x-layer
-    bool isX() const;
+    [[nodiscard]] bool isX() const;
 
     /// Return true if channelID is in bottom part of detector
-    bool isBottom() const;
+    [[nodiscard]] bool isBottom() const;
 
     /// Return true if channelID is in top part of detector
-    bool isTop() const;
+    [[nodiscard]] bool isTop() const;
 
     /// Print this FTChannelID in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  FT Channel ID
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  FT Channel ID
     void setChannelID( unsigned int value );
 
     /// Retrieve Channel in the 128 channel SiPM
-    unsigned int channel() const;
+    [[nodiscard]] unsigned int channel() const;
 
     /// Retrieve ID of the SiPM in the mat
-    unsigned int sipm() const;
+    [[nodiscard]] unsigned int sipm() const;
 
     /// Retrieve ID of the mat in the module
-    unsigned int mat() const;
+    [[nodiscard]] unsigned int mat() const;
 
     /// Retrieve Module id (0 - 5 or 0 - 6)
-    unsigned int module() const;
+    [[nodiscard]] unsigned int module() const;
 
     /// Retrieve Quarter ID (0 - 3)
-    unsigned int quarter() const;
+    [[nodiscard]] unsigned int quarter() const;
 
     /// Retrieve Layer id
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// Retrieve Station id
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Retrieve unique layer
-    unsigned int uniqueLayer() const;
+    [[nodiscard]] unsigned int uniqueLayer() const;
 
     /// Retrieve unique quarter
-    unsigned int uniqueQuarter() const;
+    [[nodiscard]] unsigned int uniqueQuarter() const;
 
     /// Retrieve unique module
-    unsigned int uniqueModule() const;
+    [[nodiscard]] unsigned int uniqueModule() const;
 
     /// Retrieve unique mat
-    unsigned int uniqueMat() const;
+    [[nodiscard]] unsigned int uniqueMat() const;
 
     /// Retrieve unique SiPM
-    unsigned int uniqueSiPM() const;
+    [[nodiscard]] unsigned int uniqueSiPM() const;
 
     friend std::ostream& operator<<( std::ostream& str, const FTChannelID& obj ) { return obj.fillStream( str ); }
 
@@ -153,7 +153,7 @@ namespace LHCb {
       uniqueSiPMMask    = sipmMask + matMask + moduleMask + quarterMask + layerMask + stationMask
     };
 
-    unsigned int m_channelID; ///< FT Channel ID
+    unsigned int m_channelID{0}; ///< FT Channel ID
 
   }; // class FTChannelID
 

@@ -35,9 +35,9 @@ namespace LHCb {
 struct ILHCbMagnetSvc : extend_interfaces<IMagneticFieldSvc> {
   DeclareInterfaceID( ILHCbMagnetSvc, 2, 0 );
 
-  virtual bool   useRealMap() const            = 0; ///< True if using measured map
-  virtual bool   isDown() const                = 0; ///< True if the down polarity map is loaded
-  virtual double signedRelativeCurrent() const = 0; ///< scale factor including polarity and current
+  [[nodiscard]] virtual bool   useRealMap() const            = 0; ///< True if using measured map
+  [[nodiscard]] virtual bool   isDown() const                = 0; ///< True if the down polarity map is loaded
+  [[nodiscard]] virtual double signedRelativeCurrent() const = 0; ///< scale factor including polarity and current
 
   /** implementation of the IMagneticFieldSvc interface.
    * @param[in]  xyz Point at which magnetic field vector will be given
@@ -53,9 +53,9 @@ struct ILHCbMagnetSvc : extend_interfaces<IMagneticFieldSvc> {
    * @param[in]  xyz Point at which magnetic field vector will be given
    * @return fvec Magnectic field vector.
    */
-  virtual ROOT::Math::XYZVector fieldVector( const ROOT::Math::XYZPoint& xyz ) const = 0;
+  [[nodiscard]] virtual ROOT::Math::XYZVector fieldVector( const ROOT::Math::XYZPoint& xyz ) const = 0;
 
   /// Get direct access to the field grid
-  virtual const LHCb::MagneticFieldGrid* fieldGrid() const = 0;
+  [[nodiscard]] virtual const LHCb::MagneticFieldGrid* fieldGrid() const = 0;
 };
 #endif // KERNEL_ILHCBMAGNETSVC_H

@@ -32,81 +32,78 @@
 class IInterface;
 class IProperty;
 // ============================================================================
-namespace Gaudi {
-  namespace Utils {
-    // ========================================================================
-    /// the actual type for the vector of properties
-    typedef std::vector<const ::Property*> Properties;
-    /// the actual type for the vector of property names
-    typedef std::vector<std::string> Names;
-    // ========================================================================
-    /** simple function to extract from the given component
-     *  the list of properties, specified by name
-     *
-     *  @code
-     *
-     *  const Gaudi::Utils::Names& names = ... ;
-     *
-     *  const IInterface* component = ... ;
-     *
-     *  Gaudi::Utils::Properties props =
-     *    Gaudi::Utils::properties ( component , names ) ;
-     *
-     *  for( Gaudi::Utils::Properties::const_iterator ip = props.begin() ;
-     *       props.end () != ip ; ++ip )
-     *   {
-     *      const Property* p = *ip ;
-     *      if ( 0 == p ) { continue ; }
-     *      // print property:
-     *      std::cout << (*p) << std::endl ;
-     *   }
-     *
-     *  @endcode
-     *
-     *  @see Gaudi::Utils::property
-     *  @param cmp the component
-     *  @param name list of property names
-     *  @retutn the list of properties
-     *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
-     *  @date 2008-08-02
-     */
-    Properties properties( const IInterface* cmp, const Names& names );
-    // ========================================================================
-    /** simple function to extract from the given component
-     *  the list of properties, specified by name
-     *
-     *  @code
-     *
-     *  const Gaudi::Utils::Names& names = ... ;
-     *
-     *  const IInterface* component = ... ;
-     *
-     *  Gaudi::Utils::Properties props =
-     *    Gaudi::Utils::properties ( component , names ) ;
-     *
-     *  for( Gaudi::Utils::Properties::const_iterator ip = props.begin() ;
-     *       props.end () != ip ; ++ip )
-     *   {
-     *      const Property* p = *ip ;
-     *      if ( 0 == p ) { continue ; }
-     *      // print property:
-     *      std::cout << (*p) << std::endl ;
-     *   }
-     *
-     *  @endcode
-     *
-     *  @see Gaudi::Utils::property
-     *  @param cmp the component
-     *  @param name list of property names
-     *  @param output (OUTPUT) the list of properties
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date 2008-08-02
-     */
-    void properties( const IInterface* cmp, const Names& names, Properties& output );
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // end of namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  /// the actual type for the vector of properties
+  using Properties = std::vector<const ::Property*>;
+  /// the actual type for the vector of property names
+  using Names = std::vector<std::string>;
+  // ========================================================================
+  /** simple function to extract from the given component
+   *  the list of properties, specified by name
+   *
+   *  @code
+   *
+   *  const Gaudi::Utils::Names& names = ... ;
+   *
+   *  const IInterface* component = ... ;
+   *
+   *  Gaudi::Utils::Properties props =
+   *    Gaudi::Utils::properties ( component , names ) ;
+   *
+   *  for( Gaudi::Utils::Properties::const_iterator ip = props.begin() ;
+   *       props.end () != ip ; ++ip )
+   *   {
+   *      const Property* p = *ip ;
+   *      if ( 0 == p ) { continue ; }
+   *      // print property:
+   *      std::cout << (*p) << std::endl ;
+   *   }
+   *
+   *  @endcode
+   *
+   *  @see Gaudi::Utils::property
+   *  @param cmp the component
+   *  @param name list of property names
+   *  @retutn the list of properties
+   *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
+   *  @date 2008-08-02
+   */
+  Properties properties( const IInterface* cmp, const Names& names );
+  // ========================================================================
+  /** simple function to extract from the given component
+   *  the list of properties, specified by name
+   *
+   *  @code
+   *
+   *  const Gaudi::Utils::Names& names = ... ;
+   *
+   *  const IInterface* component = ... ;
+   *
+   *  Gaudi::Utils::Properties props =
+   *    Gaudi::Utils::properties ( component , names ) ;
+   *
+   *  for( Gaudi::Utils::Properties::const_iterator ip = props.begin() ;
+   *       props.end () != ip ; ++ip )
+   *   {
+   *      const Property* p = *ip ;
+   *      if ( 0 == p ) { continue ; }
+   *      // print property:
+   *      std::cout << (*p) << std::endl ;
+   *   }
+   *
+   *  @endcode
+   *
+   *  @see Gaudi::Utils::property
+   *  @param cmp the component
+   *  @param name list of property names
+   *  @param output (OUTPUT) the list of properties
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-08-02
+   */
+  void properties( const IInterface* cmp, const Names& names, Properties& output );
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 namespace LHCb {
   // ==========================================================================
@@ -121,12 +118,12 @@ namespace LHCb {
     /** constructor the list of properties
      *  @param props   list of properties to be inspected
      */
-    Inspector( const Gaudi::Utils::Names& props = Gaudi::Utils::Names() );
+    Inspector( Gaudi::Utils::Names props = Gaudi::Utils::Names() );
     /** constructor the list of properties
      *  @param props   list of properties to be inspected
      *  @param members list of structural properties
      */
-    Inspector( const Gaudi::Utils::Names& props, const Gaudi::Utils::Names& members );
+    Inspector( Gaudi::Utils::Names props, Gaudi::Utils::Names members );
     // ========================================================================
   public:
     // ========================================================================

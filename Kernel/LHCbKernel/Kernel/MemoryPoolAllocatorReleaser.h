@@ -51,12 +51,12 @@ namespace Gaudi {
 
   private:
     /// Private constructor to have a singleton.
-    MemoryPoolAllocatorReleaser() {}
+    MemoryPoolAllocatorReleaser() = default;
     /// Return the instance of the singleton.
     static MemoryPoolAllocatorReleaser& instance();
 
     /// Prototype of the release functions: <code>void f()</code>.
-    typedef bool ( *ReleaseFunctionType )();
+    using ReleaseFunctionType = bool ( * )();
     /// Typedef for the collection of release functions.
     typedef std::map<ReleaseFunctionType, std::string> ReleaseFuncCollType;
 
@@ -93,10 +93,10 @@ namespace Gaudi {
   public:
     /// Register the release function of the template argument class.
     RegisterReleaseFunction() {
-      typedef MemoryPoolAllocatorReleaser bar;
-      bar::ReleaseFunctionType            f        = &T::release_pool;
-      bar&                                releaser = MemoryPoolAllocatorReleaser::instance();
-      bar::ReleaseFuncCollType&           funcMap  = releaser.m_releaseFunctions;
+      using bar                          = MemoryPoolAllocatorReleaser;
+      bar::ReleaseFunctionType  f        = &T::release_pool;
+      bar&                      releaser = MemoryPoolAllocatorReleaser::instance();
+      bar::ReleaseFuncCollType& funcMap  = releaser.m_releaseFunctions;
       if ( funcMap.find( f ) == funcMap.end() ) {
         funcMap[f] = System::typeinfoName( typeid( T ) );
 #ifdef DEBUG_MEMORY_POOL_ALLOCATOR_RELEASER

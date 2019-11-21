@@ -29,18 +29,18 @@ struct IGetLumiParameters : extend_interfaces<IAlgTool> {
   // Return the interface ID
   DeclareInterfaceID( IGetLumiParameters, 2, 0 );
 
-  virtual unsigned int        getTCK() const               = 0; ///< retrieve TCK
-  virtual long                CollidingBunches()           = 0; ///< retrieve number of colliding bunches
-  virtual double              OdinFraction() const         = 0; ///< retrieve Odin Random BB fraction
-  virtual double              HLTRandomRate() const        = 0; ///< retrieve random rate in HLT
-  virtual double              LHCFrequency() const         = 0; ///< retrieve revolution frequency
-  virtual double              RandomRateBB()               = 0; ///< retrieve random bunch-bunch rate in HLT
-  virtual std::vector<double> CalibRelative() const        = 0; ///< relative calibration factors
-  virtual std::vector<double> CalibCoefficients() const    = 0; ///< usage factors
-  virtual std::vector<double> CalibRelativeLog() const     = 0; ///< relative calibration factors
-  virtual std::vector<double> CalibCoefficientsLog() const = 0; ///< usage factors
-  virtual double              CalibScale() const           = 0; ///< absolute scale
-  virtual double              CalibScaleError() const      = 0; ///< absolute scale error
-  virtual double              StatusScale() const          = 0; ///< status scale flag
+  [[nodiscard]] virtual unsigned int        getTCK() const            = 0; ///< retrieve TCK
+  virtual long                              CollidingBunches()        = 0; ///< retrieve number of colliding bunches
+  [[nodiscard]] virtual double              OdinFraction() const      = 0; ///< retrieve Odin Random BB fraction
+  [[nodiscard]] virtual double              HLTRandomRate() const     = 0; ///< retrieve random rate in HLT
+  [[nodiscard]] virtual double              LHCFrequency() const      = 0; ///< retrieve revolution frequency
+  virtual double                            RandomRateBB()            = 0; ///< retrieve random bunch-bunch rate in HLT
+  [[nodiscard]] virtual std::vector<double> CalibRelative() const     = 0; ///< relative calibration factors
+  [[nodiscard]] virtual std::vector<double> CalibCoefficients() const = 0; ///< usage factors
+  [[nodiscard]] virtual std::vector<double> CalibRelativeLog() const  = 0; ///< relative calibration factors
+  [[nodiscard]] virtual std::vector<double> CalibCoefficientsLog() const = 0; ///< usage factors
+  [[nodiscard]] virtual double              CalibScale() const           = 0; ///< absolute scale
+  [[nodiscard]] virtual double              CalibScaleError() const      = 0; ///< absolute scale error
+  [[nodiscard]] virtual double              StatusScale() const          = 0; ///< status scale flag
 };
 #endif // IGETLUMIPARAMETERS_H

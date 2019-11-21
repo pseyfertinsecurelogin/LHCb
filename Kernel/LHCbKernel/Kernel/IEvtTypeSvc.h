@@ -17,7 +17,7 @@
 
 // definition of how to store sets of events
 namespace LHCb {
-  typedef std::greater<>                             EventTypeComp;
+  using EventTypeComp = std::greater<>;
   typedef std::set<long unsigned int, EventTypeComp> EventTypeSet;
 } // namespace LHCb
 
@@ -40,19 +40,19 @@ struct IEvtTypeSvc : extend_interfaces<IService> {
   /// Given an event code number provide its Nick Name as in input table.
   /// If an event type does not exist in the table this method
   /// will return "Unknown"
-  virtual std::string nickName( const int evtCode ) const = 0;
+  [[nodiscard]] virtual std::string nickName( const int evtCode ) const = 0;
 
   /// Given an event code number provide the ASCII decay descriptor
   /// as in input table. Some event types have "No signal" as
   /// decay descriptor, if an event type does not exist in the
   /// table this method will return "Unknown"
-  virtual std::string decayDescriptor( const int evtCode ) const = 0;
+  [[nodiscard]] virtual std::string decayDescriptor( const int evtCode ) const = 0;
 
   /// Given an event code number check if it 'exist', i.e. is known by the
   /// service
-  virtual bool typeExists( const int evtCode ) const = 0;
+  [[nodiscard]] virtual bool typeExists( const int evtCode ) const = 0;
 
   /// Return all known event types in a unique and ordered std::set
-  virtual LHCb::EventTypeSet allTypes( void ) const = 0;
+  [[nodiscard]] virtual LHCb::EventTypeSet allTypes() const = 0;
 };
 #endif // KERNEL_IEVTTYPESVC_H

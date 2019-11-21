@@ -32,17 +32,17 @@ public:
     }
   }
 
-  float x( float y ) const { return m_x0 + y * m_dxDy; }
-  float z( float y ) const { return m_z0 + y * m_dzDy; }
+  [[nodiscard]] float x( float y ) const { return m_x0 + y * m_dxDy; }
+  [[nodiscard]] float z( float y ) const { return m_z0 + y * m_dzDy; }
 
-  float xMin() const { return x( m_dxDy > 0 ? m_yMin : m_yMax ); }
-  float xMax() const { return x( m_dxDy > 0 ? m_yMax : m_yMin ); }
+  [[nodiscard]] float xMin() const { return x( m_dxDy > 0 ? m_yMin : m_yMax ); }
+  [[nodiscard]] float xMax() const { return x( m_dxDy > 0 ? m_yMax : m_yMin ); }
 
-  float yMin() const { return m_yMin; }
-  float yMax() const { return m_yMax; }
+  [[nodiscard]] float yMin() const { return m_yMin; }
+  [[nodiscard]] float yMax() const { return m_yMax; }
 
   /// returns the y along the trajectory y = y0 + z * dzDy
-  float yOnTrack( float y0, float dyDz ) const { return ( y0 + dyDz * m_z0 ) / ( 1. - dyDz * m_dzDy ); }
+  [[nodiscard]] float yOnTrack( float y0, float dyDz ) const { return ( y0 + dyDz * m_z0 ) / ( 1. - dyDz * m_dzDy ); }
 
 private:
   float m_x0   = 0.; ///< x coordinate at y = 0

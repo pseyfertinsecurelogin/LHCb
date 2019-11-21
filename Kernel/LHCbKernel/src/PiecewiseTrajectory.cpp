@@ -26,7 +26,7 @@ namespace {
         m_mu = t.second + ( mu - t.first->beginRange() );
       }
     }
-    double muEstimate() const { return m_mu; }
+    [[nodiscard]] double muEstimate() const { return m_mu; }
 
   private:
     const LHCb::Trajectory<double>::Point& m_p;

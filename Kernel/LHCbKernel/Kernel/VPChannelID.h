@@ -36,52 +36,52 @@ namespace LHCb {
     VPChannelID( int id ) : m_channelID( id ) {}
 
     /// Default Constructor
-    VPChannelID() : m_channelID( 0 ) {}
+    VPChannelID() = default;
 
     /// Cast
     operator unsigned int() const;
 
     /// Get sensor column number
-    unsigned int scol() const;
+    [[nodiscard]] unsigned int scol() const;
 
     /// Get module number
-    unsigned int module() const;
+    [[nodiscard]] unsigned int module() const;
 
     /// Get station number
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// Get side (left/right)
-    unsigned int sidepos() const;
+    [[nodiscard]] unsigned int sidepos() const;
 
     /// Special serializer to ASCII stream
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  VP Channel ID
-    unsigned int channelID() const;
+    [[nodiscard]] unsigned int channelID() const;
 
     /// Update  VP Channel ID
     void setChannelID( unsigned int value );
 
     /// Retrieve pixel row
-    unsigned int row() const;
+    [[nodiscard]] unsigned int row() const;
 
     /// Update pixel row
     void setRow( unsigned int value );
 
     /// Retrieve pixel column
-    unsigned int col() const;
+    [[nodiscard]] unsigned int col() const;
 
     /// Update pixel column
     void setCol( unsigned int value );
 
     /// Retrieve chip number
-    unsigned int chip() const;
+    [[nodiscard]] unsigned int chip() const;
 
     /// Update chip number
     void setChip( unsigned int value );
 
     /// Retrieve sensor number
-    unsigned int sensor() const;
+    [[nodiscard]] unsigned int sensor() const;
 
     /// Update sensor number
     void setSensor( unsigned int value );
@@ -96,7 +96,7 @@ namespace LHCb {
     /// Bitmasks for bitfield channelID
     enum channelIDMasks { rowMask = 0xffL, colMask = 0xff00L, chipMask = 0x30000L, sensorMask = 0xffc0000L };
 
-    unsigned int m_channelID; ///< VP Channel ID
+    unsigned int m_channelID{0}; ///< VP Channel ID
 
   }; // class VPChannelID
 
@@ -120,7 +120,7 @@ inline void LHCb::VPChannelID::setChannelID( unsigned int value ) { m_channelID 
 inline unsigned int LHCb::VPChannelID::row() const { return (unsigned int)( ( m_channelID & rowMask ) >> rowBits ); }
 
 inline void LHCb::VPChannelID::setRow( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~rowMask;
   m_channelID |= ( ( ( (unsigned int)val ) << rowBits ) & rowMask );
 }
@@ -128,7 +128,7 @@ inline void LHCb::VPChannelID::setRow( unsigned int value ) {
 inline unsigned int LHCb::VPChannelID::col() const { return (unsigned int)( ( m_channelID & colMask ) >> colBits ); }
 
 inline void LHCb::VPChannelID::setCol( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~colMask;
   m_channelID |= ( ( ( (unsigned int)val ) << colBits ) & colMask );
 }
@@ -136,7 +136,7 @@ inline void LHCb::VPChannelID::setCol( unsigned int value ) {
 inline unsigned int LHCb::VPChannelID::chip() const { return (unsigned int)( ( m_channelID & chipMask ) >> chipBits ); }
 
 inline void LHCb::VPChannelID::setChip( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~chipMask;
   m_channelID |= ( ( ( (unsigned int)val ) << chipBits ) & chipMask );
 }
@@ -146,7 +146,7 @@ inline unsigned int LHCb::VPChannelID::sensor() const {
 }
 
 inline void LHCb::VPChannelID::setSensor( unsigned int value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_channelID &= ~sensorMask;
   m_channelID |= ( ( ( (unsigned int)val ) << sensorBits ) & sensorMask );
 }

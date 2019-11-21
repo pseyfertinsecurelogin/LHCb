@@ -31,55 +31,55 @@ std::atomic<std::size_t> InstanceCounter<T>::s_counter = {0};
 
 namespace unique {
   struct IFace {
-    virtual ~IFace()                             = default;
-    virtual std::unique_ptr<IFace> clone() const = 0;
-    virtual int                    f() const     = 0;
-    virtual int                    f()           = 0;
+    virtual ~IFace()                                           = default;
+    [[nodiscard]] virtual std::unique_ptr<IFace> clone() const = 0;
+    [[nodiscard]] virtual int                    f() const     = 0;
+    virtual int                                  f()           = 0;
   };
 
   class A : public IFace, private InstanceCounter<A> {
 
   public:
-    ~A() {}
-    std::unique_ptr<IFace> clone() const override { return std::make_unique<A>( *this ); }
-    int                    f() const override { return 1; }
-    int                    f() override { return 2; }
+    ~A() override = default;
+    [[nodiscard]] std::unique_ptr<IFace> clone() const override { return std::make_unique<A>( *this ); }
+    [[nodiscard]] int                    f() const override { return 1; }
+    int                                  f() override { return 2; }
   };
 
   class B : public IFace, private InstanceCounter<B> {
 
   public:
-    ~B() {}
-    std::unique_ptr<IFace> clone() const override { return std::make_unique<B>( *this ); }
-    int                    f() const override { return 3; }
-    int                    f() override { return 4; }
+    ~B() override = default;
+    [[nodiscard]] std::unique_ptr<IFace> clone() const override { return std::make_unique<B>( *this ); }
+    [[nodiscard]] int                    f() const override { return 3; }
+    int                                  f() override { return 4; }
   };
 } // namespace unique
 
 namespace plain {
   struct IFace {
-    virtual ~IFace()             = default;
-    virtual IFace* clone() const = 0;
-    virtual int    f() const     = 0;
-    virtual int    f()           = 0;
+    virtual ~IFace()                           = default;
+    [[nodiscard]] virtual IFace* clone() const = 0;
+    [[nodiscard]] virtual int    f() const     = 0;
+    virtual int                  f()           = 0;
   };
 
   class A : public IFace, private InstanceCounter<A> {
 
   public:
-    ~A() {}
-    A*  clone() const override { return new A( *this ); }
-    int f() const override { return 1; }
-    int f() override { return 2; }
+    ~A() override = default;
+    [[nodiscard]] A*  clone() const override { return new A( *this ); }
+    [[nodiscard]] int f() const override { return 1; }
+    int               f() override { return 2; }
   };
 
   class B : public IFace, private InstanceCounter<B> {
 
   public:
-    ~B() {}
-    B*  clone() const override { return new B( *this ); }
-    int f() const override { return 3; }
-    int f() override { return 4; }
+    ~B() override = default;
+    [[nodiscard]] B*  clone() const override { return new B( *this ); }
+    [[nodiscard]] int f() const override { return 3; }
+    int               f() override { return 4; }
   };
 } // namespace plain
 
@@ -91,9 +91,9 @@ class Composite {
 
 public:
   Composite( std::unique_ptr<I> up ) : iface{std::move( up )} {}
-  int  f() const { return iface ? iface->f() : -1; }
-  int  f() { return iface ? iface->f() : -2; }
-  void setIFace( std::unique_ptr<I> up ) { iface = LHCb::cxx::PolymorphicValue{std::move( up )}; }
+  [[nodiscard]] int f() const { return iface ? iface->f() : -1; }
+  int               f() { return iface ? iface->f() : -2; }
+  void              setIFace( std::unique_ptr<I> up ) { iface = LHCb::cxx::PolymorphicValue{std::move( up )}; }
 
   friend void swap( Composite& lhs, Composite& rhs ) noexcept {
     swap( lhs.iface, rhs.iface );
