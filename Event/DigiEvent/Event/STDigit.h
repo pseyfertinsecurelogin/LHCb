@@ -54,56 +54,56 @@ namespace LHCb {
         : KeyedObject<LHCb::STChannelID>(), m_depositedCharge( digit.m_depositedCharge ) {}
 
     /// Default Constructor
-    STDigit() : m_depositedCharge( 0.0 ) {}
+    STDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// clone method
-    STDigit* clone() const;
+    [[nodiscard]] STDigit* clone() const;
 
     /// channel = key
-    STChannelID channelID() const;
+    [[nodiscard]] STChannelID channelID() const;
 
     /// Print the digit in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// check if TT type
-    bool isTT() const;
+    [[nodiscard]] bool isTT() const;
 
     /// check if IT type
-    bool isIT() const;
+    [[nodiscard]] bool isIT() const;
 
     /// short cut for station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// shortcut for layer
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// short cut for detRegion
-    unsigned int detRegion() const;
+    [[nodiscard]] unsigned int detRegion() const;
 
     /// short cut for sector
-    unsigned int sector() const;
+    [[nodiscard]] unsigned int sector() const;
 
     /// short cut for strip
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Print the unique sector name
-    std::string sectorName() const;
+    [[nodiscard]] std::string sectorName() const;
 
     /// Print the unique layer name
-    std::string layerName() const;
+    [[nodiscard]] std::string layerName() const;
 
     /// Print the unique det region name
-    std::string detRegionName() const;
+    [[nodiscard]] std::string detRegionName() const;
 
     /// Print the station name
-    std::string stationName() const;
+    [[nodiscard]] std::string stationName() const;
 
     /// Retrieve const  charge deposited on strip
-    double depositedCharge() const;
+    [[nodiscard]] double depositedCharge() const;
 
     /// Update  charge deposited on strip
     void setDepositedCharge( double value );
@@ -112,7 +112,7 @@ namespace LHCb {
 
   protected:
   private:
-    double m_depositedCharge; ///< charge deposited on strip
+    double m_depositedCharge{0.0}; ///< charge deposited on strip
 
   }; // class STDigit
 

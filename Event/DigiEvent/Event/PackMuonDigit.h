@@ -21,15 +21,12 @@
  *
  */
 
-namespace LHCb {
-  // Forward declarations
-  namespace PackMuonDigit {
-    static const unsigned int bitTimeStamp   = 4; ///< Time stamp in 4 bits inside the BX
-    static const unsigned int shiftTimeStamp = 0; ///<
-    static const unsigned int maskTimeStamp  = ( ( ( (unsigned int)1 ) << bitTimeStamp ) - 1 ) << shiftTimeStamp; ///<
+namespace LHCb::PackMuonDigit {
+  inline constexpr unsigned int bitTimeStamp   = 4; ///< Time stamp in 4 bits inside the BX
+  inline constexpr unsigned int shiftTimeStamp = 0; ///<
+  inline constexpr unsigned int maskTimeStamp  = ( ( ( (unsigned int)1 ) << bitTimeStamp ) - 1 ) << shiftTimeStamp; ///<
 
-  } // namespace PackMuonDigit
-} // namespace LHCb
+} // namespace LHCb::PackMuonDigit
 
 // -----------------------------------------------------------------------------
 // end of namespace

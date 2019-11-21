@@ -39,13 +39,13 @@ namespace LHCb {
   class UTLiteCluster final {
   public:
     /// channelID type
-    typedef LHCb::UTChannelID chan_type;
+    using chan_type = LHCb::UTChannelID;
     /// fast container for light clusters
     typedef FastClusterContainer<LHCb::UTLiteCluster, int> UTLiteClusters;
     /// fast container for light clusters (old name: will be removed)
     typedef FastClusterContainer<LHCb::UTLiteCluster, int> FastContainer;
     /// finding policy
-    typedef SiDataFunctor::CompareByChannel<LHCb::UTLiteCluster> findPolicy;
+    using findPolicy = SiDataFunctor::CompareByChannel<LHCb::UTLiteCluster>;
 
     /// Constructor
     UTLiteCluster( const UTChannelID& chan, double fracStrip, unsigned int size, bool secondThres,
@@ -56,52 +56,52 @@ namespace LHCb {
                    bool moreBitsInChannelID = false );
 
     /// Default Constructor
-    UTLiteCluster() : m_liteCluster( 0 ) {}
+    UTLiteCluster() = default;
 
     /// position within a strip of cluster centre
-    double interStripFraction() const;
+    [[nodiscard]] double interStripFraction() const;
 
     /// number of strips in cluster, 3 means 3 or more
-    unsigned int pseudoSize() const;
+    [[nodiscard]] unsigned int pseudoSize() const;
 
     /// The Channel
-    UTChannelID channelID() const;
+    [[nodiscard]] UTChannelID channelID() const;
 
     /// High Threshold
-    bool highThreshold() const;
+    [[nodiscard]] bool highThreshold() const;
 
     /// Retrieve whether it is with 25-bits for channelID or not
-    bool moreBitsInChannelID() const;
+    [[nodiscard]] bool moreBitsInChannelID() const;
 
     /// check if UT type
-    bool isUT() const;
+    [[nodiscard]] bool isUT() const;
 
     /// short cut for station
-    unsigned int station() const;
+    [[nodiscard]] unsigned int station() const;
 
     /// shortcut for layer
-    unsigned int layer() const;
+    [[nodiscard]] unsigned int layer() const;
 
     /// short cut for detRegion
-    unsigned int detRegion() const;
+    [[nodiscard]] unsigned int detRegion() const;
 
     /// short cut for sector
-    unsigned int sector() const;
+    [[nodiscard]] unsigned int sector() const;
 
     /// short cut for strip
-    unsigned int strip() const;
+    [[nodiscard]] unsigned int strip() const;
 
     /// Print the unique sector name
-    std::string sectorName() const;
+    [[nodiscard]] std::string sectorName() const;
 
     /// Print the unique layer name
-    std::string layerName() const;
+    [[nodiscard]] std::string layerName() const;
 
     /// Print the unique det region name
-    std::string detRegionName() const;
+    [[nodiscard]] std::string detRegionName() const;
 
     /// Print the station name
-    std::string stationName() const;
+    [[nodiscard]] std::string stationName() const;
 
     /// Print the lite cluster in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
@@ -128,7 +128,7 @@ namespace LHCb {
     };
 
     /// number between 0 and 7 /8ths of a strip
-    int fractionUnits() const;
+    [[nodiscard]] int fractionUnits() const;
 
     /// Offsets of bitfield liteCluster
     enum liteClusterBits { channelID0Bits = 0, interStripFraction0Bits = 24, size0Bits = 26, highThreshold0Bits = 27 };
@@ -141,7 +141,7 @@ namespace LHCb {
       highThreshold0Mask      = 0x8000000L
     };
 
-    unsigned int m_liteCluster; ///< lite Cluster
+    unsigned int m_liteCluster{0}; ///< lite Cluster
 
   }; // class UTLiteCluster
 

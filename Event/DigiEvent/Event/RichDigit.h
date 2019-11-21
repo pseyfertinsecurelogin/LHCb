@@ -42,29 +42,27 @@ namespace LHCb {
   class RichDigit final : public KeyedObject<LHCb::RichSmartID> {
   public:
     /// typedef for std::vector of RichDigit
-    typedef std::vector<RichDigit*>       Vector;
-    typedef std::vector<const RichDigit*> ConstVector;
+    using Vector      = std::vector<RichDigit*>;
+    using ConstVector = std::vector<const RichDigit*>;
 
     /// typedef for KeyedContainer of RichDigit
-    typedef KeyedContainer<RichDigit, Containers::HashMap> Container;
+    using Container = KeyedContainer<RichDigit, Containers::HashMap>;
 
     /// Default Constructor
-    RichDigit() {}
+    RichDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Get the channel identifier for this digit (RichSmartID)
-    RichSmartID richSmartID() const;
+    [[nodiscard]] RichSmartID richSmartID() const;
 
     friend std::ostream& operator<<( std::ostream& str, const RichDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
-  private:
   }; // class RichDigit
 
   /// Definition of Keyed Container for RichDigit

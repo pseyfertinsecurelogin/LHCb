@@ -44,17 +44,17 @@ namespace LHCb {
     typedef KeyedContainer<VPDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    VPDigit() {}
+    VPDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Return channel = key
-    VPChannelID channelID() const;
+    [[nodiscard]] VPChannelID channelID() const;
 
     friend std::ostream& operator<<( std::ostream& str, const VPDigit& obj ) { return obj.fillStream( str ); }
 

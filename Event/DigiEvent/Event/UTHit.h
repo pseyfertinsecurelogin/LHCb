@@ -14,7 +14,6 @@
 // Include files
 #include "Kernel/LHCbID.h"
 #include "Kernel/UTChannelID.h"
-#include "UTDet/DeUTSector.h"
 
 /** @class UTHit UTHit.h PrKernel/UTHit.h
  *  Minimal Implementation of Upstream tracker hit for pattern recognition
@@ -43,35 +42,41 @@ namespace UT {
         , m_strip( strip )
         , m_fracStrip( fracStrip ) {}
 
-    float cos() const { return m_cos; }
-    float cosT() const { return ( fabs( m_xAtYEq0 ) < 1.0E-9 ) ? 1. / std::sqrt( 1 + m_dxDy * m_dxDy ) : cos(); }
-    float dxDy() const { return m_dxDy; }
-    bool  highThreshold() const { return m_highThreshold; }
-    bool  isYCompatible( const float y, const float tol ) const { return yMin() - tol <= y && y <= yMax() + tol; }
-    bool  isNotYCompatible( const float y, const float tol ) const { return yMin() - tol > y || y > yMax() + tol; }
-    LHCb::LHCbID      lhcbID() const { return LHCb::LHCbID( m_chanID ); }
-    LHCb::UTChannelID chanID() const { return m_chanID; }
-    int               planeCode() const { return 2 * ( m_chanID.station() - 1 ) + ( m_chanID.layer() - 1 ) % 2; }
-    float             sinT() const { return tanT() * cosT(); }
-    int               size() const { return m_size; }
-    float             tanT() const { return -m_dxDy; }
-    float             weight() const { return m_weight * m_weight; }
-    float             error() const { return 1.0f / m_weight; }
-    float             xAt( const float globalY ) const { return m_xAtYEq0 + globalY * m_dxDy; }
-    float             xAtYEq0() const { return m_xAtYEq0; }
-    float             xAtYMid() const { return m_x; }
-    float             xMax() const { return std::max( xAt( yBegin() ), xAt( yEnd() ) ); }
-    float             xMin() const { return std::min( xAt( yBegin() ), xAt( yEnd() ) ); }
-    float             xT() const { return cos(); }
-    float             yBegin() const { return m_yBegin; }
-    float             yEnd() const { return m_yEnd; }
-    float             yMax() const { return std::max( yBegin(), yEnd() ); }
-    float             yMid() const { return 0.5 * ( yBegin() + yEnd() ); }
-    float             yMin() const { return std::min( yBegin(), yEnd() ); }
-    float             zAtYEq0() const { return m_zAtYEq0; }
-    unsigned int      strip() const { return m_strip; }
-    double            fracStrip() const { return m_fracStrip; }
-    int               pseudoSize() const {
+    [[nodiscard]] float cos() const { return m_cos; }
+    [[nodiscard]] float cosT() const {
+      return ( fabs( m_xAtYEq0 ) < 1.0E-9 ) ? 1. / std::sqrt( 1 + m_dxDy * m_dxDy ) : cos();
+    }
+    [[nodiscard]] float dxDy() const { return m_dxDy; }
+    [[nodiscard]] bool  highThreshold() const { return m_highThreshold; }
+    [[nodiscard]] bool  isYCompatible( const float y, const float tol ) const {
+      return yMin() - tol <= y && y <= yMax() + tol;
+    }
+    [[nodiscard]] bool isNotYCompatible( const float y, const float tol ) const {
+      return yMin() - tol > y || y > yMax() + tol;
+    }
+    [[nodiscard]] LHCb::LHCbID      lhcbID() const { return LHCb::LHCbID( m_chanID ); }
+    [[nodiscard]] LHCb::UTChannelID chanID() const { return m_chanID; }
+    [[nodiscard]] int   planeCode() const { return 2 * ( m_chanID.station() - 1 ) + ( m_chanID.layer() - 1 ) % 2; }
+    [[nodiscard]] float sinT() const { return tanT() * cosT(); }
+    [[nodiscard]] int   size() const { return m_size; }
+    [[nodiscard]] float tanT() const { return -m_dxDy; }
+    [[nodiscard]] float weight() const { return m_weight * m_weight; }
+    [[nodiscard]] float error() const { return 1.0f / m_weight; }
+    [[nodiscard]] float xAt( const float globalY ) const { return m_xAtYEq0 + globalY * m_dxDy; }
+    [[nodiscard]] float xAtYEq0() const { return m_xAtYEq0; }
+    [[nodiscard]] float xAtYMid() const { return m_x; }
+    [[nodiscard]] float xMax() const { return std::max( xAt( yBegin() ), xAt( yEnd() ) ); }
+    [[nodiscard]] float xMin() const { return std::min( xAt( yBegin() ), xAt( yEnd() ) ); }
+    [[nodiscard]] float xT() const { return cos(); }
+    [[nodiscard]] float yBegin() const { return m_yBegin; }
+    [[nodiscard]] float yEnd() const { return m_yEnd; }
+    [[nodiscard]] float yMax() const { return std::max( yBegin(), yEnd() ); }
+    [[nodiscard]] float yMid() const { return 0.5 * ( yBegin() + yEnd() ); }
+    [[nodiscard]] float yMin() const { return std::min( yBegin(), yEnd() ); }
+    [[nodiscard]] float zAtYEq0() const { return m_zAtYEq0; }
+    [[nodiscard]] unsigned int strip() const { return m_strip; }
+    [[nodiscard]] double       fracStrip() const { return m_fracStrip; }
+    [[nodiscard]] int          pseudoSize() const {
       unsigned int cSize = m_size + 1;
       if ( cSize == 1 ) {
         if ( fracStrip() != 0 ) cSize = 2;
@@ -97,7 +102,7 @@ namespace UT {
     double            m_fracStrip;
   };
 
-  typedef std::vector<const Hit*> Hits;
+  using Hits = std::vector<const Hit*>;
 
 } // namespace UT
 

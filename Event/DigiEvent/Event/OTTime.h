@@ -47,23 +47,23 @@ namespace LHCb {
     OTTime( const LHCb::OTChannelID& aChannel, double calTime );
 
     /// Default Constructor
-    OTTime() : m_calibratedTime( 0.0 ) {}
+    OTTime() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// get the OTChannelID from the key
-    OTChannelID channel() const;
+    [[nodiscard]] OTChannelID channel() const;
 
     /// get the TDC-time from the key
-    unsigned tdcTime() const;
+    [[nodiscard]] unsigned tdcTime() const;
 
     /// Retrieve const  t0 corrected; calibratedTime=propagationTime+driftTime
-    double calibratedTime() const;
+    [[nodiscard]] double calibratedTime() const;
 
     /// Update  t0 corrected; calibratedTime=propagationTime+driftTime
     void setCalibratedTime( double value );
@@ -72,7 +72,7 @@ namespace LHCb {
 
   protected:
   private:
-    double m_calibratedTime; ///< t0 corrected; calibratedTime=propagationTime+driftTime
+    double m_calibratedTime{0.0}; ///< t0 corrected; calibratedTime=propagationTime+driftTime
 
   }; // class OTTime
 

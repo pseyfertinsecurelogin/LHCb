@@ -51,11 +51,11 @@ namespace LHCb {
     MuonDigit( const LHCb::MuonTileID& tileID );
 
     /// Default Constructor
-    MuonDigit() : m_MuonDAQ( 0 ) {}
+    MuonDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
@@ -70,7 +70,7 @@ namespace LHCb {
 
   protected:
   private:
-    unsigned int m_MuonDAQ; ///< DAQ output bit pattern
+    unsigned int m_MuonDAQ{0}; ///< DAQ output bit pattern
 
   }; // class MuonDigit
 

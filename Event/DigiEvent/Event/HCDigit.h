@@ -53,35 +53,35 @@ namespace LHCb {
         : KeyedObject<LHCb::HCCellID>(), m_adc( digit.m_adc ), m_ctrlWord( digit.m_ctrlWord ), m_card( digit.m_card ) {}
 
     /// Default Constructor
-    HCDigit() : m_adc( 0 ), m_ctrlWord( 0 ), m_card( 0 ) {}
+    HCDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Clone method
-    HCDigit* clone() const;
+    [[nodiscard]] HCDigit* clone() const;
 
     /// Return the digit cellID = key
-    HCCellID cellID() const;
+    [[nodiscard]] HCCellID cellID() const;
 
     /// Print the digit key = cellID
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  PMT adc
-    int adc() const;
+    [[nodiscard]] int adc() const;
 
     /// Update  PMT adc
     void setAdc( int value );
 
     /// Retrieve const  control word
-    int ctrlWord() const;
+    [[nodiscard]] int ctrlWord() const;
 
     /// Update  control word
     void setCtrlWord( int value );
 
     /// Retrieve const  card number
-    int card() const;
+    [[nodiscard]] int card() const;
 
     /// Update  card number
     void setCard( int value );
@@ -90,9 +90,9 @@ namespace LHCb {
 
   protected:
   private:
-    int m_adc;      ///< PMT adc
-    int m_ctrlWord; ///< control word
-    int m_card;     ///< card number
+    int m_adc{0};      ///< PMT adc
+    int m_ctrlWord{0}; ///< control word
+    int m_card{0};     ///< card number
 
   }; // class HCDigit
 

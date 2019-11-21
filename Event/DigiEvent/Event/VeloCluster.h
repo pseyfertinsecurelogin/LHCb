@@ -15,6 +15,7 @@
 #include "GaudiKernel/KeyedContainer.h"
 #include "GaudiKernel/KeyedObject.h"
 #include "Kernel/VeloChannelID.h"
+#include <numeric>
 #include <utility>
 #include <vector>
 
@@ -50,8 +51,8 @@ namespace LHCb {
     typedef std::vector<std::pair<int, unsigned int>> ADCVector;
 
     /// Constructor
-    VeloCluster( const VeloLiteCluster& lCluster, const ADCVector& strips )
-        : m_liteCluster( lCluster ), m_stripValues( strips ) {}
+    VeloCluster( const VeloLiteCluster& lCluster, ADCVector strips )
+        : m_liteCluster( lCluster ), m_stripValues( std::move( strips ) ) {}
 
     /// copy constructor
     VeloCluster( const LHCb::VeloCluster& lCluster )
@@ -63,59 +64,59 @@ namespace LHCb {
     VeloCluster() : m_liteCluster(), m_stripValues() {}
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// number of strips in cluster
-    unsigned int size() const;
+    [[nodiscard]] unsigned int size() const;
 
     /// adc value of strips in cluster
-    unsigned int adcValue( unsigned int num ) const;
+    [[nodiscard]] unsigned int adcValue( unsigned int num ) const;
 
     /// strip number of strip in cluster
-    int strip( unsigned int num ) const;
+    [[nodiscard]] int strip( unsigned int num ) const;
 
     /// The  Channel ID
-    VeloChannelID channelID() const;
+    [[nodiscard]] VeloChannelID channelID() const;
 
     /// total charge
-    double totalCharge() const;
+    [[nodiscard]] double totalCharge() const;
 
     /// position within a strip of cluster centre, quantized in xxths of a strip
-    double interStripFraction() const;
+    [[nodiscard]] double interStripFraction() const;
 
     /// number of strips in cluster, 3 means 3 or more
-    unsigned int pseudoSize() const;
+    [[nodiscard]] unsigned int pseudoSize() const;
 
     /// denotes a cluster with significant adc counts, less likely to be noise or spillover
-    bool highThreshold() const;
+    [[nodiscard]] bool highThreshold() const;
 
     /// clone method
-    VeloCluster* clone() const;
+    [[nodiscard]] VeloCluster* clone() const;
 
     /// first Velo Channel ID
-    VeloChannelID firstChannel() const;
+    [[nodiscard]] VeloChannelID firstChannel() const;
 
     /// first Velo Channel ID
-    VeloChannelID lastChannel() const;
+    [[nodiscard]] VeloChannelID lastChannel() const;
 
     /// channel IDs
-    std::vector<LHCb::VeloChannelID> channels() const;
+    [[nodiscard]] std::vector<LHCb::VeloChannelID> channels() const;
 
     /// check if R type
-    bool isRType() const;
+    [[nodiscard]] bool isRType() const;
 
     /// check if Phi type
-    bool isPhiType() const;
+    [[nodiscard]] bool isPhiType() const;
 
     /// check if Pile UP
-    bool isPileUp() const;
+    [[nodiscard]] bool isPileUp() const;
 
     /// Retrieve const  TELL1 cluster without ADC values
-    const LHCb::VeloLiteCluster& liteCluster() const;
+    [[nodiscard]] const LHCb::VeloLiteCluster& liteCluster() const;
 
     /// Retrieve const  strip numbers and their signals
-    const ADCVector& stripValues() const;
+    [[nodiscard]] const ADCVector& stripValues() const;
 
     /// Update  strip numbers and their signals
     void setStripValues( const ADCVector& value );
@@ -158,10 +159,8 @@ inline LHCb::VeloChannelID LHCb::VeloCluster::channelID() const { return m_liteC
 
 inline double LHCb::VeloCluster::totalCharge() const {
 
-  double                    sum  = 0;
-  ADCVector::const_iterator iter = m_stripValues.begin();
-  for ( ; iter != m_stripValues.end(); ++iter ) { sum += iter->second; }
-  return sum;
+  return std::accumulate( m_stripValues.begin(), m_stripValues.end(), 0.,
+                          []( double sum, const auto& sv ) { return sum + sv.second; } );
 }
 
 inline double LHCb::VeloCluster::interStripFraction() const { return m_liteCluster.interStripFraction(); }
