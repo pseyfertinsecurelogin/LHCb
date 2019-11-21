@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef COMPONENT_DECALOTIMING_H
-#define COMPONENT_DECALOTIMING_H 1
+#define COMPONENT_DECALOTIMING_H
 
 // Include files
 // from Gaudi
@@ -38,7 +38,7 @@ private:
 
   std::string                   m_detectorName;
   std::string                   m_method;
-  std::array<double, 2>         m_params;
+  std::array<double, 2>         m_params{};
   std::map<std::string, double> m_deltas;
   std::string                   m_key;
   DeCalorimeter*                m_calo = nullptr;

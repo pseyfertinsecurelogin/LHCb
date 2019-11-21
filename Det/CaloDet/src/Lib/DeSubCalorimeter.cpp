@@ -9,8 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#define CALODET_DESUBCALORIMETER_CPP 1
-// ============================================================================
 
 // CaloDet
 #include "CaloDet/DeSubCalorimeter.h"
@@ -50,7 +48,7 @@ StatusCode DeSubCalorimeter::initialize() {
   auto it = std::find( pars.begin(), pars.end(), "CaloSide" );
   if ( pars.end() == it ) return StatusCode::FAILURE;
   const int value = param<int>( *it );
-  setSide( value );
+  setSide( value == 1 ? DeSubCalorimeter::Side::A : DeSubCalorimeter::Side::C );
   pars.erase( it );
 
   {
@@ -61,7 +59,7 @@ StatusCode DeSubCalorimeter::initialize() {
     for ( auto child : subdets ) {
 
       if ( !child ) { continue; }
-      DeSubSubCalorimeter* subSub = dynamic_cast<DeSubSubCalorimeter*>( child );
+      auto* subSub = dynamic_cast<DeSubSubCalorimeter*>( child );
       Assert( subSub, "no DeSubSubCalorimeter!" );
       m_subSubCalos.push_back( subSub );
     }

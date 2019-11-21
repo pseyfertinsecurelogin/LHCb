@@ -8,10 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-/// ===========================================================================
-/// ===========================================================================
-#ifndef CALODET_CARDPARAM_H
-#define CALODET_CARDPARAM_H 1
+#pragma once
 /// ===========================================================================
 #include "Kernel/CaloCellID.h"
 #include <vector>
@@ -44,33 +41,33 @@ public:
   CardParam( int iArea = 0, int iRow = 0, int iCol = 0, int ilRow = 0, int ilCol = 0, int iNum = 0, int iCrate = 0,
              int iSlot = 0 );
 
-  int     downNumber() const { return m_DownNumber; }
-  int     leftNumber() const { return m_LeftNumber; }
-  int     cornerNumber() const { return m_CornerNumber; }
-  int     previousNumber() const { return m_PreviousNumber; }
-  int     validationNumber() const { return m_validationNumber; }
-  int     area() const { return m_Area; }
-  int     firstRow() const { return m_Row; }
-  int     firstColumn() const { return m_Col; }
-  int     lastRow() const { return m_lRow; }
-  int     lastColumn() const { return m_lCol; }
-  bool    isPinCard() const { return m_isPin; }
-  int     tell1() const { return m_tell1; }
-  int     number() const { return m_number; }
-  int     crate() const { return m_crate; }
-  int     slot() const { return m_slot; }
-  int     code() const { return 16 * m_crate + m_slot; }
-  int     selectionType() const { return m_selectionType; }
-  Mapping mapping() const { return m_mapping; }
-  bool    isParasitic() const {
+  [[nodiscard]] int     downNumber() const { return m_DownNumber; }
+  [[nodiscard]] int     leftNumber() const { return m_LeftNumber; }
+  [[nodiscard]] int     cornerNumber() const { return m_CornerNumber; }
+  [[nodiscard]] int     previousNumber() const { return m_PreviousNumber; }
+  [[nodiscard]] int     validationNumber() const { return m_validationNumber; }
+  [[nodiscard]] int     area() const { return m_Area; }
+  [[nodiscard]] int     firstRow() const { return m_Row; }
+  [[nodiscard]] int     firstColumn() const { return m_Col; }
+  [[nodiscard]] int     lastRow() const { return m_lRow; }
+  [[nodiscard]] int     lastColumn() const { return m_lCol; }
+  [[nodiscard]] bool    isPinCard() const { return m_isPin; }
+  [[nodiscard]] int     tell1() const { return m_tell1; }
+  [[nodiscard]] int     number() const { return m_number; }
+  [[nodiscard]] int     crate() const { return m_crate; }
+  [[nodiscard]] int     slot() const { return m_slot; }
+  [[nodiscard]] int     code() const { return 16 * m_crate + m_slot; }
+  [[nodiscard]] int     selectionType() const { return m_selectionType; }
+  [[nodiscard]] Mapping mapping() const { return m_mapping; }
+  [[nodiscard]] bool    isParasitic() const {
     return ( ( m_Row + m_lRow + m_Col + m_lCol ) == 0 );
   } // special FEBs (no channelID associated)
-  bool isPmtCard() const { return ( !isPinCard() && !isParasitic() ); }
+  [[nodiscard]] bool isPmtCard() const { return ( !isPinCard() && !isParasitic() ); }
 
-  const std::vector<LHCb::CaloCellID>& ids() const { return m_ids; }
-  void                                 addID( LHCb::CaloCellID id ) { m_ids.push_back( id ); }
-  void                                 setTell1( int tell1 ) { m_tell1 = tell1; }
-  void                                 setValidationNumber( int num ) { m_validationNumber = num; }
+  [[nodiscard]] const std::vector<LHCb::CaloCellID>& ids() const { return m_ids; }
+  void                                               addID( LHCb::CaloCellID id ) { m_ids.push_back( id ); }
+  void                                               setTell1( int tell1 ) { m_tell1 = tell1; }
+  void                                               setValidationNumber( int num ) { m_validationNumber = num; }
   void setNeighboringCards( const int down, const int left, const int corner, const int previous ) {
     m_DownNumber     = down;
     m_LeftNumber     = left;
@@ -103,4 +100,3 @@ private:
 };
 
 /// ===========================================================================
-#endif // CALODET_CARDPARAM_H

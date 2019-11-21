@@ -9,8 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#define CALODET_DESUBSUBCALORIMETER_CPP 1
-// ============================================================================
 
 // CaloDet
 #include "CaloDet/DeSubSubCalorimeter.h"
@@ -26,17 +24,6 @@
  */
 
 // ============================================================================
-// Standard Constructors
-// ============================================================================
-DeSubSubCalorimeter::DeSubSubCalorimeter( const std::string& name )
-    : DetectorElement( name ), m_cellSize( 0.0 ), m_xSize( 0.0 ), m_ySize( 0.0 ), m_area( -1 ) {}
-
-// ============================================================================
-// Destructor
-// ============================================================================
-DeSubSubCalorimeter::~DeSubSubCalorimeter() {}
-
-// ============================================================================
 /// object identification
 // ============================================================================
 const CLID& DeSubSubCalorimeter::clID() const { return DeSubSubCalorimeter::classID(); }
@@ -47,46 +34,29 @@ const CLID& DeSubSubCalorimeter::clID() const { return DeSubSubCalorimeter::clas
 StatusCode DeSubSubCalorimeter::initialize() {
   /// initialize the base class
   StatusCode sc = DetectorElement::initialize();
-  if ( sc.isFailure() ) { return sc; }
+  if ( sc.isFailure() ) return sc;
 
-  typedef std::vector<std::string> Parameters;
-  Parameters                       pars( paramNames() );
+  const auto& pars = paramNames();
   /// cell size
-  auto it = std::find( pars.begin(), pars.end(), std::string( "CellSize" ) );
-  if ( pars.end() != it ) {
-    const double value = param<double>( *it );
-    setCellSize( value );
-    pars.erase( it );
-  } else {
-    return StatusCode::FAILURE;
-  }
+  auto it = std::find( pars.begin(), pars.end(), "CellSize" );
+  if ( pars.end() == it ) return StatusCode::FAILURE;
+  setCellSize( param<double>( *it ) );
+
   /// subSubCalo X size
-  auto itx = std::find( pars.begin(), pars.end(), std::string( "XSize" ) );
-  if ( pars.end() != itx ) {
-    const double value = param<double>( *itx );
-    setXSize( value );
-    pars.erase( itx );
-  } else {
-    return StatusCode::FAILURE;
-  }
+  auto itx = std::find( pars.begin(), pars.end(), "XSize" );
+  if ( pars.end() == itx ) return StatusCode::FAILURE;
+  setXSize( param<double>( *itx ) );
+
   /// subSubCalo Y size
-  auto ity = std::find( pars.begin(), pars.end(), std::string( "YSize" ) );
-  if ( pars.end() != ity ) {
-    const double value = param<double>( *ity );
-    setYSize( value );
-    pars.erase( ity );
-  } else {
-    return StatusCode::FAILURE;
-  }
+  auto ity = std::find( pars.begin(), pars.end(), "YSize" );
+  if ( pars.end() == ity ) return StatusCode::FAILURE;
+  setYSize( param<double>( *ity ) );
+
   /// area Id
-  auto itt = std::find( pars.begin(), pars.end(), std::string( "Area" ) );
-  if ( pars.end() != itt ) {
-    const int value = param<int>( *itt );
-    setArea( value );
-    pars.erase( itt );
-  } else {
-    return StatusCode::FAILURE;
-  }
+  auto itt = std::find( pars.begin(), pars.end(), "Area" );
+  if ( pars.end() == itt ) return StatusCode::FAILURE;
+  setArea( param<int>( *itt ) );
+
   Assert( nullptr != geometry(), "DeSubSubcalorimeter: Invalid GeometryInfo" );
   return StatusCode::SUCCESS;
 }

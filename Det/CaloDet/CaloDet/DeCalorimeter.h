@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef CALODET_DECALORIMETER_H
-#define CALODET_DECALORIMETER_H 1
+#define CALODET_DECALORIMETER_H
 // ============================================================================
 // STD & STL
 // ============================================================================
@@ -79,8 +79,7 @@ namespace DeCalorimeterLocation {
  */
 class DeCalorimeter : public DetectorElement {
 public:
-  typedef std::vector<const DeSubCalorimeter*>    SubCalos;
-  typedef std::vector<const DeSubSubCalorimeter*> SubSubCalos;
+  using SubCalos = std::vector<const DeSubCalorimeter*>;
   ///  Constructors
   DeCalorimeter( const std::string& name = "" );
   ///  object identification
@@ -301,38 +300,38 @@ private:
   bool m_initialized = false;
 
   // geometry
-  double       m_YToXSizeRatio;
-  double       m_zSize;
-  double       m_zOffset;
+  double       m_YToXSizeRatio = std::numeric_limits<double>::signaling_NaN();
+  double       m_zSize         = std::numeric_limits<double>::signaling_NaN();
+  double       m_zOffset       = std::numeric_limits<double>::signaling_NaN();
   SubCalos     m_subCalos;
-  unsigned int m_nArea;
+  unsigned int m_nArea{};
 
   // hardware
-  int    m_adcMax;
-  int    m_coding;
-  int    m_centralHoleX;
-  int    m_centralHoleY;
-  int    m_maxRowCol;
-  int    m_firstRowUp;
-  double m_centerRowCol;
+  int    m_adcMax{};
+  int    m_coding{};
+  int    m_centralHoleX{};
+  int    m_centralHoleY{};
+  int    m_maxRowCol{};
+  int    m_firstRowUp{};
+  double m_centerRowCol = std::numeric_limits<double>::signaling_NaN();
 
   // calibration
   std::vector<double> m_maxEtInCenter;
   std::vector<double> m_maxEtSlope;
-  double              m_pedShift;
-  double              m_pinPedShift;
-  double              m_l0Et;
-  double              m_activeToTotal;
-  double              m_stoch;
-  double              m_gainE;
-  double              m_cNoise;
-  double              m_iNoise;
-  double              m_zSupMeth;
-  double              m_zSup;
-  double              m_mip;
-  double              m_dyn;
-  double              m_prev;
-  double              m_l0Thresh;
+  double              m_pedShift      = std::numeric_limits<double>::signaling_NaN();
+  double              m_pinPedShift   = std::numeric_limits<double>::signaling_NaN();
+  double              m_l0Et          = std::numeric_limits<double>::signaling_NaN();
+  double              m_activeToTotal = std::numeric_limits<double>::signaling_NaN();
+  double              m_stoch         = std::numeric_limits<double>::signaling_NaN();
+  double              m_gainE         = std::numeric_limits<double>::signaling_NaN();
+  double              m_cNoise        = std::numeric_limits<double>::signaling_NaN();
+  double              m_iNoise        = std::numeric_limits<double>::signaling_NaN();
+  double              m_zSupMeth      = std::numeric_limits<double>::signaling_NaN();
+  double              m_zSup          = std::numeric_limits<double>::signaling_NaN();
+  double              m_mip           = std::numeric_limits<double>::signaling_NaN();
+  double              m_dyn           = std::numeric_limits<double>::signaling_NaN();
+  double              m_prev          = std::numeric_limits<double>::signaling_NaN();
+  double              m_l0Thresh      = std::numeric_limits<double>::signaling_NaN();
   std::vector<double> m_phe;
   std::vector<double> m_l0Cor;
   int                 m_puMeth = -1;
@@ -340,7 +339,7 @@ private:
   int                 m_puMin  = 0;
 
   // reconstruction
-  double m_zShowerMax;
+  double m_zShowerMax = std::numeric_limits<double>::signaling_NaN();
 
   // readout
   int m_pinArea = -1;
@@ -381,17 +380,26 @@ private:
   StatusCode updReco();
   StatusCode updNumGains();
   StatusCode updPileUp();
+  // ===========================================================================
+  /** ouput operator for class DeCalorimeter
+   *  @see DeCalorimeter
+   *  @param os reference to standard STL/STD output stream
+   *  @param de reference to DeCalorimeter object
+   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+   */
+  friend std::ostream& operator<<( std::ostream& os, const DeCalorimeter& de ) { return de.printOut( os ); }
+  // ===========================================================================
+  // ===========================================================================
+  /** ouput operator for class DeCalorimeter
+   *  @see DeCalorimeter
+   *  @see MsgStream
+   *  @param os reference to Gaudi message output stream
+   *  @param de reference to DeCalorimeter object
+   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+   */
+  friend MsgStream& operator<<( MsgStream& os, const DeCalorimeter& de ) { return de.printOut( os ); }
+  // ===========================================================================
 };
-
-// ===========================================================================
-/** ouput operator for class DeCalorimeter
- *  @see DeCalorimeter
- *  @param os reference to standard STL/STD output stream
- *  @param de reference to DeCalorimeter object
- *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
- */
-inline std::ostream& operator<<( std::ostream& os, const DeCalorimeter& de ) { return de.printOut( os ); }
-// ===========================================================================
 
 // ===========================================================================
 /** ouput operator for class DeCalorimeter
@@ -403,17 +411,6 @@ inline std::ostream& operator<<( std::ostream& os, const DeCalorimeter& de ) { r
 inline std::ostream& operator<<( std::ostream& os, const DeCalorimeter* de ) {
   return de ? ( os << *de ) : ( os << " DeCalorimeter* points to NULL!" << std::endl );
 }
-// ===========================================================================
-
-// ===========================================================================
-/** ouput operator for class DeCalorimeter
- *  @see DeCalorimeter
- *  @see MsgStream
- *  @param os reference to Gaudi message output stream
- *  @param de reference to DeCalorimeter object
- *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
- */
-inline MsgStream& operator<<( MsgStream& os, const DeCalorimeter& de ) { return de.printOut( os ); }
 // ===========================================================================
 
 // ===========================================================================
@@ -776,6 +773,28 @@ inline int DeCalorimeter::cardIndexByCode( const int crate, const int slot ) con
                          [&]( const CardParam& c ) { return c.crate() == crate && c.slot() == slot; } );
   return i != m_feCards.end() ? i - m_feCards.begin() : -1;
 }
+// ============================================================================
+/// Return a reference (tilted) plane
+// ============================================================================
+inline Gaudi::Plane3D DeCalorimeter::plane( const CaloPlane::Plane pos ) const {
+  switch ( pos ) {
+  case CaloPlane::Front:
+    return plane( m_zOffset - m_zSize / 2. );
+  case CaloPlane::ShowerMax:
+    return plane( m_zShowerMax );
+  case CaloPlane::Middle:
+    return plane( m_zOffset );
+  case CaloPlane::Back:
+    return plane( m_zOffset + m_zSize / 2. );
+  default:
+    return plane( m_zOffset );
+  }
+}
+// ============================================================================
+/// return a 3D-plane, which contain the given 3D-point in the global system
+// ============================================================================
+inline Gaudi::Plane3D DeCalorimeter::plane( const Gaudi::XYZPoint& global ) const {
+  return plane( geometry()->toLocal( global ).Z() );
+}
 
-#include "CaloDet/DeCalorimeter.icpp"
 #endif //    CALODET_DECALORIMETER_H

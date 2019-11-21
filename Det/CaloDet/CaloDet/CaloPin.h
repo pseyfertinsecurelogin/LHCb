@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef CALODET_CALOPIN_H
-#define CALODET_CALOPIN_H 1
+#define CALODET_CALOPIN_H
 
 // Include files
 #include "Kernel/CaloCellCode.h"
@@ -29,25 +29,25 @@ public:
   CaloPin( LHCb::CaloCellID id ) : m_id( id ){};
 
   // getters
-  LHCb::CaloCellID                     id() const { return m_id; }
-  const std::vector<int>&              leds() const { return m_leds; }
-  const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
+  [[nodiscard]] LHCb::CaloCellID                     id() const { return m_id; }
+  [[nodiscard]] const std::vector<int>&              leds() const { return m_leds; }
+  [[nodiscard]] const std::vector<LHCb::CaloCellID>& cells() const { return m_cells; }
 
-  std::vector<int> firstRows() const { return m_fRow; }
-  std::vector<int> lastRows() const { return m_lRow; }
-  std::vector<int> firstColumns() const { return m_fCol; }
-  std::vector<int> lastColumns() const { return m_lCol; }
-  std::vector<int> areas() const { return m_area; }
+  [[nodiscard]] std::vector<int> firstRows() const { return m_fRow; }
+  [[nodiscard]] std::vector<int> lastRows() const { return m_lRow; }
+  [[nodiscard]] std::vector<int> firstColumns() const { return m_fCol; }
+  [[nodiscard]] std::vector<int> lastColumns() const { return m_lCol; }
+  [[nodiscard]] std::vector<int> areas() const { return m_area; }
 
-  int firstRow() const { return *( m_fRow.begin() ); }
-  int lastRow() const { return *( m_lRow.begin() ); }
-  int firstColumn() const { return *( m_fCol.begin() ); }
-  int lastColumn() const { return *( m_lCol.begin() ); }
-  int area() const { return *( m_area.begin() ); }
+  [[nodiscard]] int firstRow() const { return *( m_fRow.begin() ); }
+  [[nodiscard]] int lastRow() const { return *( m_lRow.begin() ); }
+  [[nodiscard]] int firstColumn() const { return *( m_fCol.begin() ); }
+  [[nodiscard]] int lastColumn() const { return *( m_lCol.begin() ); }
+  [[nodiscard]] int area() const { return *( m_area.begin() ); }
 
-  int box() const { return m_box; }
-  int index() const { return m_index; }
-  int side() const { return m_side; }
+  [[nodiscard]] int box() const { return m_box; }
+  [[nodiscard]] int index() const { return m_index; }
+  [[nodiscard]] int side() const { return m_side; }
 
   friend std::ostream& operator<<( std::ostream& str, CaloPin obj ) { return obj.fillStream( str ); }
   std::ostream&        fillStream( std::ostream& str ) {

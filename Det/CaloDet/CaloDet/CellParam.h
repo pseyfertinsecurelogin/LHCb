@@ -8,9 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-#ifndef CALODET_CELLPARAM_H
-#define CALODET_CELLPARAM_H 1
+#pragma once
 // ============================================================================
 // Include files
 // ============================================================================
@@ -29,7 +27,7 @@
 // ============================================================================
 class DeCalorimeter;
 // ============================================================================
-typedef LHCb::CaloCellID::Vector CaloNeighbors;
+using CaloNeighbors = LHCb::CaloCellID::Vector;
 // ============================================================================
 /** @class  CellParam CellParam.h CaloDet/CellParam.h
  *
@@ -71,51 +69,55 @@ namespace CaloCellQuality {
   // ==========================================================================
 } // namespace CaloCellQuality
 // ============================================================================
-class CellParam {
+class CellParam final {
   friend class DeCalorimeter;
 
 public:
   /// standard constructor
-  CellParam( const LHCb::CaloCellID& id = LHCb::CaloCellID() );
-  /// destructor
-  ~CellParam();
-  bool                  valid() const { return m_valid; }
-  LHCb::CaloCellID      cellID() const { return m_cellID; }
-  double                x() const { return m_center.x(); }
-  double                y() const { return m_center.y(); }
-  double                z() const { return m_center.z() + m_zShower; }
-  const Gaudi::XYZPoint center() const { return Gaudi::XYZPoint( x(), y(), z() ); }
-  double                size() const { return m_size; }
-  double                sine() const { return m_sine; }
-  double                nominalGain() const { return m_gain; }
-  double                time() const { return m_time + m_dtime; }
-  int                   cardNumber() const { return m_cardNumber; }
-  int                   cardRow() const { return m_cardRow; }
-  int                   cardColumn() const { return m_cardColumn; }
-  double                deltaTime() const { return m_dtime; }
-  double                zShower() const { return m_zShower; }
-  int                   quality() const { return m_quality; }
-  int                   l0Constant() const { return m_l0constant; }
-  double calibration() const { return m_calibration; } // absolute calibration from 'Calibration' condition (T0)
-  double ledDataRef() const { return m_ledDataRef; }   // <LED> data from Calibration condition (Ref T0)
-  double ledMoniRef() const { return m_ledMoniRef; }   // <LED/PIN> data from Calibration condition (Ref T0)
-  double ledData() const { return m_ledData; }         // <LED> data from Quality condition (current T)
-  double ledDataRMS() const { return m_ledDataRMS; }   // RMS(LED) from Quality condition  (current T)
-  double ledMoni() const { return m_ledMoni; }         // <LED/PIN> data from Quality condition (current T)
-  double ledMoniRMS() const { return m_ledMoniRMS; }   // RMS(LED/PIN) from Quality condition (current T)
-  double ledDataShift() const { return ( ledDataRef() > 0 && ledData() > 0 ) ? ledData() / ledDataRef() : 1; }
-  double gainShift() const { return ( ledMoniRef() > 0 && ledMoni() > 0 ) ? ledMoni() / ledMoniRef() : 1; }
-  double gain() const { return nominalGain() * calibration() / gainShift(); }
-  int    numericGain() const { return m_nGain; } // for Prs only
-  double pileUpOffset() const { return m_offset; }
-  double pileUpOffsetSPD() const { return m_offsetSPD; }
-  double pileUpOffsetRMS() const { return m_eoffset; }
-  double pileUpOffsetSPDRMS() const { return m_eoffsetSPD; }
+  CellParam( LHCb::CaloCellID id = LHCb::CaloCellID() ) : m_cellID( std::move( id ) ) {}
+  [[nodiscard]] bool                  valid() const { return m_valid; }
+  [[nodiscard]] LHCb::CaloCellID      cellID() const { return m_cellID; }
+  [[nodiscard]] double                x() const { return m_center.x(); }
+  [[nodiscard]] double                y() const { return m_center.y(); }
+  [[nodiscard]] double                z() const { return m_center.z() + m_zShower; }
+  [[nodiscard]] const Gaudi::XYZPoint center() const { return Gaudi::XYZPoint( x(), y(), z() ); }
+  [[nodiscard]] double                size() const { return m_size; }
+  [[nodiscard]] double                sine() const { return m_sine; }
+  [[nodiscard]] double                nominalGain() const { return m_gain; }
+  [[nodiscard]] double                time() const { return m_time + m_dtime; }
+  [[nodiscard]] int                   cardNumber() const { return m_cardNumber; }
+  [[nodiscard]] int                   cardRow() const { return m_cardRow; }
+  [[nodiscard]] int                   cardColumn() const { return m_cardColumn; }
+  [[nodiscard]] double                deltaTime() const { return m_dtime; }
+  [[nodiscard]] double                zShower() const { return m_zShower; }
+  [[nodiscard]] int                   quality() const { return m_quality; }
+  [[nodiscard]] int                   l0Constant() const { return m_l0constant; }
+  [[nodiscard]] double                calibration() const {
+    return m_calibration;
+  } // absolute calibration from 'Calibration' condition (T0)
+  [[nodiscard]] double ledDataRef() const { return m_ledDataRef; } // <LED> data from Calibration condition (Ref T0)
+  [[nodiscard]] double ledMoniRef() const { return m_ledMoniRef; } // <LED/PIN> data from Calibration condition (Ref T0)
+  [[nodiscard]] double ledData() const { return m_ledData; }       // <LED> data from Quality condition (current T)
+  [[nodiscard]] double ledDataRMS() const { return m_ledDataRMS; } // RMS(LED) from Quality condition  (current T)
+  [[nodiscard]] double ledMoni() const { return m_ledMoni; }       // <LED/PIN> data from Quality condition (current T)
+  [[nodiscard]] double ledMoniRMS() const { return m_ledMoniRMS; } // RMS(LED/PIN) from Quality condition (current T)
+  [[nodiscard]] double ledDataShift() const {
+    return ( ledDataRef() > 0 && ledData() > 0 ) ? ledData() / ledDataRef() : 1;
+  }
+  [[nodiscard]] double gainShift() const {
+    return ( ledMoniRef() > 0 && ledMoni() > 0 ) ? ledMoni() / ledMoniRef() : 1;
+  }
+  [[nodiscard]] double gain() const { return nominalGain() * calibration() / gainShift(); }
+  [[nodiscard]] int    numericGain() const { return m_nGain; } // for Prs only
+  [[nodiscard]] double pileUpOffset() const { return m_offset; }
+  [[nodiscard]] double pileUpOffsetSPD() const { return m_offsetSPD; }
+  [[nodiscard]] double pileUpOffsetRMS() const { return m_eoffset; }
+  [[nodiscard]] double pileUpOffsetSPDRMS() const { return m_eoffsetSPD; }
 
-  const std::vector<LHCb::CaloCellID>& pins() const { return m_pins; }
-  const std::vector<int>&              leds() const { return m_leds; }
-  const CaloNeighbors&                 neighbors() const { return m_neighbors; }
-  const CaloNeighbors&                 zsupNeighbors() const { return m_zsupNeighbors; }
+  [[nodiscard]] const std::vector<LHCb::CaloCellID>& pins() const { return m_pins; }
+  [[nodiscard]] const std::vector<int>&              leds() const { return m_leds; }
+  [[nodiscard]] const CaloNeighbors&                 neighbors() const { return m_neighbors; }
+  [[nodiscard]] const CaloNeighbors&                 zsupNeighbors() const { return m_zsupNeighbors; }
 
   // ** To initialize the cell: Geometry, neighbours, gain
 
@@ -190,39 +192,39 @@ public:
   bool operator==( const CellParam& c2 ) const { return center() == c2.center() && size() == c2.size(); }
 
 private:
-  LHCb::CaloCellID              m_cellID;     ///< ID of the cell
-  double                        m_size;       ///< Cell size
-  Gaudi::XYZPoint               m_center;     ///< Cell centre
-  double                        m_sine;       ///< To transform E to Et
-  double                        m_gain;       ///< MeV per ADC count
-  double                        m_time;       ///< Nominal time of flight from Vertex (ns)
-  int                           m_cardNumber; ///< Front-end card number
-  int                           m_cardRow;    ///< card row and column
-  int                           m_cardColumn;
-  CaloNeighbors                 m_neighbors;     ///< List of neighbors
-  CaloNeighbors                 m_zsupNeighbors; ///< List of neighbors in same area
-  bool                          m_valid;
+  LHCb::CaloCellID              m_cellID;    ///< ID of the cell
+  double                        m_size{0.0}; ///< Cell size
+  Gaudi::XYZPoint               m_center{-99999.0 * Gaudi::Units::meter, -99999.0 * Gaudi::Units::meter,
+                           0.0 * Gaudi::Units::meter}; ///< Cell centre
+  double                        m_sine{0.0};                         ///< To transform E to Et
+  double                        m_gain{0.0};                         ///< MeV per ADC count
+  double                        m_time{0.0};                         ///< Nominal time of flight from Vertex (ns)
+  int                           m_cardNumber{-1};                    ///< Front-end card number
+  int                           m_cardRow{-1};                       ///< card row and column
+  int                           m_cardColumn{-1};
+  CaloNeighbors                 m_neighbors{};     ///< List of neighbors
+  CaloNeighbors                 m_zsupNeighbors{}; ///< List of neighbors in same area
+  bool                          m_valid{false};
   std::vector<LHCb::CaloCellID> m_pins;
   std::vector<int>              m_leds;
-  double                        m_dtime;
-  double                        m_zShower;
-  int                           m_quality;
-  double                        m_calibration;
-  int                           m_l0constant;
-  double                        m_ledDataRef;
-  double                        m_ledMoniRef;
-  double                        m_ledData;
-  double                        m_ledMoni;
-  double                        m_ledDataRMS;
-  double                        m_ledMoniRMS;
-  int                           m_nGain; // numeric gains (for Prs only)
-  double                        m_offset;
-  double                        m_eoffset;
-  double                        m_offsetSPD;
-  double                        m_eoffsetSPD;
+  double                        m_dtime{0.0};
+  double                        m_zShower{0.0};
+  int                           m_quality{CaloCellQuality::OK};
+  double                        m_calibration{1.0};
+  int                           m_l0constant{0};
+  double                        m_ledDataRef{-1.0};
+  double                        m_ledMoniRef{-1.0};
+  double                        m_ledData{-1.0};
+  double                        m_ledMoni{-1.0};
+  double                        m_ledDataRMS{0.0};
+  double                        m_ledMoniRMS{0.0};
+  int                           m_nGain{0}; // numeric gains (for Prs only)
+  double                        m_offset{0.0};
+  double                        m_eoffset{0.0};
+  double                        m_offsetSPD{0.0};
+  double                        m_eoffsetSPD{0.0};
 };
 
 // ============================================================================
 // The END
 // ============================================================================
-#endif // CALODET_CELLPARAM_H

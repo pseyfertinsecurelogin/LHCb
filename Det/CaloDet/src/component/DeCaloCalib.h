@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef COMPONENT_DECALOCALIB_H
-#define COMPONENT_DECALOCALIB_H 1
+#define COMPONENT_DECALOCALIB_H
 
 // Include files
 // from Gaudi

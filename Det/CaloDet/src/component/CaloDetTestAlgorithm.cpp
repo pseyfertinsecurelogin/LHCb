@@ -67,7 +67,7 @@ StatusCode CaloDetTestAlgorithm::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) { return Error( "Could not initialize the base class!", sc ); }
 
-  DeCalorimeter* calo = getDet<DeCalorimeter>( m_DetData );
+  auto* calo = getDet<DeCalorimeter>( m_DetData );
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "Detector element found at " << calo << endmsg;
 
   // channel
