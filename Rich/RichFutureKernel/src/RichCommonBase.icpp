@@ -33,14 +33,6 @@
 #include "GaudiKernel/IJobOptionsSvc.h"
 
 //=============================================================================
-// Constructor initialisation
-//=============================================================================
-template <class PBASE>
-void Rich::Future::CommonBase<PBASE>::initRichCommonConstructor() {
-  // nothing yet ..
-}
-
-//=============================================================================
 // Initialisation
 //=============================================================================
 template <class PBASE>
@@ -53,11 +45,8 @@ StatusCode Rich::Future::CommonBase<PBASE>::initialize() {
     return sc;
   }
 
-  // Load some common tools by default
-  m_jos = this->template svc<IJobOptionsSvc>( "JobOptionsSvc" );
-
   // Printout from initialize
-  if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Initialize" << endmsg;
+  _ri_debug << "Initialize" << endmsg;
 
   return sc;
 }
@@ -70,7 +59,7 @@ template <class PBASE>
 StatusCode Rich::Future::CommonBase<PBASE>::finalize() {
 
   // Printout from finalization
-  if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Finalize" << endmsg;
+  _ri_debug << "Finalize" << endmsg;
 
   // Finalise base class and return
   return PBASE::finalize();

@@ -9,23 +9,18 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-//-----------------------------------------------------------------------------
-/** @file RichAlgBase.cpp
- *
- *  Implementation file for class : Rich::AlgBase
- *
- *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
- *  @date   2002-04-05
- */
-//-----------------------------------------------------------------------------
+#pragma once
 
-// local
-#include "RichFutureKernel/RichAlgBase.h"
+#include <cassert>
 
-// ============================================================================
-// Force creation of templated classes
-#include "RichCommonBase.icpp"
-template class Rich::Future::CommonBase<GaudiAlgorithm>;
-template class Rich::Future::CommonBase<FixTESPath<Gaudi::Algorithm>>;
-template class Rich::Future::CommonBase<Gaudi::Algorithm>;
-// ============================================================================
+namespace Rich::Future::HistoUtils {
+
+  /// Utility method to save a histogram pointer with checks
+  template <typename HISTO>
+  [[nodiscard]] inline bool saveAndCheck( HISTO*& h1, HISTO* h2 ) noexcept {
+    assert( h1 == nullptr );  // should never overwrite a previously cached valid pointer
+    h1 = h2;                  // save input
+    return ( h1 != nullptr ); // input should always be valid
+  }
+
+} // namespace Rich::Future::HistoUtils
