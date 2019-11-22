@@ -64,7 +64,9 @@ namespace Rich::Future {
    */
   class RawBankDecoder final : public Transformer<Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, //
                                                                             const LHCb::ODIN& ),
-                                                  Traits::BaseClass_t<AlgBase>> {
+                                                  // Note using GaudiAlgorithm here as Gaudi::Algorithm lacks 'getDet'
+                                                  // Need to eventually fix this
+                                                  Traits::BaseClass_t<AlgBase<GaudiAlgorithm>>> {
 
   public:
     /// Standard constructor

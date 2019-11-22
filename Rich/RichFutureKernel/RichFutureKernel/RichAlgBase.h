@@ -21,8 +21,10 @@
 
 #pragma once
 
-// GaudiAlg
+// Gaudi
+#include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
 
 // local
 #include "RichFutureKernel/RichCommonBase.h"
@@ -40,11 +42,11 @@ namespace Rich::Future {
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public CommonBase<GaudiAlgorithm> {
-
+  template <typename PBASE = FixTESPath<Gaudi::Algorithm>>
+  class AlgBase : public CommonBase<PBASE> {
   public:
-    /// Standard constructor
-    AlgBase( const std::string& name, ISvcLocator* pSvcLocator ) : CommonBase<GaudiAlgorithm>( name, pSvcLocator ) {}
+    // inherit constructors from base
+    using CommonBase<PBASE>::CommonBase;
   };
 
 } // namespace Rich::Future

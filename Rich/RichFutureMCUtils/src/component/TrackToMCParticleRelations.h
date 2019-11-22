@@ -44,7 +44,7 @@ namespace Rich::Future::MC {
   class TrackToMCParticleRelations final : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&,      //
                                                                                       const LHCb::MCParticles&, //
                                                                                       const LHCb::LinksByKey& ),
-                                                              Traits::BaseClass_t<AlgBase>> {
+                                                              Traits::BaseClass_t<AlgBase<>>> {
 
   public:
     /// Standard constructor

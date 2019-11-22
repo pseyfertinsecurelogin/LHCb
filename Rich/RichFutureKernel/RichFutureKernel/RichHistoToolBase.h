@@ -50,7 +50,9 @@ namespace Rich::Future {
   public:
     /// Standard constructor
     HistoToolBase( const std::string& type, const std::string& name, const IInterface* parent )
-        : HistoBase<GaudiHistoTool>( type, name, parent ) {}
+        : HistoBase<GaudiHistoTool>( type, name, parent ) {
+      this->initRichHistoConstructor();
+    }
   };
 
 } // namespace Rich::Future

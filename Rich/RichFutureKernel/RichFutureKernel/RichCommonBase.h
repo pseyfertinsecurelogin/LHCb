@@ -41,11 +41,11 @@ class DeRich;
 // Some defines for debug/verbose messages...
 #ifndef _ri_debug
 #  define _ri_debug                                                                                                    \
-    if ( msgLevel( MSG::DEBUG ) ) debug()
+    if ( this->msgLevel( MSG::DEBUG ) ) this->debug()
 #endif
 #ifndef _ri_verbo
 #  define _ri_verbo                                                                                                    \
-    if ( msgLevel( MSG::VERBOSE ) ) verbose()
+    if ( this->msgLevel( MSG::VERBOSE ) ) this->verbose()
 #endif
 
 namespace Rich {
@@ -67,14 +67,8 @@ namespace Rich {
     class CommonBase : public PBASE, public Vc::AlignedBase<Vc::VectorAlignment> {
 
     public:
-      /// Standard algorithm-like constructor
-      CommonBase( const std::string& name, ISvcLocator* pSvcLocator );
-
-      /// Standard tool-like constructor
-      CommonBase( const std::string& type, const std::string& name, const IInterface* parent );
-
-      /// Standard Converter-like Constructor
-      CommonBase( long storage_type, const CLID& class_type, ISvcLocator* svc = nullptr );
+      // Inherit base class constructors
+      using PBASE::PBASE;
 
     public:
       /** Initialization of the algorithm after creation
@@ -125,40 +119,10 @@ namespace Rich {
       }
 
     protected:
-      // methods
-
-      /// Pointer to Job Options Service
-      inline IJobOptionsSvc* joSvc() const noexcept { return m_jos; }
-
-      /** Propagate a list oj job options from one object to another
-       *  @param from_name The name of the object to get the options from
-       *  @param to_name   The name of the oject to copy the options to
-       *  @param options   List of options to copy. If empty, all options are copied.
-       *  @param overwrite If true, options will be over-written in the target object
-       *                   if they are already set
-       *  @return StatusCode indicating if the options where correctly copied
-       */
-      StatusCode propagateJobOptions( const std::string&              from_name,                              //
-                                      const std::string&              to_name,                                //
-                                      const std::vector<std::string>& options   = std::vector<std::string>(), //
-                                      const bool                      overwrite = false                       //
-                                      ) const;
-
-    protected:
       // definitions
 
       using WarningCounter = Gaudi::Accumulators::MsgCounter<MSG::WARNING>; ///< Warning counter
       using ErrorCounter   = Gaudi::Accumulators::MsgCounter<MSG::ERROR>;   ///< Error counter
-
-    private:
-      /// Common Constructor initisalisations
-      void initRichCommonConstructor();
-
-    private:
-      // data
-
-      /// Pointer to job options service
-      IJobOptionsSvc* m_jos = nullptr;
     };
 
   } // namespace Future
