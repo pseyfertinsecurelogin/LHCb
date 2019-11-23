@@ -42,66 +42,48 @@ namespace LHCb {
    *
    */
 
-  class MuonDigit final : public KeyedObject<LHCb::MuonTileID> {
+  class MuonDigit final : public KeyedObject<MuonTileID> {
   public:
     /// typedef for KeyedContainer of MuonDigit
     typedef KeyedContainer<MuonDigit, Containers::HashMap> Container;
 
     /// description of constructor
-    MuonDigit( const LHCb::MuonTileID& tileID );
+    MuonDigit( const MuonTileID& tileID ) : m_MuonDAQ() { setKey( tileID ); }
 
     /// Default Constructor
     MuonDigit() = default;
 
     // Retrieve pointer to class definition structure
-    [[nodiscard]] const CLID& clID() const override;
-    static const CLID&        classID();
+    [[nodiscard]] const CLID& clID() const override { return MuonDigit::classID(); }
+    static const CLID&        classID() { return CLID_MuonDigit; }
 
     /// Fill the ASCII output stream
-    std::ostream& fillStream( std::ostream& s ) const override;
+    std::ostream& fillStream( std::ostream& s ) const override {
+      s << "{ "
+        << "MuonDAQ :	" << m_MuonDAQ << std::endl
+        << " }";
+      return s;
+    }
 
     /// time stamp of the digit inside the BX length  (3 bits reserved -> 3ns resolution)
-    unsigned int TimeStamp();
+    unsigned int TimeStamp() const {
+      return Packer::getBit( m_MuonDAQ, PackMuonDigit::maskTimeStamp, PackMuonDigit::shiftTimeStamp );
+    }
 
     /// set the Time  Stamp in the DAQ word
-    void setTimeStamp( unsigned int timeStamp );
+    MuonDigit& setTimeStamp( unsigned int timeStamp ) {
+      Packer::setBit( m_MuonDAQ, PackMuonDigit::shiftTimeStamp, PackMuonDigit::maskTimeStamp, timeStamp );
+      return *this;
+    }
 
     friend std::ostream& operator<<( std::ostream& str, const MuonDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     unsigned int m_MuonDAQ{0}; ///< DAQ output bit pattern
 
   }; // class MuonDigit
 
   /// Definition of Keyed Container for MuonDigit
-  typedef KeyedContainer<MuonDigit, Containers::HashMap> MuonDigits;
+  using MuonDigits = KeyedContainer<MuonDigit, Containers::HashMap>;
 
 } // namespace LHCb
-
-// -----------------------------------------------------------------------------
-// end of class
-// -----------------------------------------------------------------------------
-
-// Including forward declarations
-
-inline LHCb::MuonDigit::MuonDigit( const LHCb::MuonTileID& tileID ) : m_MuonDAQ() { setKey( tileID ); }
-
-inline const CLID& LHCb::MuonDigit::clID() const { return LHCb::MuonDigit::classID(); }
-
-inline const CLID& LHCb::MuonDigit::classID() { return CLID_MuonDigit; }
-
-inline std::ostream& LHCb::MuonDigit::fillStream( std::ostream& s ) const {
-  s << "{ "
-    << "MuonDAQ :	" << m_MuonDAQ << std::endl
-    << " }";
-  return s;
-}
-
-inline unsigned int LHCb::MuonDigit::TimeStamp() {
-  return Packer::getBit( m_MuonDAQ, PackMuonDigit::maskTimeStamp, PackMuonDigit::shiftTimeStamp );
-}
-
-inline void LHCb::MuonDigit::setTimeStamp( unsigned int timeStamp ) {
-  Packer::setBit( m_MuonDAQ, PackMuonDigit::shiftTimeStamp, PackMuonDigit::maskTimeStamp, timeStamp );
-}
