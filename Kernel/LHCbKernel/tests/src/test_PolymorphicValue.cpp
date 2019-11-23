@@ -207,8 +207,8 @@ BOOST_AUTO_TEST_CASE( test_PolymorphicValue_hash ) {
 BOOST_AUTO_TEST_CASE( test_PolymorphicValue_deref ) {
   auto iface_a = LHCb::cxx::PolymorphicValue<unique::IFace>{std::make_unique<unique::A>()};
 
-  const auto& r = *iface_a;
-  r.f();
+  const auto&           r  = *iface_a;
+  [[maybe_unused]] auto rf = r.f();
 
   iface_a->f();
 }

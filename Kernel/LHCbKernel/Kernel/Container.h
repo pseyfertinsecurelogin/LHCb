@@ -21,6 +21,15 @@
 #include <utility>
 #include <vector>
 
+#if defined( __clang__ ) && ( __clang_major__ < 9 )
+#  define GF_SUPPRESS_SPURIOUS_CLANG_WARNING_BEGIN                                                                     \
+    _Pragma( "clang diagnostic push" ) _Pragma( "clang diagnostic ignored \"-Wunused-lambda-capture\"" )
+#  define GF_SUPPRESS_SPURIOUS_CLANG_WARNING_END _Pragma( "clang diagnostic pop" )
+#else
+#  define GF_SUPPRESS_SPURIOUS_CLANG_WARNING_BEGIN
+#  define GF_SUPPRESS_SPURIOUS_CLANG_WARNING_END
+#endif
+
 namespace LHCb::Kernel {
 
   namespace details {
@@ -170,11 +179,13 @@ namespace LHCb::Kernel {
       static_assert( sizeof...( U ) == N,
                      "emplace_back takes exactly one argument per contained vector; if you need more than one argument "
                      "to construct an element, combine them inside a call to `std::forward_as_tuple` " );
+      GF_SUPPRESS_SPURIOUS_CLANG_WARNING_BEGIN
       return std::apply(
           [&args...]( auto&... d ) { // C++20: [...args = std::forward<U>(args)]( auto& ... d )
             return std::forward_as_tuple( details::emplace_back( d, std::forward<U>( args ) )... );
           },
           m_data );
+      GF_SUPPRESS_SPURIOUS_CLANG_WARNING_END
     }
     void clear() {
       std::apply( []( auto&... d ) { ( d.clear(), ... ); }, m_data );
@@ -324,7 +335,9 @@ namespace LHCb::Kernel {
               typename = std::enable_if_t<sizeof...( Size_t ) == N &&
                                           std::conjunction_v<std::is_convertible<Size_t, std::size_t>...>>>
     MultiContainer( Size_t... maxElements ) : m_buffer{Arena::create( n_bytes( std::array{maxElements...} ) )} {
+      GF_SUPPRESS_SPURIOUS_CLANG_WARNING_BEGIN
       std::apply( [maxElements...]( auto&... d ) { ( d.reserve( maxElements ), ... ); }, m_data );
+      GF_SUPPRESS_SPURIOUS_CLANG_WARNING_END
     }
 
     template <size_t I>

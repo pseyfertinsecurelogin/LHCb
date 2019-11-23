@@ -26,11 +26,11 @@ void* operator new( std::size_t s ) {
   ++alloc;
   return malloc( s );
 }
-void operator delete( void* p ) {
+void operator delete(void* p)_GLIBCXX_USE_NOEXCEPT {
   ++dealloc;
   free( p );
 }
-void operator delete( void* p, size_t ) {
+void operator delete(void* p, size_t)_GLIBCXX_USE_NOEXCEPT {
   ++dealloc;
   free( p );
 }
