@@ -38,7 +38,8 @@ public:
   ///
   EvtInfo( const int numberOfTELL1 ) : KeyedObject<int>( numberOfTELL1 ), m_evtInfo() {}
   /// Standard constructor
-  EvtInfo() = default;
+  EvtInfo()                  = default;
+  EvtInfo&           operator=( EvtInfo&& rhs ) = default;
   void               setEvtInfo( VeloTELL1::allEvt& inData );
   unsigned int       bunchCounter( const int PPFPGA = 0 ) const;
   unsigned int       detectorID( const int PPFPGA = 0 ) const;
@@ -57,7 +58,6 @@ public:
   VeloTELL1::dataVec IHeader( const int PPFPGA = 0 ) const;
   VeloTELL1::dataVec PCNBeetle( const int PPFPGA = 0 ) const;
 
-protected:
 private:
   VeloTELL1::allEvt m_evtInfo;
 };

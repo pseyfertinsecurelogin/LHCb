@@ -9,6 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
+#include "Event/L0CaloAdc.h"
+#if defined( __GNUC__ ) && __GNUC__ > 8
+#  pragma GCC diagnostic pop
+#endif
 
 #include "CaloTriggerAdcsFromRaw.h"
 

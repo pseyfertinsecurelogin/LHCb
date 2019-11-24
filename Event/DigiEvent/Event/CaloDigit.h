@@ -69,10 +69,11 @@ namespace LHCb {
     CaloDigit( const LHCb::CaloCellID& id, double e ) : Base( id ), m_e( e ) {}
 
     /// Default constructor
-    CaloDigit() : Base() {}
+    CaloDigit() = default;
 
     /// Copy Constructor
-    CaloDigit( const LHCb::CaloDigit& right ) : Base( right.cellID() ), m_e( right.e() ) {}
+    CaloDigit( const CaloDigit& right ) : Base( right.cellID() ), m_e( right.e() ) {}
+    CaloDigit& operator=( const CaloDigit& ) = default;
 
     // Retrieve pointer to class definition structure
     [[nodiscard]] const CLID& clID() const override;
