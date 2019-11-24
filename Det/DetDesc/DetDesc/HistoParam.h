@@ -45,8 +45,8 @@ namespace DetDesc {
      *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
      *   @date 2009-12-06
      */
-    GAUDI_API std::string toXMLStr( const DetDesc::Params::Histo1D& histo, const std::string& name,
-                                    const std::string& comment, int precision );
+    GAUDI_API std::string toXMLStr( const DetDesc::Params::Histo1D& histo, std::string_view name,
+                                    std::string_view comment, int precision );
 
     // ========================================================================
     /**  Interface function converting 2d histogram to xml string
@@ -60,8 +60,8 @@ namespace DetDesc {
      *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
      *   @date 2009-12-06
      */
-    GAUDI_API std::string toXMLStr( const DetDesc::Params::Histo2D& histo, const std::string& name,
-                                    const std::string& comment, int precision );
+    GAUDI_API std::string toXMLStr( const DetDesc::Params::Histo2D& histo, std::string_view name,
+                                    std::string_view comment, int precision );
 
     // ========================================================================
     /**  Interface function converting 1d histogram to a custom format string
@@ -98,7 +98,7 @@ namespace DetDesc {
  *   @date 2009-10-22
  */
 template <>
-inline std::string Param<DetDesc::Params::Histo1D>::toXMLStr( const std::string& name, const std::string& comment,
+inline std::string Param<DetDesc::Params::Histo1D>::toXMLStr( std::string_view name, std::string_view comment,
                                                               int precision ) const {
   return DetDesc::Params::toXMLStr( m_val, name, comment, precision );
 }
@@ -126,7 +126,7 @@ inline std::string Param<DetDesc::Params::Histo1D>::toStr() const {
  *   @date 2009-10-22
  */
 template <>
-inline std::string Param<DetDesc::Params::Histo2D>::toXMLStr( const std::string& name, const std::string& comment,
+inline std::string Param<DetDesc::Params::Histo2D>::toXMLStr( std::string_view name, std::string_view comment,
                                                               int precision ) const {
   return DetDesc::Params::toXMLStr( m_val, name, comment, precision );
 }

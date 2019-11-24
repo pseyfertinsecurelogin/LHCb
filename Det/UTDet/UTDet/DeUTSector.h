@@ -130,18 +130,18 @@ public:
    * @param strip strip number
    * @param value Noise value
    */
-  void setNoise( unsigned int strip, float value );
+  void setNoise( unsigned int strip, double value );
 
   /** set the Noise of the corresponding channel
    * @param chan channel
    * @param value Noise value
    */
-  void setNoise( LHCb::UTChannelID chan, float value );
+  void setNoise( LHCb::UTChannelID chan, double value );
 
   /** set the Noise vector
    * @param values Noise vector
    */
-  void setNoise( const std::vector<float>& values );
+  void setNoise( std::vector<double> values );
 
   /** get the Noise of the corresponding strip
    * @param aChannel channel
@@ -195,23 +195,23 @@ public:
    * @param strip strip number
    * @param value cmNoise value
    */
-  void setCMNoise( unsigned int strip, float value );
+  void setCMNoise( unsigned int strip, double value );
 
   /** set the cmNoise of the corresponding channel
    * @param chan channel
    * @param value cmNoise value
    */
-  void setCMNoise( LHCb::UTChannelID chan, float value );
+  void setCMNoise( LHCb::UTChannelID chan, double value );
 
   /** set the cmNoise vector
    * @param values cmNoise vector
    */
-  void setCMNoise( const std::vector<float>& values );
+  void setCMNoise( std::vector<double> values );
 
   /** set the ACD count from the electron number vector
    * @param values
    */
-  void setADCConversion( const std::vector<double>& values );
+  void setADCConversion( std::vector<double> values );
 
   /** get the ADC count from the electron number
    * @param e electron number
@@ -541,9 +541,9 @@ private:
 
   // Noise info
   std::string         m_noiseString = "Noise";
-  std::vector<float>  m_noiseValues;
+  std::vector<double> m_noiseValues;
   std::vector<double> m_electronsPerADC;
-  std::vector<float>  m_cmModeValues;
+  std::vector<double> m_cmModeValues;
 };
 
 inline unsigned int DeUTSector::id() const { return m_id; }
@@ -607,12 +607,12 @@ inline unsigned int DeUTSector::beetle( const unsigned int strip ) const {
 
 inline unsigned int DeUTSector::nBeetle() const { return nStrip() / LHCbConstants::nStripsInBeetle; }
 
-inline void DeUTSector::setNoise( LHCb::UTChannelID chan, float value ) {
+inline void DeUTSector::setNoise( LHCb::UTChannelID chan, double value ) {
   // just delegate
   setNoise( chan.strip(), value );
 }
 
-inline void DeUTSector::setCMNoise( LHCb::UTChannelID chan, float value ) {
+inline void DeUTSector::setCMNoise( LHCb::UTChannelID chan, double value ) {
   // just delegate
   setCMNoise( chan.strip(), value );
 }
