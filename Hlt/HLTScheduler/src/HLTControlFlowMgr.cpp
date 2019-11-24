@@ -229,23 +229,37 @@ StatusCode HLTControlFlowMgr::finalize() {
 
   StatusCode sc = StatusCode::SUCCESS;
 
+  // Determine the size of the algorithm name field to use
+  // Use max name size, clamped to 'reasonable' range
+  const auto maxNameS =
+      ( !m_AlgNames.empty()
+            ? std::clamp( 2u + std::max_element( m_AlgNames.begin(), m_AlgNames.end(),
+                                                 []( auto const& a, auto const& b ) { return a.size() < b.size(); } )
+                                   ->size(),
+                          m_minNameColWidth.value(), m_maxNameColWidth.value() )
+            : m_minNameColWidth.value() );
+  const auto sf1 = std::to_string( maxNameS + 5 );
+  const auto sf2 = std::to_string( maxNameS + 4 );
+  const auto sf3 = std::to_string( maxNameS + 2 );
+
   // print the counters
   if ( m_createTimingTable ) {
     double const ticksPerMilliSecond = rdtsc_ticks_per_millisecond();
     info() << "Timing table:" << endmsg;
     info() << "Average ticks per millisecond: " << static_cast<uint64_t>( ticksPerMilliSecond ) << endmsg;
-    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
+    info() << boost::format{"\n | Name of Algorithm %|" + sf1 +
+                            "t| | Execution Count | Total Time / s  | Avg. Time / us   |\n"};
     for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
-      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{" | %|-" + sf3 + "." + sf3 + "48s|%|" + sf2 + "t|"} % ( "\"" + name + "\"" );
       info() << boost::format{"| %15u | %15.3f | %16.3f |"} % static_cast<double>( ctr.nEntries() ) %
                     ( static_cast<double>( ctr.sum() ) / ticksPerMilliSecond / 1e3 ) %
                     ( ctr.mean() / ticksPerMilliSecond * 1e3 )
              << '\n';
     }
   } else {
-    info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count \n"};
+    info() << boost::format{"\n | Name of Algorithm %|" + sf1 + "t| | Execution Count \n"};
     for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_TimingCounters, m_AlgNames ) ) {
-      info() << boost::format{" | %|-48.48s|%|50t|"} % ( "\"" + name + "\"" );
+      info() << boost::format{" | %|-" + sf3 + "." + sf3 + "s|%|" + sf2 + "t|"} % ( "\"" + name + "\"" );
       info() << boost::format{"| %15u"} % static_cast<double>( ctr.nEntries() ) << '\n';
     }
   }
@@ -349,7 +363,7 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
     SmartIF<IProperty> appmgr( serviceLocator() );
 
-    for ( AlgWrapper& toBeRun : m_definitlyRunTheseAlgs ) {
+    for ( AlgWrapper& toBeRun : m_definitelyRunTheseAlgs ) {
       try {
         if ( m_createTimingTable ) {
           uint64_t const start = __rdtsc();
@@ -725,11 +739,11 @@ void HLTControlFlowMgr::configureScheduling() {
 
   std::vector<Algorithm*> allAlgos; // temporarily save/count all algorithms
   allAlgos.reserve( 1000 );         // whatever, 1000 is nice
-  // fill algorithms that should definitly run
-  for ( std::string const& algname : m_definitlyRunThese ) {
+  // fill algorithms that should definitely run
+  for ( std::string const& algname : m_definitelyRunThese ) {
     for ( Algorithm* alg : m_databroker->algorithmsRequiredFor( algname ) ) {
       if ( std::find( begin( allAlgos ), end( allAlgos ), alg ) == end( allAlgos ) ) {
-        m_definitlyRunTheseAlgs.emplace_back( alg, allAlgos.size(), m_EnableLegacyMode );
+        m_definitelyRunTheseAlgs.emplace_back( alg, allAlgos.size(), m_EnableLegacyMode );
         allAlgos.emplace_back( alg );
       }
     }
