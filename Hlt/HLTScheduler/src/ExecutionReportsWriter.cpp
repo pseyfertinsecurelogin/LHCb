@@ -42,7 +42,7 @@ StatusCode ExecutionReportsWriter::start() {
 }
 
 StatusCode ExecutionReportsWriter::execute( EventContext const& evtCtx ) const {
-  auto [NodeStates, AlgStates] = evtCtx.getExtension<HLTControlFlowMgr::SchedulerStates>();
+  auto const& [NodeStates, AlgStates] = evtCtx.getExtension<HLTControlFlowMgr::SchedulerStates>();
 
   if ( UNLIKELY( evtCtx.evt() % m_printFreq == 0 ) ) {
     DEBUG_MSG << m_schedulerPtr->buildAlgsWithStates( AlgStates ).str() << endmsg;
