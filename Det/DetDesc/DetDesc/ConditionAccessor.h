@@ -128,4 +128,9 @@ namespace LHCb::DetDesc {
       Gaudi::Functional::Traits::use_<useConditionHandleFor<C...>,
                                       Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition<>>>;
 
+  template <typename B, typename... C>
+  using usesBaseAndConditions =
+      Gaudi::Functional::Traits::use_<useConditionHandleFor<C...>,
+                                      Gaudi::Functional::Traits::BaseClass_t<AlgorithmWithCondition<B>>>;
+
 } // namespace LHCb::DetDesc
