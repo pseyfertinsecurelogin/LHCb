@@ -33,9 +33,13 @@ namespace {
 //=============================================================================
 RawBankDecoder::RawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator )
     : Transformer( name, pSvcLocator,
+                   // data inputs
                    {KeyValue{"RawEventLocation",
                              concat_alternatives( {LHCb::RawEventLocation::Rich, LHCb::RawEventLocation::Default} )},
-                    KeyValue{"OdinLocation", LHCb::ODINLocation::Default}},
+                    KeyValue{"OdinLocation", LHCb::ODINLocation::Default},
+                    // conditions input
+                    KeyValue{"DeRichSystem", DeRichLocations::RichSystem}},
+                   // output data
                    {KeyValue{"DecodedDataLocation", L1MapLocation::Default}} ) {
   // setProperty( "OutputLevel", MSG::VERBOSE );
 }
@@ -46,9 +50,6 @@ StatusCode RawBankDecoder::initialize() {
   // Initialise base class
   const auto sc = Transformer::initialize();
   if ( !sc ) return sc;
-
-  // RichDet
-  m_richSys = getDet<DeRichSystem>( DeRichLocations::RichSystem );
 
   // report inactive RICHes
   if ( !m_richIsActive[Rich::Rich1] ) { info() << "Decoding for RICH1 disabled" << endmsg; }
@@ -86,8 +87,8 @@ StatusCode RawBankDecoder::initialize() {
 //=============================================================================
 
 L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, //
-                                  const LHCb::ODIN&     odin      //
-                                  ) const {
+                                  const LHCb::ODIN&     odin,     //
+                                  const DeRichSystem&   deRichSys ) const {
 
   // Make the data map to return
   L1Map decodedData;
@@ -107,7 +108,7 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, //
     if ( bank ) {
       // Decode this bank
       try {
-        decodeToSmartIDs( *bank, odin, decodedData, banks );
+        decodeToSmartIDs( *bank, odin, deRichSys, decodedData, banks );
       } catch ( const GaudiException& expt ) {
         // count errors
         ++m_rawReadErr;
@@ -131,9 +132,9 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent, //
 
 void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
                                        const LHCb::ODIN&    odin,        //
+                                       const DeRichSystem&  deRichSys,   //
                                        L1Map&               decodedData, //
-                                       PDBanks&             banks        //
-                                       ) const {
+                                       PDBanks&             banks ) const {
 
   // Check magic code for general data corruption
   if ( UNLIKELY( LHCb::RawBank::MagicPattern != bank.magic() ) ) {
@@ -147,7 +148,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
     if ( bank.type() != LHCb::RawBank::Rich ) {
       std::ostringstream message;
       message << "BankType is not RICH : type = " << bank.type();
-      Exception( message.str() );
+      throw Rich::Exception( message.str() );
     }
 
     // Get L1 ID
@@ -157,7 +158,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
     const auto version = bankVersion( bank );
 
     // Are we decoding this bank ?
-    if ( okToDecode( L1ID ) ) {
+    if ( okToDecode( L1ID, deRichSys ) ) {
 
       // if configured, dump raw event before decoding
       if ( msgLevel( MSG::VERBOSE ) ) {
@@ -168,14 +169,14 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
 
       // Now, delegate the work to a version of the decoding appropriate to the version
       if ( version == LHCb5 || version == FlatList ) {
-        decodeToSmartIDs_2007( bank, odin, decodedData, banks );
+        decodeToSmartIDs_2007( bank, odin, deRichSys, decodedData, banks );
       } else if ( MaPMT0 == version ) {
-        decodeToSmartIDs_MaPMT0( bank, decodedData );
+        decodeToSmartIDs_MaPMT0( bank, deRichSys, decodedData );
       } else // Some problem ...
       {
         std::ostringstream mess;
         mess << "Unknown RICH L1 version number " << version;
-        Exception( mess.str() );
+        throw Rich::Exception( mess.str() );
       }
 
     } // L1 is decoded
@@ -187,8 +188,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank& bank,        //
 
 const Rich::DAQ::PDDataBank* RawBankDecoder::createDataBank( const LongType*   dataStart, //
                                                              const BankVersion version,   //
-                                                             PDBanks&          banks      //
-                                                             ) const {
+                                                             PDBanks&          banks ) const {
 
   Rich::DAQ::PDDataBank* dataBank = nullptr;
 
@@ -251,9 +251,9 @@ const Rich::DAQ::PDDataBank* RawBankDecoder::createDataBank( const LongType*   d
 
 void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank,        //
                                             const LHCb::ODIN&    odin,        //
+                                            const DeRichSystem&  deRichSys,   //
                                             L1Map&               decodedData, //
-                                            PDBanks&             banks        //
-                                            ) const {
+                                            PDBanks&             banks ) const {
 
   using namespace Rich::DAQ::HPD;
 
@@ -356,7 +356,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank,        //
             // do in a try block incase HPD ID is unknown
             LHCb::RichSmartID hpdID;
             try {
-              hpdID = ( m_useFakeHPDID ? s_fakeHPDID : m_richSys->richSmartID( hpdBank->level0ID() ) );
+              hpdID = ( m_useFakeHPDID ? s_fakeHPDID : deRichSys.richSmartID( hpdBank->level0ID() ) );
             } catch ( const GaudiException& expt ) {
               ++m_unknownPD;
               _ri_debug << "'" << expt.message() << "' | L1HardID=" << L1ID << " Ingress=" << ingressWord.ingressID()
@@ -388,7 +388,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank,        //
                 OK = true;                      // default to OK
                 if ( UNLIKELY( m_hpdL1check ) ) // Do check ?
                 {
-                  const auto db_L1ID = m_richSys->level1HardwareID( hpdBank->level0ID() );
+                  const auto db_L1ID = deRichSys.level1HardwareID( hpdBank->level0ID() );
                   OK                 = ( L1ID == db_L1ID );
                 }
                 if ( OK ) // only carry on if OK
@@ -485,7 +485,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank& bank,        //
 
 //=============================================================================
 
-void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& decodedData ) const {
+void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank,      //
+                                              const DeRichSystem&  deRichSys, //
+                                              L1Map&               decodedData ) const {
 
   using namespace Rich::DAQ::HPD; // to be changed...
 
@@ -518,7 +520,7 @@ void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& 
     while ( lineC < bankSize ) {
       // Read the smartID direct from the banks
       LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
-      const bool        isLarge = m_richSys->isLargePD( id );
+      const bool        isLarge = deRichSys.isLargePD( id );
       if ( id.isLargePMT() != isLarge ) {
         ++m_pmtSLFlagMismatch;
         // hack to fix up large PMT flag
@@ -531,7 +533,7 @@ void RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank& bank, L1Map& 
         _ri_debug << " -> " << id << endmsg;
 
         // Get the L1 input from the DB
-        const auto l1Input = m_richSys->level1InputNum( id );
+        const auto l1Input = deRichSys.level1InputNum( id );
 
         // The ingress info to fill
         IngressInfo* ingressInfo = nullptr;

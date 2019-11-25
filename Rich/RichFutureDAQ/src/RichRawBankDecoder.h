@@ -25,11 +25,15 @@
 // Rich (Future) Kernel
 #include "RichFutureKernel/RichAlgBase.h"
 
+// DetDesc
+#include "DetDesc/ConditionAccessorHolder.h"
+
 // Gaudi Functional
 #include "GaudiAlg/Transformer.h"
 
 // Rich Utils
 #include "RichFutureUtils/RichDecodedData.h"
+#include "RichUtils/RichException.h"
 #include "RichUtils/RichHashMap.h"
 #include "RichUtils/RichMap.h"
 
@@ -63,12 +67,13 @@ namespace Rich::Future {
    *  @date   2016-09-21
    */
   class RawBankDecoder final : public Transformer<Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, //
-                                                                            const LHCb::ODIN& ),
-                                                  // Note using GaudiAlgorithm here as Gaudi::Algorithm lacks 'getDet'
-                                                  // Need to eventually fix this
-                                                  Traits::BaseClass_t<AlgBase<GaudiAlgorithm>>> {
+                                                                            const LHCb::ODIN&,     //
+                                                                            const DeRichSystem& ),
+                                                  LHCb::DetDesc::usesBaseAndConditions<AlgBase<>, DeRichSystem>> {
 
   public:
+    // framework
+
     /// Standard constructor
     RawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -77,9 +82,12 @@ namespace Rich::Future {
 
     /// Algorithm execution via transform
     Rich::Future::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent, //
-                                         const LHCb::ODIN&     odin ) const override;
+                                         const LHCb::ODIN&     odin,     //
+                                         const DeRichSystem&   deRichSys ) const override;
 
   private:
+    // methods
+
     /// Returns the RawBank version enum for the given bank
     inline Rich::DAQ::BankVersion bankVersion( const LHCb::RawBank& bank ) const {
       return static_cast<Rich::DAQ::BankVersion>( bank.version() );
@@ -117,6 +125,7 @@ namespace Rich::Future {
     /// Decode a RawBank into RichSmartID identifiers
     void decodeToSmartIDs( const LHCb::RawBank&      bank,        //
                            const LHCb::ODIN&         odin,        //
+                           const DeRichSystem&       deRichSys,   //
                            Rich::Future::DAQ::L1Map& decodedData, //
                            PDBanks&                  banks ) const;
 
@@ -124,22 +133,25 @@ namespace Rich::Future {
     /// Version compatible with first 2007 "final" L1 firmware
     void decodeToSmartIDs_2007( const LHCb::RawBank&      bank,        //
                                 const LHCb::ODIN&         odin,        //
+                                const DeRichSystem&       deRichSys,   //
                                 Rich::Future::DAQ::L1Map& decodedData, //
                                 PDBanks&                  banks ) const;
 
     /// Decode a RawBank into RichSmartID identifiers
     /// MaPMT0 version
-    void decodeToSmartIDs_MaPMT0( const LHCb::RawBank&      bank, //
+    void decodeToSmartIDs_MaPMT0( const LHCb::RawBank&      bank,      //
+                                  const DeRichSystem&       deRichSys, //
                                   Rich::Future::DAQ::L1Map& decodedData ) const;
 
     /// Check if a given L1 ID should be decoded
-    inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const {
+    inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID, //
+                            const DeRichSystem&               deRichSys ) const {
       // First check if we are decoding each RICH.
       // If so, no need to lookup RICH type from ID
       bool ok = m_richIsActive[Rich::Rich1] && m_richIsActive[Rich::Rich2];
       if ( UNLIKELY( !ok ) ) {
         // Now lookup the RICH type
-        const auto rich = m_richSys->richDetector( L1ID );
+        const auto rich = deRichSys.richDetector( L1ID );
         if ( UNLIKELY( rich == Rich::InvalidDetector ) ) {
           ++m_l1InvalidRich;
           ok = false;
@@ -249,9 +261,6 @@ namespace Rich::Future {
 
     /// Boolean to indicate if there are any pixels that need suppressing
     bool m_pixelsToSuppress = false;
-
-    /// RICH System detector element
-    const DeRichSystem* m_richSys = nullptr;
 
     /// Storage of pixels to mask for each HPD
     HPDHotPixels m_hotPixels;
