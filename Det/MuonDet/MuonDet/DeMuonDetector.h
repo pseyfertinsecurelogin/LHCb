@@ -124,11 +124,30 @@ public:
   // void fillChmbPtr();
 
   // Fills various geometry related info
-  void       fillGeoInfo();
-  void       fillGeoArray();
+  void fillGeoInfo();
+  void fillGeoArray();
+
+  struct TilePosition {
+    Gaudi::XYZPoint position;
+    double          dX, dY, dZ;
+  };
+  std::optional<TilePosition> position( LHCb::MuonTileID tile ) const;
+
+  //[[deprecated("please call position(LHCb::MuonTileID) instead")]]
   StatusCode Tile2XYZ( LHCb::MuonTileID tile, double& x, double& dx, double& y, double& dy, double& z,
-                       double& dz ) const;
-  void       CountDetEls();
+                       double& dz ) const {
+    auto tilePosition = position( tile );
+    if ( !tilePosition ) return StatusCode::FAILURE;
+    x  = tilePosition->position.X();
+    y  = tilePosition->position.Y();
+    z  = tilePosition->position.Z();
+    dx = tilePosition->dX;
+    dy = tilePosition->dY;
+    dz = tilePosition->dZ;
+    return StatusCode::SUCCESS;
+  }
+
+  void CountDetEls();
 
   int    stations() const;
   int    regions() const;
