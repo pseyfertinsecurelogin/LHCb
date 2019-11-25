@@ -50,6 +50,10 @@ namespace LHCb::Muon::DAQ {
       return std::accumulate( rbs.begin(), rbs.end(), 0,
                               []( int s, const RawBank* rb ) { return rb ? s + nDigits( *rb ) : s; } );
     }
+    unsigned short make_tdc( unsigned short w ) {
+      constexpr unsigned short TDCmask = 0xF000;
+      return ( w & TDCmask ) >> 12;
+    }
   } // namespace
 
   namespace EC::RawToHits {
@@ -96,6 +100,96 @@ namespace {
 #define OOPS( x ) throw_exception( x, __PRETTY_FUNCTION__ )
 
 namespace LHCb::Muon::DAQ {
+  namespace {
+    template <typename Iterator>
+    Iterator addCoordsCrossingMap( Iterator first, Iterator last, CommonMuonHits& commonHits,
+                                   const ComputeTilePosition& compute, size_t nStations ) {
+      // need to calculate the shape of the horizontal and vertical logical strips
+
+      // used flags
+      assert( std::distance( first, last ) < 400 );
+      std::bitset<400> used; // (to be updated with new readout) the maximum # of channels per quadrant is currently 384
+                             // (from M2R2)
+      // partition into the two directions of digits
+      // vertical and horizontal stripes
+      const auto mid = std::partition( first, last, []( const Digit& digit ) { return digit.tile.isHorizontal(); } );
+
+      auto digitsOne = make_span( first, mid );
+      auto digitsTwo = make_span( mid, last );
+
+      // check how many cross
+      if ( first != mid && mid != last ) {
+        auto thisGridX = first->tile.layout().xGrid();
+        auto thisGridY = first->tile.layout().yGrid();
+
+        auto otherGridX = mid->tile.layout().xGrid();
+        auto otherGridY = mid->tile.layout().yGrid();
+
+        unsigned i = 0;
+        for ( const Digit& one : digitsOne ) {
+          unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
+          unsigned     j     = mid - first;
+          for ( const Digit& two : digitsTwo ) {
+            unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
+            if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
+              MuonTileID pad( one.tile );
+              pad.setY( two.tile.nY() );
+              pad.setLayout( {thisGridX, otherGridY} );
+              auto&& [pos, dx, dy] = compute.tilePosition( pad );
+              commonHits.emplace_back( std::move( pad ), one.tile, two.tile, pos.X(), dx, pos.Y(), dy, pos.Z(), 0,
+                                       one.tdc, one.tdc - two.tdc, 0 );
+              used[i] = used[j] = true;
+            }
+            ++j;
+          }
+          ++i;
+        }
+      }
+
+      // copy over "uncrossed" digits
+      unsigned m = 0;
+      for ( const Digit& digit : digitsOne ) {
+        if ( !used[m++] ) {
+          auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
+                           ? compute.tilePosition( digit.tile )
+                           : compute.stripXPosition( digit.tile ) );
+          commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
+                                   digit.tdc );
+        }
+      }
+      for ( const Digit& digit : digitsTwo ) {
+        if ( !used[m++] ) {
+          auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
+                           ? compute.tilePosition( digit.tile )
+                           : compute.stripYPosition( digit.tile ) );
+          commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
+                                   digit.tdc );
+        }
+      }
+      return last;
+    }
+
+    template <typename Iterator, typename MakeTile>
+    void decodeTileAndTDC( const RawBank& rb, Iterator output, MakeTile&& make_tile ) {
+      // minimum length is three 32 bit words --> 12 bytes -> 6 unsigned shorts
+      if ( rb.size() < 12 ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
+      auto range         = rb.range<unsigned short>();
+      auto preamble_size = 2 * ( ( range[0] + 3 ) / 2 );
+      if ( range.size() < preamble_size ) { OOPS( EC::RawToHits::ErrorCode::PADDING_TOO_LONG ); }
+      range = range.subspan( preamble_size );
+      for ( int i = 0; i < 4; i++ ) {
+        if ( UNLIKELY( range.empty() ) ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
+        if ( UNLIKELY( range.size() < 1 + range[0] ) ) { OOPS( EC::RawToHits::ErrorCode::TOO_MANY_HITS ); }
+        for ( unsigned short data : range.subspan( 1, range[0] ) ) {
+          auto tile = make_tile( data );
+          if ( LIKELY( tile.has_value() ) ) *output++ = {std::move( *tile ), make_tdc( data )};
+        }
+        range = range.subspan( 1 + range[0] );
+      }
+      assert( range.size() < 2 );
+    }
+
+  } // namespace
   //-----------------------------------------------------------------------------
   // Implementation file for class : RawToHits
   //-----------------------------------------------------------------------------
@@ -111,10 +205,7 @@ namespace LHCb::Muon::DAQ {
     MuonHitContainer operator()( const RawEvent&, const DeMuonDetector&, const ComputeTilePosition& ) const override;
 
   private:
-    std::array<std::vector<Digit>, 4> decodeTileAndTDC( span<const RawBank*>, const DeMuonDetector& ) const;
-    template <typename Iterator>
-    Iterator addCoordsCrossingMap( Iterator, Iterator, CommonMuonHits&, const ComputeTilePosition&,
-                                   size_t nStations ) const;
+    mutable Gaudi::Accumulators::BinomialCounter<> m_invalid_add{this, "invalid add"};
   };
 
   DECLARE_COMPONENT_WITH_ID( RawToHits, "MuonRawToHits" )
@@ -153,8 +244,32 @@ namespace LHCb::Muon::DAQ {
     std::array<CommonMuonStation, 4> stations;
     if ( mb.empty() ) return MuonHitContainer{std::move( stations )};
 
-    // decode tha data
-    auto decoding = decodeTileAndTDC( mb, det );
+    // array of vectors of hits
+    // each element of the array correspond to hits from a single station
+    // this will ease the sorting after
+    std::array<std::vector<Digit>, 4> decoding;
+
+    auto n_digits = nDigits( mb );
+    for ( auto& decode : decoding ) { decode.reserve( n_digits ); }
+
+    constexpr auto stationOfTell1 = std::array{0, 0, 0, 0, 1, 1, 2, 2, 3, 3}; // to be updated with tell40
+    for ( const auto& rb : mb ) {
+      if ( RawBank::MagicPattern != rb->magic() ) { OOPS( EC::RawToHits::ErrorCode::BAD_MAGIC ); }
+      unsigned int tell1 = rb->sourceID();
+      if ( tell1 >= MuonDAQHelper_maxTell1Number ) { OOPS( EC::RawToHits::ErrorCode::INVALID_TELL1 ); }
+      int station = stationOfTell1[tell1];
+
+      // decode the bank -- decide in which array to put the digits according to the Tell1 source
+      auto make_tile = [& ADDToTile = det.getDAQInfo()->getADDInTell1( tell1 ),
+                        invalid_add = m_invalid_add.buffer()]( unsigned short w ) mutable {
+        constexpr unsigned short ADDmask = 0x0FFF; // there is no short literal suffix...
+        unsigned short           add     = w & ADDmask;
+        bool                     valid   = add < ADDToTile.size();
+        invalid_add += !valid;
+        return valid ? std::optional{ADDToTile[add]} : std::nullopt;
+      };
+      decodeTileAndTDC( *rb, back_inserter( decoding[station] ), make_tile );
+    }
 
     if ( std::all_of( decoding.begin(), decoding.end(), []( const auto& v ) { return v.empty(); } ) ) {
       error() << "Error in decoding the muon raw data" << endmsg;
@@ -189,118 +304,6 @@ namespace LHCb::Muon::DAQ {
     }
     return MuonHitContainer{std::move( stations )};
   }
-
   //=============================================================================
-
-  template <typename Iterator>
-  Iterator RawToHits::addCoordsCrossingMap( Iterator first, Iterator last, CommonMuonHits& commonHits,
-                                            const ComputeTilePosition& compute, size_t nStations ) const {
-    // need to calculate the shape of the horizontal and vertical logical strips
-
-    // used flags
-    assert( std::distance( first, last ) < 400 );
-    std::bitset<400> used; // (to be updated with new readout) the maximum # of channels per quadrant is currently 384
-                           // (from M2R2)
-    // partition into the two directions of digits
-    // vertical and horizontal stripes
-    const auto mid = std::partition( first, last, []( const Digit& digit ) { return digit.tile.isHorizontal(); } );
-
-    auto digitsOne = make_span( first, mid );
-    auto digitsTwo = make_span( mid, last );
-
-    // check how many cross
-    if ( first != mid && mid != last ) {
-      auto thisGridX = first->tile.layout().xGrid();
-      auto thisGridY = first->tile.layout().yGrid();
-
-      auto otherGridX = mid->tile.layout().xGrid();
-      auto otherGridY = mid->tile.layout().yGrid();
-
-      unsigned i = 0;
-      for ( const Digit& one : digitsOne ) {
-        unsigned int calcX = one.tile.nX() * otherGridX / thisGridX;
-        unsigned     j     = mid - first;
-        for ( const Digit& two : digitsTwo ) {
-          unsigned int calcY = two.tile.nY() * thisGridY / otherGridY;
-          if ( calcX == two.tile.nX() && calcY == one.tile.nY() ) {
-            MuonTileID pad( one.tile );
-            pad.setY( two.tile.nY() );
-            pad.setLayout( {thisGridX, otherGridY} );
-            auto&& [pos, dx, dy] = compute.tilePosition( pad );
-            commonHits.emplace_back( std::move( pad ), one.tile, two.tile, pos.X(), dx, pos.Y(), dy, pos.Z(), 0,
-                                     one.tdc, one.tdc - two.tdc, 0 );
-            used[i] = used[j] = true;
-          }
-          ++j;
-        }
-        ++i;
-      }
-    }
-
-    // copy over "uncrossed" digits
-    unsigned m = 0;
-    for ( const Digit& digit : digitsOne ) {
-      if ( !used[m++] ) {
-        auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
-                         ? compute.tilePosition( digit.tile )
-                         : compute.stripXPosition( digit.tile ) );
-        commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
-                                 digit.tdc );
-      }
-    }
-    for ( const Digit& digit : digitsTwo ) {
-      if ( !used[m++] ) {
-        auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
-                         ? compute.tilePosition( digit.tile )
-                         : compute.stripYPosition( digit.tile ) );
-        commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
-                                 digit.tdc );
-      }
-    }
-    return last;
-  }
-
-  std::array<std::vector<Digit>, 4> RawToHits::decodeTileAndTDC( span<const RawBank*>  mb,
-                                                                 const DeMuonDetector& det ) const {
-    // array of vectors of hits
-    // each element of the array correspond to hits from a single station
-    // this will ease the sorting after
-    std::array<std::vector<Digit>, 4> storage;
-    constexpr auto stationOfTell1 = std::array{0, 0, 0, 0, 1, 1, 2, 2, 3, 3}; // to be updated with tell40
-    for ( auto& decode : storage ) { decode.reserve( nDigits( mb ) ); }
-
-    for ( const auto& r : mb ) {
-      if ( RawBank::MagicPattern != r->magic() ) { OOPS( EC::RawToHits::ErrorCode::BAD_MAGIC ); }
-      unsigned int tell1Number = r->sourceID();
-      if ( tell1Number >= MuonDAQHelper_maxTell1Number ) { OOPS( EC::RawToHits::ErrorCode::INVALID_TELL1 ); }
-
-      // decide in which array put the digits according to the Tell1 they come from
-      int station = stationOfTell1[tell1Number];
-
-      // minimum length is three 32 bit words --> 12 bytes -> 6 unsigned shorts
-      if ( r->size() < 12 ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
-      auto range         = r->range<unsigned short>();
-      auto preamble_size = 2 * ( ( range[0] + 3 ) / 2 );
-      if ( range.size() < preamble_size ) { OOPS( EC::RawToHits::ErrorCode::PADDING_TOO_LONG ); }
-      range = range.subspan( preamble_size );
-      for ( int i = 0; i < 4; i++ ) {
-        if ( UNLIKELY( range.empty() ) ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
-        if ( UNLIKELY( range.size() < 1 + range[0] ) ) { OOPS( EC::RawToHits::ErrorCode::TOO_MANY_HITS ); }
-        for ( unsigned int pp : range.subspan( 1, range[0] ) ) {
-          unsigned int add       = ( pp & 0x0FFF );
-          unsigned int tdc_value = ( ( pp & 0xF000 ) >> 12 );
-          MuonTileID   tile      = det.getDAQInfo()->getADDInTell1( tell1Number, add );
-          if ( tile.isValid() ) {
-            storage[station].emplace_back( tile, tdc_value );
-          } else {
-            info() << "invalid add " << add << " " << tile << endmsg;
-          }
-        }
-        range = range.subspan( 1 + range[0] );
-      }
-      assert( range.size() < 2 );
-    }
-    return storage;
-  }
 
 } // namespace LHCb::Muon::DAQ
