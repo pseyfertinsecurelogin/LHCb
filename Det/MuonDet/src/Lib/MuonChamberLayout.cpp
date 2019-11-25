@@ -718,11 +718,11 @@ StatusCode MuonChamberLayout::Tile2XYZpos( const LHCb::MuonTileID& tile, double&
 
   bool m_debug = false;
 
-  if ( 0 == m_logVertGridX.size() ) {
+  if ( m_logVertGridX.empty() ) {
     msgStream() << MSG::INFO << " The channel / pad grids have not been initialized!!!! Why? " << endmsg;
     fillChambersVector( this->dataSvc() );
     msgStream() << MSG::INFO << " Called initialization " << endmsg;
-    if ( 0 == m_logVertGridX.size() ) {
+    if ( m_logVertGridX.empty() ) {
       msgStream() << MSG::INFO << " Initialization failed!" << endmsg;
       return StatusCode::FAILURE;
     }

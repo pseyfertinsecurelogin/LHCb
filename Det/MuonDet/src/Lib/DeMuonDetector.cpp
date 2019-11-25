@@ -536,14 +536,11 @@ DeMuonDetector::listOfPhysChannels( Gaudi::XYZPoint my_entry, Gaudi::XYZPoint my
   return myPair;
 }
 
-StatusCode DeMuonDetector::Tile2XYZ( LHCb::MuonTileID tile, double& x, double& dx, double& y, double& dy, double& z,
-                                     double& dz ) const {
-
-  // Ask the chamber Layout about the tile.
-  if ( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
-    msgStream() << MSG::DEBUG << "Calling Tile2XYZpos method!" << endmsg;
-
-  return m_chamberLayout->Tile2XYZpos( tile, x, dx, y, dy, z, dz );
+std::optional<DeMuonDetector::TilePosition> DeMuonDetector::position( LHCb::MuonTileID tile ) const {
+  double x, dx, y, dy, z, dz;
+  auto   sc = m_chamberLayout->Tile2XYZpos( tile, x, dx, y, dy, z, dz );
+  if ( sc.isFailure() ) return std::nullopt;
+  return TilePosition{{x, y, z}, dx, dy, dz};
 }
 
 StatusCode DeMuonDetector::getPCCenter( MuonFrontEndID fe, int chamber, int station, int region, double& xcenter,
