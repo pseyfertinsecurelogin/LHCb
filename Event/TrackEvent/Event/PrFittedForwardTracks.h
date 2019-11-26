@@ -98,6 +98,8 @@ namespace LHCb::Pr::Fitted::Forward {
       m_size += simd::popcount( mask );
     }
 
+    /** @brief Return a sorted vector of unique LHCbID objects on the t'th track.
+     */
     template <typename I = SIMDWrapper::scalar::types::int_v>
     [[nodiscard]] std::vector<LHCbID> lhcbIDs( int t, Velo::Hits const& velo_hits ) const {
       auto const* forward_tracks = getForwardAncestors();
@@ -120,6 +122,12 @@ namespace LHCb::Pr::Fitted::Forward {
       lhcbids.insert( end( lhcbids ), begin( ft_lhcbids ), end( ft_lhcbids ) );
       // UT has higher IDs than FT
       lhcbids.insert( end( lhcbids ), begin( ut_lhcbids ), end( ut_lhcbids ) );
+
+      // Sort and remove duplicates
+      // This is a temporary workaround for duplicate LHCbIDs made by PrVeloUT,
+      // see https://gitlab.cern.ch/lhcb/LHCb/merge_requests/2221 for details.
+      std::sort( lhcbids.begin(), lhcbids.end() );
+      lhcbids.erase( std::unique( lhcbids.begin(), lhcbids.end() ), lhcbids.end() );
 
       return lhcbids;
     }
