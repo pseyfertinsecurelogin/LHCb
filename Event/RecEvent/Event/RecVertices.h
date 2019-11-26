@@ -33,10 +33,15 @@ namespace LHCb::Rec::PV {
   // const std::size_t default_vertex_size = 0;
   // const std::size_t default_vertex_size = 100;
   class PVs {
+  public:
+    struct Vertex {
+      Gaudi::XYZPoint                    m_position;
+      Gaudi::SymMatrix3x3                m_covMatrix;
+      LHCb::Event::v2::Track::Chi2PerDoF m_chi2PerDoF;
+    };
+
   private:
-    std::vector<Gaudi::XYZPoint>                    m_positions;
-    std::vector<Gaudi::SymMatrix3x3>                m_covMatrices;
-    std::vector<LHCb::Event::v2::Track::Chi2PerDoF> m_chi2PerDoFs;
+    std::vector<Vertex> m_vertices;
 
     std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_fwdTracks;
     std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_bkwTracks;
@@ -84,20 +89,16 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] Zipping::ZipFamilyNumber bkwZipIdentifier() const { return m_bkwTracksIdentifier; }
 
     // container interfaces
-    [[nodiscard]] std::size_t size() const { return m_positions.size(); }
+    [[nodiscard]] std::size_t size() const { return m_vertices.size(); }
     void                      reserve( std::size_t capacity ) {
-      m_positions.reserve( capacity );
-      m_covMatrices.reserve( capacity );
-      m_chi2PerDoFs.reserve( capacity );
+      m_vertices.reserve( capacity );
       m_fwdTracks.reserve( capacity );
       m_bkwTracks.reserve( capacity );
       m_fwdWeights.reserve( capacity );
       m_bkwWeights.reserve( capacity );
     }
     void resize( std::size_t capacity ) {
-      m_positions.resize( capacity );
-      m_covMatrices.resize( capacity );
-      m_chi2PerDoFs.resize( capacity );
+      m_vertices.resize( capacity );
       m_fwdTracks.resize( capacity );
       m_bkwTracks.resize( capacity );
       m_fwdWeights.resize( capacity );
@@ -115,38 +116,33 @@ namespace LHCb::Rec::PV {
       // TODO:
       // push_back / emplace_back / move?
       // google style guide says push_back
-      m_positions.emplace_back( std::move( pos ) );
-      m_covMatrices.emplace_back( std::move( poscov ) );
-      m_chi2PerDoFs.emplace_back( std::move( chi2perdof ) );
+      m_vertices.emplace_back( Vertex{pos, poscov, chi2perdof } );
       m_fwdTracks.emplace_back();
       m_fwdWeights.emplace_back();
       m_bkwTracks.emplace_back();
       m_bkwWeights.emplace_back();
       // TODO: write other than with for loop
-      auto pivot = std::partition( tracks.begin(), tracks.end(), []( auto track ) { return track.first < 0; } );
-      m_bkwTracks.reserve( pivot - tracks.begin() );
-      m_bkwWeights.reserve( pivot - tracks.begin() );
-      m_fwdTracks.reserve( tracks.end() - pivot );
-      m_fwdWeights.reserve( tracks.end() - pivot );
-      for ( auto it = tracks.begin() ; it != pivot ; it++ ) {
-          m_bkwTracks.back().push_back( ( -1 ) - it->first );
-          m_bkwWeights.back().push_back( it->second );
-      }
-      for ( auto it = pivot ; it != tracks.end() ; it++ ) {
-          m_fwdTracks.back().push_back( it->first );
-          m_fwdWeights.back().push_back( it->second );
+      // NB: tried application of std::partition to pre-sort. Lead to regression in runtime.
+      for ( auto track : tracks ) {
+        if ( track.first >= 0 ) {
+          m_fwdTracks.back().push_back( track.first );
+          m_fwdWeights.back().push_back( track.second );
+        } else {
+          m_bkwTracks.back().push_back( ( -1 ) - track.first );
+          m_bkwWeights.back().push_back( track.second );
+        }
       }
     }
 
     template <typename dType = SIMDWrapper::best::types, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
-    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( const std::size_t i ) const { return m_chi2PerDoFs[i]; }
+    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( const std::size_t i ) const { return m_vertices[i].m_chi2PerDoF; }
 
     // not implemented for unwrap = false
     // would need (maybe exists?) a SOA 3x3 matrix
     template <typename dType, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
     [[nodiscard]] decltype( auto ) cov( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_covMatrices[i];
+        return m_vertices[i].m_covMatrix;
 
       } else {
         // not implemented
@@ -157,15 +153,15 @@ namespace LHCb::Rec::PV {
     template <typename dType, bool unwrap>
     [[nodiscard]] decltype( auto ) pos( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_positions[i];
+        return m_vertices[i].m_position;
       } else {
         std::array<float, dType::size> tmpx;
         std::array<float, dType::size> tmpy;
         std::array<float, dType::size> tmpz;
         for ( std::size_t j = 0; j < dType::size; j++ ) {
-          tmpx[j] = m_positions[i + j].x();
-          tmpy[j] = m_positions[i + j].y();
-          tmpz[j] = m_positions[i + j].z();
+          tmpx[j] = m_vertices[i + j].m_position.x();
+          tmpy[j] = m_vertices[i + j].m_position.y();
+          tmpz[j] = m_vertices[i + j].m_position.z();
         }
         Vec3<typename dType::float_v> tmp{&tmpx[0], &tmpy[0], &tmpz[0]};
         return tmp;
@@ -176,13 +172,13 @@ namespace LHCb::Rec::PV {
     template <typename dType, bool unwrap>
     [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_x( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_positions[i].x();
+        return m_vertices[i].m_position.x();
       } else {
         std::array<float, dType::size> tmp;
         for ( std::size_t j = 0; j < dType::size; j++ ) {
           // the assembly for this is absurdly optimal,
           // no loop, no copying through tmp to retval to return
-          tmp[j] = m_positions[i + j].x();
+          tmp[j] = m_vertices[i + j].m_position.x();
         }
         return {&tmp[0]};
       }
@@ -190,13 +186,13 @@ namespace LHCb::Rec::PV {
     template <typename dType, bool unwrap>
     [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_y( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_positions[i].y();
+        return m_vertices[i].m_position.y();
       } else {
         std::array<float, dType::size> tmp;
         for ( std::size_t j = 0; j < dType::size; j++ ) {
           // the assembly for this is absurdly optimal,
           // no loop, no copying through tmp to retval to return
-          tmp[j] = m_positions[i + j].y();
+          tmp[j] = m_vertices[i + j].m_position.y();
         }
         return {&tmp[0]};
       }
@@ -204,13 +200,13 @@ namespace LHCb::Rec::PV {
     template <typename dType, bool unwrap>
     [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_z( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_positions[i].z();
+        return m_vertices[i].m_position.z();
       } else {
         std::array<float, dType::size> tmp;
         for ( std::size_t j = 0; j < dType::size; j++ ) {
           // the assembly for this is absurdly optimal,
           // no loop, no copying through tmp to retval to return
-          tmp[j] = m_positions[i + j].z();
+          tmp[j] = m_vertices[i + j].m_position.z();
         }
         return {&tmp[0]};
       }
