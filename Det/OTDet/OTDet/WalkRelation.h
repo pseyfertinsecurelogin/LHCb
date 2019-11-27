@@ -15,7 +15,9 @@
 #include <cmath>     // std::copysign
 
 #include "GaudiKernel/Kernel.h" // for LIKELY/UNLIKELY
-#include "vectorclass.h"
+#ifdef __x86_64__
+#  include "vectorclass.h"
+#endif // __x86_64__
 
 #include "LHCbMath/ChebyshevApprox.h"
 
@@ -88,7 +90,7 @@ namespace OTDet {
     // very short Padé approximation for the rest of the way
     const auto xx  = x * 0.125;
     const auto xx2 = xx * xx;
-#if ( 0 || defined( __ROOTCLING__ ) ) // pedestrian code
+#if ( 0 || defined( __ROOTCLING__ ) || !defined( __x86_64__ ) ) // pedestrian code
     const auto numer = 135135 + xx2 * ( 17325 + xx2 * ( 378 + xx2 * 1 ) );
     const auto denom = 135135 + xx2 * ( 62370 + xx2 * ( 3150 + xx2 * 28 ) );
 
