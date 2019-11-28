@@ -18,12 +18,12 @@ namespace DetCond::Examples::Functional {
 
   // Example of algorithm accessing conditions
   struct CondAccessExample
-      : Gaudi::Functional::Consumer<void( const Condition&, const int& ), LHCb::DetDesc::usesConditions<Condition>> {
+      : Gaudi::Functional::Consumer<void( const Condition& ), LHCb::DetDesc::usesConditions<Condition>> {
     // constructor
     CondAccessExample( const std::string& name, ISvcLocator* loc )
-        : Consumer{name, loc, {KeyValue{"CondPath", "TestCondition"}, KeyValue{"IntPath", "IntFromTES"}}} {}
+        : Consumer{name, loc, {KeyValue{"CondPath", "TestCondition"}}} {}
 
-    void operator()( const Condition& cond, const int& ) const override {
+    void operator()( const Condition& cond ) const override {
       info() << "condition value: " << cond << endmsg;
     }
   };
