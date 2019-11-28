@@ -51,19 +51,15 @@ public:
   const std::vector<DeVPSensor*>& sensors() const { return m_sensors; }
 
   /// Return pointer to sensor for a given point in the global frame.
-  const DeVPSensor* sensor( const Gaudi::XYZPoint& point ) const {
+  const DeVPSensor& sensor( const Gaudi::XYZPoint& point ) const {
     const int sensorNumber = sensitiveVolumeID( point );
-    return sensorNumber >= 0 ? m_sensors[sensorNumber] : nullptr;
+    if (sensorNumber >= 0) return *m_sensors[sensorNumber];
+    throw std::runtime_error("Invalid sensor number in DeVP");
   }
   /// Return pointer to sensor for a given channel ID.
-  [[deprecated( "use sensor(id) instead" )]] const DeVPSensor*
-  sensorOfChannel( const LHCb::VPChannelID channel ) const {
-    return sensor( channel.sensor() );
-  }
-  /// Return pointer to sensor for a given channel ID.
-  const DeVPSensor* sensor( LHCb::VPChannelID channel ) const { return sensor( channel.sensor() ); }
+  const DeVPSensor& sensor( LHCb::VPChannelID channel ) const { return sensor( channel.sensor() ); }
   /// Return pointer to sensor for a given sensor number.
-  const DeVPSensor* sensor( unsigned int sensorNumber ) const { return m_sensors[sensorNumber]; }
+  const DeVPSensor& sensor( unsigned int sensorNumber ) const { return *m_sensors[sensorNumber]; }
 
 private:
   /// Find sensors inside detector element tree.
