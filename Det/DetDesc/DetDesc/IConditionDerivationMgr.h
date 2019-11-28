@@ -14,10 +14,14 @@
 #include "DetDesc/ConditionKey.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/System.h"
 #include "Kernel/STLExtensions.h"
 #include "boost/callable_traits.hpp"
+#include <any>
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <unordered_map>
 
 class ValidDataObject;
@@ -64,19 +68,44 @@ namespace LHCb::DetDesc {
   };
 
   namespace detail {
+
     template <typename Callable>
     inline constexpr auto arity_v = std::tuple_size_v<boost::callable_traits::args_t<Callable>>;
+
+    inline void throwTypeMismatch( std::type_info const& FOUND,    //
+                                   std::type_info const& EXPECTED, //
+                                   ConditionKey const&   key ) {
+      throw GaudiException{"Key='" + key + "' type mis-match. Found='" + System::typeinfoName( FOUND ) +
+                               "' Expected='" + System::typeinfoName( EXPECTED ) + "'",
+                           "addConditionDerivation", StatusCode::FAILURE};
+    }
+
+    template <typename OUT, typename IN>
+    inline decltype( auto ) castAndCheck( IN& in, ConditionKey const& key ) {
+      if constexpr ( std::is_same_v<std::any, std::decay_t<IN>> ) {
+        const auto* p = std::any_cast<OUT>( &in );
+        if ( UNLIKELY( !p ) ) { throwTypeMismatch( in.type(), typeid( OUT ), key ); }
+        return *p;
+      } else {
+        const auto* p = dynamic_cast<OUT>( in );
+        if ( UNLIKELY( !p ) ) { throwTypeMismatch( typeid( decltype( in ) ), typeid( OUT ), key ); }
+        return *p;
+      }
+    }
 
     template <typename Input>
     decltype( auto ) fetch_1( ConditionUpdateContext const& ctx, ConditionKey const& key ) {
       auto i = ctx.find( key );
-      if ( i == ctx.end() )
+      if ( UNLIKELY( i == ctx.end() ) ) {
         throw GaudiException{"No object found at " + key, "addConditionDerivation", StatusCode::FAILURE};
-      auto* p = dynamic_cast<std::decay_t<Input> const*>( i->second );
-      if ( !p )
-        throw GaudiException{"The object found at " + key + " is not of the expected type", "addConditionDerivation",
-                             StatusCode::FAILURE};
-      return *p;
+      }
+      using Exp = std::decay_t<Input>;
+      if constexpr ( std::is_base_of_v<ValidDataObject, Exp> ) {
+        return castAndCheck<std::add_pointer_t<typename std::add_const_t<Exp>>>( i->second, key );
+      } else {
+        const auto& p = castAndCheck<ParamValidDataObject const*>( i->second, key );
+        return castAndCheck<Exp>( p.payload, key );
+      }
     }
 
     template <typename TypeList, std::ptrdiff_t N, std::size_t... I>
