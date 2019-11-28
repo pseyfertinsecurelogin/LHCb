@@ -39,6 +39,7 @@
 
 // Local
 #include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichBeamPipe.h"
 #include "RichDet/DeRichLocations.h"
 #include "RichDet/Rich1DTabProperty.h"
 #include "RichDet/RichDetConfigType.h"
@@ -383,6 +384,22 @@ public:
                                     SIMDRayTResult::PDs&          PDs,         //
                                     const LHCb::RichTraceMode     mode ) const;
 
+private:
+  /// creates a vector of all mirrors of given type
+  std::vector<const DeRichSphMirror*> getMirrors( std::string mirrType ) const;
+
+public:
+  // access to children detector elements
+
+  /// primary mirrors
+  decltype( auto ) primaryMirrors() const { return getMirrors( "SphericalMirrorDetElemLocations" ); }
+
+  /// secondary mirrors
+  decltype( auto ) secondaryMirrors() const { return getMirrors( "SecondaryMirrorDetElemLocations" ); }
+
+  /// Beam pipe
+  const DeRichBeamPipe* beampipe() const noexcept { return m_beampipe; }
+
 protected:
   /// Load on demand the nominal PD Q.E.
   void loadNominalQuantumEff();
@@ -455,9 +472,14 @@ protected:
   /// The nominal centres of curvature of the spherical mirrors
   Rich::PanelArray<Gaudi::XYZPoint> m_nominalCentresOfCurvature = {{}};
 
-private: // data
+private:
+  // data
+
   /// Pointers to the PD panels of this Rich detector
   Rich::DetectorArray<const DeRichPDPanel*> m_PDPanels{{nullptr, nullptr}};
+
+  // beampipe
+  const DeRichBeamPipe* m_beampipe = nullptr;
 
   /// flag to test if the xml supports mirror position info
   bool m_positionInfo{false};
