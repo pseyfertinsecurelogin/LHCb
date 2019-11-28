@@ -753,8 +753,8 @@ namespace Rich::Utils {
                                   SA{DeRichLocations::Rich1,  // input conditions locations
                                      DeRichLocations::Rich2}, //
                                   std::move( key ),           // output derived condition location
-                                  [&]( const DeRich1& rich1,  //
-                                       const DeRich2& rich2 ) //
+                                  []( const DeRich1& rich1,   //
+                                      const DeRich2& rich2 )  //
                                   {
                                     return MirrorFinder{rich1, rich2};
                                   } );
