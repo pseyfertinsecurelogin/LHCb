@@ -220,7 +220,7 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "RayTracing::addConditionDerivation : Key=" << ray_tracing_key << endmsg;
       }
-      using SA = std::array<std::string, 3>; // Gerhard, when you read this, can it be avoided ;) ?
+      using SA = std::array<std::string, 3>; //
       return LHCb::DetDesc::                 //
           addConditionDerivation( parent->conditionDerivationMgr(),
                                   SA{DeRichLocations::Rich1,            // input conditions locations
