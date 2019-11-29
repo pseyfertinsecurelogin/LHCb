@@ -45,16 +45,14 @@ StatusCode DeVP::initialize() {
   }
 
   // Get all daughter detector elements.
-  std::vector<DeVPSensor*> sensors;
-  findSensors( this, sensors );
-  if ( m_debug ) { msg() << MSG::DEBUG << "Found " << sensors.size() << " sensors" << endmsg; }
-  std::sort( sensors.begin(), sensors.end(), less_SensorNumber() );
+  findSensors( this, m_sensors );
+  if ( m_debug ) { msg() << MSG::DEBUG << "Found " << m_sensors.size() << " sensors" << endmsg; }
+  std::sort( m_sensors.begin(), m_sensors.end(), less_SensorNumber() );
 
   unsigned int nLeftSensors  = 0;
   unsigned int nRightSensors = 0;
-  for ( auto it = sensors.begin(), end = sensors.end(); it != end; ++it ) {
-    m_sensors.push_back( *it );
-    if ( ( *it )->isLeft() ) {
+  for ( auto it : m_sensors ) {
+    if ( it->isLeft() ) {
       ++nLeftSensors;
     } else {
       ++nRightSensors;

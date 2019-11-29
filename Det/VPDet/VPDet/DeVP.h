@@ -47,8 +47,11 @@ public:
   /// Return the number of sensors.
   unsigned int numberSensors() const { return m_sensors.size(); }
 
-  /// Return vector of sensors.
-  const std::vector<DeVPSensor*>& sensors() const { return m_sensors; }
+  template<class Operation>
+  /// runs the given callable on every sensor
+  void runOnAllSensors( Operation op ) const {
+    for ( auto& sensor : m_sensors ) op(*sensor);
+  }
 
   /// Return pointer to sensor for a given point in the global frame.
   const DeVPSensor& sensor( const Gaudi::XYZPoint& point ) const {

@@ -8,6 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#include "Kernel/VPChannelID.h"
+
+#include "GaudiKernel/Transform3DTypes.h"
+
 #include <VPDet/VPDetPaths.h>
 #include <VPDet/VPGeometry.h>
 
@@ -33,27 +37,22 @@ IConditionDerivationMgr::DerivationId VPGeometry::registerDerivation( ICondition
 // Rebuild the geometry (in case something changes in the Velo during the run)
 //============================================================================
 VPGeometry::VPGeometry( const DeVP& vp ) {
-  const auto sensors = vp.sensors();
+  // we copy the data from the geometry object which holds doubles into a local float array
+  const auto& s = vp.sensor(0);
+  std::copy( s.xLocal().begin(), s.xLocal().end(), m_local_x.begin() );
+  std::copy( s.xPitch().begin(), s.xPitch().end(), m_x_pitch.begin() );
+  m_pixel_size = s.pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
-  // we copy the data from the geometry object which holds doubles intor a local float array
-  std::copy( sensors.front()->xLocal().begin(), sensors.front()->xLocal().end(), m_local_x.begin() );
-  std::copy( sensors.front()->xPitch().begin(), sensors.front()->xPitch().end(), m_x_pitch.begin() );
-  m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
-
-  for ( const auto& sensor : sensors ) {
-    // TODO:
-    // if (!sensor->isReadOut()) continue;
-
-    // get the local to global transformation matrix and
-    // store it in a flat float array of sixe 12.
-    Gaudi::Rotation3D     ltg_rot;
-    Gaudi::TranslationXYZ ltg_trans;
-    sensor->geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
-    assert( sensor->sensorNumber() < m_ltg.size() );
-    auto& ltg = m_ltg[sensor->sensorNumber()];
-    ltg_rot.GetComponents( ltg.data() ); // writes to [ ltg[0], ltg[8] ]
-    ltg[9]  = ltg_trans.X();
-    ltg[10] = ltg_trans.Y();
-    ltg[11] = ltg_trans.Z();
-  }
+  vp.runOnAllSensors([this](const DeVPSensor& sensor){
+                       // get the local to global transformation matrix and
+                       // store it in a flat float array of sixe 12.
+                       // Take care of the different convention between ROOT and LHCb for the reference point in volumes !
+                       Gaudi::Rotation3D     ltg_rot;
+                       Gaudi::TranslationXYZ ltg_trans;
+                       sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
+                       assert( sensor.sensorNumber() < m_ltg.size() );
+                       auto& ltg = m_ltg[sensor.sensorNumber()];
+                       ltg_rot.GetComponents(begin(ltg));
+                       ltg_trans.GetCoordinates(ltg.data()+9);
+                     });
 }

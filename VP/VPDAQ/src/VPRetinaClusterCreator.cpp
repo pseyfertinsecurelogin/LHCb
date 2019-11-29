@@ -8,16 +8,17 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// LHCb
+
+#include "VPRetinaClusterCreator.h"
+
 #include "Event/StateParameters.h"
 #include "Kernel/VPConstants.h"
-
-// Rec
 #include "VPKernel/PixelUtils.h"
 
-// Local
-#include "VPRetinaClusterCreator.h"
+#include "GaudiKernel/Transform3DTypes.h"
+
 #include <iomanip>
+#include <iterator>
 
 using namespace LHCb;
 
@@ -151,8 +152,7 @@ StatusCode VPRetinaClusterCreator::initialize() {
   if ( sc.isFailure() ) return sc;
 
   m_vp = getDet<DeVP>( DeVPLocation::Default );
-  // Make sure we are up-to-date on populated VELO stations
-  registerCondition( m_vp->sensors().front()->geometry(), &VPRetinaClusterCreator::rebuildGeometry );
+  rebuildGeometry();
 
   sc = updMgrSvc()->update( this );
   if ( !sc.isSuccess() ) return Error( "Failed to update station structure." );
@@ -172,59 +172,46 @@ StatusCode VPRetinaClusterCreator::rebuildGeometry() {
 
   int        previousLeft  = -1;
   int        previousRight = -1;
-  const auto sensors       = m_vp->sensors();
 
-  m_local_x    = sensors.front()->xLocal();
-  m_x_pitch    = sensors.front()->xPitch();
-  m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
+  m_local_x    = m_vp->sensor(0).xLocal();
+  m_x_pitch    = m_vp->sensor(0).xPitch();
+  m_pixel_size = m_vp->sensor(0).pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
-  float ltg_rot_components[9];
-  for ( const auto& sensor : sensors ) {
+  m_vp->runOnAllSensors([this, &previousLeft, &previousRight](const DeVPSensor& sensor){
+                          // get the local to global transformation matrix and
+                          // store it in a flat float array of sixe 12.
+                          Gaudi::Rotation3D     ltg_rot;
+                          Gaudi::TranslationXYZ ltg_trans;
+                          sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
+                          assert( sensor.sensorNumber() < m_ltg.size() );
+                          auto ltg = m_ltg + sensor.sensorNumber();
+                          ltg_rot.GetComponents(ltg);
+                          ltg_trans.GetCoordinates(ltg+9);
 
-    // get the local to global transformation matrix and
-    // store it in a flat float array of sixe 12.
-    Gaudi::Rotation3D     ltg_rot;
-    Gaudi::TranslationXYZ ltg_trans;
-    sensor->geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
-    ltg_rot.GetComponents( ltg_rot_components );
-    unsigned idx = 16 * sensor->sensorNumber();
-    m_ltg[idx++] = ltg_rot_components[0];
-    m_ltg[idx++] = ltg_rot_components[1];
-    m_ltg[idx++] = ltg_rot_components[2];
-    m_ltg[idx++] = ltg_rot_components[3];
-    m_ltg[idx++] = ltg_rot_components[4];
-    m_ltg[idx++] = ltg_rot_components[5];
-    m_ltg[idx++] = ltg_rot_components[6];
-    m_ltg[idx++] = ltg_rot_components[7];
-    m_ltg[idx++] = ltg_rot_components[8];
-    m_ltg[idx++] = ltg_trans.X();
-    m_ltg[idx++] = ltg_trans.Y();
-    m_ltg[idx++] = ltg_trans.Z();
+                          // Get the number of the module this sensor is on.
+                          const unsigned int number = sensor.module();
+                          if ( number < m_modules.size() ) {
+                            // Check if this module has already been setup.
+                            if ( m_modules[number] ) return;
+                          } else {
+                            m_modules.resize( number + 1, 0 );
+                          }
 
-    // Get the number of the module this sensor is on.
-    const unsigned int number = sensor->module();
-    if ( number < m_modules.size() ) {
-      // Check if this module has already been setup.
-      if ( m_modules[number] ) continue;
-    } else {
-      m_modules.resize( number + 1, 0 );
-    }
-
-    // Create a new module and add it to the list.
-    m_module_pool.emplace_back( number, sensor->isRight() );
-    PixelModule* module = &m_module_pool.back();
-    module->setZ( sensor->z() );
-    if ( sensor->isRight() ) {
-      module->setPrevious( previousRight );
-      previousRight = number;
-    } else {
-      module->setPrevious( previousLeft );
-      previousLeft = number;
-    }
-    m_modules[number] = module;
-    if ( m_firstModule > number ) m_firstModule = number;
-    if ( m_lastModule < number ) m_lastModule = number;
-  }
+                          // Create a new module and add it to the list.
+                          m_module_pool.emplace_back( number, sensor.isRight() );
+                          PixelModule* module = &m_module_pool.back();
+                          module->setZ( sensor.z() );
+                          if ( sensor.isRight() ) {
+                            module->setPrevious( previousRight );
+                            previousRight = number;
+                          } else {
+                            module->setPrevious( previousLeft );
+                            previousLeft = number;
+                          }
+                          m_modules[number] = module;
+                          if ( m_firstModule > number ) m_firstModule = number;
+                          if ( m_lastModule < number ) m_lastModule = number;
+                        });
   // the module pool might have been resized -- make sure
   // all module pointers are valid.
   for ( unsigned int i = 0; i < m_module_pool.size(); ++i ) {

@@ -47,15 +47,15 @@ VPTrackingInfo::VPTrackingInfo( const DeVP& vp, float minZ_forward, float maxZ_b
   // necessary correct.
   m_firstModule = 999;
   m_lastModule  = 0;
-  for ( auto sensor : vp.sensors() ) {
-    // Get the number of the module this sensor is on.
-    const unsigned int number = sensor->module();
-    // 4 sensors per module, we want the average position
-    // use cast to avoid double arithmetic
-    m_moduleZPositions[number] += static_cast<float>( sensor->z() ) / 4.0f;
-    if ( m_firstModule > number ) m_firstModule = number;
-    if ( m_lastModule < number ) m_lastModule = number;
-  }
+  vp.runOnAllSensors([this](const DeVPSensor& sensor){
+                       // Get the number of the module this sensor is on.
+                       const unsigned int number = sensor.module();
+                       // 4 sensors per module, we want the average position
+                       // use cast to avoid double arithmetic
+                       m_moduleZPositions[number] += static_cast<float>( sensor.z() ) / 4.0f;
+                       if ( m_firstModule > number ) m_firstModule = number;
+                       if ( m_lastModule < number ) m_lastModule = number;
+                     });
   unsigned int mID = m_lastModule;
   // will do 51|50 -> 49|48 -> 47|46
   while ( mID <= m_lastModule ) {
@@ -84,32 +84,27 @@ VPTrackingInfo::VPTrackingInfo( const DeVP& vp, float minZ_forward, float maxZ_b
   m_errorYLong.resize( nSensors, 0 );
 
   const Gaudi::XYZVector vl( 1., 0., 0. );
-  auto                   sensors = vp.sensors();
-
-  for ( auto sensor : sensors ) {
-    const unsigned int sensorNumber = sensor->sensorNumber();
-    if ( sensorNumber >= m_errorX.size() ) {
-      m_errorX.resize( sensorNumber + 1 );
-      m_errorY.resize( sensorNumber + 1 );
-      m_errorXLong.resize( sensorNumber + 1 );
-      m_errorYLong.resize( sensorNumber + 1 );
-    }
-    const auto  vg          = sensor->geometry()->toGlobal( vl );
-    const float cphi        = vg.x();
-    const float phi         = acos( cphi );
-    const float sphi        = sin( phi );
-    float       cphiSquared = cphi * cphi;
-    float       sphiSquared = sphi * sphi;
-
-    float dx = errorSinglePixel;
-    float dy = errorSinglePixel;
-
-    // Transform the error estimate to the global frame.
-    m_errorX[sensorNumber] = sqrt( dx * dx * cphiSquared + dy * dy * sphiSquared );
-    m_errorY[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
-
-    dx *= 2;
-    m_errorXLong[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
-    m_errorYLong[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
-  }
+  vp.runOnAllSensors([this, &vl, errorSinglePixel](const DeVPSensor& sensor){
+                       const unsigned int sensorNumber = sensor.sensorNumber();
+                       if ( sensorNumber >= m_errorX.size() ) {
+                         m_errorX.resize( sensorNumber + 1 );
+                         m_errorY.resize( sensorNumber + 1 );
+                         m_errorXLong.resize( sensorNumber + 1 );
+                         m_errorYLong.resize( sensorNumber + 1 );
+                       }
+                       const auto  vg          = sensor.geometry()->toGlobal( vl );
+                       const float cphi        = vg.x();
+                       const float phi         = acos( cphi );
+                       const float sphi        = sin( phi );
+                       float       cphiSquared = cphi * cphi;
+                       float       sphiSquared = sphi * sphi;
+                       float dx = errorSinglePixel;
+                       float dy = errorSinglePixel;
+                       // Transform the error estimate to the global frame.
+                       m_errorX[sensorNumber] = sqrt( dx * dx * cphiSquared + dy * dy * sphiSquared );
+                       m_errorY[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
+                       dx *= 2;
+                       m_errorXLong[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
+                       m_errorYLong[sensorNumber] = sqrt( dx * dx * sphiSquared + dy * dy * cphiSquared );
+                     });
 }

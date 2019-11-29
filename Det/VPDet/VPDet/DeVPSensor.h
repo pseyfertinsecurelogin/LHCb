@@ -63,10 +63,19 @@ public:
   /// Determine if a local 3-d point is inside the sensor active area.
   bool isInActiveArea( const Gaudi::XYZPoint& point ) const;
 
+  /// Determine whether a point is within the sensor
+  bool isInsideSensor( const double x, const double y ) const {
+    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) ); 
+  }
+
   /// Convert local position to global position
   Gaudi::XYZPoint localToGlobal( const Gaudi::XYZPoint& point ) const { return m_geometry->toGlobal( point ); }
   /// Convert global position to local position
   Gaudi::XYZPoint globalToLocal( const Gaudi::XYZPoint& point ) const { return m_geometry->toLocal( point ); }
+  /// Convert local direction to global direction
+  Gaudi::XYZVector localToGlobal( const Gaudi::XYZVector& point ) const { return m_geometry->toGlobal( point ); }
+  /// Convert global direction to local direction
+  Gaudi::XYZVector globalToLocal( const Gaudi::XYZVector& point ) const { return m_geometry->toLocal( point ); }
 
   /// Return the z position of the sensor in the global frame
   double z() const { return m_z; }
@@ -92,9 +101,18 @@ public:
   /// Return array of cached x pitches by column
   const std::array<double, VP::NSensorColumns>& xPitch() const { return m_cache.x_pitch; }
 
+  /// Calculate the local position of a given pixel.
+  Gaudi::XYZPoint channelToLocalPoint( unsigned int row, unsigned int scol ) const {
+    const double x = m_cache.local_x[scol];
+    const double y = ( row + 0.5 ) * m_cache.pixelSize;
+    return Gaudi::XYZPoint( x, y, 0.0 );
+  }
+  /// Calculate the global position of a given pixel.
+  Gaudi::XYZPoint channelToGlobalPoint( unsigned int row, unsigned int scol ) const {
+    return localToGlobal(channelToLocalPoint(row, scol));
+  }
   /// Calculate the position of a given pixel.
   Gaudi::XYZPoint channelToPoint( const LHCb::VPChannelID& channel, const bool local ) const {
-
     const double          x = m_cache.local_x[channel.scol()];
     const double          y = ( channel.row() + 0.5 ) * m_cache.pixelSize;
     const Gaudi::XYZPoint point( x, y, 0.0 );
