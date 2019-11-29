@@ -66,7 +66,7 @@ namespace Rich::Utils {
     MirrorFinder( const DeRich1& rich1, //
                   const DeRich2& rich2 );
 
-  protected:
+  private:
     // helper classes
 
     /// Type for list of mirrors
@@ -562,7 +562,7 @@ namespace Rich::Utils {
       PanelArray<R2FINDER> m_r2Finder;
     };
 
-  protected:
+  private:
     // Finder types for each RICH and mirror type
     using R1Primary   = TwoSegmentXFinder;
     using R2Primary   = R2LookupTableFinder<double, 400, 400>;
@@ -747,7 +747,7 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "MirrorFinder::addConditionDerivation : Key=" << key << endmsg;
       }
-      using SA = std::array<std::string, 2>; // Gerhard, when you read this, can it be avoided ;) ?
+      using SA = std::array<std::string, 2>; // 
       return LHCb::DetDesc::                 //
           addConditionDerivation( parent->conditionDerivationMgr(),
                                   SA{DeRichLocations::Rich1,  // input conditions locations
