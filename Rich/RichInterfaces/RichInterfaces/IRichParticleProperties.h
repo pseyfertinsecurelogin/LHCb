@@ -62,6 +62,9 @@ namespace Rich {
      */
     virtual ScType beta( const ScType ptot, const Rich::ParticleIDType id ) const = 0;
 
+    /// Access the array of all particle masses
+    virtual const Rich::ParticleArray<ScType>& masses() const = 0;
+
     /** Calculates the nominal mass for a given particle type
      *
      *  @param id  The mass hypothesis to assume whilst calculating beta
@@ -77,28 +80,6 @@ namespace Rich {
      *  @return the nominal mass squared for the given particle hypothesis
      */
     virtual ScType massSq( const Rich::ParticleIDType id ) const = 0;
-
-    /** Calculates the threshold momentum for a given mass hypothesis
-     *  in a given radiator
-     *
-     *  @param id The mass hypothesis
-     *  @param rad The radiator medium
-     *
-     *  @return The momentum threshold value, below which no Cherenkov radiation
-     *          can be emitted
-     */
-    virtual ScType thresholdMomentum( const Rich::ParticleIDType id, const Rich::RadiatorType rad ) const = 0;
-
-    /** Calculates the threshold momentum for a given mass hypothesis
-     *  for the given RichTrackSegment
-     *
-     *  @param id    The mass hypothesis
-     *  @param trSeg The track segment
-     *
-     *  @return The momentum threshold value, below which no Cherenkov radiation
-     *          can be emitted
-     */
-    virtual ScType thresholdMomentum( const Rich::ParticleIDType id, const LHCb::RichTrackSegment& trSeg ) const = 0;
 
     /// Vector of the mass hypotheses to be considered
     virtual const Rich::Particles& particleTypes() const = 0;
