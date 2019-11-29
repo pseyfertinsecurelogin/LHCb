@@ -101,6 +101,23 @@ public:
   /// delegation for geometry
   inline IGeometryInfo* geometry() override;
 
+  Gaudi::XYZPoint toLocal( const Gaudi::XYZPoint& globalPoint ) const {
+    return geometry()->toLocal( globalPoint );
+  }
+  Gaudi::XYZVector toLocal( const Gaudi::XYZVector& globalPoint ) const {
+    return geometry()->toLocal( globalPoint );
+  }
+  Gaudi::XYZPoint toGlobal( const Gaudi::XYZPoint& globalPoint ) const {
+    return geometry()->toGlobal( globalPoint );
+  }
+  Gaudi::XYZVector toGlobal( const Gaudi::XYZVector& globalPoint ) const {
+    return geometry()->toGlobal( globalPoint );
+  }
+  void getGlobalMatrixDecomposition(Gaudi::Rotation3D& ltg_rot,
+                                    Gaudi::TranslationXYZ& ltg_trans) const {
+    geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
+  }
+
   /// delegation for geometry  (const version)
   inline const IGeometryInfo* geometry() const override;
 
