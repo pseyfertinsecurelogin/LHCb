@@ -60,10 +60,12 @@ BOOST_AUTO_TEST_CASE( create_PVs ) {
     //
     [[maybe_unused]] float x = pv.x().cast();
     [[maybe_unused]] auto pos = pv.pos();
+    [[maybe_unused]] auto chi2 = pv.chi2perdof().chi2();
   }
   for ( auto const& pv : iterable_pvs ) {
     //
     [[maybe_unused]] auto x = pv.x();
     [[maybe_unused]] auto pos = pv.pos();
+    [[maybe_unused]] auto chi2 = pv.chi2perdof().chi2();
   }
 }
