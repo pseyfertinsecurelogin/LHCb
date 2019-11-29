@@ -12,10 +12,10 @@
 
 #include "Event/IterableRecVertices.h"
 #include "Event/RecVertices.h"
+#include "GaudiKernel/System.h"
 #include "SOAExtensions/ZipUtils.h"
 #include <iostream>
 #include <typeinfo>
-#include "GaudiKernel/System.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE utestPVs
@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE( create_PVs ) {
 
   auto pvs = make_PVs( tracks );
 
-  static_assert(LHCb::Pr::is_zippable_v<decltype(pvs)>);
-  static_assert(LHCb::Pr::is_zippable_v<LHCb::Rec::PV::PVs>);
+  static_assert( LHCb::Pr::is_zippable_v<decltype( pvs )> );
+  static_assert( LHCb::Pr::is_zippable_v<LHCb::Rec::PV::PVs> );
 
   auto iterable_pvs = LHCb::Pr::make_zip( pvs );
 
@@ -58,14 +58,14 @@ BOOST_AUTO_TEST_CASE( create_PVs ) {
 
   for ( auto const& pv : iterable_pvs.with<SIMDWrapper::InstructionSet::Scalar>() ) {
     //
-    [[maybe_unused]] float x = pv.x().cast();
-    [[maybe_unused]] auto pos = pv.pos();
-    [[maybe_unused]] auto chi2 = pv.chi2perdof().chi2();
+    [[maybe_unused]] float x    = pv.x().cast();
+    [[maybe_unused]] auto  pos  = pv.pos();
+    [[maybe_unused]] auto  chi2 = pv.chi2perdof().chi2();
   }
   for ( auto const& pv : iterable_pvs ) {
     //
-    [[maybe_unused]] auto x = pv.x();
-    [[maybe_unused]] auto pos = pv.pos();
+    [[maybe_unused]] auto x    = pv.x();
+    [[maybe_unused]] auto pos  = pv.pos();
     [[maybe_unused]] auto chi2 = pv.chi2perdof().chi2();
   }
 }
