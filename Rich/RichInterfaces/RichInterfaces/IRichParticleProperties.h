@@ -102,6 +102,21 @@ namespace Rich {
 
     /// Vector of the mass hypotheses to be considered
     virtual const Rich::Particles& particleTypes() const = 0;
+
+    /// Access the minimum cherenkov photon energies (Aero/R1Gas/R2Gas)
+    virtual const RadiatorArray<float>& minPhotonEnergy() const = 0;
+
+    /// Access the minimum cherenkov photon energies (Aero/R1Gas/R2Gas)
+    virtual const RadiatorArray<float>& maxPhotonEnergy() const = 0;
+
+    /// Access the minimum cherenkov photon energy for given radiator
+    virtual float minPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
+
+    /// Access the minimum cherenkov photon energy for given radiator
+    virtual float maxPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
+
+    /// Access the mean cherenkov photon energy for given radiator
+    virtual float meanPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
   };
 
 } // namespace Rich
