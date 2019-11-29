@@ -11,6 +11,10 @@
 
 #include "RichFutureUtils/RichTabulatedRefIndex.h"
 
+// boost
+#include "boost/limits.hpp"
+#include "boost/numeric/conversion/bounds.hpp"
+
 using namespace Rich::Utils;
 
 float TabulatedRefIndex::refractiveIndex( const Rich::RadIntersection::Vector& intersections,
@@ -63,4 +67,30 @@ float TabulatedRefIndex::refractiveIndexSD( const Rich::RadIntersection::Vector&
     totPathL += pLength;
   }
   return ( totPathL > 0 ? refIndexSD / totPathL : refIndexSD );
+}
+
+float                                                                //
+TabulatedRefIndex::thresholdMomentum( const Rich::ParticleIDType id, //
+                                      const Rich::RadiatorType   rad ) const {
+  auto thresP = boost::numeric::bounds<float>::highest();
+  if ( Rich::BelowThreshold != id ) {
+    const auto index = refractiveIndex( rad );
+    thresP           = ( index > 1.0 //
+                   ? m_particleMass[id] / std::sqrt( ( index * index ) - 1.0 )
+                   : boost::numeric::bounds<float>::highest() );
+  }
+  return thresP;
+}
+
+float                                                                   //
+TabulatedRefIndex::thresholdMomentum( const Rich::ParticleIDType    id, //
+                                      const LHCb::RichTrackSegment& trSeg ) const {
+  auto thresP = boost::numeric::bounds<float>::highest();
+  if ( Rich::BelowThreshold != id ) {
+    const auto index = refractiveIndex( trSeg.radIntersections(), trSeg.avPhotonEnergy() );
+    thresP           = ( index > 1.0 //
+                   ? m_particleMass[id] / std::sqrt( ( index * index ) - 1.0 )
+                   : boost::numeric::bounds<float>::highest() );
+  }
+  return thresP;
 }

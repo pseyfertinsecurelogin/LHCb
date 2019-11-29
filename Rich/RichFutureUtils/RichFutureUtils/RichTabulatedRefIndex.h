@@ -21,6 +21,13 @@
 #include "RichDet/DeRichRadiator.h"
 #include "RichDet/Rich1DTabProperty.h"
 
+// Kernel
+#include "Kernel/RichParticleIDType.h"
+#include "Kernel/RichRadiatorType.h"
+
+// Utils
+#include "RichUtils/RichTrackSegment.h"
+
 // Det Desc
 #include "DetDesc/ConditionKey.h"
 #include "DetDesc/IConditionDerivationMgr.h"
@@ -46,16 +53,18 @@ namespace Rich::Utils {
     TabulatedRefIndex() = delete;
 
     /// Constructor from detector info
-    TabulatedRefIndex( const DeRich1&              rich1, //
-                       const DeRich2&              rich2, //
-                       const DeRichRadiator&       r1gas, //
-                       const DeRichRadiator&       r2gas,
+    TabulatedRefIndex( const DeRich1&              rich1,     //
+                       const DeRich2&              rich2,     //
+                       const DeRichRadiator&       r1gas,     //
+                       const DeRichRadiator&       r2gas,     //
                        const RadiatorArray<float>& minPhotEn, //
-                       const RadiatorArray<float>& maxPhotEn )
+                       const RadiatorArray<float>& maxPhotEn, //
+                       const ParticleArray<float>& masses )
         : m_riches{&rich1, &rich2}
         , m_radiators{nullptr, &r1gas, &r2gas}
         , m_minPhotEn( minPhotEn )
-        , m_maxPhotEn( maxPhotEn ) {}
+        , m_maxPhotEn( maxPhotEn )
+        , m_particleMass( masses ) {}
 
   public:
     // access methods
@@ -99,6 +108,12 @@ namespace Rich::Utils {
     // for all visable photon energies.
     float refractiveIndexSD( const Rich::RadIntersection::Vector& intersections ) const;
 
+    // Returns the threshold momentum for a given hypothesis in a given radiator
+    float thresholdMomentum( const Rich::ParticleIDType id, const Rich::RadiatorType rad ) const;
+
+    // Calculates the threshold momentum for a given mass hypothesis
+    float thresholdMomentum( const Rich::ParticleIDType id, const LHCb::RichTrackSegment& trSeg ) const;
+
   private:
     // methods
 
@@ -125,6 +140,9 @@ namespace Rich::Utils {
     /// The maximum photon energies
     RadiatorArray<float> m_maxPhotEn{4.0, 7.0, 7.0};
 
+    /// Array containing particle masses
+    ParticleArray<float> m_particleMass = {{}};
+
     /// Flag to say if we are in HLT mode or not ...
     /// Need to decide what to do with this ...
     const bool m_hltMode{true};
@@ -136,24 +154,26 @@ namespace Rich::Utils {
     addConditionDerivation( PARENT*                     parent,        //
                             LHCb::DetDesc::ConditionKey key,           //
                             const RadiatorArray<float>& minPhotEn,     //
-                            const RadiatorArray<float>& maxPhotEn ) {
+                            const RadiatorArray<float>& maxPhotEn,     //
+                            const ParticleArray<float>& masses ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "TabulatedRefIndex::addConditionDerivation : Key=" << key << endmsg;
       }
       using SA = std::array<std::string, 4>;
       return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1,                            // inputs
-                                     DeRichLocations::Rich2,                            //
-                                     DeRichLocations::Rich1Gas,                         //
-                                     DeRichLocations::Rich2Gas},                        //
-                                  std::move( key ),                                     // output
-                                  [minPhotEn = minPhotEn,                               //
-                                   maxPhotEn = maxPhotEn]( const DeRich1&        rich1, //
-                                                           const DeRich2&        rich2, //
-                                                           const DeRichRadiator& r1gas, //
-                                                           const DeRichRadiator& r2gas ) {
-                                    return Utils::TabulatedRefIndex{rich1, rich2, r1gas, r2gas, minPhotEn, maxPhotEn};
+                                  SA{DeRichLocations::Rich1,     // inputs
+                                     DeRichLocations::Rich2,     //
+                                     DeRichLocations::Rich1Gas,  //
+                                     DeRichLocations::Rich2Gas}, //
+                                  std::move( key ),              // output
+                                  [minPhotEn = minPhotEn, maxPhotEn = maxPhotEn,
+                                   masses = masses]( const DeRich1&        rich1, //
+                                                     const DeRich2&        rich2, //
+                                                     const DeRichRadiator& r1gas, //
+                                                     const DeRichRadiator& r2gas ) {
+                                    return Utils::TabulatedRefIndex{rich1,     rich2,     r1gas, r2gas,
+                                                                    minPhotEn, maxPhotEn, masses};
                                   } );
     }
 
