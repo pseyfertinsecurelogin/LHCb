@@ -16,12 +16,11 @@
 namespace LHCb::Rec {
   template <typename dType = SIMDWrapper::scalar::types>
   struct Chi2PerDoF {
-    typename dType::float_v chi2PerDoF;
-    typename dType::int_v   nDoF;
+    typename dType::float_v               chi2PerDoF;
+    typename dType::int_v                 nDoF;
     [[nodiscard]] typename dType::float_v chi2() const {
       using float_v = typename dType::float_v;
       return chi2PerDoF * (float_v)nDoF;
     }
   };
-}
-
+} // namespace LHCb::Rec

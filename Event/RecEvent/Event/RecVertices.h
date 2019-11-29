@@ -10,8 +10,8 @@
  */
 #pragma once
 
-#include "Event/Track_v2.h" // Chi2PerDof
 #include "Event/Chi2PerDoF.h"
+#include "Event/Track_v2.h" // Chi2PerDof
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "Kernel/STLExtensions.h" // LHCb::span
@@ -29,7 +29,7 @@ namespace LHCb::Rec::PV {
   using weight_t = float;
   SOAFIELD_TRIVIAL( ref_field, index, LHCb::Rec::PV::TrackRef );
   SOAFIELD_TRIVIAL( wei_field, weight, weight_t );
-  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );     // for reading convenience
+  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field ); // for reading convenience
   const std::size_t default_vertex_size = 60;
   // const std::size_t default_vertex_size = 0;
   // const std::size_t default_vertex_size = 100;
@@ -117,7 +117,7 @@ namespace LHCb::Rec::PV {
       // TODO:
       // push_back / emplace_back / move?
       // google style guide says push_back
-      m_vertices.emplace_back( Vertex{pos, poscov, chi2perdof } );
+      m_vertices.emplace_back( Vertex{pos, poscov, chi2perdof} );
       m_fwdTracks.emplace_back();
       m_fwdWeights.emplace_back();
       m_bkwTracks.emplace_back();
@@ -156,8 +156,7 @@ namespace LHCb::Rec::PV {
         return m_vertices[chunkposition].m_covMatrix;
       } else {
         using float_v = typename dType::float_v;
-        ROOT::Math::SMatrix<float_v, 3, 3, ROOT::Math::MatRepSym<float_v, 3>> retval{
-            ROOT::Math::SMatrixNoInit{}};
+        ROOT::Math::SMatrix<float_v, 3, 3, ROOT::Math::MatRepSym<float_v, 3>> retval{ROOT::Math::SMatrixNoInit{}};
         for ( std::size_t i = 0; i < 3; i++ ) {
           for ( std::size_t j = 0; j < 3; j++ ) {
             std::array<float, dType::size> tmp;
@@ -192,7 +191,8 @@ namespace LHCb::Rec::PV {
 
     // TODO: experimental function
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_x( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type
+    pos_x( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_vertices[i].m_position.x();
       } else {
@@ -206,7 +206,8 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_y( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type
+    pos_y( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_vertices[i].m_position.y();
       } else {
@@ -220,7 +221,8 @@ namespace LHCb::Rec::PV {
       }
     }
     template <typename dType, bool unwrap>
-    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type pos_z( const std::size_t i ) const {
+    [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type
+    pos_z( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         return m_vertices[i].m_position.z();
       } else {
