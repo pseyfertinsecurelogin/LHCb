@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Event/Track_v2.h" // Chi2PerDof
+#include "Event/Chi2PerDoF.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "Kernel/STLExtensions.h" // LHCb::span
@@ -134,18 +135,39 @@ namespace LHCb::Rec::PV {
       }
     }
 
-    template <typename dType = SIMDWrapper::best::types, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
-    [[nodiscard]] LHCb::Event::v2::Track::Chi2PerDoF chi2perdof( const std::size_t i ) const { return m_vertices[i].m_chi2PerDoF; }
-
-    // not implemented for unwrap = false
-    // would need (maybe exists?) a SOA 3x3 matrix
-    template <typename dType, bool unwrap = true, typename = typename std::enable_if_t<unwrap>>
-    [[nodiscard]] decltype( auto ) cov( const std::size_t i ) const {
+    template <typename dType = SIMDWrapper::best::types, bool unwrap = true>
+    [[nodiscard]] decltype( auto ) chi2perdof( const std::size_t i ) const {
       if constexpr ( unwrap ) {
-        return m_vertices[i].m_covMatrix;
-
+        return m_vertices[i].m_chi2PerDoF;
       } else {
-        // not implemented
+        std::array<float, dType::size> tmp_f;
+        std::array<int, dType::size>   tmp_i;
+        for ( std::size_t j = 0; j < dType::size; j++ ) {
+          tmp_f[j] = m_vertices[i + j].m_chi2PerDoF.chi2PerDoF;
+          tmp_i[j] = m_vertices[i + j].m_chi2PerDoF.nDoF;
+        }
+        return LHCb::Rec::Chi2PerDoF<dType>{typename dType::float_v{&tmp_f[0]}, typename dType::int_v{&tmp_i[0]}};
+      }
+    }
+
+    template <typename dType, bool unwrap = true>
+    [[nodiscard]] decltype( auto ) cov( const std::size_t chunkposition ) const {
+      if constexpr ( unwrap ) {
+        return m_vertices[chunkposition].m_covMatrix;
+      } else {
+        using float_v = typename dType::float_v;
+        ROOT::Math::SMatrix<float_v, 3, 3, ROOT::Math::MatRepSym<float_v, 3>> retval{
+            ROOT::Math::SMatrixNoInit{}};
+        for ( std::size_t i = 0; i < 3; i++ ) {
+          for ( std::size_t j = 0; j < 3; j++ ) {
+            std::array<float, dType::size> tmp;
+            for ( std::size_t simdelement = 0; simdelement < dType::size; simdelement++ ) {
+              tmp[simdelement] = m_vertices[chunkposition + simdelement].m_covMatrix.At( i, j );
+            }
+            retval.At( i, j ) = float_v{&tmp[0]};
+          }
+        }
+        return retval;
       }
     }
 

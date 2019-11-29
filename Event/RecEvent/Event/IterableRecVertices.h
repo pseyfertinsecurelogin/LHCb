@@ -25,6 +25,7 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] auto pos() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto position() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto covMatrix() const { return this->m_pvs->template cov<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto chi2perdof() const { return this->m_pvs->template chi2perdof<dType, unwrap>( this->offset() ); }
   };
 } // namespace LHCb::Rec::PV
 
