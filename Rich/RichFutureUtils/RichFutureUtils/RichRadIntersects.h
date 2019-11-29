@@ -105,12 +105,11 @@ namespace Rich::Utils {
       using SA = std::array<std::string, 2>; //
       return LHCb::DetDesc::                 //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1Gas,     // input conditions locations
-                                     DeRichLocations::Rich2Gas},    //
-                                  std::move( key ),                 // output derived condition location
-                                  []( const DeRichRadiator& r1gas,  //
-                                      const DeRichRadiator& r2gas ) //
-                                  {
+                                  SA{DeRichLocations::Rich1Gas,    // input conditions locations
+                                     DeRichLocations::Rich2Gas},   //
+                                  std::move( key ),                // output derived condition location
+                                  []( const DeRichRadiator& r1gas, //
+                                      const DeRichRadiator& r2gas ) {
                                     return RadIntersects{r1gas, r2gas};
                                   } );
     }
