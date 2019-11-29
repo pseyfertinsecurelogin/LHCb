@@ -9,12 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
+#include "Event/RawEvent.h"
+#include "Gaudi/Algorithm.h"
+#include "GaudiAlg/FixTESPath.h"
+#include "GaudiAlg/Producer.h"
 #include "MDF/Buffer.h"
 #include "MDF/IIOSvc.h"
-
-#include "Event/RawEvent.h"
-
-#include "GaudiAlg/Producer.h"
 
 #include <memory>
 #include <string>
@@ -23,7 +23,8 @@
 namespace LHCb::MDF {
 
   class IOAlg final
-      : public Gaudi::Functional::Producer<std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>>()> {
+      : public Gaudi::Functional::Producer<std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>>(),
+                                           Gaudi::Functional::Traits::BaseClass_t<FixTESPath<Gaudi::Algorithm>>> {
 
   public:
     IOAlg( const std::string& name, ISvcLocator* pSvcLocator )
