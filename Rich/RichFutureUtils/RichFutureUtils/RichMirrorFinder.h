@@ -747,7 +747,7 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "MirrorFinder::addConditionDerivation : Key=" << key << endmsg;
       }
-      using SA = std::array<std::string, 2>; // 
+      using SA = std::array<std::string, 2>; //
       return LHCb::DetDesc::                 //
           addConditionDerivation( parent->conditionDerivationMgr(),
                                   SA{DeRichLocations::Rich1,  // input conditions locations
