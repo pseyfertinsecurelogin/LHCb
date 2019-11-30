@@ -152,26 +152,25 @@ namespace Rich::Utils {
     template <typename PARENT>
     static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
     addConditionDerivation( PARENT*                     parent,        //
-                            LHCb::DetDesc::ConditionKey key,           //
-                            const RadiatorArray<float>& minPhotEn,     //
-                            const RadiatorArray<float>& maxPhotEn,     //
-                            const ParticleArray<float>& masses ) {
+                            LHCb::DetDesc::ConditionKey key ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "TabulatedRefIndex::addConditionDerivation : Key=" << key << endmsg;
       }
       using SA = std::array<std::string, 4>;
       return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1,     // inputs
-                                     DeRichLocations::Rich2,     //
-                                     DeRichLocations::Rich1Gas,  //
-                                     DeRichLocations::Rich2Gas}, //
-                                  std::move( key ),              // output
-                                  [minPhotEn = minPhotEn, maxPhotEn = maxPhotEn,
-                                   masses = masses]( const DeRich1&        rich1, //
-                                                     const DeRich2&        rich2, //
-                                                     const DeRichRadiator& r1gas, //
-                                                     const DeRichRadiator& r2gas ) {
+                                  SA{DeRichLocations::Rich1,                               // inputs
+                                     DeRichLocations::Rich2,                               //
+                                     DeRichLocations::Rich1Gas,                            //
+                                     DeRichLocations::Rich2Gas},                           //
+                                  std::move( key ),                                        // output
+                                  [minPhotEn = parent->richPartProps()->minPhotonEnergy(), //
+                                   maxPhotEn = parent->richPartProps()->maxPhotonEnergy(), //
+                                   masses    = parent->richPartProps()->masses()]             //
+                                  ( const DeRich1&        rich1,                           //
+                                    const DeRich2&        rich2,                           //
+                                    const DeRichRadiator& r1gas,                           //
+                                    const DeRichRadiator& r2gas ) {
                                     return Utils::TabulatedRefIndex{rich1,     rich2,     r1gas, r2gas,
                                                                     minPhotEn, maxPhotEn, masses};
                                   } );
