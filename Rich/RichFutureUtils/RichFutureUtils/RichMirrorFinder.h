@@ -13,6 +13,7 @@
 
 // STL
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -747,14 +748,13 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "MirrorFinder::addConditionDerivation : Key=" << key << endmsg;
       }
-      using SA = std::array<std::string, 2>; //
-      return LHCb::DetDesc::                 //
+      return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1,  // input conditions locations
-                                     DeRichLocations::Rich2}, //
-                                  std::move( key ),           // output derived condition location
-                                  []( const DeRich1& rich1,   //
-                                      const DeRich2& rich2 )  //
+                                  std::array{DeRichLocations::Rich1,  // input conditions locations
+                                             DeRichLocations::Rich2}, //
+                                  std::move( key ),                   // output derived condition location
+                                  []( const DeRich1& rich1,           //
+                                      const DeRich2& rich2 )          //
                                   {
                                     return MirrorFinder{rich1, rich2};
                                   } );

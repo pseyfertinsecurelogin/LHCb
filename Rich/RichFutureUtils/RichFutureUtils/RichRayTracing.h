@@ -220,15 +220,14 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "RayTracing::addConditionDerivation : Key=" << ray_tracing_key << endmsg;
       }
-      using SA = std::array<std::string, 3>; //
-      return LHCb::DetDesc::                 //
+      return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1,            // input conditions locations
-                                     DeRichLocations::Rich2,            //
-                                     std::move( mirror_finder_key )},   //
-                                  std::move( ray_tracing_key ),         // output derived condition location
-                                  []( const DeRich1&             rich1, //
-                                      const DeRich2&             rich2, //
+                                  std::array{DeRichLocations::Rich1,          // input conditions locations
+                                             DeRichLocations::Rich2,          //
+                                             std::move( mirror_finder_key )}, //
+                                  std::move( ray_tracing_key ),               // output derived condition location
+                                  []( const DeRich1&             rich1,       //
+                                      const DeRich2&             rich2,       //
                                       const Utils::MirrorFinder& mirrorFinder ) {
                                     return RayTracing{rich1, rich2, mirrorFinder};
                                   } );

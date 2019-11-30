@@ -13,6 +13,7 @@
 
 // STL
 #include <array>
+#include <limits>
 #include <memory>
 
 // RichDet
@@ -135,13 +136,13 @@ namespace Rich::Utils {
     Rich::RadiatorArray<const DeRichRadiator*> m_radiators = {{}};
 
     /// The minimum photon energies
-    RadiatorArray<float> m_minPhotEn{1.75, 1.75, 1.75};
+    RadiatorArray<float> m_minPhotEn{{std::numeric_limits<float>::signaling_NaN()}};
 
     /// The maximum photon energies
-    RadiatorArray<float> m_maxPhotEn{4.0, 7.0, 7.0};
+    RadiatorArray<float> m_maxPhotEn{{std::numeric_limits<float>::signaling_NaN()}};
 
     /// Array containing particle masses
-    ParticleArray<float> m_particleMass = {{}};
+    ParticleArray<float> m_particleMass = {{std::numeric_limits<float>::signaling_NaN()}};
 
     /// Flag to say if we are in HLT mode or not ...
     /// Need to decide what to do with this ...
@@ -156,13 +157,12 @@ namespace Rich::Utils {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "TabulatedRefIndex::addConditionDerivation : Key=" << key << endmsg;
       }
-      using SA = std::array<std::string, 4>;
       return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::Rich1,                               // inputs
-                                     DeRichLocations::Rich2,                               //
-                                     DeRichLocations::Rich1Gas,                            //
-                                     DeRichLocations::Rich2Gas},                           //
+                                  std::array{DeRichLocations::Rich1,                       // inputs
+                                             DeRichLocations::Rich2,                       //
+                                             DeRichLocations::Rich1Gas,                    //
+                                             DeRichLocations::Rich2Gas},                   //
                                   std::move( key ),                                        // output
                                   [minPhotEn = parent->richPartProps()->minPhotonEnergy(), //
                                    maxPhotEn = parent->richPartProps()->maxPhotonEnergy(), //
@@ -171,8 +171,7 @@ namespace Rich::Utils {
                                     const DeRich2&        rich2,                           //
                                     const DeRichRadiator& r1gas,                           //
                                     const DeRichRadiator& r2gas ) {
-                                    return Utils::TabulatedRefIndex{rich1,     rich2,     r1gas, r2gas,
-                                                                    minPhotEn, maxPhotEn, masses};
+                                    return TabulatedRefIndex{rich1, rich2, r1gas, r2gas, minPhotEn, maxPhotEn, masses};
                                   } );
     }
 

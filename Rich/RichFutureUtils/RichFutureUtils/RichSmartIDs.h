@@ -126,16 +126,18 @@ namespace Rich::Utils {
     template <typename PARENT>
     static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
     addConditionDerivation( PARENT* parent, LHCb::DetDesc::ConditionKey key ) {
-      using SA = std::array<std::string, 3>; // Gerhard, when you read this, can it be avoided ;) ?
-      return LHCb::DetDesc::                 //
+      if ( parent->msgLevel( MSG::DEBUG ) ) {
+        parent->debug() << "RichSmartIDs::addConditionDerivation : Key=" << key << endmsg;
+      }
+      return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  SA{DeRichLocations::RichSystem,     // input conditions locations
-                                     DeRichLocations::Rich1,          //
-                                     DeRichLocations::Rich2},         //
-                                  std::move( key ),                   // output derived condition location
-                                  [&]( const DeRichSystem& deRichSys, //
-                                       const DeRich1&      rich1,     //
-                                       const DeRich2&      rich2 )         //
+                                  std::array{DeRichLocations::RichSystem, // input conditions locations
+                                             DeRichLocations::Rich1,      //
+                                             DeRichLocations::Rich2},     //
+                                  std::move( key ),                       // output derived condition location
+                                  [&]( const DeRichSystem& deRichSys,     //
+                                       const DeRich1&      rich1,         //
+                                       const DeRich2&      rich2 )             //
                                   {
                                     return RichSmartIDs{&deRichSys, &rich1, &rich2};
                                   } );
