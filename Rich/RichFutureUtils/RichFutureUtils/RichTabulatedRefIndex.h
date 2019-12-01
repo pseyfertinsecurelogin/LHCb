@@ -158,23 +158,23 @@ namespace Rich::Utils {
       }
       return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::Rich1,     // inputs
-                                             DeRichLocations::Rich2,     //
-                                             DeRichLocations::Rich1Gas,  //
-                                             DeRichLocations::Rich2Gas}, //
-                                  std::move( key ),                      // output
-                                  [pp = parent->richPartProps()]         //
-                                  ( const DeRich1&        rich1,         //
-                                    const DeRich2&        rich2,         //
-                                    const DeRichRadiator& r1gas,         //
-                                    const DeRichRadiator& r2gas ) {
-                                    return TabulatedRefIndex{rich1,                 // RICH1
-                                                             rich2,                 // RICH2
-                                                             r1gas,                 // RICH1 gas
-                                                             r2gas,                 // RICH2 gas
-                                                             pp->minPhotonEnergy(), // minimum CK photon energies
-                                                             pp->maxPhotonEnergy(), // maximum CK photon energies
-                                                             pp->masses()};         // particle masses
+                                  std::array{DeRichLocations::Rich1,         // inputs
+                                             DeRichLocations::Rich2,         //
+                                             DeRichLocations::Rich1Gas,      //
+                                             DeRichLocations::Rich2Gas},     //
+                                  std::move( key ),                          // output
+                                  [p = parent]( const DeRich1&        rich1, //
+                                                const DeRich2&        rich2, //
+                                                const DeRichRadiator& r1gas, //
+                                                const DeRichRadiator& r2gas ) {
+                                    return TabulatedRefIndex{
+                                        rich1,                                 // RICH1
+                                        rich2,                                 // RICH2
+                                        r1gas,                                 // RICH1 gas
+                                        r2gas,                                 // RICH2 gas
+                                        p->richPartProps()->minPhotonEnergy(), // minimum CK photon energies
+                                        p->richPartProps()->maxPhotonEnergy(), // maximum CK photon energies
+                                        p->richPartProps()->masses()};         // particle masses
                                   } );
     }
 
