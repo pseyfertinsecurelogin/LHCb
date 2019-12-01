@@ -743,21 +743,18 @@ namespace Rich::Utils {
 
     /// Creates a condition derivation for the given key
     template <typename PARENT>
-    static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
-    addConditionDerivation( PARENT* parent, LHCb::DetDesc::ConditionKey key ) {
+    static decltype( auto )                                     //
+    addConditionDerivation( PARENT*                     parent, ///< Pointer to parent algorithm
+                            LHCb::DetDesc::ConditionKey key     ///< Derived object name
+    ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "MirrorFinder::addConditionDerivation : Key=" << key << endmsg;
       }
       return LHCb::DetDesc:: //
-          addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::Rich1,  // input conditions locations
-                                             DeRichLocations::Rich2}, //
-                                  std::move( key ),                   // output derived condition location
-                                  []( const DeRich1& rich1,           //
-                                      const DeRich2& rich2 )          //
-                                  {
-                                    return MirrorFinder{rich1, rich2};
-                                  } );
+          addConditionDerivation<MirrorFinder( const DeRich1&, const DeRich2& )>(
+              parent->conditionDerivationMgr(),                 // mamanager
+              {DeRichLocations::Rich1, DeRichLocations::Rich2}, // input condition locations
+              std::move( key ) );                               // output derived condition location
     }
 
     /// Default conditions name

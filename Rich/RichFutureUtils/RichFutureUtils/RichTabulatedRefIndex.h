@@ -124,16 +124,16 @@ namespace Rich::Utils {
     }
 
     /// Access on demand the Rich radiator detector elements
-    inline const DeRichRadiator* deRad( const Rich::RadiatorType rad ) const { return m_radiators[rad]; }
+    inline const DeRichRadiator* deRad( const Rich::RadiatorType rad ) const noexcept { return m_radiators[rad]; }
 
   private:
     // data
 
     /// Pointers to RICHes
-    Rich::DetectorArray<const DeRich*> m_riches = {{}};
+    DetectorArray<const DeRich*> m_riches = {{}};
 
     /// Pointers to RICH radiator detector elements
-    Rich::RadiatorArray<const DeRichRadiator*> m_radiators = {{}};
+    RadiatorArray<const DeRichRadiator*> m_radiators = {{}};
 
     /// The minimum photon energies
     RadiatorArray<float> m_minPhotEn{{std::numeric_limits<float>::signaling_NaN()}};
@@ -145,33 +145,36 @@ namespace Rich::Utils {
     ParticleArray<float> m_particleMass = {{std::numeric_limits<float>::signaling_NaN()}};
 
     /// Flag to say if we are in HLT mode or not ...
-    /// Need to decide what to do with this ...
+    /// @todo Need to decide what to do with this ...
     const bool m_hltMode{true};
 
   public:
     /// Creates a condition derivation for the given key
     template <typename PARENT>
-    static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
-    addConditionDerivation( PARENT*                     parent,        //
-                            LHCb::DetDesc::ConditionKey key ) {
+    static decltype( auto ) //
+    addConditionDerivation( PARENT* parent, LHCb::DetDesc::ConditionKey key ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "TabulatedRefIndex::addConditionDerivation : Key=" << key << endmsg;
       }
       return LHCb::DetDesc:: //
           addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::Rich1,                       // inputs
-                                             DeRichLocations::Rich2,                       //
-                                             DeRichLocations::Rich1Gas,                    //
-                                             DeRichLocations::Rich2Gas},                   //
-                                  std::move( key ),                                        // output
-                                  [minPhotEn = parent->richPartProps()->minPhotonEnergy(), //
-                                   maxPhotEn = parent->richPartProps()->maxPhotonEnergy(), //
-                                   masses    = parent->richPartProps()->masses()]             //
-                                  ( const DeRich1&        rich1,                           //
-                                    const DeRich2&        rich2,                           //
-                                    const DeRichRadiator& r1gas,                           //
+                                  std::array{DeRichLocations::Rich1,     // inputs
+                                             DeRichLocations::Rich2,     //
+                                             DeRichLocations::Rich1Gas,  //
+                                             DeRichLocations::Rich2Gas}, //
+                                  std::move( key ),                      // output
+                                  [pp = parent->richPartProps()]         //
+                                  ( const DeRich1&        rich1,         //
+                                    const DeRich2&        rich2,         //
+                                    const DeRichRadiator& r1gas,         //
                                     const DeRichRadiator& r2gas ) {
-                                    return TabulatedRefIndex{rich1, rich2, r1gas, r2gas, minPhotEn, maxPhotEn, masses};
+                                    return TabulatedRefIndex{rich1,                 // RICH1
+                                                             rich2,                 // RICH2
+                                                             r1gas,                 // RICH1 gas
+                                                             r2gas,                 // RICH2 gas
+                                                             pp->minPhotonEnergy(), // minimum CK photon energies
+                                                             pp->maxPhotonEnergy(), // maximum CK photon energies
+                                                             pp->masses()};         // particle masses
                                   } );
     }
 

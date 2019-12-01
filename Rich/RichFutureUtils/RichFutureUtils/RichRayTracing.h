@@ -208,9 +208,9 @@ namespace Rich::Utils {
 
     /// Creates a condition derivation for the given key
     template <typename PARENT>
-    static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId   //
-    addConditionDerivation( PARENT*                     parent,          //
-                            LHCb::DetDesc::ConditionKey ray_tracing_key, //
+    static decltype( auto )                                              //
+    addConditionDerivation( PARENT*                     parent,          ///< Pointer to parent algorithm
+                            LHCb::DetDesc::ConditionKey ray_tracing_key, ///< location for devired condition
                             LHCb::DetDesc::ConditionKey mirror_finder_key = Utils::MirrorFinder::DefaultConditionKey ) {
 
       // First, make sure mirror finder is instanciated
@@ -221,16 +221,12 @@ namespace Rich::Utils {
         parent->debug() << "RayTracing::addConditionDerivation : Key=" << ray_tracing_key << endmsg;
       }
       return LHCb::DetDesc:: //
-          addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::Rich1,          // input conditions locations
-                                             DeRichLocations::Rich2,          //
-                                             std::move( mirror_finder_key )}, //
-                                  std::move( ray_tracing_key ),               // output derived condition location
-                                  []( const DeRich1&             rich1,       //
-                                      const DeRich2&             rich2,       //
-                                      const Utils::MirrorFinder& mirrorFinder ) {
-                                    return RayTracing{rich1, rich2, mirrorFinder};
-                                  } );
+          addConditionDerivation<RayTracing( const DeRich1&, const DeRich2&, const MirrorFinder& )>(
+              parent->conditionDerivationMgr(), //
+              {DeRichLocations::Rich1,          // input conditions locations
+               DeRichLocations::Rich2,          //
+               std::move( mirror_finder_key )}, //
+              std::move( ray_tracing_key ) );   // output location
     }
 
     /// Default conditions name

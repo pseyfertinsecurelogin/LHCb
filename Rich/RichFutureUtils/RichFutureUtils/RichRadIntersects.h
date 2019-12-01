@@ -97,20 +97,16 @@ namespace Rich::Utils {
 
     /// Creates a condition derivation for the given key
     template <typename PARENT>
-    static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
+    static decltype( auto ) //
     addConditionDerivation( PARENT* parent, LHCb::DetDesc::ConditionKey key ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "RadIntersects::addConditionDerivation : Key=" << key << endmsg;
       }
       return LHCb::DetDesc:: //
-          addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::Rich1Gas,  // input conditions locations
-                                             DeRichLocations::Rich2Gas}, //
-                                  std::move( key ),                      // output derived condition location
-                                  []( const DeRichRadiator& r1gas,       //
-                                      const DeRichRadiator& r2gas ) {
-                                    return RadIntersects{r1gas, r2gas};
-                                  } );
+          addConditionDerivation<RadIntersects( const DeRichRadiator&, const DeRichRadiator& )>(
+              parent->conditionDerivationMgr(),                       // manager
+              {DeRichLocations::Rich1Gas, DeRichLocations::Rich2Gas}, // input conditions
+              std::move( key ) );                                     // output derived condition location
     }
   };
 

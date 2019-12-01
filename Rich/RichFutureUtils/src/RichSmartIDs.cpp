@@ -15,25 +15,6 @@
 
 using namespace Rich::Utils;
 
-/// Constructor from RICH detector elements
-RichSmartIDs::RichSmartIDs( const DeRichSystem* richSys, //
-                            const DeRich1*      rich1,   //
-                            const DeRich2*      rich2 )
-    : m_richS( richSys ) {
-  // load the RICH1 panels
-  if ( rich1 ) {
-    for ( const auto panel : {Rich::top, Rich::bottom} ) {
-      ( m_photoDetPanels[Rich::Rich1] )[panel] = rich1->pdPanel( panel );
-    }
-  }
-  // load the RICH2 panels
-  if ( rich2 ) {
-    for ( const auto panel : {Rich::left, Rich::right} ) {
-      ( m_photoDetPanels[Rich::Rich2] )[panel] = rich2->pdPanel( panel );
-    }
-  }
-}
-
 //=============================================================================
 // Finds the average positions of a vector of clusters, in global LHCb
 // coordinates on the PD entrance window

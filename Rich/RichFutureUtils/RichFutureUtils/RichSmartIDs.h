@@ -57,9 +57,11 @@ namespace Rich::Utils {
     RichSmartIDs() = delete;
 
     /// Constructor from RICH detector elements
-    RichSmartIDs( const DeRichSystem* richSys, //
-                  const DeRich1*      rich1,   //
-                  const DeRich2*      rich2 );
+    RichSmartIDs( const DeRichSystem& richSys, //
+                  const DeRich1&      rich1,   //
+                  const DeRich2&      rich2 )
+        : m_richS{&richSys} //
+        , m_riches{&rich1, &rich2} {}
 
   public:
     // types
@@ -69,6 +71,32 @@ namespace Rich::Utils {
     using SIMDFP     = SIMD::FP<FP>;                ///< Default vector floating point type
     using SIMDVector = SIMD::Vector<FP>;            ///< Default vector Vector class
     using SIMDPoint  = SIMD::Point<FP>;             ///< Default vector Point class
+
+  private:
+    // methods
+
+    /// Get the PD panel for the given SmartID
+    inline decltype( auto ) panel( const LHCb::RichSmartID& ID ) const noexcept {
+      return m_riches[ID.rich()]->pdPanel( ID.panel() );
+    }
+
+    /// Get the PD panel for the given RICH and side
+    inline decltype( auto ) panel( const Rich::DetectorType rich, const Rich::Side side ) const noexcept {
+      return m_riches[rich]->pdPanel( side );
+    }
+
+    /// Get the position for a given SmartID.
+    inline bool _globalPosition( const LHCb::RichSmartID& smartID, //
+                                 Gaudi::XYZPoint&         detectPoint ) const {
+      return panel( smartID )->detectionPoint( smartID, detectPoint, m_hitPhotoCathSide );
+    }
+
+    /// Get the position for a given SmartID and associated DeRichPD object
+    inline bool _globalPosition( const LHCb::RichSmartID& smartID, //
+                                 const DeRichPD*          dePD,    //
+                                 Gaudi::XYZPoint&         detectPoint ) const {
+      return dePD->detectionPoint( smartID, detectPoint, m_hitPhotoCathSide );
+    }
 
   public:
     // methods
@@ -124,71 +152,33 @@ namespace Rich::Utils {
 
     /// Creates a condition derivation for the given key
     template <typename PARENT>
-    static inline LHCb::DetDesc::IConditionDerivationMgr::DerivationId //
+    static decltype( auto ) //
     addConditionDerivation( PARENT* parent, LHCb::DetDesc::ConditionKey key ) {
       if ( parent->msgLevel( MSG::DEBUG ) ) {
         parent->debug() << "RichSmartIDs::addConditionDerivation : Key=" << key << endmsg;
       }
-      return LHCb::DetDesc:: //
-          addConditionDerivation( parent->conditionDerivationMgr(),
-                                  std::array{DeRichLocations::RichSystem, // input conditions locations
-                                             DeRichLocations::Rich1,      //
-                                             DeRichLocations::Rich2},     //
-                                  std::move( key ),                       // output derived condition location
-                                  [&]( const DeRichSystem& deRichSys,     //
-                                       const DeRich1&      rich1,         //
-                                       const DeRich2&      rich2 )             //
-                                  {
-                                    return RichSmartIDs{&deRichSys, &rich1, &rich2};
-                                  } );
+      return LHCb::DetDesc::                                        //
+          addConditionDerivation<RichSmartIDs( const DeRichSystem&, //
+                                               const DeRich1&,      //
+                                               const DeRich2& )>(   //
+              parent->conditionDerivationMgr(),                     // manager
+              {DeRichLocations::RichSystem,                         // input conditions
+               DeRichLocations::Rich1,                              // locations
+               DeRichLocations::Rich2},                             //
+              std::move( key ) );                                   // output location
     }
 
     /// Default conditions name
     static constexpr const char* DefaultConditionKey = "RichSmartIDs-Handler";
 
   private:
-    // methods
-
-    /// Get the PD panel for the given SmartID
-    inline const DeRichPDPanel* panel( const LHCb::RichSmartID& ID ) const noexcept {
-      return ( m_photoDetPanels[ID.rich()] )[ID.panel()];
-    }
-
-    /// Get the PD panel for the given RICH and side
-    inline const DeRichPDPanel* panel( const Rich::DetectorType rich, const Rich::Side side ) const noexcept {
-      return ( m_photoDetPanels[rich] )[side];
-    }
-
-    /// Get the position for a given SmartID.
-    inline bool _globalPosition( const LHCb::RichSmartID& smartID, //
-                                 Gaudi::XYZPoint&         detectPoint ) const {
-      return panel( smartID )->detectionPoint( smartID, detectPoint, m_hitPhotoCathSide );
-    }
-
-    /// Get the position for a given SmartID and associated DeRichPD object
-    inline bool _globalPosition( const LHCb::RichSmartID& smartID, //
-                                 const DeRichPD*          dePD,    //
-                                 Gaudi::XYZPoint&         detectPoint ) const {
-      return dePD->detectionPoint( smartID, detectPoint, m_hitPhotoCathSide );
-    }
-
-  private:
-    // types
-
-    /// photodetector panels per rich
-    using PDPanelsPerRich = PanelArray<const DeRichPDPanel*>;
-
-    /// typedef for photodetector for each rich
-    using RichPDPanels = DetectorArray<PDPanelsPerRich>;
-
-  private:
     // data
-
-    /// photodetector for each rich
-    RichPDPanels m_photoDetPanels;
 
     /// RichSystem object
     const DeRichSystem* m_richS = nullptr;
+
+    /// Pointers to RICH1 and RICH2
+    Rich::DetectorArray<const DeRich*> m_riches = {{}};
 
     /// false to get the hit on the outside of PD window (including refraction)
     bool m_hitPhotoCathSide = false;
