@@ -25,14 +25,22 @@
 #include <vector>
 
 namespace LHCb::Rec::PV {
-  using TrackRef = std::size_t;
-  using weight_t = float;
+  // some definitions how references to tracks in the TES work, precision of weights, and how many track references
+  // should go into small object optimization.
+  using TrackRef                        = std::size_t;
+  using weight_t                        = float;
+  const std::size_t default_vertex_size = 60;
+
+  // SOA definitions purely for read convenience e.g.
+  // @code
+  //   auto weighted_tracks = SOA::make_soaview<LHCb::Rec::PV::WeightedTrack>( vertices.fwdTracks( i ),
+  //   vertices.fwdWeights( i ) );
+  // @endcode
+  // These are not used in the PVs's class definition. If you're interested in the PVs class itself, skip.
   SOAFIELD_TRIVIAL( ref_field, index, LHCb::Rec::PV::TrackRef );
   SOAFIELD_TRIVIAL( wei_field, weight, weight_t );
-  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field ); // for reading convenience
-  const std::size_t default_vertex_size = 60;
-  // const std::size_t default_vertex_size = 0;
-  // const std::size_t default_vertex_size = 100;
+  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );
+
   class PVs {
   public:
     struct Vertex {
@@ -70,7 +78,7 @@ namespace LHCb::Rec::PV {
     PVs( PVs const& ) = delete;
     PVs( PVs&& )      = default;
 
-    // TODO: understand
+    // TODO: copied from example, intent unclear
     PVs( Zipping::ZipFamilyNumber family, PVs const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
     [[nodiscard]] const boost::container::small_vector<weight_t, default_vertex_size>& fwdWeights( const int i ) const {
@@ -109,20 +117,15 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
     // fitting into current TrackBeamLineVertexFinderSoA
-    // @todo: tracks are taken as non-const reference!
     void emplace_back( Gaudi::XYZPoint pos, Gaudi::SymMatrix3x3 poscov, LHCb::Event::v2::Track::Chi2PerDoF chi2perdof,
-                       std::vector<std::pair<int, weight_t>>& tracks // from namespace { struct Vertex TODO: make signed
-                                                                     // should not have a hard coded type here
+                       std::vector<std::pair<int, weight_t>> const& tracks // from namespace { struct Vertex
+                                                                           // should not have a hard coded type here
     ) {
-      // TODO:
-      // push_back / emplace_back / move?
-      // google style guide says push_back
-      m_vertices.emplace_back( Vertex{pos, poscov, chi2perdof} );
+      m_vertices.push_back( Vertex{pos, poscov, chi2perdof} );
       m_fwdTracks.emplace_back();
       m_fwdWeights.emplace_back();
       m_bkwTracks.emplace_back();
       m_bkwWeights.emplace_back();
-      // TODO: write other than with for loop
       // NB: tried application of std::partition to pre-sort. Lead to regression in runtime.
       for ( auto track : tracks ) {
         if ( track.first >= 0 ) {
@@ -170,7 +173,7 @@ namespace LHCb::Rec::PV {
       }
     }
 
-    // transposes internally
+    // transposes internally for SIMD access
     template <typename dType, bool unwrap>
     [[nodiscard]] decltype( auto ) pos( const std::size_t i ) const {
       if constexpr ( unwrap ) {
@@ -189,7 +192,6 @@ namespace LHCb::Rec::PV {
       }
     }
 
-    // TODO: experimental function
     template <typename dType, bool unwrap>
     [[nodiscard]] typename std::conditional<unwrap, float, typename dType::float_v>::type
     pos_x( const std::size_t i ) const {
@@ -197,11 +199,7 @@ namespace LHCb::Rec::PV {
         return m_vertices[i].m_position.x();
       } else {
         std::array<float, dType::size> tmp;
-        for ( std::size_t j = 0; j < dType::size; j++ ) {
-          // the assembly for this is absurdly optimal,
-          // no loop, no copying through tmp to retval to return
-          tmp[j] = m_vertices[i + j].m_position.x();
-        }
+        for ( std::size_t j = 0; j < dType::size; j++ ) { tmp[j] = m_vertices[i + j].m_position.x(); }
         return {&tmp[0]};
       }
     }
@@ -212,11 +210,7 @@ namespace LHCb::Rec::PV {
         return m_vertices[i].m_position.y();
       } else {
         std::array<float, dType::size> tmp;
-        for ( std::size_t j = 0; j < dType::size; j++ ) {
-          // the assembly for this is absurdly optimal,
-          // no loop, no copying through tmp to retval to return
-          tmp[j] = m_vertices[i + j].m_position.y();
-        }
+        for ( std::size_t j = 0; j < dType::size; j++ ) { tmp[j] = m_vertices[i + j].m_position.y(); }
         return {&tmp[0]};
       }
     }
@@ -227,11 +221,7 @@ namespace LHCb::Rec::PV {
         return m_vertices[i].m_position.z();
       } else {
         std::array<float, dType::size> tmp;
-        for ( std::size_t j = 0; j < dType::size; j++ ) {
-          // the assembly for this is absurdly optimal,
-          // no loop, no copying through tmp to retval to return
-          tmp[j] = m_vertices[i + j].m_position.z();
-        }
+        for ( std::size_t j = 0; j < dType::size; j++ ) { tmp[j] = m_vertices[i + j].m_position.z(); }
         return {&tmp[0]};
       }
     }
