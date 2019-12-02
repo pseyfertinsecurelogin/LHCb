@@ -9,8 +9,206 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-import os, re
+import itertools
+import os
+import re
+import six
+from collections import OrderedDict
+from itertools import takewhile
+
 import GaudiTesting.QMTTest
+from GaudiTesting.BaseTest import FilePreprocessor
+from GaudiTesting.BaseTest import h_count_re as HISTO_SUMMARY_RE
+
+from .LHCbExclusions import counter_preprocessor
+
+
+def _get_new_ref_filename(reference_path):
+    """Return the next available filename for a new reference."""
+    count = 0
+    newrefname = reference_path + '.new'
+    while os.path.exists(newrefname):
+        count += 1
+        newrefname = '{}.~{}~.new'.format(reference_path, count)
+    return newrefname
+
+
+LOG_LINE_RE = re.compile(
+    r'^(?P<component>[^. ]+(?:\.[^. ]+)*(?:\.\.\.)?)\s*'
+    r'(?P<level>SUCCESS|VERBOSE|  DEBUG|   INFO|  ERROR|  FATAL)'
+    r'\s*(?P<message>.*)$'
+    # Note: the space after the message might be stripped if \n follows
+)
+
+
+class GroupMessages(FilePreprocessor):
+    """Preprocessor that groups multi-line messages.
+
+    Using this preprocessor only makes sense if it is called with input
+    split by lines. If a string is given to `FilePreprocessor.__call__`,
+    then the groups will be merged, making this a noop.
+
+    """
+
+    def __processFile__(self, lines):
+        indices = [i for i, m in enumerate(map(LOG_LINE_RE.match, lines)) if m]
+        if not indices:
+            return []
+        # everything until the first message is one message per line
+        indices = range(indices[0]) + indices
+        messages = [
+            '\n'.join(lines[i1:i2])
+            for i1, i2 in zip(indices, indices[1:] + [None])
+        ]
+        return messages
+
+
+class BlockSkipper(FilePreprocessor):
+    """Skip all lines between `start` and `end`.
+
+    Skips blocks of lines identified by a starting line containing the
+    substring `start` and an ending line containing the substring `end`.
+    Both the starting and the ending line are excluded from the output.
+    If `being` is `None`, lines starting from the beginning are skipped.
+    If `end` is `None`, all lines until the end are skipped.
+
+    """
+
+    def __init__(self, start, end=None):
+        self.start = start
+        self.end = end
+
+    def __processFile__(self, lines):
+        skipping = self.start is None
+        output_lines = []
+        for line in lines:
+            if self.start is not None and self.start in line:
+                skipping = True
+            if not skipping:
+                output_lines.append(line)
+            if self.end is not None and self.end in line:
+                skipping = False
+        return output_lines
+
+
+def _extract_ttree_blocks(stdout):
+    """Extract lines belonging to a TTree printout."""
+
+    TTREE_START_RE = re.compile(r'^\*+$')
+    TTREE_KEEP_RE = re.compile(r'^[^*].*')
+    output_lines = []
+    keep = False
+    for line in stdout.splitlines(True):
+        if TTREE_START_RE.match(line):
+            keep = True
+        if keep:
+            output_lines.append(line)
+            keep = TTREE_KEEP_RE.match(line)
+    return ''.join(output_lines)
+
+
+def _extract_histo_blocks(stdout):
+    """Extract lines belonging to histo summary printout."""
+
+    TABLE_START_RE = re.compile(r'.*SUCCESS\s+(1D|2D|3D|1D profile|2D profile)'
+                                r' histograms in directory\s+"(\w*)".*')
+    TABLE_KEEP_RE = re.compile(r'^({})|( \| .*)$')
+    output_lines = []
+    keep = False
+    for line in stdout.splitlines(True):
+        if HISTO_SUMMARY_RE.match(line):
+            output_lines.append(line)
+        if TABLE_START_RE.match(line):
+            keep = True
+        if keep:
+            output_lines.append(line)
+            keep = TABLE_KEEP_RE.match(line)
+    return ''.join(output_lines)
+
+
+_COMPONENT_RE = r'^(?P<component>[^. ]+(?:\.[^. ]+)*(?:\.\.\.)?)\s*'
+
+_COUNTER_START_RE = {
+    'Counters':
+    (_COMPONENT_RE +
+     r'(?:SUCCESS|   INFO) Number of counters : (?P<nCounters>\d+)$'),
+    '1DHistograms':
+    (_COMPONENT_RE +
+     r'SUCCESS 1D histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'),
+    '1DProfiles':
+    (_COMPONENT_RE +
+     r'SUCCESS 1D profile histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'
+     ),
+}
+
+
+def _extract_counter_blocks(s, header_pattern, preproc=None):
+    """Extract all counter lines from a string containing log lines.
+
+    In case a counter preprocessor is given, it is applied to the counter lines.
+
+    """
+
+    if preproc:
+        s = preproc(s)
+    lines = s.splitlines() if isinstance(s, six.string_types) else s
+
+    blocks = OrderedDict()
+
+    header_re = re.compile(header_pattern)
+
+    # find counter block headers
+    headers = filter(lambda x: bool(x[1]),
+                     enumerate(map(header_re.match, lines)))
+    for i, m in headers:
+        component = m.group('component')
+
+        # take care of the case where several algos have same name
+        # (problem being that names are cut when too long)
+        if component in blocks:
+            candidates = (component + str(i) for i in itertools.count(1))
+            component = next(c for c in candidates if c not in blocks)
+
+        blocks[component] = lines[i:(i + int(m.group('nCounters')) + 2)]
+        # We might get less than nCounters as some lines might be filtered
+        # out by the counter preprocessor. Only keep what is left:
+        blocks[component] = blocks[component][:1] + list(
+            takewhile(re.compile(r'^ \|[* ].*$').match, blocks[component][1:]))
+
+    return blocks
+
+
+def _extract_counters(blocks, comp_type='Counters'):
+    """
+    Then the lines are parsed and a dictionary is returned where key is the algorithm name and value a list of counters.
+    Each counter itself is a list with first element being the counter name and the others counter's values, all as string
+    """
+    counters = {}
+    firstValueIndex = 1 if comp_type == 'Counters' else 2
+    for component, lines in blocks.items():
+        assert re.match(_COUNTER_START_RE[comp_type], lines[0])
+        counters[component] = {}
+        # exclude the first two lines which contain message and table header
+        for line in lines[2:]:
+            # note the horrible hack to handle the fact that /Event/
+            # is sometimes omited at the beginning of paths on top
+            # master and future branch behave differently on that,
+            # so in order to keep a common reference, we have to
+            # remove /Event/
+            items = [
+                v.strip()
+                for v in line.strip().replace('/Event/', '').split('|')
+                if v.strip() != ""
+            ]
+            counters[component][items[0].strip('"*')] = items[firstValueIndex:]
+    return counters
+
+
+def extract_counters(s, counter_preproc=None, comp_type='Counters'):
+    """Parse counter table in a string containing log lines."""
+    blocks = _extract_counter_blocks(
+        s, _COUNTER_START_RE[comp_type], preproc=counter_preproc)
+    return _extract_counters(blocks, comp_type=comp_type)
 
 
 class LHCbTest(GaudiTesting.QMTTest.QMTTest):
@@ -28,83 +226,93 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         else:
             return abs(ref - val) / max(abs(ref), abs(val)) > sensitivity
 
+    def ValidateOutput(self, stdout, stderr, result):
+        try:
+            return super(LHCbTest, self).ValidateOutput(stdout, stderr, result)
+        except:
+            import traceback
+            self.causes.append("Exception in validator")
+            result["validator_exception"] = result.Quote(
+                traceback.format_exc().rstrip())
+            return result, self.causes
+
     def validateWithReference(self,
                               stdout=None,
                               stderr=None,
                               result=None,
                               causes=None,
                               preproc=None,
-                              counter_preproc=None,
+                              counter_preproc=counter_preprocessor,
                               sensitivities={}):
         '''Overwrite of the base class method by adding extra checks for counters.
            sensitivities allows to overwrite the default sensitivity of the counter checking (0.0001).
            It is containing a dictionnary with Algorithm name as key and a dictionnary as value
            having counter name a key and sensitivity for that counter as value'''
+
+        if stdout is None:
+            stdout = self.out
+        if stderr is None:
+            stderr = self.err
+        if result is None:
+            result = self.result
+        if causes is None:
+            causes = self.causes
+
         # call upper class method
         super(LHCbTest, self).validateWithReference(stdout, stderr, result,
                                                     causes, preproc)
-        # check the counters
-        self._compare(stdout, causes, result, counter_preproc, 'Counters',
-                      sensitivities)
-        # check the 1D histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DHistograms',
-                      sensitivities)
-        # check the 1D profile histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DProfiles',
-                      sensitivities)
 
-    def _extract(self, s, counter_preproc=None, comp_type='Counters'):
-        """
-        Extract all counter lines from a string containing log lines.
-        In case a counter preprocessor is given, it is applied to the counter lines.
-        Then the lines are parsed and a dictionary is returned where key is the algorithm name and value a list of counters.
-        Each counter itself is a list with first element being the counter name and the others counter's values, all as string
-        """
-        counters = {}
-        if comp_type == 'Counters':
-            counterStartRE = re.compile(
-                '^(?P<algorithm>[^. ]*)[. ]+(?:SUCCESS|INFO) Number of counters : (?P<nCounters>\d+)$'
-            )
-            firstValueIndex = 1
-        elif comp_type == '1DHistograms':
-            counterStartRE = re.compile(
-                '^(?P<algorithm>[^. ]*)[. ]+SUCCESS 1D histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'
-            )
-            firstValueIndex = 2
-        elif comp_type == '1DProfiles':
-            counterStartRE = re.compile(
-                '^(?P<algorithm>[^. ]*)[. ]+SUCCESS 1D profile histograms in directory (?:[^. ]*) : (?P<nCounters>\d+)$'
-            )
-            firstValueIndex = 2
-        if counter_preproc:
-            lines = counter_preproc(s)
-        else:
-            lines = s.split(os.linesep)
-        n = 0
-        while n < len(lines):
-            # find counter block's header
-            m = counterStartRE.match(lines[n].strip())
-            n += 1
-            if None == m: continue
-            algoName = m.group('algorithm')
-            # take care of the case where several algos have same name (problem being that names are cut when too long)
-            if (algoName not in counters):
-                counters[algoName] = {}
-            # loop through counters (note +1 as we skip header lines of the block)
-            for i in range(int(m.group('nCounters'))):
-                # note the horrible hack to handle the fact that /Event/ is sometimes omited at the beginning of paths
-                # on top master and future branch behave differently on that, so in order to keep a common reference,
-                # we have to remove /Event/
-                items = [
-                    v.strip()
-                    for v in lines[n + i +
-                                   1].strip().replace('/Event/', '').split('|')
-                    if v.strip() != ""
-                ]
-                counters[algoName][items[0].strip(
-                    '"*')] = items[firstValueIndex:]
-            n += i + 1
-        return counters
+        # get reference
+        lreference = self._expandReferenceFileName(self.reference)
+        if not lreference or not os.path.isfile(lreference):
+            return
+
+        # extract counters from reference and stdout
+        with open(lreference) as f:
+            ref = f.read()
+        ref_blocks = {
+            comp_type: _extract_counter_blocks(
+                ref, pattern, preproc=counter_preproc)
+            for comp_type, pattern in _COUNTER_START_RE.items()
+        }
+
+        blocks = {
+            comp_type: _extract_counter_blocks(
+                stdout, pattern, preproc=counter_preproc)
+            for comp_type, pattern in _COUNTER_START_RE.items()
+        }
+
+        for comp_type in ['Counters', '1DHistograms', '1DProfiles']:
+            self._compare(blocks[comp_type], ref_blocks[comp_type], causes,
+                          result, comp_type, sensitivities)
+
+        if causes:
+            try:
+                newrefname = os.path.join(self.basedir,
+                                          result['New Output Reference File'])
+            except KeyError:
+                newrefname = _get_new_ref_filename(lreference)
+
+            with open(newrefname, "w") as newref:
+                # sanitize newlines
+                new = stdout.splitlines()
+                # write the preprocessed stdout (excludes counter tables)
+                if preproc:
+                    new = preproc(new)
+                for l in new:
+                    newref.write(l.rstrip() + '\n')
+                # write counter tables
+                for ct_blocks in blocks.values():
+                    for lines in ct_blocks.values():
+                        for line in lines:
+                            newref.write(line + '\n')
+                # write TTrees
+                newref.write(_extract_ttree_blocks(stdout))
+                # write Histos
+                newref.write(_extract_histo_blocks(stdout))
+
+            result['New Output Reference File'] = os.path.relpath(
+                newrefname, self.basedir)
 
     def _compareCounterLine(self, ref, value, comp_type, sensitivity):
         '''Compares 2 lines of a counter/histogram and check whether numbers are "close enough"'''
@@ -196,22 +404,16 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 onlyref.add(refName)
         return onlyref, stdoutCounters - donestdout, counterPairs
 
-    def _compare(self, stdout, causes, result, counter_preproc, comp_type,
+    def _compare(self, blocks, ref_blocks, causes, result, comp_type,
                  sensitivities):
         """
         Compares values of counters/histograms to the reference file
-        stdout: the test output
+        blocks: a dict of {component: list of lines}
         causes: the usual QMTest causes
         result: the usual QMTest result
         """
-        # get reference
-        lreference = self._expandReferenceFileName(self.reference)
-        if not (lreference and os.path.isfile(lreference)):
-            return
-        # extract counters from reference and stdout
-        refCounters = self._extract(
-            open(lreference).read(), counter_preproc, comp_type)
-        newCounters = self._extract(stdout, counter_preproc, comp_type)
+        refCounters = _extract_counters(ref_blocks, comp_type=comp_type)
+        newCounters = _extract_counters(blocks, comp_type=comp_type)
         # diff counters
         refAlgoNames = set(refCounters)
         newAlgoNames = set(newCounters)
@@ -225,9 +427,6 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 msg += '    Extra : ' + ', '.join(
                     newAlgoNames.difference(refAlgoNames)) + '\n'
             causes.append("Different set of algorithms in " + comp_type)
-            # make sure we create newref file when there are only counters differences
-            if causes:
-                self._createNewRef(stdout)
         for algoName in refAlgoNames.intersection(newAlgoNames):
             onlyref, onlystdout, counterPairs = self._compareCutSets(
                 set(refCounters[algoName]), set(newCounters[algoName]))
@@ -270,27 +469,3 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             else:
                 result[comp_type + "Mismatch"] = result.Quote(msg)
             # make sure we create newref file when there are only counters differences
-            if causes:
-                self._createNewRef(stdout)
-
-    def _createNewRef(self, stdout):
-        """
-        Creates a new reference file
-        stdout:     the test output
-        """
-        # get reference
-        lreference = self._expandReferenceFileName(self.reference)
-        if not (lreference and os.path.isfile(lreference)):
-            return
-
-        # this is copied from GaudiTest.py. Should be factorized out ideally
-        try:
-            newref = open(lreference + ".new", "w")
-            # sanitize newlines
-            for l in stdout.splitlines():
-                newref.write(l.rstrip() + '\n')
-            del newref  # flush and close
-        except IOError:
-            # Ignore IO errors when trying to update reference files
-            # because we may be in a read-only filesystem
-            pass

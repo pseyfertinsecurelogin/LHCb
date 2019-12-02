@@ -9,7 +9,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 import os
-from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper, SortGroupOfLines, BlockSkipper
+from GaudiTesting.BaseTest import (normalizeExamples, RegexpReplacer,
+                                   LineSkipper, SortGroupOfLines, BlockSkipper)
 
 gitCondDBFixes = (RegexpReplacer(
     when='Detector description database:', orig='conddb:/', repl='git:/') +
@@ -92,3 +93,9 @@ preprocessor = (
 from DDDB.Configuration import GIT_CONDDBS
 if GIT_CONDDBS:
     preprocessor = preprocessor + gitCondDBFixes
+
+# Exclude counters with
+counter_preprocessor = LineSkipper([
+    ' | "Delta Memory/MB" ',
+    ' | "Total Memory/MB" ',
+])
