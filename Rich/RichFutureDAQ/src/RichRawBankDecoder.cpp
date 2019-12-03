@@ -324,6 +324,12 @@ StatusCode RawBankDecoder::initialize() {
   const auto sc = Transformer::initialize();
   if ( !sc ) return sc;
 
+  {
+    // workaround to the issue with circular dependency in HPD initialization
+    DataObject* tmp = nullptr;
+    detSvc()->retrieveObject( inputLocation<2>(), tmp ).ignore();
+  }
+
   // report inactive RICHes
   if ( !m_richIsActive[Rich::Rich1] ) { info() << "Decoding for RICH1 disabled" << endmsg; }
   if ( !m_richIsActive[Rich::Rich2] ) { info() << "Decoding for RICH2 disabled" << endmsg; }
