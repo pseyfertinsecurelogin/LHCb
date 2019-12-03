@@ -49,8 +49,12 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+file(GLOB LIBSRCS src/*.cpp)
+IF(NOT ${BINARY_TAG_ARCH} STREQUAL "x86_64")
+list(REMOVE_ITEM LIBSRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX2.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_SSE3.cpp)
+ENDIF()
 gaudi_add_library(LHCbMathLib
-                  src/*.cpp
+                  ${LIBSRCS}
                   PUBLIC_HEADERS LHCbMath
                   INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiGSLLib GaudiKernel)
@@ -67,7 +71,7 @@ gaudi_add_dictionary(LHCbMath
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.
 
-# flags to turn off AVX512. 
+# flags to turn off AVX512.
 set(NO_AVX512_FLAGS     "-mno-avx512bw -mno-avx512cd -mno-avx512dq -mno-avx512er -mno-avx512f -mno-avx512ifma -mno-avx512pf -mno-avx512vbmi -mno-avx512vl -mno-avx512vpopcntdq ")
 if( BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_GREATER "7.99")
   set(NO_AVX512_FLAGS "${NO_AVX512_FLAGS} -mno-avx512vbmi2 -mno-avx512vnni ")
@@ -155,12 +159,14 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestBloomFilter
                        tests/TestBloomFilter.cpp
                        LINK_LIBRARIES LHCbMathLib)
+  if(${BINARY_TAG_ARCH} STREQUAL "x86_64")
   gaudi_add_executable(TestSimilarity
                        tests/TestSimilarity.cpp
                        LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestSimilarityTiming
                        tests/TestSimilarityTiming.cpp
                        LINK_LIBRARIES LHCbMathLib)
+  endif() # x86_64
   gaudi_add_executable(TestEigenGeometry
                        tests/TestEigenGeometry.cpp
                        LINK_LIBRARIES LHCbMathLib)
@@ -170,6 +176,7 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPolynomials
                        tests/poly.cpp
                        LINK_LIBRARIES LHCbMathLib)
+  if(${BINARY_TAG_ARCH} STREQUAL "x86_64")
   set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
@@ -229,6 +236,7 @@ if(GAUDI_BUILD_TESTS)
     set_property(TARGET TestMathSpeedAVX2FMA APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
   endif()
 
+  endif() # x86_64 
 endif()
 
 gaudi_install_python_modules()

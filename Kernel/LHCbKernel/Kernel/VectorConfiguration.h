@@ -10,7 +10,9 @@
 \*****************************************************************************/
 #pragma once
 
-#include "vectorclass.h"
+#ifdef __x86_64__
+#  include "vectorclass.h"
+#endif
 #include <cstddef> // std::size_t
 #include <cstdint> // std::*int*_t
 #include <type_traits>
@@ -124,10 +126,11 @@ namespace LHCb::SIMD {
     using booltype = bool_t;
   };
 
+#ifdef __x86_64__
 /**
  * VCL
  */
-#if defined( __SSE__ )
+#  if defined( __SSE__ )
   template <>
   struct Vectype<std::int32_t, 4, VCL_tag> : details::Vectype<std::int32_t, 4, VCL_tag> {
     using type   = Vec4i;
@@ -171,8 +174,8 @@ namespace LHCb::SIMD {
     // backward compatibility
     using booltype = bool_t;
   };
-#endif // __SSE__
-#if defined( __AVX__ ) && MAX_VECTOR_SIZE >= 256
+#  endif // __SSE__
+#  if defined( __AVX__ ) && MAX_VECTOR_SIZE >= 256
   template <>
   struct Vectype<std::int32_t, 8, VCL_tag> : details::Vectype<std::int32_t, 8, VCL_tag> {
     using type   = Vec8i;
@@ -216,8 +219,8 @@ namespace LHCb::SIMD {
     // backward compatibility
     using booltype = bool_t;
   };
-#endif // __AVX__
-#if defined( __AVX512F__ ) && MAX_VECTOR_SIZE >= 512
+#  endif // __AVX__
+#  if defined( __AVX512F__ ) && MAX_VECTOR_SIZE >= 512
   template <>
   struct Vectype<std::int32_t, 16, VCL_tag> : details::Vectype<std::int32_t, 16, VCL_tag> {
     using type   = Vec16i;
@@ -261,7 +264,8 @@ namespace LHCb::SIMD {
     // backward compatibility
     using booltype = bool_t;
   };
-#endif // __AVX512F__
+#  endif // __AVX512F__
+#endif   // __x86_64__
 
 /**
  * Vc
