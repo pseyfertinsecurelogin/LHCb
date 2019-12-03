@@ -57,7 +57,7 @@ namespace LoKi {
       /// constructor from tool nickname
       Check( const std::string& nikname );
       /// MANDATORY: virtual destructor
-      virtual ~Check();
+      ~Check() override;
       /// MANDATORY: clone method ("virtual constructor")
       Check* clone() const override;
       /// MANDATORY: the only one essential method
@@ -95,7 +95,7 @@ namespace LoKi {
       /// constructor from tool nickname
       Accept( const std::string& nikname );
       /// MANDATORY: virtual destructor
-      virtual ~Accept();
+      ~Accept() override;
       /// MANDATORY: clone method ("virtual constructor")
       Accept* clone() const override;
       /// MANDATORY: the only one essential method
@@ -132,7 +132,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-08-03
      */
-    typedef LoKi::Status::Accept ACCEPT;
+    using ACCEPT = LoKi::Status::Accept;
     // ========================================================================
     /** @typedef CHECK
      *  Trivial checker/function to "check"
@@ -141,7 +141,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-08-03
      */
-    typedef LoKi::Status::Check CHECK;
+    using CHECK = LoKi::Status::Check;
     // ========================================================================
   } // namespace Cuts
   // ==========================================================================

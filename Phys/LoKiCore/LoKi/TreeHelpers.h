@@ -27,7 +27,6 @@
 #include "LoKi/DecayDescriptor.h"
 // ============================================================================
 namespace Decays {
-  // ==========================================================================
   namespace Parsers {
     // ========================================================================
     /** @class Tree
@@ -40,7 +39,7 @@ namespace Decays {
     public:
       // ======================================================================
       /// the vector of trees
-      typedef std::vector<Decays::Parsers::Tree> Trees;
+      using Trees = std::vector<Decays::Parsers::Tree>;
       // ======================================================================
     public:
       // ======================================================================
@@ -81,27 +80,27 @@ namespace Decays {
       // =====================================================================
     public:
       // =====================================================================
-      const Decays::iNode&       head() const { return m_head.node(); }
-      Decays::Trees::Arrow       arrow() const { return m_arrow; }
-      Decays::Trees::Oscillation oscillated() const { return m_oscillated; }
-      bool                       inclusive() const { return m_inclusive; }
-      bool                       negated() const { return m_negated; }
-      bool                       marked() const { return m_marked; }
-      bool                       stable() const { return m_stable; }
-      const Trees&               ored() const { return m_or; }
-      const Trees&               anded() const { return m_and; }
-      const Trees&               children() const { return m_children; }
-      const Trees&               optional() const { return m_optional; }
+      [[nodiscard]] const Decays::iNode&       head() const { return m_head.node(); }
+      [[nodiscard]] Decays::Trees::Arrow       arrow() const { return m_arrow; }
+      [[nodiscard]] Decays::Trees::Oscillation oscillated() const { return m_oscillated; }
+      [[nodiscard]] bool                       inclusive() const { return m_inclusive; }
+      [[nodiscard]] bool                       negated() const { return m_negated; }
+      [[nodiscard]] bool                       marked() const { return m_marked; }
+      [[nodiscard]] bool                       stable() const { return m_stable; }
+      [[nodiscard]] const Trees&               ored() const { return m_or; }
+      [[nodiscard]] const Trees&               anded() const { return m_and; }
+      [[nodiscard]] const Trees&               children() const { return m_children; }
+      [[nodiscard]] const Trees&               optional() const { return m_optional; }
       // ======================================================================
     public:
       // ======================================================================
-      std::ostream& fillStream( std::ostream& s ) const;
-      std::string   toString() const;
+      std::ostream&             fillStream( std::ostream& s ) const;
+      [[nodiscard]] std::string toString() const;
       // ======================================================================
     private:
       // ======================================================================
       /// the decay head (single node)
-      Decays::Node m_head;
+      Decays::Node m_head = Decays::Nodes::Invalid();
       /// vector of OR-ed  trees
       Trees m_or;
       /// vector of AND-ed trees
@@ -110,17 +109,17 @@ namespace Decays {
     private:
       // ======================================================================
       /// the arrow type
-      Decays::Trees::Arrow m_arrow; // decay type
+      Decays::Trees::Arrow m_arrow = Decays::Trees::Single; // decay type
       /// oscillated?
-      Decays::Trees::Oscillation m_oscillated; // oscillated ?
+      Decays::Trees::Oscillation m_oscillated = Decays::Trees::Undefined; // oscillated ?
       /// inclusive
-      bool m_inclusive; //    inclusive
+      bool m_inclusive = false; //    inclusive
       /// negation
-      bool m_negated; //    negation?
+      bool m_negated = false; //    negation?
       /// mark
-      bool m_marked; //      marked?
+      bool m_marked = false; //      marked?
       /// stable ?
-      bool m_stable; //      stable?
+      bool m_stable = false; //      stable?
       // ======================================================================
     private:
       // ======================================================================
@@ -133,9 +132,8 @@ namespace Decays {
     // ========================================================================
     std::ostream& operator<<( std::ostream& s, const Tree& t );
     // ========================================================================
-  } // end of namespace Parsers
-  // ==========================================================================
-} // end of namespace Decays
+  } // namespace Parsers
+} // namespace Decays
 // ============================================================================
 // The END
 // ============================================================================

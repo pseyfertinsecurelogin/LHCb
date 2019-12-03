@@ -327,7 +327,6 @@ namespace LoKi {
 } //                                                      end of namespace LoKi
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Cuts {
     // ========================================================================
     /** @typedef RATE
@@ -352,7 +351,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RateLimitV RATE;
+    using RATE = LoKi::Scalers::RateLimitV;
     // ========================================================================
     /** @typedef XRATE
      *  Trivial predicate to determine the accept rate limit
@@ -376,7 +375,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RateLimit XRATE;
+    using XRATE = LoKi::Scalers::RateLimit;
     // ========================================================================
     /** @typedef SCALE
      *  Trivial predicate to prescale with given accept probability
@@ -396,7 +395,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RandomScaleV SCALE;
+    using SCALE = LoKi::Scalers::RandomScaleV;
     // ========================================================================
     /** @typedef XSCALE
      *  Trivial predicate to prescale with given accept probability
@@ -416,7 +415,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RandomScale XSCALE;
+    using XSCALE = LoKi::Scalers::RandomScale;
     // ========================================================================
     /** @typedef SKIP
      *  Trivial predicate to accept only Nth event
@@ -436,7 +435,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::SkipperV SKIP;
+    using SKIP = LoKi::Scalers::SkipperV;
     // ========================================================================
     /** @typedef XSKIP
      *  Trivial predicate to accept only Nth event
@@ -456,11 +455,10 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::Skipper XSKIP;
+    using XSKIP = LoKi::Scalers::Skipper;
     // ========================================================================
   } // namespace Cuts
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

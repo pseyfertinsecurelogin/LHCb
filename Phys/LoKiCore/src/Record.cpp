@@ -55,8 +55,7 @@ LoKi::Record::Record( const Tuples::Tuple& ntuple, const char* format... ) : Tup
       va_start( valist, format );
       // loop over all tokens
       StatusCode status = StatusCode::SUCCESS;
-      for ( LoKi::Tokens::const_iterator token = tokens.begin(); tokens.end() != token && status.isSuccess();
-            ++token ) {
+      for ( auto token = tokens.begin(); tokens.end() != token && status.isSuccess(); ++token ) {
         const double val = va_arg( valist, double );
         status           = tuple()->column( *token, val );
       }

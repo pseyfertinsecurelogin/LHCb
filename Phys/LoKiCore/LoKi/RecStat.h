@@ -122,7 +122,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
-    typedef LoKi::TES::HasRecSummary HASRECSUMMARY;
+    using HASRECSUMMARY = LoKi::TES::HasRecSummary;
     // ========================================================================
     /** @typedef RECSUMMARY
      *  Get the record from LHCb::RecSummary
@@ -137,7 +137,7 @@ namespace LoKi {
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
-    typedef LoKi::TES::RecSummary RECSUMMARY;
+    using RECSUMMARY = LoKi::TES::RecSummary;
     // ========================================================================
   } // namespace Cuts
   // ==========================================================================

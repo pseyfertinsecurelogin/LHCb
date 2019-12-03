@@ -373,7 +373,7 @@ namespace LoKi {
     /** @typedef INDICES
      *  container to keep "exceptional" indices"
      */
-    typedef std::set<std::ptrdiff_t> INDICES;
+    using INDICES = std::set<std::ptrdiff_t>;
     // ========================================================================
     template <class OBJECT, class PREDICATE1, class PREDICATE2>
     inline bool _found_2( OBJECT first, OBJECT last, const PREDICATE1& cut1, const PREDICATE2& cut2,

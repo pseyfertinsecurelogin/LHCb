@@ -40,9 +40,9 @@ namespace LoKi {
   struct Holder : public std::pair<typename LoKi::Field<const TYPE1>::Type, typename LoKi::Field<const TYPE2>::Type> {
   public:
     // ========================================================================
-    typedef typename LoKi::Field<const TYPE1>::Type First;
-    typedef typename LoKi::Field<const TYPE2>::Type Second;
-    typedef std::pair<First, Second>                Pair;
+    using First  = typename LoKi::Field<const TYPE1>::Type;
+    using Second = typename LoKi::Field<const TYPE2>::Type;
+    typedef std::pair<First, Second> Pair;
     // ========================================================================
   public:
     // ========================================================================

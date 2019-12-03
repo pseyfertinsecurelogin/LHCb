@@ -52,9 +52,9 @@ namespace LoKi {
   public:
     // ========================================================================
     /// get N
-    unsigned int N() const { return m_N; } // get N
+    [[nodiscard]] unsigned int N() const { return m_N; } // get N
     /// get N
-    unsigned int n() const { return m_N; } // get N
+    [[nodiscard]] unsigned int n() const { return m_N; } // get N
     /// printout
     virtual std::ostream& fillStream( std::ostream& s ) const;
     // ========================================================================
@@ -99,10 +99,10 @@ namespace LoKi {
     // ========================================================================
   public:
     // ========================================================================
-    bool ascending() const { return m_ascending; }
-    bool all() const { return m_N < 0; }
-    int  N() const { return m_N; }
-    int  n() const { return m_N; }
+    [[nodiscard]] bool ascending() const { return m_ascending; }
+    [[nodiscard]] bool all() const { return m_N < 0; }
+    [[nodiscard]] int  N() const { return m_N; }
+    [[nodiscard]] int  n() const { return m_N; }
     // ========== =============================================================
   private:
     // ========================================================================
@@ -128,17 +128,13 @@ namespace LoKi {
 } //                                                      end of namespace LoKi
 // ============================================================================
 //                                                                      The END
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    // Dump as C++ objects
-    GAUDI_API std::string toCpp( const LoKi::FirstN& f );
-    GAUDI_API std::string toCpp( const LoKi::Sort& s );
-    GAUDI_API std::string toCpp( const LoKi::Reverse& r );
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  // Dump as C++ objects
+  GAUDI_API std::string toCpp( const LoKi::FirstN& f );
+  GAUDI_API std::string toCpp( const LoKi::Sort& s );
+  GAUDI_API std::string toCpp( const LoKi::Reverse& r );
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 #endif // LOKI_FIRSTN_H

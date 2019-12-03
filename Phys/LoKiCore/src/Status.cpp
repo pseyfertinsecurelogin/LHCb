@@ -66,12 +66,12 @@ bool LoKi::Status::Check::operator()() const {
 // ============================================================================
 void LoKi::Status::Check::getTool() const {
   ILoKiSvc* l = lokiSvc();
-  Assert( 0 != l, "ILoKiSvc* points to NULL!" );
+  Assert( nullptr != l, "ILoKiSvc* points to NULL!" );
   SmartIF<IToolSvc> tsvc( l );
   Assert( !( !tsvc ), "IToolSvc* points to NULL!" );
   // aquire tool
-  ICheckTool*       ctool  = 0;
-  const IInterface* parent = 0;
+  ICheckTool*       ctool  = nullptr;
+  const IInterface* parent = nullptr;
   StatusCode        sc     = tsvc->retrieveTool( m_nickname, ctool, parent, true );
   Assert( sc.isSuccess(), "Unable to acquire the tool '" + m_nickname + "'", sc );
   m_tool = ctool;
@@ -127,12 +127,12 @@ std::ostream& LoKi::Status::Accept::fillStream( std::ostream& s ) const {
 // ============================================================================
 void LoKi::Status::Accept::getTool() const {
   ILoKiSvc* l = lokiSvc();
-  Assert( 0 != l, "ILoKiSvc* points to NULL!" );
+  Assert( nullptr != l, "ILoKiSvc* points to NULL!" );
   SmartIF<IToolSvc> tsvc( l );
   Assert( !( !tsvc ), "IToolSvc* points to NULL!" );
   // aquire tool
-  IAccept*          ctool  = 0;
-  const IInterface* parent = 0;
+  IAccept*          ctool  = nullptr;
+  const IInterface* parent = nullptr;
   StatusCode        sc     = tsvc->retrieveTool( m_nickname, ctool, parent, true );
   Assert( sc.isSuccess(), "Unable to aquire the tool '" + m_nickname + "'", sc );
   m_tool = ctool;

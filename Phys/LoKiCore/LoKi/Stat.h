@@ -15,6 +15,7 @@
 // Include files
 // ============================================================================
 #include <numeric>
+#include <utility>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -96,17 +97,17 @@ namespace LoKi {
     public:
       // ======================================================================
       /// pointer to member function
-      typedef double ( StatEntity::*PMF )() const;
+      using PMF = double ( StatEntity::* )() const;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the function
-      Stat( PMF pmf, LoKi::FunctorFromFunctor<TYPE, double> fun, const std::string& nam )
-          : LoKi::Functors::Sum<TYPE>( std::move( fun ) ), m_pmf( pmf ), m_nam( nam ) {}
+      Stat( PMF pmf, LoKi::FunctorFromFunctor<TYPE, double> fun, std::string nam )
+          : LoKi::Functors::Sum<TYPE>( std::move( fun ) ), m_pmf( pmf ), m_nam( std::move( nam ) ) {}
       /// constructor from the function and  predicate
       Stat( PMF pmf, LoKi::FunctorFromFunctor<TYPE, double> fun, LoKi::FunctorFromFunctor<TYPE, bool> cut,
-            const std::string& nam )
-          : LoKi::Functors::Sum<TYPE>( std::move( fun ), std::move( cut ) ), m_pmf( pmf ), m_nam( nam ) {}
+            std::string nam )
+          : LoKi::Functors::Sum<TYPE>( std::move( fun ), std::move( cut ) ), m_pmf( pmf ), m_nam( std::move( nam ) ) {}
       /// MANDATORY: clone method ("virtual constructor")
       Stat* clone() const override { return new Stat( *this ); }
       /// MANDATORY: the only one essential method:
@@ -119,7 +120,7 @@ namespace LoKi {
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override { return this->_print_( s, this->m_nam, 0 ); }
       /// print as C++
-      std::string toCpp() const override {
+      [[nodiscard]] std::string toCpp() const override {
         std::string s = "LoKi::" + this->m_nam + "( " + this->m_fun.toCpp();
         if ( this->m_cut ) s += ", " + this->m_cut->toCpp();
         return s += ") ";

@@ -57,8 +57,8 @@ namespace LoKi {
   //
   class GAUDI_API StrKeep {
   public:
-    StrKeep( const std::string& data );
-    const std::string& data() const { return m_data; }
+    StrKeep( std::string data );
+    [[nodiscard]] const std::string& data() const { return m_data; }
 
   private:
     std::string m_data;
@@ -89,7 +89,6 @@ struct IDVAlgorithm;
 class GaudiAlgorithm;
 // ============================================================================
 namespace Gaudi {
-  // ==========================================================================
   namespace Utils {
     // ========================================================================
     GAUDI_API std::string toCpp( const LoKi::AuxFunBase& o );
@@ -120,11 +119,9 @@ namespace Gaudi {
     GAUDI_API std::string toCpp( const GaudiAlgorithm* /* a */ );
     // ========================================================================
   } // namespace Utils
-  // ==========================================================================
 } // namespace Gaudi
 // ============================================================================
 namespace Gaudi {
-  // ==========================================================================
   namespace Utils {
     // ========================================================================
     // strings and chars
@@ -210,7 +207,6 @@ namespace Gaudi {
     }
     // ========================================================================
   } // namespace Utils
-  // ==========================================================================
 } // namespace Gaudi
 // ============================================================================
 //                                                                      The END

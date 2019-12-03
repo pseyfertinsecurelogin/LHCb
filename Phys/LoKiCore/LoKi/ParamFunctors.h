@@ -39,7 +39,6 @@
  *
  */
 namespace LoKi {
-  // ==========================================================================
   namespace Parameters {
     // ========================================================================
     /** @class ParamBase LoKi/ParamFunctors.h
@@ -58,9 +57,9 @@ namespace LoKi {
       /** constructor from Param-object
        *  @param property the property description
        */
-      ParamBase( const LoKi::Param& property );
+      ParamBase( LoKi::Param property );
       /// virtual destructor
-      virtual ~ParamBase() = default; // virtual destructor
+      ~ParamBase() override = default; // virtual destructor
       // ======================================================================
     protected:
       // ======================================================================
@@ -109,7 +108,6 @@ namespace LoKi {
     };
     // ========================================================================
   } // namespace Parameters
-  // ==========================================================================
 } // namespace LoKi
 // ============================================================================
 //                                                                      The END

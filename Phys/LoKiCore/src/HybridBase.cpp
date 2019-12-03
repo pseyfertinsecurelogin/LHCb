@@ -144,7 +144,8 @@ LoKi::Hybrid::Base::Base( const std::string& type, const std::string& name, cons
   //
   m_cppname = this->name();
   if ( boost::algorithm::starts_with( m_cppname, "ToolSvc." ) ) { m_cppname.erase( 0, 8 ); }
-  std::replace_if( m_cppname.begin(), m_cppname.end(), []( const char& c ) { return c == '.' || c == ' '; }, '_' );
+  std::replace_if(
+      m_cppname.begin(), m_cppname.end(), []( const char& c ) { return c == '.' || c == ' '; }, '_' );
   boost::algorithm::replace_all( m_cppname, "::", "__" );
   m_cppname.insert( 0, "FUNCTORS_" );
   //
@@ -613,7 +614,7 @@ void LoKi::Hybrid::Base::writeCpp() const {
 // build the universal context
 LoKi::Context LoKi::Hybrid::Base::make_context() const {
   const IAlgContextSvc* cntx = svc<IAlgContextSvc>( "AlgContextSvc", true );
-  if ( nullptr == cntx ) {
+  if ( !cntx ) {
     Error( "Can't get the context service!" ).ignore();
     return LoKi::Context();
   }

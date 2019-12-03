@@ -89,7 +89,7 @@ namespace Decays {
     private:
       // ======================================================================
       /// the default constructor is disabled
-      Marked_(); // no default constructor
+      Marked_() = delete; // no default constructor
       // ======================================================================
     private:
       // ======================================================================
@@ -111,9 +111,9 @@ namespace Decays {
     private:
       // ======================================================================
       /// get the actual argument type form the base
-      typedef typename Decays::iTree_<PARTICLE>::argument argument;
+      using argument = typename Decays::iTree_<PARTICLE>::argument;
       /// get the actual collection type form the base
-      typedef typename Decays::iTree_<PARTICLE>::Collection Collection;
+      using Collection = typename Decays::iTree_<PARTICLE>::Collection;
       // ======================================================================
     public:
       // ======================================================================
@@ -124,7 +124,7 @@ namespace Decays {
       /// MANDATORY: the printout
       std::ostream& fillStream( std::ostream& s ) const override { return s << " X "; }
       /// Check the validity
-      bool valid() const override { return true; }
+      [[nodiscard]] bool valid() const override { return true; }
       /// validate it
       StatusCode validate( const LHCb::IParticlePropertySvc* /* svc */ ) const override {
         return StatusCode( StatusCode::SUCCESS, true );
@@ -134,7 +134,7 @@ namespace Decays {
       /// collect the marked elements
       size_t collect( Collection& /* output */ ) const override { return 0; }
       /// has marked elements in the tree ?
-      bool marked() const override { return false; }
+      [[nodiscard]] bool marked() const override { return false; }
       // ======================================================================
     };
     // ========================================================================
@@ -148,7 +148,7 @@ namespace Decays {
     private:
       // ======================================================================
       /// get the actual argument type form the base
-      typedef typename Decays::iTree_<PARTICLE>::argument argument;
+      using argument = typename Decays::iTree_<PARTICLE>::argument;
       // ======================================================================
     public:
       // ======================================================================
@@ -171,9 +171,9 @@ namespace Decays {
     private:
       // ======================================================================
       /// get the actual argument type form the base
-      typedef typename Decays::iTree_<PARTICLE>::argument argument;
+      using argument = typename Decays::iTree_<PARTICLE>::argument;
       /// get the actual collection type form the base
-      typedef typename Decays::iTree_<PARTICLE>::Collection Collection;
+      using Collection = typename Decays::iTree_<PARTICLE>::Collection;
       // ======================================================================
     public:
       // ======================================================================
@@ -186,7 +186,7 @@ namespace Decays {
       /// MANDATORY: the printout
       std::ostream& fillStream( std::ostream& s ) const override { return s << " <INVALID> "; }
       /// Check the validity
-      bool valid() const override { return false; }
+      [[nodiscard]] bool valid() const override { return false; }
       /// validate it
       StatusCode validate( const LHCb::IParticlePropertySvc* /* svc */ ) const override {
         return StatusCode( StatusCode::FAILURE, true );
@@ -196,7 +196,7 @@ namespace Decays {
       /// collect the marked elements
       size_t collect( Collection& /* output */ ) const override { return 0; }
       /// has marked elements in the tree ?
-      bool marked() const override { return false; }
+      [[nodiscard]] bool marked() const override { return false; }
       // ======================================================================
     };
     // ========================================================================
@@ -210,9 +210,9 @@ namespace Decays {
     private:
       // ======================================================================
       /// get the actual argument type form the base
-      typedef typename Decays::iTree_<PARTICLE>::argument argument;
+      using argument = typename Decays::iTree_<PARTICLE>::argument;
       /// get the actual collection type form the base
-      typedef typename Decays::iTree_<PARTICLE>::Collection Collection;
+      using Collection = typename Decays::iTree_<PARTICLE>::Collection;
       // ======================================================================
     public:
       // ======================================================================
@@ -230,7 +230,7 @@ namespace Decays {
       /// MANDATORY: the printout
       std::ostream& fillStream( std::ostream& s ) const override;
       /// Check the validity
-      bool valid() const override;
+      [[nodiscard]] bool valid() const override;
       /// validate it
       StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       /// reset the collection cache
@@ -238,7 +238,7 @@ namespace Decays {
       /// collect the marked elements
       size_t collect( typename Decays::iTree_<PARTICLE>::Collection& /* output */ ) const override { return 0; }
       /// has marked elements in the tree ?
-      bool marked() const override { return false; }
+      [[nodiscard]] bool marked() const override { return false; }
       // ======================================================================
     private:
       // ======================================================================
@@ -264,12 +264,12 @@ namespace Decays {
     public:
       // ======================================================================
       /// invalid class
-      typedef Decays::Trees::Invalid_<PARTICLE> Invalid;
+      using Invalid = Decays::Trees::Invalid_<PARTICLE>;
       // ======================================================================
     public:
       // ======================================================================
       /// the default constructor   (Assign invalid ID)
-      _Tree_() : m_tree( Invalid() ), m_id( 0 ) {}
+      _Tree_() : m_tree( Invalid() ) {}
       /// the constructor from the tree (Assign unique ID)
       _Tree_( const Decays::iTree_<PARTICLE>& tree ) : m_tree( tree ), m_id( 0 ) { m_id = getID(); }
       /// the constructor from the tree (Assign unique ID)
@@ -286,7 +286,7 @@ namespace Decays {
       /// the main method
       inline bool operator()( typename Decays::iTree_<PARTICLE>::argument p ) const { return m_tree.tree( p ); }
       // valid ?
-      inline bool valid() const { return m_tree.tree().valid(); }
+      [[nodiscard]] inline bool valid() const { return m_tree.tree().valid(); }
       // validate
       inline StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const {
         return m_tree.tree().validate( svc );
@@ -300,7 +300,7 @@ namespace Decays {
       /// the specific printout
       inline std::ostream& fillStream( std::ostream& s ) const { return m_tree.fillStream( s ); }
       /// has marked elements in the tree ?
-      inline bool marked() const { return m_tree.marked(); }
+      [[nodiscard]] inline bool marked() const { return m_tree.marked(); }
       // ======================================================================
     public:
       // ======================================================================
@@ -365,7 +365,7 @@ namespace Decays {
       Decays::Tree_<PARTICLE> m_tree; // the actual tree for matching
       // ======================================================================
       /// own unique ID
-      size_t m_id; // own unique ID
+      size_t m_id{0}; // own unique ID
       // ======================================================================
     private:
       // ======================================================================
@@ -419,14 +419,14 @@ namespace Decays {
   public:
     // =======================================================================
     /// the element type
-    typedef Decays::Trees::_Tree_<PARTICLE> _Tree_;
-    typedef Decays::Tree_<PARTICLE>         Tree;
-    typedef Decays::iTree_<PARTICLE>        iTree;
+    using _Tree_ = Decays::Trees::_Tree_<PARTICLE>;
+    using Tree   = Decays::Tree_<PARTICLE>;
+    using iTree  = Decays::iTree_<PARTICLE>;
     /// the actual container
-    typedef std::vector<_Tree_>              Trees_;
-    typedef typename Trees_::iterator        iterator;
-    typedef typename Trees_::const_iterator  const_iterator;
-    typedef typename Trees_::const_reference const_reference;
+    using Trees_          = std::vector<_Tree_>;
+    using iterator        = typename Trees_::iterator;
+    using const_iterator  = typename Trees_::const_iterator;
+    using const_reference = typename Trees_::const_reference;
     // =======================================================================
   public:
     // =======================================================================
@@ -494,13 +494,13 @@ namespace Decays {
     // ========================================================================
   public:
     // ========================================================================
-    const_iterator begin() const { return m_trees.begin(); }
-    const_iterator end() const { return m_trees.end(); }
-    iterator       begin() { return m_trees.begin(); }
-    iterator       end() { return m_trees.end(); }
-    bool           empty() const { return m_trees.empty(); }
-    size_t         size() const { return m_trees.size(); }
-    void           clear() { m_trees.clear(); }
+    const_iterator       begin() const { return m_trees.begin(); }
+    const_iterator       end() const { return m_trees.end(); }
+    iterator             begin() { return m_trees.begin(); }
+    iterator             end() { return m_trees.end(); }
+    [[nodiscard]] bool   empty() const { return m_trees.empty(); }
+    [[nodiscard]] size_t size() const { return m_trees.size(); }
+    void                 clear() { m_trees.clear(); }
     // ========================================================================
   public:
     // ========================================================================
@@ -537,12 +537,12 @@ namespace Decays {
     public:
       // ======================================================================
       /// the actual type for subtrees
-      typedef Decays::TreeList_<PARTICLE> TreeList;
+      using TreeList = Decays::TreeList_<PARTICLE>;
       // ======================================================================
     protected:
       // ======================================================================
-      typedef typename TreeList::iterator       iterator;
-      typedef typename TreeList::const_iterator const_iterator;
+      using iterator       = typename TreeList::iterator;
+      using const_iterator = typename TreeList::const_iterator;
       // ======================================================================
     protected:
       // ======================================================================
@@ -605,17 +605,17 @@ namespace Decays {
     protected:
       // =====================================================================
       /// base class
-      typedef typename Decays::Trees::Op_<PARTICLE> _Base;
+      using _Base = typename Decays::Trees::Op_<PARTICLE>;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual type for subtrees
-      typedef typename _Base::TreeList TreeList;
+      using TreeList = typename _Base::TreeList;
       // ======================================================================
     protected:
       // ======================================================================
-      typedef typename _Base::iterator       iterator;
-      typedef typename _Base::const_iterator const_iterator;
+      using iterator       = typename _Base::iterator;
+      using const_iterator = typename _Base::const_iterator;
       // ======================================================================
     public:
       // ======================================================================
@@ -673,7 +673,7 @@ namespace Decays {
     private:
       // ======================================================================
       /// the default constructor is disabled
-      And_(); // the default constructor is disabled
+      And_() = delete; // the default constructor is disabled
       // ======================================================================
     };
     // ========================================================================
@@ -687,17 +687,17 @@ namespace Decays {
     protected:
       // ======================================================================
       /// base class
-      typedef typename Decays::Trees::Op_<PARTICLE> _Base;
+      using _Base = typename Decays::Trees::Op_<PARTICLE>;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual type for subtrees
-      typedef typename _Base::TreeList TreeList;
+      using TreeList = typename _Base::TreeList;
       // ======================================================================
     protected:
       // ======================================================================
-      typedef typename _Base::iterator       iterator;
-      typedef typename _Base::const_iterator const_iterator;
+      using iterator       = typename _Base::iterator;
+      using const_iterator = typename _Base::const_iterator;
       // ======================================================================
     public:
       // ======================================================================
@@ -755,7 +755,7 @@ namespace Decays {
     private:
       // ======================================================================
       /// the default constructor is disabled
-      Or_(); // the default constructor is disabled
+      Or_() = delete; // the default constructor is disabled
       // ======================================================================
     };
     // ========================================================================
@@ -769,17 +769,17 @@ namespace Decays {
     protected:
       // =====================================================================
       /// base class
-      typedef typename Decays::Trees::Or_<PARTICLE> _Base;
+      using _Base = typename Decays::Trees::Or_<PARTICLE>;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual type for subtrees
-      typedef typename _Base::TreeList TreeList;
+      using TreeList = typename _Base::TreeList;
       // ======================================================================
     protected:
       // ======================================================================
-      typedef typename _Base::iterator       iterator;
-      typedef typename _Base::const_iterator const_iterator;
+      using iterator       = typename _Base::iterator;
+      using const_iterator = typename _Base::const_iterator;
       // ======================================================================
     public:
       // ======================================================================
@@ -833,7 +833,7 @@ namespace Decays {
     private:
       // ======================================================================
       /// the default constructor is disabled
-      List_(); // the default constructor is disabled
+      List_() = delete; // the default constructor is disabled
       // ======================================================================
     };
     // ========================================================================
@@ -875,7 +875,7 @@ namespace Decays {
       /// MANDATORY: the specific printout
       std::ostream& fillStream( std::ostream& s ) const override { return s << " ~(" << m_tree << ") "; }
       /// MANDATORY: check the validness
-      bool valid() const override { return m_tree.valid(); }
+      [[nodiscard]] bool valid() const override { return m_tree.valid(); }
       /// MANDATORY: the proper validation of the tree
       StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override { return m_tree.validate( svc ); }
       /// MANDATORY: collect all marked elements
@@ -883,12 +883,12 @@ namespace Decays {
       /// reset the collection cache
       void reset() const override { m_tree.reset(); }
       /// has marked elements in the tree ?
-      bool marked() const override { return false; }
+      [[nodiscard]] bool marked() const override { return false; }
       // ======================================================================
     private:
       // ======================================================================
       /// the default constructor is disabled
-      Not_(); // the default constructor is disabled
+      Not_() = delete; // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -991,25 +991,25 @@ namespace Decays {
     struct Types_ {
       // ======================================================================
       /// the actual particle type
-      typedef PARTICLE Type;
+      using Type = PARTICLE;
       /// the actual particle type
-      typedef PARTICLE Particle;
+      using Particle = PARTICLE;
       /// the actual type of interface
-      typedef Decays::iTree_<PARTICLE> iTree;
+      using iTree = Decays::iTree_<PARTICLE>;
       /// the actual type of assignable
-      typedef Decays::Tree_<PARTICLE> Tree;
+      using Tree = Decays::Tree_<PARTICLE>;
       /// the actual type of vector of assignables
-      typedef Decays::TreeList_<PARTICLE> TreeList;
+      using TreeList = Decays::TreeList_<PARTICLE>;
       // the actual type of "Any"
-      typedef Decays::Trees::Any_<PARTICLE> Any;
+      using Any = Decays::Trees::Any_<PARTICLE>;
       /// the actual type of vector of assignables
-      typedef Decays::Trees::Invalid_<PARTICLE> Invalid;
+      using Invalid = Decays::Trees::Invalid_<PARTICLE>;
       // OR
-      typedef Decays::Trees::Or_<PARTICLE> Or;
+      using Or = Decays::Trees::Or_<PARTICLE>;
       // AND
-      typedef Decays::Trees::And_<PARTICLE> And;
+      using And = Decays::Trees::And_<PARTICLE>;
       // LIST
-      typedef Decays::Trees::List_<PARTICLE> List;
+      using List = Decays::Trees::List_<PARTICLE>;
       // ======================================================================
     };
     // ========================================================================

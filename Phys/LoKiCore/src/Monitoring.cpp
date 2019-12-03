@@ -40,24 +40,24 @@
 // ============================================================================
 StatEntity* LoKi::Monitoring::getCounter( IStatSvc* csvc, const std::string& name ) {
   //
-  if ( 0 == csvc ) // try to get it from LoKi
+  if ( !csvc ) // try to get it from LoKi
   {
     const LoKi::Services& svcs = LoKi::Services::instance();
     csvc                       = svcs.statSvc();
   }
   //
-  if ( 0 == csvc ) {
+  if ( !csvc ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid IStatSvc" );
-    return 0; // RETURN
+    return nullptr; // RETURN
   }
   // get the counter
   Stat stat( csvc, name );
   //
   const StatEntity* counter = stat.entity();
   //
-  if ( 0 == counter ) {
+  if ( !counter ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid StatEntity" );
-    return 0; // RETURN
+    return nullptr; // RETURN
   }
   //
   LoKi::Report::Print( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + ")" +
@@ -75,10 +75,10 @@ StatEntity* LoKi::Monitoring::getCounter( IStatSvc* csvc, const std::string& nam
  */
 // ============================================================================
 StatEntity* LoKi::Monitoring::getCounter( GaudiAlgorithm* alg, const std::string& name ) {
-  if ( 0 == alg ) {
+  if ( !alg ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) +
                          "): invalid GaudiAlgorithm" );
-    return 0;
+    return nullptr;
   }
   // get the counter
   StatEntity* counter = &( alg->counter( name ) );
@@ -97,9 +97,9 @@ StatEntity* LoKi::Monitoring::getCounter( GaudiAlgorithm* alg, const std::string
  */
 // ============================================================================
 StatEntity* LoKi::Monitoring::getCounter( GaudiTool* tool, const std::string& name ) {
-  if ( 0 == tool ) {
+  if ( !tool ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid GaudiTool" );
-    return 0;
+    return nullptr;
   }
   // get the counter
   StatEntity* counter = &( tool->counter( name ) );
@@ -118,16 +118,16 @@ StatEntity* LoKi::Monitoring::getCounter( GaudiTool* tool, const std::string& na
  */
 // ============================================================================
 StatEntity* LoKi::Monitoring::getCounter( const IAlgContextSvc* csvc, const std::string& name ) {
-  if ( 0 == csvc ) // try to get it for LoKi
+  if ( !csvc ) // try to get it for LoKi
   {
     const LoKi::Services& svcs = LoKi::Services::instance();
     csvc                       = svcs.contextSvc();
   }
   //
-  if ( 0 == csvc ) {
+  if ( !csvc ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) +
                          "): invalid IAlgContextSvc" );
-    return 0; // RETURN
+    return nullptr; // RETURN
   }
   // get GaudiAlgorithm for the context:
   GaudiAlgorithm* alg = Gaudi::Utils::getGaudiAlg( csvc );

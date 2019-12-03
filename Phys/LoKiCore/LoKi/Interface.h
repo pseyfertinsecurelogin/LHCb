@@ -124,7 +124,7 @@ namespace LoKi {
   public:
     // ========================================================================
     /// valid pointer?
-    bool validPointer() const { return nullptr != m_object; }
+    [[nodiscard]] bool validPointer() const { return nullptr != m_object; }
     /// invalid ?
     bool operator!() const { return !validPointer(); }
     /// valid?

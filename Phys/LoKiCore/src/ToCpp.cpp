@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <utility>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -36,7 +37,7 @@
 #include "LoKi/KinTypes.h"
 #include "LoKi/ToCpp.h"
 // ============================================================================
-LoKi::StrKeep::StrKeep( const std::string& data ) : m_data( data ) {}
+LoKi::StrKeep::StrKeep( std::string data ) : m_data( std::move( data ) ) {}
 // ============================================================================
 std::string Gaudi::Utils::toCpp( const LoKi::StrKeep& s ) { return s.data(); }
 // ============================================================================

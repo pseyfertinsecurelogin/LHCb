@@ -81,7 +81,7 @@ namespace {
         m_props.push_back( std::make_unique<prop_t>( std::get<0>( t ), std::get<1>( t ) ) );
     }
     void check_veto() { // avoid changing properties expliclty present in the JOS...
-      const auto*props = m_jos->getProperties( m_name );
+      const auto* props = m_jos->getProperties( m_name );
       if ( !props ) return;
       for ( const auto& i : *props ) {
         auto j = std::find_if( std::begin( m_props ), std::end( m_props ),

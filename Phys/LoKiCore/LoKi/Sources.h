@@ -97,8 +97,8 @@ namespace LoKi {
     template <class TYPE>
     class Counter : public LoKi::Functor<void, double> {
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Source _Source;
-      typedef typename LoKi::Assignable_t<_Source>       Source_;
+      using _Source = typename LoKi::BasicFunctors<TYPE>::Source;
+      using Source_ = typename LoKi::Assignable_t<_Source>;
       // ======================================================================
     public:
       // ======================================================================

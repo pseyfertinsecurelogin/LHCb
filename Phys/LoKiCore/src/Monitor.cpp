@@ -16,6 +16,8 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <utility>
+
 #include "GaudiKernel/HistoDef.h"
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
@@ -38,30 +40,30 @@
 // ============================================================================
 // constructors for Histogram service
 // ============================================================================
-LoKi::Histo::Histo() : m_case( true ), m_valid( false ), m_hsvc( 0 ), m_cntx( 0 ) {}
+LoKi::Histo::Histo() : m_valid( false ) {}
 // ============================================================================
-LoKi::Histo::Histo( const std::string& dir, const std::string& id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc )
-    : m_path( dir ), m_id( id ), m_hdef( hdef ), m_case( true ), m_valid( true ), m_hsvc( svc ), m_cntx( 0 ) {}
+LoKi::Histo::Histo( std::string dir, const std::string& id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc )
+    : m_path( std::move( dir ) ), m_id( id ), m_hdef( std::move( hdef ) ), m_hsvc( svc ) {}
 // ============================================================================
-LoKi::Histo::Histo( const std::string& dir, const int id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc )
-    : m_path( dir ), m_id( id ), m_hdef( hdef ), m_case( true ), m_valid( true ), m_hsvc( svc ), m_cntx( 0 ) {}
+LoKi::Histo::Histo( std::string dir, const int id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc )
+    : m_path( std::move( dir ) ), m_id( id ), m_hdef( std::move( hdef ) ), m_hsvc( svc ) {}
 // ============================================================================
-LoKi::Histo::Histo( const std::string& dir, const GaudiAlg::ID& id, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc )
-    : m_path( dir ), m_id( id ), m_hdef( hdef ), m_case( true ), m_valid( true ), m_hsvc( svc ), m_cntx( 0 ) {}
+LoKi::Histo::Histo( std::string dir, const GaudiAlg::ID& id, Gaudi::Histo1DDef hdef, IHistogramSvc* svc )
+    : m_path( std::move( dir ) ), m_id( id ), m_hdef( std::move( hdef ) ), m_hsvc( svc ) {}
 // ============================================================================
-LoKi::Histo::Histo( const std::string& path, const Gaudi::Histo1DDef& hdef, IHistogramSvc* svc )
-    : m_path( path ), m_hdef( hdef ), m_case( true ), m_valid( true ), m_hsvc( svc ), m_cntx( 0 ) {}
+LoKi::Histo::Histo( std::string path, Gaudi::Histo1DDef hdef, IHistogramSvc* svc )
+    : m_path( std::move( path ) ), m_hdef( std::move( hdef ) ), m_hsvc( svc ) {}
 // ============================================================================
 // constructors for Context service
 // ============================================================================
-LoKi::Histo::Histo( const Gaudi::Histo1DDef& hdef, const std::string& id, IAlgContextSvc* svc )
-    : m_id( id ), m_hdef( hdef ), m_case( false ), m_valid( true ), m_hsvc( 0 ), m_cntx( svc ) {}
+LoKi::Histo::Histo( Gaudi::Histo1DDef hdef, const std::string& id, IAlgContextSvc* svc )
+    : m_id( id ), m_hdef( std::move( hdef ) ), m_case( false ), m_cntx( svc ) {}
 // ============================================================================
-LoKi::Histo::Histo( const Gaudi::Histo1DDef& hdef, const int id, IAlgContextSvc* svc )
-    : m_id( id ), m_hdef( hdef ), m_case( false ), m_valid( true ), m_hsvc( 0 ), m_cntx( svc ) {}
+LoKi::Histo::Histo( Gaudi::Histo1DDef hdef, const int id, IAlgContextSvc* svc )
+    : m_id( id ), m_hdef( std::move( hdef ) ), m_case( false ), m_cntx( svc ) {}
 // ============================================================================
-LoKi::Histo::Histo( const Gaudi::Histo1DDef& hdef, const GaudiAlg::ID& id, IAlgContextSvc* svc )
-    : m_id( id ), m_hdef( hdef ), m_case( false ), m_valid( true ), m_hsvc( 0 ), m_cntx( svc ) {}
+LoKi::Histo::Histo( Gaudi::Histo1DDef hdef, const GaudiAlg::ID& id, IAlgContextSvc* svc )
+    : m_id( id ), m_hdef( std::move( hdef ) ), m_case( false ), m_cntx( svc ) {}
 // ============================================================================
 std::string Gaudi::Utils::toCpp( const GaudiAlg::ID& o ) {
   return "GaudiAlg::ID(" + ( o.numeric() ? toCpp( o.numericID() ) : o.literal() ? toCpp( o.literalID() ) : "" ) + ") ";
@@ -92,11 +94,11 @@ std::string Gaudi::Utils::toCpp( const LoKi::Histo& o ) {
   return s + ")";
 }
 // ============================================================================
-LoKi::CounterDef::CounterDef( const std::string& group, const std::string& name, const LoKi::Monitoring::Flag flag )
-    : m_group( group ), m_name( name ), m_flag( flag ) {}
+LoKi::CounterDef::CounterDef( std::string group, std::string name, const LoKi::Monitoring::Flag flag )
+    : m_group( std::move( group ) ), m_name( std::move( name ) ), m_flag( flag ) {}
 // ============================================================================
-LoKi::CounterDef::CounterDef( const std::string& name, const LoKi::Monitoring::Flag flag )
-    : m_name( name ), m_flag( flag ) {}
+LoKi::CounterDef::CounterDef( std::string name, const LoKi::Monitoring::Flag flag )
+    : m_name( std::move( name ) ), m_flag( flag ) {}
 // ============================================================================
 std::string Gaudi::Utils::toCpp( const LoKi::CounterDef& o ) {
   //

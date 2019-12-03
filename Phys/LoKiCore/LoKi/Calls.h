@@ -36,7 +36,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
 namespace LoKi {
-  // ==========================================================================
   namespace Dicts {
     // ========================================================================
     /** @class FunCalls LoKi/Calls.h
@@ -62,9 +61,9 @@ namespace LoKi {
       // ======================================================================
     private:
       // ======================================================================
-      typedef TYPE                                                Type;
-      typedef typename LoKi::BasicFunctors<const Type*>::Function Fun;
-      typedef LoKi::details::result_t<Fun>                        result_type;
+      using Type        = TYPE;
+      using Fun         = typename LoKi::BasicFunctors<const Type*>::Function;
+      using result_type = LoKi::details::result_t<Fun>;
       // ======================================================================
     public:
       // ======================================================================
@@ -111,9 +110,9 @@ namespace LoKi {
     class CutCalls {
     private:
       // ======================================================================
-      typedef TYPE                                    Type;
-      typedef typename LoKi::Predicate_t<const Type*> Fun;
-      typedef LoKi::details::result_t<Fun>            result_type;
+      using Type        = TYPE;
+      using Fun         = typename LoKi::Predicate_t<const Type*>;
+      using result_type = LoKi::details::result_t<Fun>;
       // ======================================================================
     public:
       // ======================================================================
@@ -132,8 +131,7 @@ namespace LoKi {
     };
     // ========================================================================
   } // namespace Dicts
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

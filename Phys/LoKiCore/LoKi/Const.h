@@ -37,17 +37,17 @@ namespace LoKi {
    */
   template <class TYPE>
   struct Const {
-    typedef std::add_const_t<TYPE> Value;
+    using Value = std::add_const_t<TYPE>;
   };
   // ==========================================================================
   template <class TYPE>
   struct Const<TYPE*> {
-    typedef std::add_const_t<TYPE>* const Value;
+    using Value = std::add_const_t<TYPE>* const;
   };
   // ==========================================================================
   template <class TYPE>
   struct Const<TYPE&> {
-    typedef std::add_const_t<TYPE> const& Value;
+    using Value = const std::add_const_t<TYPE>&;
   };
   // ==========================================================================
   /** @struct NonConst LoKi/Const.h
@@ -57,17 +57,17 @@ namespace LoKi {
    */
   template <class TYPE>
   struct NonConst {
-    typedef std::remove_const_t<TYPE> Value;
+    using Value = std::remove_const_t<TYPE>;
   };
   // ==========================================================================
   template <class TYPE>
   struct NonConst<TYPE*> {
-    typedef std::remove_const_t<TYPE>* Value;
+    using Value = std::remove_const_t<TYPE>*;
   };
   // ==========================================================================
   template <class TYPE>
   struct NonConst<TYPE&> {
-    typedef std::remove_const_t<TYPE>& Value;
+    using Value = std::remove_const_t<TYPE>&;
   };
   // ==========================================================================
 } //                                                      end of namespace LoKi

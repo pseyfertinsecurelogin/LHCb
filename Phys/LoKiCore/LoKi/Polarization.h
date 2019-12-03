@@ -81,7 +81,7 @@ namespace LoKi::Kinematics::Polarization {
    *       University of Wisconsin Press, Madison WI U.S.A. 1971.
    */
   // using UseMadisonConvention = Gaudi::tagged_bool<struct UseMadisonConvention_tag>;
-  typedef bool UseMadisonConvention;
+  using UseMadisonConvention = bool;
   // =====================================================================
   /** get the three axes for polarization frame
    *  @param f  the frame

@@ -17,6 +17,7 @@
 // ============================================================================
 #include <mutex>
 #include <string>
+#include <utility>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -55,14 +56,14 @@ namespace LoKi {
   public:
     // ========================================================================
     /// constructor from the timer name
-    Timer( const std::string& name ) : m_name( name ) {}
+    Timer( std::string name ) : m_name( std::move( name ) ) {}
     /// destructor
     virtual ~Timer() = default; // destructor
     // ========================================================================
   public:
     // ========================================================================
     /// get the timer name
-    const std::string& name() const { return m_name; } // get the timer name
+    [[nodiscard]] const std::string& name() const { return m_name; } // get the timer name
     // ========================================================================
   private:
     // ========================================================================
@@ -88,8 +89,8 @@ namespace LoKi {
       Timer_( LoKi::FunctorFromFunctor<TYPE1, TYPE2> fun, ChronoEntity* timer )
           : m_fun( std::move( fun ) ), m_timer( timer ) {}
       /// constructor from functor&service&timer name
-      Timer_( LoKi::FunctorFromFunctor<TYPE1, TYPE2> fun, IChronoSvc* svc, const std::string& timer )
-          : m_fun( std::move( fun ) ), m_svc( svc ), m_tname( timer ) {
+      Timer_( LoKi::FunctorFromFunctor<TYPE1, TYPE2> fun, IChronoSvc* svc, std::string timer )
+          : m_fun( std::move( fun ) ), m_svc( svc ), m_tname( std::move( timer ) ) {
         if ( !m_svc && this->gaudi() ) {
           SmartIF<IChronoSvc> cs( this->lokiSvc().getObject() );
           m_svc = cs.get();
@@ -183,8 +184,8 @@ namespace LoKi {
       Timer_( LoKi::FunctorFromFunctor<void, TYPE2> fun, ChronoEntity* timer )
           : m_fun( std::move( fun ) ), m_timer( timer ) {}
       /// constructor from functor&service&timer name
-      Timer_( LoKi::FunctorFromFunctor<void, TYPE2> fun, IChronoSvc* svc, const std::string& timer )
-          : m_fun( std::move( fun ) ), m_svc( svc ), m_tname( timer ) {
+      Timer_( LoKi::FunctorFromFunctor<void, TYPE2> fun, IChronoSvc* svc, std::string timer )
+          : m_fun( std::move( fun ) ), m_svc( svc ), m_tname( std::move( timer ) ) {
         if ( !m_svc && this->gaudi() ) {
           SmartIF<IChronoSvc> cs( this->lokiSvc().getObject() );
           m_svc = cs.get();

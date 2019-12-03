@@ -53,7 +53,7 @@ namespace LoKi {
     private:
       // ======================================================================
       typedef LoKi::Functor<TYPE1, TYPE2> Fun_;
-      typedef typename Fun_::argument     argument;
+      using argument = typename Fun_::argument;
       // ======================================================================
     public:
       // ======================================================================
@@ -90,7 +90,7 @@ namespace LoKi {
       /// the functor
       LoKi::Assignable_t<Fun_> m_fun;
       /// right-action ?
-      bool m_right; // right action?
+      bool m_right{}; // right action?
       /// the stream
       std::ostream& m_stream; // the stream
       /// the dumper

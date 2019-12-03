@@ -395,7 +395,7 @@ namespace LoKi {
     public:
       // ======================================================================
       /// the base
-      typedef typename LoKi::BasicFunctors<TYPE>::Pipe uBase; //   the base
+      using uBase = typename LoKi::BasicFunctors<TYPE>::Pipe; //   the base
       // ======================================================================
     public:
       // ======================================================================
@@ -824,7 +824,7 @@ namespace LoKi {
           if ( r1.empty() ) { return r1; } // RETURN EMPTY
           auto r2 = f2( args... );
           if ( r2.empty() ) { return r2; } // RETURN EMPTY
-          LoKi::Operations::NoEmptyUnion _union;
+          LoKi::Operations::NoEmptyUnion _union{};
           return _union( r1, r2 );
         }
         static constexpr const char* name() { return "no_empty_union"; }
@@ -1155,8 +1155,8 @@ namespace LoKi {
       // ======================================================================
     public:
       // ======================================================================
-      int  N() const { return this->m_sort.N(); }
-      bool all() const { return this->m_sort.all(); }
+      [[nodiscard]] int  N() const { return this->m_sort.N(); }
+      [[nodiscard]] bool all() const { return this->m_sort.all(); }
       // ======================================================================
     protected:
       // ======================================================================

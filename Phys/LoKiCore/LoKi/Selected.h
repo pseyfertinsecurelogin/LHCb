@@ -51,17 +51,17 @@ namespace LoKi {
   public:
     // ========================================================================
     /// actual container type
-    typedef CONTAINER Container;
+    using Container = CONTAINER;
     /// underlying map
     typedef typename GaudiUtils::HashMap<std::string, Container> Map;
     /// return type
-    typedef typename Gaudi::NamedRange_<Container> Range;
+    using Range = typename Gaudi::NamedRange_<Container>;
     /// actual iterator type
-    typedef typename Range::iterator iterator;
+    using iterator = typename Range::iterator;
     /// own type
-    typedef Selected_<Container> _Self;
+    using _Self = Selected_<Container>;
     /// iterator type
-    typedef typename Map::const_iterator map_iterator;
+    using map_iterator = typename Map::const_iterator;
     // ========================================================================
   public:
     // ========================================================================

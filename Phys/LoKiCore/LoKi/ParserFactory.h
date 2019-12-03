@@ -67,12 +67,12 @@ namespace Decays {
     StatusCode factory( Decays::TreeList_<PARTICLE>& trees, const Decays::Parsers::Tree::Trees& parsed,
                         std::ostream& stream ) {
       // avoid long names
-      typedef Decays::Trees::Types_<PARTICLE> Types;
-      typedef typename Types::Tree            Tree;
-      typedef typename Types::Invalid         Invalid;
+      using Types   = Decays::Trees::Types_<PARTICLE>;
+      using Tree    = typename Types::Tree;
+      using Invalid = typename Types::Invalid;
 
       // loop over parsed trees
-      for ( Decays::Parsers::Tree::Trees::const_iterator it = parsed.begin(); parsed.end() != it; ++it ) {
+      for ( auto it = parsed.begin(); parsed.end() != it; ++it ) {
         // create the invalid tree
         Tree tree = Invalid();
         // parse the element of the list
@@ -96,13 +96,13 @@ namespace Decays {
     template <class PARTICLE>
     inline StatusCode factory( Decays::Tree_<PARTICLE>& tree, const Decays::Parsers::Tree& parsed,
                                std::ostream& stream ) {
-      typedef Decays::Trees::Types_<PARTICLE>  Types;
-      typedef typename Types::TreeList         TreeList;
-      typedef typename Types::Invalid          Invalid;
-      typedef typename Types::Or               Or;
-      typedef typename Types::And              And;
-      typedef Decays::Trees::Marked_<PARTICLE> Marked;
-      typedef Decays::Trees::Stable_<PARTICLE> Stable;
+      using Types    = Decays::Trees::Types_<PARTICLE>;
+      using TreeList = typename Types::TreeList;
+      using Invalid  = typename Types::Invalid;
+      using Or       = typename Types::Or;
+      using And      = typename Types::And;
+      using Marked   = Decays::Trees::Marked_<PARTICLE>;
+      using Stable   = Decays::Trees::Stable_<PARTICLE>;
 
       // invalidate the tree
       tree = Invalid();

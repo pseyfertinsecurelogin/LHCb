@@ -47,7 +47,6 @@
  */
 // ============================================================================
 namespace LoKi {
-  // ==========================================================================
   namespace Dicts {
     // ========================================================================
     /** @class FuncOps__
@@ -196,12 +195,12 @@ namespace LoKi {
     class FuncOps__<void> {
     protected:
       // ======================================================================
-      typedef LoKi::BasicFunctors<void>::Function               Func;
-      typedef LoKi::BasicFunctors<void>::Predicate              Cuts;
-      typedef LoKi::BasicFunctors<void>::FunctionFromFunction   Fun;
-      typedef LoKi::BasicFunctors<void>::PredicateFromPredicate Cut;
-      typedef LoKi::Parameters::Parameter                       PAR;
-      typedef LoKi::Param                                       Para;
+      using Func = LoKi::BasicFunctors<void>::Function;
+      using Cuts = LoKi::BasicFunctors<void>::Predicate;
+      using Fun  = LoKi::BasicFunctors<void>::FunctionFromFunction;
+      using Cut  = LoKi::BasicFunctors<void>::PredicateFromPredicate;
+      using PAR  = LoKi::Parameters::Parameter;
+      using Para = LoKi::Param;
       // ======================================================================
     public:
       // ======================================================================
@@ -314,10 +313,10 @@ namespace LoKi {
     class FuncOps_ : public FuncOps__<TYPE> {
     protected:
       // ======================================================================
-      typedef typename FuncOps__<TYPE>::Func Func;
-      typedef typename FuncOps__<TYPE>::Cuts Cuts;
-      typedef typename FuncOps__<TYPE>::Fun  Fun;
-      typedef typename FuncOps__<TYPE>::Cut  Cut;
+      using Func = typename FuncOps__<TYPE>::Func;
+      using Cuts = typename FuncOps__<TYPE>::Cuts;
+      using Fun  = typename FuncOps__<TYPE>::Fun;
+      using Cut  = typename FuncOps__<TYPE>::Cut;
       // ======================================================================
     public:
       // ======================================================================
@@ -484,10 +483,10 @@ namespace LoKi {
     class FuncOps : public FuncOps_<TYPE> {
     protected:
       // ======================================================================
-      typedef typename FuncOps_<TYPE>::Func Func;
-      typedef typename FuncOps_<TYPE>::Cuts Cuts;
-      typedef typename FuncOps_<TYPE>::Fun  Fun;
-      typedef typename FuncOps_<TYPE>::Cut  Cut;
+      using Func  = typename FuncOps_<TYPE>::Func;
+      using Cuts  = typename FuncOps_<TYPE>::Cuts;
+      using Fun   = typename FuncOps_<TYPE>::Fun;
+      using Cut   = typename FuncOps_<TYPE>::Cut;
       using TYPE2 = TYPE;
       // ======================================================================
     public:
@@ -631,10 +630,10 @@ namespace LoKi {
     class CutsOps_ {
     private:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Function               Func;
-      typedef typename LoKi::BasicFunctors<TYPE>::Predicate              Cuts;
-      typedef typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction   Fun;
-      typedef typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate Cut;
+      using Func = typename LoKi::BasicFunctors<TYPE>::Function;
+      using Cuts = typename LoKi::BasicFunctors<TYPE>::Predicate;
+      using Fun  = typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction;
+      using Cut  = typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate;
       // ======================================================================
     public:
       // ======================================================================
@@ -715,11 +714,11 @@ namespace LoKi {
     class CutsOps : public CutsOps_<TYPE> {
     private:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Function               Func;
-      typedef typename LoKi::BasicFunctors<TYPE>::Predicate              Cuts;
-      typedef typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction   Fun;
-      typedef typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate Cut;
-      typedef typename LoKi::BasicFunctors<TYPE2>::Pipe                  Pipe;
+      using Func = typename LoKi::BasicFunctors<TYPE>::Function;
+      using Cuts = typename LoKi::BasicFunctors<TYPE>::Predicate;
+      using Fun  = typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction;
+      using Cut  = typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate;
+      using Pipe = typename LoKi::BasicFunctors<TYPE2>::Pipe;
       // ======================================================================
     public:
       // ======================================================================
@@ -826,8 +825,8 @@ namespace LoKi {
     class MapsOps {
     private:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Map Map;
-      typedef LoKi::details::result_t<Map>            result_type;
+      using Map         = typename LoKi::BasicFunctors<TYPE>::Map;
+      using result_type = LoKi::details::result_t<Map>;
       // ======================================================================
     public:
       // ======================================================================
@@ -976,14 +975,14 @@ namespace LoKi {
     class PipeOps {
     private:
       // ======================================================================
-      using TYPE2 = TYPE;
-      typedef typename LoKi::BasicFunctors<TYPE>::Pipe       Pipe;
-      typedef typename LoKi::BasicFunctors<TYPE>::Map        Map;
-      typedef typename LoKi::BasicFunctors<TYPE>::FunVal     FunVal;
-      typedef typename LoKi::BasicFunctors<TYPE>::CutVal     CutVal;
-      typedef typename LoKi::BasicFunctors<TYPE2>::Function  Func;
-      typedef typename LoKi::BasicFunctors<TYPE2>::Predicate Cuts;
-      typedef LoKi::details::result_t<Pipe>                  result_type;
+      using TYPE2       = TYPE;
+      using Pipe        = typename LoKi::BasicFunctors<TYPE>::Pipe;
+      using Map         = typename LoKi::BasicFunctors<TYPE>::Map;
+      using FunVal      = typename LoKi::BasicFunctors<TYPE>::FunVal;
+      using CutVal      = typename LoKi::BasicFunctors<TYPE>::CutVal;
+      using Func        = typename LoKi::BasicFunctors<TYPE2>::Function;
+      using Cuts        = typename LoKi::BasicFunctors<TYPE2>::Predicate;
+      using result_type = LoKi::details::result_t<Pipe>;
       // ======================================================================
     public:
       // ======================================================================
@@ -1163,10 +1162,10 @@ namespace LoKi {
     class FunValOps : public FuncOps_<std::vector<TYPE>> {
     private:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::FunVal      FunVal;
-      typedef typename LoKi::BasicFunctors<double>::Function  Func;
-      typedef typename LoKi::BasicFunctors<double>::Predicate Cuts;
-      typedef LoKi::details::result_t<FunVal>                 result_type;
+      using FunVal      = typename LoKi::BasicFunctors<TYPE>::FunVal;
+      using Func        = typename LoKi::BasicFunctors<double>::Function;
+      using Cuts        = typename LoKi::BasicFunctors<double>::Predicate;
+      using result_type = LoKi::details::result_t<FunVal>;
       // ======================================================================
     public:
       // ======================================================================
@@ -1250,14 +1249,14 @@ namespace LoKi {
     private:
       using TYPE2 = TYPE;
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Source     Source;
-      typedef typename LoKi::BasicFunctors<TYPE>::Pipe       Pipe;
-      typedef typename LoKi::BasicFunctors<TYPE>::Map        Map;
-      typedef typename LoKi::BasicFunctors<TYPE>::FunVal     FunVal;
-      typedef typename LoKi::BasicFunctors<TYPE>::CutVal     CutVal;
-      typedef typename LoKi::BasicFunctors<TYPE2>::Function  Func;
-      typedef typename LoKi::BasicFunctors<TYPE2>::Predicate Cuts;
-      typedef LoKi::details::result_t<Source>                result_type;
+      using Source      = typename LoKi::BasicFunctors<TYPE>::Source;
+      using Pipe        = typename LoKi::BasicFunctors<TYPE>::Pipe;
+      using Map         = typename LoKi::BasicFunctors<TYPE>::Map;
+      using FunVal      = typename LoKi::BasicFunctors<TYPE>::FunVal;
+      using CutVal      = typename LoKi::BasicFunctors<TYPE>::CutVal;
+      using Func        = typename LoKi::BasicFunctors<TYPE2>::Function;
+      using Cuts        = typename LoKi::BasicFunctors<TYPE2>::Predicate;
+      using result_type = LoKi::details::result_t<Source>;
       // ======================================================================
     public:
       // ======================================================================
@@ -1393,11 +1392,11 @@ namespace LoKi {
     class CutValOps : public CutsOps_<std::vector<TYPE>> {
     public:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::CutVal CutVal;
-      typedef typename LoKi::BasicFunctors<TYPE>::Pipe   Pipe;
-      typedef typename LoKi::BasicFunctors<TYPE>::Map    Map;
-      typedef typename LoKi::BasicFunctors<TYPE>::FunVal FunVal;
-      typedef LoKi::details::result_t<CutVal>            result_type;
+      using CutVal      = typename LoKi::BasicFunctors<TYPE>::CutVal;
+      using Pipe        = typename LoKi::BasicFunctors<TYPE>::Pipe;
+      using Map         = typename LoKi::BasicFunctors<TYPE>::Map;
+      using FunVal      = typename LoKi::BasicFunctors<TYPE>::FunVal;
+      using result_type = LoKi::details::result_t<CutVal>;
       // ======================================================================
     public:
       // ======================================================================
@@ -1525,8 +1524,7 @@ namespace LoKi {
     };
     // ========================================================================
   } // namespace Dicts
-  // ==========================================================================
-} //                                                      end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

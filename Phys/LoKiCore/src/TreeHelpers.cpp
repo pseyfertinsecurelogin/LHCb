@@ -40,40 +40,18 @@ namespace {
     //
     const Decays::iNode* inode = &( t.head() );
     //
-    return !inode->valid() && 0 != dynamic_cast<const Decays::Nodes::Invalid*>( inode );
+    return !inode->valid() && nullptr != dynamic_cast<const Decays::Nodes::Invalid*>( inode );
   }
   // ==========================================================================
 } // namespace
 // ============================================================================
 // default constructor
 // ============================================================================
-Decays::Parsers::Tree::Tree()
-    : m_head( Decays::Nodes::Invalid() )
-    , m_or()
-    , m_and()
-    , m_arrow( Decays::Trees::Single )
-    , m_oscillated( Decays::Trees::Undefined )
-    , m_inclusive( false )
-    , m_negated( false )
-    , m_marked( false )
-    , m_stable( false )
-    , m_children()
-    , m_optional() {}
+Decays::Parsers::Tree::Tree() = default;
 // ============================================================================
 // constructor from the decay head
 // ============================================================================
-Decays::Parsers::Tree::Tree( const Decays::iNode& head, const bool stable )
-    : m_head( head )
-    , m_or()
-    , m_and()
-    , m_arrow( Decays::Trees::Single )
-    , m_oscillated( Decays::Trees::Undefined )
-    , m_inclusive( false )
-    , m_negated( false )
-    , m_marked( false )
-    , m_stable( stable )
-    , m_children()
-    , m_optional() {}
+Decays::Parsers::Tree::Tree( const Decays::iNode& head, const bool stable ) : m_head( head ), m_stable( stable ) {}
 
 // ============================================================================
 // configuration
@@ -184,7 +162,7 @@ Decays::Parsers::Tree& Decays::Parsers::Tree::operator|=( const Decays::iNode& t
 // OR
 // ============================================================================
 Decays::Parsers::Tree& Decays::Parsers::Tree::operator|=( const Decays::Parsers::Tree::Trees& trees ) {
-  for ( Trees::const_iterator it = trees.begin(); trees.end() != it; ++it ) { ( *this ) |= ( *it ); } // ASSIGN!
+  for ( auto it = trees.begin(); trees.end() != it; ++it ) { ( *this ) |= ( *it ); } // ASSIGN!
   return *this;
 }
 // ============================================================================
@@ -213,7 +191,7 @@ Decays::Parsers::Tree& Decays::Parsers::Tree::operator&=( const Decays::iNode& t
 // AND
 // ============================================================================
 Decays::Parsers::Tree& Decays::Parsers::Tree::operator&=( const Decays::Parsers::Tree::Trees& trees ) {
-  for ( Trees::const_iterator it = trees.begin(); trees.end() != it; ++it ) { ( *this ) &= ( *it ); } // ASSIGN!
+  for ( auto it = trees.begin(); trees.end() != it; ++it ) { ( *this ) &= ( *it ); } // ASSIGN!
   return *this;
 }
 // ============================================================================
@@ -225,17 +203,16 @@ std::ostream& Decays::Parsers::Tree::fillStream( std::ostream& s ) const {
   if ( m_marked ) { s << " ^"; }
   if ( m_negated ) { s << " ~"; }
 
-  typedef Trees::const_iterator CIT;
   if ( !m_or.empty() ) {
     s << " (";
-    for ( CIT it = m_or.begin(); m_or.end() != it; ++it ) {
+    for ( auto it = m_or.begin(); m_or.end() != it; ++it ) {
       if ( it != m_or.begin() ) { s << " ||"; }
       s << " " << ( *it );
     }
     return s << " ) "; // RETURN
   } else if ( !m_and.empty() ) {
     s << " (";
-    for ( CIT it = m_and.begin(); m_and.end() != it; ++it ) {
+    for ( auto it = m_and.begin(); m_and.end() != it; ++it ) {
       if ( it != m_and.begin() ) { s << " &&"; }
       s << " " << ( *it );
     }
@@ -260,9 +237,9 @@ std::ostream& Decays::Parsers::Tree::fillStream( std::ostream& s ) const {
 
   s << " " << Decays::Trees::arrow( m_arrow );
 
-  for ( CIT ic = m_children.begin(); m_children.end() != ic; ++ic ) { s << " " << ( *ic ); }
+  for ( auto ic = m_children.begin(); m_children.end() != ic; ++ic ) { s << " " << ( *ic ); }
 
-  for ( CIT io = m_optional.begin(); m_optional.end() != io; ++io ) { s << " {" << ( *io ) << "}"; }
+  for ( auto io = m_optional.begin(); m_optional.end() != io; ++io ) { s << " {" << ( *io ) << "}"; }
 
   if ( m_inclusive ) { s << " ..."; }
   //

@@ -49,7 +49,7 @@ namespace LoKi {
     /// parameters: argument
     typedef LoKi::Holder<TYPE1, TYPE2> Type1; // parameters: argument
     /// parameters: return value
-    typedef TYPE3 Type2; // parameters: return value
+    using Type2 = TYPE3; // parameters: return value
     // ========================================================================
     /// the type of the argument
     typedef LoKi::Holder<TYPE1, TYPE2> Type;
@@ -57,11 +57,11 @@ namespace LoKi {
     //     // the actual signature
     // ========================================================================
     /// the actual type for the argument
-    typedef typename boost::call_traits<Type>::param_type argument;
+    using argument = typename boost::call_traits<Type>::param_type;
     /// the actual type for the first argument
-    typedef typename boost::call_traits<TYPE1>::param_type first_argument;
+    using first_argument = typename boost::call_traits<TYPE1>::param_type;
     /// teh actual type for the second argument
-    typedef typename boost::call_traits<TYPE2>::param_type second_argument;
+    using second_argument = typename boost::call_traits<TYPE2>::param_type;
     // ========================================================================
   public:
     // ========================================================================
@@ -80,7 +80,7 @@ namespace LoKi {
     /// MANDATORY: clone method
     virtual Functor* clone() const = 0;
     /// virtual destructor
-    virtual ~Functor() = default;
+    ~Functor() override = default;
     // ========================================================================
   public:
     // ========================================================================
@@ -127,10 +127,10 @@ namespace LoKi {
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override { return m_fun->fillStream( s ); };
     /// OPTIONAL: unique function ID, delegate to the underlying objects
-    std::size_t id() const override { return m_fun->id(); }
+    [[nodiscard]] std::size_t id() const override { return m_fun->id(); }
     /// OPTIONAL: delegate the object type
-    std::string objType() const override { return m_fun->objType(); }
-    std::string toCpp() const override { return m_fun->toCpp(); }
+    [[nodiscard]] std::string objType() const override { return m_fun->objType(); }
+    [[nodiscard]] std::string toCpp() const override { return m_fun->toCpp(); }
     // ========================================================================
   public:
     // ========================================================================

@@ -46,14 +46,14 @@ namespace LoKi {
   class GAUDI_API Dump final {
   public:
     // ========================================================================
-    Dump( const std::string& open = "", const std::string& close = "\n" );
-    Dump( const std::size_t nmax, const std::string& open = "", const std::string& close = "\n" );
-    Dump( const std::string& open, const std::string& close, const std::size_t nmax );
-    Dump( const std::string& open, const std::size_t nmax, const std::string& close = "\n" );
+    Dump( std::string open = "", std::string close = "\n" );
+    Dump( const std::size_t nmax, std::string open = "", std::string close = "\n" );
+    Dump( std::string open, std::string close, const std::size_t nmax );
+    Dump( std::string open, const std::size_t nmax, std::string close = "\n" );
     // ========================================================================
-    const std::string& open() const { return m_open; }
-    const std::string& close() const { return m_close; }
-    std::size_t        nMax() const { return m_nmax; }
+    [[nodiscard]] const std::string& open() const { return m_open; }
+    [[nodiscard]] const std::string& close() const { return m_close; }
+    [[nodiscard]] std::size_t        nMax() const { return m_nmax; }
     // ========================================================================
   private:
     // ========================================================================
@@ -68,17 +68,13 @@ namespace LoKi {
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    // Dump as C++ object
-    GAUDI_API
-    std::string toCpp( const LoKi::Dump& dump );
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  // Dump as C++ object
+  GAUDI_API
+  std::string toCpp( const LoKi::Dump& dump );
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 //                                                                      The END
 // ============================================================================

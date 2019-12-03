@@ -96,7 +96,7 @@ namespace LoKi {
       if ( sc.isFailure() ) { return sc; }
       //
       LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
-      if ( 0 == rep.reporter() ) { rep.setReporter( this ).ignore(); }
+      if ( !rep.reporter() ) { rep.setReporter( this ).ignore(); }
       // locate LoKi service
       return StatusCode::SUCCESS;
     }
@@ -110,7 +110,7 @@ namespace LoKi {
       // owner for reporter?
       if ( rep.reporter() == this ) {
         rep.report().ignore();
-        rep.setReporter( 0 ).ignore();
+        rep.setReporter( nullptr ).ignore();
       }
       // finalize the base class
       return base_class::finalize();
@@ -138,7 +138,7 @@ namespace LoKi {
     /// get the correct algorithm context
     std::string getMyAlg() const {
       const IAlgContextSvc* asvc    = contextSvc();
-      const IAlgorithm*     current = ( asvc ? asvc->currentAlg() : NULL );
+      const IAlgorithm*     current = ( asvc ? asvc->currentAlg() : nullptr );
       return ( current ? " [" + current->name() + "]" : "" );
     }
     // ========================================================================

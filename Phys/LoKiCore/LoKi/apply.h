@@ -259,14 +259,14 @@ namespace LoKi {
   template <class TYPE>
   inline std::vector<TYPE*> apply( const LoKi::Functor<std::vector<const TYPE*>, std::vector<const TYPE*>>& pipe,
                                    const std::vector<TYPE*>&                                                input ) {
-    typedef std::vector<typename LoKi::Const<TYPE>::Value*> _CVector;
-    typedef std::vector<TYPE*>                              _NVector;
+    using _CVector = std::vector<typename LoKi::Const<TYPE>::Value*>;
+    using _NVector = std::vector<TYPE*>;
     // adapt the argument:
-    const _CVector* _vct_ = reinterpret_cast<const _CVector*>( &input );
+    const auto* _vct_ = reinterpret_cast<const _CVector*>( &input );
     // use functor
     const _CVector& _out = pipe.evaluate( *_vct_ );
     // adapt result:
-    const _NVector* _out_ = reinterpret_cast<const _NVector*>( &_out );
+    const auto* _out_ = reinterpret_cast<const _NVector*>( &_out );
     //
     return *_out_;
   }

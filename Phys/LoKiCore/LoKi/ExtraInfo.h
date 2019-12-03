@@ -81,8 +81,8 @@ namespace LoKi {
     public:
       // ======================================================================
       /// get the index
-      int    index() const { return m_index; }
-      double value() const { return m_default; }
+      [[nodiscard]] int    index() const { return m_index; }
+      [[nodiscard]] double value() const { return m_default; }
       // ======================================================================
     private:
       // ======================================================================
@@ -124,7 +124,7 @@ namespace LoKi {
     public:
       // ======================================================================
       /// get the index
-      int index() const { return m_index; }
+      [[nodiscard]] int index() const { return m_index; }
       // ======================================================================
     private:
       // ======================================================================
@@ -181,16 +181,16 @@ namespace LoKi {
        *  @see LoKi::AuxFunBase
        *  @return the function-ID
        */
-      std::size_t id() const override { return m_index; }
+      [[nodiscard]] std::size_t id() const override { return m_index; }
       // ======================================================================
     public:
       // ======================================================================
       /// get the index
-      int index() const { return m_index; }
+      [[nodiscard]] int index() const { return m_index; }
       /// get the function
       const auto& func() const { return m_fun.func(); }
       /// get the flag
-      bool update() const { return m_update; }
+      [[nodiscard]] bool update() const { return m_update; }
       // ======================================================================
       /// no assignement
       GetSmartInfo& operator=( const GetSmartInfo& ) = delete; // no assignment

@@ -61,7 +61,7 @@ namespace Decays {
      *  @param descriptor (INPUT)  node descriptor
      *  @param constructed node
      */
-    virtual Node node( const std::string& descriptor = "" ) const = 0;
+    [[nodiscard]] virtual Node node( const std::string& descriptor = "" ) const = 0;
     // ========================================================================
   }; //                                             end class IDecayNodeFactory
   // ==========================================================================

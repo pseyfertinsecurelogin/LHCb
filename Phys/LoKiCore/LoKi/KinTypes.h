@@ -42,17 +42,17 @@
 namespace LoKi {
   // ==========================================================================
   // the actual type of Lorentz vector
-  typedef Gaudi::LorentzVector LorentzVector; // the vector in 4D
+  using LorentzVector = Gaudi::LorentzVector; // the vector in 4D
   // the actual type of Lorentz vector
-  typedef LorentzVector Vector4D; // the vector in 4D
+  using Vector4D = LorentzVector; // the vector in 4D
   // the actual tyep of 3D vector
-  typedef Gaudi::XYZVector ThreeVector; // the vector in 3D
+  using ThreeVector = Gaudi::XYZVector; // the vector in 3D
   /// the actual type of 3D vector
-  typedef ThreeVector Vector3D; // the vector in 3D
+  using Vector3D = ThreeVector; // the vector in 3D
   /// the actual type for  3D point
-  typedef Gaudi::XYZPoint Point3D; // the point  in 3D
+  using Point3D = Gaudi::XYZPoint; // the point  in 3D
   // ==========================================================================
-  typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<std::complex<double>>> ComplexLorentzVector;
+  using ComplexLorentzVector = ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<std::complex<double>>>;
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

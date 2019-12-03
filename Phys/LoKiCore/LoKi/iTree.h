@@ -45,7 +45,7 @@ namespace Decays {
   public:
     // ======================================================================
     /// check the validity of the tree
-    virtual bool valid() const = 0;
+    [[nodiscard]] virtual bool valid() const = 0;
     // ======================================================================
     /** validate the decay tree
      *  @param svc pointer to Particle Property Service
@@ -82,13 +82,13 @@ namespace Decays {
      *
      *  @endcode
      */
-    virtual bool marked() const = 0;
+    [[nodiscard]] virtual bool marked() const = 0;
     // ========================================================================
     /// reset the collection cache
     virtual void reset() const = 0;
     // ======================================================================
     /// clone method ("virtual constructor")
-    virtual iTree* clone() const = 0;
+    [[nodiscard]] virtual iTree* clone() const = 0;
     // ======================================================================
     /** printout of the stream
      *  @param s the reference to the output stream
@@ -96,7 +96,7 @@ namespace Decays {
      */
     virtual std::ostream& fillStream( std::ostream& s ) const = 0;
     /// conversion to the string
-    virtual std::string toString() const;
+    [[nodiscard]] virtual std::string toString() const;
     /// invalid tree?
     virtual bool operator!() const { return !( this->valid() ); }
     // ======================================================================
@@ -115,10 +115,10 @@ namespace Decays {
   public:
     // ======================================================================
     /// the actual type of the argument
-    typedef typename boost::call_traits<PARTICLE>::param_type argument;
-    typedef std::vector<PARTICLE>                             Collection;
+    using argument   = typename boost::call_traits<PARTICLE>::param_type;
+    using Collection = std::vector<PARTICLE>;
     // the actual type of particle
-    typedef PARTICLE particle;
+    using particle = PARTICLE;
     // ======================================================================
   public:
     // ======================================================================
@@ -180,7 +180,7 @@ namespace Decays {
     /// MANDATORY: the specific printout
     std::ostream& fillStream( std::ostream& s ) const override { return m_tree->fillStream( s ); }
     /// MANDATORY: check the validity of the node
-    bool valid() const override { return m_tree->valid(); }
+    [[nodiscard]] bool valid() const override { return m_tree->valid(); }
     /// MANDATORY: the proper validation of the tree
     StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override { return m_tree->validate( svc ); }
     /// collect the marked elements
@@ -190,7 +190,7 @@ namespace Decays {
     /// reset the collection cache
     void reset() const override { m_tree->reset(); }
     /// has marked elements in the tree?
-    bool marked() const override { return m_tree->marked(); }
+    [[nodiscard]] bool marked() const override { return m_tree->marked(); }
     // ======================================================================
   public:
     // ======================================================================
@@ -254,8 +254,8 @@ namespace Decays {
 // ============================================================================
 template <class PARTICLE>
 Decays::Tree_<PARTICLE>::Tree_( const Decays::iTree_<PARTICLE>& tree ) {
-  typedef Decays::Tree_<PARTICLE> Self;
-  const Self*                     self = dynamic_cast<const Self*>( &tree );
+  using Self       = Decays::Tree_<PARTICLE>;
+  const Self* self = dynamic_cast<const Self*>( &tree );
   if ( self ) { m_tree.reset( self->m_tree->clone() ); }
   if ( !m_tree ) { m_tree.reset( tree.clone() ); }
 }
@@ -281,8 +281,8 @@ template <class PARTICLE>
 Decays::Tree_<PARTICLE>& Decays::Tree_<PARTICLE>::operator=( const Decays::iTree_<PARTICLE>& right ) // assignment
 {
   if ( &right == this ) { return *this; }
-  typedef Decays::Tree_<PARTICLE> Self;
-  const Self*                     self = dynamic_cast<const Self*>( &right );
+  using Self       = Decays::Tree_<PARTICLE>;
+  const Self* self = dynamic_cast<const Self*>( &right );
   //
   Decays::iTree_<PARTICLE>* tree = nullptr;
   if ( self ) { tree = self->m_tree->clone(); }
@@ -292,18 +292,14 @@ Decays::Tree_<PARTICLE>& Decays::Tree_<PARTICLE>::operator=( const Decays::iTree
   return *this;
 }
 // ============================================================================
-namespace Gaudi {
-  // ==========================================================================
-  namespace Utils {
-    // ========================================================================
-    template <class PARTICLE>
-    inline std::string toCpp( const Decays::iTree_<PARTICLE>& p ) {
-      return "\"" + p.toString() + "\"";
-    }
-    // ========================================================================
-  } // namespace Utils
-  // ==========================================================================
-} // namespace Gaudi
+namespace Gaudi::Utils {
+  // ========================================================================
+  template <class PARTICLE>
+  inline std::string toCpp( const Decays::iTree_<PARTICLE>& p ) {
+    return "\"" + p.toString() + "\"";
+  }
+  // ========================================================================
+} // namespace Gaudi::Utils
 // ============================================================================
 // The END
 // ============================================================================

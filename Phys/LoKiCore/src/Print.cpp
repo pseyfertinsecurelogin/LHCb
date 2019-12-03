@@ -46,7 +46,7 @@
 // make printout of DataObject
 // ============================================================================
 std::string LoKi::Print::Printer::toString( const DataObject* obj ) {
-  if ( 0 == obj ) { return "NULL"; }
+  if ( !obj ) { return "NULL"; }
   std::ostringstream s;
   obj->fillStream( s );
   return s.str();
@@ -55,7 +55,7 @@ std::string LoKi::Print::Printer::toString( const DataObject* obj ) {
 // make printout of DataObject
 // ============================================================================
 std::string LoKi::Print::Printer::toString( const ContainedObject* obj ) {
-  if ( 0 == obj ) { return "NULL"; }
+  if ( !obj ) { return "NULL"; }
   std::ostringstream s;
   obj->fillStream( s );
   return s.str();
@@ -64,18 +64,18 @@ std::string LoKi::Print::Printer::toString( const ContainedObject* obj ) {
 // tesLocation for ContainedObject
 // ============================================================================
 std::string LoKi::Print::Printer::tesLocation( const ContainedObject* obj ) {
-  if ( 0 == obj ) { return ""; }
+  if ( !obj ) { return ""; }
   const ObjectContainerBase* parent = obj->parent();
-  if ( 0 == parent ) { return ""; }
+  if ( !parent ) { return ""; }
   return tesLocation( parent ) + "[" + Gaudi::Utils::toString( parent->index( obj ) ) + "]";
 }
 // ============================================================================
 // tesLocation for DataObject
 // ============================================================================
 std::string LoKi::Print::Printer::tesLocation( const DataObject* obj ) {
-  if ( 0 == obj ) { return ""; }
+  if ( !obj ) { return ""; }
   const IRegistry* reg = obj->registry();
-  if ( 0 == reg ) { return ""; }
+  if ( !reg ) { return ""; }
   return reg->identifier();
 }
 // ========================================================================

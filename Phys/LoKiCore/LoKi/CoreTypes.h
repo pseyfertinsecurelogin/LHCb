@@ -43,38 +43,38 @@ namespace LoKi {
   namespace CoreTypes {
     // ====================================================================
     /// type of 'cuts' for  'void' (interface)
-    typedef LoKi::Predicate_t<void> FCuts;
+    using FCuts = LoKi::Predicate_t<void>;
     /// type of 'functions' 'void' (interface)
-    typedef LoKi::Function_t<void> FFunc;
+    using FFunc = LoKi::Function_t<void>;
     /// type of 'cuts' for  'void' (assignable)
-    typedef LoKi::Assignable_t<FCuts> FCut;
+    using FCut = LoKi::Assignable_t<FCuts>;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::Assignable_t<FFunc> FFun;
+    using FFun = LoKi::Assignable_t<FFunc>;
     // ========================================================================
     /// type of 'cuts' for  'double' (interface)
-    typedef LoKi::Predicate_t<double> XCuts;
+    using XCuts = LoKi::Predicate_t<double>;
     /// type of 'functions' 'double' (interface)
-    typedef LoKi::Function_t<double> XFunc;
+    using XFunc = LoKi::Function_t<double>;
     /// type of 'cuts' for  'double' (assignable)
-    typedef LoKi::Assignable_t<XCuts> XCut;
+    using XCut = LoKi::Assignable_t<XCuts>;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::Assignable_t<XFunc> XFun;
+    using XFun = LoKi::Assignable_t<XFunc>;
     // ========================================================================
     /// maping or filtering : std::vector<double> -> std::vector<double>
-    typedef LoKi::Map_t<double>       XMaps;
-    typedef LoKi::Assignable_t<XMaps> XMap;
+    using XMaps = LoKi::Map_t<double>;
+    using XMap  = LoKi::Assignable_t<XMaps>;
     /// the same
-    typedef LoKi::Pipe_t<double>       XPipes;
-    typedef LoKi::Assignable_t<XPipes> XPipe;
+    using XPipes = LoKi::Pipe_t<double>;
+    using XPipe  = LoKi::Assignable_t<XPipes>;
     /// function or element selection: std::vector<double> -> double
-    typedef LoKi::FunVal_t<double>       XFunVals;
-    typedef LoKi::Assignable_t<XFunVals> XFunVal;
+    using XFunVals = LoKi::FunVal_t<double>;
+    using XFunVal  = LoKi::Assignable_t<XFunVals>;
     /// source : void -> std::vector<double>
-    typedef LoKi::Source_t<double>       XSources;
-    typedef LoKi::Assignable_t<XSources> XSource;
+    using XSources = LoKi::Source_t<double>;
+    using XSource  = LoKi::Assignable_t<XSources>;
     /// source : void -> std::vector<double>
-    typedef LoKi::Source_t<double>       FSources;
-    typedef LoKi::Assignable_t<FSources> FSource;
+    using FSources = LoKi::Source_t<double>;
+    using FSource  = LoKi::Assignable_t<FSources>;
     // ========================================================================
   } // namespace CoreTypes
   // ==========================================================================

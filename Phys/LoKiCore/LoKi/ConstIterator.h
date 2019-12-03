@@ -58,15 +58,15 @@ namespace LoKi {
                                               > {
   protected:
     /// One of the @link iterator_tags tag types@endlink.
-    typedef typename ITERATOR::iterator_category iterator_category;
+    using iterator_category = typename ITERATOR::iterator_category;
     /// The type "pointed to" by the iterator.
-    typedef typename LoKi::Const<typename ITERATOR::value_type>::Value value_type;
+    using value_type = typename LoKi::Const<typename ITERATOR::value_type>::Value;
     /// Distance between iterators is represented as this type.
-    typedef typename ITERATOR::difference_type difference_type;
+    using difference_type = typename ITERATOR::difference_type;
     /// This type represents a pointer-to-value_type.
-    typedef typename LoKi::Const<typename ITERATOR::pointer>::Value pointer;
+    using pointer = typename LoKi::Const<typename ITERATOR::pointer>::Value;
     /// This type represents a reference-to-value_type.
-    typedef typename LoKi::Const<typename ITERATOR::reference>::Value reference;
+    using reference = typename LoKi::Const<typename ITERATOR::reference>::Value;
 
   public:
     /// the default constructor : the base must be  default contrubctible!

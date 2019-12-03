@@ -58,7 +58,7 @@ namespace LoKi {
   protected:
     // ========================================================================
     /// Standard constructor
-    Base( const std::string& name = "<Anonymous>", const IReporter* reporter = 0 );
+    Base( std::string name = "<Anonymous>", const IReporter* reporter = nullptr );
     /// copy constructor
     Base( const Base& right );
     /// destructor: virtual and protected:

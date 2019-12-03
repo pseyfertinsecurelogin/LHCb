@@ -314,11 +314,11 @@ std::vector<TYPE>& operator>>( const LoKi::Functor<void, std::vector<TYPE>>& sou
 template <class TYPE>
 const std::vector<const TYPE*>& operator>>( const LoKi::Functor<void, std::vector<TYPE*>>& source,
                                             std::vector<const TYPE*>&                      dest ) {
-  typedef std::vector<const TYPE*> _CVector;
-  typedef std::vector<TYPE*>       _NVector;
+  using _CVector = std::vector<const TYPE*>;
+  using _NVector = std::vector<TYPE*>;
   //
   const _NVector& aux = source.evaluate();
-  const _CVector* out = reinterpret_cast<const _CVector*>( &aux );
+  const auto*     out = reinterpret_cast<const _CVector*>( &aux );
   //
   dest = *out;
   //
@@ -349,8 +349,8 @@ const std::vector<const TYPE*>& operator>>( const LoKi::Functor<void, std::vecto
 template <class TYPE>
 std::vector<TYPE*>& operator>>( const LoKi::Functor<void, std::vector<const TYPE*>>& source,
                                 std::vector<TYPE*>&                                  dest ) {
-  typedef std::vector<const TYPE*> _CVector;
-  typedef std::vector<TYPE*>       _NVector;
+  using _CVector = std::vector<const TYPE*>;
+  using _NVector = std::vector<TYPE*>;
   //
   const _CVector& aux = source.evaluate();
   const auto*     out = reinterpret_cast<const _NVector*>( &aux );

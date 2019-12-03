@@ -34,7 +34,7 @@ namespace LoKi {
     /// Standard constructor
     Reference( TYPE& data ) : m_data( &data ) {}
     /// destructor
-    ~Reference() {}
+    ~Reference() = default;
     /// just to please the compiler: NO USE IS ALLOWED
     Reference() : m_data( nullptr ) {}
     // ========================================================================
