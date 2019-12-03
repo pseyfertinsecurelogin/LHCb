@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+
 #include <algorithm>
 
 // Gaudi
@@ -60,6 +61,10 @@ StatusCode DeVP::initialize() {
   }
   msg() << MSG::INFO << "There are " << m_sensors.size() << " sensors "
         << "(left: " << nLeftSensors << ", right: " << nRightSensors << ")" << endmsg;
+
+  // Register update of the local cach on geometry changes
+  updMgrSvc()->registerCondition( this, geometry() , &DeVP::updateCache );
+
   return StatusCode::SUCCESS;
 }
 
@@ -104,3 +109,24 @@ void DeVP::findSensors( IDetectorElement* det, std::vector<DeVPSensor*>& sensors
     }
   }
 }
+
+StatusCode DeVP::updateCache() {
+  const auto& s = sensor(0);
+  std::copy( s.xLocal().begin(), s.xLocal().end(), m_local_x.begin() );
+  std::copy( s.xPitch().begin(), s.xPitch().end(), m_x_pitch.begin() );
+  m_pixel_size = s.pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
+  runOnAllSensors([this](const DeVPSensor& sensor){
+                    // get the local to global transformation matrix and
+                    // store it in a flat float array of sixe 12.
+                    // Take care of the different convention between ROOT and LHCb for the reference point in volumes !
+                    Gaudi::Rotation3D     ltg_rot;
+                    Gaudi::TranslationXYZ ltg_trans;
+                    sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
+                    assert( sensor.sensorNumber() < m_ltg.size() );
+                    auto& ltg = m_ltg[sensor.sensorNumber()];
+                    ltg_rot.GetComponents(begin(ltg));
+                    ltg_trans.GetCoordinates(ltg.data()+9);
+                  });
+  return StatusCode::SUCCESS;
+}
+
