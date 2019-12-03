@@ -273,6 +273,10 @@ namespace Rich::Future {
      */
     Gaudi::Property<bool> m_useFakeHPDID{this, "UseFakeHPDID", false};
 
+    /** (Temporary) Option to enable (off by default) explicit DeRichSystem initialisation
+     *  can be removed once the need to decode HPD data is no longer required */
+    Gaudi::Property<bool> m_initDeRichSystem{this, "ExplicitDeRichSystemInit", false};
+
   private:
     // implementation details
 
@@ -320,14 +324,16 @@ using namespace Rich::Future;
 //=============================================================================
 
 StatusCode RawBankDecoder::initialize() {
+
   // Initialise base class
-  const auto sc = Transformer::initialize();
+  auto sc = Transformer::initialize();
   if ( !sc ) return sc;
 
-  {
-    // workaround to the issue with circular dependency in HPD initialization
+  if ( UNLIKELY( m_initDeRichSystem.value() ) ) {
+    // workaround for the issue of circular dependencies in HPD initialization
     DataObject* tmp = nullptr;
-    detSvc()->retrieveObject( inputLocation<2>(), tmp ).ignore();
+    sc              = detSvc()->retrieveObject( inputLocation<2>(), tmp );
+    if ( !sc ) return sc;
   }
 
   // report inactive RICHes
