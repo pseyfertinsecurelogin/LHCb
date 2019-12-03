@@ -29,6 +29,7 @@
     <tuple><text>daqsys.decoder-setup</text><enumeral>PASS</enumeral></tuple>
   </set></argument>
   <argument name="args"><set>
+    <text>../options/enable-RichHPD-workaround.py</text>
     <text>../options/test-gaudirun.py</text>
     <text>--option</text>
     <text>from PRConfig import TestFileDB; TestFileDB.test_file_db['2012_raw_default'].run();from Configurables import LHCbApp; LHCbApp().EvtMax=10;</text>

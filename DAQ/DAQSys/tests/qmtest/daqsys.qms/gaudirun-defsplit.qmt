@@ -29,6 +29,7 @@
     <tuple><text>daqsys.decoder-setup</text><enumeral>PASS</enumeral></tuple>
   </set></argument>
   <argument name="args"><set>
+    <text>../options/enable-RichHPD-workaround.py</text>
     <text>../options/test-gaudirun.py</text>
     <text>--option</text>
     <text>from PRConfig import TestFileDB; TestFileDB.test_file_db['S20r0p2_stripped_test'].run();from Configurables import LHCbApp,DecodeRawEvent; LHCbApp().EvtMax=10; DecodeRawEvent().OverrideInputs="Stripping20";</text>
