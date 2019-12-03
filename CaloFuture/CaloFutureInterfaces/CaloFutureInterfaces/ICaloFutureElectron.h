@@ -38,7 +38,7 @@ namespace LHCb::Calo::Interfaces {
   struct IElectron : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( IElectron, 2, 0 );
+    DeclareInterfaceID( IElectron, 3, 0 );
 
     virtual std::pair<const LHCb::CaloHypo *, const LHCb::CaloHypo*> set( LHCb::ProtoParticle const& proto) const = 0;
 
