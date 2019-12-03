@@ -181,6 +181,17 @@ LHCb.ParticleID.__str__ = LHCb.ParticleID.toString
 LHCb.ParticleID.__repr__ = LHCb.ParticleID.toString
 
 
+def _pp_cmp_(pp1, pp2):
+    """Comparison for ParticleProperty objects."""
+    if pp1 == pp2:
+        return 0
+    comparator = LHCb.ParticleProperty.Compare()
+    return -1 if comparator(pp1, pp2) else 1
+
+
+LHCb.ParticleProperty.__cmp__ = _pp_cmp_
+
+
 ## abs for ParticleID
 def _abs_1_(self):
     """
