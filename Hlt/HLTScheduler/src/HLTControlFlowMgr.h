@@ -17,6 +17,7 @@
 #include "CFNodePropertiesParse.h"
 #include "ThreadPool.h"
 // FW includes
+#include "Gaudi/Interfaces/IQueueingEventProcessor.h"
 #include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/Counters.h"
@@ -27,7 +28,6 @@
 #include "GaudiKernel/IAlgExecStateSvc.h"
 #include "GaudiKernel/IAlgorithm.h"
 #include "GaudiKernel/IDataBroker.h"
-#include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IEvtSelector.h"
 #include "GaudiKernel/IHiveWhiteBoard.h"
 #include "GaudiKernel/Memory.h"
@@ -38,8 +38,10 @@
 #include <condition_variable>
 #include <fstream>
 #include <iomanip>
+#include <list>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -53,36 +55,36 @@
 // locals
 #include "ControlFlowNode.h"
 
-class HLTControlFlowMgr final : public extends<Service, IEventProcessor> {
+class HLTControlFlowMgr final : public extends<Service, Gaudi::Interfaces::IQueueingEventProcessor> {
 
 public:
   /// Standard Constructor
   using extends::extends;
 
-  /// implementation of IService::initialize
   StatusCode initialize() override;
-  /// implementation of IService::reinitialize
   StatusCode reinitialize() override { return StatusCode::FAILURE; }
-  /// implementation of IService::finalize
   StatusCode finalize() override;
 
-  /// implementation of IEventProcessor::nextEvent
   StatusCode nextEvent( int maxevt ) override;
-  /// implementation of IEventProcessor::executeEvent(void* par)
   StatusCode executeEvent( EventContext&& evtContext ) override;
-  /// implementation of IEventProcessor::executeRun()
   StatusCode executeRun( int maxevt ) override { return nextEvent( maxevt ); }
-  /// implementation of IEventProcessor::stopRun()
   StatusCode stopRun() override;
-  /// implementation of IEventProcessor::createEventContext
+
+  // Implementation of IQueueingEventProcessor
   EventContext createEventContext() override;
+
+  void push( EventContext&& evtContext ) override;
+
+  bool empty() const override;
+
+  std::optional<ResultType> pop() override;
 
 private:
   /// Declare the root address of the event
   std::optional<IOpaqueAddress*> declareEventRootAddress();
 
   /// Method to check if an event failed and take appropriate actions
-  StatusCode eventFailed( EventContext& eventContext ) const;
+  StatusCode eventFailed( EventContext const& eventContext ) const;
 
   /// Algorithm promotion
   void promoteToExecuted( EventContext&& eventContext ) const;
@@ -242,4 +244,7 @@ public:
     }
     return names_indices;
   }
+
+  mutable std::mutex             m_doneMutex;
+  mutable std::queue<ResultType> m_done;
 };

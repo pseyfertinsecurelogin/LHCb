@@ -17,9 +17,10 @@
 </set></argument>
 <argument name="exit_code"><integer>3</integer></argument>
 <argument name="validator"><text>
-expected_lower = "LAZY_AND: moore  #=4       Sum=4           Eff=|( 100.0000 +- 0.00000 )%|"
-expected_upper = "LAZY_AND: moore  #=5       Sum=5           Eff=|( 100.0000 +- 0.00000 )%|"
-if stdout.find(expected_lower) == -1 and stdout.find(expected_upper) == -1:
+expected_4 = "LAZY_AND: moore  #=4       Sum=4           Eff=|( 100.0000 +- 0.00000 )%|"
+expected_5 = "LAZY_AND: moore  #=5       Sum=5           Eff=|( 100.0000 +- 0.00000 )%|"
+expected_6 = "LAZY_AND: moore  #=6       Sum=6           Eff=|( 100.0000 +- 0.00000 )%|"
+if stdout.find(expected_4) == -1 and stdout.find(expected_5) == -1 and stdout.find(expected_6) == -1:
     causes.append("early abortion didn't work correctly")
 </text></argument>
 </extension>
