@@ -14,7 +14,9 @@
 #include "LHCbMath/TypeMapping.h"
 #include "LHCbMath/bit_cast.h"
 
-#include <immintrin.h>
+#ifdef __x86_64__
+#  include <immintrin.h>
+#endif
 #include <limits>
 
 #include <algorithm>

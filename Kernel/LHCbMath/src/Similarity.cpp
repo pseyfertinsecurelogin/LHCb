@@ -35,6 +35,7 @@ namespace LHCb {
       //
       using gsl::span;
 
+#ifdef __x86_64__
       namespace avx2 {
         extern void   similarity_5_1( span<const double, 15> Ci, span<const double, 5> Fi, span<double, 1> Ti );
         extern void   similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> Ti );
@@ -58,6 +59,7 @@ namespace LHCb {
         extern void similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> Ti );
         extern void similarity_5_7( span<const double, 15> Ci, span<const double, 35> Fi, span<double, 28> Ti );
       } // namespace sse3
+#endif  // __x86_64__
       namespace generic {
         extern void   similarity_5_1( span<const double, 15> Ci, span<const double, 5> Fi, span<double, 1> Ti );
         extern void   similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> Ti );
@@ -72,20 +74,32 @@ namespace LHCb {
       namespace dispatch {
 
         void similarity_5_1( span<const double, 15> Ci, span<const double, 5> Fi, span<double, 1> ti ) {
+#ifdef __x86_64__
           auto vtbl = {std::pair{CPU::AVX2, &avx2::similarity_5_1}, std::pair{CPU::AVX, &avx::similarity_5_1},
                        std::pair{CPU::SSE3, &sse3::similarity_5_1}, std::pair{CPU::GENERIC, &generic::similarity_5_1}};
+#else
+          auto vtbl = {std::pair{CPU::GENERIC, &generic::similarity_5_1}};
+#endif
           dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_1, Ci, Fi, ti );
         }
 
         void similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> ti ) {
+#ifdef __x86_64__
           auto vtbl = {std::pair{CPU::AVX2, &avx2::similarity_5_5}, std::pair{CPU::AVX, &avx::similarity_5_5},
                        std::pair{CPU::SSE3, &sse3::similarity_5_5}, std::pair{CPU::GENERIC, &generic::similarity_5_5}};
+#else
+          auto vtbl = {std::pair{CPU::GENERIC, &generic::similarity_5_5}};
+#endif
           dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_5, Ci, Fi, ti );
         }
 
         void similarity_5_7( span<const double, 15> Ci, span<const double, 35> Fi, span<double, 28> ti ) {
+#ifdef __x86_64__
           auto vtbl = {std::pair{CPU::AVX2, &avx2::similarity_5_7}, std::pair{CPU::AVX, &avx::similarity_5_7},
                        std::pair{CPU::SSE3, &sse3::similarity_5_7}, std::pair{CPU::GENERIC, &generic::similarity_5_7}};
+#else
+          auto vtbl = {std::pair{CPU::GENERIC, &generic::similarity_5_7}};
+#endif
           dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_7, Ci, Fi, ti );
         }
 
@@ -96,15 +110,23 @@ namespace LHCb {
 
         bool average( span<const double, 5> X1, span<const double, 15> C1, span<const double, 5> X2,
                       span<const double, 15> C2, span<double, 5> X, span<double, 15> C ) {
+#ifdef __x86_64__
           auto vtbl = {std::pair{CPU::AVX2, &avx2::average}, std::pair{CPU::AVX, &avx::average},
                        std::pair{CPU::GENERIC, &generic::average}};
+#else
+          auto vtbl = {std::pair{CPU::GENERIC, &generic::average}};
+#endif
           return dispatch_fn( vtbl, LHCb::Math::detail::average, X1, C1, X2, C2, X, C );
         }
 
         double filter( span<double, 5> X, span<double, 15> C, span<const double, 5> Xref, span<const double, 5> H,
                        double refResidual, double errorMeas2 ) {
+#ifdef __x86_64__
           auto vtbl = {std::pair{CPU::AVX2, &avx2::filter}, std::pair{CPU::AVX, &avx::filter},
                        std::pair{CPU::GENERIC, &generic::filter}};
+#else
+          auto vtbl = {std::pair{CPU::GENERIC, &generic::filter}};
+#endif
           return dispatch_fn( vtbl, LHCb::Math::detail::filter, X, C, Xref, H, refResidual, errorMeas2 );
         }
 
