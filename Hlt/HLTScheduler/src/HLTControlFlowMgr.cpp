@@ -9,6 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "HLTControlFlowMgr.h"
+#include "GaudiKernel/ConcurrencyFlags.h"
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/SerializeSTL.h"
 #include <thread>
@@ -309,38 +310,59 @@ StatusCode HLTControlFlowMgr::finalize() {
 }
 
 EventContext HLTControlFlowMgr::createEventContext() {
-  // setup evtcontext
-  EventContext evtContext{};
-  evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
-  ++m_nextevt;
+  using namespace std::chrono_literals;
+
+  std::unique_lock<std::mutex> lock{m_createEventMutex};
+  while ( true ) {
+    if ( m_createEventCond.wait_for( lock, 2ms, [&] { return m_whiteboard->freeSlots() > 0; } ) ) {
+      IOpaqueAddress* evt_root_ptr = nullptr;
+      if ( m_evtSelector ) {
+        auto addr = declareEventRootAddress();
+        if ( addr.has_value() and not addr.value() ) { // We ran out of events!
+          m_nextevt = -1;                              // Set created event to a negative value: we finished!
+          return EventContext{};
+        } else if ( not addr.has_value() ) {
+          error() << "something went wrong getting the next event root address" << endmsg;
+          return EventContext{};
+        }
+        evt_root_ptr = addr.value();
+      }
+
+      // setup evtcontext
+      EventContext evtContext{};
+      evtContext.set( m_nextevt, m_whiteboard->allocateStore( m_nextevt ) );
+      // pointer to the event into the context extension
+      evtContext.emplaceExtension<decltype( evt_root_ptr )>( evt_root_ptr );
+
+      m_nextevt++;
+      return evtContext;
+    }
+  }
+}
+
+StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
+  using namespace std::chrono_literals;
+  push( std::move( evtContext ) );
+  std::optional<ResultType> result;
+  while ( !( result = pop() ) ) std::this_thread::sleep_for( 1ms );
+  return std::get<0>( std::move( *result ) );
+}
+
+void HLTControlFlowMgr::push( EventContext&& evtContext ) {
+  // receive the data pointer
+  auto evt_root_ptr = evtContext.getExtension<IOpaqueAddress*>();
+
   // giving the scheduler states to the evtContext, so that they are
   // globally accessible within an event
   // copy of states happens here!
   evtContext.emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
-  return evtContext;
-}
-
-StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
-
-  IOpaqueAddress* evt_root_ptr = nullptr;
-  if ( m_evtSelector ) {
-    auto addr = declareEventRootAddress();
-    if ( addr.has_value() and not addr.value() ) { // We ran out of events!
-      m_nextevt = -1;                              // Set created event to a negative value: we finished!
-      return StatusCode::SUCCESS;
-    } else if ( not addr.has_value() ) {
-      error() << "something went wrong getting the next event root address" << endmsg;
-      return StatusCode::FAILURE;
-    }
-    evt_root_ptr = addr.value();
-  }
 
   // Now add event to the task pool
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
   auto event_task = [evt_root_ptr, evtContext = std::move( evtContext ), this]() mutable {
-    auto sc = m_whiteboard->selectStore( evtContext.slot() );
+    StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
     if ( sc.isFailure() ) {
       fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
               << "Impossible to create event context" << endmsg;
@@ -410,8 +432,6 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 
     // update scheduler state
     promoteToExecuted( std::move( evtContext ) );
-
-    return nullptr;
   };
 
   if constexpr ( use_debuggable_threadpool ) {
@@ -419,8 +439,24 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
   } else {
     enqueue( std::move( event_task ) );
   }
+}
 
-  return StatusCode::SUCCESS;
+bool HLTControlFlowMgr::empty() const {
+  return
+      // note: this is not synchronized
+      m_done.empty() &&
+      // note: this is not synchronized either
+      ( m_whiteboard->freeSlots() == m_whiteboard->getNumberOfStores() );
+}
+
+std::optional<HLTControlFlowMgr::ResultType> HLTControlFlowMgr::pop() {
+  std::lock_guard           _{m_doneMutex};
+  std::optional<ResultType> out;
+  if ( !m_done.empty() ) {
+    out = std::move( m_done.front() );
+    m_done.pop();
+  }
+  return out;
 }
 
 StatusCode HLTControlFlowMgr::stopRun() {
@@ -468,8 +504,6 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
 
   // start with event 0
   m_nextevt = 0;
-  // Run the first event before spilling more than one
-  bool newEvtAllowed = false;
 
   // adjust timing start counter
   if ( m_startTimeAtEvt < 0 || m_startTimeAtEvt > m_stopTimeAtEvt ) {
@@ -505,47 +539,25 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   info() << "Will measure time between events " << m_startTimeAtEvt.value() << " and " << m_stopTimeAtEvt.value()
          << " (stop might be some events later)" << endmsg;
 
-  auto okToStartNewEvt = [&] {
-    return ( newEvtAllowed || m_nextevt == 0 ) && // Launch the first event alone
-                                                  // The events are not finished with an unlimited number of events
-           m_nextevt >= 0 &&
-           // The events are not finished with a limited number of events
-           ( m_nextevt < maxevt || maxevt < 0 ) &&
-           // There are still free slots in the whiteboard
-           m_whiteboard->freeSlots() > 0;
-  };
-
-  auto maxEvtNotReached = [&] { return maxevt < 0 || m_finishedEvt < (unsigned int)maxevt; };
-
   info() << "Starting loop on events" << endmsg;
   std::optional<decltype( Clock::now() )> startTime, endTime;
 
   using namespace std::chrono_literals;
 
-  while ( maxEvtNotReached() ) {
-    std::unique_lock<std::mutex> lock{m_createEventMutex};
-    if ( m_createEventCond.wait_for( lock, 2ms, okToStartNewEvt ) ) {
-      if ( m_shutdown_now ) {
-        shutdown_threadpool();
-        return StatusCode::FAILURE;
-      }
-      // in some cases, due to concurrency, we do not stop exactly at the given value.
-      if ( UNLIKELY( static_cast<unsigned int>( m_stopTimeAtEvt ) < m_finishedEvt && !endTime && m_finishedEvt > 0 ) ) {
-        m_stopTimeAtEvt = m_finishedEvt;
-        endTime         = Clock::now();
-      }
-      if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
-
-      auto       evtContext = createEventContext();
-      StatusCode sc         = executeEvent( std::move( evtContext ) );
-      if ( m_nextevt == -1 ) break;
-
-      if ( !sc.isSuccess() ) {
-        shutdown_threadpool();
-        return StatusCode::FAILURE; // else we have an success --> exit loop
-      }
-      newEvtAllowed = true;
+  while ( maxevt < 0 || m_nextevt < maxevt ) {
+    if ( m_shutdown_now ) {
+      shutdown_threadpool();
+      return StatusCode::FAILURE;
     }
+    if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
+    if ( UNLIKELY( m_stopTimeAtEvt == m_nextevt ) ) { endTime = Clock::now(); }
+    auto evtContext = createEventContext();
+    if ( UNLIKELY( !evtContext.valid() ) ) {
+      if ( m_nextevt == -1 ) break; // finished
+      shutdown_threadpool();
+      return StatusCode::FAILURE; // else we have an success --> exit loop
+    }
+    push( std::move( evtContext ) );
   } // end main loop on finished events
 
   if ( !endTime ) {
@@ -599,7 +611,7 @@ std::optional<IOpaqueAddress*> HLTControlFlowMgr::declareEventRootAddress() {
  * It dumps the state of the scheduler, drains the actions (without executing
  * them) and events in the queues and returns a failure.
  */
-StatusCode HLTControlFlowMgr::eventFailed( EventContext& eventContext ) const {
+StatusCode HLTControlFlowMgr::eventFailed( EventContext const& eventContext ) const {
   fatal() << "*** Event " << eventContext.evt() << " on slot " << eventContext.slot() << " failed! ***" << endmsg;
   std::ostringstream ost;
   m_algExecStateSvc->dump( ost, eventContext );
@@ -612,7 +624,8 @@ void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
   int si = eventContext.slot();
 
   // Schedule the cleanup of the event
-  if ( m_algExecStateSvc->eventStatus( eventContext ) == EventStatus::Success ) {
+  auto status = m_algExecStateSvc->eventStatus( eventContext );
+  if ( status == EventStatus::Success ) {
     m_failed_evts_detected = 0;
     if ( msgLevel( MSG::VERBOSE ) )
       verbose() << "Event " << eventContext.evt() << " finished (slot " << si << ")." << endmsg;
@@ -621,15 +634,23 @@ void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
     fatal() << "Failed event detected on " << eventContext << endmsg;
   }
 
-  if ( msgLevel( MSG::VERBOSE ) )
-    verbose() << "Clearing slot " << si << " (event " << eventContext.evt() << ") of the whiteboard" << endmsg;
+  {
+    std::lock_guard _{m_doneMutex};
+    if ( UNLIKELY( status != EventStatus::Success ) ) {
+      m_done.emplace( StatusCode::FAILURE, std::move( eventContext ) );
+    } else {
+      m_done.emplace( StatusCode::SUCCESS, std::move( eventContext ) );
+    }
+  }
 
   auto sc = m_whiteboard->clearStore( si );
   if ( !sc.isSuccess() ) warning() << "Clear of Event data store failed" << endmsg;
   sc = m_whiteboard->freeStore( si );
-  if ( !sc.isSuccess() ) error() << "Whiteboard slot " << eventContext.slot() << " could not be properly cleared";
+  if ( !sc.isSuccess() ) error() << "Whiteboard slot " << si << " could not be properly cleared";
+
   ++m_finishedEvt;
-  m_createEventCond.notify_all();
+
+  m_createEventCond.notify_one();
 }
 
 // scheduling functionality----------------------------------------------------
