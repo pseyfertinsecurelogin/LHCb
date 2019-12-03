@@ -40,16 +40,15 @@ namespace LHCb::Calo::Interfaces {
     // Return the interface ID
     DeclareInterfaceID( IElectron, 2, 0 );
 
-    virtual bool set( ProtoParticle const& proto, std::string const& det = DeCalorimeterLocation::Ecal,
-                      CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0 ) = 0;
+    virtual std::pair<const LHCb::CaloHypo *, const LHCb::CaloHypo*> set( LHCb::ProtoParticle const& proto) const = 0;
 
-    virtual State           caloState() const                                                         = 0;
-    virtual State           closestState() const                                                      = 0;
-    virtual double          eOverP() const                                                            = 0;
-    virtual const CaloHypo* electron() const                                                          = 0;
-    virtual const CaloHypo* bremstrahlung() const                                                     = 0;
-    virtual CaloMomentum    bremCaloFutureMomentum() const                                            = 0;
-    virtual double          caloTrajectoryL( CaloPlane::Plane refPlane = CaloPlane::ShowerMax ) const = 0;
+    virtual State           caloState(ProtoParticle const &proto) const                                                         = 0;
+    virtual State           closestState(ProtoParticle const &proto) const                                                      = 0;
+    virtual double          eOverP(ProtoParticle const &proto) const                                                            = 0;
+    virtual const CaloHypo* electron(ProtoParticle const &proto) const                                                          = 0;
+    virtual const CaloHypo* bremstrahlung(ProtoParticle const &proto) const                                                     = 0;
+    virtual CaloMomentum    bremCaloFutureMomentum(ProtoParticle const &proto) const                                            = 0;
+    virtual double          caloTrajectoryL(ProtoParticle const &proto, CaloPlane::Plane refPlane = CaloPlane::ShowerMax ) const = 0;
   };
 } // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREELECTRON_H
