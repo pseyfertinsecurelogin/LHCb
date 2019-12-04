@@ -118,6 +118,14 @@ namespace Rich {
         }
       }
 
+      /// Load an object from the given store
+      template <typename TOOL, typename SERVICE>
+      decltype( auto ) acquire( SERVICE svc, std::string loc ) {
+        DataObject* tmp = nullptr;
+        auto        sc  = svc->retrieveObject( std::move( loc ), tmp );
+        return ( sc ? dynamic_cast<TOOL*>( tmp ) : nullptr );
+      }
+
     protected:
       // definitions
 
