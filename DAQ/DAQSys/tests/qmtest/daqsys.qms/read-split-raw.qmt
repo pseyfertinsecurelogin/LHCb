@@ -30,6 +30,7 @@
     <tuple><text>daqsys.split-raw-event</text><enumeral>PASS</enumeral></tuple>
   </set></argument>
   <argument name="args"><set>
+    <text>../options/enable-RichHPD-workaround.py</text>
     <text>../options/setup-crazy-split.py</text>
     <text>../options/read-split.py</text>
     <text>--option</text>
