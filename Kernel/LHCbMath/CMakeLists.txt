@@ -50,9 +50,11 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB LIBSRCS src/*.cpp)
-IF(NOT ${BINARY_TAG_ARCH} STREQUAL "x86_64")
-list(REMOVE_ITEM LIBSRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX2.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_SSE3.cpp)
-ENDIF()
+if(NOT ${BINARY_TAG_ARCH} IN_LIST BTU_KNOWN_x86_ARCHS)
+  list(REMOVE_ITEM LIBSRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX.cpp
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX2.cpp
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_SSE3.cpp)
+endif()
 gaudi_add_library(LHCbMathLib
                   ${LIBSRCS}
                   PUBLIC_HEADERS LHCbMath
@@ -159,7 +161,7 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestBloomFilter
                        tests/TestBloomFilter.cpp
                        LINK_LIBRARIES LHCbMathLib)
-  if(${BINARY_TAG_ARCH} STREQUAL "x86_64")
+  if(${BINARY_TAG_ARCH} IN_LIST BTU_KNOWN_x86_ARCHS)
   gaudi_add_executable(TestSimilarity
                        tests/TestSimilarity.cpp
                        LINK_LIBRARIES LHCbMathLib)
@@ -176,7 +178,7 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPolynomials
                        tests/poly.cpp
                        LINK_LIBRARIES LHCbMathLib)
-  if(${BINARY_TAG_ARCH} STREQUAL "x86_64")
+  if(${BINARY_TAG_ARCH} IN_LIST BTU_KNOWN_x86_ARCHS)
   set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
@@ -236,7 +238,7 @@ if(GAUDI_BUILD_TESTS)
     set_property(TARGET TestMathSpeedAVX2FMA APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
   endif()
 
-  endif() # x86_64 
+  endif() # x86_64
 endif()
 
 gaudi_install_python_modules()
