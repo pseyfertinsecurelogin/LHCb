@@ -206,8 +206,8 @@ namespace Rich::Future {
 
     /// Test if a given bit in a word is set on
     template <class TYPE>
-    inline bool isBitOn( const TYPE                 data, //
-                         const Rich::DAQ::ShortType pos ) const noexcept {
+    static bool isBitOn( const TYPE                 data, //
+                         const Rich::DAQ::ShortType pos ) noexcept {
       return ( 0 != ( data & ( 1 << pos ) ) );
     }
 
