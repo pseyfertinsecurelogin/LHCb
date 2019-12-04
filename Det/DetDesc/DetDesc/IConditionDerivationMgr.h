@@ -27,6 +27,23 @@
 class ValidDataObject;
 
 namespace LHCb::DetDesc {
+  namespace details {
+    template <typename Transform>
+    struct construct_constructor;
+
+    template <typename Ret, typename... Args>
+    struct construct_constructor<Ret( Args const&... )> {
+      static_assert( std::is_constructible_v<Ret, Args const&...> );
+      [[nodiscard]] static constexpr auto
+      construct( Args const&... args ) noexcept( std::is_nothrow_constructible_v<Ret, Args const&...> ) {
+        return Ret{args...};
+      }
+    };
+
+    template <typename Transform>
+    constexpr auto invoke_constructor = construct_constructor<Transform>::construct;
+
+  } // namespace details
   /// Class used to access the conditions accessible to the current transformation.
   using ConditionUpdateContext = std::unordered_map<ConditionKey, ValidDataObject const*>;
 
@@ -122,9 +139,9 @@ namespace LHCb::DetDesc {
   } // namespace detail
 
   template <typename Transform, size_t N = detail::arity_v<Transform>>
-  IConditionDerivationMgr::DerivationId addConditionDerivation( IConditionDerivationMgr&    cdm,
-                                                                std::array<ConditionKey, N> inputKeys,
-                                                                ConditionKey outputKey, Transform f ) {
+  IConditionDerivationMgr::DerivationId
+  addConditionDerivation( IConditionDerivationMgr& cdm, std::array<ConditionKey, N> inputKeys, ConditionKey outputKey,
+                          Transform f = details::invoke_constructor<Transform> ) {
     // check if the derivation was already registered
     auto dId = cdm.derivationFor( outputKey );
     if ( dId != IConditionDerivationMgr::NoDerivation ) { return dId; }
