@@ -57,18 +57,25 @@ namespace LHCb {
     FieldVector fieldVectorClosestPoint( const Gaudi::XYZPoint& xyz ) const;
 
     /// Return the magnetic field scale factor
-    double scaleFactor() const noexcept { return m_scaleFactor; }
+    float scaleFactor() const noexcept { return m_scaleFactor; }
 
     /// Update the scale factor
-    void setScaleFactor( const double& s ) {
+    void setScaleFactor( const float& s ) {
       m_scaleFactor   = s;
-      m_scaleFactor_V = Vec4f( s, s, s, 0. );
+      m_scaleFactor_V = {s, s, s};
     }
 
   private:
+  private:
+    /// converts an array to Vec4f format. Note that this is a noop once compiled
+    template <typename ARRAY>
+    static Vec4f toVec4f( ARRAY const& a ) {
+      return Vec4f().load( a.data() );
+    }
+
     template <class vectype, size_t... Is>
     std::array<vectype, 3> fetchVectorQ_helper( const vectype& indices, std::index_sequence<Is...> ) const {
-      std::array<Vec4f, sizeof...( Is )> Qs{m_Q_V[indices[Is]]...};
+      std::array<Vec4f, sizeof...( Is )> Qs{toVec4f( m_Q_V[indices[Is]] )...};
 
       // TODO: This could be done more efficiently
       //       with templating magic and permute or similar
@@ -221,14 +228,15 @@ namespace LHCb {
     }
 
   private:
-    double m_scaleFactor = 1; ///< The scale factor
+    float m_scaleFactor = 1; ///< The scale factor
 
-    Vec4f                   m_scaleFactor_V = {1, 1, 1, 0}; ///< Vector version of the scale factor
-    std::vector<Vec4f>      m_Q_V;                          ///< Vectorised Field map
-    Vec4f                   m_min_FL_V  = {0., 0., 0., 0.}; ///< Offset in x, y and z
-    Vec4f                   m_Dxyz_V    = {0., 0., 0., 0.}; ///< Steps in x, y and z
-    Vec4f                   m_invDxyz_V = {0., 0., 0., 0.}; ///< Inverse of steps in x, y and z (cached for speed)
-    std::array<unsigned, 3> m_Nxyz_V    = {0, 0, 0};        ///< Number of steps in x, y and z
+    std::array<float, 4> m_scaleFactor_V = {1, 1, 1, 0}; ///< Vector version of the scale factor, padded to 4 floats
+    std::vector<std::array<float, 4>> m_Q_V;             ///< Vectorised Field map, padded to 4 floats per field
+    std::array<float, 4>              m_min_FL_V  = {0., 0., 0., 0.}; ///< Offset in x, y and z, padded to 4 floats
+    std::array<float, 4>              m_Dxyz_V    = {0., 0., 0., 0.}; ///< Steps in x, y and z, padded to 4 floats
+    std::array<float, 4>              m_invDxyz_V = {0., 0., 0.,
+                                        0.}; ///< Inverse of steps in x, y and z (cached for speed), padded to 4 floats
+    std::array<unsigned, 4>           m_Nxyz_V    = {0, 0, 0, 0}; ///< Number of steps in x, y and z, padded to 4 floats
   };
 
 } // namespace LHCb
