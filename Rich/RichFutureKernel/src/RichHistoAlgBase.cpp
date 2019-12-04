@@ -23,8 +23,10 @@
 #include "RichFutureKernel/RichHistoAlgBase.h"
 
 // ============================================================================
-// Force creation of templated class
+// Force creation of templated classes
+#include "GaudiAlg/GaudiHistos.icpp"
+template class GaudiHistos<Rich::Future::Details::BaseAlg>;
 #include "RichHistoBase.icpp"
-template class Rich::Future::CommonBase<GaudiHistoAlg>;
-template class Rich::Future::HistoBase<GaudiHistoAlg>;
+template class Rich::Future::CommonBase<Rich::Future::Details::HistoBaseAlg>;
+template class Rich::Future::HistoBase<Rich::Future::Details::HistoBaseAlg>;
 // ============================================================================
