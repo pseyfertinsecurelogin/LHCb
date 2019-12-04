@@ -61,7 +61,6 @@ namespace Rich::Utils {
     // constructors
 
     // no default constructor
-    MirrorFinder() = delete;
 
     /// Constructor from dependent detector elements
     MirrorFinder( const DeRich1& rich1, //
