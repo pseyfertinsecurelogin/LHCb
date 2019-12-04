@@ -331,9 +331,7 @@ StatusCode RawBankDecoder::initialize() {
 
   if ( UNLIKELY( m_initDeRichSystem.value() ) ) {
     // workaround for the issue of circular dependencies in HPD initialization
-    DataObject* tmp = nullptr;
-    sc              = detSvc()->retrieveObject( inputLocation<2>(), tmp );
-    if ( !sc ) return sc;
+    if ( !acquire<DeRichSystem>( detSvc(), inputLocation<2>() ) ) { return StatusCode::FAILURE; }
   }
 
   // report inactive RICHes
