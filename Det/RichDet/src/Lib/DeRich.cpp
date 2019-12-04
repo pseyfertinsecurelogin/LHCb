@@ -385,10 +385,8 @@ std::vector<const DeRichSphMirror*> DeRich::getMirrors( std::string mirrType ) c
   mirrors.reserve( locations.size() );
 
   // load the mirrors
-  for ( const auto& loc : locations ) {
-    SmartDataPtr<DeRichSphMirror> mirror( dataSvc(), loc );
-    mirrors.push_back( mirror );
-  }
+  std::transform( begin(locations), end(locations), std::back_inserter(mirrors),
+                  [ds=dataSvc()](const auto& loc) { return SmartDataPtr<DeRichSpMirror>{ds,loc}; } );
 
   // return the vector
   return mirrors;
