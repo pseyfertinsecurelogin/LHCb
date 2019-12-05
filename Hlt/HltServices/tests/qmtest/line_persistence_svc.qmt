@@ -24,6 +24,9 @@
   <argument name="use_temp_dir">
     <enumeral>true</enumeral>
   </argument>
+  <argument name="prerequisites"><set>
+    <tuple><text>hltservices.assign_first_tck</text><enumeral>PASS</enumeral></tuple>
+  </set></argument>
   <argument name="validator"><text>
 countErrorLines({"FATAL": 0, "ERROR": 0, "WARNING": 0})
   </text></argument>
