@@ -50,9 +50,6 @@ public:
 
   /// Calculate the nearest channel to a given point.
   bool pointToChannel( const Gaudi::XYZPoint& point, const bool local, LHCb::VPChannelID& channel ) const;
-  /// Calculate the nearest channel to a point and the inter-pixel fractions.
-  bool pointToChannel( const Gaudi::XYZPoint& point, const bool local, LHCb::VPChannelID& channel,
-                       std::pair<double, double>& fraction ) const;
 
   /// Return the pixel size.
   std::pair<double, double> pixelSize( const LHCb::VPChannelID channel ) const;
@@ -65,7 +62,7 @@ public:
 
   /// Determine whether a point is within the sensor
   bool isInsideSensor( const double x, const double y ) const {
-    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) ); 
+    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) );
   }
 
   /// Convert local position to global position
@@ -102,14 +99,14 @@ public:
   const std::array<double, VP::NSensorColumns>& xPitch() const { return m_cache.x_pitch; }
 
   /// Calculate the local position of a given pixel.
-  Gaudi::XYZPoint channelToLocalPoint( unsigned int row, unsigned int scol ) const {
-    const double x = m_cache.local_x[scol];
-    const double y = ( row + 0.5 ) * m_cache.pixelSize;
+  Gaudi::XYZPoint channelToLocalPoint( const LHCb::VPChannelID channel ) const {
+    const double x = m_cache.local_x[channel.scol()];
+    const double y = ( channel.row() + 0.5 ) * m_cache.pixelSize;
     return Gaudi::XYZPoint( x, y, 0.0 );
   }
   /// Calculate the global position of a given pixel.
-  Gaudi::XYZPoint channelToGlobalPoint( unsigned int row, unsigned int scol ) const {
-    return localToGlobal(channelToLocalPoint(row, scol));
+  Gaudi::XYZPoint channelToGlobalPoint( const LHCb::VPChannelID channel ) const {
+    return localToGlobal( channelToLocalPoint( channel ) );
   }
   /// Calculate the position of a given pixel.
   Gaudi::XYZPoint channelToPoint( const LHCb::VPChannelID& channel, const bool local ) const {

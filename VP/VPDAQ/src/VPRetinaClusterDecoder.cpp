@@ -63,45 +63,45 @@ StatusCode VPRetinaClusterDecoder::rebuildGeometry() {
   int previousLeft  = -1;
   int previousRight = -1;
 
-  m_local_x    = m_vp->sensor(0).xLocal();
-  m_x_pitch    = m_vp->sensor(0).xPitch();
-  m_pixel_size = m_vp->sensor(0).pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
+  m_local_x    = m_vp->sensor( 0 ).xLocal();
+  m_x_pitch    = m_vp->sensor( 0 ).xPitch();
+  m_pixel_size = m_vp->sensor( 0 ).pixelSize();
 
-  m_vp->runOnAllSensors([this, &previousLeft, &previousRight](const DeVPSensor& sensor){
-                          // get the local to global transformation matrix and
-                          // store it in a flat float array of sixe 12.
-                          Gaudi::Rotation3D     ltg_rot;
-                          Gaudi::TranslationXYZ ltg_trans;
-                          sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
-                          assert( sensor.sensorNumber() < m_ltg.size() );
-                          auto& ltg = m_ltg[sensor.sensorNumber()];
-                          ltg_rot.GetComponents(begin(ltg));
-                          ltg_trans.GetCoordinates(ltg.data()+9);
+  m_vp->runOnAllSensors( [this, &previousLeft, &previousRight]( const DeVPSensor& sensor ) {
+    // get the local to global transformation matrix and
+    // store it in a flat float array of sixe 12.
+    Gaudi::Rotation3D     ltg_rot;
+    Gaudi::TranslationXYZ ltg_trans;
+    sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
+    assert( sensor.sensorNumber() < m_ltg.size() );
+    auto& ltg = m_ltg[sensor.sensorNumber()];
+    ltg_rot.GetComponents( begin( ltg ) );
+    ltg_trans.GetCoordinates( ltg.data() + 9 );
 
-                          // Get the number of the module this sensor is on.
-                          const unsigned int number = sensor.module();
-                          if ( number < m_modules.size() ) {
-                            // Check if this module has already been setup.
-                            if ( m_modules[number] ) return;
-                          } else {
-                            m_modules.resize( number + 1, 0 );
-                          }
+    // Get the number of the module this sensor is on.
+    const unsigned int number = sensor.module();
+    if ( number < m_modules.size() ) {
+      // Check if this module has already been setup.
+      if ( m_modules[number] ) return;
+    } else {
+      m_modules.resize( number + 1, 0 );
+    }
 
-                          // Create a new module and add it to the list.
-                          m_module_pool.emplace_back( number, sensor.isRight() );
-                          PixelModule* module = &m_module_pool.back();
-                          module->setZ( sensor.z() );
-                          if ( sensor.isRight() ) {
-                            module->setPrevious( previousRight );
-                            previousRight = number;
-                          } else {
-                            module->setPrevious( previousLeft );
-                            previousLeft = number;
-                          }
-                          m_modules[number] = module;
-                          if ( m_firstModule > number ) m_firstModule = number;
-                          if ( m_lastModule < number ) m_lastModule = number;
-                        });
+    // Create a new module and add it to the list.
+    m_module_pool.emplace_back( number, sensor.isRight() );
+    PixelModule* module = &m_module_pool.back();
+    module->setZ( sensor.z() );
+    if ( sensor.isRight() ) {
+      module->setPrevious( previousRight );
+      previousRight = number;
+    } else {
+      module->setPrevious( previousLeft );
+      previousLeft = number;
+    }
+    m_modules[number] = module;
+    if ( m_firstModule > number ) m_firstModule = number;
+    if ( m_lastModule < number ) m_lastModule = number;
+  } );
   // the module pool might have been resized -- make sure
   // all module pointers are valid.
   for ( unsigned int i = 0; i < m_module_pool.size(); ++i ) {

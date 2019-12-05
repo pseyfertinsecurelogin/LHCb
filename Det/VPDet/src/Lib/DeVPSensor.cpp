@@ -157,79 +157,6 @@ bool DeVPSensor::pointToChannel( const Gaudi::XYZPoint& point, const bool local,
 }
 
 //==============================================================================
-// Calculate the pixel and fraction corresponding to a global point.
-//==============================================================================
-bool DeVPSensor::pointToChannel( const Gaudi::XYZPoint& point, const bool local, LHCb::VPChannelID& channel,
-                                 std::pair<double, double>& fraction ) const {
-
-  Gaudi::XYZPoint localPoint = local ? point : globalToLocal( point );
-  // Check if the point is in the active area of the sensor.
-  if ( !isInActiveArea( localPoint ) ) return false;
-  fraction.first  = 0.;
-  fraction.second = 0.;
-  // Set the sensor number.
-  channel.setSensor( m_sensorNumber );
-  const double step = m_cache.chipSize + m_cache.interChipDist;
-  double       x0   = 0.;
-  for ( unsigned int i = 0; i < m_cache.nChips; ++i ) {
-    if ( localPoint.x() < x0 + step ) {
-      // Set the chip number.
-      channel.setChip( i );
-      // Calculate the column number.
-      const double       x    = localPoint.x() - x0;
-      const double       fcol = x / m_cache.pixelSize - 0.5;
-      const unsigned int icol = fcol > 0. ? int( fcol ) : 0;
-      // Set column and inter-pixel fraction.
-      if ( icol <= 0 ) {
-        channel.setCol( 0 );
-        if ( 0 == i ) {
-          if ( fcol > 0. ) fraction.first = fcol;
-        } else {
-          // First column has elongated pixels.
-          const double pitch = 0.5 * ( m_cache.pixelSize + m_cache.interChipPixelSize );
-          fraction.first     = x / pitch;
-        }
-      } else if ( icol >= m_cache.nCols - 1 ) {
-        channel.setCol( m_cache.nCols - 1 );
-        if ( i == m_cache.nChips - 1 ) {
-          fraction.first = fcol - icol;
-        } else {
-          // Last column has elongated pixels.
-          if ( x < m_cache.chipSize ) {
-            // This point is assigned to the last but one pixel.
-            channel.setCol( m_cache.nCols - 2 );
-            const double pitch = 0.5 * ( m_cache.pixelSize + m_cache.interChipPixelSize );
-            fraction.first     = 1. - ( m_cache.chipSize - x ) / pitch;
-          } else {
-            // Point is in inter-chip region.
-            fraction.first = ( x - m_cache.chipSize ) / m_cache.interChipPixelSize;
-          }
-        }
-      } else {
-        channel.setCol( icol );
-        fraction.first = fcol - icol;
-        if ( icol == m_cache.nCols - 2 && i < m_cache.nChips - 1 ) {
-          fraction.first *= m_cache.pixelSize / m_cache.interChipPixelSize;
-        }
-      }
-      // Set the row and inter-pixel fraction.
-      const double       frow = localPoint.y() / m_cache.pixelSize - 0.5;
-      const unsigned int irow = frow > 0. ? int( frow ) : 0;
-      if ( irow <= 0 ) {
-        channel.setRow( 0 );
-        if ( frow > 0. ) fraction.second = frow;
-      } else {
-        channel.setRow( irow );
-        fraction.second = frow - irow;
-      }
-      break;
-    }
-    x0 += step;
-  }
-  return true;
-}
-
-//==============================================================================
 // Check if a local point is inside the active area of the sensor.
 //==============================================================================
 bool DeVPSensor::isInActiveArea( const Gaudi::XYZPoint& point ) const {
@@ -251,7 +178,6 @@ std::pair<double, double> DeVPSensor::pixelSize( const LHCb::VPChannelID channel
 // Return true if a pixel with given channel ID is an elongated pixel.
 //==============================================================================
 bool DeVPSensor::isLong( const LHCb::VPChannelID channel ) const {
-
   const unsigned int chip = channel.chip();
   const unsigned int col  = channel.col();
   if ( ( col == 0 && chip > 0 ) || ( col == m_cache.nCols - 1 && chip < m_cache.nChips - 1 ) ) { return true; }
