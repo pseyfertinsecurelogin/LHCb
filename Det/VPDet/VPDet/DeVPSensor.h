@@ -62,7 +62,7 @@ public:
 
   /// Determine whether a point is within the sensor
   bool isInsideSensor( const double x, const double y ) const {
-    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) );
+    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) ); 
   }
 
   /// Convert local position to global position
@@ -122,6 +122,7 @@ public:
   unsigned int numChips() const { return m_cache.nChips; }
   unsigned int numColumns() const { return m_cache.nCols; }
   unsigned int numRows() const { return m_cache.nRows; }
+
 private:
   IGeometryInfo* m_geometry = nullptr;
 

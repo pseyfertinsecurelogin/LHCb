@@ -11,4 +11,3 @@
 #pragma once
 
 #include "DetDesc/ConditionAccessorHolder.h"
-

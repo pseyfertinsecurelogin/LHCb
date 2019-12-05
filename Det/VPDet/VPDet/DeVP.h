@@ -47,17 +47,17 @@ public:
   /// Return the number of sensors.
   unsigned int numberSensors() const { return m_sensors.size(); }
 
-  template<class Operation>
+  template <class Operation>
   /// runs the given callable on every sensor
   void runOnAllSensors( Operation op ) const {
-    for ( auto& sensor : m_sensors ) op(*sensor);
+    for ( auto& sensor : m_sensors ) op( *sensor );
   }
 
   /// Return pointer to sensor for a given point in the global frame.
   const DeVPSensor& sensor( const Gaudi::XYZPoint& point ) const {
     const int sensorNumber = sensitiveVolumeID( point );
-    if (sensorNumber >= 0) return *m_sensors[sensorNumber];
-    throw std::runtime_error("Invalid sensor number in DeVP");
+    if ( sensorNumber >= 0 ) return *m_sensors[sensorNumber];
+    throw std::runtime_error( "Invalid sensor number in DeVP" );
   }
   /// Return pointer to sensor for a given channel ID.
   const DeVPSensor& sensor( LHCb::VPChannelID channel ) const { return sensor( channel.sensor() ); }
@@ -65,7 +65,6 @@ public:
   const DeVPSensor& sensor( unsigned int sensorNumber ) const { return *m_sensors[sensorNumber]; }
 
 private:
-
   /// local to global matrix cache
   std::array<std::array<float, 12>, VP::NSensors> m_ltg{{}};
 
@@ -79,14 +78,14 @@ private:
   float m_pixel_size = 0;
 
 public:
-    /// Return local x for a given sensor.
-    float local_x(unsigned int n) const        { return m_local_x[n];       }
-    /// Return pitch for a given sensor.
-    float x_pitch(unsigned int n) const        { return m_x_pitch[n];       }
-    /// Return the pixel size.
-    float pixel_size() const                   { return m_pixel_size;       }
-    /// Return local to global matirx for a sensor
-    const std::array<float, 12>& ltg(unsigned int n) const { return m_ltg[n]; }
+  /// Return local x for a given sensor.
+  float local_x( unsigned int n ) const { return m_local_x[n]; }
+  /// Return pitch for a given sensor.
+  float x_pitch( unsigned int n ) const { return m_x_pitch[n]; }
+  /// Return the pixel size.
+  float pixel_size() const { return m_pixel_size; }
+  /// Return local to global matirx for a sensor
+  const std::array<float, 12>& ltg( unsigned int n ) const { return m_ltg[n]; }
 
 private:
   /// Find sensors inside detector element tree.
@@ -113,7 +112,6 @@ private:
 
   /// code updateing the cached data when geometry changes
   StatusCode updateCache();
-
 };
 
 #endif

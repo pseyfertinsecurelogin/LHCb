@@ -28,7 +28,6 @@ namespace DetCond::Examples::Functional {
     }
   };
 
-
   /// Example of a derived condition that does not inherit from Condition base class.
   struct MyData {
     double p1, p2, v;
@@ -67,8 +66,7 @@ namespace DetCond::Examples::Functional {
     double                  pi() { return m_pi; };
   };
   struct CondAccessExampleWithDerivationAndBase
-      : Gaudi::Functional::Consumer<void( const MyData& ),
-                                    LHCb::DetDesc::usesBaseAndConditions<MyAlgorithm, MyData>> {
+      : Gaudi::Functional::Consumer<void( const MyData& ), LHCb::DetDesc::usesBaseAndConditions<MyAlgorithm, MyData>> {
     CondAccessExampleWithDerivationAndBase( const std::string& name, ISvcLocator* loc )
         : Consumer{name, loc, {KeyValue{"Target", "DerivedCondition"}}} {}
 
