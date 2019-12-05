@@ -115,7 +115,13 @@ public:
     const Gaudi::XYZPoint point( x, y, 0.0 );
     return ( local ? point : localToGlobal( point ) );
   }
-
+  double chipSize() const { return m_cache.chipSize; }
+  double interChipDist() const { return m_cache.interChipDist; }
+  double pixelSize() const { return m_cache.pixelSize; }
+  double interChipPixelSize() const { return m_cache.interChipPixelSize; }
+  unsigned int numChips() const { return m_cache.nChips; }
+  unsigned int numColumns() const { return m_cache.nCols; }
+  unsigned int numRows() const { return m_cache.nRows; }
 private:
   IGeometryInfo* m_geometry = nullptr;
 
