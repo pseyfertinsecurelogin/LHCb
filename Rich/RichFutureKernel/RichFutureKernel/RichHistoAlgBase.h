@@ -23,6 +23,7 @@
 
 // Gaudi
 #include "Gaudi/Algorithm.h"
+#include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/GaudiHistoAlg.h"
 
 // local
@@ -35,8 +36,8 @@ namespace Rich::Future {
 
   namespace Details {
     /// Basic algorithm class with minimum functionality from legacy GaudiAlg needed by GaudiHistos
-    struct GAUDI_API BaseAlg : Gaudi::Algorithm {
-      using Gaudi::Algorithm::Algorithm;
+    struct GAUDI_API BaseAlg : FixTESPath<Gaudi::Algorithm> {
+      using FixTESPath<Gaudi::Algorithm>::FixTESPath;
       StatusCode Print( const std::string& msg,                       //
                         const StatusCode   st  = StatusCode::SUCCESS, //
                         const MSG::Level   lev = MSG::INFO ) const {
