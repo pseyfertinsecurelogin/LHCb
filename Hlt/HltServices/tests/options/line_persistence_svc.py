@@ -16,6 +16,7 @@ from Configurables import HltLinePersistenceSvc
 from Configurables import TCKLinePersistenceSvc
 from Configurables import ConfigCDBAccessSvc, HltConfigSvc
 import GaudiPython
+import ROOT
 
 HistogramPersistencySvc().OutputLevel = 5
 
@@ -46,7 +47,9 @@ gaudi.config()
 gaudi.initialize()
 
 LHCb = GaudiPython.gbl.LHCb
-std = GaudiPython.gbl.std
+# Taking `std` from `cppyy.gbl` (or `GaudiPython.gbl` which is equivalent) is broken in GCC9
+# https://root-forum.cern.ch/t/incomplete-python-bindings-under-gcc9/37071
+std = ROOT.std
 # Make sure relevant types are instantiated, if not PyROOT segfaults!
 std.vector(std.string)
 std.set(std.string)
