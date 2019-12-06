@@ -205,7 +205,7 @@ namespace LHCb::Muon::DAQ {
     MuonHitContainer operator()( const RawEvent&, const DeMuonDetector&, const ComputeTilePosition& ) const override;
 
   private:
-    mutable Gaudi::Accumulators::BinomialCounter<> m_invalid_add{this, "invalid add"};
+    mutable Gaudi::Accumulators::MsgCounter<MSG::ERROR> m_invalid_add{this, "invalid add"};
   };
 
   DECLARE_COMPONENT_WITH_ID( RawToHits, "MuonRawToHits" )
@@ -260,8 +260,8 @@ namespace LHCb::Muon::DAQ {
       int station = stationOfTell1[tell1];
 
       // decode the bank -- decide in which array to put the digits according to the Tell1 source
-      auto make_tile = [& ADDToTile = det.getDAQInfo()->getADDInTell1( tell1 ),
-                        invalid_add = m_invalid_add.buffer()]( unsigned short w ) mutable {
+      auto make_tile = [& ADDToTile  = det.getDAQInfo()->getADDInTell1( tell1 ),
+                        &invalid_add = m_invalid_add]( unsigned short w ) mutable {
         constexpr unsigned short ADDmask = 0x0FFF; // there is no short literal suffix...
         unsigned short           add     = w & ADDmask;
         bool                     valid   = add < ADDToTile.size();
