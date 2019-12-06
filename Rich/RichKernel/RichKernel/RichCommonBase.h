@@ -115,8 +115,11 @@ namespace Rich {
      *  @return Pointer to the tool associated to the given nickname
      */
     template <typename TOOL>
-    inline const TOOL* acquireTool( const std::string& nickName, const std::string& iName, const TOOL*& pTool,
-                                    const IInterface* parent = nullptr, const bool commonTool = false ) const {
+    inline const TOOL* acquireTool( const std::string& nickName, //
+                                    const std::string& iName,    //
+                                    const TOOL*&       pTool,
+                                    const IInterface*  parent     = nullptr, //
+                                    const bool         commonTool = false ) const {
       // Start by setting tool pointer to null
       pTool = nullptr;
 
@@ -167,8 +170,10 @@ namespace Rich {
      *  @return Pointer to the tool associated to the given nickname
      */
     template <typename TOOL>
-    inline const TOOL* acquireTool( const std::string& nickName, const TOOL*& pTool, const IInterface* parent = nullptr,
-                                    const bool commonTool = false ) const {
+    inline const TOOL* acquireTool( const std::string& nickName,             //
+                                    const TOOL*&       pTool,                //
+                                    const IInterface*  parent     = nullptr, //
+                                    const bool         commonTool = false ) const {
       return this->acquireTool( nickName, nickName, pTool, parent, commonTool );
     }
 
@@ -221,7 +226,8 @@ namespace Rich {
      *                   if they are already set
      *  @return StatusCode indicating if the options where correctly copied
      */
-    StatusCode propagateJobOptions( const std::string& from_name, const std::string& to_name,
+    StatusCode propagateJobOptions( const std::string&              from_name, //
+                                    const std::string&              to_name,   //
                                     const std::vector<std::string>& options   = std::vector<std::string>(),
                                     const bool                      overwrite = false ) const;
 

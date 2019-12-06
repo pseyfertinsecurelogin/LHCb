@@ -30,6 +30,7 @@
 #include "RichDet/DeRichPDPanel.h"
 #include "RichDet/DeRichPMTPanel.h"
 #include "RichDet/DeRichPMTPanelClassic.h"
+#include "RichDet/DeRichSphMirror.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRich
@@ -87,6 +88,11 @@ StatusCode DeRich::initialize() {
       if ( m_Rich2PhotoDetectorArrayConfig == 2 || m_Rich2PhotoDetectorArrayConfig == 3 ) { m_Rich2UseMixedPmt = true; }
     }
   }
+
+  // beampipe
+  const auto loc = ( rich() == Rich::Rich1 ? DeRichLocations::Rich1BeamPipe : DeRichLocations::Rich2BeamPipe );
+  SmartDataPtr<DeRichBeamPipe> pipe( dataSvc(), loc );
+  m_beampipe = pipe;
 
   return StatusCode::SUCCESS;
 }
@@ -364,4 +370,26 @@ DeRich::SIMDRayTResult::Results DeRich::rayTrace( const Rich::SIMD::Sides&      
 
   // return
   return res1;
+}
+
+//=============================================================================
+// creates a vector of all mirrors of given type
+//=============================================================================
+std::vector<const DeRichSphMirror*> DeRich::getMirrors( std::string mirrType ) const {
+
+  // list of mirror locations for given type
+  const auto locations = paramVect<std::string>( mirrType );
+
+  // vector of mirror pointers to return
+  std::vector<const DeRichSphMirror*> mirrors;
+  mirrors.reserve( locations.size() );
+
+  // load the mirrors
+  std::transform( begin( locations ), end( locations ), std::back_inserter( mirrors ),
+                  [ds = dataSvc()]( const auto& loc ) {
+                    return SmartDataPtr<DeRichSphMirror>{ds, loc};
+                  } );
+
+  // return the vector
+  return mirrors;
 }

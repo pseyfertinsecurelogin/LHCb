@@ -206,8 +206,8 @@ namespace Rich::Future {
 
     /// Test if a given bit in a word is set on
     template <class TYPE>
-    inline bool isBitOn( const TYPE                 data, //
-                         const Rich::DAQ::ShortType pos ) const noexcept {
+    static bool isBitOn( const TYPE                 data, //
+                         const Rich::DAQ::ShortType pos ) noexcept {
       return ( 0 != ( data & ( 1 << pos ) ) );
     }
 
@@ -331,9 +331,7 @@ StatusCode RawBankDecoder::initialize() {
 
   if ( UNLIKELY( m_initDeRichSystem.value() ) ) {
     // workaround for the issue of circular dependencies in HPD initialization
-    DataObject* tmp = nullptr;
-    sc              = detSvc()->retrieveObject( inputLocation<2>(), tmp );
-    if ( !sc ) return sc;
+    if ( !acquire<DeRichSystem>( detSvc(), inputLocation<2>() ) ) { return StatusCode::FAILURE; }
   }
 
   // report inactive RICHes

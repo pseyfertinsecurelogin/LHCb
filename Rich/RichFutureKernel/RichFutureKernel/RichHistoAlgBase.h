@@ -21,7 +21,9 @@
 
 #pragma once
 
-// GaudiAlg
+// Gaudi
+#include "Gaudi/Algorithm.h"
+#include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/GaudiHistoAlg.h"
 
 // local
@@ -31,6 +33,35 @@
 #include "RichUtils/RichHistoID.h"
 
 namespace Rich::Future {
+
+  namespace Details {
+    /// Basic algorithm class with minimum functionality from legacy GaudiAlg needed by GaudiHistos
+    struct GAUDI_API BaseAlg : FixTESPath<Gaudi::Algorithm> {
+      using FixTESPath<Gaudi::Algorithm>::FixTESPath;
+      StatusCode Print( const std::string& msg,                       //
+                        const StatusCode   st  = StatusCode::SUCCESS, //
+                        const MSG::Level   lev = MSG::INFO ) const {
+        msgStream( lev ) << msg;
+        return st;
+      }
+      StatusCode Warning( const std::string& msg, //
+                          const StatusCode   st = StatusCode::FAILURE ) const {
+        warning() << msg;
+        return st;
+      }
+      StatusCode Error( const std::string& msg, //
+                        const StatusCode   st = StatusCode::FAILURE ) const {
+        error() << msg;
+        return st;
+      }
+    };
+    /// Histogramming base a la GaudiAlg, but based on Gaudi::Algorithm
+    struct GAUDI_API HistoBaseAlg : GaudiHistos<BaseAlg> {
+      using GaudiHistos<BaseAlg>::GaudiHistos;
+      using GaudiHistos<BaseAlg>::initialize;
+      using GaudiHistos<BaseAlg>::finalize;
+    };
+  } // namespace Details
 
   //-----------------------------------------------------------------------------
   /** @class HistoAlgBase RichHistoAlgBase.h RichFutureKernel/RichHistoAlgBase.h
@@ -45,11 +76,12 @@ namespace Rich::Future {
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public HistoBase<GaudiHistoAlg> {
+  class HistoAlgBase : public HistoBase<Details::HistoBaseAlg> {
 
   public:
     /// Standard constructor
-    HistoAlgBase( const std::string& name, ISvcLocator* pSvcLocator ) : HistoBase<GaudiHistoAlg>( name, pSvcLocator ) {
+    HistoAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : HistoBase<Details::HistoBaseAlg>( name, pSvcLocator ) {
       this->initRichHistoConstructor();
     }
   };

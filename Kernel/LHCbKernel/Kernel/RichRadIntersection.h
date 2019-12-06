@@ -32,6 +32,9 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 
+// Boost
+#include <boost/container/small_vector.hpp>
+
 // DetDesc
 class DeRichRadiator;
 
@@ -54,7 +57,7 @@ namespace Rich {
 
   public:
     /// Definition of a vector of intersections
-    using Vector = std::vector<Rich::RadIntersection>;
+    using Vector = boost::container::small_vector<Rich::RadIntersection, 1>;
 
   public:
     /// Default constructor

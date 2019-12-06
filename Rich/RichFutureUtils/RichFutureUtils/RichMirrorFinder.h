@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -9,20 +9,11 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-//-----------------------------------------------------------------------------
-/** @file IRichMirrorSegFinderLookUpTable.h
- *
- *  Header file for tool interface : Rich::IMirrorSegFinderLookUpTable
- *
- *  @author Antonis Papanestis
- *  @date   2003-11-04
- */
-//-----------------------------------------------------------------------------
-
 #pragma once
 
 // STL
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -34,7 +25,6 @@
 #include <Vc/vector>
 
 // from Gaudi
-#include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
 // from LHCbKernel
@@ -44,30 +34,39 @@
 // from MathCore
 #include "GaudiKernel/Point3DTypes.h"
 
+// Det Desc
+#include "DetDesc/ConditionKey.h"
+#include "DetDesc/IConditionDerivationMgr.h"
+
 // RichDet
 #include "RichDet/DeRichSphMirror.h"
+class DeRich1;
+class DeRich2;
 
-namespace Rich::Future {
+namespace Rich::Utils {
 
   //-----------------------------------------------------------------------------
-  /** @class IMirrorSegFinderLookUpTable RichInterfaces/IRichMirrorSegFinderLookUpTable.h
+  /** @class MirrorFinder RichMirrorFinder.h
    *
-   *  Interface to a tool to find the appropriate mirror segment for a given reflection point.
-   *  This interface is specific to the implementation using a look up table, and
-   *  as such provides the most efficient access.
+   *  Utility to find the appropriate mirror segment for a given reflection point.
    *
    *  @author Chris Jones
    *  @date   2017-01-19
    */
   //-----------------------------------------------------------------------------
 
-  class IMirrorSegFinderLookUpTable : public virtual IAlgTool {
+  class MirrorFinder final {
 
   public:
-    /// Interface ID
-    DeclareInterfaceID( IMirrorSegFinderLookUpTable, 1, 0 );
+    // constructors
 
-  protected:
+    // no default constructor
+
+    /// Constructor from dependent detector elements
+    MirrorFinder( const DeRich1& rich1, //
+                  const DeRich2& rich2 );
+
+  private:
     // helper classes
 
     /// Type for list of mirrors
@@ -75,7 +74,7 @@ namespace Rich::Future {
 
     /// SIMD Type for array of Mirrors
     template <typename TYPE>
-    using SIMDMirrors = Rich::SIMD::STDArray<const DeRichSphMirror*, TYPE>;
+    using SIMDMirrors = SIMD::STDArray<const DeRichSphMirror*, TYPE>;
 
     //-----------------------------------------------------------------------------
     /** @class LookupTableFinder RichMirrorSegFinderLookUpTable.h
@@ -83,7 +82,7 @@ namespace Rich::Future {
      *  Helper object implementing a lookup table based mirror search
      *
      *  @author Chris Jones
-     *  @date   2015-02-01
+     *  @date   2019-11-27
      */
     //-----------------------------------------------------------------------------
     template <typename FPTYPE, std::uint32_t NXBINS, std::uint32_t NYBINS, //
@@ -238,6 +237,7 @@ namespace Rich::Future {
       /** @class LookupTable RichMirrorSegFinderLookUpTable.h
        *  2D (x,y) Lookup table for RICH mirrors */
       class LookupTable final : private MirrorArray {
+
       public:
         /// Constructor
         LookupTable() { clear(); }
@@ -562,7 +562,7 @@ namespace Rich::Future {
       PanelArray<R2FINDER> m_r2Finder;
     };
 
-  protected:
+  private:
     // Finder types for each RICH and mirror type
     using R1Primary   = TwoSegmentXFinder;
     using R2Primary   = R2LookupTableFinder<double, 400, 400>;
@@ -736,6 +736,28 @@ namespace Rich::Future {
       // Find the mirror from the lookup map
       return m_secMirrFinder.find( rich, sides, x, y );
     }
+
+  public:
+    // conditions handling
+
+    /// Creates a condition derivation for the given key
+    template <typename PARENT>
+    static decltype( auto )                                     //
+    addConditionDerivation( PARENT*                     parent, ///< Pointer to parent algorithm
+                            LHCb::DetDesc::ConditionKey key     ///< Derived object name
+    ) {
+      if ( parent->msgLevel( MSG::DEBUG ) ) {
+        parent->debug() << "MirrorFinder::addConditionDerivation : Key=" << key << endmsg;
+      }
+      return LHCb::DetDesc:: //
+          addConditionDerivation<MirrorFinder( const DeRich1&, const DeRich2& )>(
+              parent->conditionDerivationMgr(),                 // mamanager
+              {DeRichLocations::Rich1, DeRichLocations::Rich2}, // input condition locations
+              std::move( key ) );                               // output derived condition location
+    }
+
+    /// Default conditions name
+    static constexpr const char* DefaultConditionKey = "RichMirrorFinder-Handler";
   };
 
-} // namespace Rich::Future
+} // namespace Rich::Utils
