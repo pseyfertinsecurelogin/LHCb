@@ -47,9 +47,6 @@ namespace Rich::Utils {
   public:
     // construtors
 
-    // no default constructor
-    RadIntersects() = delete;
-
     // From radiators
     RadIntersects( const DeRichRadiator& r1gas,  // RICH1 gas volume
                    const DeRichRadiator& r2gas ) // RICH2 gas volume

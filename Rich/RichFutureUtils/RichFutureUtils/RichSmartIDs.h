@@ -53,8 +53,7 @@ namespace Rich::Utils {
   class RichSmartIDs final {
 
   public:
-    /// Disallow default constructor
-    RichSmartIDs() = delete;
+    // constructors
 
     /// Constructor from RICH detector elements
     RichSmartIDs( const DeRichSystem& richSys, //
@@ -76,12 +75,12 @@ namespace Rich::Utils {
     // methods
 
     /// Get the PD panel for the given SmartID
-    inline decltype( auto ) panel( const LHCb::RichSmartID& ID ) const noexcept {
+    [[nodiscard]] decltype( auto ) panel( const LHCb::RichSmartID& ID ) const noexcept {
       return m_riches[ID.rich()]->pdPanel( ID.panel() );
     }
 
     /// Get the PD panel for the given RICH and side
-    inline decltype( auto ) panel( const Rich::DetectorType rich, const Rich::Side side ) const noexcept {
+    [[nodiscard]] decltype( auto ) panel( const Rich::DetectorType rich, const Rich::Side side ) const noexcept {
       return m_riches[rich]->pdPanel( side );
     }
 
@@ -112,17 +111,17 @@ namespace Rich::Utils {
                          Gaudi::XYZPoint&            detectPoint ) const;
 
     // Finds the average positions of a vector of clusters, in global LHCb coordinates
-    LHCb::STL::Vector<Gaudi::XYZPoint> globalPositions( const Rich::PDPixelCluster::Vector& clusters,
-                                                        const bool ignoreClusters = false ) const;
+    [[nodiscard]] LHCb::STL::Vector<Gaudi::XYZPoint> globalPositions( const Rich::PDPixelCluster::Vector& clusters,
+                                                                      const bool ignoreClusters = false ) const;
 
     // Converts an PD RichSmartID identification into a position in global LHCb coordinates.
     bool pdPosition( const LHCb::RichSmartID& pdid, //
                      Gaudi::XYZPoint&         pdPoint ) const;
 
     // Computes the global position coordinate for a given position in local
-    Gaudi::XYZPoint globalPosition( const Gaudi::XYZPoint&   localPoint, //
-                                    const Rich::DetectorType rich,       //
-                                    const Rich::Side         side ) const {
+    [[nodiscard]] Gaudi::XYZPoint globalPosition( const Gaudi::XYZPoint&   localPoint, //
+                                                  const Rich::DetectorType rich,       //
+                                                  const Rich::Side         side ) const {
       return panel( rich, side )->PDPanelToGlobalMatrix() * localPoint;
     }
 
@@ -131,19 +130,19 @@ namespace Rich::Utils {
                   LHCb::RichSmartID&     smartid ) const;
 
     // Supplies a vector of all currently active and valid channels in the RICH detectors
-    LHCb::RichSmartID::Vector readoutChannelList() const;
+    [[nodiscard]] LHCb::RichSmartID::Vector readoutChannelList() const;
 
     // Converts a position in global coordinates to the local coordinate system.
-    Gaudi::XYZPoint globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const;
+    [[nodiscard]] Gaudi::XYZPoint globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const;
 
     // Converts a SIMD position in global coordinates to the local coordinate system
-    SIMDPoint globalToPDPanel( const Rich::DetectorType rich, //
-                               const SIMDPoint&         globalPoint ) const;
+    [[nodiscard]] SIMDPoint globalToPDPanel( const Rich::DetectorType rich, //
+                                             const SIMDPoint&         globalPoint ) const;
 
     // Converts a SIMD position in global coordinates to the local coordinate system
-    SIMDPoint globalToPDPanel( const Rich::DetectorType rich, //
-                               const Rich::Side         side, //
-                               const SIMDPoint&         globalPoint ) const {
+    [[nodiscard]] SIMDPoint globalToPDPanel( const Rich::DetectorType rich, //
+                                             const Rich::Side         side, //
+                                             const SIMDPoint&         globalPoint ) const {
       return panel( rich, side )->globalToPDPanelMatrixSIMD() * globalPoint;
     }
 

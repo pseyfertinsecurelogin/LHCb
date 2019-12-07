@@ -38,13 +38,13 @@ RayTracing::RayTracing( const DeRich1&             rich1,          //
     m_sphMirrorSegRows[Rich::Rich1] = m_rich[Rich::Rich1]->param<int>( "SphMirrorSegRows" );
     m_sphMirrorSegCols[Rich::Rich1] = m_rich[Rich::Rich1]->param<int>( "SphMirrorSegColumns" );
   } else {
-    throw Rich::Exception( "No primary mirrors for RICH1 found !" );
+    throw Exception( "No primary mirrors for RICH1 found !" );
   }
   if ( m_rich[Rich::Rich1]->exists( "SecMirrorSegRows" ) ) {
     m_secMirrorSegRows[Rich::Rich1] = m_rich[Rich::Rich1]->param<int>( "SecMirrorSegRows" );
     m_secMirrorSegCols[Rich::Rich1] = m_rich[Rich::Rich1]->param<int>( "SecMirrorSegColumns" );
   } else {
-    throw Rich::Exception( "No secondary mirrors for RICH1 found !" );
+    throw Exception( "No secondary mirrors for RICH1 found !" );
   }
 
   // Rich2 mirrors
@@ -52,13 +52,13 @@ RayTracing::RayTracing( const DeRich1&             rich1,          //
     m_sphMirrorSegRows[Rich::Rich2] = m_rich[Rich::Rich2]->param<int>( "SphMirrorSegRows" );
     m_sphMirrorSegCols[Rich::Rich2] = m_rich[Rich::Rich2]->param<int>( "SphMirrorSegColumns" );
   } else {
-    throw Rich::Exception( "No primary mirrors for RICH2 found !" );
+    throw Exception( "No primary mirrors for RICH2 found !" );
   }
   if ( m_rich[Rich::Rich2]->exists( "SecMirrorSegRows" ) ) {
     m_secMirrorSegRows[Rich::Rich2] = m_rich[Rich::Rich2]->param<int>( "SecMirrorSegRows" );
     m_secMirrorSegCols[Rich::Rich2] = m_rich[Rich::Rich2]->param<int>( "SecMirrorSegColumns" );
   } else {
-    throw Rich::Exception( "No secondary mirrors for RICH2 found !" );
+    throw Exception( "No secondary mirrors for RICH2 found !" );
   }
 }
 
@@ -232,96 +232,6 @@ RayTracing::Result::Vector RayTracing::traceToDetector( const Gaudi::XYZPoint&  
   } // loop over photon data
 
   return results;
-}
-
-//=============================================================================
-// reflect the trajectory on the mirror, and determine the position where
-// it hits the detector plane,
-// take into account the geometrical boundaries of mirrors and detector
-//=============================================================================
-LHCb::RichTraceMode::RayTraceResult RayTracing::traceToDetector( const Rich::DetectorType  rich,        //
-                                                                 const Gaudi::XYZPoint&    startPoint,  //
-                                                                 const Gaudi::XYZVector&   startDir,    //
-                                                                 Gaudi::XYZPoint&          hitPosition, //
-                                                                 const LHCb::RichTraceMode mode,        //
-                                                                 const Rich::Side          forcedSide,  //
-                                                                 const double              photonEnergy //
-                                                                 ) const {
-  // need to think if this can be done without creating a temp RichGeomPhoton ?
-  Future::GeomPhoton photon;
-  const auto         sc = traceToDetector( rich, startPoint, startDir, photon, mode, forcedSide, photonEnergy );
-  hitPosition           = photon.detectionPoint();
-  return sc;
-}
-
-//=============================================================================
-// reflect the trajectory on the mirror, and determine the position where
-// it hits the detector plane,
-// take into account the geometrical boundaries of mirrors and detector
-//=============================================================================
-LHCb::RichTraceMode::RayTraceResult RayTracing::traceToDetector( const Rich::DetectorType      rich,        //
-                                                                 const Gaudi::XYZPoint&        startPoint,  //
-                                                                 const Gaudi::XYZVector&       startDir,    //
-                                                                 Gaudi::XYZPoint&              hitPosition, //
-                                                                 const LHCb::RichTrackSegment& trSeg,       //
-                                                                 const LHCb::RichTraceMode     mode,        //
-                                                                 const Rich::Side              forcedSide   //
-                                                                 ) const {
-  // need to think if this can be done without creating a temp GeomPhoton ?
-  Future::GeomPhoton photon;
-  const auto         sc = traceToDetector( rich, startPoint, startDir, photon, trSeg, mode, forcedSide );
-  hitPosition           = photon.detectionPoint();
-  return sc;
-}
-
-//=============================================================================
-// reflect the trajectory on the mirror, and determine the position where
-// it hits the detector plane,
-// take into account the geometrical boundaries of mirrors and detector
-//=============================================================================
-LHCb::RichTraceMode::RayTraceResult RayTracing::traceToDetector( const Rich::DetectorType  rich,       //
-                                                                 const Gaudi::XYZPoint&    startPoint, //
-                                                                 const Gaudi::XYZVector&   startDir,   //
-                                                                 Future::GeomPhoton&       photon,     //
-                                                                 const LHCb::RichTraceMode mode,       //
-                                                                 const Rich::Side          forcedSide, //
-                                                                 const double /* photonEnergy */       //
-                                                                 ) const {
-
-  // temporary working objects
-  Gaudi::XYZPoint  tmpPos( startPoint );
-  Gaudi::XYZVector tmpDir( startDir );
-
-  // Correct start point/direction for aerogel refraction, if appropriate
-  if ( UNLIKELY( mode.aeroRefraction() && Rich::Rich1 == rich ) ) {
-    Exception( "Aerogel processing is not supported" );
-  } // Do the ray tracing
-  return _traceToDetector( rich, startPoint, tmpPos, tmpDir, photon, mode, forcedSide );
-}
-
-//=============================================================================
-// reflect the trajectory on the mirror, and determine the position where
-// it hits the detector plane,
-// take into account the geometrical boundaries of mirrors and detector
-//=============================================================================
-LHCb::RichTraceMode::RayTraceResult RayTracing::traceToDetector( const Rich::DetectorType      rich,       //
-                                                                 const Gaudi::XYZPoint&        startPoint, //
-                                                                 const Gaudi::XYZVector&       startDir,   //
-                                                                 Future::GeomPhoton&           photon,     //
-                                                                 const LHCb::RichTrackSegment& trSeg,      //
-                                                                 const LHCb::RichTraceMode     mode,       //
-                                                                 const Rich::Side              forcedSide  //
-                                                                 ) const {
-
-  // temporary working objects
-  Gaudi::XYZPoint  tmpPos( startPoint );
-  Gaudi::XYZVector tmpDir( startDir );
-
-  // Correct start point/direction for aerogel refraction, if appropriate
-  if ( UNLIKELY( mode.aeroRefraction() && rich == Rich::Rich1 && trSeg.radiator() == Rich::Aerogel ) ) {
-    Exception( "Aerogel processing is not supported" );
-  } // Do the ray tracing
-  return _traceToDetector( rich, startPoint, tmpPos, tmpDir, photon, mode, forcedSide );
 }
 
 //=============================================================================

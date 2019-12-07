@@ -50,8 +50,7 @@ namespace Rich::Utils {
   class TabulatedRefIndex final {
 
   public:
-    /// Disallow default constructor
-    TabulatedRefIndex() = delete;
+    // constructors
 
     /// Constructor from detector info
     TabulatedRefIndex( const DeRich1&              rich1,     //
@@ -72,16 +71,16 @@ namespace Rich::Utils {
 
     // Calculates the refractive index for a given radiator type at a
     // given energy
-    float refractiveIndex( const Rich::RadiatorType rad, //
-                           const float              energy ) const {
+    [[nodiscard]] float refractiveIndex( const Rich::RadiatorType rad, //
+                                         const float              energy ) const {
       return deRad( rad )->refractiveIndex( energy, m_hltMode );
     }
 
     // Calculates the average refractive index for a given radiator type
     // for a given range of photon energies.
-    float refractiveIndex( const Rich::RadiatorType rad,       //
-                           const float              energyBot, //
-                           const float              energyTop ) const {
+    [[nodiscard]] float refractiveIndex( const Rich::RadiatorType rad,       //
+                                         const float              energyBot, //
+                                         const float              energyTop ) const {
       const auto rich = ( rad == Rich::Rich2Gas ? Rich::Rich2 : Rich::Rich1 );
       return refractiveIndex( rad,
                               m_riches[rich]->nominalPDQuantumEff()->meanX( energyBot, energyTop ) / Gaudi::Units::eV );
@@ -89,42 +88,44 @@ namespace Rich::Utils {
 
     // Calculates the average refractive index for a given radiator type
     // for a all visable photon energies.
-    float refractiveIndex( const Rich::RadiatorType rad ) const {
+    [[nodiscard]] float refractiveIndex( const Rich::RadiatorType rad ) const {
       return refractiveIndex( rad, meanPhotonEnergy( rad ) );
     }
 
     // Calculates the average refractive index for a given set of radiator intersections
     // for all visable photon energies.
-    float refractiveIndex( const Rich::RadIntersection::Vector& intersections, const float energy ) const;
+    [[nodiscard]] float refractiveIndex( const Rich::RadIntersection::Vector& intersections, const float energy ) const;
 
     // Calculates the average refractive index for a given set of radiator intersections
     // for all visable photon energies
-    float refractiveIndex( const Rich::RadIntersection::Vector& intersections ) const;
+    [[nodiscard]] float refractiveIndex( const Rich::RadIntersection::Vector& intersections ) const;
 
     // Calculates the refractive index R.M.S. for a given set of radiator intersections
     // for all visable photon energies.
-    float refractiveIndexRMS( const Rich::RadIntersection::Vector& intersections ) const;
+    [[nodiscard]] float refractiveIndexRMS( const Rich::RadIntersection::Vector& intersections ) const;
 
     // Calculates the refractive index S.D. for a given set of radiator intersections
     // for all visable photon energies.
-    float refractiveIndexSD( const Rich::RadIntersection::Vector& intersections ) const;
+    [[nodiscard]] float refractiveIndexSD( const Rich::RadIntersection::Vector& intersections ) const;
 
     // Returns the threshold momentum for a given hypothesis in a given radiator
-    float thresholdMomentum( const Rich::ParticleIDType id, const Rich::RadiatorType rad ) const;
+    [[nodiscard]] float thresholdMomentum( const Rich::ParticleIDType id, const Rich::RadiatorType rad ) const;
 
     // Calculates the threshold momentum for a given mass hypothesis
-    float thresholdMomentum( const Rich::ParticleIDType id, const LHCb::RichTrackSegment& trSeg ) const;
+    [[nodiscard]] float thresholdMomentum( const Rich::ParticleIDType id, const LHCb::RichTrackSegment& trSeg ) const;
 
   private:
     // methods
 
     /// get the average mean photon energy for given radiator
-    inline float meanPhotonEnergy( const Rich::RadiatorType rad ) const noexcept {
+    [[nodiscard]] float meanPhotonEnergy( const Rich::RadiatorType rad ) const noexcept {
       return 0.5f * ( m_maxPhotEn[rad] + m_minPhotEn[rad] );
     }
 
     /// Access on demand the Rich radiator detector elements
-    inline const DeRichRadiator* deRad( const Rich::RadiatorType rad ) const noexcept { return m_radiators[rad]; }
+    [[nodiscard]] inline const DeRichRadiator* deRad( const Rich::RadiatorType rad ) const noexcept {
+      return m_radiators[rad];
+    }
 
   private:
     // data
