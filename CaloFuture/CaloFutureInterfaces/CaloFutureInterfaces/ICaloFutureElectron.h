@@ -35,13 +35,18 @@ namespace LHCb {
  *  @date   2006-11-30
  */
 namespace LHCb::Calo::Interfaces {
+  struct hypoPairStruct {
+    const LHCb::CaloHypo* electronHypo = nullptr;
+    const LHCb::CaloHypo* bremHypo     = nullptr;
+    explicit              operator bool() const { return ( electronHypo != nullptr ); }
+  };
+
   struct IElectron : public extend_interfaces<IAlgTool> {
 
     // Return the interface ID
     DeclareInterfaceID( IElectron, 3, 0 );
 
-    virtual std::pair<const LHCb::CaloHypo*, const LHCb::CaloHypo*>
-    getElectronBrem( LHCb::ProtoParticle const& proto ) const = 0;
+    virtual hypoPairStruct getElectronBrem( LHCb::ProtoParticle const& proto ) const = 0;
 
     virtual State           caloState( ProtoParticle const& proto ) const                             = 0;
     virtual State           closestState( ProtoParticle const& proto ) const                          = 0;
