@@ -150,6 +150,15 @@ namespace Rich::Utils {
     const bool m_hltMode{true};
 
   public:
+    // conditions handling
+
+    /// Creates a condition derivation
+    template <typename PARENT>
+    static decltype( auto ) addConditionDerivation( PARENT* parent ) {
+      // Assume parent algorithm has one and only one input of the correct type...
+      return addConditionDerivation( parent, parent->template inputLocation<TabulatedRefIndex>() );
+    }
+
     /// Creates a condition derivation for the given key
     template <typename PARENT>
     static decltype( auto ) //

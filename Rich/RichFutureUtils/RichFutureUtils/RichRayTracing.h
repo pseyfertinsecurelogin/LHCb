@@ -179,6 +179,13 @@ namespace Rich::Utils {
   public:
     // conditions handling
 
+    /// Creates a condition derivation
+    template <typename PARENT>
+    static decltype( auto ) addConditionDerivation( PARENT* parent ) {
+      // Assume parent algorithm has one and only one input of the correct type...
+      return addConditionDerivation( parent, parent->template inputLocation<RayTracing>() );
+    }
+
     /// Creates a condition derivation for the given key
     template <typename PARENT>
     static decltype( auto )                                              //
