@@ -87,6 +87,9 @@ namespace LHCb::DetDesc {
   namespace detail {
 
     template <typename Callable>
+    using result_of_t = boost::callable_traits::return_type_t<Callable>;
+
+    template <typename Callable>
     inline constexpr auto arity_v = std::tuple_size_v<boost::callable_traits::args_t<Callable>>;
 
     inline void throwTypeMismatch( std::type_info const& FOUND,    //
