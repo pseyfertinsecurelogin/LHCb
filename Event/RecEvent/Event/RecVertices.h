@@ -29,7 +29,7 @@ namespace LHCb::Rec::PV {
   // should go into small object optimization.
   using TrackRef                        = std::size_t;
   using weight_t                        = float;
-  const std::size_t default_vertex_size = 60;
+  const std::size_t default_vertex_size = 200;
 
   // SOA definitions purely for read convenience e.g.
   // @code
