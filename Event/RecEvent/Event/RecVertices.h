@@ -29,7 +29,7 @@ namespace LHCb::Rec::PV {
   // should go into small object optimization.
   using TrackRef                        = std::size_t;
   using weight_t                        = float;
-  const std::size_t default_vertex_size = 60;
+  const std::size_t default_vertex_size = 200;
 
   // SOA definitions purely for read convenience e.g.
   // @code
@@ -49,7 +49,8 @@ namespace LHCb::Rec::PV {
       LHCb::Event::v2::Track::Chi2PerDoF m_chi2PerDoF;
     };
 
-  private:
+    // todo: data members public is questionable but done to disentangle TBL internal logic from event model files
+  public:
     std::vector<Vertex> m_vertices;
 
     std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_fwdTracks;
@@ -116,27 +117,8 @@ namespace LHCb::Rec::PV {
 
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
-    // fitting into current TrackBeamLineVertexFinderSoA
-    void emplace_back( Gaudi::XYZPoint pos, Gaudi::SymMatrix3x3 poscov, LHCb::Event::v2::Track::Chi2PerDoF chi2perdof,
-                       std::vector<std::pair<int, weight_t>> const& tracks // from namespace { struct Vertex
-                                                                           // should not have a hard coded type here
-    ) {
-      m_vertices.push_back( Vertex{pos, poscov, chi2perdof} );
-      m_fwdTracks.emplace_back();
-      m_fwdWeights.emplace_back();
-      m_bkwTracks.emplace_back();
-      m_bkwWeights.emplace_back();
-      // NB: tried application of std::partition to pre-sort. Lead to regression in runtime.
-      for ( auto track : tracks ) {
-        if ( track.first >= 0 ) {
-          m_fwdTracks.back().push_back( track.first );
-          m_fwdWeights.back().push_back( track.second );
-        } else {
-          m_bkwTracks.back().push_back( ( -1 ) - track.first );
-          m_bkwWeights.back().push_back( track.second );
-        }
-      }
-    }
+    // no filling method
+    // should be implemented by creating algorithm where the algorithm-internal structures are known
 
     template <typename dType = SIMDWrapper::best::types, bool unwrap = true>
     [[nodiscard]] decltype( auto ) chi2perdof( const std::size_t i ) const {
