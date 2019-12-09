@@ -29,7 +29,23 @@
   float chi2{42};
   int   ndof{23};
 
-  retval.emplace_back( pos, covmatrix, LHCb::Event::v2::Track::Chi2PerDoF{chi2 / ndof, ndof}, tracks );
+  retval.m_vertices.push_back(
+      LHCb::Rec::PV::PVs::Vertex{pos, covmatrix, LHCb::Event::v2::Track::Chi2PerDoF{chi2 / ndof, ndof}} );
+
+  auto& fwdTracks  = retval.m_fwdTracks.emplace_back();
+  auto& fwdWeights = retval.m_fwdWeights.emplace_back();
+  auto& bkwTracks  = retval.m_bkwTracks.emplace_back();
+  auto& bkwWeights = retval.m_bkwWeights.emplace_back();
+  // NB: tried application of std::partition to pre-sort. Lead to regression in runtime.
+  for ( auto track : tracks ) {
+    if ( track.first >= 0 ) {
+      fwdTracks.push_back( track.first );
+      fwdWeights.push_back( track.second );
+    } else {
+      bkwTracks.push_back( ( -1 ) - track.first );
+      bkwWeights.push_back( track.second );
+    }
+  }
 
   return retval;
 }
