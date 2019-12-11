@@ -45,7 +45,8 @@
  *
  */
 // ============================================================================
-// Clang specific cling JIT issue..
+// Clang specific cling JIT issue.. see
+// https://gitlab.cern.ch/lhcb/LHCb/merge_requests/2258
 // IncrementalExecutor::executeFunction: symbol
 // '_ZNSt5arrayINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELm4EED1Ev'
 // unresolved while linking function '_GLOBAL__sub_I_cling_module_394'!
