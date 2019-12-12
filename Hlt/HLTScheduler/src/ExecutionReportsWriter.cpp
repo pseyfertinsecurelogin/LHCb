@@ -19,11 +19,18 @@
 #include "GaudiAlg/Transformer.h"
 #include "GaudiKernel/EventContext.h"
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/IANNSvc.h"
 
 #include <string>
 #include <type_traits>
 #include <vector>
 
+/** @brief Write DecReport objects based on the status of the execution nodes in the scheduler.
+ *
+ * Each execution node of the HltControlFlowMgr is converted to a DecReport
+ * object, with the decision corresponding to the state of the node. The ID
+ * used in the DecReport is taken from the ANNSvc.
+ */
 class ExecutionReportsWriter final
     : public Gaudi::Functional::Transformer<LHCb::HltDecReports( EventContext const& ),
                                             Gaudi::Functional::Traits::BaseClass_t<FixTESPath<Gaudi::Algorithm>>> {
@@ -36,10 +43,16 @@ public:
 private:
   HLTControlFlowMgr* m_schedulerPtr = nullptr;
 
-  std::vector<int> m_name_indices{};
+  /// ANNSvc for translating selection names to int selection IDs
+  ServiceHandle<IANNSvc> m_hltANNSvc{this, "ANNSvc", "HltANNSvc", "Service to retrieve DecReport IDs"};
+
+  /// Map from line name to index in the scheduler's execution node list and
+  /// number assigned by the HltAnnSvc
+  std::map<std::string, std::pair<int, IANNSvc::minor_mapped_type>> m_name_indices{};
 
   Gaudi::Property<int>                      m_printFreq{this, "PrintFreq", 1000, "Print Frequency for states"};
   Gaudi::Property<std::vector<std::string>> m_line_names{this, "Persist", {}, "Specify the nodes to be written to TES"};
+  Gaudi::Property<std::string>              m_ann_key{this, "ANNSvcKey", "", "Key from the ANN service to query."};
 };
 
 DECLARE_COMPONENT( ExecutionReportsWriter )
@@ -50,17 +63,29 @@ StatusCode ExecutionReportsWriter::start() {
   m_schedulerPtr = dynamic_cast<HLTControlFlowMgr*>( &*service<IEventProcessor>( "HLTControlFlowMgr", false ) );
   if ( !m_schedulerPtr ) return StatusCode::FAILURE;
 
-  m_name_indices.reserve( m_line_names.size() );
-
-  auto names_to_indices = m_schedulerPtr->getNodeNamesWithIndices();
-  for ( std::string_view name : m_line_names ) {
-    auto i = std::find_if( names_to_indices.begin(), names_to_indices.end(),
-                           [&]( const auto& p ) { return std::get<0>( p ) == name; } );
-    if ( i == names_to_indices.end() ) {
-      error() << "Not all line names have been found, please check" << endmsg;
+  const auto& scheduler_items = m_schedulerPtr->getNodeNamesWithIndices();
+  const auto& ann_items       = m_hltANNSvc->items( m_ann_key.value() );
+  for ( const auto& name : m_line_names ) {
+    // The scheduler stores execution nodes as a flat list. We can cache the
+    // index of the execution node for each line now, and retrieve the node from
+    // the list in each event
+    auto node_idx = std::find_if( scheduler_items.begin(), scheduler_items.end(),
+                                  [&]( const auto& p ) { return std::get<0>( p ) == name; } );
+    if ( node_idx == scheduler_items.end() ) {
+      error() << "Line name not a known execution node: " << name << endmsg;
       return StatusCode::FAILURE;
     }
-    m_name_indices.emplace_back( std::get<1>( *i ) );
+
+    // Translate each node name to an int, which will be written to the DecReport
+    // If the node name isn't known to the ANNSvc we can't translate it
+    auto ann_idx =
+        std::find_if( ann_items.begin(), ann_items.end(), [&]( const auto& p ) { return std::get<0>( p ) == name; } );
+    if ( ann_idx == ann_items.end() ) {
+      error() << "Line name not known to ANNSvc: " << name << endmsg;
+      return StatusCode::FAILURE;
+    }
+
+    m_name_indices[name] = {std::get<1>( *node_idx ), std::get<1>( *ann_idx )};
   }
   return sc;
 }
@@ -74,8 +99,10 @@ LHCb::HltDecReports ExecutionReportsWriter::operator()( EventContext const& evtC
   }
   LHCb::HltDecReports reports{};
   reports.reserve( m_name_indices.size() );
-  for ( size_t i = 0; i < m_name_indices.size(); ++i ) {
-    reports.insert( m_line_names[i], {NodeStates[m_name_indices[i]].passed, 0, 0, 0, static_cast<int>( i )} );
+  for ( const auto& item : m_name_indices ) {
+    const auto& name                = std::get<0>( item );
+    const auto& [node_idx, ann_idx] = std::get<1>( item );
+    reports.insert( name, {NodeStates[node_idx].passed, 0, 0, 0, ann_idx} );
   }
   return reports; // write down something better?
 }
