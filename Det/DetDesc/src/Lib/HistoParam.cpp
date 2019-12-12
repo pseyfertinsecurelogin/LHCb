@@ -46,8 +46,8 @@
  *   @date 2009-12-06
  */
 // ============================================================================
-std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo1D& histo, const std::string& name,
-                                       const std::string& comment, int /* precision */ ) {
+std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo1D& histo, std::string_view name,
+                                       std::string_view comment, int /* precision */ ) {
   std::ostringstream out;
   //
   out << "<param name=\"" << name << "\" type=\"Histo1D\""; // open TAG
@@ -81,8 +81,8 @@ std::string DetDesc::Params::toStr( const DetDesc::Params::Histo1D& histo ) { re
  *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
  *   @date 2009-12-06
  */
-std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo2D& histo, const std::string& name,
-                                       const std::string& comment, int /* precision */ ) {
+std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo2D& histo, std::string_view name,
+                                       std::string_view comment, int /* precision */ ) {
   std::ostringstream out;
   //
   out << "<param name=\"" << name << "\" type=\"Histo2D\""; // open TAG

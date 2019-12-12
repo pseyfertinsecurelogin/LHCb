@@ -48,24 +48,22 @@ std::string DeUTSector::hybridType() const { return m_hybridType; }
 std::ostream& DeUTSector::printOut( std::ostream& os ) const {
 
   // stream to cout
-  os << " Sector :  " << name() << std::endl;
-  os << " Nickname: " << m_nickname << "\n ID " << id() << "\n type  " << type() << "\n pitch " << m_pitch
-     << "\n strip " << m_nStrip << "\n capacitance " << m_capacitance / Gaudi::Units::picofarad << "\n dead width "
-     << m_deadWidth << "\n center " << globalCentre() << "\n Sector status " << sectorStatus() << "\n fraction active "
-     << fractionActive() << "\n version " << m_versionString << std::endl;
-  return os;
+  return os << " Sector :  " << name() << '\n'
+            << " Nickname: " << m_nickname << "\n ID " << id() << "\n type  " << type() << "\n pitch " << m_pitch
+            << "\n strip " << m_nStrip << "\n capacitance " << m_capacitance / Gaudi::Units::picofarad
+            << "\n dead width " << m_deadWidth << "\n center " << globalCentre() << "\n Sector status "
+            << sectorStatus() << "\n fraction active " << fractionActive() << "\n version " << m_versionString
+            << std::endl;
 }
 
 MsgStream& DeUTSector::printOut( MsgStream& os ) const {
 
   // stream to Msg service
-  os << " Sector : \n " << name() << std::endl;
-  os << " Nickname: " << m_nickname << "\n ID " << id() << "type \n " << type() << " pitch \n " << m_pitch
-     << "n strip \n " << m_nStrip << " capacitance \n " << m_capacitance / Gaudi::Units::picofarad << "dead width \n "
-     << m_deadWidth << "\n center " << globalCentre() << "\n fraction active " << fractionActive() << "\n version "
-     << m_versionString << std::endl;
-
-  return os;
+  return os << " Sector : \n " << name() << '\n'
+            << " Nickname: " << m_nickname << "\n ID " << id() << "type \n " << type() << " pitch \n " << m_pitch
+            << "n strip \n " << m_nStrip << " capacitance \n " << m_capacitance / Gaudi::Units::picofarad
+            << "dead width \n " << m_deadWidth << "\n center " << globalCentre() << "\n fraction active "
+            << fractionActive() << "\n version " << m_versionString << std::endl;
 }
 
 StatusCode DeUTSector::initialize() {
@@ -234,14 +232,11 @@ float DeUTSector::sectorNoise() const {
     }
   }
 
-  if ( number < 1 )
-    return 999.99f;
-  else {
-    MsgStream msg( msgSvc(), name() );
-    if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
-      msg << MSG::DEBUG << number << " strips out of " << nStrip() << " are not taken into account" << endmsg;
-    return sum / number;
-  }
+  if ( number < 1 ) return 999.99f;
+  MsgStream msg( msgSvc(), name() );
+  if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
+    msg << MSG::DEBUG << number << " strips out of " << nStrip() << " are not taken into account" << endmsg;
+  return sum / number;
 }
 
 float DeUTSector::beetleNoise( unsigned int beetle ) const {
@@ -261,15 +256,12 @@ float DeUTSector::beetleNoise( unsigned int beetle ) const {
     }
   }
 
-  if ( number < 1 )
-    return 999.99f;
-  else {
-    MsgStream msg( msgSvc(), name() );
-    if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
-      msg << MSG::DEBUG << number << " strips out of " << LHCbConstants::nStripsInBeetle
-          << " are not taken into account" << endmsg;
-    return sum / number;
-  }
+  if ( number < 1 ) return 999.99f;
+  MsgStream msg( msgSvc(), name() );
+  if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
+    msg << MSG::DEBUG << number << " strips out of " << LHCbConstants::nStripsInBeetle << " are not taken into account"
+        << endmsg;
+  return sum / number;
 }
 
 float DeUTSector::portNoise( unsigned int beetle, unsigned int port ) const {
@@ -290,74 +282,71 @@ float DeUTSector::portNoise( unsigned int beetle, unsigned int port ) const {
     }
   }
 
-  if ( number < 1 )
-    return 999.99f;
-  else {
-    MsgStream msg( msgSvc(), name() );
-    if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
-      msg << MSG::DEBUG << number << " strips out of " << LHCbConstants::nStripsInPort << " are not taken into account"
-          << endmsg;
-    return sum / number;
-  }
+  if ( number < 1 ) return 999.99f;
+  MsgStream msg( msgSvc(), name() );
+  if ( UNLIKELY( msg.level() <= MSG::DEBUG ) )
+    msg << MSG::DEBUG << number << " strips out of " << LHCbConstants::nStripsInPort << " are not taken into account"
+        << endmsg;
+  return sum / number;
 }
 
-void DeUTSector::setNoise( unsigned int strip, float value ) {
+void DeUTSector::setNoise( unsigned int strip, double value ) {
   Condition* aCon = condition( m_noiseString );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    auto& reference           = aCon->param<std::vector<float>>( "SectorNoise" );
+    auto& reference           = aCon->param<std::vector<double>>( "SectorNoise" );
     reference[strip - 1u]     = value;
     m_noiseValues[strip - 1u] = value;
   }
 }
 
-void DeUTSector::setNoise( const std::vector<float>& values ) {
+void DeUTSector::setNoise( std::vector<double> values ) {
   Condition* aCon( condition( m_noiseString ) );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    auto& reference = aCon->param<std::vector<float>>( "SectorNoise" );
-    reference.assign( values.begin(), values.end() );
-    m_noiseValues = values;
+    auto& reference = aCon->param<std::vector<double>>( "SectorNoise" );
+    reference       = values;
+    m_noiseValues   = std::move( values );
   }
 }
 
-void DeUTSector::setCMNoise( unsigned int strip, float value ) {
+void DeUTSector::setCMNoise( unsigned int strip, double value ) {
   Condition* aCon = condition( m_noiseString );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    auto& reference            = aCon->param<std::vector<float>>( "cmNoise" );
+    auto& reference            = aCon->param<std::vector<double>>( "cmNoise" );
     reference[strip - 1u]      = value;
     m_cmModeValues[strip - 1u] = value;
   }
 }
 
-void DeUTSector::setCMNoise( const std::vector<float>& values ) {
+void DeUTSector::setCMNoise( std::vector<double> values ) {
   Condition* aCon( condition( m_noiseString ) );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    auto& reference = aCon->param<std::vector<float>>( "cmNoise" );
-    reference.assign( values.begin(), values.end() );
-    m_cmModeValues = values;
+    auto& reference = aCon->param<std::vector<double>>( "cmNoise" );
+    reference       = values;
+    m_cmModeValues  = std::move( values );
   }
 }
 
-void DeUTSector::setADCConversion( const std::vector<double>& values ) {
+void DeUTSector::setADCConversion( std::vector<double> values ) {
   Condition* aCon( condition( m_noiseString ) );
   if ( !aCon ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
-    auto& reference = aCon->param<std::vector<double>>( "electronsPerADC" );
-    reference.assign( values.begin(), values.end() );
-    m_electronsPerADC = values;
+    auto& reference   = aCon->param<std::vector<double>>( "electronsPerADC" );
+    reference         = values;
+    m_electronsPerADC = std::move( values );
   }
 }
 
@@ -620,7 +609,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
   const auto& tmpNoise = aCon->param<std::vector<double>>( "SectorNoise" );
 
   if ( tmpNoise.size() == m_nStrip )
-    m_noiseValues.assign( tmpNoise.begin(), tmpNoise.end() );
+    m_noiseValues = tmpNoise;
   else {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Size mismatch for SectorNoise" << endmsg;
@@ -630,7 +619,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
   const auto& tmpElectrons = aCon->param<std::vector<double>>( "electronsPerADC" );
 
   if ( tmpElectrons.size() == m_nStrip )
-    m_electronsPerADC.assign( tmpElectrons.begin(), tmpElectrons.end() );
+    m_electronsPerADC = tmpElectrons;
   else {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Size mismatch for electronsPerADC" << endmsg;
@@ -640,7 +629,7 @@ StatusCode DeUTSector::updateNoiseCondition() {
   if ( aCon->exists( "cmNoise" ) == true ) {
     const auto& tmpCM = aCon->param<std::vector<double>>( "cmNoise" );
     if ( tmpCM.size() == m_nStrip )
-      m_cmModeValues.assign( tmpCM.begin(), tmpCM.end() );
+      m_cmModeValues = tmpCM;
     else {
       MsgStream msg( msgSvc(), name() );
       msg << MSG::ERROR << "Size mismatch for cmNoise" << endmsg;

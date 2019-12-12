@@ -41,21 +41,21 @@ public:
 
   /// Setter (with automatic conversion)
   template <class T1>
-  inline void set( T1 val ) {
+  void set( T1 val ) {
     m_val = std::move( val );
   }
 
   /// Getter
-  inline value_type& get() { return m_val; }
+  value_type& get() { return m_val; }
 
   /// Getter (const version)
-  inline const value_type& get() const { return m_val; }
+  const value_type& get() const { return m_val; }
 
   /// String representation for printout
-  inline std::string toStr() const override;
+  std::string toStr() const override;
 
   /// String representation for printout
-  std::string toXMLStr( const std::string& name, const std::string& comment = "", int precision = 16 ) const override;
+  std::string toXMLStr( std::string_view name, std::string_view comment, int precision ) const override;
 
   /// TypeId of the datum
   const std::type_info& type() const override { return typeid( T ); }
@@ -75,7 +75,7 @@ private:
 #include "GaudiKernel/SerializeSTL.h"
 /// String representation for printout
 template <class T>
-inline std::string Param<T>::toStr() const {
+std::string Param<T>::toStr() const {
   using namespace GaudiUtils;
   std::ostringstream o;
   o << m_val;
@@ -89,53 +89,53 @@ inline std::string Param<double>::toStr() const {
   o << m_val;
   return o.str();
 }
+namespace details {
+  template <typename...>
+  struct always_false : std::bool_constant<false> {};
+} // namespace details
 
 /// Default implementation. Only a limited number of types are allowed in
 /// the XML representation of a ParamValidDataObject
 template <class T>
-std::string Param<T>::toXMLStr( const std::string&, const std::string&, int ) const {
-  throw GaudiException( std::string( "Cannot convert parameter of type " ) + typeid( m_val ).name() + " to XML",
-                        "Param<T>::toXMLStr()", StatusCode::FAILURE );
+std::string Param<T>::toXMLStr( std::string_view, std::string_view, int ) const {
+  static_assert( ::details::always_false<T>::value, "Cannot convert parameter to XML" );
   return {};
 }
 
 // === Forward declaration of version of toXMLStr for the supported types ===
+template <>
+std::string Param<int>::toXMLStr( std::string_view name, std::string_view comment, int precision ) const;
+template <>
+std::string Param<double>::toXMLStr( std::string_view name, std::string_view comment, int precision ) const;
+template <>
+std::string Param<std::string>::toXMLStr( std::string_view name, std::string_view comment, int precision ) const;
 
 template <>
-std::string Param<int>::toXMLStr( const std::string& name, const std::string& comment, int precision ) const;
+std::string Param<std::vector<int>>::toXMLStr( std::string_view name, std::string_view comment, int precision ) const;
 template <>
-std::string Param<double>::toXMLStr( const std::string& name, const std::string& comment, int precision ) const;
-template <>
-std::string Param<std::string>::toXMLStr( const std::string& name, const std::string& comment, int precision ) const;
-
-template <>
-std::string Param<std::vector<int>>::toXMLStr( const std::string& name, const std::string& comment,
-                                               int precision ) const;
-template <>
-std::string Param<std::vector<double>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::vector<double>>::toXMLStr( std::string_view name, std::string_view comment,
                                                   int precision ) const;
 template <>
-std::string Param<std::vector<std::string>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::vector<std::string>>::toXMLStr( std::string_view name, std::string_view comment,
                                                        int precision ) const;
 
 template <>
-std::string Param<std::map<std::string, int>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::map<std::string, int>>::toXMLStr( std::string_view name, std::string_view comment,
                                                          int precision ) const;
 template <>
-std::string Param<std::map<std::string, double>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::map<std::string, double>>::toXMLStr( std::string_view name, std::string_view comment,
                                                             int precision ) const;
 template <>
-std::string Param<std::map<std::string, std::string>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::map<std::string, std::string>>::toXMLStr( std::string_view name, std::string_view comment,
                                                                  int precision ) const;
 
 template <>
-std::string Param<std::map<int, int>>::toXMLStr( const std::string& name, const std::string& comment,
-                                                 int precision ) const;
+std::string Param<std::map<int, int>>::toXMLStr( std::string_view name, std::string_view comment, int precision ) const;
 template <>
-std::string Param<std::map<int, double>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::map<int, double>>::toXMLStr( std::string_view name, std::string_view comment,
                                                     int precision ) const;
 template <>
-std::string Param<std::map<int, std::string>>::toXMLStr( const std::string& name, const std::string& comment,
+std::string Param<std::map<int, std::string>>::toXMLStr( std::string_view name, std::string_view comment,
                                                          int precision ) const;
 
 #endif // DETDESC_PARAM_H

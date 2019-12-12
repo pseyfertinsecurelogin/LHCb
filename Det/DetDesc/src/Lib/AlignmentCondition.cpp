@@ -39,15 +39,15 @@ namespace {
 //=============================================================================
 AlignmentCondition::AlignmentCondition() : m_services( DetDesc::services() ) {}
 //=============================================================================
-AlignmentCondition::AlignmentCondition( const std::vector<double>& translation, const std::vector<double>& rotation,
-                                        const std::vector<double>& pivot )
+AlignmentCondition::AlignmentCondition( std::vector<double> translation, std::vector<double> rotation,
+                                        std::vector<double> pivot )
     : m_services( DetDesc::services() ) {
   MsgStream log( msgSvc(), "AlignmentCondition" );
   if ( log.level() <= MSG::VERBOSE )
     log << MSG::VERBOSE << "Constructing AlignmentCondition from transformation parameters. classID " << classID()
         << endmsg;
 
-  setOffNominalTransformation( translation, rotation, pivot );
+  setOffNominalTransformation( std::move( translation ), std::move( rotation ), std::move( pivot ) );
 }
 
 //=============================================================================
@@ -64,10 +64,9 @@ void AlignmentCondition::offNominalMatrix( const Gaudi::Transform3D& newMatrix )
   updateParams( m_matrixInv );
 }
 //=============================================================================
-StatusCode AlignmentCondition::setOffNominalTransformation( const std::vector<double>& translation,
-                                                            const std::vector<double>& rotation,
-                                                            const std::vector<double>& pivot ) {
-  loadParams( translation, rotation, pivot );
+StatusCode AlignmentCondition::setOffNominalTransformation( std::vector<double> translation,
+                                                            std::vector<double> rotation, std::vector<double> pivot ) {
+  loadParams( std::move( translation ), std::move( rotation ), std::move( pivot ) );
   return makeMatrices();
 }
 //=============================================================================
@@ -113,11 +112,11 @@ void AlignmentCondition::updateParams( const Gaudi::Transform3D& matrixInv ) {
   loadParams( newTrans, newRot, pivot );
 }
 //=============================================================================
-void AlignmentCondition::loadParams( const std::vector<double>& translation, const std::vector<double>& rotation,
-                                     const std::vector<double>& pivot ) {
-  this->addParam( s_translationString, translation );
-  this->addParam( s_rotationString, rotation );
-  this->addParam( s_pivotString, pivot );
+void AlignmentCondition::loadParams( std::vector<double> translation, std::vector<double> rotation,
+                                     std::vector<double> pivot ) {
+  this->addParam( s_translationString, std::move( translation ) );
+  this->addParam( s_rotationString, std::move( rotation ) );
+  this->addParam( s_pivotString, std::move( pivot ) );
 }
 //=============================================================================
 IMessageSvc* AlignmentCondition::msgSvc() const { return m_services->msgSvc(); }

@@ -53,8 +53,7 @@ public:
   virtual std::string toStr() const = 0;
 
   ///  String representation for XML format
-  virtual std::string toXMLStr( const std::string& name, const std::string& comment = "",
-                                int precision = 16 ) const = 0;
+  virtual std::string toXMLStr( std::string_view name, std::string_view comment = "", int precision = 16 ) const = 0;
 
   /// TypeId of the datum
   virtual const std::type_info& type() const = 0;
