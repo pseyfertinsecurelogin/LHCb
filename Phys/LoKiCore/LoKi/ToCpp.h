@@ -16,6 +16,7 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <array>
 #include <map>
 #include <string>
 #include <tuple>
@@ -43,6 +44,21 @@
  *  @date 2015-03-30
  *
  */
+// ============================================================================
+// Clang specific cling JIT issue.. see
+// https://gitlab.cern.ch/lhcb/LHCb/merge_requests/2258
+// IncrementalExecutor::executeFunction: symbol
+// '_ZNSt5arrayINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELm4EED1Ev'
+// unresolved while linking function '_GLOBAL__sub_I_cling_module_394'!
+// You are probably missing the definition of
+// std::array<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, 4ul>::~array()
+// Maybe you need to load the corresponding shared library?
+// ============================================================================
+#if defined( __clang__ )
+namespace {
+  static std::array<std::string, 4ul> sa_4;
+}
+#endif
 // ============================================================================
 // Forward declarations
 // ============================================================================
