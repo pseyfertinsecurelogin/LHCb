@@ -60,8 +60,6 @@ namespace Rich::Utils {
   public:
     // constructors
 
-    // no default constructor
-
     /// Constructor from dependent detector elements
     MirrorFinder( const DeRich1& rich1, //
                   const DeRich2& rich2 );
@@ -208,8 +206,8 @@ namespace Rich::Utils {
 
     private:
       /// Get the mirror closest to a given (x,y) point
-      const DeRichSphMirror* closestXY( const FPTYPE x, //
-                                        const FPTYPE y ) const {
+      [[nodiscard]] const DeRichSphMirror* closestXY( const FPTYPE x, //
+                                                      const FPTYPE y ) const {
         const DeRichSphMirror* minM = nullptr;
         // Loop over all the mirrors to find the closest
         FPTYPE minDist( 9e30 );
@@ -244,36 +242,36 @@ namespace Rich::Utils {
 
       public:
         /// Combine two (scalar) x,y indices in a single one
-        inline ScalarIndex xyIndex( const ScalarIndex ix, //
-                                    const ScalarIndex iy ) const noexcept {
+        [[nodiscard]] ScalarIndex xyIndex( const ScalarIndex ix, //
+                                           const ScalarIndex iy ) const noexcept {
           return ( NYBINS * ix ) + iy;
         }
         /// Combine two (SIMD) x,y indices in a single one
-        inline typename SIMDIndices::IndexType xyIndex( const typename SIMDIndices::IndexType& ix, //
-                                                        const typename SIMDIndices::IndexType& iy  //
-                                                        ) const noexcept {
+        [[nodiscard]] typename SIMDIndices::IndexType xyIndex( const typename SIMDIndices::IndexType& ix, //
+                                                               const typename SIMDIndices::IndexType& iy  //
+                                                               ) const noexcept {
           return ( SIMDIndices::IndexType( NYBINS ) * ix ) + iy;
         }
 
       public:
         /// Access the mirror for a given combined xy index (Scalar)
-        inline MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ixy]; }
+        [[nodiscard]] MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ixy]; }
         /// Access the mirror for a given set of (x,y) indices (Scalar)
-        inline MirrorNum get( const ScalarIndex ix, //
-                              const ScalarIndex iy ) const noexcept {
+        [[nodiscard]] MirrorNum get( const ScalarIndex ix, //
+                                     const ScalarIndex iy ) const noexcept {
           return get( xyIndex( ix, iy ) );
         }
 
       public:
         /// Access the mirror for a given xy index (SIMD)
-        inline SIMDIndices get( const typename SIMDIndices::IndexType& ixy ) const noexcept {
+        [[nodiscard]] SIMDIndices get( const typename SIMDIndices::IndexType& ixy ) const noexcept {
           // gather SIMD lookup
           return ( *this )[ixy];
         }
 
         /// Access the mirror for a given set of (x,y) indices (SIMD)
-        inline SIMDIndices get( const typename SIMDIndices::IndexType& ix, //
-                                const typename SIMDIndices::IndexType& iy ) const noexcept {
+        [[nodiscard]] SIMDIndices get( const typename SIMDIndices::IndexType& ix, //
+                                       const typename SIMDIndices::IndexType& iy ) const noexcept {
           // Make '1D' indices from X and Y
           return get( xyIndex( ix, iy ) );
         }
@@ -294,23 +292,27 @@ namespace Rich::Utils {
 
     private:
       /// Get the number of bins in X (Scalar)
-      constexpr std::uint32_t nXBins() const noexcept { return NXBINS; }
+      [[nodiscard]] constexpr std::uint32_t nXBins() const noexcept { return NXBINS; }
       /// Get the number of bins in Y (Scalar)
-      constexpr std::uint32_t nYBins() const noexcept { return NYBINS; }
+      [[nodiscard]] constexpr std::uint32_t nYBins() const noexcept { return NYBINS; }
       /// Get the minimum range in X (Scalar)
-      FPTYPE minX() const noexcept { return m_minX; }
+      [[nodiscard]] FPTYPE minX() const noexcept { return m_minX; }
       /// Get the maximum range in X (Scalar)
-      FPTYPE maxX() const noexcept { return m_maxX; }
+      [[nodiscard]] FPTYPE maxX() const noexcept { return m_maxX; }
       /// Get the minimum range in Y (Scalar)
-      FPTYPE minY() const noexcept { return m_minY; }
+      [[nodiscard]] FPTYPE minY() const noexcept { return m_minY; }
       /// Get the maximum range in Y (Scalar)
-      FPTYPE maxY() const noexcept { return m_maxY; }
+      [[nodiscard]] FPTYPE maxY() const noexcept { return m_maxY; }
 
     private:
       /// Get x for a given index value
-      inline FPTYPE binX( const ScalarIndex i ) const noexcept { return minX() + ( ( (FPTYPE)i + 0.5f ) / m_incX ); }
+      [[nodiscard]] FPTYPE binX( const ScalarIndex i ) const noexcept {
+        return minX() + ( ( (FPTYPE)i + 0.5f ) / m_incX );
+      }
       /// Get y for a given index value
-      inline FPTYPE binY( const ScalarIndex i ) const noexcept { return minY() + ( ( (FPTYPE)i + 0.5f ) / m_incY ); }
+      [[nodiscard]] FPTYPE binY( const ScalarIndex i ) const noexcept {
+        return minY() + ( ( (FPTYPE)i + 0.5f ) / m_incY );
+      }
 
     private:
       /// Get the x index
@@ -467,7 +469,7 @@ namespace Rich::Utils {
         m_r2Finder[Rich::right].reset();
       }
       /// Validity check
-      bool isOK() const {
+      [[nodiscard]] bool isOK() const {
         return ( !m_r1Finder[Rich::top].mirrors.empty() &&    //
                  !m_r1Finder[Rich::bottom].mirrors.empty() && //
                  !m_r2Finder[Rich::left].mirrors.empty() &&   //
@@ -549,9 +551,9 @@ namespace Rich::Utils {
 
     public:
       /// Get the list of mirrors
-      const Mirrors& mirrors( const Rich::DetectorType rich, //
-                              const Rich::Side         side  //
-                              ) const noexcept {
+      [[nodiscard]] const Mirrors& mirrors( const Rich::DetectorType rich, //
+                                            const Rich::Side         side  //
+                                            ) const noexcept {
         return ( Rich::Rich1 == rich ? m_r1Finder[side].mirrors : m_r2Finder[side].mirrors );
       }
 
