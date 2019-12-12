@@ -45,7 +45,6 @@ namespace LHCb::Muon::DAQ {
       auto overhead      = preamble_size + 4;
       return range.size() > overhead ? range.size() - overhead : 0;
     }
-
     int nDigits( span<const RawBank*> rbs ) {
       return std::accumulate( rbs.begin(), rbs.end(), 0,
                               []( int s, const RawBank* rb ) { return rb ? s + nDigits( *rb ) : s; } );
@@ -170,7 +169,7 @@ namespace LHCb::Muon::DAQ {
     }
 
     template <typename Iterator, typename MakeTile>
-    void decodeTileAndTDC( const RawBank& rb, Iterator output, MakeTile&& make_tile ) {
+    void decodeBank( const RawBank& rb, Iterator output, MakeTile&& make_tile ) {
       // minimum length is three 32 bit words --> 12 bytes -> 6 unsigned shorts
       if ( rb.size() < 12 ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
       auto range         = rb.range<unsigned short>();
@@ -181,8 +180,8 @@ namespace LHCb::Muon::DAQ {
         if ( UNLIKELY( range.empty() ) ) { OOPS( EC::RawToHits::ErrorCode::BANK_TOO_SHORT ); }
         if ( UNLIKELY( range.size() < 1 + range[0] ) ) { OOPS( EC::RawToHits::ErrorCode::TOO_MANY_HITS ); }
         for ( unsigned short data : range.subspan( 1, range[0] ) ) {
-          auto tile = make_tile( data );
-          if ( LIKELY( tile.has_value() ) ) *output++ = {std::move( *tile ), make_tdc( data )};
+          if ( auto tile = make_tile( data ); LIKELY( tile.has_value() ) )
+            *output++ = {std::move( *tile ), make_tdc( data )};
         }
         range = range.subspan( 1 + range[0] );
       }
@@ -224,11 +223,9 @@ namespace LHCb::Muon::DAQ {
   // Initialisation
   //=============================================================================
   StatusCode RawToHits::initialize() {
-    auto sc = Transformer::initialize();
-    if ( sc.isSuccess() )
-      addConditionDerivation<ComputeTilePosition( const DeMuonDetector& )>( DeMuonLocation::Default,
-                                                                            inputLocation<2>() );
-    return sc;
+    return Transformer::initialize().andThen( [&]() {
+      addConditionDerivation<ComputeTilePosition( const DeMuonDetector& )>( *this, DeMuonLocation::Default );
+    } );
   }
 
   //=============================================================================
@@ -268,7 +265,7 @@ namespace LHCb::Muon::DAQ {
         invalid_add += !valid;
         return valid ? std::optional{ADDToTile[add]} : std::nullopt;
       };
-      decodeTileAndTDC( *rb, back_inserter( decoding[station] ), make_tile );
+      decodeBank( *rb, back_inserter( decoding[station] ), make_tile );
     }
 
     if ( std::all_of( decoding.begin(), decoding.end(), []( const auto& v ) { return v.empty(); } ) ) {

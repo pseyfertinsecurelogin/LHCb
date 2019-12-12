@@ -85,12 +85,22 @@ namespace LHCb::DetDesc {
     // This is not properly part of the ConditionAccessorHolder interface, but it helps
     // for the migration.
 
-    template <typename Transform, typename InputKeys>
+    template <typename Transform, typename InputKeys,
+              typename = std::enable_if_t<!std::is_base_of_v<IAlgorithm, std::decay_t<InputKeys>>>>
     IConditionDerivationMgr::DerivationId
     addConditionDerivation( InputKeys&& inputKeys, ConditionKey outputKey,
                             Transform f = details::invoke_constructor<Transform> ) const {
       return LHCb::DetDesc::addConditionDerivation( conditionDerivationMgr(), std::forward<InputKeys>( inputKeys ),
                                                     std::move( outputKey ), std::move( f ) );
+    }
+
+    template <typename Transform, typename InputKeys, typename Parent,
+              typename = std::enable_if_t<std::is_base_of_v<IAlgorithm, Parent>>>
+    IConditionDerivationMgr::DerivationId static addConditionDerivation(
+        Parent const& parent, InputKeys&& inputKeys, Transform f = details::invoke_constructor<Transform> ) {
+      return LHCb::DetDesc::addConditionDerivation(
+          parent.conditionDerivationMgr(), std::forward<InputKeys>( inputKeys ),
+          parent.template inputLocation<detail::result_of_t<Transform>>(), std::move( f ) );
     }
 
   private:
