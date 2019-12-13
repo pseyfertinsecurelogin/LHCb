@@ -13,13 +13,10 @@
 #include "DetDesc/ConditionContext.h"
 #include "DetDesc/ConditionKey.h"
 #include "DetDesc/ParamValidDataObject.h"
-
-#include "GaudiKernel/EventContext.h"
-#include "GaudiKernel/Property.h"
-
 #include "GaudiAlg/FixTESPath.h"
 #include "GaudiAlg/FunctionalUtilities.h"
-
+#include "GaudiKernel/EventContext.h"
+#include "GaudiKernel/Property.h"
 #include <string>
 #include <type_traits>
 
@@ -27,22 +24,14 @@ namespace LHCb::DetDesc {
   template <typename Base>
   class ConditionAccessorHolder;
 
-  namespace details {
+  namespace detail {
     template <typename T>
     inline constexpr bool is_condition_type_v = std::is_base_of_v<ParamValidDataObject, T>;
 
     template <typename T>
-    using accessor_storage_t = std::conditional_t<is_condition_type_v<T>, T*, ParamValidDataObject*>;
+    using accessor_storage_t = std::conditional_t<is_condition_type_v<T>, T, ParamValidDataObject>;
 
-    template <typename T>
-    const T& extract_payload( const accessor_storage_t<T> ptr ) {
-      if constexpr ( is_condition_type_v<T> ) {
-        return *ptr;
-      } else {
-        return *std::any_cast<T>( &ptr->payload );
-      }
-    }
-  } // namespace details
+  } // namespace detail
 
   // A condition accessor is to condition data what an EventReadHandle is to
   // event data : it notifies the framework that an Algorithm or AlgTool depends
@@ -64,9 +53,8 @@ namespace LHCb::DetDesc {
     // Constructor takes the "this" pointer of the owner and the usual triplet
     // of values needed to declare a property (in this case the condition's key)
     template <typename Owner>
-    ConditionAccessor( Owner* owner, const std::string& keyName, const ConditionKey& keyDefault,
-                       const std::string& keyDoc = "" )
-        : m_key{owner, keyName, keyDefault, keyDoc} {
+    ConditionAccessor( Owner* owner, std::string keyName, ConditionKey keyDefault, std::string keyDoc = "" )
+        : m_key{owner, std::move( keyName ), std::move( keyDefault ), std::move( keyDoc )} {
       owner->registerConditionAccessor( *this );
     }
 
@@ -86,10 +74,22 @@ namespace LHCb::DetDesc {
 
     // Access the value of the condition, for a given condition context
     const T& get( const ConditionContext& /*ctx*/ ) const {
-      if ( !m_ptr )
+      if ( UNLIKELY( !m_ptr ) ) {
         throw GaudiException( "payload not present: " + m_key.toString(), "ConditionAccessor::get",
                               StatusCode::FAILURE );
-      return details::extract_payload<T>( m_ptr );
+      }
+      if constexpr ( detail::is_condition_type_v<T> ) {
+        return *m_ptr;
+      } else { // unbox...
+        auto const* p = std::any_cast<T>( &m_ptr->payload );
+        if ( UNLIKELY( !p ) ) {
+          throw GaudiException{"Key='" + m_key + "' type mis-match. Found='" +
+                                   System::typeinfoName( m_ptr->payload.type() ) + "' Expected='" +
+                                   System::typeinfoName( typeid( T ) ) + "'",
+                               "unbox", StatusCode::FAILURE};
+        }
+        return *p;
+      }
     }
 
   private:
@@ -100,7 +100,7 @@ namespace LHCb::DetDesc {
     Gaudi::Property<ConditionKey> m_key;
 
     // Pointer to the condition in the Detector Transien Store
-    details::accessor_storage_t<T> m_ptr;
+    detail::accessor_storage_t<T>* m_ptr;
   };
 
   template <typename C, typename A>
