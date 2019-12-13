@@ -64,6 +64,8 @@ preprocessor = (
         "INFO  resolving alias TCK/0x",
         "SUCCESS Number of counters : ",
         "INFO Number of counters : ",
+        "OMP: Warning #96: Cannot form a team with",
+        "OMP: Hint Consider unsetting",
     ],
                 regexps=[
                     r"HLTControlFlowMgr\s*INFO Timing table:",
