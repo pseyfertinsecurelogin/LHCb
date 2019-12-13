@@ -62,7 +62,7 @@ public:
 
   /// Determine whether a point is within the sensor
   bool isInsideSensor( const double x, const double y ) const {
-    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) ); 
+    return isInActiveArea( globalToLocal( Gaudi::XYZPoint{x, y, z()} ) );
   }
 
   /// Convert local position to global position
@@ -115,10 +115,10 @@ public:
     const Gaudi::XYZPoint point( x, y, 0.0 );
     return ( local ? point : localToGlobal( point ) );
   }
-  double chipSize() const { return m_cache.chipSize; }
-  double interChipDist() const { return m_cache.interChipDist; }
-  double pixelSize() const { return m_cache.pixelSize; }
-  double interChipPixelSize() const { return m_cache.interChipPixelSize; }
+  double       chipSize() const { return m_cache.chipSize; }
+  double       interChipDist() const { return m_cache.interChipDist; }
+  double       pixelSize() const { return m_cache.pixelSize; }
+  double       interChipPixelSize() const { return m_cache.interChipPixelSize; }
   unsigned int numChips() const { return m_cache.nChips; }
   unsigned int numColumns() const { return m_cache.nCols; }
   unsigned int numRows() const { return m_cache.nRows; }

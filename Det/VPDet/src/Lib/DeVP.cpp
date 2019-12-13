@@ -125,7 +125,9 @@ StatusCode DeVP::updateCache() {
     assert( sensor.sensorNumber() < m_ltg.size() );
     auto& ltg = m_ltg[sensor.sensorNumber()];
     ltg_rot.GetComponents( begin( ltg ) );
-    ltg_trans.GetCoordinates( ltg.data() + 9 );
+    ltg[9]  = ltg_trans.X();
+    ltg[10] = ltg_trans.Y();
+    ltg[11] = ltg_trans.Z();
   } );
   return StatusCode::SUCCESS;
 }
