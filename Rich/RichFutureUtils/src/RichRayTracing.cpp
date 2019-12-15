@@ -64,11 +64,12 @@ RayTracing::RayTracing( const DeRich1&             rich1,          //
 
 // For a given detector, ray-traces a given set of directions from a given point to
 // the photo detectors.
-RayTracing::Result::Vector RayTracing::traceToDetector( const Gaudi::XYZPoint&        startPoint, //
-                                                        SIMD::STDVector<SIMDVector>&& startDirs,  //
-                                                        const LHCb::RichTrackSegment& trSeg,      //
-                                                        const LHCb::RichTraceMode     mode        //
-                                                        ) const {
+RayTracing::Result::Vector                                              //
+RayTracing::_traceToDetector( const Gaudi::XYZPoint&        startPoint, //
+                              SIMD::STDVector<SIMDVector>&  startDirs,  //
+                              const LHCb::RichTrackSegment& trSeg,      //
+                              const LHCb::RichTraceMode     mode        //
+                              ) const {
 
   // types
   using FP     = SIMD::DefaultScalarFP;
@@ -237,14 +238,15 @@ RayTracing::Result::Vector RayTracing::traceToDetector( const Gaudi::XYZPoint&  
 //=============================================================================
 // Does the actual ray tracing
 //=============================================================================
-LHCb::RichTraceMode::RayTraceResult RayTracing::_traceToDetector( const Rich::DetectorType  rich,       //
-                                                                  const Gaudi::XYZPoint&    startPoint, //
-                                                                  Gaudi::XYZPoint&          tmpPos,     //
-                                                                  Gaudi::XYZVector&         tmpDir,     //
-                                                                  Future::GeomPhoton&       photon,     //
-                                                                  const LHCb::RichTraceMode mode,       //
-                                                                  const Rich::Side          forcedSide  //
-                                                                  ) const {
+LHCb::RichTraceMode::RayTraceResult                                 //
+RayTracing::_traceToDetector( const Rich::DetectorType  rich,       //
+                              const Gaudi::XYZPoint&    startPoint, //
+                              Gaudi::XYZPoint&          tmpPos,     //
+                              Gaudi::XYZVector&         tmpDir,     //
+                              Future::GeomPhoton&       photon,     //
+                              const LHCb::RichTraceMode mode,       //
+                              const Rich::Side          forcedSide  //
+                              ) const {
 
   // default result is failure
   LHCb::RichTraceMode::RayTraceResult result = LHCb::RichTraceMode::RayTraceResult::RayTraceFailed;
