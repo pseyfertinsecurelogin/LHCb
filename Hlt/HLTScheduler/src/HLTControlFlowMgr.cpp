@@ -574,12 +574,13 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
            << " WSS " << System::mappedMemory( System::MemoryUnit::kByte ) * 1. / 1024. << ", timing failed.."
            << endmsg;
   } else {
-    auto totalTime = std::chrono::duration_cast<std::chrono::milliseconds>( *endTime - *startTime ).count();
-
+    const auto totalTime  = std::chrono::duration_cast<std::chrono::milliseconds>( *endTime - *startTime ).count();
+    const auto timeDiff   = m_stopTimeAtEvt.value() - m_startTimeAtEvt.value();
+    const auto evtsPerSec = ( totalTime > 0 ? timeDiff * 1. / totalTime * 1e3 : 0 );
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
-           << " WSS " << System::mappedMemory( System::MemoryUnit::kByte ) * 1. / 1024. << ", timed "
-           << m_stopTimeAtEvt.value() - m_startTimeAtEvt.value() << " Events: " << totalTime << " ms"
-           << ", Evts/s = " << ( m_stopTimeAtEvt.value() - m_startTimeAtEvt.value() ) * 1. / totalTime * 1e3 << endmsg;
+           << " WSS " << System::mappedMemory( System::MemoryUnit::kByte ) * 1. / 1024. << ", timed " << timeDiff
+           << " Events: " << totalTime << " ms"
+           << ", Evts/s = " << evtsPerSec << endmsg;
   }
   return StatusCode::SUCCESS;
 }
