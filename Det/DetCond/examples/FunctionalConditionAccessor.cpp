@@ -23,9 +23,7 @@ namespace DetCond::Examples::Functional {
     CondAccessExample( const std::string& name, ISvcLocator* loc )
         : Consumer{name, loc, {KeyValue{"CondPath", "TestCondition"}}} {}
 
-    void operator()( const Condition& cond ) const override {
-      info() << "condition value: " << cond << endmsg;
-    }
+    void operator()( const Condition& cond ) const override { info() << "condition value: " << cond << endmsg; }
   };
 
   /// Example of a derived condition that does not inherit from Condition base class.
