@@ -19,7 +19,8 @@ gaudi_depends_on_subdirs(
                          GaudiHive
                          GaudiAlg
                          GaudiKernel
-                         Event/HltEvent)
+                         Event/HltEvent
+                         Kernel/HltInterfaces)
 
 find_package(Boost)
 find_package(TBB)
@@ -30,6 +31,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${TBB_INCLUDE_DIRS})
 gaudi_add_module(HLTScheduler
                  src/*.cpp
                  INCLUDE_DIRS Boost HLTScheduler cppgsl
-                 LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel HltEvent)
+                 LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel HltEvent HltInterfaces)
 
 gaudi_add_test(QMTest QMTEST)
