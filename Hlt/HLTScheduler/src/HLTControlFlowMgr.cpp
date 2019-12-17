@@ -547,6 +547,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   while ( maxevt < 0 || m_nextevt < maxevt ) {
     if ( m_shutdown_now ) {
       shutdown_threadpool();
+      while ( not empty() ) pop();
       return StatusCode::FAILURE;
     }
     if ( UNLIKELY( m_startTimeAtEvt == m_nextevt ) ) startTime = Clock::now();
@@ -558,6 +559,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
       return StatusCode::FAILURE; // else we have an success --> exit loop
     }
     push( std::move( evtContext ) );
+    pop();
   } // end main loop on finished events
 
   if ( !endTime ) {
@@ -566,6 +568,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   }
 
   shutdown_threadpool();
+  while ( not empty() ) pop();
 
   releaseEvtSelContext();
 
@@ -637,11 +640,8 @@ void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
 
   {
     std::lock_guard _{m_doneMutex};
-    if ( UNLIKELY( status != EventStatus::Success ) ) {
-      m_done.emplace( StatusCode::FAILURE, std::move( eventContext ) );
-    } else {
-      m_done.emplace( StatusCode::SUCCESS, std::move( eventContext ) );
-    }
+    m_done.emplace( status == EventStatus::Success ? StatusCode::SUCCESS : StatusCode::FAILURE,
+                    std::move( eventContext ) );
   }
 
   auto sc = m_whiteboard->clearStore( si );
