@@ -121,7 +121,7 @@ namespace LHCb::DetDesc {
       }
       using Exp = std::decay_t<Input>;
       if constexpr ( std::is_base_of_v<ValidDataObject, Exp> ) {
-        return castAndCheck<std::add_pointer_t<typename std::add_const_t<Exp>>>( i->second, key );
+        return castAndCheck<std::add_pointer_t<std::add_const_t<Exp>>>( i->second, key );
       } else {
         const auto& p = castAndCheck<ParamValidDataObject const*>( i->second, key );
         return castAndCheck<Exp>( p.payload, key );
