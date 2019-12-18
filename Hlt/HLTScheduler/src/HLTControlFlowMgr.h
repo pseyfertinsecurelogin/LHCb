@@ -17,10 +17,10 @@
 #include "CFNodePropertiesParse.h"
 #include "ThreadPool.h"
 // FW includes
+#include "Gaudi/Accumulators.h"
 #include "Gaudi/Interfaces/IQueueingEventProcessor.h"
 #include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/Counters.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/DataSvc.h"
 #include "GaudiKernel/EventContext.h"
