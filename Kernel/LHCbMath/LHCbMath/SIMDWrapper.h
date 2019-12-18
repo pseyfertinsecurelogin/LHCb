@@ -229,6 +229,9 @@ namespace SIMDWrapper {
       friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return lhs.data << rhs.data; }
       friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return lhs.data >> rhs.data; }
 
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return std::min( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return std::max( lhs, rhs ); }
+
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return ( s > float_v( 0.f ) ) ? a : b;
       }
@@ -492,6 +495,9 @@ namespace SIMDWrapper {
 
       friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm_sll_epi32( lhs, rhs ); }
       friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm_srl_epi32( lhs, rhs ); }
+
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm_min_epi32( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return _mm_max_epi32( lhs, rhs ); }
 
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm_castps_si128( _mm_blendv_ps( _mm_castsi128_ps( a ), _mm_castsi128_ps( b ), s < float_v( 0.f ) ) );
@@ -835,6 +841,9 @@ namespace SIMDWrapper {
         return print_vector<int, 8>( os, x, "avx2" );
       }
 
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm256_min_epi32( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return _mm256_max_epi32( lhs, rhs ); }
+
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( a ), _mm256_castsi256_ps( b ), s ) );
       }
@@ -1094,6 +1103,9 @@ namespace SIMDWrapper {
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
 
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm256_min_epi32( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return _mm256_max_epi32( lhs, rhs ); }
+
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_mask_mov_epi32( a, s < float_v( 0.f ), b );
       }
@@ -1291,6 +1303,9 @@ namespace SIMDWrapper {
 
       friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm512_and_si512( lhs, rhs ); }
       friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm512_or_si512( lhs, rhs ); }
+
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm512_min_epi32( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return _mm512_max_epi32( lhs, rhs ); }
 
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm512_mask_mov_epi32( a, s < float_v( 0.f ), b );
