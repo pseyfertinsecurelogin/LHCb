@@ -22,7 +22,7 @@
 #pragma once
 
 // Gaudi
-#include "GaudiKernel/Counters.h"
+#include "Gaudi/Accumulators.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/ISvcLocator.h"

@@ -12,8 +12,8 @@
 #define CALOFUTUREDIGIT_CALOFUTURERAWTODIGITS_H 1
 
 // from Gaudi
+#include "Gaudi/Accumulators.h"
 #include "GaudiAlg/Transformer.h"
-#include "GaudiKernel/Counters.h"
 #include "GaudiKernel/IRndmGenSvc.h"
 
 #include "DetDesc/Condition.h"
