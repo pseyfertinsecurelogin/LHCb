@@ -183,7 +183,6 @@ StatusCode VPRetinaClusterCreator::rebuildGeometry() {
     Gaudi::Rotation3D     ltg_rot;
     Gaudi::TranslationXYZ ltg_trans;
     sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
-    assert( sensor.sensorNumber() < m_ltg.size() );
     auto ltg = m_ltg + sensor.sensorNumber();
     ltg_rot.GetComponents( ltg );
     ltg_trans.GetCoordinates( ltg + 9 );
