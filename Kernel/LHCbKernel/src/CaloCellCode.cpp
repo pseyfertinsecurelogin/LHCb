@@ -207,7 +207,7 @@ namespace CaloCellCode {
   std::string toString( const CaloIndex& i ) { return caloName( i ); }
   StatusCode  parse( CaloIndex& i, const std::string& s ) {
     i = caloNum( s );
-    return i == static_cast<CaloIndex>( -1 ) ? StatusCode::FAILURE : StatusCode::SUCCESS;
+    return StatusCode{i != CaloCellCode::CaloIndex::Undefined};
   }
 
 } // namespace CaloCellCode
