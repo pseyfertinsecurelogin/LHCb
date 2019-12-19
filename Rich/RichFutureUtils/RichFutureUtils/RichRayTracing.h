@@ -96,13 +96,16 @@ namespace Rich::Utils {
   public:
     // vector methods
 
-    /// For a given detector, ray-traces a given set of directions from a given point to
-    /// the photo detectors.
-    Result::Vector traceToDetector( const Gaudi::XYZPoint&        startPoint,                  //
-                                    SIMD::STDVector<SIMDVector>&& startDirs,                   //
-                                    const LHCb::RichTrackSegment& trSeg,                       //
-                                    const LHCb::RichTraceMode     mode = LHCb::RichTraceMode() //
-                                    ) const;
+    /** For a given detector, ray-traces a given set of directions from a given point to
+     *  the photo detectors. */
+    template <typename STARTDIRS>
+    decltype( auto ) traceToDetector( const Gaudi::XYZPoint&        startPoint,                  //
+                                      STARTDIRS&&                   startDirs,                   //
+                                      const LHCb::RichTrackSegment& trSeg,                       //
+                                      const LHCb::RichTraceMode     mode = LHCb::RichTraceMode() //
+                                      ) const {
+      return _traceToDetector( startPoint, startDirs, trSeg, mode );
+    }
 
   public:
     // scalar methods
@@ -149,6 +152,15 @@ namespace Rich::Utils {
 
   private:
     // methods
+
+    /** For a given detector, ray-traces a given set of directions from a given point to
+     *  the photo detectors.
+     *  @attention startDirs is modified by this method */
+    Result::Vector _traceToDetector( const Gaudi::XYZPoint&        startPoint,                  //
+                                     SIMD::STDVector<SIMDVector>&  startDirs,                   //
+                                     const LHCb::RichTrackSegment& trSeg,                       //
+                                     const LHCb::RichTraceMode     mode = LHCb::RichTraceMode() //
+                                     ) const;
 
     /// Do the ray tracing
     LHCb::RichTraceMode::RayTraceResult _traceToDetector( const Rich::DetectorType  rich,       //
