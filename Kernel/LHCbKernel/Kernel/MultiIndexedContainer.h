@@ -21,7 +21,13 @@
 // Range V3
 #ifndef NDEBUG
 #  include <range/v3/algorithm.hpp>
+#  include <range/v3/version.hpp>
 #  include <range/v3/view.hpp>
+#  if RANGE_V3_VERSION < 900
+namespace ranges::views {
+  using namespace ranges::view;
+}
+#  endif
 #endif
 
 #include "GaudiKernel/Range.h"
@@ -288,7 +294,7 @@ namespace LHCb::Container {
     bool is_sorted( const COMPARE& compare ) const {
       //
       // Zip the ids and hits together
-      auto zipped = ranges::view::zip( m_ids, m_hits );
+      auto zipped = ranges::views::zip( m_ids, m_hits );
 
       // Sorting predicate that defers hit base sorting to the compare
       // function passed in
