@@ -66,6 +66,13 @@ namespace LHCb::MDF {
         "approximate size of the buffer used to prefetch rawbanks in terms of number of events. Default is 20000"};
     Gaudi::Property<std::vector<std::string>> m_input{this, "Input", {}, "List of inputs"};
     Gaudi::Property<unsigned int>             m_nbSkippedEvents{this, "NSkip", 0, "First event to process"};
+    Gaudi::Property<unsigned int>             m_nbBanksReserve{
+        this,
+        "NBanksReserve",
+        1200,
+        [this]( Property& ) { LHCb::MDF::Buffer::setReservedNumberOfBanks( this->m_nbBanksReserve ); },
+        Gaudi::Details::Property::ImmediatelyInvokeHandler{true},
+        "Number of RawBanks to reserve space for in each RawEvent"};
 
     /// current Buffer to events
     std::shared_ptr<Buffer> m_curBuffer{nullptr};

@@ -53,6 +53,8 @@ namespace LHCb::MDF {
     virtual ~Buffer() = default;
     /// returns number of events in buffer
     unsigned int size() { return m_events.size(); }
+    /// updates number of banks to reserve space for
+    static void setReservedNumberOfBanks( unsigned int nbBanksReserve ) { s_nbBanksReserve = nbBanksReserve; }
     /**
      * get the next event in the Buffer. This method is thread safe
      * and garantees to return evry single event exactly once
@@ -65,6 +67,8 @@ namespace LHCb::MDF {
     std::vector<MDFEvent> m_events;
     /// number of events still available in current buffer
     std::atomic<int> m_nbAvailableEvents;
+    /// number of RawBanks to reserve space for in each RawEvent
+    static unsigned int s_nbBanksReserve;
   };
 
   // Helper template magic to constrain OwningBuffer to actually be an owning buffer
