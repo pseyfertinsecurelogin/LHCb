@@ -17,6 +17,9 @@ gaudi_depends_on_subdirs(Event/EventBase
                          Event/MCEvent
                          Kernel/LHCbKernel)
 
+find_package(ROOT)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+
 gaudi_install_headers(Event)
 
 gaudi_add_dictionary(FTEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES LHCbKernel MCEvent INCLUDE_DIRS Event/EventBase)

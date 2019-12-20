@@ -37,6 +37,9 @@ namespace ranges {
     return make_iterator_range( std::forward<Args>( args )... );
   }
 } // namespace ranges
+namespace ranges::views {
+  using namespace ranges::view;
+}
 #else
 #  include "range/v3/view/subrange.hpp"
 #endif
@@ -155,9 +158,9 @@ namespace {
     // vertical and horizontal stripes
     const auto N = std::distance( first, pivot );
 
-    auto usedAndDigits = ranges::view::zip( used, ranges::make_subrange( first, last ) );
-    auto digitsOne     = ( usedAndDigits | ranges::view::take_exactly( N ) );
-    auto digitsTwo     = ( usedAndDigits | ranges::view::drop_exactly( N ) );
+    auto usedAndDigits = ranges::views::zip( used, ranges::make_subrange( first, last ) );
+    auto digitsOne     = ( usedAndDigits | ranges::views::take_exactly( N ) );
+    auto digitsTwo     = ( usedAndDigits | ranges::views::drop_exactly( N ) );
 
     // check how many cross
     retVal.reserve( digitsOne.size() * digitsTwo.size() + ( last - first ) );
@@ -172,8 +175,8 @@ namespace {
       }
     }
     // copy over "uncrossed" digits
-    for ( const Digit& digit :
-          usedAndDigits | ranges::view::remove_if( []( const auto& p ) { return p.first; } ) | ranges::view::values ) {
+    for ( const Digit& digit : usedAndDigits | ranges::views::remove_if( []( const auto& p ) { return p.first; } ) |
+                                   ranges::views::values ) {
       retVal.emplace_back( digit.tile, digit.tdc );
     }
     return last;
