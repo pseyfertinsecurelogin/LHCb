@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 from Configurables import RawEventFormatConf
-from Gaudi.Configuration import ConfigurableUser
+from Gaudi.Configuration import ConfigurableUser, log
 from Configurables import DataOnDemandSvc
 
 
@@ -89,10 +89,8 @@ class DecodeRawEvent(ConfigurableUser):
         Will override any decoder which has either been set to active *or* was 'used'
 
         """
-        #print "IN OVERRIDE IF REQUIRED!!"
         if (not self.isPropertySet("OverrideInputs")) or (
                 self.getProp("OverrideInputs") is None):
-            #print "RETURNING FOR SOME STUPID REASON"
             return
         #load dictionary of possible raw event locations
         RawEventFormatConf().loadIfRequired()
@@ -100,7 +98,6 @@ class DecodeRawEvent(ConfigurableUser):
         v = self.getProp("OverrideInputs")
 
         if adecoder is None:
-            #print "Finding the decoders!"
             #which banks, and which decoders will be overwritten
             from DAQSys.DecoderClass import decodersForBank, usedDecoders
             banks = self.allBanks()
@@ -117,10 +114,9 @@ class DecodeRawEvent(ConfigurableUser):
                     d = decodersForBank(self.__db__(), b)
                     if len(d):
                         names = [di.FullName for di in d]
-                        print "# WARNING: Re-configuration of inputs for " + names.__str__(
-                        ) + " could not be done, because the bank it decodes '" + b + "' does not appear in the list of available banks for target version '" + str(
-                            v
-                        ) + "' try setting this decoder to active=False and configuring yourself if really needed, or manually editing the contents of the RawEventFormat/Compat dictionaries"
+                        log.warning(
+                            "Re-configuration of inputs for %s could not be done, because the bank it decodes '%s' does not appear in the list of available banks for target version '%s' try setting this decoder to active=False and configuring yourself if really needed, or manually editing the contents of the RawEventFormat/Compat dictionaries"
+                            % (names.__str__(), b, str(v)))
                     else:
                         #there are no decoders for this bank, just ignore it
                         pass
@@ -182,11 +178,12 @@ class DecodeRawEvent(ConfigurableUser):
                 raise ValueError(
                     "I cannot overwrite to this raw version, because the input for the alg "
                     + d.FullName + " is not configurable")
-            print "# WARNING: Re-configuration of inputs for " + d.FullName + " was not done, but it might be OK since at least one location is in the default decode list"
+            log.warning(
+                "Re-configuration of inputs for %s was not done, but it might be OK since at least one location is in the default decode list"
+                % d.FullName)
             return
 
         #overwrite them if able
-        #print "# DecodeRawEvent: Overriding "+d.FullName+" from "+d.listInputs().__str__()+" to " +str(dest)
         d.overrideInputs(dest)
         if setup:
             d.setup(onlyInputs=True)
@@ -253,7 +250,9 @@ class DecodeRawEvent(ConfigurableUser):
                                     "/")[-1] and v.FullName.split("/")[0] == v.
                                 FullName.split("/")[-1] and testname.split(
                                     "/")[0] == v.FullName.split("/")[0]):
-                            print "# WARNING: something else configured a decoder already, " + loc + " " + testname
+                            log.warning(
+                                "something else configured a decoder already, %s %s"
+                                % (loc, testname))
                         else:
                             raise AttributeError(
                                 "At least two different active algs want to write to the same location. Check your DecoderDB! "
