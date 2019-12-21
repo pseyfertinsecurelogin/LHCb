@@ -74,7 +74,7 @@ protected:
                        const unsigned int pcn ) const;
 
   /// compute the spill offset
-  void computeSpillOffset( const std::string& location );
+  void computeSpillOffset( std::string_view location );
 
   /** check the spill is read out **/
   bool validSpill( const LHCb::ODIN& odin ) const;
@@ -84,8 +84,8 @@ protected:
 
   unsigned int byteSize( LHCb::span<const LHCb::RawBank*> banks ) const;
 
-  Gaudi::Property<bool> m_skipErrors{this, "skipBanksWithErrors", false};
-  std::string           m_bankTypeString;
+  Gaudi::Property<bool>        m_skipErrors{this, "skipBanksWithErrors", false};
+  Gaudi::Property<std::string> m_bankTypeString{this, "BankType", {}};
 
   Gaudi::Property<int>    m_forcedVersion{this, "forcedVersion", UTDAQ::inValidVersion};
   Gaudi::Property<bool>   m_checkValidSpill{this, "checkValidity", false};
@@ -93,10 +93,10 @@ protected:
   LHCb::RawBank::BankType m_bankType;
 
 private:
-  std::string            toSpill( const std::string& location ) const;
+  std::string            toSpill( std::string_view location ) const;
   LHCb::UTCluster::Spill m_spillOffset;
 
-  std::string m_errorBankString;
+  Gaudi::Property<std::string> m_errorBankString{this, "ErrorBank", "UTError"};
 
   Gaudi::Property<bool> m_recoverMode{this, "recoverMode", true};
 };

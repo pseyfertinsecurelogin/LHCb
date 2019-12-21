@@ -8,18 +8,17 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include <algorithm>
-
-// local
-#include "UTDAQ/RawBankToUTClusterAlg.h"
-
-// Event
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
 #include "Event/UTCluster.h"
-#include "Event/UTSummary.h"
-
 #include "Event/UTLiteCluster.h"
+#include "Event/UTSummary.h"
+#include "GaudiAlg/Transformer.h"
 #include "Kernel/IUTReadoutTool.h"
+#include "Kernel/STLExtensions.h"
+#include "Kernel/UTChannelID.h"
+#include "Kernel/UTClusterWord.h"
+#include "Kernel/UTDAQDefinitions.h"
 #include "Kernel/UTDataFunctor.h"
 #include "Kernel/UTDecoder.h"
 #include "Kernel/UTFun.h"
@@ -29,6 +28,68 @@
 #include "Kernel/UTTell1ID.h"
 #include "LHCbMath/LHCbMath.h"
 #include "SiDAQ/SiADCWord.h"
+#include "UTDecodingBaseAlg.h"
+#include <algorithm>
+#include <boost/container/small_vector.hpp>
+#include <string>
+#include <vector>
+
+/** @class RawBankToUTClusterAlg RawBankToUTClusterAlg.h
+ *
+ *  Algorithm to create UTClusters from RawEvent object
+ *
+ *  @author A Beiter (based on code by M. Needham)
+ *  @date   2018-09-04
+ */
+
+typedef Gaudi::Functional::MultiTransformer<std::tuple<LHCb::UTClusters, LHCb::UTSummary>( const LHCb::ODIN&,
+                                                                                           const LHCb::RawEvent& ),
+                                            Gaudi::Functional::Traits::BaseClass_t<UTDecodingBaseAlg>>
+    RawBankToUTClusterAlgBaseClass;
+
+class RawBankToUTClusterAlg : public RawBankToUTClusterAlgBaseClass {
+
+public:
+  /// Standard constructor
+  RawBankToUTClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
+
+  /// initialize
+  StatusCode initialize() override;
+  /// finalize
+  StatusCode finalize() override;
+  /// Algorithm execution
+  std::tuple<LHCb::UTClusters, LHCb::UTSummary> operator()( const LHCb::ODIN&, const LHCb::RawEvent& ) const override;
+
+private:
+  LHCb::UTSummary decodeBanks( const LHCb::RawEvent& rawEvt, LHCb::UTClusters& clusCont ) const;
+
+  void createCluster( const UTClusterWord& aWord, const UTTell1Board* aBoard, LHCb::span<const SiADCWord> adcValues,
+                      const UTDAQ::version& bankVersion, LHCb::UTClusters& clusCont ) const;
+
+  double mean( LHCb::span<const SiADCWord> adcValues ) const;
+
+  LHCb::UTLiteCluster word2LiteCluster( const UTClusterWord aWord, const LHCb::UTChannelID chan,
+                                        const unsigned int fracStrip ) const;
+
+  LHCb::UTSummary createSummaryBlock( const LHCb::RawEvent& rawEvt, const unsigned int& nclus, const unsigned int& pcn,
+                                      const bool pcnsync, const unsigned int bytes,
+                                      const std::vector<unsigned int>&      bankList,
+                                      const std::vector<unsigned int>&      missing,
+                                      const LHCb::UTSummary::RecoveredInfo& recoveredBanks ) const;
+
+  double stripFraction( const double interStripPos ) const;
+
+  Gaudi::Property<std::string> m_pedestalBankString{this, "PedestalBank", "UTPedestal"};
+  LHCb::RawBank::BankType      m_pedestalType;
+  Gaudi::Property<std::string> m_fullBankString{this, "FullBank", "UTFull"};
+  LHCb::RawBank::BankType      m_fullType;
+};
+
+LHCb::UTLiteCluster RawBankToUTClusterAlg::word2LiteCluster( const UTClusterWord aWord, const LHCb::UTChannelID chan,
+                                                             const unsigned int fracStrip ) const {
+  return LHCb::UTLiteCluster( fracStrip, aWord.pseudoSizeBits(), aWord.hasHighThreshold(), chan,
+                              ( detType() == "UT" ) );
+}
 
 using namespace LHCb;
 
@@ -51,9 +112,7 @@ RawBankToUTClusterAlg::RawBankToUTClusterAlg( const std::string& name, ISvcLocat
           {KeyValue( "clusterLocation", UTClusterLocation::UTClusters ),
            KeyValue( "summaryLocation", UTSummaryLocation::UTSummary )} ) {
   // Standard constructor, initializes variables
-  declareUTConfigProperty( "BankType", m_bankTypeString, "UT" );
-  declareUTConfigProperty( "PedestalBank", m_pedestalBankString, "UTPedestal" );
-  declareUTConfigProperty( "FullBank", m_fullBankString, "UTFull" );
+  setProperty( "BankType", "UT" ).ignore();
 }
 
 StatusCode RawBankToUTClusterAlg::initialize() {

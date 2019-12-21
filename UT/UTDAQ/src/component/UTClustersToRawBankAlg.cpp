@@ -8,29 +8,86 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// UTDAQ
-#include "UTDAQ/UTClustersToRawBankAlg.h"
-#include "Kernel/UTRawBankMap.h"
-#include "Kernel/UTTell1ID.h"
-
-#include "Kernel/UTClusterWord.h"
-#include "Kernel/UTDAQDefinitions.h"
-#include "Kernel/UTTell1Board.h"
-#include "SiDAQ/SiADCWord.h"
-#include "SiDAQ/SiHeaderWord.h"
-#include "UTDAQ/UTDAQFunctor.h"
-
-#include "Kernel/IUTReadoutTool.h"
-
-// Event
 #include "Event/BankWriter.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "Event/UTCluster.h"
 #include "Event/UTSummary.h"
-
-// Kernel
+#include "Kernel/IUTReadoutTool.h"
 #include "Kernel/UTChannelID.h"
-
+#include "Kernel/UTClusterWord.h"
+#include "Kernel/UTCommonBase.h"
+#include "Kernel/UTDAQDefinitions.h"
+#include "Kernel/UTRawBankMap.h"
+#include "Kernel/UTTell1Board.h"
+#include "Kernel/UTTell1ID.h"
+#include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiHeaderWord.h"
+#include "UTDAQ/UTBoardToBankMap.h"
+#include "UTDAQ/UTClustersOnBoard.h"
+#include "UTDAQ/UTDAQFunctor.h"
 #include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
+
+/** @class UTClustersToRawBankAlg UTClustersToRawBankAlg.h
+ *
+ *  Algorithm to fill the Raw buffer with UT information from UTClusters
+ *
+ *  @author A Beiter (based on code by M Needham)
+ *  @date   2018-09-04
+ */
+
+template <class IReadoutTool = IUTReadoutTool>
+class UTClustersToRawBankAlgT : public UT::CommonBase<GaudiAlgorithm, IReadoutTool> {
+
+public:
+  /// Standard constructor
+  UTClustersToRawBankAlgT( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+
+private:
+  /// convert string to enum
+  StatusCode configureBankType();
+
+  /// initialize event
+  void initEvent();
+
+  /// fill the banks
+  StatusCode groupByBoard( const LHCb::UTClusters* clusCont );
+
+  unsigned int bankSize( UTClustersOnBoard::ClusterVector& clusCont ) const;
+
+  unsigned int getPCN() const;
+
+  // create a new bank
+  void writeBank( const UTClustersOnBoard::ClusterVector& clusCont, LHCb::BankWriter& bWriter,
+                  const UTTell1ID aBoardID );
+
+  Gaudi::Property<int> m_maxClustersPerPPx{this, "maxClusters", 512};
+
+  DataObjectReadHandle<LHCb::RawEvent>   m_raw{this, "rawLocation", LHCb::RawEventLocation::Default};
+  DataObjectReadHandle<LHCb::UTClusters> m_clusters{this, "clusterLocation", LHCb::UTClusterLocation::UTClusters};
+  DataObjectReadHandle<LHCb::UTSummary>  m_summary{this, "summaryLocation", LHCb::UTSummaryLocation::UTSummary};
+
+  LHCb::RawBank::BankType m_bankType;
+
+  UTBoardToBankMap m_bankMapping;
+
+  std::map<UTTell1ID, UTClustersOnBoard*> m_clusMap;
+  std::vector<UTClustersOnBoard>          m_clusVectors;
+
+  unsigned int m_overflow       = 0;
+  unsigned int m_maxClusterSize = 4;
+  unsigned int m_pcn            = 128;
+};
+
+// Declaration of the backward compatible UTClustersToRawBankAlg class (not templated for the original UT case)
+using UTClustersToRawBankAlg = UTClustersToRawBankAlgT<>;
 
 using namespace LHCb;
 
@@ -45,8 +102,6 @@ DECLARE_COMPONENT_WITH_ID( UTClustersToRawBankAlgT<IUTReadoutTool>, "UTClustersT
 template <class IReadoutTool>
 UTClustersToRawBankAlgT<IReadoutTool>::UTClustersToRawBankAlgT( const std::string& name, ISvcLocator* pSvcLocator )
     : UT::CommonBase<GaudiAlgorithm, IReadoutTool>( name, pSvcLocator ) {
-  this->declareUTConfigProperty( "clusterLocation", m_clusterLocation, UTClusterLocation::UTClusters );
-  this->declareUTConfigProperty( "summaryLocation", m_summaryLocation, UTSummaryLocation::UTSummary );
   this->setForcedInit();
 }
 
@@ -99,13 +154,13 @@ template <class IReadoutTool>
 StatusCode UTClustersToRawBankAlgT<IReadoutTool>::execute() {
 
   // Retrieve the RawBank
-  RawEvent* tEvent = this->template get<RawEvent>( m_rawLocation );
+  RawEvent* tEvent = m_raw.get();
 
   // initialize this event
   initEvent();
 
   // get the data....
-  const UTClusters* clusCont = this->template get<UTClusters>( m_clusterLocation );
+  const UTClusters* clusCont = m_clusters.get();
 
   // group the data by banks..
   StatusCode sc = groupByBoard( clusCont );
@@ -147,7 +202,7 @@ void UTClustersToRawBankAlgT<IReadoutTool>::initEvent() {
 
   // locate and set the pcn from the summary block if it exists
   // in the case there is no summary block write 128
-  const LHCb::UTSummary* sum = this->template getIfExists<LHCb::UTSummary>( m_summaryLocation );
+  const LHCb::UTSummary* sum = m_summary.getIfExists();
   if ( sum ) m_pcn = sum->pcn();
 }
 

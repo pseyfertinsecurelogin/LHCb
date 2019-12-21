@@ -11,7 +11,7 @@
 #include <algorithm>
 
 // local
-#include "UTDAQ/UTDecodingBaseAlg.h"
+#include "UTDecodingBaseAlg.h"
 
 // Event
 #include "Event/ByteStream.h"
@@ -44,7 +44,6 @@ using namespace LHCb;
 
 UTDecodingBaseAlg::UTDecodingBaseAlg( const std::string& name, ISvcLocator* pSvcLocator )
     : UT::AlgBase( name, pSvcLocator ) {
-  declareUTConfigProperty( "ErrorBank", m_errorBankString, "UTError" );
   setForcedInit();
 }
 
@@ -282,25 +281,25 @@ std::unique_ptr<LHCb::UTTELL1BoardErrorBanks> UTDecodingBaseAlg::decodeErrors( c
   return outputErrors;
 }
 
-std::string UTDecodingBaseAlg::toSpill( const std::string& location ) const {
+std::string UTDecodingBaseAlg::toSpill( std::string_view location ) const {
 
   std::string theSpill;
   for ( const auto* name : {"Prev", "Next"} ) {
     auto iPos = location.find( name );
     if ( iPos != std::string::npos ) {
-      std::string            startSpill = location.substr( iPos );
-      std::string::size_type iPos2      = startSpill.find( "/" );
-      theSpill                          = startSpill.substr( 0, iPos2 );
+      auto startSpill = location.substr( iPos );
+      auto iPos2      = startSpill.find( "/" );
+      theSpill        = startSpill.substr( 0, iPos2 );
       break;
     }
   } // is
   return theSpill;
 }
 
-void UTDecodingBaseAlg::computeSpillOffset( const std::string& location ) {
+void UTDecodingBaseAlg::computeSpillOffset( std::string_view location ) {
   // convert spill to offset in time
-  std::string spill = toSpill( location );
-  m_spillOffset     = ( spill.size() > 4u ? LHCb::UTCluster::SpillToType( spill ) : LHCb::UTCluster::Spill::Central );
+  auto spill    = toSpill( location );
+  m_spillOffset = ( spill.size() > 4u ? LHCb::UTCluster::SpillToType( spill ) : LHCb::UTCluster::Spill::Central );
 }
 
 bool UTDecodingBaseAlg::validSpill( const LHCb::ODIN& odin ) const {

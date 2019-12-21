@@ -65,9 +65,9 @@ namespace LHCb {
     };
     GeomCache computeGeometry( const DeUTDetector& utDet );
 
-    // [[deprecated("Please use computeGeometry(const DeUTDetector&) instead")]]
-    inline void computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, UTInfo::TotalLayers>& layers,
-                                 std::array<SectorsInStationZ, UTInfo::Stations>& sectorsZ ) {
+    [[deprecated( "Please use computeGeometry(const DeUTDetector&) instead" )]] inline void
+    computeGeometry( const DeUTDetector& utDet, std::array<LayerInfo, UTInfo::TotalLayers>& layers,
+                     std::array<SectorsInStationZ, UTInfo::Stations>& sectorsZ ) {
       auto cache = computeGeometry( utDet );
       layers     = cache.layers;
       sectorsZ   = cache.sectorsZ;

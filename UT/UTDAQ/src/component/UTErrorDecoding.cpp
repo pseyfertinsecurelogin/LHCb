@@ -8,13 +8,29 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "UTDAQ/UTErrorDecoding.h"
-
-// Event
 #include "Event/UTTELL1BoardErrorBank.h"
+#include "GaudiAlg/Consumer.h"
+#include "UTDecodingBaseAlg.h"
+
+/** @class UTErrorDecoding UTErrorDecoding.h public/UTErrorDecoding.h
+ *
+ *
+ *  @author A Beiter (based on code by Mathias Knecht, M Needham, S Ponce)
+ *  @date   2018-09-04
+ */
+
+class UTErrorDecoding : public Gaudi::Functional::Consumer<void( const LHCb::RawEvent& ),
+                                                           Gaudi::Functional::Traits::BaseClass_t<UTDecodingBaseAlg>> {
+public:
+  /// Standard constructor
+  UTErrorDecoding( const std::string& name, ISvcLocator* pSvcLocator );
+
+  /// Algorithm execution
+  void operator()( const LHCb::RawEvent& ) const override;
+
+private:
+  Gaudi::Property<bool> m_PrintErrorInfo{this, "PrintErrorInfo", false};
+};
 
 using namespace LHCb;
 

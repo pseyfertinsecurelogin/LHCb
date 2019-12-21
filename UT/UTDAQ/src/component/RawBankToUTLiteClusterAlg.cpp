@@ -8,27 +8,66 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include <algorithm>
-#include <vector>
-
-// local
-#include "Kernel/IUTReadoutTool.h"
-#include "UTDAQ/RawBankToUTLiteClusterAlg.h"
-
-#include "LHCbMath/LHCbMath.h"
-
-// Event
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
 #include "Event/UTLiteCluster.h"
-
+#include "GaudiAlg/Transformer.h"
+#include "Kernel/IUTReadoutTool.h"
+#include "Kernel/UTClusterWord.h"
 #include "Kernel/UTDAQDefinitions.h"
 #include "Kernel/UTDataFunctor.h"
 #include "Kernel/UTDecoder.h"
 #include "Kernel/UTStripRepresentation.h"
 #include "Kernel/UTTell1Board.h"
 #include "Kernel/UTTell1ID.h"
+#include "LHCbMath/LHCbMath.h"
+#include "UTDecodingBaseAlg.h"
+#include <algorithm>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "Kernel/FastClusterContainer.h"
+/** @class RawBankToUTLiteClusterAlg RawBankToUTLiteClusterAlg.h
+ *
+ *  Algorithm to create UTClusters from RawEvent object
+ *
+ *  @author A. Beiter based on code by:
+ *  @author M. Needham
+ *  @author S. Ponce
+ */
+
+typedef Gaudi::Functional::Transformer<LHCb::UTLiteCluster::UTLiteClusters( const LHCb::ODIN&, const LHCb::RawEvent& ),
+                                       Gaudi::Functional::Traits::BaseClass_t<UTDecodingBaseAlg>>
+    RawBankToUTLiteClusterAlgBaseClass;
+
+class RawBankToUTLiteClusterAlg final : public RawBankToUTLiteClusterAlgBaseClass {
+
+public:
+  /// Standard constructor
+  RawBankToUTLiteClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode                          initialize() override; ///< Algorithm initialization
+  StatusCode                          finalize() override;   ///< Algorithm finalization
+  LHCb::UTLiteCluster::UTLiteClusters operator()( const LHCb::ODIN&, const LHCb::RawEvent& ) const override;
+
+private:
+  // create Clusters from this type
+  StatusCode decodeBanks( const LHCb::RawEvent& rawEvt, LHCb::UTLiteCluster::UTLiteClusters& fCont ) const;
+
+  // add a single cluster to the output container
+  void createCluster( const UTTell1Board* aBoard, const UTDAQ::version& bankVersion, const UTClusterWord& aWord,
+                      LHCb::UTLiteCluster::UTLiteClusters& fCont, const bool isUT ) const;
+};
+
+void RawBankToUTLiteClusterAlg::createCluster( const UTTell1Board* aBoard, const UTDAQ::version& bankVersion,
+                                               const UTClusterWord& aWord, LHCb::UTLiteCluster::UTLiteClusters& fCont,
+                                               const bool isUT ) const {
+
+  const unsigned int           fracStrip = aWord.fracStripBits();
+  const UTTell1Board::chanPair chan =
+      aBoard->DAQToOffline( fracStrip, bankVersion, UTDAQ::UTStripRepresentation( aWord.channelID() ) );
+  fCont.emplace_back( chan.second, aWord.pseudoSizeBits(), aWord.hasHighThreshold(), chan.first, isUT );
+}
 
 using namespace LHCb;
 
@@ -78,18 +117,11 @@ RawBankToUTLiteClusterAlg::RawBankToUTLiteClusterAlg( const std::string& name, I
                                                       LHCb::RawEventLocation::Tracker, LHCb::RawEventLocation::Other,
                                                       LHCb::RawEventLocation::Default )}},
                    KeyValue( "clusterLocation", UTLiteClusterLocation::UTClusters ) ) {
-  // Standard constructor, initializes variables
-  declareUTConfigProperty( "BankType", m_bankTypeString, detType() );
+  setProperty( "BankType", detType() ).ignore();
 }
 
 StatusCode RawBankToUTLiteClusterAlg::initialize() {
-  // Initialization
-  StatusCode sc = Transformer::initialize();
-  if ( sc.isFailure() ) return Error( "Failed to initialize", sc );
-  // Spill
-  computeSpillOffset( inputLocation<1>() );
-  // return
-  return StatusCode::SUCCESS;
+  return Transformer::initialize().andThen( [&] { computeSpillOffset( inputLocation<LHCb::RawEvent>() ); } );
 }
 
 LHCb::UTLiteCluster::UTLiteClusters RawBankToUTLiteClusterAlg::operator()( const LHCb::ODIN&     odin,
@@ -100,10 +132,7 @@ LHCb::UTLiteCluster::UTLiteClusters RawBankToUTLiteClusterAlg::operator()( const
   } else {
     fCont.reserve( 5000 );
     // decode banks
-    StatusCode sc = decodeBanks( rawEvt, fCont );
-    if ( sc.isFailure() ) {
-      throw GaudiException( "Problems in decoding event skipped", "RawBankToUTLiteClusterAlg", StatusCode::FAILURE );
-    }
+    decodeBanks( rawEvt, fCont ).orThrow( "Problems in decoding event", "RawBankToUTLiteClusterAlg" );
   }
   return fCont;
 }

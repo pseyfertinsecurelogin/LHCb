@@ -53,19 +53,7 @@ namespace UT {
   class CommonBase : public PBASE {
 
   public:
-    /// Standard algorithm-like constructor, only enable for base classes inheriting GaudiAlgorithm
-    template <typename A = void,
-              typename   = typename std::enable_if<std::is_base_of<GaudiAlgorithm, PBASE>::value, A>::type>
-    CommonBase( const std::string& name, ISvcLocator* pSvcLocator ) : PBASE( name, pSvcLocator ) {
-      declareUTConfigProperty( "ReadoutTool", m_readoutToolName, m_detType + "ReadoutTool" );
-    }
-
-    /// Standard tool-like constructor, only enable for base classes inheriting GaudiTool
-    template <typename A = void, typename = typename std::enable_if<std::is_base_of<GaudiTool, PBASE>::value, A>::type>
-    CommonBase( const std::string& type, const std::string& name, const IInterface* parent )
-        : PBASE( type, name, parent ) {
-      declareUTConfigProperty( "ReadoutTool", m_readoutToolName, m_detType + "ReadoutTool" );
-    }
+    using PBASE::PBASE;
 
     /// Destructor
     virtual ~CommonBase();
@@ -122,13 +110,6 @@ namespace UT {
     /** detector type as a string */
     std::string detectorType( const LHCb::UTChannelID& chan ) const;
 
-    /** declarePropery the UT way **/
-    ::Property* declareUTConfigProperty( const std::string& name, std::string& value, const std::string& def,
-                                         const std::string& doc = "none" ) {
-      // add to the property to the list of flippable after the normal property declaration
-      return this->declareProperty( name, value = def, doc );
-    }
-
     /** safe finding of the sector - exception thrown if not valid */
     DeUTSector* findSector( const LHCb::UTChannelID& aChannel ) const;
 
@@ -142,11 +123,11 @@ namespace UT {
 
     mutable DeUTDetector*            m_tracker{nullptr};
     mutable IReadoutTool*            m_readoutTool{nullptr};
-    std::string                      m_readoutToolName;
+    Gaudi::Property<std::string>     m_detType{this, "DetType", "UT"};
+    Gaudi::Property<std::string>     m_readoutToolName{this, "ReadoutTool", m_detType.value() + "ReadoutTool"};
     mutable std::vector<::Property*> m_toBeFlipped;
 
-    Gaudi::Property<std::string> m_detType{this, "DetType", "UT"};
-    Gaudi::Property<bool>        m_forcedInit{this, "ForcedInit", false};
+    Gaudi::Property<bool> m_forcedInit{this, "ForcedInit", false};
   };
 } // namespace UT
 
@@ -178,7 +159,7 @@ StatusCode UT::CommonBase<PBASE, IReadoutTool>::initialize() {
   // Printout from initialize
   if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Initialize" << endmsg;
 
-  if ( m_forcedInit == true ) {
+  if ( m_forcedInit ) {
     // force getting of the tools
     getTracker();
     getReadoutTool();
@@ -210,7 +191,7 @@ inline void UT::CommonBase<PBASE, IReadoutTool>::setDetType( const std::string& 
 
 template <class PBASE, class IReadoutTool>
 inline DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::tracker() const {
-  return m_tracker != 0 ? m_tracker : getTracker();
+  return m_tracker ? m_tracker : getTracker();
 }
 
 #include "UTDet/DeUTSector.h"
@@ -219,7 +200,7 @@ template <class PBASE, class IReadoutTool>
 inline DeUTSector* UT::CommonBase<PBASE, IReadoutTool>::findSector( const LHCb::UTChannelID& aChannel ) const {
 
   DeUTSector* sector = tracker()->findSector( aChannel );
-  if ( sector == 0 ) throw GaudiException( "No sector found", this->name(), StatusCode::FAILURE );
+  if ( !sector ) throw GaudiException( "No sector found", this->name(), StatusCode::FAILURE );
 
   return sector;
 }
@@ -232,7 +213,7 @@ inline DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::getTracker() const {
 
 template <class PBASE, class IReadoutTool>
 inline IReadoutTool* UT::CommonBase<PBASE, IReadoutTool>::readoutTool() const {
-  return m_readoutTool != 0 ? m_readoutTool : getReadoutTool();
+  return m_readoutTool ? m_readoutTool : getReadoutTool();
 }
 
 template <class PBASE, class IReadoutTool>
