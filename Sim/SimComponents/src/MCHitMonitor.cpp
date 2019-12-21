@@ -8,32 +8,84 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+
+#include "AIDA/IHistogram1D.h"
+#include "AIDA/IHistogram2D.h"
+#include "Event/MCHit.h"
+#include "Event/MCParticle.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "LHCbMath/ModeFunctions.h"
+#include "MCInterfaces/IMCParticleSelector.h"
+#include <string>
+#include <vector>
+
+/** class MCHitMonitor, package MCHitMonitor
+ *  Top Level Algorithm that manages MCHits digitization code
+ *
+ *  @author M.Needham
+ *  @date 04/12/2008 [revised]
+ *  @date   21/10/2000
+ */
+
+class MCHitMonitor : public GaudiHistoAlg {
+
+public:
+  /// Constructer
+  MCHitMonitor( const std::string& name, ISvcLocator* pSvcLocator );
+
+  /// intialize
+  StatusCode initialize() override;
+
+  /// execute
+  StatusCode execute() override;
+
+  /// finalize
+  StatusCode finalize() override;
+
+private:
+  /// init histograms
+  void initHistograms();
+
+  /// fill histograms
+  StatusCode fillHistograms( const LHCb::MCHit* aHit ) const;
+
+  /// station number for a given z
+  int getStationID( const double z ) const;
+
+  // selector
+  ToolHandle<IMCParticleSelector> m_selector{this, "selectorName", "MCParticleSelector"};
+
+  std::vector<IHistogram1D*> m_timeOfFlightHistos;
+  std::vector<IHistogram2D*> m_XvsYHistos;
+  std::vector<IHistogram1D*> m_EnergyLossHistos;
+
+  mutable std::vector<double> m_energyVec;
+
+  // job Options
+  DataObjectReadHandle<LHCb::MCHits>   m_mcHits{this, "mcPathString", ""};
+  Gaudi::Property<std::vector<double>> m_Zstations{this, "zStations", {}};
+  Gaudi::Property<double>              m_Xmax{this, "xMax", 400.0 * Gaudi::Units::cm};
+  Gaudi::Property<double>              m_Ymax{this, "yMax", 400.0 * Gaudi::Units::cm};
+  Gaudi::Property<double>              m_TMax{this, "tMax", 100.0 * Gaudi::Units::ns};
+  Gaudi::Property<double>              m_TMin{this, "tMin", 0.0 * Gaudi::Units::ns};
+  Gaudi::Property<double>              m_EMax{this, "eMax", 1.0 * Gaudi::Units::MeV};
+  Gaudi::Property<double>              m_MaxPath{this, "maxPath", 5.0 * Gaudi::Units::cm};
+  Gaudi::Property<double>              m_ZTolerance{this, "zTolerance", 20.0 * Gaudi::Units::cm};
+  Gaudi::Property<double>              m_minPathLength{this, "minPathLength", 0.1 * Gaudi::Units::mm};
+  Gaudi::Property<unsigned int>        m_nToCollect{this, "nToCollect", 20000};
+
+  // counters
+  mutable Gaudi::Accumulators::AveragingCounter<>             m_betaGamma_counter{this, "betaGamma"};
+  mutable Gaudi::Accumulators::Counter<>                      m_DeltaRay_counter{this, "DeltaRay"};
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_numberHits_counter{this, "numberHits"};
+};
+
 //
 // This File contains the implementation of the MCHitMonitor
 //
 //   Author:Matthew Needham
 //   Created: 18-05-1999
-
-// Standard C++ Library
-#include <string>
-
-// Histogramming
-#include "AIDA/IHistogram1D.h"
-#include "AIDA/IHistogram2D.h"
-
-// LHCb Event
-#include "Event/MCHit.h"
-#include "Event/MCParticle.h"
-
-// Units
-#include "GaudiKernel/SystemOfUnits.h"
-
-// Tools
-#include "MCInterfaces/IMCParticleSelector.h"
-
-#include "MCHitMonitor.h"
-
-#include "LHCbMath/ModeFunctions.h"
 
 // Needed for the creation of MCHitMonitor objects.
 DECLARE_COMPONENT( MCHitMonitor )
@@ -46,39 +98,22 @@ DECLARE_COMPONENT( MCHitMonitor )
 
 MCHitMonitor::MCHitMonitor( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiHistoAlg( name, pSvcLocator ) {
   /// MCHitMonitor constructor
-  this->declareProperty( "mcPathString", m_MCHitPath = "" );
-  this->declareProperty( "zTolerance", m_ZTolerance = 20.0 * Gaudi::Units::cm );
-  this->declareProperty( "zStations", m_Zstations );
-  this->declareProperty( "xMax", m_Xmax = 400.0 * Gaudi::Units::cm );
-  this->declareProperty( "yMax", m_Ymax = 400.0 * Gaudi::Units::cm );
-  this->declareProperty( "selectorName", m_selectorName = "MCParticleSelector" );
-  this->declareProperty( "tMax", m_TMax = 100.0 * Gaudi::Units::ns );
-  this->declareProperty( "tMin", m_TMin = 0.0 * Gaudi::Units::ns );
-  this->declareProperty( "eMax", m_EMax = 1.0 * Gaudi::Units::MeV );
-  this->declareProperty( "maxPath", m_MaxPath = 5.0 * Gaudi::Units::cm );
-  this->declareProperty( "minPathLength", m_minPathLength = 0.1 * Gaudi::Units::mm );
-  this->declareProperty( "nToCollect", m_nToCollect = 20000 );
 }
 
 StatusCode MCHitMonitor::initialize() {
   // initialize
 
-  StatusCode sc = GaudiHistoAlg::initialize();
-  if ( sc.isFailure() ) { return Error( "Failed to initialize", sc ); }
+  return GaudiHistoAlg::initialize().andThen( [&] {
+    // initialize histograms
+    initHistograms();
 
-  m_selector = tool<IMCParticleSelector>( m_selectorName, m_selectorName, this );
-
-  // initialize histograms
-  this->initHistograms();
-
-  m_energyVec.reserve( m_nToCollect );
-
-  return StatusCode::SUCCESS;
+    m_energyVec.reserve( m_nToCollect );
+  } );
 }
 
 void MCHitMonitor::initHistograms() {
   /// Intialize histograms
-  std::string tPath = this->histoPath() + "/";
+  std::string tPath = histoPath() + "/";
 
   // make histograms per stations
   IHistogram1D* aHisto1D = nullptr;
@@ -106,7 +141,7 @@ void MCHitMonitor::initHistograms() {
 StatusCode MCHitMonitor::execute() {
   /// Executes MCHitMonitor for one event.
 
-  const LHCb::MCHits* hitsCont = get<LHCb::MCHits>( m_MCHitPath );
+  const LHCb::MCHits* hitsCont = m_mcHits.get();
 
   plot( (double)hitsCont->size(), 1, "num hits", 0., 5000, 100 );
   m_numberHits_counter += hitsCont->size();

@@ -25,9 +25,9 @@
 
 struct ICheckTool : extend_interfaces<IAlgTool> {
   /// access to interface id
-  DeclareInterfaceID( ICheckTool, 1, 0 );
+  DeclareInterfaceID( ICheckTool, 2, 0 );
 
   /// Check the data
-  virtual StatusCode check() = 0;
+  virtual StatusCode check() const = 0;
 };
 #endif // KERNEL_ICHECKTOOL_H

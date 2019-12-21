@@ -63,8 +63,7 @@ StatusCode DumpHepMC::execute() {
     if ( !events ) { continue; }
     //
     info() << " HepMC container '" << *ia << "' \t has " << events->size() << " event(s) " << endmsg;
-    for ( auto ie = events->begin(); events->end() != ie; ++ie ) {
-      const LHCb::HepMCEvent* event = *ie;
+    for ( const LHCb::HepMCEvent* event : *events ) {
       if ( !event ) { continue; }
       log << "  Generator '" << event->generatorName() << "'\n";
       if ( log.isActive() ) orderedPrint( event->pGenEvt(), log.stream() );

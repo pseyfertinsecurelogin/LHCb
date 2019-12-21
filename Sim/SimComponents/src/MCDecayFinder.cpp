@@ -371,18 +371,18 @@ bool MCDecayFinder::findDecay( const LHCb::MCParticles& event, const LHCb::MCPar
 }
 
 bool MCDecayFinder::hasDecay() const {
-  LHCb::MCParticles* mcparts = get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
+  const LHCb::MCParticles* mcparts = m_mcParts.get();
   if ( !mcparts ) {
-    fatal() << "Unable to find MC particles at '" << LHCb::MCParticleLocation::Default << "'" << endmsg;
+    fatal() << "Unable to find MC particles at '" << m_mcParts.objKey() << "'" << endmsg;
     return false;
   }
   return hasDecay( *mcparts );
 }
 
 bool MCDecayFinder::findDecay( const LHCb::MCParticle*& previous_result ) const {
-  LHCb::MCParticles* mcparts = get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
+  const LHCb::MCParticles* mcparts = m_mcParts.get();
   if ( !mcparts ) {
-    fatal() << "Unable to find MC particles at '" << LHCb::MCParticleLocation::Default << "'" << endmsg;
+    fatal() << "Unable to find MC particles at '" << m_mcParts.objKey() << "'" << endmsg;
     return false;
   }
   return findDecay( *mcparts, previous_result );
@@ -596,64 +596,65 @@ std::string MCDecayFinder::ParticleMatcher::describe() {
   if ( oscillate ) result += '[';
   if ( noscillate ) result += '[';
   if ( inverse ) result += '!';
-  dispatch_variant( parms, [&]( const std::monostate& ) { result += "## MUST NOT COMPILE ##"; },
-                    [&]( const stdhep_t& stdhep ) {
-                      if ( !m_ppSvc ) return;
-                      if ( !m_ppSvc->find( LHCb::ParticleID( stdhep.id ) ) )
-                        throw DescriptorError( std::string( "Unknown particle" ) );
-                      ;
-                      result += m_ppSvc->find( LHCb::ParticleID( stdhep.id ) )->particle();
-                    },
-                    [&]( const quark_t& quarks ) {
-                      auto append = []( std::string& s, Quarks q ) {
-                        switch ( q ) {
-                        case up:
-                          s += 'u';
-                          break;
-                        case down:
-                          s += 'd';
-                          break;
-                        case charm:
-                          s += 'c';
-                          break;
-                        case strange:
-                          s += 's';
-                          break;
-                        case top:
-                          s += 't';
-                          break;
-                        case bottom:
-                          s += 'b';
-                          break;
-                        case antiup:
-                          s += "u~";
-                          break;
-                        case antidown:
-                          s += "d~";
-                          break;
-                        case anticharm:
-                          s += "c~";
-                          break;
-                        case antistrange:
-                          s += "s~";
-                          break;
-                        case antitop:
-                          s += "t~";
-                          break;
-                        case antibottom:
-                          s += "b~";
-                          break;
-                        case empty:
-                          break;
-                        };
-                      };
-                      result += "<X";
-                      append( result, quarks.q1 );
-                      append( result, quarks.q2 );
-                      append( result, quarks.q3 );
-                      result += '>';
-                    },
-                    [&]( const quantum_t& ) { result += "## NOT IMPLEMENTED ##"; } );
+  dispatch_variant(
+      parms, [&]( const std::monostate& ) { result += "## MUST NOT COMPILE ##"; },
+      [&]( const stdhep_t& stdhep ) {
+        if ( !m_ppSvc ) return;
+        if ( !m_ppSvc->find( LHCb::ParticleID( stdhep.id ) ) )
+          throw DescriptorError( std::string( "Unknown particle" ) );
+        ;
+        result += m_ppSvc->find( LHCb::ParticleID( stdhep.id ) )->particle();
+      },
+      [&]( const quark_t& quarks ) {
+        auto append = []( std::string& s, Quarks q ) {
+          switch ( q ) {
+          case up:
+            s += 'u';
+            break;
+          case down:
+            s += 'd';
+            break;
+          case charm:
+            s += 'c';
+            break;
+          case strange:
+            s += 's';
+            break;
+          case top:
+            s += 't';
+            break;
+          case bottom:
+            s += 'b';
+            break;
+          case antiup:
+            s += "u~";
+            break;
+          case antidown:
+            s += "d~";
+            break;
+          case anticharm:
+            s += "c~";
+            break;
+          case antistrange:
+            s += "s~";
+            break;
+          case antitop:
+            s += "t~";
+            break;
+          case antibottom:
+            s += "b~";
+            break;
+          case empty:
+            break;
+          };
+        };
+        result += "<X";
+        append( result, quarks.q1 );
+        append( result, quarks.q2 );
+        append( result, quarks.q3 );
+        result += '>';
+      },
+      [&]( const quantum_t& ) { result += "## NOT IMPLEMENTED ##"; } );
 
   if ( noscillate ) result += "]nos";
   if ( oscillate ) result += "]os";
@@ -716,12 +717,12 @@ bool MCDecayFinder::ParticleMatcher::test( const LHCb::MCParticle* part, LHCb::M
 }
 
 void MCDecayFinder::ParticleMatcher::conjugateID() {
-  dispatch_variant( parms, []( const std::monostate& ) {},
-                    [&]( stdhep_t& stdhep ) { stdhep.id = this->conjugatedID( stdhep.id ); },
-                    []( ... ) {
-                      throw DescriptorError( "Charge conjugate only allowed"
-                                             " on explicit particle or '?'" );
-                    } );
+  dispatch_variant(
+      parms, []( const std::monostate& ) {}, [&]( stdhep_t& stdhep ) { stdhep.id = this->conjugatedID( stdhep.id ); },
+      []( ... ) {
+        throw DescriptorError( "Charge conjugate only allowed"
+                               " on explicit particle or '?'" );
+      } );
 }
 
 int MCDecayFinder::ParticleMatcher::conjugatedID( int id ) {

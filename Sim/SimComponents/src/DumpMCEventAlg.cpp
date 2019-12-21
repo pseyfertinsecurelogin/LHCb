@@ -8,23 +8,39 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// Tools
-#include "Kernel/ICheckTool.h"
 
-// Event Model
+// Include files
 #include "Event/MCHeader.h"
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
+#include "GaudiAlg/Consumer.h"
+#include "Kernel/ICheckTool.h"
 
-// local
-#include "DumpMCEventAlg.h"
+/** @class DumpMCEventAlg DumpMCEventAlg.h
+ *  Dump contents of an MCEvent.
+ *  Reimplements functionality previously in DumpEventExample
+ *  Amount printed depends on OutputLevel:
+ *    INFO: prints EventHeader and Collisions
+ *   DEBUG: prints also first "NumberOfObjectsToPrint" MCVertices and
+ *          MCParticles (default is 5)
+ * VERBOSE: prints all MCVertices and MCParticles
+ *
+ *  @author Marco Cattaneo
+ *  @date   2004-07-14
+ */
+class DumpMCEventAlg : public Gaudi::Functional::Consumer<void(
+                           const LHCb::MCHeader& evt, const LHCb::MCVertices& verts, const LHCb::MCParticles& parts )> {
+public:
+  /// Standard constructor
+  DumpMCEventAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-//-----------------------------------------------------------------------------
-// Implementation file for class : DumpMCEventAlg
-//
-// 2004-07-14 : Marco Cattaneo
-//-----------------------------------------------------------------------------
+  void operator()( const LHCb::MCHeader& evt, const LHCb::MCVertices& verts,
+                   const LHCb::MCParticles& parts ) const override;
+
+private:
+  Gaudi::Property<unsigned int> m_numObjects{this, "NumberOfObjectsToPrint", 5};  ///< Number of objects to print
+  PublicToolHandle<ICheckTool>  m_checker{this, "CheckTool", "CheckMCEventTool"}; ///< Tool to check event integrity
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( DumpMCEventAlg )
@@ -33,61 +49,44 @@ DECLARE_COMPONENT( DumpMCEventAlg )
 // Standard constructor, initializes variables
 //=============================================================================
 DumpMCEventAlg::DumpMCEventAlg( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "NumberOfObjectsToPrint", m_numObjects = 5 );
-}
-
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode DumpMCEventAlg::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  m_checker = tool<ICheckTool>( "CheckMCEventTool" );
-
-  return StatusCode::SUCCESS;
-}
+    : Consumer( name, pSvcLocator,
+                {KeyValue{"MCHeader", LHCb::MCHeaderLocation::Default},
+                 KeyValue{"MCVertices", LHCb::MCVertexLocation::Default},
+                 KeyValue{"MCParticles", LHCb::MCParticleLocation::Default}} ) {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode DumpMCEventAlg::execute() {
+void DumpMCEventAlg::operator()( const LHCb::MCHeader& evt, const LHCb::MCVertices& verts,
+                                 const LHCb::MCParticles& parts ) const {
 
-  LHCb::MCHeader* evt = get<LHCb::MCHeader>( LHCb::MCHeaderLocation::Default );
-  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n" << *evt << endmsg;
+  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n" << evt << endmsg;
 
-  StatusCode sc = m_checker->check();
-  if ( sc.isFailure() ) return sc;
+  m_checker->check().orThrow( "Checker Failed", "DumpMCEventAlg" );
+  ;
   info() << "MCVertex/MCParticle tree structure is OK" << endmsg;
 
-  LHCb::MCVertices* verts = get<LHCb::MCVertices>( LHCb::MCVertexLocation::Default );
-  info() << "There are " << verts->size() << " Vertices:" << endmsg;
-
+  info() << "There are " << verts.size() << " Vertices:" << endmsg;
   if ( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    for ( auto iVert = verts->begin(); iVert != verts->end(); iVert++ ) {
+    for ( const auto& iVert : verts ) {
       if ( !msgLevel( MSG::VERBOSE ) && m_numObjects < ++count ) break;
-      debug() << "MCVertex " << ( *iVert )->key() << ":" << std::endl;
-      ( *iVert )->fillStream( debug().stream() );
+      debug() << "MCVertex " << iVert->key() << ":\n";
+      iVert->fillStream( debug().stream() );
       debug() << endmsg;
     }
   }
 
-  LHCb::MCParticles* parts = get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
-  info() << "There are " << parts->size() << " Particles:" << endmsg;
-
+  info() << "There are " << parts.size() << " Particles:" << endmsg;
   if ( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    for ( auto iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
+    for ( const auto& iPart : parts ) {
       if ( !msgLevel( MSG::VERBOSE ) && m_numObjects < ++count ) break;
-      debug() << "MCParticle " << ( *iPart )->key() << ":" << std::endl;
-      ( *iPart )->fillStream( debug().stream() );
+      debug() << "MCParticle " << iPart->key() << ":" << std::endl;
+      iPart->fillStream( debug().stream() );
       debug() << endmsg;
     }
   }
-
-  return StatusCode::SUCCESS;
 }
 
 //=============================================================================

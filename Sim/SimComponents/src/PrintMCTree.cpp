@@ -76,9 +76,9 @@ StatusCode PrintMCTree::execute() {
 
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
-  LHCb::MCParticles* kmcparts = get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
+  const LHCb::MCParticles* kmcparts = m_mcParts.get();
 
-  std::vector<LHCb::MCParticle*> mcparts( kmcparts->begin(), kmcparts->end() );
+  std::vector<const LHCb::MCParticle*> mcparts( kmcparts->begin(), kmcparts->end() );
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "There are " << mcparts.size() << " MC particles" << endmsg;
 
   bool printed = false;

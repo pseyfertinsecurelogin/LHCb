@@ -8,7 +8,30 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "ForcedBDecayTool.h"
+// Include files
+#include "Event/GenHeader.h"
+#include "Event/MCParticle.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "MCInterfaces/IForcedBDecayTool.h"
+
+/** @class ForcedBDecayTool ForcedBDecayTool.h
+ *
+ *  v1.0
+ *  @author Marco Musy
+ *  @date   2006-10-02
+ */
+class ForcedBDecayTool : public extends<GaudiTool, IForcedBDecayTool> {
+public:
+  /// Standard constructor
+  using extends::extends;
+
+  const LHCb::MCParticle* forcedB() override;
+
+private:
+  LHCb::MCParticle*                       associatedofHEP( HepMC::GenParticle* );
+  DataObjectReadHandle<LHCb::HepMCEvents> m_mcEvent{this, "HepMCEvents", LHCb::HepMCEventLocation::Default};
+  DataObjectReadHandle<LHCb::MCParticles> m_mcParts{this, "MCParticles", LHCb::MCParticleLocation::Default};
+};
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : ForcedBDecayTool v1.0
@@ -16,17 +39,15 @@
 // 2007-02-06 : Marco Musy
 //-----------------------------------------------------------------------------
 
-using namespace LHCb;
-
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( ForcedBDecayTool )
 
 //=============================================================================
-const MCParticle* ForcedBDecayTool::forcedB() {
+const LHCb::MCParticle* ForcedBDecayTool::forcedB() {
 
   // check what is the B forced to decay
-  const MCParticle* BS      = nullptr;
-  HepMCEvents*      hepVect = get<HepMCEvents>( HepMCEventLocation::Default );
+  const LHCb::MCParticle*  BS      = nullptr;
+  const LHCb::HepMCEvents* hepVect = m_mcEvent.get();
   for ( auto& q : *hepVect ) {
     for ( auto p = q->pGenEvt()->particles_begin(); p != q->pGenEvt()->particles_end(); ++p ) {
       if ( ( *p )->status() != 889 ) continue;
@@ -37,11 +58,10 @@ const MCParticle* ForcedBDecayTool::forcedB() {
   return BS;
 }
 //============================================================================
-MCParticle* ForcedBDecayTool::associatedofHEP( HepMC::GenParticle* hepmcp ) {
-  MCParticles* mcpart = get<MCParticles>( MCParticleLocation::Default );
+LHCb::MCParticle* ForcedBDecayTool::associatedofHEP( HepMC::GenParticle* hepmcp ) {
+  const LHCb::MCParticles* mcpart = m_mcParts.get();
 
-  int  mid = hepmcp->pdg_id();
-  auto imc = std::find_if( mcpart->begin(), mcpart->end(), [&]( const MCParticle* p ) {
+  auto imc = std::find_if( mcpart->begin(), mcpart->end(), [mid = hepmcp->pdg_id()]( const LHCb::MCParticle* p ) {
     return p->particleID().hasBottom() && p->particleID().pid() == mid;
   } );
   return imc != mcpart->end() ? *imc : nullptr;

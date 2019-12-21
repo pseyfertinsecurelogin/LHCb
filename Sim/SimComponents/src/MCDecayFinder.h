@@ -187,6 +187,7 @@ public:
       std::vector<std::pair<const LHCb::MCParticle*, LHCb::MCParticle::ConstVector>>& subtrees ) const override;
 
 private:
+  DataObjectReadHandle<LHCb::MCParticles> m_mcParts{this, "MCParticles", LHCb::MCParticleLocation::Default};
   /// Enumaration types used internally.
   enum Quarks {
     empty,

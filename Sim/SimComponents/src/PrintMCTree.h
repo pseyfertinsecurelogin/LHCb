@@ -33,9 +33,10 @@ public:
   StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  IPrintMCDecayTreeTool*   m_printMCTree = nullptr;
-  std::vector<std::string> m_particleNames; ///< particle names
-  std::vector<int>         m_particleIDs;
-  int                      m_depth = -1; ///< depth of tree
+  IPrintMCDecayTreeTool*                  m_printMCTree = nullptr;
+  std::vector<std::string>                m_particleNames; ///< particle names
+  std::vector<int>                        m_particleIDs;
+  int                                     m_depth = -1; ///< depth of tree
+  DataObjectReadHandle<LHCb::MCParticles> m_mcParts{this, "MCParticles", LHCb::MCParticleLocation::Default};
 };
 #endif // PRINTMCTREE_H
