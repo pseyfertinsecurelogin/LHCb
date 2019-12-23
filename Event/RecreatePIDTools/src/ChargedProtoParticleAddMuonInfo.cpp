@@ -35,35 +35,21 @@ ChargedProtoParticleAddMuonInfo::ChargedProtoParticleAddMuonInfo( const std::str
 
   // context specific locations
   if ( context() == "HLT" || context() == "Hlt" ) {
-    m_muonPath  = LHCb::MuonPIDLocation::Hlt;
-    m_protoPath = LHCb::ProtoParticleLocation::HltCharged;
-  } else {
-    m_muonPath  = LHCb::MuonPIDLocation::Offline;
-    m_protoPath = LHCb::ProtoParticleLocation::Charged;
+    m_muonPath.setKey( LHCb::MuonPIDLocation::Hlt );
+    m_protoPath.setKey( LHCb::ProtoParticleLocation::HltCharged );
   }
-
-  // Muon data
-  declareProperty( "InputMuonPIDLocation", m_muonPath );
-
-  // ProtoParticles
-  declareProperty( "ProtoParticleLocation", m_protoPath );
 
   // setProperty( "OutputLevel", 1 );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-ChargedProtoParticleAddMuonInfo::~ChargedProtoParticleAddMuonInfo() {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
 StatusCode ChargedProtoParticleAddMuonInfo::execute() {
   // ProtoParticle container
-  LHCb::ProtoParticles* protos = getIfExists<LHCb::ProtoParticles>( m_protoPath );
+  LHCb::ProtoParticles* protos = m_protoPath.getIfExists();
   if ( !protos ) {
-    return Warning( "No existing ProtoParticle container at " + m_protoPath + " thus do nothing.",
+    return Warning( "No existing ProtoParticle container at " + m_protoPath.objKey() + " thus do nothing.",
                     StatusCode::SUCCESS );
   }
 
@@ -73,7 +59,7 @@ StatusCode ChargedProtoParticleAddMuonInfo::execute() {
 
   // Loop over proto particles and update muon info
   for ( auto* proto : *protos ) { updateMuon( proto ); }
-  counter( m_muonPath + " ==> " + m_protoPath ) += protos->size();
+  counter( m_muonPath.objKey() + " ==> " + m_protoPath.objKey() ) += protos->size();
 
   // return
   return StatusCode::SUCCESS;
@@ -142,14 +128,15 @@ bool ChargedProtoParticleAddMuonInfo::getMuonData() {
   m_muonMap.clear();
 
   // Do we have any MuonPID results
-  const LHCb::MuonPIDs* muonpids = getIfExists<LHCb::MuonPIDs>( m_muonPath );
+  const LHCb::MuonPIDs* muonpids = m_muonPath.getIfExists();
   if ( !muonpids ) {
-    Warning( "No MuonPIDs at '" + m_muonPath + "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS, 1 )
+    Warning( "No MuonPIDs at '" + m_muonPath.objKey() + "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS,
+             1 )
         .ignore();
     return false;
   }
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Successfully loaded " << muonpids->size() << " MuonPIDs from " << m_muonPath << endmsg;
+    debug() << "Successfully loaded " << muonpids->size() << " MuonPIDs from " << m_muonPath.objKey() << endmsg;
 
   // Pointer for bug work around below, if needed.
   const LHCb::ProtoParticles* protos = NULL;
@@ -169,7 +156,7 @@ bool ChargedProtoParticleAddMuonInfo::getMuonData() {
 
       // Bug in old (u)DSTs. Try and work around using track keys ...
       // Eventually to be removed
-      if ( !protos ) { protos = get<LHCb::ProtoParticles>( m_protoPath ); }
+      if ( !protos ) { protos = m_protoPath.get(); }
       for ( auto* proto : *protos ) {
         if ( proto->track() && proto->track()->key() == M->key() ) {
           m_muonMap[proto->track()] = M;
