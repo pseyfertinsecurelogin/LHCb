@@ -8,44 +8,39 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// From Gaudi
-#include "GaudiKernel/IEventTimeDecoder.h"
-
-// From LHCb
 #include "Event/ODIN.h"
-
-// local
-#include "ODINBadTimeTest.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include <atomic>
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: ODINBadTimeTest
 //
 // 18/10/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_COMPONENT( LHCbAlgsTests::ODINBadTimeTest )
 
 namespace LHCbAlgsTests {
-  // ============================================================================
-  // Standard constructor, initializes variables
-  // ============================================================================
-  ODINBadTimeTest::ODINBadTimeTest( const std::string& name, ISvcLocator* pSvcLocator )
-      : GaudiAlgorithm( name, pSvcLocator ) {}
 
-  // ============================================================================
-  // Initialization
-  // ============================================================================
-  StatusCode ODINBadTimeTest::initialize() {
-    StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-    if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
+  /** @class ODINBadTimeTest ODINBadTimeTest.h src/ODINBadTimeTest.h
+   *
+   * Small test algorithm to test the handling of invalid GPS time in OdinTimeDecoder.
+   *
+   * @author Marco Clemencic
+   * @date 18/10/2011
+   */
+  class ODINBadTimeTest final : public GaudiAlgorithm {
+    ToolHandle<IEventTimeDecoder>     m_evtTimeTool{"OdinTimeDecoder", this};
+    mutable std::atomic<bool>         m_called{false};
+    DataObjectWriteHandle<LHCb::ODIN> m_odin{this, "ODINLocation", LHCb::ODINLocation::Default};
 
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
+  public:
+    /// Standard constructor
+    using GaudiAlgorithm::GaudiAlgorithm;
 
-    m_evtTimeTool = tool<IEventTimeDecoder>( "OdinTimeDecoder", this, true );
+    StatusCode execute() override; ///< Algorithm execution
+  };
 
-    return sc;
-  }
+  DECLARE_COMPONENT( ODINBadTimeTest )
 
   // ============================================================================
   // Main execution
@@ -53,36 +48,24 @@ namespace LHCbAlgsTests {
   StatusCode ODINBadTimeTest::execute() {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
-    LHCb::ODIN* odin = new LHCb::ODIN();
-    if ( !m_called ) {
+    LHCb::ODIN* odin   = new LHCb::ODIN();
+    bool        called = m_called.exchange( true );
+    if ( !called ) {
       // valid GPS time on the first call
       odin->setGpsTime( 1318944600000000ULL ); // 18/10/2011 15:30
     } else {
       // invalid GPS time on the following calls
       odin->setGpsTime( 9239754600000000ULL ); // 18/10/2262 15:30
     }
-    put( evtSvc(), odin, LHCb::ODINLocation::Default );
 
-    info() << "Set ODIN time to " << odin->gpsTime() / 1000000 << " (" << ( m_called ? "invalid" : "valid" ) << ")"
+    info() << "Set ODIN time to " << odin->gpsTime() / 1000000 << " (" << ( called ? "invalid" : "valid" ) << ")"
            << endmsg;
+
+    m_odin.put( std::move( odin ) );
     // will not try to decode the ODIN bank
     info() << "ODIN time -> " << m_evtTimeTool->getTime() << endmsg;
 
-    m_called = true;
-
     return StatusCode::SUCCESS;
-  }
-
-  // ============================================================================
-  // Finalize
-  // ============================================================================
-  StatusCode ODINBadTimeTest::finalize() {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
-
-    releaseTool( m_evtTimeTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    m_evtTimeTool = nullptr;
-
-    return GaudiAlgorithm::finalize(); // must be called after all other actions
   }
 
   // ============================================================================

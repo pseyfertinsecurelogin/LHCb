@@ -8,20 +8,37 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "RecEventTime.h"
-
 #include "Event/RecHeader.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 
-RecEventTime::RecEventTime( const std::string& type, const std::string& name, const IInterface* parent )
-    : base_class( type, name, parent ) {
-  declareProperty( "RecHeaderLocation", m_recHeaderLoc = LHCb::RecHeaderLocation::Default, "Location for RecHeader" );
-}
+/** Simple implementation of IEventTimeDecoder that takes the event
+ *  time from LHCb::RecHeader.
+ *
+ *  @author Marco Clemencic
+ *  @date   2010-09-23
+ */
 
-Gaudi::Time RecEventTime::getTime() const {
-  // If the rec header is available, return its event time
-  auto* h = getIfExists<LHCb::RecHeader>( evtSvc(), m_recHeaderLoc );
-  // return the time
-  return ( h ? h->gpsTime() * 1000 : Gaudi::Time::epoch() );
-}
+class RecEventTime final : public extends<GaudiTool, IEventTimeDecoder> {
+
+public:
+  /// Standard constructor
+  using extends::extends;
+
+  // --- implementation of IEventTimeDecoder ---
+  /// Retrieve the event time from RecHeader (if present).
+  /// @return The time of current event.
+  Gaudi::Time getTime() const override {
+    // If the rec header is available, return its event time
+    auto* h = m_recHeaderLoc.getIfExists();
+    // return the time
+    return ( h ? h->gpsTime() * 1000 : Gaudi::Time::epoch() );
+  }
+
+private:
+  /// Location of the RecHeader in the transient store.
+  DataObjectReadHandle<LHCb::RecHeader> m_recHeaderLoc{this, "RecHeaderLocation", LHCb::RecHeaderLocation::Default,
+                                                       "Location for RecHeader"};
+};
 
 DECLARE_COMPONENT( RecEventTime )

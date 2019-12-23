@@ -8,20 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
+#include "DetDesc/RunChangeIncident.h"
+#include "Event/ODIN.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
-
-// detector description
-#include "DetDesc/RunChangeIncident.h"
-
-// data model
-#include "Event/ODIN.h"
-
-// local
-#include "TestTimeDecoderOdin.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TestTimeDecoderOdin
@@ -29,19 +21,45 @@
 // 2006-09-21 : Marco Clemencic
 //-----------------------------------------------------------------------------
 
+namespace LHCbAlgsTests {
+
+  /** @class TestTimeDecoderOdin TestTimeDecoderOdin.h
+   *
+   *  Fake EventTimeDecoder that generates an ODIN object with incremented run
+   *  number at each call of getTime().
+   *
+   *  Used in the test "lhcbalgs.runchangehandler".
+   *
+   *  @author Marco Clemencic
+   *  @date   2006-09-21
+   */
+  class TestTimeDecoderOdin final : public extends<GaudiTool, IEventTimeDecoder> {
+
+  public:
+    /// Standard constructor
+    using extends::extends;
+
+    // --- implementation of IEventTimeDecoder ---
+    /// Get the time of the current event from the ODIN object.
+    /// @return The time of current event.
+    Gaudi::Time getTime() const override;
+
+  private:
+    // --- local data ---
+    /// Used to remember the run number and spot a change of run number.
+    mutable Gaudi::Property<unsigned int> m_currentRun{this, "FirstRunNumber", 1};
+
+    /// How much to increase the run number at every call (default 1).
+    Gaudi::Property<bool>             m_runNumberStep{this, "RunNumberStep", 1};
+    DataObjectWriteHandle<LHCb::ODIN> m_odin{this, "ODINLocation", LHCb::ODINLocation::Default};
+  };
+
+} // namespace LHCbAlgsTests
+
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( LHCbAlgsTests::TestTimeDecoderOdin )
 
 using namespace LHCbAlgsTests;
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-TestTimeDecoderOdin::TestTimeDecoderOdin( const std::string& type, const std::string& name, const IInterface* parent )
-    : GaudiTool( type, name, parent ) {
-  declareInterface<IEventTimeDecoder>( this );
-  declareProperty( "FirstRunNumber", m_currentRun = 1 );
-  declareProperty( "RunNumberStep", m_runNumberStep = 1 );
-}
 
 //=========================================================================
 //  Return the time of current event
@@ -55,24 +73,23 @@ Gaudi::Time TestTimeDecoderOdin::getTime() const {
   static Gaudi::Time last_time( 0 );
   static bool        first = true;
 
-  LHCb::ODIN* odin = new LHCb::ODIN();
+  auto odin = std::make_unique<LHCb::ODIN>();
 
   if ( UNLIKELY( first ) ) {
-    odin->setRunNumber( m_currentRun );
+    odin->setRunNumber( m_currentRun.value() );
     first = false;
   } else {
     if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
-      debug() << "Firing " << IncidentType::RunChange << " incident. Old run=" << m_currentRun;
-    m_currentRun += m_runNumberStep;
-    odin->setRunNumber( m_currentRun );
-    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << ", new run=" << m_currentRun << endmsg;
+      debug() << "Firing " << IncidentType::RunChange << " incident. Old run=" << m_currentRun.value();
+    m_currentRun += m_runNumberStep.value();
+    odin->setRunNumber( m_currentRun.value() );
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << ", new run=" << m_currentRun.value() << endmsg;
   }
-
-  put( odin, LHCb::ODINLocation::Default );
 
   last_time = odin->eventTime();
 
   incSvc()->fireIncident( RunChangeIncident( name(), m_currentRun, last_time ) );
+  m_odin.put( std::move( odin ) );
 
   return last_time;
 }

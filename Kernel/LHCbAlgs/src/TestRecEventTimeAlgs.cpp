@@ -20,7 +20,7 @@
 
 namespace LHCbAlgsTest {
 
-  class CreateFakeRecHeader final : public extends1<Service, IIncidentListener> {
+  class CreateFakeRecHeader final : public extends<Service, IIncidentListener> {
 
   public:
     CreateFakeRecHeader( const std::string& name, ISvcLocator* pSvcLocator ) : base_class( name, pSvcLocator ) {
@@ -29,8 +29,6 @@ namespace LHCbAlgsTest {
       declareProperty( "RecHeaderLocation", m_recHeaderLoc = LHCb::RecHeaderLocation::Default,
                        "Alternative location for RecHeader." );
     }
-
-    virtual ~CreateFakeRecHeader() = default;
 
     StatusCode initialize() override {
       StatusCode sc = base_class::initialize();

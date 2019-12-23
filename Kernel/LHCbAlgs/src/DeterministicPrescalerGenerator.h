@@ -13,6 +13,9 @@
  *  Quasi-random generator for DeterministicPrescaler
  */
 
+#include "Kernel/STLExtensions.h"
+#include <algorithm>
+#include <cstdint>
 #include <string>
 
 namespace {
@@ -47,6 +50,12 @@ namespace {
   uint32_t mix32( uint32_t state, uint32_t extra ) { return mix( state + extra ); }
 
   // mix some 'extra' entropy into 'state' and return result
+  uint32_t mix4( uint32_t s, LHCb::span<const char, 4> a ) {
+    // FIXME: this _might_ do something different on big endian vs. small endian machines...
+    return mix32( s, uint32_t( a[0] ) | uint32_t( a[1] ) << 8 | uint32_t( a[2] ) << 16 | uint32_t( a[3] ) << 24 );
+  }
+
+  // mix some 'extra' entropy into 'state' and return result
   uint32_t mix64( uint32_t state, uint64_t extra ) {
     constexpr auto mask = ( ( ~uint64_t{0} ) >> 32 );
     state               = mix32( state, uint32_t( extra & mask ) );
@@ -55,14 +64,15 @@ namespace {
 
   // mix some 'extra' entropy into 'state' and return result
   uint32_t mixString( uint32_t state, std::string_view extra ) {
-    // prefix name with ' ' until the size is a multiple of 4.
-    std::string s = std::string( ( 4 - extra.size() % 4 ) % 4, ' ' ).append( extra );
-    for ( size_t i = 0; i < s.size() / 4; ++i ) {
-      // FIXME: this _might_ do something different on big endian vs. small endian machines...
-      uint32_t x = uint32_t( s[i * 4] ) | uint32_t( s[i * 4 + 1] ) << 8 | uint32_t( s[i * 4 + 2] ) << 16 |
-                   uint32_t( s[i * 4 + 3] ) << 24;
-      state = mix32( state, x );
+    // prefix extra with ' ' until the size is a multiple of 4.
+    if ( auto rem = extra.size() % 4; rem != 0 ) {
+      // prefix name with ' ' until the size is a multiple of 4.
+      std::array<char, 4> prefix = {' ', ' ', ' ', ' '};
+      std::copy_n( extra.data(), rem, std::next( prefix.data(), ( 4 - rem ) ) );
+      state = mix4( state, prefix );
+      extra.remove_prefix( rem );
     }
+    for ( ; !extra.empty(); extra.remove_prefix( 4 ) ) state = mix4( state, extra.substr( 0, 4 ) );
     return state;
   }
 

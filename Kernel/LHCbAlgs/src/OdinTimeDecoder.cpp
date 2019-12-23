@@ -8,28 +8,63 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/Incident.h"
-
-// data model
+#include "DetDesc/RunChangeIncident.h"
 #include "Event/ODIN.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-
-// detector description
-#include "DetDesc/RunChangeIncident.h"
-
-// local
-#include "OdinTimeDecoder.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/ToolHandle.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : OdinTimeDecoder
 //
 // 2006-09-21 : Marco Clemencic
 //-----------------------------------------------------------------------------
+
+/** @class OdinTimeDecoder OdinTimeDecoder.h
+ *
+ *
+ *  @author Marco Clemencic
+ *  @date   2006-09-21
+ */
+class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder> {
+
+public:
+  // inherited constructor
+  using extends::extends;
+
+  /// Initialize the tool
+  StatusCode initialize() override;
+
+  // --- implementation of IEventTimeDecoder ---
+  /// Get the time of the current event from the ODIN object.
+  /// @return The time of current event.
+  Gaudi::Time getTime() const override;
+
+private:
+  // --- local methods ---
+  /// Get the ODIN object from the T.E.S. or create it.
+  /// @return Pointer to the ODIN object or NULL if it cannot be found.
+  LHCb::ODIN* getODIN() const;
+
+  /// Tool to decode the ODIN bank
+  ToolHandle<IGenericTool> m_odinDecoder{"ODINDecodeTool", this};
+
+  // @FIXME: we must get the ODIN object from where the Tool created it
+  DataObjectReadHandle<LHCb::ODIN> m_odin{this, "ODINLocation", LHCb::ODINLocation::Default};
+
+  // --- local data ---
+  /// Used to remember the run number and spot a change of run number.
+  mutable unsigned int m_currentRun{0};
+
+  /// Used to detect if we switch from flagging to filtering mode (which implies
+  /// a "run change" without actually changing the run number).
+  mutable bool m_flaggingMode{true};
+};
 
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( OdinTimeDecoder )
@@ -41,10 +76,10 @@ DECLARE_COMPONENT( OdinTimeDecoder )
 // Initialize
 //=============================================================================
 StatusCode OdinTimeDecoder::initialize() {
-  StatusCode sc = GaudiTool::initialize();
-  if ( sc.isFailure() ) return sc;
-  // try to get the tool to decode the ODIN bank
-  return m_odinDecoder.retrieve();
+  return GaudiTool::initialize().andThen( [&] {
+    // try to get the tool to decode the ODIN bank
+    return m_odinDecoder.retrieve();
+  } );
 }
 
 //=========================================================================
@@ -60,8 +95,7 @@ LHCb::ODIN* OdinTimeDecoder::getODIN() const {
     /// cannot be used in a const method. The proper fix can be implemented only in the context
     /// of transformer algorithms of Gaudi::Functional.
     const_cast<IGenericTool&>( *m_odinDecoder ).execute();
-    // @FIXME: we must get the ODIN object from where the Tool created it
-    return getIfExists<LHCb::ODIN>( LHCb::ODINLocation::Default );
+    return m_odin.getIfExists();
   }
   return nullptr;
 }

@@ -9,7 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
+#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "ODINCodecBaseTool.h"
+#include <memory>
+#include <vector>
 
 /** @class ODINEncodeTool ODINEncodeTool.h
  *
@@ -27,30 +32,22 @@ public:
   /// Standard constructor
   ODINEncodeTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  /// Initialize the tool
-  inline StatusCode initialize() override;
-
   /// Do the conversion
   void execute() override;
 
 private:
   /// Location in the transient store of the ODIN object.
-  std::string m_odinLocation;
+  DataObjectReadHandle<LHCb::ODIN> m_odinLocation{this, "ODINLocation", LHCb::ODINLocation::Default,
+                                                  "Location of the ODIN object in the transient store."};
 
-  /// Location in the transient store of the RawEvent object.
-  std::string m_rawEventLocation;
+  /// Location in the transient store of the RawEvent object
+  DataObjectReadHandle<LHCb::RawEvent> m_rawEventLocation{this, "RawEventLocation", LHCb::RawEventLocation::Default,
+                                                          "Location of the RawEvent object in the transient store."};
 };
 
 //=============================================================================
 // IMPLEMENTATION
 //=============================================================================
-
-#include <memory>
-#include <vector>
-// from LHCb
-#include "Event/ODIN.h"
-#include "Event/RawBank.h"
-#include "Event/RawEvent.h"
 
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( ODINEncodeTool )
@@ -59,46 +56,16 @@ DECLARE_COMPONENT( ODINEncodeTool )
 // Standard constructor, initializes variables
 //=============================================================================
 ODINEncodeTool::ODINEncodeTool( const std::string& type, const std::string& name, const IInterface* parent )
-    : ODINCodecBaseTool( type, name, parent ) {
-  declareProperty( "ODINLocation", m_odinLocation = "",
-                   "Location of the ODIN object in the transient store. By "
-                   "default is the content of LHCb::ODINLocation::Default." );
-  declareProperty( "RawEventLocation", m_rawEventLocation = "",
-                   "Location of the RawEvent object in the transient store. By "
-                   "default is the content of LHCb::RawEventLocation::Default." );
-}
-//=============================================================================
-// Initialize
-//=============================================================================
-StatusCode ODINEncodeTool::initialize() {
-  StatusCode sc = ODINCodecBaseTool::initialize(); // always first
-  if ( sc.isFailure() ) return sc;                 // error message already printed
-
-  if ( m_odinLocation.empty() ) {
-    // use the default
-    m_odinLocation = LHCb::ODINLocation::Default;
-  } else {
-    info() << "Using '" << m_odinLocation << "' as location of the ODIN object" << endmsg;
-  }
-
-  if ( m_rawEventLocation.empty() ) {
-    // use the default
-    m_rawEventLocation = LHCb::RawEventLocation::Default;
-  } else {
-    info() << "Using '" << m_rawEventLocation << "' as location of the RawEvent object" << endmsg;
-  }
-
-  return sc;
-}
+    : ODINCodecBaseTool( type, name, parent ) {}
 //=============================================================================
 // Main function
 //=============================================================================
 void ODINEncodeTool::execute() {
   // Check if there is an ODIN object
-  LHCb::RawEvent* raw = this->getIfExists<LHCb::RawEvent>( m_rawEventLocation );
+  LHCb::RawEvent* raw = m_rawEventLocation.getIfExists();
   if ( raw ) {
     // Add the raw bank to the raw event
-    debug() << "Getting " << m_rawEventLocation << endmsg;
+    debug() << "Getting " << m_rawEventLocation.objKey() << endmsg;
 
     // pointer for a pre-existing bank
     const LHCb::RawBank* old_bank = nullptr;
@@ -115,7 +82,7 @@ void ODINEncodeTool::execute() {
       }
     }
     // Encode ODIN object
-    LHCb::RawBank* bank = i_encode( get<LHCb::ODIN>( m_odinLocation ) );
+    LHCb::RawBank* bank = i_encode( m_odinLocation.get() );
     if ( bank ) {
       if ( old_bank ) raw->removeBank( old_bank );
       // add the bank

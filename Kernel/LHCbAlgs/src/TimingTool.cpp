@@ -8,32 +8,44 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/Chrono.h"
+#include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/RndmGenerators.h"
-
-// local
-#include "TimingTool.h"
-
+#include "Kernel/INormalizeTool.h"
 //-----------------------------------------------------------------------------
 // Implementation file for class : TimingTool
 //
 // 2003-11-04 : Marco Cattaneo
 //-----------------------------------------------------------------------------
+/** @class TimingTool TimingTool.h
+ *  Tool to get a timing normalisation for the Chrono service
+ *  Adapted from BrunelAlgs/TimingAlg by M.Ferro-Luzzi
+ *
+ *  @author Marco Cattaneo
+ *  @date   2003-11-04
+ */
+class TimingTool final : public extends<GaudiTool, INormalizeTool> {
+
+public:
+  /// Standard constructor
+  using extends::extends;
+
+  StatusCode finalize() override;
+
+  double          normalize() override; ///< Return normalization (in ns)
+  IChronoStatSvc* chronoSvc();          ///< Returns pointer to ChronSvc
+  IRndmGenSvc*    randSvc();            ///< Returns pointer to random number service
+
+private:
+  Gaudi::Property<unsigned int> m_shots{this, "shots", 2100000}; ///< Number of random number shots for normalisation //
+                                                                 ///< 1s on 1GHz PIII, gcc 3.2, -O2
+  IChronoStatSvc* m_CSS = nullptr;                               ///< Pointer to Chrono service
+  IRndmGenSvc*    m_RGS = nullptr;                               ///< Pointer to Random numbers service
+};
 
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( TimingTool )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-TimingTool::TimingTool( const std::string& type, const std::string& name, const IInterface* parent )
-    : GaudiTool( type, name, parent ) {
-  declareInterface<INormalizeTool>( this );
-
-  declareProperty( "shots", m_shots = 2100000 ); // 1s on 1GHz PIII, gcc 3.2, -o2
-}
 
 //=============================================================================
 double TimingTool::normalize() {

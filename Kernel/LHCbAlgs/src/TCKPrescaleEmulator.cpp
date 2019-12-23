@@ -8,26 +8,92 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
+#include "DetDesc/Condition.h"
+#include "Event/HltDecReports.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiAlg/GaudiSequencer.h"
 #include "GaudiAlg/ISequencerTimerTool.h"
 #include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
-#include "Kernel/IANNSvc.h"
-#include "OfflineDeterministicPrescaler.h"
-// local
-#include "TCKPrescaleEmulator.h"
-
+#include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/ThreadLocalContext.h"
+#include "Kernel/IANNSvc.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/TCK.h"
+#include "OfflineDeterministicPrescaler.h"
 
-using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : TCKPrescaleEmulator
 //
 // 2012-09-13 : Conor Fitzpatrick
 //-----------------------------------------------------------------------------
+using namespace LHCb;
+
+/** @class TCKPrescaleEmulator TCKPrescaleEmulator.h
+ *
+ *
+ *  @author Conor Fitzpatrick
+ *  @date   2012-09-13
+ */
+class TCKPrescaleEmulator final : public GaudiAlgorithm {
+
+public:
+  /// Standard constructor
+  TCKPrescaleEmulator( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
+  using StringMap = std::map<std::string, double>;
+
+private:
+  /// Fill maps with prescale, postscale and post*prescale based on specificed TCK
+  StatusCode getPrescalesFromTCK( unsigned int, StringMap&, StringMap&, StringMap& );
+
+  const HltDecReports* getReports(); ///< get the DecReports for each event, calculate the ratio of prescales if the TCK
+                                     ///< has changed or first event and call updatePrescalers if so
+
+  StatusCode getPrescalers();    ///< Initialise Prescalers
+  StatusCode updatePrescalers(); ///< Set accept rates of Prescalers based on ratio of prescales from the user-specced
+                                 ///< TCK and the TCK in (the first, or changed) MC event TCK
+
+  StatusCode i_cacheTriggerData(); ///< Function extracting data from Condition
+
+  bool endedWith( const std::string& lineName, const std::string& ending );
+
+private:
+  std::string m_scalerName;     //< Name prepended to PropertyConfig
+  std::string m_postScalerName; //< Name postpended to PropertyConfig if postscaled
+  std::string m_preScalerName;  //< Name postpended to PropertyConfig if prescaled
+
+  // Pre, post scales we get from the MC data itself
+  StringMap prescalesInMC;     // name of prescalers
+  StringMap postscalesInMC;    // name of postscalers
+  StringMap scaleProductsInMC; // pre*post-scales
+
+  // Pre, post scales we get from the user-specified TCK
+  StringMap prescalesToEmulate;     // name of prescalers
+  StringMap postscalesToEmulate;    // name of postscalers
+  StringMap scaleProductsToEmulate; // pre*post-scales
+
+  StringMap scaleProductsToApply; ///< map of scaleProducts that will get applied to the MC, (ratio of MC and ToEmulate
+                                  ///< scaleProducts)
+
+  std::map<std::string, Algorithm*> prescalers; ///< map of prescaler algorithms
+
+  IPropertyConfigSvc*                 m_propertyConfigSvc = nullptr;
+  unsigned int                        m_tck{0};                //
+  std::string                         m_propertyConfigSvcName; ///< Name of PropertyConfigSvc
+  Condition*                          m_condTrigger = nullptr; ///< Condition for sampling coefficients
+  unsigned int                        m_triggerTCK{0};         ///< tck for these data
+  DataObjectReadHandle<HltDecReports> m_hltDecReportsLocation{
+      this, "HltDecReportsLocation", HltDecReportsLocation::Default}; ///< Location of the DecReports
+  std::vector<std::string> m_linesToKill; ///< lines to prescale to zero in MC regardless of existence in TCK or not
+  bool                     firstevent{true};
+  unsigned int             lasttck{0};
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( TCKPrescaleEmulator )
@@ -42,7 +108,6 @@ TCKPrescaleEmulator::TCKPrescaleEmulator( const std::string& name, ISvcLocator* 
   declareProperty( "ConfigQualifier", m_scalerName = "DeterministicPrescaler" );
   declareProperty( "PreScalerQualifier", m_preScalerName = "PreScaler" );
   declareProperty( "PostScalerQualifier", m_postScalerName = "PostScaler" );
-  declareProperty( "HltDecReportsLocation", m_hltDecReportsLocation = HltDecReportsLocation::Default );
   declareProperty( "LinesToAlwaysKill", m_linesToKill );
   declareProperty( "IPropertyConfigSvcInstance", m_propertyConfigSvcName = "PropertyConfigSvc" );
 }
@@ -75,15 +140,10 @@ StatusCode TCKPrescaleEmulator::initialize() {
   // If "LinesToKill" hasn't been filled, fill it with sensible defaults, if it has been filled, make sure the user
   // knows
   if ( m_linesToKill.empty() ) {
-    m_linesToKill.push_back( "Hlt1Global" );
-    m_linesToKill.push_back( "Hlt2Global" );
-    m_linesToKill.push_back( "Hlt1Phys" );
-    m_linesToKill.push_back( "Hlt2Phys" );
-    m_linesToKill.push_back( "Hlt1Lumi" );
-    // m_linesToKill.push_back("Hlt1MBNoBias");
-    // m_linesToKill.push_back("Hlt1CharmCalibrationNoBias");
-    m_linesToKill.push_back( "Hlt2Transparent" );
-    info() << "By default the following decisions are killed as they're meaningless in MC: ";
+    m_linesToKill = {"Hlt1Global", "Hlt2Global", "Hlt1Phys", "Hlt2Phys", "Hlt1Lumi",
+                     // "Hlt1MBNoBias", "Hlt1CharmCalibrationNoBias",
+                     "Hlt2Transparent"};
+    info() << "By default the following decisions are killed as they are meaningless in MC: ";
     for ( const auto& i : m_linesToKill ) { info() << i << "," << endmsg; }
     info() << "To change this behavior fill property LinesToAlwaysKill with your own choice of lines" << endmsg;
   } else {
@@ -92,14 +152,12 @@ StatusCode TCKPrescaleEmulator::initialize() {
               << endmsg;
   }
 
-  sc = getPrescalesFromTCK( m_tck, prescalesToEmulate, postscalesToEmulate, scaleProductsToEmulate );
-  if ( sc.isFailure() ) {
-    fatal() << "FAILED TO GET PRESCALES FROM TCK! " << endmsg;
-    return sc;
-  }
-  getPrescalers().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  firstevent = true;
-  return sc;
+  return getPrescalesFromTCK( m_tck, prescalesToEmulate, postscalesToEmulate, scaleProductsToEmulate )
+      .orElse( [&] { fatal() << "FAILED TO GET PRESCALES FROM TCK! " << endmsg; } )
+      .andThen( [&] {
+        getPrescalers().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        firstevent = true;
+      } );
 }
 
 //=============================================================================
@@ -165,7 +223,7 @@ StatusCode TCKPrescaleEmulator::execute() {
 //============================================================================
 const HltDecReports* TCKPrescaleEmulator::getReports() {
   StatusCode sc         = StatusCode::FAILURE;
-  auto       decreports = get<HltDecReports>( m_hltDecReportsLocation );
+  auto       decreports = m_hltDecReportsLocation.get();
   if ( decreports ) {
     if ( !firstevent ) {
       if ( decreports->configuredTCK() == lasttck ) {

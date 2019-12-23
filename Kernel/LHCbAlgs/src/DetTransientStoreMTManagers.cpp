@@ -14,16 +14,12 @@
 namespace Gaudi {
   namespace Parsers {
     StatusCode parse( Gaudi::Time& output, const std::string& input ) {
-      double           t;
-      const StatusCode s = parse( t, input );
-      if ( s ) output = static_cast<Gaudi::Time::ValueType>( t * 1E9 );
-      return s;
+      double t;
+      return parse( t, input ).andThen( [&] { output = static_cast<Gaudi::Time::ValueType>( t * 1E9 ); } );
     }
     StatusCode parse( Gaudi::TimeSpan& output, const std::string& input ) {
-      double           t;
-      const StatusCode s = parse( t, input );
-      if ( s ) output = static_cast<Gaudi::TimeSpan::ValueType>( t * 1E9 );
-      return s;
+      double t;
+      return parse( t, input ).andThen( [&] { output = static_cast<Gaudi::TimeSpan::ValueType>( t * 1E9 ); } );
     }
   } // namespace Parsers
 } // namespace Gaudi
@@ -109,7 +105,7 @@ namespace LHCb {
       ODIN operator()() const override {
         ODIN odin;
         odin.setEventTime( Gaudi::Time{m_currentTime.fetch_add( m_step.value().ns() )} );
-        return {odin};
+        return odin;
       }
 
     private:
@@ -122,8 +118,7 @@ namespace LHCb {
     DECLARE_COMPONENT( FakeEventTimeProducer )
 
     /// Test algorithm to print the event time in ODIN.
-    class PrintCurrentEventTime : public Gaudi::Functional::Consumer<void( const ODIN& )> {
-    public:
+    struct PrintCurrentEventTime : Gaudi::Functional::Consumer<void( const ODIN& )> {
       PrintCurrentEventTime( const std::string& name, ISvcLocator* pSvcLocator )
           : Consumer( name, pSvcLocator, KeyValue( "ODIN", LHCb::ODINLocation::Default ) ) {}
       void operator()( const ODIN& odin ) const override {

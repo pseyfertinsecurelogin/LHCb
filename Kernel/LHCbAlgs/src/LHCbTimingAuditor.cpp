@@ -20,11 +20,6 @@
 // ============================================================================
 #include "GaudiAlg/ISequencerTimerTool.h"
 // ============================================================================
-#ifdef __ICC
-// disable icc warning #654: overloaded virtual function "B::Y" is only partially overridden in class "C"
-//   TODO: there is only a partial overload of IAuditor::before and IAuditor::after
-#  pragma warning( disable : 654 )
-#endif
 /** @class LHCbTimingAuditor
  *
  *  Simple auditor which uses SequencerTimerTool for *ALL*
@@ -66,8 +61,6 @@ public:
     declareProperty( "OptimizedForDOD", m_goodForDOD );
     declareProperty( "TimingTool", m_timingToolName = "LHCbSequencerTimerTool/TIMER" );
   }
-  /// virtual destructor
-  virtual ~LHCbTimingAuditor() {}
 
 private:
   // the default constructor is disabled

@@ -8,15 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/DataObject.h"
-// ============================================================================
-// GaudiAlg
-// ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
 // ============================================================================
 namespace Gaudi {
@@ -28,44 +19,26 @@ namespace Gaudi {
    */
   // ==========================================================================
   class DataRemove final : public GaudiAlgorithm {
+    // ========================================================================
+    DataObjectReadHandle<DataObject> m_dataLocation{this, "DataLocation", ""};
+    // ========================================================================
   public:
     // ========================================================================
-    /// the only one essential method
-    StatusCode execute() override;
-    // ========================================================================
     /// standard constructor
-    DataRemove( const std::string& name, ISvcLocator* pSvc );
+    using GaudiAlgorithm::GaudiAlgorithm;
     // ========================================================================
-  private:
-    std::string m_dataLocation;
+    /// the only one essential method
+    StatusCode execute() override {
+      if ( !m_dataLocation.objKey().empty() ) {
+        if ( DataObject* data = m_dataLocation.getIfExists(); data ) {
+          return evtSvc()->unregisterObject( data ).andThen( [&] { delete data; } );
+        }
+      }
+      return StatusCode::SUCCESS;
+    }
     // ========================================================================
   }; // end of class DataRemove
   // ==========================================================================
+  DECLARE_COMPONENT( DataRemove )
 } //                                                     end of namespace Gaudi
-// ============================================================================
-Gaudi::DataRemove::DataRemove( const std::string& name, ISvcLocator* pSvc ) : GaudiAlgorithm( name, pSvc ) {
-  declareProperty( "DataLocation", m_dataLocation = "" );
-}
-// ========================================================================
-// the main method
-// ========================================================================
-StatusCode Gaudi::DataRemove::execute() {
-  if ( !m_dataLocation.empty() ) {
-    DataObject* data = getIfExists<DataObject>( m_dataLocation );
-    if ( data ) {
-      const StatusCode sc = evtSvc()->unregisterObject( data );
-      if ( sc.isSuccess() ) {
-        delete data;
-        data = nullptr;
-      } else {
-        return Error( "Failed to delete input data " + m_dataLocation, sc );
-      }
-    }
-  }
-  return StatusCode::SUCCESS;
-}
-// ============================================================================
-DECLARE_COMPONENT( Gaudi::DataRemove )
-// ============================================================================
-// The END
 // ============================================================================

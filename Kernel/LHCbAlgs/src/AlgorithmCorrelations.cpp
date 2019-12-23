@@ -8,18 +8,151 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
+#include "GaudiAlg/GaudiTool.h"
+#include "Kernel/IAlgorithmCorrelations.h" // Interface
 #include <boost/format.hpp>
 #include <math.h>
-
-// local
-#include "AlgorithmCorrelations.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : AlgorithmCorrelations
 //
 // 2005-04-19 : Patrick KOPPENBURG
 //-----------------------------------------------------------------------------
+
+/** @class AlgorithmCorrelations AlgorithmCorrelations.h
+ *
+ *  Tool to print a table of correlations of Bernoullian variables. See
+ *  Interface doxygen.
+ *  Options for this implementation, ff one wants to declare the algorithm directly to the tool (ignoring
+ *    the corresponding methods):
+ *  @code
+ *      Algorithms = { "alg1", "alg2"... }
+ *      AlgorithmsRow, optional, for non-square matrices. Defines headers for columns
+ *  @endcode
+ *    Other options:
+ *  @code
+ *      OnlyNonZero = true ; // skips algorithms with eff=0 in table
+ *      Decimals = -1 ; // defines precision. -1 means automatic precision.
+ *      UseNumbers = true ;  // labels columns by numbers
+ *  @endcode
+ *
+ *  @author Patrick KOPPENBURG
+ *  @date   2005-04-19
+ */
+class AlgorithmCorrelations : public extends<GaudiTool, IAlgorithmCorrelations> {
+  class AlgoMatrix;
+  class AlgoResult;
+
+public:
+  typedef std::vector<std::string> strings;
+
+public:
+  /// Standard constructor
+  AlgorithmCorrelations( const std::string& type, const std::string& name, const IInterface* parent );
+
+  StatusCode initialize() override;
+  StatusCode algorithms( const strings& ) override;
+  StatusCode algorithmsRow( const strings& ) override;
+  StatusCode printTable() override;
+  StatusCode printList() override;
+  ///< Fill results one by one for each algorithm
+  StatusCode fillResult( const std::string& algo, const bool& result ) override;
+  ///< Actually tell the tool that we reached the end of the event (only for one-by-one filling)
+  StatusCode endEvent() override;
+
+private:
+  StatusCode   reset();                                     ///< reset everything
+  bool         isEffective( const std::string& ) const;     ///< Algo did something
+  double       algoRate( const std::string& ) const;        ///< Algo did something
+  int          happyAlgorithms() const;                     ///< Number of algos that did something
+  unsigned int getDecimals() const;                         ///< Number of significant decimals
+  StatusCode   addResults();                                ///< add all results
+  StatusCode   resetAlgoResult( std::vector<AlgoResult>& ); ///< reset algo Results
+  StatusCode   fillResult( const std::string&, const bool&, std::vector<AlgoResult>& ); ///< fill results
+  StatusCode   testAlgos( const strings& ) const;
+
+private:
+  Gaudi::Property<strings> m_conditionAlgorithms{this, "AlgorithmsRow", {}, "Algorithms to check against"};
+  Gaudi::Property<strings> m_algorithmsToTest{this, "Algorithms", {}}; ///< Algorithms to check
+  std::vector<AlgoMatrix>  m_AlgoMatrices;                             ///< Pairs of correlations
+  std::vector<AlgoResult>  m_conditionResults;                         ///< results of algorithms in this event
+  std::vector<AlgoResult>  m_testResults;                              ///< results of algorithms in this event
+
+  Gaudi::Property<bool> m_minimize{this, "OnlyNonZero", true, "Use mimimal table width"};
+  Gaudi::Property<int>  m_decimals{this, "Decimals", -1, "Number of decimals"};
+  Gaudi::Property<bool> m_useNumbers{this, "UseNumbers", true, "use numbers as column labels"};
+
+  unsigned int       m_longestName{10}; ///< Longest algorithm name
+  bool               m_square{false};   ///< it is a square matrix
+  unsigned long long m_nEvents{0};      ///< number of events
+
+  // container of results for one algorithm
+  class AlgoResult final {
+
+  public:
+    AlgoResult() = default;
+    AlgoResult( const std::string& algo ) : m_algo( algo ) {}
+
+    const std::string& algo() const { return m_algo; }
+    bool               result() const { return m_result; }
+    StatusCode         setResult( const bool& b ) {
+      if ( m_updated ) return StatusCode::FAILURE;
+      m_result = b;
+      return StatusCode::SUCCESS;
+    }
+    void setAlgo( const std::string& a ) { m_algo = a; }
+    void reset() {
+      m_result  = false;
+      m_updated = false;
+    } ///< Reset for next event
+
+  private:
+    std::string m_algo{"UNDEFINED"}; ///< Algo name
+    bool        m_result{false};     ///< Result in this event
+    bool        m_updated{false};    ///< Already in this event?
+  };
+
+  // container of Algos matrix for two algorithms
+  class AlgoMatrix final {
+  public:
+    /// Standard constructor
+    AlgoMatrix() = default;
+
+    /// Useful constructor
+    AlgoMatrix( const std::string& a1, const std::string& a2 ) : m_algorithm1( a1 ), m_algorithm2( a2 ) {}
+
+    /// Add Algo
+    void addConditionalResult( const bool& r1, const bool& r2 ) {
+      if ( r2 ) { ++m_alg2passed; }
+      if ( r1 && r2 ) { ++m_bothpassed; }
+    }
+
+    /// Return full statistics
+    unsigned long long getConditionalStatistics() const { return m_bothpassed; }
+
+    unsigned long long getFullStatistics() const { return m_alg2passed; }
+
+    /// Return full statistics
+    double getConditionalFraction() const {
+      return ( m_alg2passed > 0 ? double( m_bothpassed ) / double( m_alg2passed ) : -1. );
+    }
+
+    double getConditionalPercent() const { return 100. * getConditionalFraction(); }
+
+    /// Return algorithm names
+    void getAlgorithms( std::string& a1, std::string& a2 ) const {
+      a1 = m_algorithm1;
+      a2 = m_algorithm2;
+    }
+
+  private:
+    std::string m_algorithm1; ///< Algorithm in row
+    std::string m_algorithm2; ///< Algorithm in column
+    /// statistics
+    unsigned long long m_bothpassed{0}; ///< both passed
+    unsigned long long m_alg2passed{0}; ///< alg 2 passed
+  };
+};
 
 // Declaration of the Tool Factory
 
@@ -30,25 +163,18 @@ DECLARE_COMPONENT( AlgorithmCorrelations )
 //=============================================================================
 AlgorithmCorrelations::AlgorithmCorrelations( const std::string& type, const std::string& name,
                                               const IInterface* parent )
-    : GaudiTool( type, name, parent ) {
-  declareInterface<IAlgorithmCorrelations>( this );
-  declareProperty( "Algorithms", m_algorithmsToTest );       // can be overwritten
-  declareProperty( "AlgorithmsRow", m_conditionAlgorithms ); // can be overwritten
-  declareProperty( "OnlyNonZero", m_minimize = true );
-  declareProperty( "Decimals", m_decimals = -1 );
-  declareProperty( "UseNumbers", m_useNumbers = true );
-}
+    : extends( type, name, parent ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode AlgorithmCorrelations::initialize() {
-  StatusCode sc = GaudiTool::initialize();
-  if ( !sc ) return sc;
-  if ( !m_algorithmsToTest.empty() )
-    return reset(); // options are active
-  else
-    return sc;
+  return extends::initialize().andThen( [&]() -> StatusCode {
+    if ( !m_algorithmsToTest.empty() )
+      return reset(); // options are active
+    else
+      return StatusCode::SUCCESS;
+  } );
 }
 //=============================================================================
 // Set matrix
@@ -78,7 +204,7 @@ StatusCode AlgorithmCorrelations::reset() {
   }
 
   // minimize?
-  if ( m_minimize ) warning() << "Will only print non-zero efficient algorithms in table" << endmsg;
+  if ( m_minimize.value() ) warning() << "Will only print non-zero efficient algorithms in table" << endmsg;
 
   if ( m_decimals >= 0 )
     info() << "Will print efficiencies with " << m_decimals << " decimals (percent)" << endmsg;
@@ -198,13 +324,13 @@ StatusCode AlgorithmCorrelations::fillResult( const std::string& algo, const boo
 //=============================================================================
 StatusCode AlgorithmCorrelations::algorithms( const strings& algos ) {
   m_algorithmsToTest = algos;
-  m_algorithmsToTest.insert( m_algorithmsToTest.begin(), "ALWAYS" );
+  m_algorithmsToTest.value().insert( m_algorithmsToTest.begin(), "ALWAYS" );
   return reset();
 }
 //=============================================================================
 StatusCode AlgorithmCorrelations::algorithmsRow( const strings& algos ) {
   m_conditionAlgorithms = algos;
-  m_conditionAlgorithms.insert( m_conditionAlgorithms.begin(), "ALWAYS" );
+  m_conditionAlgorithms.value().insert( m_conditionAlgorithms.begin(), "ALWAYS" );
   return reset();
 }
 //=============================================================================
@@ -212,12 +338,10 @@ StatusCode AlgorithmCorrelations::algorithmsRow( const strings& algos ) {
 //=============================================================================
 StatusCode AlgorithmCorrelations::testAlgos( const strings& algos ) const {
   for ( auto i1 = algos.begin(); i1 != algos.end(); ++i1 ) {
-    for ( auto i2 = algos.begin(); i1 != i2; ++i2 ) {
-      if ( *i1 == *i2 ) {
-        err() << "Duplicate instance of ``" << *i1 << "''" << endmsg;
-        err() << "Fix you options" << endmsg;
-        return StatusCode::FAILURE;
-      }
+    if ( std::find( std::next( i1 ), algos.end(), *i1 ) != algos.end() ) {
+      err() << "Duplicate instance of " << std::quoted( *i1 ) << endmsg;
+      err() << "Fix you options" << endmsg;
+      return StatusCode::FAILURE;
     }
   }
   return StatusCode::SUCCESS;
@@ -293,13 +417,13 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
   always() << "    " << algo % "Algorithm"
            << "   Eff.  ";
 
-  if ( !m_useNumbers ) always() << std::string( decimals, ' ' ); // don't ask why I need this
+  if ( !m_useNumbers.value() ) always() << std::string( decimals, ' ' ); // don't ask why I need this
 
   unsigned int i = 0;
   for ( const auto& a : m_conditionAlgorithms ) {
     if ( a == "ALWAYS" ) continue;
-    if ( ( isEffective( a ) ) || ( !m_minimize ) ) {
-      if ( m_useNumbers ) {
+    if ( ( isEffective( a ) ) || ( !m_minimize.value() ) ) {
+      if ( m_useNumbers.value() ) {
         ++i;
         always() << number % i;
       } else {
@@ -318,7 +442,7 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
   for ( const auto& srm : m_AlgoMatrices ) {
     std::string a1, a2;
     srm.getAlgorithms( a1, a2 );
-    doprint = ( ( !m_minimize ) || isEffective( a1 ) );
+    doprint = ( ( !m_minimize.value() ) || isEffective( a1 ) );
     if ( ( a1 == "ALWAYS" ) && ( m_square ) ) continue; // no efficiency if square
     /*
      * efficiency row
@@ -345,7 +469,7 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
        * standard
        */
     } else if ( doprint || ( a1 == "ALWAYS" ) ) {
-      if ( ( m_minimize ) && ( !isEffective( a2 ) ) ) continue;
+      if ( ( m_minimize.value() ) && ( !isEffective( a2 ) ) ) continue;
       if ( a1 == a2 )
         always() << hashes;
       else {
@@ -359,12 +483,12 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
     }
   }
   always() << "\n" << equalline << "\n";
-  if ( ( !m_square ) && ( m_useNumbers ) ) {
+  if ( ( !m_square ) && ( m_useNumbers.value() ) ) {
     unsigned int j = 0;
     always() << "Column labels are : \n";
     for ( const auto& a : m_conditionAlgorithms ) {
       if ( a == "ALWAYS" ) continue;
-      if ( ( m_minimize ) && !( isEffective( a ) ) ) continue;
+      if ( ( m_minimize.value() ) && !( isEffective( a ) ) ) continue;
       ++j;
       always() << smallnumber % j << algo % a << "\n";
     }
@@ -391,9 +515,8 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
 //=============================================================================
 int AlgorithmCorrelations::happyAlgorithms( void ) const {
 
-  if ( !m_minimize ) return m_conditionAlgorithms.size();
-  int         nalgow    = 0;
-  std::string firstalgo = "";
+  if ( !m_minimize.value() ) return m_conditionAlgorithms.size();
+  int nalgow = 0;
   for ( const auto& a : m_conditionAlgorithms ) {
     if ( ( isEffective( a ) ) && ( a != "ALWAYS" ) ) ++nalgow;
     if ( msgLevel( MSG::VERBOSE ) ) verbose() << "Algorithm " << a << " says: " << isEffective( a ) << endmsg;
@@ -411,7 +534,6 @@ unsigned int AlgorithmCorrelations::getDecimals( void ) const {
   for ( const auto& srm : m_AlgoMatrices ) {
     const auto sum = srm.getFullStatistics();
     if ( sum > maxevt ) maxevt = sum;
-    //    if (msgLevel(MSG::VERBOSE)) verbose() << sum << " -> max = " << maxevt << endmsg ;
   }
   double minerror  = 100. / maxevt;
   double signif    = -std::log10( minerror ) + 1;

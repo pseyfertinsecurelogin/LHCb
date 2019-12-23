@@ -8,18 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// From ROOT
-#include "TH1D.h"
-
-// from Gaudi
+#include "GaudiAlg/GaudiHistoTool.h"
+#include "GaudiAlg/ISequencerTimerTool.h"
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/RndmGenerators.h"
 #include "GaudiUtils/Aida2ROOT.h"
-
-// local
-#include "LHCbSequencerTimerTool.h"
+#include "LHCbTimerForSequencer.h"
+#include "TH1D.h"
+#include "boost/algorithm/string/predicate.hpp"
 #include <fstream>
 
 //-----------------------------------------------------------------------------
@@ -27,6 +23,87 @@
 //
 // 2004-05-19 : Olivier Callot
 //-----------------------------------------------------------------------------
+
+/** @class LHCbSequencerTimerTool LHCbSequencerTimerTool.h
+ *  Implements the time measurement inside a sequencer
+ *
+ *  The width of the timing table column printing the algorithm name
+ *  is 30 by default. That can be changed via
+ *  \verbatim
+ TimingAuditor().addTool(LHCbSequencerTimerTool, name = "TIMER")
+ TimingAuditor().TIMER.NameSize = 50 \endverbatim
+ *
+ *  @author Olivier Callot
+ *  @date   2004-05-19
+ */
+
+class LHCbSequencerTimerTool final : public extends<GaudiHistoTool, ISequencerTimerTool> {
+
+public:
+  using ISequencerTimerTool::name;
+  using ISequencerTimerTool::start;
+  using ISequencerTimerTool::stop;
+
+public:
+  /// Standard constructor
+  LHCbSequencerTimerTool( const std::string& type, const std::string& name, const IInterface* parent );
+
+  /** initialize method, to compute the normalization factor **/
+  StatusCode initialize() override;
+
+  /** finalize method, to print the time summary table **/
+  StatusCode finalize() override;
+
+  /** add a timer entry with the specified name **/
+  int addTimer( const std::string& name ) override;
+
+  /** Increase the indentation of the name **/
+  void increaseIndent() override { m_indent += 2; }
+
+  /** Decrease the indentation of the name **/
+  void decreaseIndent() override {
+    m_indent -= 2;
+    if ( 0 > m_indent ) m_indent = 0;
+  }
+
+  /** start the counter, i.e. register the current time **/
+  void start( int index ) override { m_timerList[index].start(); }
+
+  /** stop the counter, return the elapsed time **/
+  double stop( int index ) override { return m_timerList[index].stop(); }
+
+  /** returns the last time **/
+  double lastTime( int index ) override { return m_timerList[index].lastTime(); }
+
+  /** returns the name of the counter **/
+  const std::string& name( int index ) override { return m_timerList[index].name(); }
+
+  /** returns the index of the counter with that name, or -1 **/
+  int indexByName( const std::string& name ) override;
+
+  /** returns the flag telling that global timing is wanted **/
+  bool globalTiming() override { return m_globalTiming.value(); }
+
+  /** prepares and saves the timing histograms **/
+  void saveHistograms() override;
+
+  /** saves the output to a file **/
+  StatusCode fileIO();
+
+private:
+  Gaudi::Property<int>  m_shots{this, "shots",
+                               3500000}; ///< Number of shots for CPU normalization // 1s on 2.8GHz Xeon, gcc 3.2, -O2
+  Gaudi::Property<bool> m_normalised{this, "Normalised", false}; ///< Is the time scaled to a nominal PIII ?
+  int                   m_indent{0};                             ///< Amount of indentation
+  std::vector<LHCbTimerForSequencer>      m_timerList;
+  double                                  m_normFactor{0.001}; ///< Factor to convert to standard CPU (1 GHz PIII)
+  double                                  m_speedRatio{0};
+  Gaudi::Property<bool>                   m_globalTiming{this, "GlobalTiming", false};
+  Gaudi::Property<std::string::size_type> m_headerSize{
+      this, "NameSize", 30, "Number of characters to be used in algorithm name column"}; ///< Size of the name field
+  Gaudi::Property<std::string> m_summaryFile{this, "SummaryFile", ""}; ///< Whether to output also to a file
+  std::string                  m_sep; ///< Separator to use in fileIO, defined by extension of the file
+};
 
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( LHCbSequencerTimerTool )
@@ -36,23 +113,16 @@ DECLARE_COMPONENT( LHCbSequencerTimerTool )
 //=============================================================================
 LHCbSequencerTimerTool::LHCbSequencerTimerTool( const std::string& type, const std::string& name,
                                                 const IInterface* parent )
-    : GaudiHistoTool( type, name, parent ) {
-  declareInterface<ISequencerTimerTool>( this );
-
-  declareProperty( "shots", m_shots = 3500000 ); // 1s on 2.8GHz Xeon, gcc 3.2, -o2
-  declareProperty( "Normalised", m_normalised = false );
-  declareProperty( "GlobalTiming", m_globalTiming = false );
-  declareProperty( "NameSize", m_headerSize = 30, "Number of characters to be used in algorithm name column" );
+    : extends( type, name, parent ) {
   // Histograms are disabled by default in this tool.
   setProperty( "HistoProduce", false ).ignore();
-  declareProperty( "SummaryFile", m_summaryFile = "" );
 }
 
 //=========================================================================
 //
 //=========================================================================
 StatusCode LHCbSequencerTimerTool::initialize() {
-  const StatusCode sc = GaudiHistoTool::initialize();
+  const StatusCode sc = extends::initialize();
   if ( sc.isFailure() ) return sc;
   LHCbTimerForSequencer norm( "normalize", m_headerSize, m_normFactor );
   norm.start();
@@ -69,15 +139,15 @@ StatusCode LHCbSequencerTimerTool::initialize() {
   m_speedRatio      = 1. / time;
   info() << "This machine has a speed about " << format( "%6.2f", 1000. * m_speedRatio )
          << " times the speed of a 2.8 GHz Xeon." << endmsg;
-  if ( m_normalised ) { m_normFactor = m_speedRatio; }
-  if ( m_summaryFile.size() ) {
-    auto ext = m_summaryFile.substr( m_summaryFile.find_last_of( '.' ) );
-    if ( ext == ".csv" )
+  if ( m_normalised.value() ) { m_normFactor = m_speedRatio; }
+  if ( !m_summaryFile.empty() ) {
+    if ( boost::algorithm::ends_with( m_summaryFile.value(), ".csv" ) )
       m_sep = ", ";
-    else if ( ext == ".dat" )
+    else if ( boost::algorithm::ends_with( m_summaryFile.value(), ".dat" ) )
       m_sep = "\t";
     else
-      return Error( "Unknown file type " + ext + " please use .csv (comma separated) or .dat (tab separated)",
+      return Error( "Unknown file type " + m_summaryFile.value() +
+                        " please use .csv (comma separated) or .dat (tab separated)",
                     StatusCode::FAILURE );
   }
 
@@ -92,11 +162,11 @@ StatusCode LHCbSequencerTimerTool::finalize() {
   std::string line( m_headerSize + 68, '-' );
   info() << line << endmsg << "This machine has a speed about " << format( "%6.2f", 1000. * m_speedRatio )
          << " times the speed of a 2.8 GHz Xeon.";
-  if ( m_normalised ) info() << " *** All times are renormalized ***";
+  if ( m_normalised.value() ) info() << " *** All times are renormalized ***";
   info() << endmsg << LHCbTimerForSequencer::header( m_headerSize ) << endmsg << line << endmsg;
 
-  std::string lastName = "";
-  for ( unsigned int kk = 0; m_timerList.size() > kk; kk++ ) {
+  std::string lastName;
+  for ( unsigned int kk = 0; kk < m_timerList.size(); ++kk ) {
     if ( lastName == m_timerList[kk].name() ) continue; // suppress duplicate
     lastName = m_timerList[kk].name();
     info() << m_timerList[kk] << endmsg;

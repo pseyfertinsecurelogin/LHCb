@@ -32,13 +32,10 @@ EmptyEventNodeCleaner::EmptyEventNodeCleaner( const std::string& name, ISvcLocat
 // Initialization
 //=============================================================================
 StatusCode EmptyEventNodeCleaner::initialize() {
-  const StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) return sc;
-
-  // get the File Records service
-  m_dataSvc = svc<IDataProviderSvc>( m_dataSvcName, true );
-
-  return sc;
+  return GaudiAlgorithm::initialize().andThen( [&] {
+    // get the File Records service
+    m_dataSvc = svc<IDataProviderSvc>( m_dataSvcName, true );
+  } );
 }
 
 //=============================================================================
@@ -64,9 +61,8 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject* obj, const std::string& loca
     return;
   }
 
-  SmartIF<IDataManagerSvc>        mgr( m_dataSvc );
-  typedef std::vector<IRegistry*> Leaves;
-  Leaves                          leaves;
+  SmartIF<IDataManagerSvc> mgr( m_dataSvc );
+  std::vector<IRegistry*>  leaves;
 
   // Load the leaves
   StatusCode sc = mgr->objectLeaves( obj, leaves );

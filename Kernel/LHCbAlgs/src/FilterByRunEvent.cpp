@@ -8,12 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
 #include "Event/ODIN.h"
-
-// local
-#include "FilterByRunEvent.h"
+#include "GaudiAlg/FilterPredicate.h"
+#include <algorithm>
+#include <utility>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FilterByRunEvent
@@ -21,53 +20,69 @@
 // 2007-01-18 : Patrick Spradlin
 //-----------------------------------------------------------------------------
 
+/** @class FilterByRunEvent FilterByRunEvent.h
+ *
+ *
+ *  @author Patrick Spradlin
+ *  @date   2007-01-18
+ *
+ *  @par Algorithm purpose
+ *    @c FilterByRunEvent filters events based on the
+ *    (run number, event number) pair of the event.
+ *
+ *  @par Algorithm properties
+ *    @c FilterByRunEvent has two properties:
+ *    - @c PassSelectedEvents:  A boolean with a default value of @c true.
+ *      If @c PassSelectedEvents is set to @c true (the default),
+ *      @c FilterByRunEvent will pass only the specified events and reject all
+ *      other events. If @c PassSelectedEvents is set to @c false,
+ *      @c FilterByRunEvent will reject the specified events and pass all
+ *      other events.
+ *    - @c RunEventNumList:  A vector of (run number, event number) pairs.
+ *      By default, @c RunEventNumList is empty.  In python configurables,
+ *      @c RunEventNumList is specified with a list of pairs (tuples of
+ *      length 2).
+ *
+ *    The default configuration of @c FilterByRunEvent is a fail-all filter.
+ *
+ *  @par Example of usage
+ *
+ *    In order to configure a sequencer @c MySequence to skip the two events
+ *    with (run number, event number) pairs (86456, 421) and (48621, 3):
+ *    @verbatim
+.....
+MySequence = GaudiSequencer('MySequence')
+MyFilterByRunEvent = FilterByRunEvent('MyFilterByRunEvent')
+MySequence.Members += [ MyFilterByRunEvent, .... ]
+
+# Set PassSelectedEvents to false, so that it rejects the selected events
+MyFilterByRunEvent.PassSelectedEvents = 0
+# std::vector< std::pair<int, int> > configured with a list of pairs
+MyFilterByRunEvent.RunEventNumList = [ (86456, 421), (48621, 3) ]
+.... @endverbatim
+ */
+class FilterByRunEvent final : public Gaudi::Functional::FilterPredicate<bool( const LHCb::ODIN& )> {
+  // FIXME: needs to be: std::vector<std::pair<unsigned int,unsigned long long> > m_events; ///< Run/event number pairs
+  Gaudi::Property<std::vector<std::pair<int, int>>> m_events{this, "RunEventNumList", {}, [=]( Property& ) {
+                                                               std::sort( m_events.begin(), m_events.end() );
+                                                             }}; ///< Run/event number pairs
+  Gaudi::Property<bool> m_passSelect{this, "PassSelectedEvents", true, "If true, will pass list events; false, fail"};
+
+public:
+  /// Standard constructor
+  FilterByRunEvent( const std::string& name, ISvcLocator* pSvcLocator )
+      : FilterPredicate{name, pSvcLocator, {"ODINLocation", LHCb::ODINLocation::Default}} {}
+
+  bool operator()( const LHCb::ODIN& odin ) const override {
+    const bool lcl_sel = std::any_of(
+        m_events.begin(), m_events.end(),
+        [runEv = std::pair{(int)odin.runNumber(), (int)odin.eventNumber()}]( const auto& p ) { return runEv == p; } );
+
+    const bool lcl_pass = ( m_passSelect.value() ? lcl_sel : !lcl_sel );
+    if ( lcl_pass ) info() << "Passing Run " << odin.runNumber() << " event number " << odin.eventNumber() << endmsg;
+    return lcl_pass;
+  }
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( FilterByRunEvent )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FilterByRunEvent::FilterByRunEvent( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "RunEventNumList", m_events );
-  declareProperty( "PassSelectedEvents", m_passSelect = true );
-}
-
-StatusCode FilterByRunEvent::initialize() {
-  const auto sc = GaudiAlgorithm::initialize();
-  if ( !sc ) return sc;
-
-  // sort the run/event list
-  std::sort( m_events.begin(), m_events.end() );
-
-  return sc;
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode FilterByRunEvent::execute() {
-
-  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
-
-  // code goes here
-  setFilterPassed( !m_passSelect );
-
-  // Get the run and event number from the ODIN bank
-  const auto* odin = get<LHCb::ODIN>( LHCb::ODINLocation::Default );
-
-  // Get run/event from ODIn and make comparison object
-  const auto runEv = std::pair{(int)odin->runNumber(), (int)odin->eventNumber()};
-
-  const bool lcl_sel =
-      std::any_of( m_events.begin(), m_events.end(), [&runEv]( const auto& p ) { return runEv == p; } );
-
-  const bool lcl_pass = ( m_passSelect ? lcl_sel : !lcl_sel );
-
-  setFilterPassed( lcl_pass );
-
-  if ( lcl_pass ) info() << "Passing Run " << odin->runNumber() << " event number " << odin->eventNumber() << endmsg;
-
-  return StatusCode::SUCCESS;
-}
-//=============================================================================

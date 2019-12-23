@@ -8,9 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-// Include files
-#include "ProcessPhase.h"
+#include "GaudiAlg/GaudiSequencer.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
 
 //------------------------------------------------------------------------------
@@ -21,13 +19,31 @@
 // Created:     17th December 1999
 //------------------------------------------------------------------------------
 
+/** @class ProcessPhase ProcessPhase.h LHCbAlgs/ProcessPhase.h
+ *
+ * Processing phase of LHCb application
+ *
+ * Creates and invokes subdetector processing algorithms
+ * Convention: algorithm name = \<phase name\> + \<detector name\>
+ *
+ * @author: Marco Cattaneo
+ * @date:   17th December 1999
+ */
+
+class ProcessPhase final : public GaudiSequencer {
+
+public:
+  using GaudiSequencer::GaudiSequencer;
+
+  StatusCode initialize() override; ///> Create and initialise sequences of this phase
+
+private:
+  Gaudi::Property<std::vector<std::string>> m_detList{this, "DetectorList", {}}; ///> List of subdetectors to be
+                                                                                 /// processed
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( ProcessPhase )
-
-ProcessPhase::ProcessPhase( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiSequencer( name, pSvcLocator ) {
-  m_detList.clear();
-  declareProperty( "DetectorList", m_detList );
-}
 
 StatusCode ProcessPhase::initialize() {
   std::string myMeasureProp;

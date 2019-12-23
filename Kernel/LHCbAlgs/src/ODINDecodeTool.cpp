@@ -9,8 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
+#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "GaudiKernel/SerializeSTL.h"
 #include "ODINCodecBaseTool.h"
+#include <sstream>
 
 /** @class ODINDecodeTool ODINDecodeTool.h
  *
@@ -28,8 +32,6 @@ public:
   /// Standard constructor
   ODINDecodeTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~ODINDecodeTool() = default; ///< Destructor
-
   /// Initialize the tool
   inline StatusCode initialize() override;
 
@@ -38,18 +40,10 @@ public:
 
 private:
   /// Location in the transient store of the ODIN object.
-  std::string m_odinLocation;
+  /// FIXME: this is not stricly true, as we also read from this location...
+  DataObjectWriteHandle<LHCb::ODIN> m_odinLocation{this, "ODINLocation", LHCb::ODINLocation::Default,
+                                                   "Location of the ODIN object in the transient store"};
 };
-
-//=============================================================================
-// IMPLEMENTATION
-//=============================================================================
-
-#include <sstream>
-// from LHCb
-#include "Event/ODIN.h"
-#include "Event/RawBank.h"
-#include "Event/RawEvent.h"
 
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( ODINDecodeTool )
@@ -59,9 +53,6 @@ DECLARE_COMPONENT( ODINDecodeTool )
 //=============================================================================
 ODINDecodeTool::ODINDecodeTool( const std::string& type, const std::string& name, const IInterface* parent )
     : ODINCodecBaseTool( type, name, parent ) {
-  declareProperty( "ODINLocation", m_odinLocation = LHCb::ODINLocation::Default,
-                   "Location of the ODIN object in the transient store. By "
-                   "default is the content of LHCb::ODINLocation::Default." );
   // new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
@@ -73,8 +64,8 @@ StatusCode ODINDecodeTool::initialize() {
   StatusCode sc = ODINCodecBaseTool::initialize(); // always first
   if ( sc.isFailure() ) return sc;                 // error message already printed
 
-  if ( m_odinLocation != LHCb::ODINLocation::Default ) {
-    info() << "Using '" << m_odinLocation << "' as location of the ODIN object" << endmsg;
+  if ( m_odinLocation.objKey() != LHCb::ODINLocation::Default ) {
+    info() << "Using '" << m_odinLocation.objKey() << "' as location of the ODIN object" << endmsg;
   }
 
   if ( m_rawEventLocations.empty() || ( m_rawEventLocations[0] != LHCb::RawEventLocation::Default &&
@@ -89,7 +80,7 @@ StatusCode ODINDecodeTool::initialize() {
 //=============================================================================
 void ODINDecodeTool::execute() {
   // load the odin
-  LHCb::ODIN* odin = getIfExists<LHCb::ODIN>( m_odinLocation );
+  LHCb::ODIN* odin = m_odinLocation.getIfExists();
 
   // Check if there is already an ODIN object
   if ( odin ) {
@@ -117,9 +108,8 @@ void ODINDecodeTool::execute() {
   const auto& odinBanks = rawEvent->banks( LHCb::RawBank::ODIN );
   if ( !odinBanks.empty() ) { // ... good, we can decode it
     odin = this->i_decode( *odinBanks.begin(), odin );
-    if ( odin && ( !odin->registry() ) ) // register ODIN object if valid and not yet registered
-    {
-      put( odin, m_odinLocation );
+    if ( odin && ( !odin->registry() ) ) { // register ODIN object if valid and not yet registered
+      m_odinLocation.put( odin );
     }
   } else {
     Warning( "Cannot find ODIN bank in RawEvent" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
