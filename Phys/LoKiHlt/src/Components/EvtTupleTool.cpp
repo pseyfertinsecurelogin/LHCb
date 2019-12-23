@@ -220,13 +220,13 @@ namespace LoKi {
     private:
       // ======================================================================
       /// the TES-location of ODIN
-      Gaudi::Property<std::string> m_ODINLocation //          the TES-location of ODIN
+      DataObjectReadHandle<LHCb::ODIN> m_ODINLocation //          the TES-location of ODIN
           {this, "ODIN_Location", LHCb::ODINLocation::Default, "TES-location of LHCb::ODIN object"};
       /// the TES-location of L0DUReports
-      Gaudi::Property<std::string> m_L0DULocation //   the TES-location of L0DUReports
+      DataObjectReadHandle<LHCb::L0DUReport> m_L0DULocation //   the TES-location of L0DUReports
           {this, "L0DU_Location", LHCb::L0DUReportLocation::Default, "TES-location of LHCb::L0DUReport object"};
       /// the TES-location of HltDecReports
-      Gaudi::Property<std::string> m_HDRLocation // the TES-location of HltDecReports
+      DataObjectReadHandle<LHCb::HltDecReports> m_HDRLocation // the TES-location of HltDecReports
           {this, "HLT_Location", LHCb::HltDecReportsLocation::Default, "TES-location of LHCb::HltDecReports object"};
       // ======================================================================
     };
@@ -504,7 +504,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t ) {
   // ==========================================================================
   // ODIN
   if ( !m_odin.empty() ) {
-    const LHCb::ODIN* odin = get<LHCb::ODIN>( m_ODINLocation );
+    const LHCb::ODIN* odin = m_ODINLocation.get();
     //
     for ( const auto& item : m_odin ) {
       StatusCode code = t->column( item.m_name, item.m_fun( odin ) );
@@ -517,7 +517,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t ) {
   // ==========================================================================
   // L0
   if ( !m_l0.empty() ) {
-    const LHCb::L0DUReport* l0 = get<LHCb::L0DUReport>( m_L0DULocation );
+    const LHCb::L0DUReport* l0 = m_L0DULocation.get();
     //
     for ( const auto& item : m_l0 ) {
       StatusCode code = t->column( item.m_name, item.m_fun( l0 ) );
@@ -530,7 +530,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t ) {
   // ==========================================================================
   // HLT
   if ( !m_hdr.empty() ) {
-    const LHCb::HltDecReports* hdr = get<LHCb::HltDecReports>( m_HDRLocation );
+    const LHCb::HltDecReports* hdr = m_HDRLocation.get();
     //
     for ( const auto& item : m_hdr ) {
       StatusCode code = t->column( item.m_name, item.m_fun( hdr ) );

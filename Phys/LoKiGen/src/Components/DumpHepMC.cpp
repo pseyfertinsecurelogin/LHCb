@@ -17,7 +17,7 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/Consumer.h"
 // ============================================================================
 // GenEvent
 // ============================================================================
@@ -35,60 +35,44 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-05-04
    */
-  class DumpHepMC : public GaudiAlgorithm {
+  class DumpHepMC : public Gaudi::Functional::Consumer<void( LHCb::HepMCEvent::Container const& )> {
   public:
     // ========================================================================
     /// standard initialization of the algorithm
     StatusCode initialize() override {
-      StatusCode sc = GaudiAlgorithm::initialize();
-      if ( sc.isFailure() ) { return sc; }
-      /// get LoKi service
-      svc<IService>( "LoKiSvc", true );
-      return StatusCode::SUCCESS;
+      return Consumer::initialize().andThen( [&] {
+        /// get LoKi service
+        svc<IService>( "LoKiSvc", true );
+      } );
     }
     /// the only one essential method : execution of the algorithm
-    StatusCode execute() override;
+    void operator()( const LHCb::HepMCEvent::Container& ) const override;
     /** The standard constructor
      *  @param name algorithm instance name
      *  @param svc  Service Locator
      */
     DumpHepMC( const std::string& name, // algorithm instance name
                ISvcLocator*       svc )       // service locator
-        : GaudiAlgorithm( name, svc )
-        , m_input( LHCb::HepMCEventLocation::Default ) // input TES-location
-        , m_depth( 10 )                                // the maximal printout depth
-        , m_vertex( true )                             // print vertex information
-        , m_vertexe( true )                            // print end-vertex information?
-        , m_mode( LoKi::DecayChainBase::LV_WITHPT )    // printout mode
-    {
-      declareProperty( "Input", m_input, "The TES-location of HepMC data" );
-      declareProperty( "Depth", m_depth, "The maximal printout depth" );
-      declareProperty( "PrintVertex", m_vertex, "Print vertex information?" );
-      declareProperty( "PrintEndVertex", m_vertexe, "Print end-vertex information?" );
-      declareProperty( "Mode", m_mode, "Printout mode, see LoKi::DecayChainBase::Mode" );
-    }
+        : Consumer{name, svc, {"Input", LHCb::HepMCEventLocation::Default}} {}
     // ========================================================================
   private:
     // ========================================================================
-    /// the TES-location of HepMC data
-    std::string m_input; // the TES-location of HepMC data
     /// the maximal printout dephth
-    unsigned short m_depth; // the maximal printout dephth
+    Gaudi::Property<unsigned short> m_depth{this, "Depth", 10, "The maximal printout depth"};
     /// print vertex information ?
-    bool m_vertex; // print vertex information ?
+    Gaudi::Property<bool> m_vertex{this, "PrintVertex", true, "Print vertex information?"};
     /// print end-vertex information ?
-    bool m_vertexe; // print end-vertex information ?
+    Gaudi::Property<bool> m_vertexe{this, "PrintEndVertex", true, "Print end-vertex information?"};
     /// printout mode  ( @see LoKi::DecayChainBase::Mode )
-    unsigned short m_mode; // printout mode
+    Gaudi::Property<unsigned short> m_mode{this, "Mode", LoKi::DecayChainBase::LV_WITHPT,
+                                           "Printout mode, see LoKi::DecayChainBase::Mode"};
     // ========================================================================
   };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
 // the only one essential method : execution of the algorithm
-StatusCode LoKi::DumpHepMC::execute() {
-  // get HepMC data:
-  const LHCb::HepMCEvent::Container* events = get<LHCb::HepMCEvent::Container>( m_input );
+void LoKi::DumpHepMC::operator()( const LHCb::HepMCEvent::Container& events ) const {
 
   LoKi::DecayChainBase::Mode mode = LoKi::DecayChainBase::LV_WITHPT;
   switch ( m_mode ) {
@@ -125,21 +109,19 @@ StatusCode LoKi::DumpHepMC::execute() {
   }
 
   // get the smart printer
-  LoKi::GenDecayChain printer( m_depth, m_vertex, mode, MSG::YELLOW, MSG::RED, m_vertexe );
+  LoKi::GenDecayChain printer( m_depth, m_vertex.value(), mode, MSG::YELLOW, MSG::RED, m_vertexe.value() );
 
   MsgStream& log = always();
   //
-  log << " HepMC event dump '" << m_input << "' \n";
+  log << " HepMC event dump '" << inputLocation() << "' \n";
   //
-  printer.print( events,                  // input data
+  printer.print( &events,                 // input data
                  log.stream(),            // the stream
                  '\n',                    // the terminator
                  LoKi::Objects::_ALL_,    // accept
                  LoKi::Objects::_NONE_ ); // mark
   //
   log << endmsg;
-  //
-  return StatusCode::SUCCESS;
 }
 // ============================================================================
 /// Declaration of the Algorithm Factory
