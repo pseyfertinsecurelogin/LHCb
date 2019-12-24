@@ -27,14 +27,14 @@
 class PackedBank {
 public:
   /// Standard constructor
-  PackedBank( DataObject* obj ) {
+  PackedBank( const DataObject* obj ) {
     m_bank.reserve( 200 );
-    if ( 0 == obj ) return;
+    if ( !obj ) return;
     m_bank.push_back( obj->clID() );
     storeString( obj->registry()->identifier() );
     unsigned int objSize = obj->linkMgr()->size();
     m_bank.push_back( objSize );
-    for ( unsigned int kl = 0; objSize > kl; ++kl ) { storeString( obj->linkMgr()->link( kl )->path() ); }
+    for ( unsigned int kl = 0; kl < objSize; ++kl ) { storeString( obj->linkMgr()->link( kl )->path() ); }
   };
 
   void storeInt( const unsigned int k ) { m_bank.push_back( k ); };
