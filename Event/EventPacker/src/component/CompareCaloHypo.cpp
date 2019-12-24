@@ -8,10 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "CompareCaloHypo.h"
+#include "Event/PackedCaloHypo.h"
+#include "GaudiAlg/Consumer.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareCaloHypo
@@ -19,29 +17,28 @@
 // 2008-11-14 : Olivier Callot
 //-----------------------------------------------------------------------------
 
+/** @class CompareCaloHypo CompareCaloHypo.h
+ *  Compare two containers of CaloHypo
+ *
+ *  @author Olivier Callot
+ *  @date   2008-11-14
+ */
+class CompareCaloHypo : public Gaudi::Functional::Consumer<void( const LHCb::CaloHypos&, const LHCb::CaloHypos& )> {
+
+public:
+  /// Standard constructor
+  CompareCaloHypo( const std::string& name, ISvcLocator* pSvcLocator )
+      : Consumer{name,
+                 pSvcLocator,
+                 {KeyValue{"InputName", LHCb::CaloHypoLocation::Electrons},
+                  KeyValue{"TestName", LHCb::CaloHypoLocation::Electrons + "Test"}}} {}
+
+  void operator()( LHCb::CaloHypos const& old, LHCb::CaloHypos const& test ) const override {
+    // compare and return
+    const LHCb::CaloHypoPacker packer( this );
+    packer.check( old, test ).orThrow( "CompareCaloHypo failed", "CompareCaloHypo" );
+  }
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( CompareCaloHypo )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-CompareCaloHypo::CompareCaloHypo( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = LHCb::CaloHypoLocation::Electrons );
-  declareProperty( "TestName", m_testName = LHCb::CaloHypoLocation::Electrons + "Test" );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode CompareCaloHypo::execute() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  LHCb::CaloHypos* old  = get<LHCb::CaloHypos>( m_inputName );
-  LHCb::CaloHypos* test = get<LHCb::CaloHypos>( m_testName );
-
-  // compare and return
-  const LHCb::CaloHypoPacker packer( this );
-  return packer.check( *old, *test );
-}
-//=============================================================================

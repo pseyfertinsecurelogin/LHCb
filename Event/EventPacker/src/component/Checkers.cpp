@@ -8,7 +8,63 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "CheckerBaseAlg.icpp"
+#include "GaudiAlg/Consumer.h"
+#include "GaudiKernel/GaudiException.h"
+
+namespace DataPacking {
+
+  /** @class Check CheckerBaseAlg.h
+   *
+   *  Templated base algorithm for checking data packing
+   *
+   *  @author Christopher Rob Jones
+   *  @date   2009-10-14
+   */
+
+  template <typename PACKER>
+  using Data = typename PACKER::DataVector;
+
+  template <typename PACKER>
+  using Consumer = Gaudi::Functional::Consumer<void( Data<PACKER> const&, Data<PACKER> const& )>;
+
+  template <class PACKER>
+  class Check : public Consumer<PACKER> {
+    using KeyValue = typename Consumer<PACKER>::KeyValue;
+
+  public:
+    /// Standard constructor
+    Check( const std::string& name, ISvcLocator* pSvcLocator )
+        : Consumer<PACKER>{name,
+                           pSvcLocator,
+                           {KeyValue{"DataA", PACKER::unpackedLocation()},
+                            KeyValue{"DataB", PACKER::unpackedLocation() + "Test"}}} {}
+
+    void operator()( const Data<PACKER>& dataA, const Data<PACKER>& dataB ) const override {
+
+      // Compare versions
+      if ( dataA.version() != dataB.version() ) {
+        throw GaudiException( "Containers '" + this->template inputLocation<0>() + "' and '" +
+                                  this->template inputLocation<1>() + "' have different versions",
+                              "Check", StatusCode::FAILURE );
+      }
+
+      // check data sizes
+      if ( dataA.size() != dataB.size() ) {
+        throw GaudiException( "Size of containers '" + this->template inputLocation<0>() + "' and '" +
+                                  this->template inputLocation<1>() + "' differs",
+                              "Check", StatusCode::FAILURE );
+      }
+
+      // compare the containers
+      // For the moment just carry on if an error is returned (with a message)
+      m_packer.check( dataA, dataB ).ignore();
+    }
+
+  private:
+    const PACKER m_packer{this}; ///< Packer
+  };
+
+} // namespace DataPacking
 
 #include "Event/PackedCaloAdc.h"
 #include "Event/PackedCaloCluster.h"
