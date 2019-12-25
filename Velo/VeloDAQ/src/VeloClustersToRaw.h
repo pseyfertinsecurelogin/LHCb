@@ -17,6 +17,7 @@
 
 #include "Event/VeloCluster.h"
 #include "SiDAQ/SiRawBufferWord.h"
+#include "VeloRawBankVersions.h"
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
@@ -35,7 +36,7 @@ class VeloClustersToRaw : public GaudiAlgorithm {
 
 public:
   /// Standard constructor
-  VeloClustersToRaw( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override;    ///< Algorithm execution
@@ -49,12 +50,15 @@ private:
 
 private:
   // configurable locations in the TES
-  std::string m_clusterLoc;  ///< cluster container input location
-  std::string m_rawEventLoc; ///< raw bank output location
+  DataObjectReadHandle<LHCb::VeloClusters> m_clusterLoc{
+      this, "VeloClusterLocation", "Raw/Velo/ClustersSelected"}; ///< cluster container input location
+  DataObjectHandle<LHCb::RawEvent> m_rawEventLoc{this, Gaudi::DataHandle::Updater, "RawEventLocation",
+                                                 "DAQ/RawEventSelected"}; ///< raw bank output location
 
-  unsigned int m_bankVersion; ///< raw bank version tag
-
-  bool m_runSelfTest; ///< run self test on default locations
+  Gaudi::Property<unsigned int> m_bankVersion{this, "BankVersion", VeloDAQ::v3}; ///< raw bank version tag
+  Gaudi::Property<bool>         m_runSelfTest{this, "RunSelfTest", false,
+                                      "Decodes endoced bank and compares to input clusters."}; ///< run self test on
+                                                                                               ///< default locations
 
   // long lived containers for performance reasons. Also used to communicate
   // with makeBank() method

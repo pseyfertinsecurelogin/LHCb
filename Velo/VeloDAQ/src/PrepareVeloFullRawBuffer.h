@@ -11,6 +11,7 @@
 #pragma once
 // Include files
 // from Gaudi
+#include "Event/RawEvent.h"
 #include "GaudiAlg/GaudiTupleAlg.h"
 
 // STL
@@ -51,6 +52,12 @@ using namespace LHCb;
 
 class PrepareVeloFullRawBuffer : public GaudiTupleAlg {
 public:
+  //
+  /// Standard constructor
+  using GaudiTupleAlg::GaudiTupleAlg;
+  StatusCode execute() override; ///< Algorithm execution
+
+private:
   typedef std::map<unsigned int, std::pair<unsigned int, const unsigned int*>> DATA_REPO;
 
   enum parameters {
@@ -70,13 +77,6 @@ public:
 
   enum BANKS_SIZES { WORD2BYTE = 4, EB_FPGAx1 = 6, COMPLETE_EB = 52, FPGAx1 = 224, FPGAx4 = 896 };
 
-  //
-  /// Standard constructor
-  PrepareVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-
   // fetch the RawEvent
   StatusCode getRawEvent();
   // extract vector of the RawBanks of the type VeloFull (non-zero supp.)
@@ -90,7 +90,6 @@ public:
   // use only as emergency checker!
   void dumpADCs( const dataVec& inADCs );
 
-protected:
   void setADCBankFlag();
   void setPedBankFlag();
   void unsetADCBankFlag();
@@ -100,32 +99,23 @@ protected:
   void setDecodeWithErrorBank();
   bool getDecodeWithErrorBank() const;
 
-private:
-  const LHCb::RawEvent* m_rawEvent;            /// pointer to RawEvent container
-  std::string           m_rawEventLoc;         /// location of RawEvent container
-  DATA_REPO             m_fullData2Decode;     /// source id and ptr to the bank body - full
-  DATA_REPO             m_partialData2Decode;  /// source id and ptr to the bank body - partial
-  DATA_REPO             m_pedestalData2Decode; /// src id and ptr to the bank body - pedestals
-  DATA_REPO             m_errorBanks2Check;    /// the same for the error banks
-  VeloFullBanks*        m_veloADCData;         /// container to store ordered data
-  VeloFullBanks*        m_veloADCPartialData;
-  VeloFullBanks*        m_veloPedestals;  /// container to store ordered pedestals
-  std::string           m_veloADCDataLoc; /// TES locations of decoded data
-  std::string           m_veloPedestalsLoc;
-  std::string           m_veloADCPartialDataLoc;
-  bool                  m_adcBankPresent; /// flag to check if data is sent out
-  bool                  m_pedBankPresent; /// flag to check if ped is sent out
-  bool                  m_runWithODIN;
-  bool                  m_roundRobin;
-  bool                  m_ignoreErrorBanks;
-};
-
-struct errorBankFinder {
-
-  errorBankFinder( unsigned int tell1 ) : currentTell1( tell1 ) {}
-
-  bool operator()( const LHCb::RawBank* aBank ) const { return aBank->sourceID() == static_cast<int>( currentTell1 ); }
-
-private:
-  unsigned int currentTell1;
+  const LHCb::RawEvent*                m_rawEvent = nullptr; ///< pointer to RawEvent container
+  DataObjectReadHandle<LHCb::RawEvent> m_rawEventLoc{
+      this, "RawEventLocation", LHCb::RawEventLocation::Default};      ///< location of RawEvent container
+  DATA_REPO                            m_fullData2Decode;              ///< source id and ptr to the bank body - full
+  DATA_REPO                            m_partialData2Decode;           ///< source id and ptr to the bank body - partial
+  DATA_REPO                            m_pedestalData2Decode;          ///< src id and ptr to the bank body - pedestals
+  DATA_REPO                            m_errorBanks2Check;             ///< the same for the error banks
+  VeloFullBanks*                       m_veloADCData        = nullptr; ///< container to store ordered data
+  VeloFullBanks*                       m_veloADCPartialData = nullptr;
+  VeloFullBanks*                       m_veloPedestals      = nullptr; ///< container to store ordered pedestals
+  DataObjectWriteHandle<VeloFullBanks> m_veloADCDataLoc{
+      this, "ADCLocation", VeloFullBankLocation::Default}; /// TES locations of decoded data
+  DataObjectWriteHandle<VeloFullBanks> m_veloPedestalsLoc{this, "PedestalsLoc", VeloFullBankLocation::Pedestals};
+  DataObjectWriteHandle<VeloFullBanks> m_veloADCPartialDataLoc{this, "ADCPartialLoc", "Raw/Velo/PreparedPartialADC"};
+  bool                                 m_adcBankPresent = false; /// flag to check if data is sent out
+  bool                                 m_pedBankPresent = false; /// flag to check if ped is sent out
+  Gaudi::Property<bool>                m_runWithODIN{this, "RunWithODIN", true};
+  Gaudi::Property<bool>                m_roundRobin{this, "RoundRobin", false};
+  Gaudi::Property<bool>                m_ignoreErrorBanks{this, "IgnoreErrorBanks", true};
 };

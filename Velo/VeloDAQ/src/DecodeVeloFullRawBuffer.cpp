@@ -28,57 +28,6 @@
 DECLARE_COMPONENT( DecodeVeloFullRawBuffer )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DecodeVeloFullRawBuffer::DecodeVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator )
-    , m_veloADCLocation( VeloFullBankLocation::Default )
-    , m_veloPartialADCLocation( "Raw/Velo/PreparedPartialADC" )
-    , m_veloPedLocation( VeloFullBankLocation::Pedestals )
-    , m_decodedADCLocation( LHCb::VeloTELL1DataLocation::ADCs )
-    , m_decodedPartialADCLocation( "Raw/Velo/PartialADCs" )
-    , m_decodedPedLocation( LHCb::VeloTELL1DataLocation::Pedestals )
-    , m_decodedHeaderLocation( LHCb::VeloTELL1DataLocation::Headers )
-    , m_evtInfoLocation( EvtInfoLocation::Default )
-    , m_veloADCs( 0 )
-    , m_veloPartialADCs( 0 )
-    , m_veloPeds( 0 )
-    , m_decodedADC( 0 )
-    , m_decodedPartialADC( 0 )
-    , m_decodedPed( 0 )
-    , m_decodedHeader( 0 )
-    , m_evtInfo( 0 )
-    , m_adcDataPresent( false )
-    , m_pedDataPresent( false )
-    , m_isDebug( false )
-    , m_signADC( VeloTELL1::SENSOR_CHANNELS )
-    , m_signPartialADC( VeloTELL1::SENSOR_CHANNELS )
-    , m_signADCReordered( VeloTELL1::SENSOR_CHANNELS )
-    , m_signPartialADCReordered( VeloTELL1::SENSOR_CHANNELS )
-    , m_signHeader( 256 )
-    , m_signHeaderReordered( 256 )
-    , m_signPed( VeloTELL1::SENSOR_CHANNELS )
-    , m_signPedReordered( VeloTELL1::SENSOR_CHANNELS )
-    , m_ADCDecoder( VeloFull )
-    , m_ADCPartialDecoder( VeloFull )
-    , m_HeaderDecoder( VeloHeader )
-    , m_PedDecoder( VeloPedestal ) {
-  declareProperty( "ADCLocation", m_veloADCLocation = VeloFullBankLocation::Default );
-  declareProperty( "PedestalLocation", m_veloPedLocation = VeloFullBankLocation::Pedestals );
-  declareProperty( "DecodedADCLocation", m_decodedADCLocation = LHCb::VeloTELL1DataLocation::ADCs );
-  declareProperty( "DecodedPartialADCLocation", m_decodedPartialADCLocation = "Raw/Velo/PartialADCs" );
-  declareProperty( "DecodedPedestalLocation", m_decodedPedLocation = LHCb::VeloTELL1DataLocation::Pedestals );
-  declareProperty( "DecodedHeaderLocation", m_decodedHeaderLocation = LHCb::VeloTELL1DataLocation::Headers );
-  declareProperty( "EventInfoLocation", m_evtInfoLocation = EvtInfoLocation::Default );
-  declareProperty( "SectorCorrection", m_sectorCorrection = true );
-  declareProperty( "CableOrder", m_cableOrder );
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-DecodeVeloFullRawBuffer::~DecodeVeloFullRawBuffer() {}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode DecodeVeloFullRawBuffer::initialize() {
@@ -91,7 +40,7 @@ StatusCode DecodeVeloFullRawBuffer::initialize() {
   // create a configuration with default order.  Otherwise perform
   // sanity checks and bail out when encountering nonsense.
   if ( m_cableOrder.empty() ) {
-    for ( unsigned int i = 0; i < 4; ++i ) { m_cableOrder.push_back( i ); }
+    for ( unsigned int i = 0; i < 4; ++i ) { m_cableOrder.value().push_back( i ); }
     std::reverse( m_cableOrder.begin(), m_cableOrder.end() );
   } else if ( 4 != m_cableOrder.size() ) {
     error() << "The cable order configuration must have exactly 4 entries." << endmsg;
@@ -116,9 +65,7 @@ StatusCode DecodeVeloFullRawBuffer::initialize() {
 //=============================================================================
 StatusCode DecodeVeloFullRawBuffer::execute() {
 
-  m_isDebug = msgLevel( MSG::DEBUG );
-
-  if ( m_isDebug ) debug() << "==> Execute" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
   //
   getData();
   // decode ADC, Pedestals and EvtInfos data
@@ -131,15 +78,15 @@ StatusCode DecodeVeloFullRawBuffer::execute() {
 
 //=============================================================================
 StatusCode DecodeVeloFullRawBuffer::getData() {
-  if ( m_isDebug ) debug() << " ==> getData() " << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> getData() " << endmsg;
   //
-  m_veloADCs = getIfExists<VeloFullBanks>( adcContName() );
-  if ( NULL == m_veloADCs ) {
-    if ( m_isDebug ) debug() << " ==> There is no data banks at: " << adcContName() << endmsg;
+  m_veloADCs = m_veloADCLocation.getIfExists();
+  if ( !m_veloADCs ) {
+    if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> There is no data banks at: " << m_veloADCLocation.objKey() << endmsg;
   } else {
     // get the data banks from default TES location
-    if ( m_isDebug )
-      debug() << " ==> The data banks have been read-in from location: " << adcContName()
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " ==> The data banks have been read-in from location: " << m_veloADCLocation.objKey()
               << ", size of data container (number of read-out TELL1s): " << m_veloADCs->size() << endmsg;
     // create container for decoded data
     m_decodedADC    = new LHCb::VeloTELL1Datas();
@@ -149,16 +96,17 @@ StatusCode DecodeVeloFullRawBuffer::getData() {
     setADCDataFlag();
   }
 
-  m_veloPartialADCs = getIfExists<VeloFullBanks>( m_veloPartialADCLocation );
-  if ( NULL == m_veloPartialADCs ) {
+  m_veloPartialADCs = m_veloPartialADCLocation.getIfExists();
+  if ( !m_veloPartialADCs ) {
 
-    if ( m_isDebug ) debug() << " ==> There is no data banks at: " << m_veloPartialADCLocation << endmsg;
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " ==> There is no data banks at: " << m_veloPartialADCLocation.objKey() << endmsg;
 
   } else {
 
     // get the partial data banks from default TES location
-    if ( m_isDebug )
-      debug() << " ==> The data banks have been read-in from location: " << m_veloPartialADCLocation
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " ==> The data banks have been read-in from location: " << m_veloPartialADCLocation.objKey()
               << ", size of data container (number of read-out TELL1s): " << m_veloPartialADCs->size() << endmsg;
 
     // --> create container for decoded data
@@ -166,13 +114,13 @@ StatusCode DecodeVeloFullRawBuffer::getData() {
   }
 
   //
-  m_veloPeds = getIfExists<VeloFullBanks>( pedContName() );
-  if ( NULL == m_veloPeds ) {
-    if ( m_isDebug ) debug() << " ==> There is no Pedestals at: " << pedContName() << endmsg;
+  m_veloPeds = m_veloPedLocation.getIfExists();
+  if ( !m_veloPeds ) {
+    if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> There is no Pedestals at: " << m_veloPedLocation.objKey() << endmsg;
   } else {
     // get the pedestals banks from Pedestals TES location
-    if ( m_isDebug )
-      debug() << " ==> The ped. banks have been read-in from location: " << pedContName()
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << " ==> The ped. banks have been read-in from location: " << m_veloPedLocation.objKey()
               << ", size of pedestals container (number of read-out TELL1s): " << m_veloPeds->size() << endmsg;
     // create container for decoded Ped
     m_decodedPed = new LHCb::VeloTELL1Datas();
@@ -181,21 +129,9 @@ StatusCode DecodeVeloFullRawBuffer::getData() {
   //
   return ( StatusCode::SUCCESS );
 }
-//==============================================================================
-std::string DecodeVeloFullRawBuffer::adcContName() { return ( m_veloADCLocation ); }
-//==============================================================================
-std::string DecodeVeloFullRawBuffer::pedContName() { return ( m_veloPedLocation ); }
-//=============================================================================
-std::string DecodeVeloFullRawBuffer::decADCName() { return ( m_decodedADCLocation ); }
-//=============================================================================
-std::string DecodeVeloFullRawBuffer::decPedName() { return ( m_decodedPedLocation ); }
-//=============================================================================
-std::string DecodeVeloFullRawBuffer::decHeaderName() { return ( m_decodedHeaderLocation ); }
-//=============================================================================
-std::string DecodeVeloFullRawBuffer::evtInfoName() { return ( m_evtInfoLocation ); }
 //=============================================================================
 StatusCode DecodeVeloFullRawBuffer::decodeData() {
-  if ( m_isDebug ) debug() << " ==> decodeData() " << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> decodeData() " << endmsg;
   //
   if ( adcDataFlag() ) {
     // decode both ADC and ADCHeaders
@@ -216,13 +152,13 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
       // repeater board and Tell1 have to be connected in reverse
       // to their numbering (data 0 -> tell1 input 3,data 1-> tell1 input 2 etc)
 
-      if ( m_sectorCorrection ) { // need to correct for wrong cabling
+      if ( m_sectorCorrection.value() ) { // need to correct for wrong cabling
         int counter = 0;
         for ( scdatIt iT = m_signADC.begin(); iT != m_signADC.end(); ++iT ) {
           int channelposition = counter;
           channelposition     = m_cableOrder[channelposition / 512] * 512 + channelposition % 512;
 
-          if ( m_isDebug ) debug() << "ADCbanks: " << channelposition << " " << ( *iT ) << endmsg;
+          if ( msgLevel( MSG::DEBUG ) ) debug() << "ADCbanks: " << channelposition << " " << ( *iT ) << endmsg;
 
           m_signADCReordered[channelposition] = static_cast<signed int>( *iT );
 
@@ -233,7 +169,7 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
           int channelposition = counter;
           channelposition     = m_cableOrder[channelposition / 64] * 64 + channelposition % 64;
 
-          if ( m_isDebug ) debug() << "Header: " << channelposition << " " << ( *iT ) << endmsg;
+          if ( msgLevel( MSG::DEBUG ) ) debug() << "Header: " << channelposition << " " << ( *iT ) << endmsg;
           m_signHeaderReordered[channelposition] = ( static_cast<signed int>( *iT ) );
           counter++;
         }
@@ -252,18 +188,16 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
     }
   }
 
-  if ( NULL != m_veloPartialADCs ) {
+  if ( m_veloPartialADCs ) {
     // --> this part is responsible for the decoding of the partial data
     //     associated with an error bank
 
-    VeloFullBanks::const_iterator partIt = m_veloPartialADCs->begin();
-
-    for ( ; partIt != m_veloPartialADCs->end(); ++partIt ) {
+    for ( auto partIt = m_veloPartialADCs->begin(); partIt != m_veloPartialADCs->end(); ++partIt ) {
 
       m_ADCPartialDecoder.decode( *partIt, m_signPartialADC );
       LHCb::VeloTELL1Data* partData = new LHCb::VeloTELL1Data( ( *partIt )->key(), VeloFull );
 
-      if ( m_sectorCorrection ) { // need to correct for wrong cabling
+      if ( m_sectorCorrection.value() ) { // need to correct for wrong cabling
 
         int     counter = 0;
         scdatIt pIT     = m_signPartialADC.begin();
@@ -293,12 +227,12 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
       m_PedDecoder.decode( sens, m_signPed );
       auto pedData = std::make_unique<LHCb::VeloTELL1Data>( sens->key(), VeloPedestal );
 
-      if ( true == m_sectorCorrection ) { // need to correct for wrong cabling
+      if ( m_sectorCorrection.value() ) { // need to correct for wrong cabling
         int counter = 0;
         for ( scdatIt iT = m_signPed.begin(); iT != m_signPed.end(); iT++ ) {
           int channelposition = counter;
           channelposition     = m_cableOrder[channelposition / 512] * 512 + channelposition % 512;
-          if ( m_isDebug ) debug() << "Ped bank: " << channelposition << " " << ( *iT ) << endmsg;
+          if ( msgLevel( MSG::DEBUG ) ) debug() << "Ped bank: " << channelposition << " " << ( *iT ) << endmsg;
           m_signPedReordered[channelposition] = static_cast<signed int>( *iT );
           counter++;
         }
@@ -311,7 +245,7 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
   }
   //
   if ( ( !adcDataFlag() ) && ( !pedDataFlag() ) ) {
-    if ( m_isDebug ) debug() << " ==> No data decoded! " << endmsg;
+    if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> No data decoded! " << endmsg;
     return ( StatusCode::SUCCESS );
   } else {
     return ( StatusCode::SUCCESS );
@@ -319,7 +253,7 @@ StatusCode DecodeVeloFullRawBuffer::decodeData() {
 }
 //=============================================================================
 void DecodeVeloFullRawBuffer::sortAndWriteDecodedData() {
-  if ( m_isDebug ) debug() << " ==> writeDecodedData() " << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> writeDecodedData() " << endmsg;
   //
   if ( adcDataFlag() ) {
     // sort the output containers by key (TELL1 number)
@@ -327,23 +261,22 @@ void DecodeVeloFullRawBuffer::sortAndWriteDecodedData() {
     std::stable_sort( m_decodedHeader->begin(), m_decodedHeader->end(), VeloEventFunctor::Less_by_key );
     std::stable_sort( m_evtInfo->begin(), m_evtInfo->end(), VeloEventFunctor::Less_by_key );
     // put the data to TES
-    put( m_decodedADC, decADCName() );
-    put( m_decodedHeader, decHeaderName() );
-    put( m_evtInfo, evtInfoName() );
+    m_decodedADCLocation.put( m_decodedADC );
+    m_decodedHeaderLocation.put( m_decodedHeader );
+    m_evtInfoLocation.put( m_evtInfo );
   }
 
-  if ( NULL != m_decodedPartialADC ) {
+  if ( m_decodedPartialADC ) {
     if ( !m_decodedPartialADC->empty() )
-      if ( m_isDebug ) debug() << " --> Write some data " << endmsg;
-
-    put( m_decodedPartialADC, m_decodedPartialADCLocation );
+      if ( msgLevel( MSG::DEBUG ) ) debug() << " --> Write some data " << endmsg;
+    m_decodedPartialADCLocation.put( m_decodedPartialADC );
   }
 
   if ( pedDataFlag() ) {
     // sort decoded pedestals
     std::stable_sort( m_decodedPed->begin(), m_decodedPed->end(), VeloEventFunctor::Less_by_key );
     // put decoded peds in TES
-    put( m_decodedPed, decPedName() );
+    m_decodedPedLocation.put( m_decodedPed );
   }
 }
 //=============================================================================
@@ -351,16 +284,16 @@ void DecodeVeloFullRawBuffer::setADCDataFlag() { m_adcDataPresent = true; }
 //=============================================================================
 void DecodeVeloFullRawBuffer::setPedDataFlag() { m_pedDataPresent = true; }
 //=============================================================================
-bool DecodeVeloFullRawBuffer::adcDataFlag() { return ( m_adcDataPresent ); }
+bool DecodeVeloFullRawBuffer::adcDataFlag() { return m_adcDataPresent; }
 //=============================================================================
-bool DecodeVeloFullRawBuffer::pedDataFlag() { return ( m_pedDataPresent ); }
+bool DecodeVeloFullRawBuffer::pedDataFlag() { return m_pedDataPresent; }
 //=============================================================================
 void DecodeVeloFullRawBuffer::unsetADCDataFlag() { m_adcDataPresent = false; }
 //=============================================================================
 void DecodeVeloFullRawBuffer::unsetPedDataFlag() { m_pedDataPresent = false; }
 //
 void DecodeVeloFullRawBuffer::resetMemory() {
-  if ( m_isDebug ) debug() << " ==> resetMemory() " << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> resetMemory() " << endmsg;
   //
   unsetADCDataFlag();
   unsetPedDataFlag();

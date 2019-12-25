@@ -38,6 +38,13 @@
 
 class SmartVeloErrorBankDecoder : public GaudiAlgorithm {
 public:
+  /// Standard constructor
+  using GaudiAlgorithm::GaudiAlgorithm;
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
   /// iterator to the error bank body
   typedef const unsigned int*                 ErrorBankIT;
   typedef std::pair<ErrorBankIT, ErrorBankIT> ITPair;
@@ -47,14 +54,6 @@ public:
   enum marks { INIT_SHIFT = 4, EVT_WORDS = 5 };
 
   enum sectors { SOURCES = 4, HEADER = 5, ERROR_BANK_SIZE = 20 };
-
-  /// Standard constructor
-  SmartVeloErrorBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-
-protected:
   // get the RawEvent
   StatusCode getRawEvent();
   // extract error banks
@@ -65,23 +64,19 @@ protected:
   StatusCode storeErrorRawBanks();
 
 private:
-  bool            m_isDebug;
-  LHCb::RawEvent* m_rawEvent; /// pointer to RawEvent container
-
-  /// Location in the transient store of the RawEvent object.
-  /// @warning Obsolete: use m_rawEventLocations
-  std::string m_rawEventLocation;
+  const LHCb::RawEvent* m_rawEvent = nullptr; /// pointer to RawEvent container
 
   /// List of locations in the transient store to search the RawEvent object.
-  std::vector<std::string> m_rawEventLocations;
+  Gaudi::Property<std::vector<std::string>> m_rawEventLocations{
+      this, "RawEventLocations", {}, "List of possible locations of the RawEvent object in the transient store."};
 
-  VeloErrorBanks*                      m_errorBank; /// container to store error banks
-  std::string                          m_errorBankLoc;
-  int                                  m_printBankHeader;
-  BANKS                                m_cachedBanks;
-  std::map<unsigned int, unsigned int> m_bankLength;
-  unsigned int                         m_bankVersion;
-  unsigned int                         m_bankType;
-  unsigned int                         m_magicPattern;
+  VeloErrorBanks*                       m_errorBank = nullptr; /// container to store error banks
+  DataObjectWriteHandle<VeloErrorBanks> m_errorBankLoc{this, "ErrorBankLocation", VeloErrorBankLocation::Default};
+  Gaudi::Property<bool>                 m_printBankHeader{this, "PrintBankHeader", false};
+  BANKS                                 m_cachedBanks;
+  std::map<unsigned int, unsigned int>  m_bankLength;
+  unsigned int                          m_bankVersion  = 0;
+  unsigned int                          m_bankType     = 0;
+  unsigned int                          m_magicPattern = 0;
 };
 #endif // SMARTVELOERRORBANKDECODER_H

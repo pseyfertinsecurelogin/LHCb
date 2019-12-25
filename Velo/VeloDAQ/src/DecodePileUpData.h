@@ -62,14 +62,14 @@ public:
   void        Fill( unsigned int wordIt, unsigned int word_Tot, const unsigned int* data_Ptr, int step,
                     PuTell1::DataTable PUcontainerBee );
 
-protected:
 private:
   LHCb::RawEvent* m_rawEvent;
 
-  std::string        m_PUClusterLocation;
-  std::string        m_PUClusterNZSLocation;
-  bool               m_isNonZeroSupp;
-  PuTell1::DataTable m_PUcontainerBee_NZS;
-  PuTell1::DataTable m_PUcontainerBee;
+  DataObjectWriteHandle<LHCb::VeloClusters> m_PUClusterLocation{this, "PUClusterLocation", "Raw/Velo/PUClusters"};
+  DataObjectWriteHandle<LHCb::VeloClusters> m_PUClusterNZSLocation{this, "PUClusterNZSLocation",
+                                                                   "Raw/Velo/PUClustersNZS"};
+  Gaudi::Property<bool>                     m_isNonZeroSupp{this, "NonZeroSupp", true};
+  PuTell1::DataTable                        m_PUcontainerBee_NZS;
+  PuTell1::DataTable                        m_PUcontainerBee;
 };
 #endif // DecodePileUpData_H

@@ -9,7 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "Event/RawEvent.h"
-#include "VeloEvent/InternalVeloCluster.h"
 
 #include "VeloDet/DeVelo.h"
 
@@ -20,7 +19,6 @@
 #include "PrepareVeloRawBuffer.h"
 #include "VeloClusterPtrLessThan.h"
 #include "VeloClusterWord.h"
-#include "VeloRawBankVersions.h"
 #include "VeloRawWordSizes.h"
 
 //-----------------------------------------------------------------------------
@@ -33,22 +31,6 @@
 //-----------------------------------------------------------------------------
 
 DECLARE_COMPONENT( PrepareVeloRawBuffer )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-PrepareVeloRawBuffer::PrepareVeloRawBuffer( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InternalVeloClusterLocation", m_clusterLoc = LHCb::InternalVeloClusterLocation::Default );
-  declareProperty( "RawEventLocation", m_rawEventLoc = LHCb::RawEventLocation::Default );
-  declareProperty( "DumpInputClusters", m_dumpInputClusters = false );
-  declareProperty( "BankVersion", m_bankVersion = VeloDAQ::v3 );
-}
-
-//=============================================================================
-// Destructor
-//=============================================================================
-PrepareVeloRawBuffer::~PrepareVeloRawBuffer() {}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -72,9 +54,10 @@ StatusCode PrepareVeloRawBuffer::initialize() {
   }
 
   // get a list of sensor numbers to identify empty sensors
-  std::vector<DeVeloSensor*>::const_iterator sIter = m_velo->sensorsBegin();
-  std::vector<DeVeloSensor*>::const_iterator sEnd  = m_velo->sensorsEnd();
-  for ( ; sIter != sEnd; ++sIter ) { m_sensorNumbers.push_back( ( *sIter )->sensorNumber() ); }
+  auto sEnd = m_velo->sensorsEnd();
+  for ( auto sIter = m_velo->sensorsBegin(); sIter != sEnd; ++sIter ) {
+    m_sensorNumbers.push_back( ( *sIter )->sensorNumber() );
+  }
   std::sort( m_sensorNumbers.begin(), m_sensorNumbers.end() );
 
   return StatusCode::SUCCESS;
@@ -91,8 +74,8 @@ StatusCode PrepareVeloRawBuffer::execute() {
 
   // Get the input container
   // Get the InternalVeloClusters from their default location
-  const LHCb::InternalVeloClusters* clusters = getIfExists<LHCb::InternalVeloClusters>( m_clusterLoc );
-  if ( NULL == clusters ) { return Error( " ==> There are no InternalVeloClusters in TES! " ); }
+  const LHCb::InternalVeloClusters* clusters = m_clusterLoc.getIfExists();
+  if ( !clusters ) { return Error( " ==> There are no InternalVeloClusters in TES! " ); }
 
   m_sortedClusters.clear();
   m_sortedClusters.resize( clusters->size() );
@@ -102,14 +85,14 @@ StatusCode PrepareVeloRawBuffer::execute() {
   std::sort( m_sortedClusters.begin(), m_sortedClusters.end(), VeloDAQ::veloClusterPtrLessThan() );
 
   // dump input clusters to console, if requested
-  if ( m_dumpInputClusters ) dumpInputClusters();
+  if ( m_dumpInputClusters.value() ) dumpInputClusters();
 
   // see whether the raw event exits
-  LHCb::RawEvent* rawEvent = getIfExists<LHCb::RawEvent>( m_rawEventLoc );
-  if ( NULL == rawEvent ) {
+  LHCb::RawEvent* rawEvent = m_rawEventLoc.getIfExists();
+  if ( !rawEvent ) {
     // raw rawEvent doesn't exist. We need to create it
     rawEvent = new LHCb::RawEvent();
-    put( rawEvent, m_rawEventLoc );
+    m_rawEventLoc.put( rawEvent );
   }
 
   // loop over all clusters and write one bank per sensor
