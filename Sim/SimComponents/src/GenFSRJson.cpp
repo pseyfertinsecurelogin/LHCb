@@ -54,21 +54,21 @@ namespace {
     std::string path_decFile = System::getEnv( "DECFILESROOT" );
 
     if ( path_decFile != "" ) {
-      std::string  evtType_str = std::to_string( evtType );
-      std::string  path_desc   = path_decFile + "/options/" + evtType_str + ".py";
-      std::fstream file_desc( path_desc, std::fstream::in );
-      std::string  line_ref  = "$DECFILESROOT/dkfiles/";
-      std::string  line_stop = ".dec\"";
-      std::string  line;
+      std::string                evtType_str = std::to_string( evtType );
+      std::string                path_desc   = path_decFile + "/options/" + evtType_str + ".py";
+      std::fstream               file_desc( path_desc, std::fstream::in );
+      constexpr std::string_view line_ref  = "$DECFILESROOT/dkfiles/";
+      constexpr std::string_view line_stop = ".dec\"";
+      std::string                line;
 
       while ( getline( file_desc, line ) ) {
-        std::size_t pos_ref = line.find( line_ref );
+        auto pos_ref = line.find( line_ref );
 
         if ( pos_ref != std::string::npos ) {
-          std::size_t pos_end = line.find( line_stop );
-          pos_ref             = pos_ref + line_ref.length();
-          int count           = pos_end - pos_ref;
-          description         = line.substr( pos_ref, count );
+          auto pos_end = line.find( line_stop );
+          pos_ref      = pos_ref + line_ref.length();
+          int count    = pos_end - pos_ref;
+          description  = line.substr( pos_ref, count );
           break;
         }
       }
@@ -82,8 +82,7 @@ namespace {
   //=============================================================================
 
   ptree writeGeneratorCounters( const LHCb::GenFSR& genFSR ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     ptree array_tree;
 
@@ -112,17 +111,20 @@ namespace {
                     key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUInt &&
                     key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUIntAcc );
 
-      double      fraction = genFSR.getEfficiency( after, before, C );
-      double      error    = genFSR.getEfficiencyError( after, before, C, flag );
-      std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+      double fraction = genFSR.getEfficiency( after, before, C );
+      double error    = genFSR.getEfficiencyError( after, before, C, flag );
+      auto   fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
+      if ( fullName == mapCross.end() )
+        throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
+                             __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
       ptree counter_tree;
-      counter_tree.put( "descr", fullName );
+      counter_tree.put( "descr", fullName->second );
       counter_tree.put( "type", "counter" );
       counter_tree.put( "value", fraction );
       counter_tree.put( "error", error );
 
-      array_tree.push_back( std::make_pair( "", counter_tree ) );
+      array_tree.push_back( {"", counter_tree} );
     }
 
     return array_tree;
@@ -133,8 +135,7 @@ namespace {
   //=============================================================================
 
   ptree writeCutEfficiencies( const LHCb::GenFSR& genFSR ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     ptree array_tree;
 
@@ -157,16 +158,19 @@ namespace {
       double fraction = genFSR.getEfficiency( after, before );
       double error    = genFSR.getEfficiencyError( after, before );
 
-      std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+      auto fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
+      if ( fullName == mapCross.end() )
+        throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
+                             __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
       ptree efficiency_tree;
 
-      efficiency_tree.put( "descr", fullName );
+      efficiency_tree.put( "descr", fullName->second );
       efficiency_tree.put( "type", "counter" );
       efficiency_tree.put( "value", fraction );
       efficiency_tree.put( "error", error );
 
-      array_tree.push_back( std::make_pair( "", efficiency_tree ) );
+      array_tree.push_back( {"", efficiency_tree} );
     }
 
     return array_tree;
@@ -179,8 +183,7 @@ namespace {
   ptree writeHadronCounters( const LHCb::GenFSR& genFSR ) {
     ptree array_tree;
 
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     for ( const auto& counter : genFSR.genCounters() ) {
       auto key = counter.first;
@@ -194,15 +197,18 @@ namespace {
         double fraction = genFSR.getEfficiency( after, before );
         double error    = genFSR.getEfficiencyError( after, before );
 
-        std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+        auto fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
+        if ( fullName == mapCross.end() )
+          throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
+                               __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
         ptree counter_tree;
-        counter_tree.put( "descr", fullName );
+        counter_tree.put( "descr", fullName->second );
         counter_tree.put( "type", "counter" );
         counter_tree.put( "value", fraction );
         counter_tree.put( "error", error );
 
-        array_tree.push_back( std::make_pair( "", counter_tree ) );
+        array_tree.push_back( {"", counter_tree} );
       }
     }
 
@@ -228,7 +234,7 @@ namespace {
       cross_tree.put( "type", "cross-section" );
       cross_tree.put( "value", value );
 
-      array_tree.push_back( std::make_pair( "", cross_tree ) );
+      array_tree.push_back( {"", cross_tree} );
     }
 
     return array_tree;
@@ -275,8 +281,8 @@ namespace {
     interaction_tree.put( "numer", countIntAcc );
     interaction_tree.put( "denom", countIntGen );
 
-    array_tree.push_back( std::make_pair( "", event_tree ) );
-    array_tree.push_back( std::make_pair( "", interaction_tree ) );
+    array_tree.push_back( {"", event_tree} );
+    array_tree.push_back( {"", interaction_tree} );
 
     return array_tree;
   }
@@ -285,11 +291,6 @@ namespace {
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 DECLARE_COMPONENT( GenFSRJson )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-GenFSRJson::GenFSRJson( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {}
 
 //=============================================================================
 //  Initialization

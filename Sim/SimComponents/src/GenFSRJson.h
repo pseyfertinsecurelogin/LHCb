@@ -33,7 +33,7 @@
 class GenFSRJson : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  GenFSRJson( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override;    // Algorithm execution

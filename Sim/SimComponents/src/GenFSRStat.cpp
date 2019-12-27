@@ -120,8 +120,7 @@ namespace {
   //=============================================================================
 
   void writeGeneratorCounters( LHCb::GenFSR& genFSR, int count, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     // write the table options
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
@@ -138,7 +137,9 @@ namespace {
         continue;
 
       std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-      std::string fullName = mapCross[name];
+      auto        fullName = mapCross.find( name );
+      if ( fullName == mapCross.end() )
+        throw GaudiException{"unknown key: " + name, __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
       longlong before = genFSR.getDenominator( key );
       longlong after  = genFSR.getGenCounterInfo( key ).second;
@@ -146,9 +147,9 @@ namespace {
       if ( before == 0 || after == 0 ) continue;
 
       if ( key >= LHCb::GenCountersFSR::CounterKey::OnebGen )
-        htmlOutput << "<td><font size=2>" << fullName << " (mb)</font></td>\n";
+        htmlOutput << "<td><font size=2>" << fullName->second << " (mb)</font></td>\n";
       else
-        htmlOutput << "<td><font size=2>" << fullName << "</font></td>\n";
+        htmlOutput << "<td><font size=2>" << fullName->second << "</font></td>\n";
     }
 
     htmlOutput << "</tr>\n\n<tr>\n";
@@ -217,8 +218,8 @@ namespace {
   //  Add generator level cut efficiencies in the xml file
   //=============================================================================
   void writeCutEfficiencies( LHCb::GenFSR& genFSR, int count, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
     htmlOutput << "><div class=firstcell>Generator Efficiencies</div></th>\n";
@@ -236,7 +237,9 @@ namespace {
         continue;
 
       std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-      std::string fullName = mapCross[name];
+      auto        fullName = mapCross.find( name );
+      if ( fullName == mapCross.end() )
+        throw GaudiException{"unknown key: " + name, __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
       longlong before = genFSR.getDenominator( key );
       if ( before == 0 ) continue;
@@ -244,7 +247,7 @@ namespace {
       longlong after = counter.second.second;
       if ( after == 0 ) continue;
 
-      htmlOutput << "<td><font size=2>" << fullName << "</font></td>\n";
+      htmlOutput << "<td><font size=2>" << fullName->second << "</font></td>\n";
     }
     htmlOutput << "</tr>\n\n<tr>\n";
 
@@ -299,8 +302,8 @@ namespace {
   //=============================================================================
 
   void writeGenHadronCounters( LHCb::GenFSR& genFSR, int countGen, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR ::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countGen;
     htmlOutput << "><div class=firstcell> Generated Hadron Counters</div></th>\n" << std::endl;
@@ -315,7 +318,9 @@ namespace {
            ( key >= LHCb::GenCountersFSR::CounterKey::BGen && key <= LHCb::GenCountersFSR::CounterKey::B2starGen ) ||
            ( key >= LHCb::GenCountersFSR::CounterKey::DGen && key <= LHCb::GenCountersFSR::CounterKey::D2starGen ) ) {
         std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-        std::string fullName = mapCross[name];
+        auto        fullName = mapCross.find( name );
+        if ( fullName == mapCross.end() )
+          throw GaudiException{"unknown key: " + name, __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
         longlong before = genFSR.getDenominator( key );
         if ( before == 0 ) continue;
@@ -323,7 +328,7 @@ namespace {
         longlong after = genFSR.getGenCounterInfo( key ).second;
         if ( after == 0 ) continue;
 
-        htmlOutput << "<td><font size=2>" << fullName << "</font></td>\n";
+        htmlOutput << "<td><font size=2>" << fullName->second << "</font></td>\n";
       }
     }
 
@@ -374,8 +379,8 @@ namespace {
   //=============================================================================
 
   void writeAccHadronCounters( LHCb::GenFSR& genFSR, int countAcc, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR ::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countAcc;
     htmlOutput << "><div class=firstcell> Accepted Hadron Counters</div></th>\n" << std::endl;
@@ -391,7 +396,9 @@ namespace {
            ( key >= LHCb::GenCountersFSR::CounterKey::DAcc && key <= LHCb::GenCountersFSR::CounterKey::D2starAcc ) ) {
 
         std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-        std::string fullName = mapCross[name];
+        auto        fullName = mapCross.find( name );
+        if ( fullName == mapCross.end() )
+          throw GaudiException{"unknown key: " + name, __PRETTY_FUNCTION__, StatusCode::FAILURE};
 
         longlong before = genFSR.getDenominator( key );
         if ( before == 0 ) continue;
@@ -399,7 +406,7 @@ namespace {
         longlong after = genFSR.getGenCounterInfo( key ).second;
         if ( after == 0 ) continue;
 
-        htmlOutput << "<td><font size=2>" << fullName << "</font></td>\n";
+        htmlOutput << "<td><font size=2>" << fullName->second << "</font></td>\n";
       }
     }
 
