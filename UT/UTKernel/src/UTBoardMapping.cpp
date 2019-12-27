@@ -84,13 +84,9 @@ void UTBoardMapping::AddUTMapEntry( unsigned int sourceID, unsigned int number )
 }
 
 std::string UTBoardMapping::printUTMap() {
-
   std::ostringstream o;
-  o << " *** UT board to sourceID Map ***" << std::endl;
-  const Map& theMap = UTSourceIDToNumberMap();
-  for ( Map::value_type board : theMap ) {
-    o << "SourceID: " << board.first << " Flat number: " << board.second << std::endl;
-  } // for each
-  o << "**************" << std::endl;
+  o << " *** UT board to sourceID Map ***\n";
+  for ( const auto& [id, nr] : UTSourceIDToNumberMap() ) { o << "SourceID: " << id << " Flat number: " << nr << '\n'; }
+  o << "**************\n";
   return o.str();
 }

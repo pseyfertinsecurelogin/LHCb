@@ -41,12 +41,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public UT::CommonBase<GaudiTool> {
-
-  public:
-    /// Standard constructor
-    ToolBase( const std::string& type, const std::string& name, const IInterface* parent )
-        : UT::CommonBase<GaudiTool>( type, name, parent ) {}
+  struct ToolBase : UT::CommonBase<GaudiTool> {
+    using UT::CommonBase<GaudiTool>::CommonBase;
   };
 
 } // namespace UT

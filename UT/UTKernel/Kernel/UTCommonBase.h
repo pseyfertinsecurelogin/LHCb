@@ -55,9 +55,6 @@ namespace UT {
   public:
     using PBASE::PBASE;
 
-    /// Destructor
-    virtual ~CommonBase();
-
     /** Initialization of the algorithm after creation
      *
      * @return The status of the initialization
@@ -65,14 +62,6 @@ namespace UT {
      * @retval StatusCode::FAILURE Initialization failed
      */
     StatusCode initialize() override;
-
-    /** Finalization of the algorithm before deletion
-     *
-     * @return The status of the finalization
-     * @retval StatusCode::SUCCESS Finalization was successful
-     * @retval StatusCode::FAILURE Finalization failed
-     */
-    StatusCode finalize() override;
 
     /** get the top level detector element */
     DeUTDetector* tracker() const;
@@ -142,19 +131,13 @@ namespace UT {
 #include "Kernel/UTLexicalCaster.h"
 
 //=============================================================================
-// Destructor
-//=============================================================================
-template <class PBASE, class IReadoutTool>
-UT::CommonBase<PBASE, IReadoutTool>::~CommonBase() {}
-
-//=============================================================================
 // Initialisation
 //=============================================================================
 template <class PBASE, class IReadoutTool>
 StatusCode UT::CommonBase<PBASE, IReadoutTool>::initialize() {
   // Execute the base class initialize
   const StatusCode sc = PBASE::initialize();
-  if ( sc.isFailure() ) { return this->Error( "Failed to initialise Gaudi Base class", sc ); }
+  if ( sc.isFailure() ) return sc;
 
   // Printout from initialize
   if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Initialize" << endmsg;
@@ -169,55 +152,41 @@ StatusCode UT::CommonBase<PBASE, IReadoutTool>::initialize() {
 }
 //=============================================================================
 
-//=============================================================================
-// Finalisation
-//=============================================================================
 template <class PBASE, class IReadoutTool>
-StatusCode UT::CommonBase<PBASE, IReadoutTool>::finalize() {
-  // Printout from finalization
-  if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Finalize" << endmsg;
-
-  // Finalise base class and return
-  return PBASE::finalize();
-}
-//=============================================================================
-
-template <class PBASE, class IReadoutTool>
-inline void UT::CommonBase<PBASE, IReadoutTool>::setDetType( const std::string& aString ) {
+void UT::CommonBase<PBASE, IReadoutTool>::setDetType( const std::string& aString ) {
   m_detType = aString;
 }
 
 #include "UTDet/DeUTDetector.h"
 
 template <class PBASE, class IReadoutTool>
-inline DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::tracker() const {
+DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::tracker() const {
   return m_tracker ? m_tracker : getTracker();
 }
 
 #include "UTDet/DeUTSector.h"
 
 template <class PBASE, class IReadoutTool>
-inline DeUTSector* UT::CommonBase<PBASE, IReadoutTool>::findSector( const LHCb::UTChannelID& aChannel ) const {
+DeUTSector* UT::CommonBase<PBASE, IReadoutTool>::findSector( const LHCb::UTChannelID& aChannel ) const {
 
   DeUTSector* sector = tracker()->findSector( aChannel );
   if ( !sector ) throw GaudiException( "No sector found", this->name(), StatusCode::FAILURE );
-
   return sector;
 }
 
 template <class PBASE, class IReadoutTool>
-inline DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::getTracker() const {
+DeUTDetector* UT::CommonBase<PBASE, IReadoutTool>::getTracker() const {
   m_tracker = this->template getDet<DeUTDetector>( DeUTDetLocation::location() );
   return m_tracker;
 }
 
 template <class PBASE, class IReadoutTool>
-inline IReadoutTool* UT::CommonBase<PBASE, IReadoutTool>::readoutTool() const {
+IReadoutTool* UT::CommonBase<PBASE, IReadoutTool>::readoutTool() const {
   return m_readoutTool ? m_readoutTool : getReadoutTool();
 }
 
 template <class PBASE, class IReadoutTool>
-inline IReadoutTool* UT::CommonBase<PBASE, IReadoutTool>::getReadoutTool() const {
+IReadoutTool* UT::CommonBase<PBASE, IReadoutTool>::getReadoutTool() const {
   m_readoutTool = this->template tool<IReadoutTool>( m_readoutToolName, m_readoutToolName );
   return m_readoutTool;
 }
@@ -228,7 +197,7 @@ void UT::CommonBase<PBASE, IReadoutTool>::setForcedInit() {
 }
 
 template <class PBASE, class IReadoutTool>
-inline const std::string& UT::CommonBase<PBASE, IReadoutTool>::detType() const {
+const std::string& UT::CommonBase<PBASE, IReadoutTool>::detType() const {
   return m_detType;
 }
 
@@ -236,49 +205,48 @@ inline const std::string& UT::CommonBase<PBASE, IReadoutTool>::detType() const {
 #include "Kernel/UTNames.h"
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::station( const LHCb::UTChannelID& chan ) const {
-  return ( LHCb::UTNames().StationToString( chan ) );
+std::string UT::CommonBase<PBASE, IReadoutTool>::station( const LHCb::UTChannelID& chan ) const {
+  return LHCb::UTNames().StationToString( chan );
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueDetRegion( const LHCb::UTChannelID& chan ) const {
-  return ( LHCb::UTNames().UniqueRegionToString( chan ) );
+std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueDetRegion( const LHCb::UTChannelID& chan ) const {
+  return LHCb::UTNames().UniqueRegionToString( chan );
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueLayer( const LHCb::UTChannelID& chan ) const {
-  return ( LHCb::UTNames().UniqueLayerToString( chan ) );
+std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueLayer( const LHCb::UTChannelID& chan ) const {
+  return LHCb::UTNames().UniqueLayerToString( chan );
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueSector( const LHCb::UTChannelID& chan ) const {
-  return ( LHCb::UTNames().UniqueSectorToString( chan ) );
+std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueSector( const LHCb::UTChannelID& chan ) const {
+  return LHCb::UTNames().UniqueSectorToString( chan );
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueBeetle( const LHCb::UTChannelID& chan ) const {
+std::string UT::CommonBase<PBASE, IReadoutTool>::uniqueBeetle( const LHCb::UTChannelID& chan ) const {
   const DeUTSector* theSector = findSector( chan );
   return theSector->nickname() + "Beetle" + UT::toString( theSector->beetle( chan ) );
   ;
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::uniquePort( const LHCb::UTChannelID& chan ) const {
+std::string UT::CommonBase<PBASE, IReadoutTool>::uniquePort( const LHCb::UTChannelID& chan ) const {
   const unsigned int port = ( ( chan.strip() - 1u ) / LHCbConstants::nStripsInPort ) + 1u;
   return uniqueBeetle( chan ) + "Port" + UT::toString( port );
   ;
 }
 
 template <class PBASE, class IReadoutTool>
-inline std::string UT::CommonBase<PBASE, IReadoutTool>::detectorType( const LHCb::UTChannelID& chan ) const {
+std::string UT::CommonBase<PBASE, IReadoutTool>::detectorType( const LHCb::UTChannelID& chan ) const {
   const DeUTSector* sector = tracker()->findSector( chan );
   return sector ? sector->type() : "Unknown";
 }
 
 #include "Event/ProcStatus.h"
 template <class PBASE, class IReadoutTool>
-inline StatusCode UT::CommonBase<PBASE, IReadoutTool>::procFailure( const std::string& reason,
-                                                                    const bool         aborted ) const {
+StatusCode UT::CommonBase<PBASE, IReadoutTool>::procFailure( const std::string& reason, const bool aborted ) const {
 
   LHCb::ProcStatus* procStat =
       this->template getOrCreate<LHCb::ProcStatus, LHCb::ProcStatus>( LHCb::ProcStatusLocation::Default );

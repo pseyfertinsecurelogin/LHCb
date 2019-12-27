@@ -39,7 +39,6 @@ namespace UT {
 
     UTDetectorPlot( const std::string& name, const std::string& title, const unsigned int xBinsPerSector = 1u );
 
-    ~UTDetectorPlot();
     typedef Bins Bins;
     Bins         toBins( const DeUTSector* sector ) const;
   };
