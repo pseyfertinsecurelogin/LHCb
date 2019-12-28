@@ -42,6 +42,7 @@ TESFingerPrint      DEBUG could not locate CounterSummarySvc, no counter summary
 TESFingerPrint      DEBUG List of ALL properties of TESFingerPrint/TESFingerPrint  #properties = 39
 TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputFileName':tes_finger_print.dat
 TESFingerPrint      DEBUG Property ['Name': Value] =  'HeuristicsLevel':Medium
+TESFingerPrint      DEBUG Property ['Name': Value] =  'DataStoreLeavesTool':DataSvcFileEntriesTool/DataSvcFileEntriesTool
 TESFingerPrint      DEBUG Property ['Name': Value] =  'RequireObjects':[  ]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'VetoObjects':[  ]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'StatEntityList':[  ]
@@ -79,11 +80,10 @@ TESFingerPrint      DEBUG Property ['Name': Value] =  'Enable':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputLevel':1
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraOutputs':[]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraInputs':[]
-TESFingerPrint      DEBUG ==> Initialize
-TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service ToolSvc
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc
 TESFingerPrint      DEBUG input handles: 0
 TESFingerPrint      DEBUG output handles: 0
+TESFingerPrint      DEBUG Adding public ToolHandle tool ToolSvc.DataSvcFileEntriesTool (DataSvcFileEntriesTool)
 TESFingerPrint      DEBUG Data Deps for TESFingerPrint
 EventPersistenc...   INFO Added successfully Conversion service:RootCnvSvc
 EventSelector        INFO Stream:EventSelector.DataStreamTool_1 Def:DATAFILE='Reco14-Stripping21.mdst' SVC='Gaudi::RootEvtSelector' OPT='READ'
@@ -299,7 +299,9 @@ StoreExplorerAlg     INFO   +--> /DAQ [No Address]  DataObject
 StoreExplorerAlg     INFO     +--> /ODIN [No Address]  LHCb::ODIN
 TESFingerPrint      DEBUG ==> Execute
 ApplicationMgr       INFO Application Manager Stopped successfully
-PrintHeader          INFO Filtered 5 events
+PrintHeader       SUCCESS Number of counters : 1
+ |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
+ | "EventCount"                                    |         5 |
 TESFingerPrint      DEBUG ==> Finalize
 TESFingerPrint    VERBOSE ==> TES DataObject statistics: {/Event: 5, /Event/Bhadron: 5, /Event/Bhadron/pPhys: 5, /Event/Bhadron/pPhys/FlavourTags: 4, /Event/Bhadron/pPhys/PartToRelatedInfoRelations: 3, /Event/Bhadron/pPhys/Particles: 5, /Event/Bhadron/pPhys/RecVertices: 2, /Event/Bhadron/pPhys/Relations: 5, /Event/Bhadron/pPhys/Vertices: 5, /Event/Bhadron/pRec: 5, /Event/Bhadron/pRec/Calo: 5, /Event/Bhadron/pRec/Calo/EcalClusters: 5, /Event/Bhadron/pRec/Calo/EcalSplitClusters: 2, /Event/Bhadron/pRec/Calo/Electrons: 4, /Event/Bhadron/pRec/Calo/MergedPi0s: 2, /Event/Bhadron/pRec/Calo/Photons: 5, /Event/Bhadron/pRec/Calo/SplitPhotons: 2, /Event/Bhadron/pRec/Muon: 5, /Event/Bhadron/pRec/Muon/MuonPID: 5, /Event/Bhadron/pRec/ProtoP: 5, /Event/Bhadron/pRec/ProtoP/Charged: 5, /Event/Bhadron/pRec/ProtoP/Neutrals: 5, /Event/Bhadron/pRec/Rich: 5, /Event/Bhadron/pRec/Rich/PIDs: 5, /Event/Bhadron/pRec/Track: 5, /Event/Bhadron/pRec/Track/Best: 5, /Event/Bhadron/pRec/Track/Clusters: 5, /Event/Bhadron/pRec/Track/Muon: 2, /Event/Bhadron/pRec/Vertex: 5, /Event/Bhadron/pRec/Vertex/Primary: 5, /Event/Calo: 1, /Event/Calo/RawEvent: 1, /Event/Rec: 5, /Event/Rec/Header: 5, /Event/Rec/Status: 5, /Event/Rec/Summary: 5, /Event/Strip: 5, /Event/Strip/pPhys: 5, /Event/Strip/pPhys/DecReports: 5, /Event/Trigger: 5, /Event/Trigger/RawEvent: 5}
 TESFingerPrint    VERBOSE ==> TES Container sizes: {}
