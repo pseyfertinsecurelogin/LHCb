@@ -45,31 +45,30 @@ namespace LHCb {
     typedef KeyedContainer<MCBcmDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCBcmDigit() : m_MCHitKeys() {}
+    MCBcmDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  Keys to MCHits
-    const std::vector<int>& mcHitKeys() const;
+    [[nodiscard]] const std::vector<int>& mcHitKeys() const;
 
     /// Update  Keys to MCHits
-    void setMCHitKeys( const std::vector<int>& value );
+    MCBcmDigit& setMCHitKeys( std::vector<int> value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCBcmDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     std::vector<int> m_MCHitKeys; ///< Keys to MCHits
 
   }; // class MCBcmDigit
 
   /// Definition of Keyed Container for MCBcmDigit
-  typedef KeyedContainer<MCBcmDigit, Containers::HashMap> MCBcmDigits;
+  using MCBcmDigits = KeyedContainer<MCBcmDigit, Containers::HashMap>;
 
 } // namespace LHCb
 
@@ -84,12 +83,14 @@ inline const CLID& LHCb::MCBcmDigit::clID() const { return LHCb::MCBcmDigit::cla
 inline const CLID& LHCb::MCBcmDigit::classID() { return CLID_MCBcmDigit; }
 
 inline std::ostream& LHCb::MCBcmDigit::fillStream( std::ostream& s ) const {
-  s << "{ "
-    << "MCHitKeys :	" << m_MCHitKeys << std::endl
-    << " }";
-  return s;
+  return s << "{ "
+           << "MCHitKeys :	" << m_MCHitKeys << std::endl
+           << " }";
 }
 
 inline const std::vector<int>& LHCb::MCBcmDigit::mcHitKeys() const { return m_MCHitKeys; }
 
-inline void LHCb::MCBcmDigit::setMCHitKeys( const std::vector<int>& value ) { m_MCHitKeys = value; }
+inline LHCb::MCBcmDigit& LHCb::MCBcmDigit::setMCHitKeys( std::vector<int> value ) {
+  m_MCHitKeys = std::move( value );
+  return *this;
+}

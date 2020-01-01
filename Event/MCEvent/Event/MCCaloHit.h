@@ -49,14 +49,14 @@ namespace LHCb {
   class MCCaloHit : public ContainedObject {
   public:
     /// typedef for ObjectVector of MCCaloHit
-    typedef ObjectVector<MCCaloHit> Container;
+    using Container = ObjectVector<MCCaloHit>;
 
     /// MCCaloHits -> MCCaloHitVector equivalence
-    typedef ObjectVector<LHCb::MCCaloHit> MCCaloHits;
+    using MCCaloHits = ObjectVector<LHCb::MCCaloHit>;
     /// Shortcut for particle class
-    typedef SmartRef<LHCb::MCParticle> Particle;
+    using Particle = SmartRef<LHCb::MCParticle>;
     /// The type of 'Time' variable (\#of 25ns timeslot)
-    typedef char Time;
+    using Time = char;
 
     /// Non-default constructor
     MCCaloHit( int id, double e, const Time& t, const Particle& p )
@@ -75,10 +75,7 @@ namespace LHCb {
         , m_particle( right.particle() ) {}
 
     /// Default Constructor
-    MCCaloHit() : m_activeE( 0 ), m_sensDetID( -1 ), m_time( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCCaloHit() {}
+    MCCaloHit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -94,48 +91,47 @@ namespace LHCb {
     CaloCellID cellID() const;
 
     /// sensDetID from CaloCellID
-    void setCellID( const LHCb::CaloCellID& id );
+    MCCaloHit& setCellID( LHCb::CaloCellID id );
 
     /// Retrieve const  Monte Carlo energy deposition in the active media of given cell
     double activeE() const;
 
     /// Update  Monte Carlo energy deposition in the active media of given cell
-    void setActiveE( double value );
+    MCCaloHit& setActiveE( double value );
 
     /// Retrieve const  Sensitive detector identifier - the identifier of calorimeter cell
     int sensDetID() const;
 
     /// Update  Sensitive detector identifier - the identifier of calorimeter cell
-    void setSensDetID( int value );
+    MCCaloHit& setSensDetID( int value );
 
     /// Retrieve const  Time slot# for energy deposition(in 25ns units, 0 means 'current BX')
     const Time& time() const;
 
     /// Update  Time slot# for energy deposition(in 25ns units, 0 means 'current BX')
-    void setTime( const Time& value );
+    MCCaloHit& setTime( Time value );
 
     /// Retrieve (const)  reference to the Monte Carlo particle
     const LHCb::MCParticle* particle() const;
 
     /// Update  reference to the Monte Carlo particle
-    void setParticle( const SmartRef<LHCb::MCParticle>& value );
+    MCCaloHit& setParticle( SmartRef<LHCb::MCParticle> value );
 
     /// Update (pointer)  reference to the Monte Carlo particle
-    void setParticle( const LHCb::MCParticle* value );
+    MCCaloHit& setParticle( const LHCb::MCParticle* value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCCaloHit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    double                     m_activeE;   ///< Monte Carlo energy deposition in the active media of given cell
-    int                        m_sensDetID; ///< Sensitive detector identifier - the identifier of calorimeter cell
-    Time                       m_time;      ///< Time slot# for energy deposition(in 25ns units, 0 means 'current BX')
-    SmartRef<LHCb::MCParticle> m_particle;  ///< reference to the Monte Carlo particle
+    double                     m_activeE{0};    ///< Monte Carlo energy deposition in the active media of given cell
+    int                        m_sensDetID{-1}; ///< Sensitive detector identifier - the identifier of calorimeter cell
+    Time                       m_time{0};  ///< Time slot# for energy deposition(in 25ns units, 0 means 'current BX')
+    SmartRef<LHCb::MCParticle> m_particle; ///< reference to the Monte Carlo particle
 
   }; // class MCCaloHit
 
   /// Definition of vector container type for MCCaloHit
-  typedef ObjectVector<MCCaloHit> MCCaloHits;
+  using MCCaloHits = ObjectVector<MCCaloHit>;
 
 } // namespace LHCb
 
@@ -160,24 +156,42 @@ inline std::ostream& LHCb::MCCaloHit::fillStream( std::ostream& s ) const {
 
 inline double LHCb::MCCaloHit::activeE() const { return m_activeE; }
 
-inline void LHCb::MCCaloHit::setActiveE( double value ) { m_activeE = value; }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setActiveE( double value ) {
+  m_activeE = value;
+  return *this;
+}
 
 inline int LHCb::MCCaloHit::sensDetID() const { return m_sensDetID; }
 
-inline void LHCb::MCCaloHit::setSensDetID( int value ) { m_sensDetID = value; }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setSensDetID( int value ) {
+  m_sensDetID = value;
+  return *this;
+}
 
 inline const LHCb::MCCaloHit::Time& LHCb::MCCaloHit::time() const { return m_time; }
 
-inline void LHCb::MCCaloHit::setTime( const Time& value ) { m_time = value; }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setTime( Time value ) {
+  m_time = std::move( value );
+  return *this;
+}
 
 inline const LHCb::MCParticle* LHCb::MCCaloHit::particle() const { return m_particle; }
 
-inline void LHCb::MCCaloHit::setParticle( const SmartRef<LHCb::MCParticle>& value ) { m_particle = value; }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setParticle( SmartRef<LHCb::MCParticle> value ) {
+  m_particle = std::move( value );
+  return *this;
+}
 
-inline void LHCb::MCCaloHit::setParticle( const LHCb::MCParticle* value ) { m_particle = value; }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setParticle( const LHCb::MCParticle* value ) {
+  m_particle = value;
+  return *this;
+}
 
 inline LHCb::MCCaloHit* LHCb::MCCaloHit::clone() const { return new LHCb::MCCaloHit( *this ); }
 
 inline LHCb::CaloCellID LHCb::MCCaloHit::cellID() const { return CaloCellID( m_sensDetID ); }
 
-inline void LHCb::MCCaloHit::setCellID( const LHCb::CaloCellID& id ) { m_sensDetID = int( id.all() ); }
+inline LHCb::MCCaloHit& LHCb::MCCaloHit::setCellID( LHCb::CaloCellID id ) {
+  m_sensDetID = int( id.all() );
+  return *this;
+}

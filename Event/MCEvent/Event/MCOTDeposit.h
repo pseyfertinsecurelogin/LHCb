@@ -47,11 +47,11 @@ namespace LHCb {
   class MCOTDeposit : public ContainedObject {
   public:
     /// typedef for std::vector of MCOTDeposit
-    typedef std::vector<MCOTDeposit*>       Vector;
-    typedef std::vector<const MCOTDeposit*> ConstVector;
+    using Vector      = std::vector<MCOTDeposit*>;
+    using ConstVector = std::vector<const MCOTDeposit*>;
 
     /// typedef for ObjectVector of MCOTDeposit
-    typedef ObjectVector<MCOTDeposit> Container;
+    using Container = ObjectVector<MCOTDeposit>;
 
     /// Deposit type enumerations
     enum Types {
@@ -73,15 +73,7 @@ namespace LHCb {
         , m_mcHit( aMCHit ) {}
 
     /// Default Constructor
-    MCOTDeposit()
-        : m_type( LHCb::MCOTDeposit::Types::TypeUnknown )
-        , m_channel()
-        , m_time( 0.0 )
-        , m_driftDistance( 0.0 )
-        , m_ambiguity( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCOTDeposit() {}
+    MCOTDeposit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -152,21 +144,20 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCOTDeposit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    LHCb::MCOTDeposit::Types m_type;          ///< Deposit type
-    LHCb::OTChannelID        m_channel;       ///< OTChannelID
-    double                   m_time;          ///< time
-    double                   m_driftDistance; ///< Drift distance to wire (used for cheating)
-    int                      m_ambiguity;     ///< MC solution for the correct left/right ambiguity
-    SmartRef<LHCb::MCHit>    m_mcHit;         ///< Reference to MCHit that was converted to a MCOTDeposit
+    LHCb::MCOTDeposit::Types m_type{LHCb::MCOTDeposit::Types::TypeUnknown}; ///< Deposit type
+    LHCb::OTChannelID        m_channel;                                     ///< OTChannelID
+    double                   m_time{0.0};                                   ///< time
+    double                   m_driftDistance{0.0}; ///< Drift distance to wire (used for cheating)
+    int                      m_ambiguity{0};       ///< MC solution for the correct left/right ambiguity
+    SmartRef<LHCb::MCHit>    m_mcHit;              ///< Reference to MCHit that was converted to a MCOTDeposit
 
     static const GaudiUtils::VectorMap<std::string, Types>& s_TypesTypMap();
 
   }; // class MCOTDeposit
 
   /// Definition of vector container type for MCOTDeposit
-  typedef ObjectVector<MCOTDeposit> MCOTDeposits;
+  using MCOTDeposits = ObjectVector<MCOTDeposit>;
 
   inline std::ostream& operator<<( std::ostream& s, LHCb::MCOTDeposit::Types e ) {
     switch ( e ) {

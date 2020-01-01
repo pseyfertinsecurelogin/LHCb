@@ -68,7 +68,7 @@ void LHCb::MCProperty::setProperty( const LHCb::MCParticle* part, int value ) {
   if ( findIndex( key, iF ) ) {
     m_property[iF].second = value;
   } else {
-    m_property.push_back( std::pair<int, int>( 0, 0 ) );
+    m_property.emplace_back( 0, 0 );
     int iL = m_property.size() - 1;
     while ( iL > iF ) {
       m_property[iL] = m_property[iL - 1];

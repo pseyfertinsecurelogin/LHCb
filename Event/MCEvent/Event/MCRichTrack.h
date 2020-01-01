@@ -48,10 +48,7 @@ namespace LHCb {
     typedef KeyedContainer<MCRichTrack, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCRichTrack() {}
-
-    /// Default Destructor
-    virtual ~MCRichTrack() {}
+    MCRichTrack() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -92,7 +89,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCRichTrack& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     SmartRefVector<LHCb::MCRichSegment> m_mcSegments; ///< Associatted radiator segments
     SmartRef<LHCb::MCParticle>          m_mcParticle; ///< Associated MCParticle

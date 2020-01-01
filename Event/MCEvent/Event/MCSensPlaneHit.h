@@ -49,16 +49,10 @@ namespace LHCb {
   class MCSensPlaneHit : public ContainedObject {
   public:
     /// typedef for ObjectVector of MCSensPlaneHit
-    typedef ObjectVector<MCSensPlaneHit> Container;
+    using Container = ObjectVector<MCSensPlaneHit>;
 
     /// Default Constructor
-    MCSensPlaneHit()
-        : m_position( 0, 0, -1 * Gaudi::Units::km, -100 * Gaudi::Units::second )
-        , m_momentum( 0, 0, -100 * Gaudi::Units::TeV, -200 * Gaudi::Units::TeV )
-        , m_type( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCSensPlaneHit() {}
+    MCSensPlaneHit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -71,42 +65,43 @@ namespace LHCb {
     const Gaudi::LorentzVector& position() const;
 
     /// Update  Position of the hit in the sensitive plane
-    void setPosition( const Gaudi::LorentzVector& value );
+    MCSensPlaneHit& setPosition( Gaudi::LorentzVector value );
 
     /// Retrieve const  Particle momentum for the hit in the sensitive plane
     const Gaudi::LorentzVector& momentum() const;
 
     /// Update  Particle momentum for the hit in the sensitive plane
-    void setMomentum( const Gaudi::LorentzVector& value );
+    MCSensPlaneHit& setMomentum( Gaudi::LorentzVector value );
 
     /// Retrieve const  true particle Geant identifier
     int type() const;
 
     /// Update  true particle Geant identifier
-    void setType( int value );
+    MCSensPlaneHit& setType( int value );
 
     /// Retrieve (const)  reference to the Monte Carlo particle
     const LHCb::MCParticle* particle() const;
 
     /// Update  reference to the Monte Carlo particle
-    void setParticle( const SmartRef<LHCb::MCParticle>& value );
+    MCSensPlaneHit& setParticle( SmartRef<LHCb::MCParticle> value );
 
     /// Update (pointer)  reference to the Monte Carlo particle
-    void setParticle( const LHCb::MCParticle* value );
+    MCSensPlaneHit& setParticle( const LHCb::MCParticle* value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCSensPlaneHit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    Gaudi::LorentzVector       m_position; ///< Position of the hit in the sensitive plane
-    Gaudi::LorentzVector       m_momentum; ///< Particle momentum for the hit in the sensitive plane
-    int                        m_type;     ///< true particle Geant identifier
-    SmartRef<LHCb::MCParticle> m_particle; ///< reference to the Monte Carlo particle
+    Gaudi::LorentzVector       m_position{0, 0, -1 * Gaudi::Units::km,
+                                    -100 * Gaudi::Units::second}; ///< Position of the hit in the sensitive plane
+    Gaudi::LorentzVector       m_momentum{0, 0, -100 * Gaudi::Units::TeV,
+                                    -200 * Gaudi::Units::TeV}; ///< Particle momentum for the hit in the sensitive plane
+    int                        m_type{0};                            ///< true particle Geant identifier
+    SmartRef<LHCb::MCParticle> m_particle;                           ///< reference to the Monte Carlo particle
 
   }; // class MCSensPlaneHit
 
   /// Definition of vector container type for MCSensPlaneHit
-  typedef ObjectVector<MCSensPlaneHit> MCSensPlaneHits;
+  using MCSensPlaneHits = ObjectVector<MCSensPlaneHit>;
 
 } // namespace LHCb
 
@@ -132,18 +127,33 @@ inline std::ostream& LHCb::MCSensPlaneHit::fillStream( std::ostream& s ) const {
 
 inline const Gaudi::LorentzVector& LHCb::MCSensPlaneHit::position() const { return m_position; }
 
-inline void LHCb::MCSensPlaneHit::setPosition( const Gaudi::LorentzVector& value ) { m_position = value; }
+inline LHCb::MCSensPlaneHit& LHCb::MCSensPlaneHit::setPosition( Gaudi::LorentzVector value ) {
+  m_position = std::move( value );
+  return *this;
+}
 
 inline const Gaudi::LorentzVector& LHCb::MCSensPlaneHit::momentum() const { return m_momentum; }
 
-inline void LHCb::MCSensPlaneHit::setMomentum( const Gaudi::LorentzVector& value ) { m_momentum = value; }
+inline LHCb::MCSensPlaneHit& LHCb::MCSensPlaneHit::setMomentum( Gaudi::LorentzVector value ) {
+  m_momentum = std::move( value );
+  return *this;
+}
 
 inline int LHCb::MCSensPlaneHit::type() const { return m_type; }
 
-inline void LHCb::MCSensPlaneHit::setType( int value ) { m_type = value; }
+inline LHCb::MCSensPlaneHit& LHCb::MCSensPlaneHit::setType( int value ) {
+  m_type = value;
+  return *this;
+}
 
 inline const LHCb::MCParticle* LHCb::MCSensPlaneHit::particle() const { return m_particle; }
 
-inline void LHCb::MCSensPlaneHit::setParticle( const SmartRef<LHCb::MCParticle>& value ) { m_particle = value; }
+inline LHCb::MCSensPlaneHit& LHCb::MCSensPlaneHit::setParticle( SmartRef<LHCb::MCParticle> value ) {
+  m_particle = std::move( value );
+  return *this;
+}
 
-inline void LHCb::MCSensPlaneHit::setParticle( const LHCb::MCParticle* value ) { m_particle = value; }
+inline LHCb::MCSensPlaneHit& LHCb::MCSensPlaneHit::setParticle( const LHCb::MCParticle* value ) {
+  m_particle = value;
+  return *this;
+}

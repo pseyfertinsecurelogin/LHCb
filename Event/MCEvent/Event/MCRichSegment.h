@@ -56,10 +56,7 @@ namespace LHCb {
     typedef KeyedContainer<MCRichSegment, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCRichSegment() : m_historyCode( 0 ), m_trajectoryPoints(), m_trajectoryMomenta() {}
-
-    /// Default Destructor
-    virtual ~MCRichSegment() {}
+    MCRichSegment() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -187,7 +184,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCRichSegment& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     /// Offsets of bitfield historyCode
     enum historyCodeBits { richBits = 0, radiatorBits = 2 };
@@ -195,7 +191,7 @@ namespace LHCb {
     /// Bitmasks for bitfield historyCode
     enum historyCodeMasks { richMask = 0x3L, radiatorMask = 0x7cL };
 
-    unsigned int                 m_historyCode;        ///< Bit packed field containing detector information
+    unsigned int                 m_historyCode{0};     ///< Bit packed field containing detector information
     std::vector<Gaudi::XYZPoint> m_trajectoryPoints;   ///< Vector of trajectory points through the radiator for this
                                                        ///< segment
     std::vector<Gaudi::XYZVector> m_trajectoryMomenta; ///< The momentum vector of the particle for each trajectory step

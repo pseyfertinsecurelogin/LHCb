@@ -44,48 +44,44 @@ namespace LHCb {
   class MCRichDigit : public KeyedObject<LHCb::RichSmartID> {
   public:
     /// typedef for std::vector of MCRichDigit
-    typedef std::vector<MCRichDigit*>       Vector;
-    typedef std::vector<const MCRichDigit*> ConstVector;
+    using Vector      = std::vector<MCRichDigit*>;
+    using ConstVector = std::vector<const MCRichDigit*>;
 
     /// typedef for KeyedContainer of MCRichDigit
     typedef KeyedContainer<MCRichDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCRichDigit() : m_hits(), m_history( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCRichDigit() {}
+    MCRichDigit() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Get the channel identifier for this digit (RichSmartID)
-    RichSmartID richSmartID() const;
+    [[nodiscard]] RichSmartID richSmartID() const;
 
     /// Print this MCRichDigit in a human readable way
     std::ostream& fillStream( std::ostream& s ) const override;
 
     /// Retrieve const  MCRichHits contributing to this digitisation object, together with their history code
-    const LHCb::MCRichDigitHit::Vector& hits() const;
+    [[nodiscard]] const LHCb::MCRichDigitHit::Vector& hits() const;
 
     /// Update  MCRichHits contributing to this digitisation object, together with their history code
     void setHits( const LHCb::MCRichDigitHit::Vector& value );
 
     /// Retrieve const  Bit-packed word containing the overall history information for this digit
-    const LHCb::MCRichDigitHistoryCode& history() const;
+    [[nodiscard]] const LHCb::MCRichDigitHistoryCode& history() const;
 
     /// Update  Bit-packed word containing the overall history information for this digit
     void setHistory( const LHCb::MCRichDigitHistoryCode& value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCRichDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     LHCb::MCRichDigitHit::Vector m_hits; ///< MCRichHits contributing to this digitisation object, together with their
                                          ///< history code
-    LHCb::MCRichDigitHistoryCode m_history; ///< Bit-packed word containing the overall history information for this
-                                            ///< digit
+    LHCb::MCRichDigitHistoryCode m_history{0}; ///< Bit-packed word containing the overall history information for this
+                                               ///< digit
 
   }; // class MCRichDigit
 

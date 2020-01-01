@@ -48,10 +48,7 @@ namespace LHCb {
         , m_primaryVertices( head.primaryVertices() ) {}
 
     /// Default Constructor
-    MCHeader() : m_evtNumber( 0 ), m_evtTime( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCHeader() {}
+    MCHeader() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -67,38 +64,37 @@ namespace LHCb {
     long long evtNumber() const;
 
     /// Update  Event number
-    void setEvtNumber( long long value );
+    MCHeader& setEvtNumber( long long value );
 
     /// Retrieve const  Event time
     unsigned long long evtTime() const;
 
     /// Update  Event time
-    void setEvtTime( unsigned long long value );
+    MCHeader& setEvtTime( unsigned long long value );
 
     /// Retrieve (const)  Pointer to primary vertices
     const SmartRefVector<LHCb::MCVertex>& primaryVertices() const;
 
     /// Update  Pointer to primary vertices
-    void setPrimaryVertices( const SmartRefVector<LHCb::MCVertex>& value );
+    MCHeader& setPrimaryVertices( const SmartRefVector<LHCb::MCVertex>& value );
 
     /// Add to  Pointer to primary vertices
-    void addToPrimaryVertices( const SmartRef<LHCb::MCVertex>& value );
+    MCHeader& addToPrimaryVertices( SmartRef<LHCb::MCVertex> value );
 
     /// Att to (pointer)  Pointer to primary vertices
-    void addToPrimaryVertices( const LHCb::MCVertex* value );
+    MCHeader& addToPrimaryVertices( const LHCb::MCVertex* value );
 
     /// Remove from  Pointer to primary vertices
-    void removeFromPrimaryVertices( const SmartRef<LHCb::MCVertex>& value );
+    MCHeader& removeFromPrimaryVertices( const SmartRef<LHCb::MCVertex>& value );
 
     /// Clear  Pointer to primary vertices
-    void clearPrimaryVertices();
+    MCHeader& clearPrimaryVertices();
 
     friend std::ostream& operator<<( std::ostream& str, const MCHeader& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    long long                      m_evtNumber;       ///< Event number
-    unsigned long long             m_evtTime;         ///< Event time
+    long long                      m_evtNumber{0};    ///< Event number
+    unsigned long long             m_evtTime{0};      ///< Event time
     SmartRefVector<LHCb::MCVertex> m_primaryVertices; ///< Pointer to primary vertices
 
   }; // class MCHeader
@@ -127,31 +123,44 @@ inline std::ostream& LHCb::MCHeader::fillStream( std::ostream& s ) const {
 
 inline long long LHCb::MCHeader::evtNumber() const { return m_evtNumber; }
 
-inline void LHCb::MCHeader::setEvtNumber( long long value ) { m_evtNumber = value; }
+inline LHCb::MCHeader& LHCb::MCHeader::setEvtNumber( long long value ) {
+  m_evtNumber = value;
+  return *this;
+}
 
 inline unsigned long long LHCb::MCHeader::evtTime() const { return m_evtTime; }
 
-inline void LHCb::MCHeader::setEvtTime( unsigned long long value ) { m_evtTime = value; }
+inline LHCb::MCHeader& LHCb::MCHeader::setEvtTime( unsigned long long value ) {
+  m_evtTime = value;
+  return *this;
+}
 
 inline const SmartRefVector<LHCb::MCVertex>& LHCb::MCHeader::primaryVertices() const { return m_primaryVertices; }
 
-inline void LHCb::MCHeader::setPrimaryVertices( const SmartRefVector<LHCb::MCVertex>& value ) {
+inline LHCb::MCHeader& LHCb::MCHeader::setPrimaryVertices( const SmartRefVector<LHCb::MCVertex>& value ) {
   m_primaryVertices = value;
+  return *this;
 }
 
-inline void LHCb::MCHeader::addToPrimaryVertices( const SmartRef<LHCb::MCVertex>& value ) {
+inline LHCb::MCHeader& LHCb::MCHeader::addToPrimaryVertices( SmartRef<LHCb::MCVertex> value ) {
+  m_primaryVertices.push_back( std::move( value ) );
+  return *this;
+}
+
+inline LHCb::MCHeader& LHCb::MCHeader::addToPrimaryVertices( const LHCb::MCVertex* value ) {
   m_primaryVertices.push_back( value );
+  return *this;
 }
 
-inline void LHCb::MCHeader::addToPrimaryVertices( const LHCb::MCVertex* value ) {
-  m_primaryVertices.push_back( value );
-}
-
-inline void LHCb::MCHeader::removeFromPrimaryVertices( const SmartRef<LHCb::MCVertex>& value ) {
+inline LHCb::MCHeader& LHCb::MCHeader::removeFromPrimaryVertices( const SmartRef<LHCb::MCVertex>& value ) {
   auto i = std::remove( m_primaryVertices.begin(), m_primaryVertices.end(), value );
   m_primaryVertices.erase( i, m_primaryVertices.end() );
+  return *this;
 }
 
-inline void LHCb::MCHeader::clearPrimaryVertices() { m_primaryVertices.clear(); }
+inline LHCb::MCHeader& LHCb::MCHeader::clearPrimaryVertices() {
+  m_primaryVertices.clear();
+  return *this;
+}
 
 inline unsigned int LHCb::MCHeader::numOfPrimaryVertices() const { return primaryVertices().size(); }

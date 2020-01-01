@@ -28,10 +28,9 @@ StatusCode makeMCTruthLink( const DataObject* from, const DataObject* to ) {
   return StatusCode::FAILURE;
 }
 void* accessMCTruth( void* ( *cast )(DataObject*), const DataObject* from ) {
-  void* result = 0;
-  if ( 0 != from ) {
-    LinkManager* mgr = from->linkMgr();
-    if ( mgr ) {
+  void* result = nullptr;
+  if ( from ) {
+    if ( LinkManager* mgr = from->linkMgr(); mgr ) {
       for ( int i = 0, n = mgr->size(); i < n; i++ ) {
         if ( ( result = cast( SmartRef<DataObject>( from, i ) ) ) ) { return result; }
       }
@@ -42,13 +41,10 @@ void* accessMCTruth( void* ( *cast )(DataObject*), const DataObject* from ) {
 
 void* accessMCTruth( void* ( *cast )(ContainedObject*), const ContainedObject* from ) {
   void* result = nullptr;
-  if ( 0 != from ) {
-    long idx = from->index();
-    if ( idx != StreamBuffer::INVALID ) {
-      const DataObject* parent = from->parent();
-      if ( parent ) {
-        LinkManager* mgr = parent->linkMgr();
-        if ( mgr ) {
+  if ( from ) {
+    if ( long idx = from->index(); idx != StreamBuffer::INVALID ) {
+      if ( const DataObject* parent = from->parent(); parent ) {
+        if ( LinkManager* mgr = parent->linkMgr(); mgr ) {
           for ( int i = 0, n = mgr->size(); i < n; i++ ) {
             if ( ( result = cast( SmartRef<ContainedObject>( from, i, idx ) ) ) ) { return result; }
           }

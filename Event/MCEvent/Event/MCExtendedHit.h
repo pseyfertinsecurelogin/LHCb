@@ -36,9 +36,6 @@ namespace LHCb {
     /// Default Constructor
     MCExtendedHit() : m_momentum( 0.0, 0.0, 0.0 ) {}
 
-    /// Default Destructor
-    virtual ~MCExtendedHit() {}
-
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
     static const CLID& classID();
@@ -60,7 +57,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCExtendedHit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     Gaudi::XYZVector m_momentum; ///< momentum-vector of particle when entering the detector
 

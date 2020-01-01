@@ -63,11 +63,7 @@ namespace LHCb {
         , m_addedCMNoise( 0.0 ) {}
 
     /// Default Constructor
-    MCVeloFE()
-        : m_addedSignal( 0.0 ), m_addedPedestal( 0.0 ), m_addedNoise( 0.0 ), m_addedCMNoise( 0.0 ), m_MCHitsCharge() {}
-
-    /// Default Destructor
-    virtual ~MCVeloFE() {}
+    MCVeloFE() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -155,12 +151,12 @@ namespace LHCb {
 
   protected:
   private:
-    double              m_addedSignal;    ///< Added Signal in units of electrons
-    double              m_addedPedestal;  ///< pedestal added in Si/FE chip simulation in units of electrons
-    double              m_addedNoise;     ///< noise added in Si/FE chip simulation in units of electrons
-    double              m_addedCMNoise;   ///< common mode noise added in Si/FE chip simulation in units of electrons
-    std::vector<double> m_MCHitsCharge;   ///< Charge of Monte Carlo hit contributed to this channel
-    SmartRefVector<LHCb::MCHit> m_MCHits; ///< References to Monte Carlo hits contributing to this channel
+    double              m_addedSignal{0.0};   ///< Added Signal in units of electrons
+    double              m_addedPedestal{0.0}; ///< pedestal added in Si/FE chip simulation in units of electrons
+    double              m_addedNoise{0.0};    ///< noise added in Si/FE chip simulation in units of electrons
+    double              m_addedCMNoise{0.0}; ///< common mode noise added in Si/FE chip simulation in units of electrons
+    std::vector<double> m_MCHitsCharge;      ///< Charge of Monte Carlo hit contributed to this channel
+    SmartRefVector<LHCb::MCHit> m_MCHits;    ///< References to Monte Carlo hits contributing to this channel
 
   }; // class MCVeloFE
 

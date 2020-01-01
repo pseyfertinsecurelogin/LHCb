@@ -51,10 +51,7 @@ namespace LHCb {
         : m_depositedCharge( charge ), m_channelID( aChan ), m_mcHit( aHit ) {}
 
     /// Default Constructor
-    MCSTDeposit() : m_depositedCharge( 0.0 ), m_channelID() {}
-
-    /// Default Destructor
-    virtual ~MCSTDeposit() {}
+    MCSTDeposit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -80,11 +77,10 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCSTDeposit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    double                m_depositedCharge; ///< charge deposited on strip
-    LHCb::STChannelID     m_channelID;       ///< channelID
-    SmartRef<LHCb::MCHit> m_mcHit;           ///< pointer to MCHit
+    double                m_depositedCharge{0.0}; ///< charge deposited on strip
+    LHCb::STChannelID     m_channelID;            ///< channelID
+    SmartRef<LHCb::MCHit> m_mcHit;                ///< pointer to MCHit
 
   }; // class MCSTDeposit
 

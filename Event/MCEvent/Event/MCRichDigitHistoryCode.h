@@ -27,207 +27,204 @@ namespace LHCb {
    *
    */
 
-  class MCRichDigitHistoryCode {
+  class MCRichDigitHistoryCode final {
   public:
     /// Constructor from bit-packed integer
     explicit MCRichDigitHistoryCode( const unsigned int code ) : m_historyCode( code ) {}
 
     /// Default Constructor
-    MCRichDigitHistoryCode() : m_historyCode( 0 ) {}
-
-    /// Default Destructor
-    ~MCRichDigitHistoryCode() {}
+    MCRichDigitHistoryCode() = default;
 
     /// set the flags according the the given history code
     void setFlags( const LHCb::MCRichDigitHistoryCode history );
 
     /// Returns true if one of the contributing hits is Cherenkov radiation from the main radiators
-    bool isRICHRadiator() const;
+    [[nodiscard]] bool isRICHRadiator() const;
 
     /// Returns true if one of the contributing hits is from an optical reflection within the HPD
-    bool hpdReflection() const;
+    [[nodiscard]] bool hpdReflection() const;
 
     /// Returns true if at least one of the hits contributing to this digit came from a background source
-    bool hasBackground() const;
+    [[nodiscard]] bool hasBackground() const;
 
     /// Returns true if this digit is purely due to Cherekov signal from one of the main RICH radiators. I.e. has NO
     /// background contribution.
-    bool isSignal() const;
+    [[nodiscard]] bool isSignal() const;
 
     /// Returns true if this digit is only due to background. I.e. none of the contributing hits were signal hits
-    bool isBackground() const;
+    [[nodiscard]] bool isBackground() const;
 
     /// Print this MCRichDigitHistoryCode in a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  Bit-packed history information
-    unsigned int historyCode() const;
+    [[nodiscard]] unsigned int historyCode() const;
 
     /// Update  Bit-packed history information
     void setHistoryCode( unsigned int value );
 
     /// Retrieve Digit is associated to a signal event MCRichHit
-    bool signalEvent() const;
+    [[nodiscard]] bool signalEvent() const;
 
     /// Update Digit is associated to a signal event MCRichHit
     void setSignalEvent( bool value );
 
     /// Retrieve Digit is associated to a Prev event MCRichHit
-    bool prevEvent() const;
+    [[nodiscard]] bool prevEvent() const;
 
     /// Update Digit is associated to a Prev event MCRichHit
     void setPrevEvent( bool value );
 
     /// Retrieve Digit is associated to a PrevPrev event MCRichHit
-    bool prevPrevEvent() const;
+    [[nodiscard]] bool prevPrevEvent() const;
 
     /// Update Digit is associated to a PrevPrev event MCRichHit
     void setPrevPrevEvent( bool value );
 
     /// Retrieve Digit is associated to a Next event MCRichHit
-    bool nextEvent() const;
+    [[nodiscard]] bool nextEvent() const;
 
     /// Update Digit is associated to a Next event MCRichHit
     void setNextEvent( bool value );
 
     /// Retrieve Digit is associated to a NextNext event MCRichHit
-    bool nextNextEvent() const;
+    [[nodiscard]] bool nextNextEvent() const;
 
     /// Update Digit is associated to a NextNext event MCRichHit
     void setNextNextEvent( bool value );
 
     /// Retrieve One of the contributing hits came from aerogel Cherenkov radiation
-    bool aerogelHit() const;
+    [[nodiscard]] bool aerogelHit() const;
 
     /// Update One of the contributing hits came from aerogel Cherenkov radiation
     void setAerogelHit( bool value );
 
     /// Retrieve One of the contributing hits came from C4F10 Cherenkov radiation
-    bool c4f10Hit() const;
+    [[nodiscard]] bool c4f10Hit() const;
 
     /// Update One of the contributing hits came from C4F10 Cherenkov radiation
     void setC4f10Hit( bool value );
 
     /// Retrieve One of the contributing hits came from CF4 Cherenkov radiation
-    bool cf4Hit() const;
+    [[nodiscard]] bool cf4Hit() const;
 
     /// Update One of the contributing hits came from CF4 Cherenkov radiation
     void setCf4Hit( bool value );
 
     /// Retrieve One of the contributing hits underwent rayleigh scattering
-    bool scatteredHit() const;
+    [[nodiscard]] bool scatteredHit() const;
 
     /// Update One of the contributing hits underwent rayleigh scattering
     void setScatteredHit( bool value );
 
     /// Retrieve One of the contributing hits came from a charged track hitting the HPD window
-    bool chargedTrack() const;
+    [[nodiscard]] bool chargedTrack() const;
 
     /// Update One of the contributing hits came from a charged track hitting the HPD window
     void setChargedTrack( bool value );
 
     /// Retrieve One of the contributing hits came from CK radiation from charged tracks traversing the Gas quartz
     /// windows
-    bool gasQuartzCK() const;
+    [[nodiscard]] bool gasQuartzCK() const;
 
     /// Update One of the contributing hits came from CK radiation from charged tracks traversing the Gas quartz windows
     void setGasQuartzCK( bool value );
 
     /// Retrieve One of the contributing hits came from CK radiation from charged tracks traversing the HPD quartz
     /// windows
-    bool hpdQuartzCK() const;
+    [[nodiscard]] bool hpdQuartzCK() const;
 
     /// Update One of the contributing hits came from CK radiation from charged tracks traversing the HPD quartz windows
     void setHpdQuartzCK( bool value );
 
     /// Retrieve One of the contributing hits came from CK radiation from charged tracks traversing the nitrogen gas
-    bool nitrogenCK() const;
+    [[nodiscard]] bool nitrogenCK() const;
 
     /// Update One of the contributing hits came from CK radiation from charged tracks traversing the nitrogen gas
     void setNitrogenCK( bool value );
 
     /// Retrieve One of the contributing hits came from CK radiation from the aerogel filter
-    bool aeroFilterCK() const;
+    [[nodiscard]] bool aeroFilterCK() const;
 
     /// Update One of the contributing hits came from CK radiation from the aerogel filter
     void setAeroFilterCK( bool value );
 
     /// Retrieve One of the contributing hits came from a dark hit (I.e. a red photon)
-    bool darkHit() const;
+    [[nodiscard]] bool darkHit() const;
 
     /// Update One of the contributing hits came from a dark hit (I.e. a red photon)
     void setDarkHit( bool value );
 
     /// Retrieve This digit was produced due to charge sharing in the HPD silicon pixel chip
-    bool chargeShareHit() const;
+    [[nodiscard]] bool chargeShareHit() const;
 
     /// Update This digit was produced due to charge sharing in the HPD silicon pixel chip
     void setChargeShareHit( bool value );
 
     /// Retrieve One of the contributing hits was pure Cherenkov (unscattered/reflected etc.) signal from one of the
     /// main RICH radiators
-    bool hasSignal() const;
+    [[nodiscard]] bool hasSignal() const;
 
     /// Update One of the contributing hits was pure Cherenkov (unscattered/reflected etc.) signal from one of the main
     /// RICH radiators
     void setHasSignal( bool value );
 
     /// Retrieve One of the contributing hits came from an electron backscattered at the HPD silicon chip
-    bool hpdSiBackscatter() const;
+    [[nodiscard]] bool hpdSiBackscatter() const;
 
     /// Update One of the contributing hits came from an electron backscattered at the HPD silicon chip
     void setHpdSiBackscatter( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the QW/PC interface in the HPD
-    bool hpdReflQWPC() const;
+    [[nodiscard]] bool hpdReflQWPC() const;
 
     /// Update One of the contributing hits came from a photon reflected by the QW/PC interface in the HPD
     void setHpdReflQWPC( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the Chromium in the HPD
-    bool hpdReflChr() const;
+    [[nodiscard]] bool hpdReflChr() const;
 
     /// Update One of the contributing hits came from a photon reflected by the Chromium in the HPD
     void setHpdReflChr( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the Air/QW interface in the HPD
-    bool hpdReflAirQW() const;
+    [[nodiscard]] bool hpdReflAirQW() const;
 
     /// Update One of the contributing hits came from a photon reflected by the Air/QW interface in the HPD
     void setHpdReflAirQW( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the Air/PC interface in the HPD
-    bool hpdReflAirPC() const;
+    [[nodiscard]] bool hpdReflAirPC() const;
 
     /// Update One of the contributing hits came from a photon reflected by the Air/PC interface in the HPD
     void setHpdReflAirPC( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the silicon in the HPD
-    bool hpdReflSi() const;
+    [[nodiscard]] bool hpdReflSi() const;
 
     /// Update One of the contributing hits came from a photon reflected by the silicon in the HPD
     void setHpdReflSi( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the kovar in the HPD
-    bool hpdReflKovar() const;
+    [[nodiscard]] bool hpdReflKovar() const;
 
     /// Update One of the contributing hits came from a photon reflected by the kovar in the HPD
     void setHpdReflKovar( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the kapton in the HPD
-    bool hpdReflKapton() const;
+    [[nodiscard]] bool hpdReflKapton() const;
 
     /// Update One of the contributing hits came from a photon reflected by the kapton in the HPD
     void setHpdReflKapton( bool value );
 
     /// Retrieve One of the contributing hits came from a photon reflected by the PC/QW interface in the HPD
-    bool hpdReflPCQW() const;
+    [[nodiscard]] bool hpdReflPCQW() const;
 
     /// Update One of the contributing hits came from a photon reflected by the PC/QW interface in the HPD
     void setHpdReflPCQW( bool value );
 
     /// Retrieve One of the contributing hits came from a photon created via scintillation in the radiator
-    bool radScintillation() const;
+    [[nodiscard]] bool radScintillation() const;
 
     /// Update One of the contributing hits came from a photon created via scintillation in the radiator
     void setRadScintillation( bool value );
@@ -236,7 +233,6 @@ namespace LHCb {
       return obj.fillStream( str );
     }
 
-  protected:
   private:
     /// Offsets of bitfield historyCode
     enum historyCodeBits {
@@ -300,7 +296,7 @@ namespace LHCb {
       radScintillationMask = 0x4000000L
     };
 
-    unsigned int m_historyCode; ///< Bit-packed history information
+    unsigned int m_historyCode{0}; ///< Bit-packed history information
 
   }; // class MCRichDigitHistoryCode
 
@@ -321,7 +317,7 @@ inline bool LHCb::MCRichDigitHistoryCode::signalEvent() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setSignalEvent( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_historyCode &= ~signalEventMask;
   m_historyCode |= ( ( ( (unsigned int)val ) << signalEventBits ) & signalEventMask );
 }
@@ -331,7 +327,7 @@ inline bool LHCb::MCRichDigitHistoryCode::prevEvent() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setPrevEvent( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_historyCode &= ~prevEventMask;
   m_historyCode |= ( ( ( (unsigned int)val ) << prevEventBits ) & prevEventMask );
 }
@@ -341,7 +337,7 @@ inline bool LHCb::MCRichDigitHistoryCode::prevPrevEvent() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setPrevPrevEvent( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_historyCode &= ~prevPrevEventMask;
   m_historyCode |= ( ( ( (unsigned int)val ) << prevPrevEventBits ) & prevPrevEventMask );
 }
@@ -351,7 +347,7 @@ inline bool LHCb::MCRichDigitHistoryCode::nextEvent() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setNextEvent( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_historyCode &= ~nextEventMask;
   m_historyCode |= ( ( ( (unsigned int)val ) << nextEventBits ) & nextEventMask );
 }
@@ -361,7 +357,7 @@ inline bool LHCb::MCRichDigitHistoryCode::nextNextEvent() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setNextNextEvent( bool value ) {
-  unsigned int val = (unsigned int)value;
+  auto val = (unsigned int)value;
   m_historyCode &= ~nextNextEventMask;
   m_historyCode |= ( ( ( (unsigned int)val ) << nextNextEventBits ) & nextNextEventMask );
 }
@@ -371,9 +367,8 @@ inline bool LHCb::MCRichDigitHistoryCode::aerogelHit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setAerogelHit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~aerogelHitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << aerogelHitBits ) & aerogelHitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << aerogelHitBits ) & aerogelHitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::c4f10Hit() const {
@@ -381,9 +376,8 @@ inline bool LHCb::MCRichDigitHistoryCode::c4f10Hit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setC4f10Hit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~c4f10HitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << c4f10HitBits ) & c4f10HitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << c4f10HitBits ) & c4f10HitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::cf4Hit() const {
@@ -391,9 +385,8 @@ inline bool LHCb::MCRichDigitHistoryCode::cf4Hit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setCf4Hit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~cf4HitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << cf4HitBits ) & cf4HitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << cf4HitBits ) & cf4HitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::scatteredHit() const {
@@ -401,9 +394,8 @@ inline bool LHCb::MCRichDigitHistoryCode::scatteredHit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setScatteredHit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~scatteredHitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << scatteredHitBits ) & scatteredHitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << scatteredHitBits ) & scatteredHitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::chargedTrack() const {
@@ -411,9 +403,8 @@ inline bool LHCb::MCRichDigitHistoryCode::chargedTrack() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setChargedTrack( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~chargedTrackMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << chargedTrackBits ) & chargedTrackMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << chargedTrackBits ) & chargedTrackMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::gasQuartzCK() const {
@@ -421,9 +412,8 @@ inline bool LHCb::MCRichDigitHistoryCode::gasQuartzCK() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setGasQuartzCK( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~gasQuartzCKMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << gasQuartzCKBits ) & gasQuartzCKMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << gasQuartzCKBits ) & gasQuartzCKMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdQuartzCK() const {
@@ -431,9 +421,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdQuartzCK() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdQuartzCK( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdQuartzCKMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdQuartzCKBits ) & hpdQuartzCKMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdQuartzCKBits ) & hpdQuartzCKMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::nitrogenCK() const {
@@ -441,9 +430,8 @@ inline bool LHCb::MCRichDigitHistoryCode::nitrogenCK() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setNitrogenCK( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~nitrogenCKMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << nitrogenCKBits ) & nitrogenCKMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << nitrogenCKBits ) & nitrogenCKMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::aeroFilterCK() const {
@@ -451,9 +439,8 @@ inline bool LHCb::MCRichDigitHistoryCode::aeroFilterCK() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setAeroFilterCK( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~aeroFilterCKMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << aeroFilterCKBits ) & aeroFilterCKMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << aeroFilterCKBits ) & aeroFilterCKMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::darkHit() const {
@@ -461,9 +448,8 @@ inline bool LHCb::MCRichDigitHistoryCode::darkHit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setDarkHit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~darkHitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << darkHitBits ) & darkHitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << darkHitBits ) & darkHitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::chargeShareHit() const {
@@ -471,9 +457,8 @@ inline bool LHCb::MCRichDigitHistoryCode::chargeShareHit() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setChargeShareHit( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~chargeShareHitMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << chargeShareHitBits ) & chargeShareHitMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << chargeShareHitBits ) & chargeShareHitMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hasSignal() const {
@@ -481,9 +466,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hasSignal() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHasSignal( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hasSignalMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hasSignalBits ) & hasSignalMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hasSignalBits ) & hasSignalMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdSiBackscatter() const {
@@ -491,9 +475,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdSiBackscatter() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdSiBackscatter( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdSiBackscatterMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdSiBackscatterBits ) & hpdSiBackscatterMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdSiBackscatterBits ) & hpdSiBackscatterMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflQWPC() const {
@@ -501,9 +484,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflQWPC() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflQWPC( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflQWPCMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflQWPCBits ) & hpdReflQWPCMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflQWPCBits ) & hpdReflQWPCMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflChr() const {
@@ -511,9 +493,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflChr() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflChr( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflChrMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflChrBits ) & hpdReflChrMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflChrBits ) & hpdReflChrMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflAirQW() const {
@@ -521,9 +502,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflAirQW() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflAirQW( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflAirQWMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflAirQWBits ) & hpdReflAirQWMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflAirQWBits ) & hpdReflAirQWMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflAirPC() const {
@@ -531,9 +511,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflAirPC() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflAirPC( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflAirPCMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflAirPCBits ) & hpdReflAirPCMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflAirPCBits ) & hpdReflAirPCMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflSi() const {
@@ -541,9 +520,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflSi() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflSi( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflSiMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflSiBits ) & hpdReflSiMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflSiBits ) & hpdReflSiMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflKovar() const {
@@ -551,9 +529,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflKovar() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflKovar( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflKovarMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflKovarBits ) & hpdReflKovarMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflKovarBits ) & hpdReflKovarMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflKapton() const {
@@ -561,9 +538,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflKapton() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflKapton( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflKaptonMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflKaptonBits ) & hpdReflKaptonMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflKaptonBits ) & hpdReflKaptonMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::hpdReflPCQW() const {
@@ -571,9 +547,8 @@ inline bool LHCb::MCRichDigitHistoryCode::hpdReflPCQW() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setHpdReflPCQW( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~hpdReflPCQWMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << hpdReflPCQWBits ) & hpdReflPCQWMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << hpdReflPCQWBits ) & hpdReflPCQWMask );
 }
 
 inline bool LHCb::MCRichDigitHistoryCode::radScintillation() const {
@@ -581,9 +556,8 @@ inline bool LHCb::MCRichDigitHistoryCode::radScintillation() const {
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setRadScintillation( bool value ) {
-  unsigned int val = (unsigned int)value;
   m_historyCode &= ~radScintillationMask;
-  m_historyCode |= ( ( ( (unsigned int)val ) << radScintillationBits ) & radScintillationMask );
+  m_historyCode |= ( ( ( (unsigned int)value ) << radScintillationBits ) & radScintillationMask );
 }
 
 inline void LHCb::MCRichDigitHistoryCode::setFlags( const LHCb::MCRichDigitHistoryCode history ) {

@@ -45,17 +45,14 @@ namespace LHCb {
   class MCRichDigitSummary : public ContainedObject {
   public:
     /// typedef for std::vector of MCRichDigitSummary
-    typedef std::vector<MCRichDigitSummary*>       Vector;
-    typedef std::vector<const MCRichDigitSummary*> ConstVector;
+    using Vector      = std::vector<MCRichDigitSummary*>;
+    using ConstVector = std::vector<const MCRichDigitSummary*>;
 
     /// typedef for ObjectVector of MCRichDigitSummary
-    typedef ObjectVector<MCRichDigitSummary> Container;
+    using Container = ObjectVector<MCRichDigitSummary>;
 
     /// Default Constructor
-    MCRichDigitSummary() : m_history( 0 ), m_richSmartID() {}
-
-    /// Default Destructor
-    virtual ~MCRichDigitSummary() {}
+    MCRichDigitSummary() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -89,16 +86,15 @@ namespace LHCb {
       return obj.fillStream( str );
     }
 
-  protected:
   private:
-    LHCb::MCRichDigitHistoryCode m_history;     ///< Bit-packed history information
+    LHCb::MCRichDigitHistoryCode m_history{0};  ///< Bit-packed history information
     LHCb::RichSmartID            m_richSmartID; ///< RichSmartID channel identifier
     SmartRef<LHCb::MCParticle>   m_MCParticle;  ///< MCParticle associated to this RichDigit (RichSmartID)
 
   }; // class MCRichDigitSummary
 
   /// Definition of vector container type for MCRichDigitSummary
-  typedef ObjectVector<MCRichDigitSummary> MCRichDigitSummarys;
+  using MCRichDigitSummarys = ObjectVector<MCRichDigitSummary>;
 
 } // namespace LHCb
 

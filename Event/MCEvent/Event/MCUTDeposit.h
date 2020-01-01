@@ -50,10 +50,7 @@ namespace LHCb {
         : m_depositedCharge( charge ), m_channelID( aChan ), m_mcHit( aHit ) {}
 
     /// Default Constructor
-    MCUTDeposit() : m_depositedCharge( 0.0 ), m_channelID() {}
-
-    /// Default Destructor
-    virtual ~MCUTDeposit() {}
+    MCUTDeposit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -72,18 +69,17 @@ namespace LHCb {
     const LHCb::MCHit* mcHit() const;
 
     /// Update  pointer to MCHit
-    void setMcHit( const SmartRef<LHCb::MCHit>& value );
+    LHCb::MCUTDeposit& setMcHit( SmartRef<LHCb::MCHit> value );
 
     /// Update (pointer)  pointer to MCHit
-    void setMcHit( const LHCb::MCHit* value );
+    LHCb::MCUTDeposit& setMcHit( const LHCb::MCHit* value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCUTDeposit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    double                m_depositedCharge; ///< charge deposited on strip
-    LHCb::UTChannelID     m_channelID;       ///< channelID
-    SmartRef<LHCb::MCHit> m_mcHit;           ///< pointer to MCHit
+    double                m_depositedCharge{0.0}; ///< charge deposited on strip
+    LHCb::UTChannelID     m_channelID;            ///< channelID
+    SmartRef<LHCb::MCHit> m_mcHit;                ///< pointer to MCHit
 
   }; // class MCUTDeposit
 
@@ -116,6 +112,12 @@ inline const LHCb::UTChannelID& LHCb::MCUTDeposit::channelID() const { return m_
 
 inline const LHCb::MCHit* LHCb::MCUTDeposit::mcHit() const { return m_mcHit; }
 
-inline void LHCb::MCUTDeposit::setMcHit( const SmartRef<LHCb::MCHit>& value ) { m_mcHit = value; }
+inline LHCb::MCUTDeposit& LHCb::MCUTDeposit::setMcHit( SmartRef<LHCb::MCHit> value ) {
+  m_mcHit = std::move( value );
+  return *this;
+}
 
-inline void LHCb::MCUTDeposit::setMcHit( const LHCb::MCHit* value ) { m_mcHit = value; }
+inline LHCb::MCUTDeposit& LHCb::MCUTDeposit::setMcHit( const LHCb::MCHit* value ) {
+  m_mcHit = value;
+  return *this;
+}

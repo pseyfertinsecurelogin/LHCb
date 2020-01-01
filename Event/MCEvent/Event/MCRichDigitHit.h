@@ -33,20 +33,17 @@ namespace LHCb {
    *
    */
 
-  class MCRichDigitHit {
+  class MCRichDigitHit final {
   public:
     /// Vector of MCRichDigitHit
-    typedef std::vector<LHCb::MCRichDigitHit> Vector;
+    using Vector = std::vector<LHCb::MCRichDigitHit>;
 
     /// Constructor from MCRichHit and history code
     MCRichDigitHit( const LHCb::MCRichHit& hit, const LHCb::MCRichDigitHistoryCode hist )
         : m_history( hist ), m_mcRichHit( &hit ) {}
 
     /// Default Constructor
-    MCRichDigitHit() : m_history( 0 ) {}
-
-    /// Default Destructor
-    ~MCRichDigitHit() {}
+    MCRichDigitHit() = default;
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const;
@@ -70,12 +67,11 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCRichDigitHit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    LHCb::MCRichDigitHistoryCode m_history; ///< Bit-packed word containing the overall history information for this
-                                            ///< hit. A summary of both how the hit was produced and also how it was
-                                            ///< used in the digitisation
-    SmartRef<LHCb::MCRichHit> m_mcRichHit;  ///< Associated MCRichHit
+    LHCb::MCRichDigitHistoryCode m_history{0}; ///< Bit-packed word containing the overall history information for this
+                                               ///< hit. A summary of both how the hit was produced and also how it was
+                                               ///< used in the digitisation
+    SmartRef<LHCb::MCRichHit> m_mcRichHit;     ///< Associated MCRichHit
 
   }; // class MCRichDigitHit
 

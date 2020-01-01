@@ -46,11 +46,11 @@ namespace LHCb {
   class MCVertex : public KeyedObject<int> {
   public:
     /// typedef for std::vector of MCVertex
-    typedef std::vector<MCVertex*>       Vector;
-    typedef std::vector<const MCVertex*> ConstVector;
+    using Vector      = std::vector<MCVertex*>;
+    using ConstVector = std::vector<const MCVertex*>;
 
     /// typedef for KeyedContainer of MCVertex
-    typedef KeyedContainer<MCVertex, Containers::HashMap> Container;
+    using Container = KeyedContainer<MCVertex, Containers::HashMap>;
 
     /// Describe the physics process related to the vertex
     enum MCVertexType {
@@ -80,7 +80,7 @@ namespace LHCb {
 
     /// Copy Constructor
     MCVertex( const LHCb::MCVertex* right )
-        : KeyedObject<int>()
+        : KeyedObject<int>() // note: key is _not_ copied...
         , m_position( right->position() )
         , m_time( right->time() )
         , m_type( right->type() )
@@ -88,10 +88,7 @@ namespace LHCb {
         , m_products( right->products() ) {}
 
     /// Default Constructor
-    MCVertex() : m_position( 0.0, 0.0, 0.0 ), m_time( 0.0 ), m_type( MCVertex::MCVertexType::Unknown ) {}
-
-    /// Default Destructor
-    virtual ~MCVertex() {}
+    MCVertex() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -122,55 +119,54 @@ namespace LHCb {
     const Gaudi::XYZPoint& position() const;
 
     /// Update  Position in LHCb reference system
-    void setPosition( const Gaudi::XYZPoint& value );
+    MCVertex& setPosition( Gaudi::XYZPoint value );
 
     /// Retrieve const  Time since pp interaction
     double time() const;
 
     /// Update  Time since pp interaction
-    void setTime( double value );
+    MCVertex& setTime( double value );
 
     /// Retrieve const  How the vertex was made
     const MCVertexType& type() const;
 
     /// Update  How the vertex was made
-    void setType( const MCVertexType& value );
+    MCVertex& setType( MCVertexType value );
 
     /// Retrieve (const)  Pointer to parent particle that decay or otherwise end in this vertex
     const LHCb::MCParticle* mother() const;
 
     /// Update  Pointer to parent particle that decay or otherwise end in this vertex
-    void setMother( const SmartRef<LHCb::MCParticle>& value );
+    MCVertex& setMother( SmartRef<LHCb::MCParticle> value );
 
     /// Update (pointer)  Pointer to parent particle that decay or otherwise end in this vertex
-    void setMother( const LHCb::MCParticle* value );
+    MCVertex& setMother( const LHCb::MCParticle* value );
 
     /// Retrieve (const)  Pointer to daughter particles
     const SmartRefVector<LHCb::MCParticle>& products() const;
 
     /// Update  Pointer to daughter particles
-    void setProducts( const SmartRefVector<LHCb::MCParticle>& value );
+    MCVertex& setProducts( SmartRefVector<LHCb::MCParticle> value );
 
     /// Add to  Pointer to daughter particles
-    void addToProducts( const SmartRef<LHCb::MCParticle>& value );
+    MCVertex& addToProducts( SmartRef<LHCb::MCParticle> value );
 
     /// Att to (pointer)  Pointer to daughter particles
-    void addToProducts( const LHCb::MCParticle* value );
+    MCVertex& addToProducts( const LHCb::MCParticle* value );
 
     /// Remove from  Pointer to daughter particles
-    void removeFromProducts( const SmartRef<LHCb::MCParticle>& value );
+    MCVertex& removeFromProducts( const SmartRef<LHCb::MCParticle>& value );
 
     /// Clear  Pointer to daughter particles
-    void clearProducts();
+    MCVertex& clearProducts();
 
     friend std::ostream& operator<<( std::ostream& str, const MCVertex& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    Gaudi::XYZPoint            m_position; ///< Position in LHCb reference system
-    double                     m_time;     ///< Time since pp interaction
-    MCVertexType               m_type;     ///< How the vertex was made
-    SmartRef<LHCb::MCParticle> m_mother;   ///< Pointer to parent particle that decay or otherwise end in this vertex
+    Gaudi::XYZPoint            m_position{0.0, 0.0, 0.0};               ///< Position in LHCb reference system
+    double                     m_time{0.0};                             ///< Time since pp interaction
+    MCVertexType               m_type{MCVertex::MCVertexType::Unknown}; ///< How the vertex was made
+    SmartRef<LHCb::MCParticle> m_mother; ///< Pointer to parent particle that decay or otherwise end in this vertex
     SmartRefVector<LHCb::MCParticle> m_products; ///< Pointer to daughter particles
 
   }; // class MCVertex
@@ -244,42 +240,70 @@ inline const CLID& LHCb::MCVertex::classID() { return CLID_MCVertex; }
 
 inline const Gaudi::XYZPoint& LHCb::MCVertex::position() const { return m_position; }
 
-inline void LHCb::MCVertex::setPosition( const Gaudi::XYZPoint& value ) { m_position = value; }
+inline LHCb::MCVertex& LHCb::MCVertex::setPosition( Gaudi::XYZPoint value ) {
+  m_position = std::move( value );
+  return *this;
+}
 
 inline double LHCb::MCVertex::time() const { return m_time; }
 
-inline void LHCb::MCVertex::setTime( double value ) { m_time = value; }
+inline LHCb::MCVertex& LHCb::MCVertex::setTime( double value ) {
+  m_time = value;
+  return *this;
+}
 
 inline const LHCb::MCVertex::MCVertexType& LHCb::MCVertex::type() const { return m_type; }
 
-inline void LHCb::MCVertex::setType( const MCVertexType& value ) { m_type = value; }
+inline LHCb::MCVertex& LHCb::MCVertex::setType( MCVertexType value ) {
+  m_type = std::move( value );
+  return *this;
+}
 
 inline const LHCb::MCParticle* LHCb::MCVertex::mother() const { return m_mother; }
 
-inline void LHCb::MCVertex::setMother( const SmartRef<LHCb::MCParticle>& value ) { m_mother = value; }
+inline LHCb::MCVertex& LHCb::MCVertex::setMother( SmartRef<LHCb::MCParticle> value ) {
+  m_mother = std::move( value );
+  return *this;
+}
 
-inline void LHCb::MCVertex::setMother( const LHCb::MCParticle* value ) { m_mother = value; }
+inline LHCb::MCVertex& LHCb::MCVertex::setMother( const LHCb::MCParticle* value ) {
+  m_mother = value;
+  return *this;
+}
 
 inline const SmartRefVector<LHCb::MCParticle>& LHCb::MCVertex::products() const { return m_products; }
 
-inline void LHCb::MCVertex::setProducts( const SmartRefVector<LHCb::MCParticle>& value ) { m_products = value; }
-
-inline void LHCb::MCVertex::addToProducts( const SmartRef<LHCb::MCParticle>& value ) { m_products.push_back( value ); }
-
-inline void LHCb::MCVertex::addToProducts( const LHCb::MCParticle* value ) { m_products.push_back( value ); }
-
-inline void LHCb::MCVertex::removeFromProducts( const SmartRef<LHCb::MCParticle>& value ) {
-  auto i = std::remove( m_products.begin(), m_products.end(), value );
-  m_products.erase( i, m_products.end() );
+inline LHCb::MCVertex& LHCb::MCVertex::setProducts( SmartRefVector<LHCb::MCParticle> value ) {
+  m_products = std::move( value );
+  return *this;
 }
 
-inline void LHCb::MCVertex::clearProducts() { m_products.clear(); }
+inline LHCb::MCVertex& LHCb::MCVertex::addToProducts( SmartRef<LHCb::MCParticle> value ) {
+  m_products.push_back( std::move( value ) );
+  return *this;
+}
+
+inline LHCb::MCVertex& LHCb::MCVertex::addToProducts( const LHCb::MCParticle* value ) {
+  m_products.push_back( value );
+  return *this;
+}
+
+inline LHCb::MCVertex& LHCb::MCVertex::removeFromProducts( const SmartRef<LHCb::MCParticle>& value ) {
+  auto i = std::remove( m_products.begin(), m_products.end(), value );
+  m_products.erase( i, m_products.end() );
+  return *this;
+}
+
+inline LHCb::MCVertex& LHCb::MCVertex::clearProducts() {
+  m_products.clear();
+  return *this;
+}
 
 inline LHCb::MCVertex* LHCb::MCVertex::clone() const { return new LHCb::MCVertex( this ); }
 
 inline LHCb::MCVertex* LHCb::MCVertex::cloneWithKey() const {
 
-  LHCb::MCVertex* clone = new LHCb::MCVertex( this );
+  auto* clone = new LHCb::MCVertex( this );
   clone->setKey( this->key() );
   return clone;
 }
@@ -298,5 +322,5 @@ inline bool LHCb::MCVertex::isDecay() const {
 
 inline const LHCb::MCVertex* LHCb::MCVertex::primaryVertex() const {
 
-  return ( this->isPrimary() ? this : ( m_mother != 0 ? m_mother->primaryVertex() : NULL ) );
+  return ( this->isPrimary() ? this : ( m_mother != 0 ? m_mother->primaryVertex() : nullptr ) );
 }

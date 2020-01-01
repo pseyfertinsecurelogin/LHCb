@@ -23,14 +23,11 @@
  *
  */
 
-namespace LHCb {
-  // Forward declarations
-  namespace MuonBXFlag {
-    /// flags to identify the BX id
-    enum BXFlag { CURRENT = 0, PREV = 1, TWOPREV = 2, THREEPREV, FOURPREV };
+namespace LHCb::MuonBXFlag {
+  /// flags to identify the BX id
+  enum BXFlag { CURRENT = 0, PREV = 1, TWOPREV = 2, THREEPREV, FOURPREV };
 
-  } // namespace MuonBXFlag
-} // namespace LHCb
+} // namespace LHCb::MuonBXFlag
 
 // -----------------------------------------------------------------------------
 // end of namespace

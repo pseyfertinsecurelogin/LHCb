@@ -50,20 +50,7 @@ namespace LHCb {
     typedef KeyedContainer<MCRichOpticalPhoton, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCRichOpticalPhoton()
-        : m_pdIncidencePoint()
-        , m_sphericalMirrorReflectPoint()
-        , m_flatMirrorReflectPoint()
-        , m_aerogelExitPoint()
-        , m_cherenkovTheta( 0 )
-        , m_cherenkovPhi( 0 )
-        , m_emissionPoint()
-        , m_energyAtProduction( 0 )
-        , m_parentMomentum()
-        , m_hpdQWIncidencePoint() {}
-
-    /// Default Destructor
-    virtual ~MCRichOpticalPhoton() {}
+    MCRichOpticalPhoton() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -145,19 +132,19 @@ namespace LHCb {
       return obj.fillStream( str );
     }
 
-  protected:
   private:
-    Gaudi::XYZPoint  m_pdIncidencePoint;            ///< Point of incidence of the photon on the HPD window
-    Gaudi::XYZPoint  m_sphericalMirrorReflectPoint; ///< Spherical mirror reflection point
-    Gaudi::XYZPoint  m_flatMirrorReflectPoint;      ///< Flat mirror reflection point
-    Gaudi::XYZPoint  m_aerogelExitPoint;    ///< If applicable, exit point of the photon from the aerogel radiator
-    float            m_cherenkovTheta;      ///< Cherenkov angle theta at production
-    float            m_cherenkovPhi;        ///< Cherenkov angle phi at production
-    Gaudi::XYZPoint  m_emissionPoint;       ///< Photon emission point
-    float            m_energyAtProduction;  ///< Photon energy at production
-    Gaudi::XYZVector m_parentMomentum;      ///< The momentum of the photon parent at production
-    Gaudi::XYZPoint  m_hpdQWIncidencePoint; ///< Photon incidence point on the external surface of the HPD Quartz Window
-    SmartRef<LHCb::MCRichHit> m_mcRichHit;  ///< Associated MCRichHit
+    Gaudi::XYZPoint  m_pdIncidencePoint{};            ///< Point of incidence of the photon on the HPD window
+    Gaudi::XYZPoint  m_sphericalMirrorReflectPoint{}; ///< Spherical mirror reflection point
+    Gaudi::XYZPoint  m_flatMirrorReflectPoint{};      ///< Flat mirror reflection point
+    Gaudi::XYZPoint  m_aerogelExitPoint{};    ///< If applicable, exit point of the photon from the aerogel radiator
+    float            m_cherenkovTheta{0};     ///< Cherenkov angle theta at production
+    float            m_cherenkovPhi{0};       ///< Cherenkov angle phi at production
+    Gaudi::XYZPoint  m_emissionPoint{};       ///< Photon emission point
+    float            m_energyAtProduction{0}; ///< Photon energy at production
+    Gaudi::XYZVector m_parentMomentum{};      ///< The momentum of the photon parent at production
+    Gaudi::XYZPoint  m_hpdQWIncidencePoint{}; ///< Photon incidence point on the external surface of the HPD Quartz
+                                              ///< Window
+    SmartRef<LHCb::MCRichHit> m_mcRichHit;    ///< Associated MCRichHit
 
   }; // class MCRichOpticalPhoton
 

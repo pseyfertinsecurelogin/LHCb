@@ -44,11 +44,11 @@ namespace LHCb {
   class MCProperty final : public DataObject {
   public:
     /// Default Constructor
-    MCProperty() : m_property() {}
+    MCProperty() = default;
 
     // Retrieve pointer to class definition structure
-    const CLID&        clID() const override;
-    static const CLID& classID();
+    [[nodiscard]] const CLID& clID() const override;
+    static const CLID&        classID();
 
     /// Fill the ASCII output stream
     std::ostream& fillStream( std::ostream& s ) const override;
@@ -61,11 +61,10 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCProperty& obj ) { return obj.fillStream( str ); }
 
-  protected:
+  private:
     /// Returns the index of the key. True if key exist, else inserting position
     bool findIndex( int key, int& index ) const;
 
-  private:
     std::vector<std::pair<int, int>> m_property; ///< List of linked objects
 
   }; // class MCProperty
