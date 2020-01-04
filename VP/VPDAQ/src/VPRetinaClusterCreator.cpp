@@ -8,25 +8,86 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-#include "VPRetinaClusterCreator.h"
-
-#include "Event/StateParameters.h"
-#include "Kernel/VPConstants.h"
-#include "VPKernel/PixelUtils.h"
-
+#include "DetDesc/ConditionAccessorHolder.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Event/VPLightCluster.h"
+#include "GaudiAlg/Transformer.h"
 #include "GaudiKernel/Transform3DTypes.h"
-
+#include "Kernel/VPChannelID.h"
+#include "Kernel/VPConstants.h"
+#include "VPDet/DeVP.h"
+#include "VPKernel/PixelUtils.h"
+#include "VPKernel/VeloPixelInfo.h"
+#include "VPRetinaCluster.h"
+#include "VPRetinaMatrix.h"
+#include <array>
 #include <iomanip>
 #include <iterator>
+#include <tuple>
+#include <vector>
+
+/** @class VPRetinaClusterCreator VPRetinaClusterCreator.h
+ * Algorithm to create RetinaCluster Raw Bank from SuperPixel.
+ *
+ * There is one raw bank per sensor, that is the sensor number (0-207)
+ * is the source ID of the bank. Note that this means there is no
+ * need to encode the sensor in the RetinaCluster addresses.
+ *
+ * Each bank has a four byte word header, followed by a four byte
+ * RetinaCluster word for each RetinaCluster on the sensor.
+ *
+ * The header word is currently simply the number of RetinaCluster
+ * on the sensor.
+ *
+ * The RetinaCluster word encoding is the following:
+ *
+ * bit 0-2    RetinaCluster Fraction Row (0-1 by step of 0.125)
+ * bit 3-10   RetinaCluster Row (0-255)
+ * bit 11-13  RetinaCluster Fraction Column (0-1 by step of 0.125)
+ * bit 14-23  RetinaCluster Column (0-767)
+ * bit 24-25  SensorID in the module
+ * bit 26-31  UNUSED
+ *
+ * @author Federico Lazzari
+ * @date   2018-06-20
+ */
+
+namespace LHCb::VP::Retina {
+  struct GeomCache {
+    GeomCache( const DeVP& det );
+    std::array<std::array<float, 9>, ::VP::NSensors> m_ltg;
+    LHCb::span<const double>                         m_local_x;
+    LHCb::span<const double>                         m_x_pitch;
+    float                                            m_pixel_size;
+  };
+} // namespace LHCb::VP::Retina
+
+class VPRetinaClusterCreator
+    : public Gaudi::Functional::Transformer<LHCb::RawEvent( const LHCb::RawEvent&, const LHCb::VP::Retina::GeomCache& ),
+                                            LHCb::DetDesc::usesConditions<LHCb::VP::Retina::GeomCache>> {
+
+public:
+  /// Standard constructor
+  VPRetinaClusterCreator( const std::string& name, ISvcLocator* pSvcLocator );
+
+  /// Algorithm initialization
+  StatusCode initialize() override;
+
+  /// Algorithm execution
+  LHCb::RawEvent operator()( const LHCb::RawEvent&, const LHCb::VP::Retina::GeomCache& ) const override;
+
+private:
+  /// bank version. (change this every time semantics change!)
+  static constexpr unsigned int m_bankVersion = 1;
+
+  /// make RetinaClusters from bank
+  std::vector<uint32_t> makeRetinaClusters( LHCb::span<const uint32_t> bank ) const;
+};
 
 using namespace LHCb;
 
 DECLARE_COMPONENT( VPRetinaClusterCreator )
-
-namespace {
-  using namespace Pixel;
-}
 
 namespace {
   struct SPCache {
@@ -140,91 +201,47 @@ namespace {
 // Standard constructor, initializes variables
 //=============================================================================
 VPRetinaClusterCreator::VPRetinaClusterCreator( const std::string& name, ISvcLocator* pSvcLocator )
-    : Transformer( name, pSvcLocator, KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
+    : Transformer( name, pSvcLocator,
+                   {KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
+                    KeyValue{"GeomCacheLocation", "VPRetinaClusterCreator-" + name + "-GeomCache"}},
                    KeyValue{"RetinaClusterLocation", LHCb::RawEventLocation::VeloCluster} ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode VPRetinaClusterCreator::initialize() {
-
-  StatusCode sc = Transformer::initialize();
-  if ( sc.isFailure() ) return sc;
-
-  m_vp = getDet<DeVP>( DeVPLocation::Default );
-  rebuildGeometry();
-
-  sc = updMgrSvc()->update( this );
-  if ( !sc.isSuccess() ) return Error( "Failed to update station structure." );
-
-  return StatusCode::SUCCESS;
+  return Transformer::initialize().andThen(
+      [&] { addConditionDerivation<LHCb::VP::Retina::GeomCache( const DeVP& )>( *this, DeVPLocation::Default ); } );
 }
 
 //============================================================================
 // Rebuild the geometry (in case something changes in the Velo during the run)
 //============================================================================
-StatusCode VPRetinaClusterCreator::rebuildGeometry() {
+LHCb::VP::Retina::GeomCache::GeomCache( const DeVP& det ) {
 
-  // Delete the existing modules.
-  m_modules.clear();
-  m_firstModule = 999;
-  m_lastModule  = 0;
+  m_local_x    = det.sensor( 0 ).xLocal();
+  m_x_pitch    = det.sensor( 0 ).xPitch();
+  m_pixel_size = det.sensor( 0 ).pixelSize();
 
-  int previousLeft  = -1;
-  int previousRight = -1;
-
-  m_local_x    = m_vp->sensor( 0 ).xLocal();
-  m_x_pitch    = m_vp->sensor( 0 ).xPitch();
-  m_pixel_size = m_vp->sensor( 0 ).pixelSize();
-
-  m_vp->runOnAllSensors( [this, &previousLeft, &previousRight]( const DeVPSensor& sensor ) {
+  det.runOnAllSensors( [this]( const DeVPSensor& sensor ) {
     // get the local to global transformation matrix and
     // store it in a flat float array of sixe 12.
     Gaudi::Rotation3D     ltg_rot;
     Gaudi::TranslationXYZ ltg_trans;
     sensor.getGlobalMatrixDecomposition( ltg_rot, ltg_trans );
-    auto ltg = m_ltg + sensor.sensorNumber();
-    ltg_rot.GetComponents( ltg );
-    ltg_trans.GetCoordinates( ltg + 9 );
-
-    // Get the number of the module this sensor is on.
-    const unsigned int number = sensor.module();
-    if ( number < m_modules.size() ) {
-      // Check if this module has already been setup.
-      if ( m_modules[number] ) return;
-    } else {
-      m_modules.resize( number + 1, 0 );
-    }
-
-    // Create a new module and add it to the list.
-    m_module_pool.emplace_back( number, sensor.isRight() );
-    PixelModule* module = &m_module_pool.back();
-    module->setZ( sensor.z() );
-    if ( sensor.isRight() ) {
-      module->setPrevious( previousRight );
-      previousRight = number;
-    } else {
-      module->setPrevious( previousLeft );
-      previousLeft = number;
-    }
-    m_modules[number] = module;
-    if ( m_firstModule > number ) m_firstModule = number;
-    if ( m_lastModule < number ) m_lastModule = number;
+    auto& ltg = m_ltg[sensor.sensorNumber()];
+    ltg_rot.GetComponents( ltg.data() );
+    ltg[2] = ltg_trans.X();
+    ltg[5] = ltg_trans.Y();
+    ltg[8] = ltg_trans.Z();
   } );
-  // the module pool might have been resized -- make sure
-  // all module pointers are valid.
-  for ( unsigned int i = 0; i < m_module_pool.size(); ++i ) {
-    PixelModule* module         = &m_module_pool[i];
-    m_modules[module->number()] = module;
-  }
-
-  return StatusCode::SUCCESS;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-LHCb::RawEvent VPRetinaClusterCreator::operator()( const LHCb::RawEvent& rawEvent ) const {
+LHCb::RawEvent VPRetinaClusterCreator::operator()( const LHCb::RawEvent&              rawEvent,
+                                                   const LHCb::VP::Retina::GeomCache& cache ) const {
   RawEvent result;
 
   const auto& tBanks = rawEvent.banks( LHCb::RawBank::VP );
@@ -246,35 +263,29 @@ LHCb::RawEvent VPRetinaClusterCreator::operator()( const LHCb::RawEvent& rawEven
   for ( auto iterBank : tBanks ) {
 
     const unsigned int sensor             = iterBank->sourceID();
-    const uint32_t     sensorID_in_module = sensor % VP::NSensorsPerModule;
-    const unsigned int module             = 1 + ( sensor / VP::NSensorsPerModule );
+    const uint32_t     sensorID_in_module = sensor % ::VP::NSensorsPerModule;
+    const unsigned int module             = 1 + ( sensor / ::VP::NSensorsPerModule );
 
-    const float* ltg = m_ltg + 16 * sensor;
+    const auto& ltg = cache.m_ltg[sensor];
 
-    const uint32_t* bank = iterBank->data();
-
-    auto retinaClusters = makeRetinaClusters( bank );
-
-    for ( auto iterCluster : retinaClusters ) {
+    for ( auto iterCluster : makeRetinaClusters( iterBank->range<uint32_t>() ) ) {
       const uint32_t cx = iterCluster >> 14 & 0x3FF;
       const float    fx = ( ( iterCluster >> 11 ) & 0x7 ) / 8.;
       const uint32_t cy = ( iterCluster >> 3 ) & 0xFF;
       const float    fy = ( iterCluster & 0x7 ) / 8.;
 
-      const float local_x = m_local_x[cx] + fx * m_x_pitch[cx];
-      const float local_y = ( cy + 0.5 + fy ) * m_pixel_size;
+      const float local_x = cache.m_local_x[cx] + fx * cache.m_x_pitch[cx];
+      const float local_y = ( cy + 0.5 + fy ) * cache.m_pixel_size;
 
-      // gx
-      const float gx = ( ltg[0] * local_x + ltg[1] * local_y + ltg[9] );
-      // gy
-      const float gy = ( ltg[3] * local_x + ltg[4] * local_y + ltg[10] );
+      const float gx = ltg[0] * local_x + ltg[1] * local_y + ltg[2];
+      const float gy = ltg[3] * local_x + ltg[4] * local_y + ltg[5];
       // phi
-      float tan = gy / gx;
+      const float tan = gy / gx;
 
-      toSortClusters.push_back( LHCb::VPRetinaCluster( iterCluster + ( sensorID_in_module << 24 ), gx, gy, tan ) );
+      toSortClusters.emplace_back( iterCluster + ( sensorID_in_module << 24 ), gx, gy, tan );
     }
 
-    if ( sensorID_in_module == VP::NSensorsPerModule - 1 ) {
+    if ( sensorID_in_module == ::VP::NSensorsPerModule - 1 ) {
 
       const bool odd = ( module - 1 ) % 2 == 1;
 
@@ -293,7 +304,8 @@ LHCb::RawEvent VPRetinaClusterCreator::operator()( const LHCb::RawEvent& rawEven
       std::vector<uint32_t> sortedClusters;
       sortedClusters.reserve( toSortClusters.size() + 1 );
       sortedClusters.push_back( toSortClusters.size() );
-      for ( auto iterCluster : toSortClusters ) sortedClusters.push_back( iterCluster.word() );
+      std::transform( toSortClusters.begin(), toSortClusters.end(), std::back_inserter( sortedClusters ),
+                      []( const auto& c ) { return c.word(); } );
 
       result.addBank( module, LHCb::RawBank::VPRetinaCluster, m_bankVersion, sortedClusters );
 
@@ -312,16 +324,16 @@ LHCb::RawEvent VPRetinaClusterCreator::operator()( const LHCb::RawEvent& rawEven
 //=============================================================================
 // make RetinaClusters from bank
 //=============================================================================
-std::vector<uint32_t> VPRetinaClusterCreator::makeRetinaClusters( const uint32_t* bank ) const {
-  const uint32_t nsp = *bank++;
+std::vector<uint32_t> VPRetinaClusterCreator::makeRetinaClusters( LHCb::span<const uint32_t> bank ) const {
+
+  assert( bank.size() == 1 + bank[0] );
 
   std::vector<VPRetinaMatrix> RetinaMatrixVector;
   RetinaMatrixVector.reserve( 20 );
   std::vector<uint32_t> RetinaCluster;
 
   // Read super pixel
-  for ( unsigned int i = 0; i < nsp; ++i ) {
-    const uint32_t sp_word = *bank++;
+  for ( const uint32_t sp_word : bank.subspan( 1 ) ) {
 
     uint8_t sp = sp_word & 0xFFU;
 
@@ -369,7 +381,7 @@ std::vector<uint32_t> VPRetinaClusterCreator::makeRetinaClusters( const uint32_t
     auto iterRetina = std::find_if( RetinaMatrixVector.begin(), RetinaMatrixVector.end(),
                                     [&]( const VPRetinaMatrix& m ) { return m.IsInRetina( sp_row, sp_col ); } );
     if ( iterRetina != RetinaMatrixVector.end() ) {
-      ( *iterRetina ).AddSP( sp_row, sp_col, sp );
+      iterRetina->AddSP( sp_row, sp_col, sp );
     } else {
       RetinaMatrixVector.emplace_back( sp_row, sp_col, sp );
     }
