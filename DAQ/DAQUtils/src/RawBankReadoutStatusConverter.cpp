@@ -8,18 +8,37 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
 #include "Event/ProcStatus.h"
 #include "Event/RawBankReadoutStatus.h"
-// local
-#include "RawBankReadoutStatusConverter.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBankReadoutStatusConverter
 //
 // 2012-03-30 : Olivier Deschamps
 //-----------------------------------------------------------------------------
+
+/** @class RawBankReadoutStatusConverter RawBankReadoutStatusConverter.h
+ *
+ *
+ *  @author Olivier Deschamps
+ *  @date   2012-03-30
+ */
+class RawBankReadoutStatusConverter : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  RawBankReadoutStatusConverter( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
+  std::string                               reason( int status, std::string typeName );
+  Gaudi::Property<std::vector<std::string>> m_types{this, "BankTypes", {}};
+  Gaudi::Property<std::vector<std::string>> m_flags{this, "AbortStatus", {}};
+  Gaudi::Property<std::string>              m_system{this, "System", "UNSET"};
+  unsigned int                              m_mask{0x0};
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( RawBankReadoutStatusConverter )
@@ -28,15 +47,7 @@ DECLARE_COMPONENT( RawBankReadoutStatusConverter )
 // Standard constructor, initializes variables
 //=============================================================================
 RawBankReadoutStatusConverter::RawBankReadoutStatusConverter( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ), m_mask( 0x0 ) {
-  declareProperty( "BankTypes", m_types );
-  declareProperty( "AbortStatus", m_flags );
-  declareProperty( "System", m_system = "UNSET" );
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-RawBankReadoutStatusConverter::~RawBankReadoutStatusConverter() {}
+    : GaudiAlgorithm( name, pSvcLocator ) {}
 
 //=============================================================================
 // Initialization
@@ -49,11 +60,11 @@ StatusCode RawBankReadoutStatusConverter::initialize() {
 
   // convert aborting status into mask
   m_mask = 0x0;
-  for ( std::vector<std::string>::iterator i = m_flags.begin(); m_flags.end() != i; ++i ) {
+  for ( auto i = m_flags.begin(); m_flags.end() != i; ++i ) {
     int word = 1;
     while ( word <= LHCb::RawBankReadoutStatus::Status::Unknown ) {
       LHCb::RawBankReadoutStatus::Status stat = (LHCb::RawBankReadoutStatus::Status)word;
-      std::ostringstream                 label( "" );
+      std::ostringstream                 label;
       label << stat;
       if ( label.str() == *i ) m_mask |= word;
       word *= 2;
@@ -78,7 +89,7 @@ StatusCode RawBankReadoutStatusConverter::execute() {
   // Access RawBankReadoutStatus
   LHCb::RawBankReadoutStatuss* rStats =
       getIfExists<LHCb::RawBankReadoutStatuss>( LHCb::RawBankReadoutStatusLocation::Default );
-  if ( rStats == NULL || rStats->empty() ) return StatusCode::SUCCESS;
+  if ( !rStats || rStats->empty() ) return StatusCode::SUCCESS;
 
   // Access procStatus
   LHCb::ProcStatus* pStat = getOrCreate<LHCb::ProcStatus, LHCb::ProcStatus>( LHCb::ProcStatusLocation::Default );
@@ -107,7 +118,7 @@ StatusCode RawBankReadoutStatusConverter::execute() {
 }
 
 std::string RawBankReadoutStatusConverter::reason( int status, std::string typeName ) {
-  std::ostringstream tag( "" );
+  std::ostringstream tag;
   tag << "Bank = " << typeName << " - ReadoutStatus = " << status << " : | ";
   unsigned int word = 1;
   while ( word <= LHCb::RawBankReadoutStatus::Status::Unknown ) {
@@ -116,16 +127,6 @@ std::string RawBankReadoutStatusConverter::reason( int status, std::string typeN
     word *= 2;
   }
   return tag.str();
-}
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode RawBankReadoutStatusConverter::finalize() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
-
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

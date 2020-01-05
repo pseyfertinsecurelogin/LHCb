@@ -8,24 +8,44 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IRegistry.h"
-
-// event model
 #include "Event/FileId.h"
 #include "Event/RawEvent.h"
-
-// local
-#include "FileIdBankWriter.h"
+#include "Gaudi/Accumulators.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FileIdBankWriter
 //
 // 2009-10-01 : Jaap Panman
 //-----------------------------------------------------------------------------
+
+/** @class FileIdBankWriter FileIdBankWriter.h
+ *
+ *
+ *  @author Jaap Panman
+ *  @date   2009-10-01
+ */
+class FileIdBankWriter : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  FileIdBankWriter( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+
+private:
+  Gaudi::Property<std::string> m_rawEventLocation{
+      this, "RawEventLocation", LHCb::RawEventLocation::Default};             // Location where we get the RawEvent
+  std::string                    m_current_fname;                             // current file ID string
+  Gaudi::Accumulators::Counter<> m_count_files{this, "number of files seen"}; // number of files read
+
+  std::vector<unsigned int> m_bank;
+
+  LHCb::FileId m_fileId;
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( FileIdBankWriter )
@@ -34,26 +54,17 @@ DECLARE_COMPONENT( FileIdBankWriter )
 // Standard constructor, initializes variables
 //=============================================================================
 FileIdBankWriter::FileIdBankWriter( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ), m_count_files( 0 ) {
-  declareProperty( "RawEventLocation", m_rawEventLocation = LHCb::RawEventLocation::Default );
-}
+    : GaudiAlgorithm( name, pSvcLocator ) {}
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode FileIdBankWriter::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  // file counting
-  m_current_fname = "";
-  m_count_files   = 0;
-
-  // for output
-  m_bank.reserve( 10 );
-
-  return StatusCode::SUCCESS;
+  return GaudiAlgorithm::initialize().andThen( [&] {
+    // file counting
+    m_current_fname.clear();
+    m_count_files.reset();
+    m_bank.reserve( 10 ); // for output
+  } );
 }
 
 //=============================================================================
@@ -66,7 +77,7 @@ StatusCode FileIdBankWriter::execute() {
   // registry from raw data - only correct if file catalogue used
   std::string     event_fname;
   LHCb::RawEvent* event = getIfExists<LHCb::RawEvent>( m_rawEventLocation );
-  if ( event == NULL ) {
+  if ( !event ) {
     return Warning( "RawBank cannot be loaded", StatusCode::SUCCESS );
   } else {
     IOpaqueAddress* eAddr = event->registry()->address();
@@ -97,10 +108,7 @@ StatusCode FileIdBankWriter::execute() {
 //  Finalize
 //=============================================================================
 StatusCode FileIdBankWriter::finalize() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
-
-  if ( msgLevel( MSG::INFO ) ) { info() << "number of files seen: " << m_count_files << endmsg; }
+  if ( msgLevel( MSG::INFO ) ) { info() << "number of files seen: " << m_count_files.value() << endmsg; }
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 

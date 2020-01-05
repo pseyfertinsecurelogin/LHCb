@@ -8,17 +8,50 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "RawEventSimpleCombiner.h"
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawEventSimpleCombiner
 //
 // 2009-06-22 : Tomasz Skwarnicki
 //-----------------------------------------------------------------------------
+
+/** @class RawEventSimpleCombiner RawEventSimpleCombiner.h
+ *  Combines disparate raw events into one new location
+ *  Based on RawEventSelectiveCopy from Tomasz
+ *  Use if the split locations hold no raw event bank duplicates
+ *
+ *  @author Rob Lambert
+ *  @date   2013-04-03
+ *
+ *  2018-07-06 Added functionality that allows to add raw events to an existing one @rcenci
+ */
+class RawEventSimpleCombiner : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  RawEventSimpleCombiner( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
+  Gaudi::Property<std::vector<std::string>> m_banksToCopy{this, "RawBanksToCopy", {"ALL"}}; // which banks to recombine,
+                                                                                            // default ALL
+  Gaudi::Property<std::vector<std::string>> m_inputLocations{this, "InputRawEventLocations", {}}; // get the banks from
+                                                                                                  // where
+  Gaudi::Property<std::string> m_outputLocation{
+      this, "OutputRawEventLocation", LHCb::RawEventLocation::Default}; // where to put them, DEFAULT /Event/RawEvent
+
+  std::vector<LHCb::RawBank::BankType> m_bankTypes;
+
+  Gaudi::Property<bool> m_enableIncrementalMode{
+      this, "EnableIncrementalMode", false,
+      "Enable incremental mode, where raw events are added to output raw event (already created)"};
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( RawEventSimpleCombiner )
@@ -28,16 +61,7 @@ using namespace LHCb;
 // Standard constructor, initializes variables
 //=============================================================================
 RawEventSimpleCombiner::RawEventSimpleCombiner( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ), m_banksToCopy( 1, std::string( "ALL" ) ), m_inputLocations( 0 ) {
-
-  declareProperty( "RawBanksToCopy", m_banksToCopy );
-  declareProperty( "InputRawEventLocations", m_inputLocations );
-  declareProperty( "OutputRawEventLocation", m_outputLocation = RawEventLocation::Default );
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-RawEventSimpleCombiner::~RawEventSimpleCombiner() {}
+    : GaudiAlgorithm( name, pSvcLocator ) {}
 
 StatusCode RawEventSimpleCombiner::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
@@ -60,24 +84,21 @@ StatusCode RawEventSimpleCombiner::initialize() {
   }
 
   // selective banks
-  for ( std::vector<std::string>::const_iterator bankName = m_banksToCopy.begin(); bankName != m_banksToCopy.end();
-        ++bankName ) {
+  for ( const auto& bankName : m_banksToCopy ) {
     bool found = false;
     for ( int i = 0; i != (int)RawBank::LastType; i++ ) {
       const std::string name = RawBank::typeName( (RawBank::BankType)i );
-      if ( name == *bankName ) {
+      if ( name == bankName ) {
         found = true;
         m_bankTypes.push_back( (RawBank::BankType)i );
         break;
       }
     }
-    if ( !found ) warning() << "Requested bank '" << *bankName << "' is not a valid name" << endmsg;
+    if ( !found ) warning() << "Requested bank '" << bankName << "' is not a valid name" << endmsg;
   }
   if ( msgLevel( MSG::VERBOSE ) ) {
     verbose() << " RawBank types to be copied= ";
-    for ( std::vector<RawBank::BankType>::const_iterator ib = m_bankTypes.begin(); ib != m_bankTypes.end(); ++ib ) {
-      verbose() << RawBank::typeName( *ib ) << " ";
-    }
+    for ( const auto& ib : m_bankTypes ) verbose() << RawBank::typeName( ib ) << " ";
     verbose() << endmsg;
   }
 
@@ -94,7 +115,7 @@ StatusCode RawEventSimpleCombiner::execute() {
   std::vector<const RawEvent*> foundRawEvents;
 
   // get input RawEvents
-  for ( std::vector<std::string>::const_iterator il = m_inputLocations.begin(); il != m_inputLocations.end(); il++ ) {
+  for ( auto il = m_inputLocations.begin(); il != m_inputLocations.end(); il++ ) {
     const RawEvent* rawEvent = getIfExists<RawEvent>( *il ); // try with RootInTes
 
     if ( !rawEvent ) // try without RootInTes

@@ -8,10 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "ODINTimeFilter.h"
+#include "Event/ODIN.h"
+#include "GaudiAlg/FilterPredicate.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : ODINTimeFilter
@@ -19,122 +17,132 @@
 // 2009-10-07 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
+/** @class ODINTimeFilter ODINTimeFilter.h
+ *
+ *
+ *  @author Olivier Deschamps
+ *  @date   2009-10-07
+ */
+class ODINTimeFilter : public Gaudi::Functional::FilterPredicate<bool( const LHCb::ODIN& )> {
+public:
+  /// Standard constructor
+  ODINTimeFilter( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  bool       operator()( const LHCb::ODIN& ) const override;
+  StatusCode finalize() override; ///< Algorithm finalization
+
+private:
+  void criteriaPrintOut();
+
+  mutable Gaudi::Accumulators::Counter<> m_eventCount{this, "Event"};
+  mutable Gaudi::Accumulators::Counter<> m_filteredEventCount{this, "Filtered Events"};
+
+  // event ID intervall selector
+  Gaudi::Property<bool>                      m_evt{this, "eventSelector", false};
+  Gaudi::Property<std::pair<double, double>> m_eRange{this, "eRange", {-1, -1}};
+  // time intervall selector
+  Gaudi::Property<bool>                m_time{this, "timeSelector", true};
+  Gaudi::Property<std::pair<int, int>> m_yRange{this, "yRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_mRange{this, "mRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_dRange{this, "dRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_hRange{this, "hRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_mnRange{this, "mnRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_sRange{this, "sRange", {-1, -1}};
+  Gaudi::Property<std::pair<int, int>> m_nsRange{this, "nsRange", {-1, -1}};
+  // BCID interval Range
+  Gaudi::Property<bool>                m_bx{this, "BCIDSelector", false};
+  Gaudi::Property<std::pair<int, int>> m_bRange{this, "bRange", {-1, -1}};
+
+  Gaudi::Property<bool> m_loc{this, "localTime", true};
+  Gaudi::Property<bool> m_print{this, "eventTime", false};
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( ODINTimeFilter )
+
+namespace {
+  int val( int v1, int v2, int v3 = 0 ) {
+    if ( v1 < 0 ) return v2;
+    return ( v1 + v3 );
+  }
+  bool def( std::pair<double, double> range ) { return ( range.first >= 0 && range.second >= 0 ); }
+  bool def( std::pair<int, int> range ) { return ( range.first >= 0 && range.second >= 0 ); }
+  bool check( unsigned long long val, std::pair<double, double> range ) {
+    if ( !def( range ) ) return true;
+    return val >= (unsigned long long)range.first && val <= (unsigned long long)range.second;
+  }
+
+  bool check( int val, std::pair<int, int> range ) {
+    if ( !def( range ) ) return true;
+    return val >= range.first && val <= range.second;
+  }
+} // namespace
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 ODINTimeFilter::ODINTimeFilter( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  // time intervall selector
-  declareProperty( "timeSelector", m_time = true );
-  declareProperty( "yRange", m_yRange );
-  declareProperty( "mRange", m_mRange );
-  declareProperty( "dRange", m_dRange );
-  declareProperty( "hRange", m_hRange );
-  declareProperty( "mnRange", m_mnRange );
-  declareProperty( "sRange", m_sRange );
-  declareProperty( "nsRange", m_nsRange );
-  // event ID intervall selector
-  declareProperty( "eventSelector", m_evt = false );
-  declareProperty( "eRange", m_eRange );
-  // BCID interval Range
-  declareProperty( "BCIDSelector", m_bx = false );
-  declareProperty( "bRange", m_bRange );
-  //
-  declareProperty( "localTime", m_loc = true );
-  declareProperty( "eventTime", m_print = false );
-
-  m_yRange  = {-1, -1};
-  m_mRange  = {-1, -1};
-  m_dRange  = {-1, -1};
-  m_hRange  = {-1, -1};
-  m_mnRange = {-1, -1};
-  m_sRange  = {-1, -1};
-  m_nsRange = {-1, -1};
-  m_eRange  = {-1, -1};
-  m_bRange  = {-1, -1};
-}
+    : FilterPredicate{name, pSvcLocator, {"ODINLocation", LHCb::ODINLocation::Default}} {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode ODINTimeFilter::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  criteriaPrintOut();
-  return StatusCode::SUCCESS;
+  return FilterPredicate::initialize().andThen( [&] { criteriaPrintOut(); } );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode ODINTimeFilter::execute() {
+bool ODINTimeFilter::operator()( LHCb::ODIN const& odin ) const {
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
-  // get ODIN
-  LHCb::ODIN* odin = getIfExists<LHCb::ODIN>( LHCb::ODINLocation::Default );
-  if ( odin == NULL ) return Error( "ODIN cannot be loaded" );
-
   // get time & eventID
-  Gaudi::Time        time  = odin->eventTime();
-  unsigned long long event = odin->eventNumber();
-  int                run   = odin->runNumber();
-  int                bx    = odin->bunchId();
-
-  setFilterPassed( true );
+  Gaudi::Time        time  = odin.eventTime();
+  unsigned long long event = odin.eventNumber();
+  int                run   = odin.runNumber();
+  int                bx    = odin.bunchId();
 
   // timing check
   // WARNING : month from 1->12 (Gaudi::Time uses 0->11)
 
-  Gaudi::Time minTime =
-      Gaudi::Time( val( m_yRange.first, time.year( m_loc ) ), val( m_mRange.first, time.month( m_loc ), -1 ),
-                   val( m_dRange.first, time.day( m_loc ) ), val( m_hRange.first, time.hour( m_loc ) ),
-                   val( m_mnRange.first, time.minute( m_loc ) ), val( m_sRange.first, time.second( m_loc ) ),
-                   val( m_nsRange.first, time.nsecond() ), m_loc );
-
-  Gaudi::Time maxTime =
-      Gaudi::Time( val( m_yRange.second, time.year( m_loc ) ), val( m_mRange.second, time.month( m_loc ), -1 ),
-                   val( m_dRange.second, time.day( m_loc ) ), val( m_hRange.second, time.hour( m_loc ) ),
-                   val( m_mnRange.second, time.minute( m_loc ) ), val( m_sRange.second, time.second( m_loc ) ),
-                   val( m_nsRange.second, time.nsecond() ), m_loc );
-
   // timing selection
+  bool pass = true;
   ++m_eventCount;
-  if ( m_time ) {
+  if ( m_time.value() ) {
     if ( def( m_yRange ) || def( m_mRange ) || def( m_dRange ) || def( m_hRange ) || def( m_mnRange ) ||
-         def( m_sRange ) || def( m_sRange ) )
-      if ( minTime > time || maxTime < time ) setFilterPassed( false );
-  }
-  if ( m_evt ) {
-    if ( !check( event, m_eRange ) ) setFilterPassed( false );
-  }
-  if ( m_bx ) {
-    if ( !check( bx, m_bRange ) ) setFilterPassed( false );
-  }
+         def( m_sRange ) || def( m_sRange ) ) {
 
-  if ( filterPassed() ) ++m_filteredEventCount;
+      Gaudi::Time minTime = Gaudi::Time(
+          val( m_yRange.value().first, time.year( m_loc ) ), val( m_mRange.value().first, time.month( m_loc ), -1 ),
+          val( m_dRange.value().first, time.day( m_loc ) ), val( m_hRange.value().first, time.hour( m_loc ) ),
+          val( m_mnRange.value().first, time.minute( m_loc ) ), val( m_sRange.value().first, time.second( m_loc ) ),
+          val( m_nsRange.value().first, time.nsecond() ), m_loc );
 
-  if ( m_print )
+      Gaudi::Time maxTime = Gaudi::Time(
+          val( m_yRange.value().second, time.year( m_loc ) ), val( m_mRange.value().second, time.month( m_loc ), -1 ),
+          val( m_dRange.value().second, time.day( m_loc ) ), val( m_hRange.value().second, time.hour( m_loc ) ),
+          val( m_mnRange.value().second, time.minute( m_loc ) ), val( m_sRange.value().second, time.second( m_loc ) ),
+          val( m_nsRange.value().second, time.nsecond() ), m_loc );
+
+      if ( minTime > time || maxTime < time ) pass = false;
+    }
+  }
+  if ( m_evt.value() && !check( event, m_eRange ) ) pass = false;
+  if ( m_bx.value() && !check( bx, m_bRange ) ) pass = false;
+
+  if ( pass ) ++m_filteredEventCount;
+
+  if ( m_print.value() )
     info() << "[Run : " << run << ", EventId  : " << event << ", BCID : " << bx << "]"
-           << " @ EventTime : " << time.year( m_loc ) << "/" << time.month( m_loc ) + 1 << "/" << time.day( m_loc )
-           << " " << time.hour( m_loc ) << ":" << time.minute( m_loc ) << ":" << time.second( m_loc )
-           << "::" << time.nsecond() << " (accepted :  " << filterPassed() << ")" << endmsg;
-  return StatusCode::SUCCESS;
+           << " @ EventTime : " << time.year( m_loc.value() ) << "/" << time.month( m_loc.value() ) + 1 << "/"
+           << time.day( m_loc.value() ) << " " << time.hour( m_loc.value() ) << ":" << time.minute( m_loc.value() )
+           << ":" << time.second( m_loc.value() ) << "::" << time.nsecond() << " (accepted :  " << pass << ")"
+           << endmsg;
+  return pass;
 }
-
-int ODINTimeFilter::val( int v1, int v2, int v3 ) {
-  if ( v1 < 0 ) return v2;
-  return ( v1 + v3 );
-}
-
-bool ODINTimeFilter::def( std::pair<double, double> range ) { return ( range.first >= 0 && range.second >= 0 ); }
-bool ODINTimeFilter::def( std::pair<int, int> range ) { return ( range.first >= 0 && range.second >= 0 ); }
 
 void ODINTimeFilter::criteriaPrintOut() {
   bool ok1 = true;
@@ -154,38 +162,33 @@ void ODINTimeFilter::criteriaPrintOut() {
     if ( !ok2 ) info() << "No time intervall defined" << endmsg;
     if ( !ok3 ) info() << "No BCID intervall defined" << endmsg;
     info() << "Filter event in : " << endmsg;
-    if ( def( m_yRange ) ) info() << "year    Range [" << m_yRange.first << "," << m_yRange.second << "]" << endmsg;
-    if ( def( m_mRange ) ) info() << "month   Range [" << m_mRange.first << "," << m_mRange.second << "]" << endmsg;
-    if ( def( m_dRange ) ) info() << "day     Range [" << m_dRange.first << "," << m_dRange.second << "]" << endmsg;
-    if ( def( m_hRange ) ) info() << "hour    Range [" << m_hRange.first << "," << m_hRange.second << "]" << endmsg;
-    if ( def( m_mnRange ) ) info() << "minute  Range [" << m_mnRange.first << "," << m_mnRange.second << "]" << endmsg;
-    if ( def( m_sRange ) ) info() << "second  Range [" << m_sRange.first << "," << m_sRange.second << "]" << endmsg;
-    if ( def( m_sRange ) ) info() << "nsecond  Range [" << m_nsRange.first << "," << m_nsRange.second << "]" << endmsg;
-    if ( def( m_eRange ) ) info() << "eventID    Range [" << m_eRange.first << "," << m_eRange.second << "]" << endmsg;
-    if ( def( m_bRange ) ) info() << "BCID    Range [" << m_bRange.first << "," << m_bRange.second << "]" << endmsg;
+    if ( def( m_yRange ) )
+      info() << "year    Range [" << m_yRange.value().first << "," << m_yRange.value().second << "]" << endmsg;
+    if ( def( m_mRange ) )
+      info() << "month   Range [" << m_mRange.value().first << "," << m_mRange.value().second << "]" << endmsg;
+    if ( def( m_dRange ) )
+      info() << "day     Range [" << m_dRange.value().first << "," << m_dRange.value().second << "]" << endmsg;
+    if ( def( m_hRange ) )
+      info() << "hour    Range [" << m_hRange.value().first << "," << m_hRange.value().second << "]" << endmsg;
+    if ( def( m_mnRange ) )
+      info() << "minute  Range [" << m_mnRange.value().first << "," << m_mnRange.value().second << "]" << endmsg;
+    if ( def( m_sRange ) )
+      info() << "second  Range [" << m_sRange.value().first << "," << m_sRange.value().second << "]" << endmsg;
+    if ( def( m_sRange ) )
+      info() << "nsecond  Range [" << m_nsRange.value().first << "," << m_nsRange.value().second << "]" << endmsg;
+    if ( def( m_eRange ) )
+      info() << "eventID    Range [" << m_eRange.value().first << "," << m_eRange.value().second << "]" << endmsg;
+    if ( def( m_bRange ) )
+      info() << "BCID    Range [" << m_bRange.value().first << "," << m_bRange.value().second << "]" << endmsg;
   }
-}
-
-bool ODINTimeFilter::check( unsigned long long val, std::pair<double, double> range ) {
-  if ( !def( range ) ) return true;
-  if ( val >= (unsigned long long)range.first && val <= (unsigned long long)range.second ) return true;
-  return false;
-}
-
-bool ODINTimeFilter::check( int val, std::pair<int, int> range ) {
-  if ( !def( range ) ) return true;
-  if ( val >= range.first && val <= range.second ) return true;
-  return false;
 }
 
 //=============================================================================
 //  Finalize
 //=============================================================================
 StatusCode ODINTimeFilter::finalize() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
   criteriaPrintOut();
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return FilterPredicate::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

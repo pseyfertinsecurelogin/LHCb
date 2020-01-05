@@ -8,65 +8,48 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-#include <numeric>
-// from Gaudi
-#include "GaudiKernel/IEventTimeDecoder.h"
-
-// local
-#include "Event/ODIN.h"
 #include "Event/RawEvent.h"
+#include "GaudiAlg/Producer.h"
+#include <numeric>
 
-#include "DummyRawEventCreator.h"
-
+using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : DummyRawEventCreator
 //
 // 2005-10-13 : Markus Frank
 //-----------------------------------------------------------------------------
 
-// Declaration of the Algorithm Factory
-DECLARE_COMPONENT( DAQEventTests::DummyRawEventCreator )
+namespace DAQEventTests {
+  /** @class DummyRawEventCreator DummyRawEventCreator.h
+   *  Creates and fills dummy RawEvent
+   *
+   *  @author Markus Frank
+   *  @date   2005-10-13
+   */
+  struct DummyRawEventCreator : Gaudi::Functional::Producer<RawEvent()> {
 
-#ifndef ODIN_VERSION
-#  define ODIN_VERSION 3
-#endif
+    DummyRawEventCreator( const std::string& name, ISvcLocator* pSvcLocator )
+        : Producer{name, pSvcLocator, {"RawEventLocation", RawEventLocation::Default}} {}
 
-using namespace LHCb;
-using namespace DAQEventTests;
+    RawEvent operator()() const override {
+      RawEvent raw;
+      for ( int i = 0; i < 16; ++i ) {
+        int      len  = ( i + 1 ) * 64;
+        RawBank* bank = raw.createBank( i, RawBank::DAQ, 1, len, 0 );
+        std::iota( bank->begin<int>(), bank->end<int>(), 0 );
+        raw.adoptBank( bank, true );
+      }
+      for ( int i = 0; i < 9; ++i ) {
+        int      len  = ( i + 1 ) * 32;
+        RawBank* bank = raw.createBank( i, RawBank::PrsE, 1, len, 0 );
+        std::iota( bank->begin<int>(), bank->end<int>(), 0 );
+        raw.adoptBank( bank, true );
+      }
+      return raw;
+    }
+  };
 
-StatusCode DummyRawEventCreator::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) return sc;
+  // Declaration of the Algorithm Factory
+  DECLARE_COMPONENT( DummyRawEventCreator )
 
-  m_eventTimeDecoder = tool<IEventTimeDecoder>( "OdinTimeDecoder", this, true );
-
-  return sc;
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode DummyRawEventCreator::execute() {
-
-  debug() << "==> Execute" << endmsg;
-
-  RawEvent* raw = new RawEvent();
-  for ( int i = 0; i < 16; ++i ) {
-    int      len  = ( i + 1 ) * 64;
-    RawBank* bank = raw->createBank( i, RawBank::DAQ, 1, len, 0 );
-    std::iota( bank->begin<int>(), bank->end<int>(), 0 );
-    raw->adoptBank( bank, true );
-  }
-
-  for ( int i = 0; i < 9; ++i ) {
-    int      len  = ( i + 1 ) * 32;
-    RawBank* bank = raw->createBank( i, RawBank::PrsE, 1, len, 0 );
-    std::iota( bank->begin<int>(), bank->end<int>(), 0 );
-    raw->adoptBank( bank, true );
-  }
-
-  put( raw, RawEventLocation::Default );
-
-  return StatusCode::SUCCESS;
-}
+} // namespace DAQEventTests
