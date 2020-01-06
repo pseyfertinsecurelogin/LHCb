@@ -22,7 +22,8 @@ gaudi_depends_on_subdirs(Det/DDDB
 
 find_package(Boost)
 find_package(ROOT)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+find_package(VectorClass)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
 
 gaudi_add_module(Magnet
                  src/*.cpp
