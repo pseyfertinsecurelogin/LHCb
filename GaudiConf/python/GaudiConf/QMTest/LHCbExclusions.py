@@ -64,6 +64,8 @@ preprocessor = (
         "INFO  resolving alias TCK/0x",
         "SUCCESS Number of counters : ",
         "INFO Number of counters : ",
+        "SUCCESS 1D histograms in directory",
+        "SUCCESS 1D profile histograms in directory",
         "OMP: Warning #96: Cannot form a team with",
         "OMP: Hint Consider unsetting",
     ],
