@@ -8,9 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import os
-from GaudiTesting.BaseTest import (normalizeExamples, RegexpReplacer,
-                                   LineSkipper, SortGroupOfLines, BlockSkipper)
+from GaudiTesting.BaseTest import (normalizeExamples, normalizeEOL,
+                                   RegexpReplacer, LineSkipper,
+                                   SortGroupOfLines, BlockSkipper)
 
 gitCondDBFixes = (RegexpReplacer(
     when='Detector description database:', orig='conddb:/', repl='git:/') +
@@ -20,7 +20,7 @@ gitCondDBFixes = (RegexpReplacer(
                   ]))
 
 preprocessor = (
-    normalizeExamples +
+    normalizeExamples + normalizeEOL +  # workaround for gaudi/Gaudi#108
     RegexpReplacer(  # normalize full path to DBASE or PARAM
         orig=r'/[^ :]+/(DBASE|PARAM)/',
         repl=r'\1/') +
