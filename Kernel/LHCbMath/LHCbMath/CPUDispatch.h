@@ -20,44 +20,6 @@
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/System.h"
-
-// Define flags for each SIMD level
-#if defined( __AVX512BW__ ) || defined( __AVX512DQ__ )
-#  define AVX512BWDQ_ENABLED true
-#else
-#  define AVX512BWDQ_ENABLED false
-#endif
-#if defined( __AVX512VL__ )
-#  define AVX512VL_ENABLED true
-#else
-#  define AVX512VL_ENABLED false
-#endif
-#if defined( __AVX512F__ )
-#  define AVX512F_ENABLED true
-#else
-#  define AVX512F_ENABLED false
-#endif
-#if defined( __AVX2__ )
-#  define AVX2_ENABLED true
-#else
-#  define AVX2_ENABLED false
-#endif
-#if defined( __AVX__ )
-#  define AVX_ENABLED true
-#else
-#  define AVX_ENABLED false
-#endif
-#if defined( __SSE4_2__ )
-#  define SSE4_2_ENABLED true
-#else
-#  define SSE4_2_ENABLED false
-#endif
-#if defined( __SSE3__ )
-#  define SSE3_ENABLED true
-#else
-#  define SSE3_ENABLED false
-#endif
-
 namespace LHCb {
 
   /// Namespace for CPU dispatch helper methods
@@ -75,6 +37,50 @@ namespace LHCb {
       AVX512BWDQ = 11,
       UNKNOWN    = 999999
     };
+
+    // Define flags for each SIMD level
+    constexpr bool AVX512BWDQ_ENABLED =
+#if defined( __AVX512BW__ ) || defined( __AVX512DQ__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX512VL_ENABLED =
+#if defined( __AVX512VL__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX512F_ENABLED =
+#if defined( __AVX512F__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX2_ENABLED =
+#if defined( __AVX2__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX_ENABLED =
+#if defined( __AVX__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool SSE4_2_ENABLED =
+#if defined( __SSE4_2__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool SSE3_ENABLED =
+#if defined( __SSE3__ )
+        true;
+#else
+        false;
+#endif
 
     namespace {
       // Define the SIMD allowed, based on compilation level and runtime flags
@@ -145,11 +151,3 @@ namespace LHCb {
 
   } // namespace CPU
 } // namespace LHCb
-
-#undef AVX512BWDQ_ENABLED
-#undef AVX512VL_ENABLED
-#undef AVX512F_ENABLED
-#undef AVX2_ENABLED
-#undef AVX_ENABLED
-#undef SSE4_2_ENABLED
-#undef SSE3_ENABLED
