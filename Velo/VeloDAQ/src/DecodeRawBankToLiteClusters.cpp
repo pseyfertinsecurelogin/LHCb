@@ -54,8 +54,8 @@ int VeloDAQ::decodeRawBankToLiteClusters( const SiDAQ::buffer_word* bank, const 
   // decode the clusterpositions, create lite clusters and
   // append them to the container
   for ( auto cpi = decoder.posBegin(); cpi != decoder.posEnd(); ++cpi ) {
-    clusters.emplace_back( cpi->fracStripBits(), cpi->pseudoSizeBits(), cpi->hasHighThreshold(),
-                           LHCb::VeloChannelID( sensorNumber, cpi->channelID() ) );
+    clusters.emplace_back( ( *cpi ).fracStripBits(), ( *cpi ).pseudoSizeBits(), ( *cpi ).hasHighThreshold(),
+                           LHCb::VeloChannelID( sensorNumber, ( *cpi ).channelID() ) );
   }
   return decoder.nClusters();
 }
