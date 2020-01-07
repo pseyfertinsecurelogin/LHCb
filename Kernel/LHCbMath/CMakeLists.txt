@@ -49,14 +49,8 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB LIBSRCS src/*.cpp)
-if(NOT ${BINARY_TAG_ARCH} IN_LIST BTU_KNOWN_x86_ARCHS)
-  list(REMOVE_ITEM LIBSRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_AVX2.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/Similarity_SSE3.cpp)
-endif()
 gaudi_add_library(LHCbMathLib
-                  ${LIBSRCS}
+                  src/*.cpp
                   PUBLIC_HEADERS LHCbMath
                   INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiGSLLib GaudiKernel)
@@ -104,10 +98,6 @@ endif()
 # suppress AVX512 warnings from vectorclass
 # to be removed when vectorclass updated (currently 1.30) and fixes it.
 set(AVX512_BUILD_FLAGS " -Wno-strict-aliasing ${AVX512_BUILD_FLAGS}" )
-
-set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
-set_property(SOURCE src/Similarity_AVX.cpp  APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
-set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPow
@@ -161,14 +151,6 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestBloomFilter
                        tests/TestBloomFilter.cpp
                        LINK_LIBRARIES LHCbMathLib)
-  if(${BINARY_TAG_ARCH} IN_LIST BTU_KNOWN_x86_ARCHS)
-  gaudi_add_executable(TestSimilarity
-                       tests/TestSimilarity.cpp
-                       LINK_LIBRARIES LHCbMathLib)
-  gaudi_add_executable(TestSimilarityTiming
-                       tests/TestSimilarityTiming.cpp
-                       LINK_LIBRARIES LHCbMathLib)
-  endif() # x86_64
   gaudi_add_executable(TestEigenGeometry
                        tests/TestEigenGeometry.cpp
                        LINK_LIBRARIES LHCbMathLib)
