@@ -120,15 +120,7 @@ public:
       return *this;
     }
 
-    /** Equal
-     *  True if positions match
-     */
-    friend bool operator==( const pos_iterator& lhs, const pos_iterator& rhs ) { return lhs.m_pos == rhs.m_pos; }
-
-    /** Not Equal
-     *  True if positions do not match
-     */
-    friend bool operator!=( const pos_iterator& lhs, const pos_iterator& rhs ) { return lhs.m_pos != rhs.m_pos; }
+    bool operator!=( const unsigned int end ) const { return m_pos != end; }
 
     // dereferencing
     const CLUSTERWORD operator*() const { return CLUSTERWORD( m_bank[m_pos] ); }
@@ -192,15 +184,7 @@ public:
       return *this;
     }
 
-    /** Equal
-     *  True if positions match
-     */
-    friend bool operator==( const posadc_iterator& lhs, const posadc_iterator& rhs ) { return lhs.m_pos == rhs.m_pos; }
-
-    /** Not Equal
-     *  True if positions do not match
-     */
-    friend bool operator!=( const posadc_iterator& lhs, const posadc_iterator& rhs ) { return lhs.m_pos != rhs.m_pos; }
+    bool operator!=( const unsigned int end ) const { return m_pos != end; }
 
     // dereferencing
 
@@ -346,13 +330,13 @@ public:
   const pos_iterator posBegin() const { return pos_iterator( 0, this ); }
 
   /// end iterator for cluster positions
-  const pos_iterator posEnd() const { return pos_iterator( m_nClusters, this ); }
+  unsigned int posEnd() const { return m_nClusters; }
 
   /// start iterator for decoded clusters with ADC values
   const posadc_iterator posAdcBegin() const { return posadc_iterator( 0, this ); }
 
   /// end iterator for decoded clusters with ADC values
-  const posadc_iterator posAdcEnd() const { return posadc_iterator( m_nClusters, this ); }
+  unsigned int posAdcEnd() const { return m_nClusters; }
 
 private:
   const SiDAQ::buffer_word* m_bank;
