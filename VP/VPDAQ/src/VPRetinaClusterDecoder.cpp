@@ -24,6 +24,44 @@
 #include <tuple>
 #include <vector>
 
+namespace VPRetina {
+  enum class ErrorCode : StatusCode::code_t {
+    BANK_VERSION_UNKNOWN,
+    EMPTY_BANK,
+    BANK_SIZE_INCONSISTENT,
+    BAD_MAGIC,
+    BAD_SOURCE_ID
+  };
+  struct ErrorCategory : StatusCode::Category {
+    const char* name() const override { return "VPRetinaDecoder"; }
+    bool        isRecoverable( StatusCode::code_t ) const override { return false; }
+    std::string message( StatusCode::code_t code ) const override {
+      switch ( static_cast<VPRetina::ErrorCode>( code ) ) {
+      case ErrorCode::BANK_VERSION_UNKNOWN:
+        return "Bank version unknown";
+      case ErrorCode::EMPTY_BANK:
+        return "Empty bank";
+      case ErrorCode::BANK_SIZE_INCONSISTENT:
+        return "Bank size and declared number of clusters inconsistent";
+      case ErrorCode::BAD_MAGIC:
+        return "Wrong magic number for bank";
+      case ErrorCode::BAD_SOURCE_ID:
+        return "Source ID not in the expected range";
+      default:
+        return StatusCode::default_category().message( code );
+      }
+    }
+  };
+} // namespace VPRetina
+STATUSCODE_ENUM_DECL( VPRetina::ErrorCode )
+STATUSCODE_ENUM_IMPL( VPRetina::ErrorCode, VPRetina::ErrorCategory )
+
+[[gnu::noreturn]] void throw_exception( VPRetina::ErrorCode ec, const char* tag ) {
+  auto sc = StatusCode( ec );
+  throw GaudiException{sc.message(), tag, std::move( sc )};
+}
+#define OOPS( x ) throw_exception( x, __PRETTY_FUNCTION__ )
+
 struct VPRetinaClusterGeomCache {
 
   std::array<std::array<float, 9>, VP::NSensors> m_ltg; // 9*208 = 9*number of sensors
@@ -51,7 +89,7 @@ struct VPRetinaClusterGeomCache {
   }
 };
 
-// Namespace for locations in TDS
+// Namespace for locations in TES
 namespace LHCb {
   namespace VPClusterLocation {
     inline const std::string Offsets = "Raw/VP/LightClustersOffsets";
@@ -76,8 +114,8 @@ public:
   operator()( const LHCb::RawEvent&, const VPRetinaClusterGeomCache& ) const override;
 
 private:
-  std::bitset<VP::NModules>                  m_modulesToSkipMask;
-  Gaudi::Property<std::vector<unsigned int>> m_modulesToSkip{this,
+  std::bitset<VP::NModules>                       m_modulesToSkipMask;
+  Gaudi::Property<std::vector<unsigned int>>      m_modulesToSkip{this,
                                                              "ModulesToSkip",
                                                              {},
                                                              [=]( auto& ) {
@@ -87,6 +125,8 @@ private:
                                                              },
                                                              Gaudi::Details::Property::ImmediatelyInvokeHandler{true},
                                                              "List of modules that should be skipped in decoding"};
+  mutable Gaudi::Accumulators::AveragingCounter<> m_nBanks{this, "Number of banks"};
+  mutable Gaudi::Accumulators::AveragingCounter<> m_nClusters{this, "Number of clusters"};
 };
 
 DECLARE_COMPONENT( VPRetinaClusterDecoder )
@@ -120,14 +160,11 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent, const VPReti
   auto& [clusters, offsets] = result;
 
   const auto& banks = rawEvent.banks( LHCb::RawBank::VPRetinaCluster );
-  debug() << "Number of retina cluster raw banks: " << banks.size() << "." << endmsg;
+  m_nBanks += banks.size();
   if ( banks.empty() ) return result;
 
   const unsigned int version = banks[0]->version();
-  if ( version != 1 ) {
-    warning() << "Unsupported raw bank version (" << version << ")" << endmsg;
-    return result;
-  }
+  if ( version != 1 ) OOPS( VPRetina::ErrorCode::BANK_VERSION_UNKNOWN );
 
   // Since 'clusters` is local, to first preallocate, then count hits per module,
   // and then preallocate per module and move hits might not be faster than adding
@@ -138,17 +175,20 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent, const VPReti
 
   // Loop over VP RawBanks
   for ( const auto* bank : banks ) {
+    if ( LHCb::RawBank::MagicPattern != bank->magic() ) OOPS( VPRetina::ErrorCode::BAD_MAGIC );
 
     const unsigned int module = bank->sourceID();
+    if ( module == 0 || module > VP::NModules ) OOPS( VPRetina::ErrorCode::BAD_SOURCE_ID );
+
     if ( m_modulesToSkipMask[module - 1] ) continue;
 
     const unsigned int sensor0 = ( module - 1 ) * VP::NSensorsPerModule;
 
     auto data = bank->range<uint32_t>();
-    assert( !data.empty() );
+    if ( data.empty() ) OOPS( VPRetina::ErrorCode::EMPTY_BANK );
 
     const uint32_t ncluster = data[0];
-    assert( data.size() == ncluster + 1 );
+    if ( data.size() != ncluster + 1 ) OOPS( VPRetina::ErrorCode::BANK_SIZE_INCONSISTENT );
     data = data.subspan( 1 );
 
     // Read clusters
@@ -176,6 +216,7 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent, const VPReti
   } // loop over all banks
 
   std::partial_sum( offsets.begin(), offsets.end(), offsets.begin() );
+  m_nClusters += offsets.back();
 
   return result;
 }
