@@ -15,9 +15,6 @@
 #include <cmath>     // std::copysign
 
 #include "GaudiKernel/Kernel.h" // for LIKELY/UNLIKELY
-#ifdef __x86_64__
-#  include "vectorclass.h"
-#endif // __x86_64__
 
 #include "LHCbMath/ChebyshevApprox.h"
 
@@ -88,21 +85,13 @@ namespace OTDet {
     // strategy for large arguments: tanh(2x) = 2 tanh(x)/(1 + tanh^2(x))
     // idea is to use this "argument halving" a couple of times, and use a
     // very short Padé approximation for the rest of the way
-    const auto xx  = x * 0.125;
-    const auto xx2 = xx * xx;
-#if ( 0 || defined( __ROOTCLING__ ) || !defined( __x86_64__ ) ) // pedestrian code
+    const auto xx    = x * 0.125;
+    const auto xx2   = xx * xx;
     const auto numer = 135135 + xx2 * ( 17325 + xx2 * ( 378 + xx2 * 1 ) );
     const auto denom = 135135 + xx2 * ( 62370 + xx2 * ( 3150 + xx2 * 28 ) );
-
-    auto tanh = xx * numer / denom;
-#else // same code SIMD'ified
-    auto sum  = xx2 * Vec2d{1, 28} + Vec2d{378, 3150};
-    sum       = xx2 * sum + Vec2d{17325, 62370};
-    sum       = xx2 * sum + Vec2d{135135, 135135};
-    auto tanh = xx * sum[0] / sum[1];
-#endif
-    tanh = 2 * tanh / ( tanh * tanh + 1 );
-    tanh = 2 * tanh / ( tanh * tanh + 1 );
+    auto       tanh  = xx * numer / denom;
+    tanh             = 2 * tanh / ( tanh * tanh + 1 );
+    tanh             = 2 * tanh / ( tanh * tanh + 1 );
     return 2 * tanh / ( tanh * tanh + 1 );
   }
 
