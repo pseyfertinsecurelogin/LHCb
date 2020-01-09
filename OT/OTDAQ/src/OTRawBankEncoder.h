@@ -52,7 +52,7 @@ class OTRawBankEncoder : public extends<GaudiTool, IOTRawBankEncoder> {
 
 public:
   /// Standard constructor
-  OTRawBankEncoder( const std::string& type, const std::string& name, const IInterface* parent );
+  using extends::extends;
 
   /// Tool initialization
   StatusCode initialize() override;
@@ -74,11 +74,13 @@ private:
   /// Clear OTBanks and OTRawbank after each event
   void clear() const;
 
-  IOTChannelMapTool* m_channelmaptool;   ///< Pointer to IOTChannelMapTool
-  bool               m_addEmptyBanks;    ///< Falg to add empty banks
-  std::string        m_rawEventLocation; ///< Location of RawEvent
-  mutable OTBanks    m_banks;            ///< Vector of banks
-  mutable OTRawBank  m_rawBank;          ///< A raw bank. This goes into the raw buffer
+  PublicToolHandle<IOTChannelMapTool> m_channelmaptool{
+      this, "ChannelMap", "OTChannelMapTool"}; ///< Pointer to IOTChannelMapTool,access to the channel map
+  Gaudi::Property<bool>                m_addEmptyBanks{this, "AddEmptyBanks", true, "Flag to add empty banks"};
+  DataObjectReadHandle<LHCb::RawEvent> m_rawEventLocation{this, "RawEventLocation", LHCb::RawEventLocation::Default,
+                                                          "Location of RawEvent"};
+  mutable OTBanks                      m_banks;   ///< Vector of banks
+  mutable OTRawBank                    m_rawBank; ///< A raw bank. This goes into the raw buffer
 };
 
 inline size_t OTRawBankEncoder::channelToBank( const LHCb::OTChannelID& channel ) const {

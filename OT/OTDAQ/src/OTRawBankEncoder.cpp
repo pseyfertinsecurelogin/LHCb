@@ -148,24 +148,9 @@ namespace OTDAQ {
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( OTRawBankEncoder )
 
-OTRawBankEncoder::OTRawBankEncoder( const std::string& type, const std::string& name, const IInterface* parent )
-    : extends( type, name, parent ), m_channelmaptool( 0 ) {
-  declareProperty( "AddEmptyBanks", m_addEmptyBanks = true );
-  declareProperty( "RawEventLocation", m_rawEventLocation = LHCb::RawEventLocation::Default );
-}
-
 StatusCode OTRawBankEncoder::initialize() {
-
   debug() << "Initialising OTRawbankEncoder" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
-  if ( sc.isFailure() ) return sc;
-
-  // access to the channel map
-  m_channelmaptool = tool<IOTChannelMapTool>( "OTChannelMapTool" );
-
-  createBanks();
-
-  return sc;
+  return extends::initialize().andThen( [&] { createBanks(); } );
 }
 
 void OTRawBankEncoder::createBanks() {
@@ -201,7 +186,7 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank( const OTDAQ:
   /// The first 4 bytes contain the OT Specific header.
   /// Don't fill it for simulation.
   std::vector<unsigned char> buffer;
-  if ( m_addEmptyBanks )
+  if ( m_addEmptyBanks.value() )
     pipeToBuffer( OTDAQ::OTSpecificHeader( 0, 0, 0, bank.nGols() ), buffer ); ///< The way it's done in the hardware
   else
     pipeToBuffer( OTDAQ::OTSpecificHeader( 0, 0, 0, bank.nGolsToEncode() ), buffer );
@@ -210,8 +195,8 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank( const OTDAQ:
   /// Do this only for non-empty gols
   for ( const auto& gol : bank ) {
 
-    if ( gol.encode() || m_addEmptyBanks ) {
-      if ( !gol.encode() && m_addEmptyBanks ) { // Empty. Always add empty gols in hardware
+    if ( gol.encode() || m_addEmptyBanks.value() ) {
+      if ( !gol.encode() && m_addEmptyBanks.value() ) { // Empty. Always add empty gols in hardware
         /// OK empty gol and we want to "add" it
         /// OK lot of assumptions here:
         /// 1) First we assume that module id is gol id
@@ -275,16 +260,7 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
   const bool isVerbose = msgLevel( MSG::VERBOSE );
 
   /// Raw event
-  LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>( m_rawEventLocation );
-  // LHCb::RawEvent* rawEvent = 0;
-  //   /// Check if raw event exists
-  //   if ( exist<LHCb::RawEvent>( m_rawEventLocation ) ) {
-  //       rawEvent = get<LHCb::RawEvent>( m_rawEventLocation );
-  //   } else {
-  //     /// else create it
-  //     rawEvent = new LHCb::RawEvent();
-  //     eventSvc()->registerObject(m_rawEventLocation, rawEvent);
-  //   }
+  LHCb::RawEvent* rawEvent = m_rawEventLocation.get();
 
   /// Sort the channels into banks
   if ( isDebug ) debug() << "Going to encode " << channels.size() << " channels" << endmsg;
@@ -318,7 +294,7 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
   /// Loop over ot banks and create raw banks
   /// We do this only for banks that contain hits
   for ( const auto& bank : m_banks ) {
-    if ( bank.encode() || m_addEmptyBanks ) {
+    if ( bank.encode() || m_addEmptyBanks.value() ) {
       // create, and put raw bank in raw event
       rawEvent->addBank( bank.id(), LHCb::RawBank::OT, OTBankVersion::SIM, createRawBank( bank ) );
       /// clear raw bank
