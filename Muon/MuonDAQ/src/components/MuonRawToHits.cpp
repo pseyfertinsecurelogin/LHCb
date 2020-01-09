@@ -90,16 +90,14 @@ namespace LHCb::Muon::DAQ {
 STATUSCODE_ENUM_DECL( LHCb::Muon::DAQ::EC::RawToHits::ErrorCode )
 STATUSCODE_ENUM_IMPL( LHCb::Muon::DAQ::EC::RawToHits::ErrorCode, LHCb::Muon::DAQ::EC::RawToHits::ErrorCategory )
 
-namespace {
-  [[gnu::noreturn]] void throw_exception( LHCb::Muon::DAQ::EC::RawToHits::ErrorCode ec, const char* tag ) {
-    auto sc = StatusCode( ec );
-    throw GaudiException{sc.message(), tag, std::move( sc )};
-  }
-} // namespace
-#define OOPS( x ) throw_exception( x, __PRETTY_FUNCTION__ )
-
 namespace LHCb::Muon::DAQ {
   namespace {
+    [[gnu::noreturn]] void throw_exception( EC::RawToHits::ErrorCode ec, const char* tag ) {
+      auto sc = StatusCode( ec );
+      throw GaudiException{sc.message(), tag, std::move( sc )};
+    }
+#define OOPS( x ) throw_exception( x, __PRETTY_FUNCTION__ )
+
     template <typename Iterator>
     Iterator addCoordsCrossingMap( Iterator first, Iterator last, CommonMuonHits& commonHits,
                                    const ComputeTilePosition& compute, size_t nStations ) {

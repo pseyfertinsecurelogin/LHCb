@@ -8,27 +8,66 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// local
-#include "MuonDigitToRawBuffer.h"
 #include "Event/BankWriter.h"
 #include "Event/MuonBankVersion.h"
 #include "Event/MuonDigit.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Kernel/MuonTileID.h"
 #include "MuonDAQ/MuonHLTDigitFormat.h"
 #include "MuonDAQ/SortDigitInL1.h"
 #include "MuonDAQ/SortDigitInODE.h"
+#include "MuonDet/DeMuonDetector.h"
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonDet/MuonL1Board.h"
 #include "MuonDet/MuonODEBoard.h"
 #include "MuonDet/MuonStationCabling.h"
 #include "MuonDet/MuonTSMap.h"
+#include <string>
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonDigitToRawBuffer
 //
 // 2004-01-16 : Alessia Satta
 //-----------------------------------------------------------------------------
+
+/** @class MuonDigitToRawBuffer MuonDigitToRawBuffer.h
+ *
+ *
+ *  @author Alessia Satta
+ *  @date   2004-01-19
+ */
+class MuonDigitToRawBuffer : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  using GaudiAlgorithm::GaudiAlgorithm;
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
+  StatusCode ProcessDC06( const LHCb::MuonDigits&, LHCb::RawEvent& );
+  StatusCode ProcessV1( const LHCb::MuonDigits&, LHCb::RawEvent& );
+  StatusCode ProcessDigitDC06( const LHCb::MuonDigits& );
+  StatusCode ProcessDigitV1( const LHCb::MuonDigits& );
+  StatusCode ProcessPads();
+
+  DeMuonDetector* m_muonDet = nullptr;
+
+  std::vector<unsigned int> m_digitsInODE[MuonDAQHelper_maxODENumber];
+  std::vector<unsigned int> m_digitsInL1[MuonDAQHelper_maxTell1Number];
+  unsigned int              firedInODE[MuonDAQHelper_maxODENumber];
+  unsigned int              firedInPP[MuonDAQHelper_maxTell1Number * 4];
+
+  std::vector<unsigned int> m_padInL1[MuonDAQHelper_maxTell1Number];
+
+  long         m_TotL1Board = 0;
+  unsigned int m_M1Tell1    = 0;
+
+  Gaudi::Property<unsigned int>          m_vtype{this, "VType", 2};
+  DataObjectReadHandle<LHCb::RawEvent>   m_raw{this, "RawEvent", LHCb::RawEventLocation::Default};
+  DataObjectReadHandle<LHCb::MuonDigits> m_digits{this, "Digits", LHCb::MuonDigitLocation::MuonDigit};
+};
 
 DECLARE_COMPONENT( MuonDigitToRawBuffer )
 
@@ -40,8 +79,6 @@ using namespace LHCb;
 StatusCode MuonDigitToRawBuffer::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialise" << endmsg;
 
   m_muonDet    = getDet<DeMuonDetector>( DeMuonLocation::Default );
   m_TotL1Board = m_muonDet->getDAQInfo()->TotTellNumber();
@@ -70,29 +107,24 @@ StatusCode MuonDigitToRawBuffer::initialize() {
 // Main execution
 //=============================================================================
 StatusCode MuonDigitToRawBuffer::execute() {
-
-  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
-  StatusCode sc = StatusCode::SUCCESS;
+  LHCb::RawEvent*         raw    = m_raw.get();
+  const LHCb::MuonDigits* digits = m_digits.get();
+  StatusCode              sc     = StatusCode::SUCCESS;
   switch ( m_vtype ) {
   case MuonBankVersion::DC06:
-    sc = ProcessDC06();
+    sc = ProcessDC06( *digits, *raw );
     break;
   case MuonBankVersion::v1:
-    sc = ProcessV1();
+    sc = ProcessV1( *digits, *raw );
     break;
   }
-
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " exit " << endmsg;
   return sc;
 }
 ///
-StatusCode MuonDigitToRawBuffer::ProcessDC06() {
-  LHCb::RawEvent* raw = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
+StatusCode MuonDigitToRawBuffer::ProcessDC06( const LHCb::MuonDigits& digits, LHCb::RawEvent& raw ) {
 
-  auto sc = ProcessDigitDC06();
-  if ( sc.isFailure() ) return sc;
-
-  sc = ProcessPads();
+  auto sc = ProcessDigitDC06( digits ).andThen( &MuonDigitToRawBuffer::ProcessPads, this );
   if ( sc.isFailure() ) return sc;
 
   for ( unsigned int i = 0; i < (unsigned int)m_TotL1Board; i++ ) {
@@ -212,7 +244,7 @@ StatusCode MuonDigitToRawBuffer::ProcessDC06() {
       }
     }
 
-    raw->addBank( i, RawBank::Muon, 1, bank.dataBank() );
+    raw.addBank( i, RawBank::Muon, 1, bank.dataBank() );
   }
 
   for ( int i = 0; i < m_TotL1Board; i++ ) {
@@ -229,16 +261,9 @@ StatusCode MuonDigitToRawBuffer::ProcessDC06() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode MuonDigitToRawBuffer::ProcessV1() {
+StatusCode MuonDigitToRawBuffer::ProcessV1( const LHCb::MuonDigits& digits, LHCb::RawEvent& raw ) {
 
-  StatusCode sc = StatusCode::FAILURE;
-
-  LHCb::RawEvent* raw = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
-
-  sc = ProcessDigitV1();
-  if ( sc.isFailure() ) return sc;
-
-  sc = ProcessPads();
+  StatusCode sc = ProcessDigitV1( digits ).andThen( &MuonDigitToRawBuffer::ProcessPads, this );
   if ( sc.isFailure() ) return sc;
 
   unsigned int pp_counter[4];
@@ -353,7 +378,7 @@ StatusCode MuonDigitToRawBuffer::ProcessV1() {
     //     }
 
     if ( bankLenHit % 32 != 0 ) bank << nullWord;
-    raw->addBank( i, RawBank::Muon, MuonBankVersion::v1, bank.dataBank() );
+    raw.addBank( i, RawBank::Muon, MuonBankVersion::v1, bank.dataBank() );
   }
 
   for ( int i = 0; i < m_TotL1Board; i++ ) {
@@ -375,13 +400,11 @@ StatusCode MuonDigitToRawBuffer::ProcessV1() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode MuonDigitToRawBuffer::ProcessDigitDC06() {
+StatusCode MuonDigitToRawBuffer::ProcessDigitDC06( const LHCb::MuonDigits& digit ) {
 
-  LHCb::MuonDigits*          digit = get<LHCb::MuonDigits>( LHCb::MuonDigitLocation::MuonDigit );
-  LHCb::MuonDigits::iterator idigit;
-  for ( idigit = digit->begin(); idigit < digit->end(); idigit++ ) {
-    LHCb::MuonTileID digitTile = ( *idigit )->key();
-    unsigned int     time      = ( *idigit )->TimeStamp();
+  for ( const auto& idigit : digit ) {
+    LHCb::MuonTileID digitTile = idigit->key();
+    unsigned int     time      = idigit->TimeStamp();
     // time=0;
     long L1Number            = 0;
     long ODENumber           = 0;
@@ -447,8 +470,7 @@ StatusCode MuonDigitToRawBuffer::ProcessPads() {
       TSInODE = ode->getTSNumber();
       if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "TS " << TSInODE << endmsg;
 
-      std::string             TSPath = cablingBasePath + ode->getTSName( 0 );
-      SmartDataPtr<MuonTSMap> TS( detSvc(), TSPath );
+      SmartDataPtr<MuonTSMap> TS( detSvc(), cablingBasePath + ode->getTSName( 0 ) );
       long                    channelInTS = TS->numberOfOutputSignal();
       if ( TS->numberOfLayout() == 2 ) {
         maxPads = TS->gridXLayout( 0 ) * TS->gridYLayout( 1 );
@@ -479,22 +501,17 @@ StatusCode MuonDigitToRawBuffer::ProcessPads() {
           }
           std::string TSPath = cablingBasePath + ode->getTSName( TSnumberInODE );
           // debug()<<" TSPath "<<  TSPath <<endmsg;
-          std::vector<unsigned int> resultsAddress = ( m_muonDet->getDAQInfo() )->padsinTS( list_input, TSPath );
+          std::vector<unsigned int> resultsAddress = m_muonDet->getDAQInfo()->padsinTS( list_input, TSPath );
           // store the output
           if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "size " << resultsAddress.size() << endmsg;
 
-          if ( resultsAddress.size() ) {
-            for ( std::vector<unsigned int>::iterator itpad = resultsAddress.begin(); itpad < resultsAddress.end();
-                  itpad++ ) {
-              m_padInL1[i].push_back( padsInTell1 + maxPads * TSnumberInODE + ( *itpad ) );
-            }
-          }
+          std::transform( resultsAddress.begin(), resultsAddress.end(), std::back_inserter( m_padInL1[i] ),
+                          [&]( const auto& pad ) { return padsInTell1 + maxPads * TSnumberInODE + pad; } );
 
           // add te offset padsInTell1;
           // padsInTell1=padsInTell1+maxPads;
           // clear the area
-          std::vector<unsigned int>::iterator itClear;
-          for ( itClear = list_input.begin(); itClear < list_input.end(); itClear++ ) { *itClear = 0; }
+          std::fill( list_input.begin(), list_input.end(), 0 );
           if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " qui qui " << swap << endmsg;
 
           TSnumberInODE = address / channelInTS;
@@ -508,15 +525,10 @@ StatusCode MuonDigitToRawBuffer::ProcessPads() {
             // add the pads mechanism....
             if ( itDigit == m_digitsInODE[odenumber].end() - 1 ) {
               if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " before " << endmsg;
-
-              std::vector<unsigned int> resultsAddress = ( m_muonDet->getDAQInfo() )->padsinTS( list_input, TSPath );
+              const auto& resultsAddress = m_muonDet->getDAQInfo()->padsinTS( list_input, TSPath );
               if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " after " << endmsg;
-              if ( resultsAddress.size() ) {
-                for ( std::vector<unsigned int>::iterator itpad = resultsAddress.begin(); itpad < resultsAddress.end();
-                      itpad++ ) {
-                  m_padInL1[i].push_back( padsInTell1 + maxPads * TSnumberInODE + ( *itpad ) );
-                }
-              }
+              std::transform( resultsAddress.begin(), resultsAddress.end(), std::back_inserter( m_padInL1[i] ),
+                              [&]( const auto& pad ) { return padsInTell1 + maxPads * TSnumberInODE + pad; } );
             }
           }
         } else {
@@ -532,14 +544,11 @@ StatusCode MuonDigitToRawBuffer::ProcessPads() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode MuonDigitToRawBuffer::ProcessDigitV1() {
+StatusCode MuonDigitToRawBuffer::ProcessDigitV1( const LHCb::MuonDigits& digit ) {
 
-  LHCb::MuonDigits*          digit = get<LHCb::MuonDigits>( LHCb::MuonDigitLocation::MuonDigit );
-  LHCb::MuonDigits::iterator idigit;
-
-  for ( idigit = digit->begin(); idigit < digit->end(); idigit++ ) {
-    LHCb::MuonTileID digitTile = ( *idigit )->key();
-    unsigned int     time      = ( *idigit )->TimeStamp();
+  for ( const auto& idigit : digit ) {
+    LHCb::MuonTileID digitTile = idigit->key();
+    unsigned int     time      = idigit->TimeStamp();
     // time=0;
     long         L1Number  = 0;
     long         ODENumber = 0;
