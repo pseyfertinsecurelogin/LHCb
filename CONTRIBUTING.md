@@ -12,6 +12,8 @@ This helps with the validation of code prior to making it available in the offic
 
 - `2018-patches` branch: for 2018 incremental stripping (`S34r0pX`, `S35r0pX`, `S35r1pX`) and patches to Moore, Brunel (`Reco18`) and stripping in 2018 simulation workflows. Builds with gcc62 on slc6 and centos7 and with gcc7 on centos7
 
+- `stripping24r2-28r2-patches` branch: for 2015 and 2016 restripping (`S24r2`, `S28r2`) and stripping in 2015 and 2016 simulation workflows. Builds with gcc7 on centos7
+
 - `2017-patches` branch: for 2017 incremental stripping (`S29r2pX`, `S32r0pX`, `S33r1pX`) and patches to Moore, Brunel (`Reco17`) and stripping in 2017 simulation workflows. Builds with gcc49 on slc6 and with gcc62 on slc6 and centos7
 
 - `2016-patches` branch: for 2016 incremental stripping (`S28r1pX`, `S30r2pX`, `S30r3pX`) and patches to Brunel (`Reco16`) and stripping in 2016 simulation workflows. Builds with gcc49 on slc6
