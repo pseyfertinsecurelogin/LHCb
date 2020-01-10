@@ -200,19 +200,19 @@ LHCb::UTSummary RawBankToUTClusterAlg::decodeBanks( const RawEvent& rawEvt, LHCb
     }
 
     // check the integrity of the bank --> always skip if not ok
-    if ( !m_skipErrors && checkDataIntegrity( decoder, aBoard, bank->size(), bankVersion ) == false ) {
+    if ( !m_skipErrors && !checkDataIntegrity( decoder, aBoard, bank->size(), bankVersion ) ) {
       bankList.push_back( bank->sourceID() );
       continue;
     }
 
     // iterator over the data....
-    for ( auto iterDecoder = decoder.posAdcBegin(); iterDecoder != decoder.posAdcEnd(); ++iterDecoder ) {
+    for ( const auto& iterDecoder : decoder.posAdcRange() ) {
       if ( !recover ) {
-        createCluster( iterDecoder->first, aBoard, iterDecoder->second, bankVersion, clusCont );
+        createCluster( iterDecoder.first, aBoard, iterDecoder.second, bankVersion, clusCont );
       } else {
         // check that this cluster is ok to be recovered
-        if ( errorBank != 0 && canBeRecovered( errorBank, iterDecoder->first, pcn ) == true ) {
-          createCluster( iterDecoder->first, aBoard, iterDecoder->second, bankVersion, clusCont );
+        if ( errorBank != 0 && canBeRecovered( errorBank, iterDecoder.first, pcn ) ) {
+          createCluster( iterDecoder.first, aBoard, iterDecoder.second, bankVersion, clusCont );
         }
       }
     } // iterDecoder
