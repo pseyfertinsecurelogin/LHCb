@@ -179,12 +179,12 @@ namespace LHCb::Allocators {
 
     template <typename, typename>
     friend class ArenaAllocator;
-  };
 
-  template <typename T, typename Arena1, typename U, typename Arena2>
-  inline bool operator==( const ArenaAllocator<T, Arena1>& lhs, const ArenaAllocator<U, Arena2>& rhs ) noexcept {
-    return std::is_same_v<Arena1, Arena2> && lhs.m_arena == rhs.m_arena;
-  }
+    template <typename U, typename Arena2>
+    friend bool operator==( ArenaAllocator const& lhs, ArenaAllocator<U, Arena2> const& rhs ) {
+      return std::is_same_v<Arena, Arena2> && lhs.m_arena == rhs.m_arena;
+    }
+  };
 
   template <typename T, typename Arena1, typename U, typename Arena2>
   inline bool operator!=( const ArenaAllocator<T, Arena1>& lhs, const ArenaAllocator<U, Arena2>& rhs ) noexcept {
