@@ -10,11 +10,6 @@
 \*****************************************************************************/
 #pragma once
 
-// Include files
-#include <ostream>
-
-// Forward declarations
-
 /** @namespace MuonOriginFlag
  *
  * nature of the hit/digit
@@ -23,22 +18,11 @@
  *
  */
 
-namespace LHCb {
-  // Forward declarations
-  namespace MuonOriginFlag {
-    /// flags to identify the nature of thehit/digit
-    enum OriginFlag {
-      GEANT         = 0,
-      FLATSPILLOVER = 1,
-      BACKGROUND    = 2,
-      CHAMBERNOISE,
-      XTALK,
-      ELECTRONICNOISE,
-      LHCBACKGROUND
-    };
+namespace LHCb::MuonOriginFlag {
+  /// flags to identify the nature of thehit/digit
+  enum OriginFlag { GEANT = 0, FLATSPILLOVER = 1, BACKGROUND = 2, CHAMBERNOISE, XTALK, ELECTRONICNOISE, LHCBACKGROUND };
 
-  } // namespace MuonOriginFlag
-} // namespace LHCb
+} // namespace LHCb::MuonOriginFlag
 
 // -----------------------------------------------------------------------------
 // end of namespace

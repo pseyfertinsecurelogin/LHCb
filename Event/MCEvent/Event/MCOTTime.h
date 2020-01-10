@@ -49,10 +49,7 @@ namespace LHCb {
     MCOTTime( const LHCb::OTChannelID& aChannel, const SmartRefVector<LHCb::MCOTDeposit>& deposits );
 
     /// Default Constructor
-    MCOTTime() {}
-
-    /// Default Destructor
-    virtual ~MCOTTime() {}
+    MCOTTime() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -84,7 +81,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCOTTime& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     SmartRefVector<LHCb::MCOTDeposit> m_deposits; ///< References to all MCOTDeposits on this MCOTTime
 

@@ -57,19 +57,10 @@ namespace LHCb {
   class MCHit : public ContainedObject {
   public:
     /// typedef for ObjectVector of MCHit
-    typedef ObjectVector<MCHit> Container;
+    using Container = ObjectVector<MCHit>;
 
     /// Default Constructor
-    MCHit()
-        : m_sensDetID( -1 )
-        , m_entry( 0.0, 0.0, 0.0 )
-        , m_displacement( 0.0, 0.0, 0.0 )
-        , m_energy( 0.0 )
-        , m_time( 0.0 )
-        , m_p( 0.0 ) {}
-
-    /// Default Destructor
-    virtual ~MCHit() {}
+    MCHit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -97,63 +88,62 @@ namespace LHCb {
     int sensDetID() const;
 
     /// Update  Sensitive detector identifier, its meaning is different for each sub-detector
-    void setSensDetID( int value );
+    MCHit& setSensDetID( int value );
 
     /// Retrieve const  Entry point in LHCb reference system (mm)
     const Gaudi::XYZPoint& entry() const;
 
     /// Update  Entry point in LHCb reference system (mm)
-    void setEntry( const Gaudi::XYZPoint& value );
+    MCHit& setEntry( Gaudi::XYZPoint value );
 
     /// Retrieve const  Difference between exit and entry points (mm)
     const Gaudi::XYZVector& displacement() const;
 
     /// Update  Difference between exit and entry points (mm)
-    void setDisplacement( const Gaudi::XYZVector& value );
+    MCHit& setDisplacement( Gaudi::XYZVector value );
 
     /// Retrieve const  Energy deposited in step (MeV)
     double energy() const;
 
     /// Update  Energy deposited in step (MeV)
-    void setEnergy( double value );
+    MCHit& setEnergy( double value );
 
     /// Retrieve const  Time (ns) relative to the origin collision
     double time() const;
 
     /// Update  Time (ns) relative to the origin collision
-    void setTime( double value );
+    MCHit& setTime( double value );
 
     /// Retrieve const  |P| of particle at the entry point (MeV)
     double p() const;
 
     /// Update  |P| of particle at the entry point (MeV)
-    void setP( double value );
+    MCHit& setP( double value );
 
     /// Retrieve (const)  Pointer to MCParticle causing the hit
     const LHCb::MCParticle* mcParticle() const;
 
     /// Update  Pointer to MCParticle causing the hit
-    void setMCParticle( const SmartRef<LHCb::MCParticle>& value );
+    MCHit& setMCParticle( SmartRef<LHCb::MCParticle> value );
 
     /// Update (pointer)  Pointer to MCParticle causing the hit
-    void setMCParticle( const LHCb::MCParticle* value );
+    MCHit& setMCParticle( const LHCb::MCParticle* value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCHit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    int              m_sensDetID;    ///< Sensitive detector identifier, its meaning is different for each sub-detector
-    Gaudi::XYZPoint  m_entry;        ///< Entry point in LHCb reference system (mm)
-    Gaudi::XYZVector m_displacement; ///< Difference between exit and entry points (mm)
-    double           m_energy;       ///< Energy deposited in step (MeV)
-    double           m_time;         ///< Time (ns) relative to the origin collision
-    double           m_p;            ///< |P| of particle at the entry point (MeV)
-    SmartRef<LHCb::MCParticle> m_MCParticle; ///< Pointer to MCParticle causing the hit
+    int              m_sensDetID{-1}; ///< Sensitive detector identifier, its meaning is different for each sub-detector
+    Gaudi::XYZPoint  m_entry{0, 0, 0};        ///< Entry point in LHCb reference system (mm)
+    Gaudi::XYZVector m_displacement{0, 0, 0}; ///< Difference between exit and entry points (mm)
+    double           m_energy{0.0};           ///< Energy deposited in step (MeV)
+    double           m_time{0.0};             ///< Time (ns) relative to the origin collision
+    double           m_p{0.0};                ///< |P| of particle at the entry point (MeV)
+    SmartRef<LHCb::MCParticle> m_MCParticle;  ///< Pointer to MCParticle causing the hit
 
   }; // class MCHit
 
   /// Definition of vector container type for MCHit
-  typedef ObjectVector<MCHit> MCHits;
+  using MCHits = ObjectVector<MCHit>;
 
 } // namespace LHCb
 
@@ -182,33 +172,57 @@ inline std::ostream& LHCb::MCHit::fillStream( std::ostream& s ) const {
 
 inline int LHCb::MCHit::sensDetID() const { return m_sensDetID; }
 
-inline void LHCb::MCHit::setSensDetID( int value ) { m_sensDetID = value; }
+inline LHCb::MCHit& LHCb::MCHit::setSensDetID( int value ) {
+  m_sensDetID = value;
+  return *this;
+}
 
 inline const Gaudi::XYZPoint& LHCb::MCHit::entry() const { return m_entry; }
 
-inline void LHCb::MCHit::setEntry( const Gaudi::XYZPoint& value ) { m_entry = value; }
+inline LHCb::MCHit& LHCb::MCHit::setEntry( Gaudi::XYZPoint value ) {
+  m_entry = std::move( value );
+  return *this;
+}
 
 inline const Gaudi::XYZVector& LHCb::MCHit::displacement() const { return m_displacement; }
 
-inline void LHCb::MCHit::setDisplacement( const Gaudi::XYZVector& value ) { m_displacement = value; }
+inline LHCb::MCHit& LHCb::MCHit::setDisplacement( Gaudi::XYZVector value ) {
+  m_displacement = std::move( value );
+  return *this;
+}
 
 inline double LHCb::MCHit::energy() const { return m_energy; }
 
-inline void LHCb::MCHit::setEnergy( double value ) { m_energy = value; }
+inline LHCb::MCHit& LHCb::MCHit::setEnergy( double value ) {
+  m_energy = value;
+  return *this;
+}
 
 inline double LHCb::MCHit::time() const { return m_time; }
 
-inline void LHCb::MCHit::setTime( double value ) { m_time = value; }
+inline LHCb::MCHit& LHCb::MCHit::setTime( double value ) {
+  m_time = value;
+  return *this;
+}
 
 inline double LHCb::MCHit::p() const { return m_p; }
 
-inline void LHCb::MCHit::setP( double value ) { m_p = value; }
+inline LHCb::MCHit& LHCb::MCHit::setP( double value ) {
+  m_p = value;
+  return *this;
+}
 
 inline const LHCb::MCParticle* LHCb::MCHit::mcParticle() const { return m_MCParticle; }
 
-inline void LHCb::MCHit::setMCParticle( const SmartRef<LHCb::MCParticle>& value ) { m_MCParticle = value; }
+inline LHCb::MCHit& LHCb::MCHit::setMCParticle( SmartRef<LHCb::MCParticle> value ) {
+  m_MCParticle = std::move( value );
+  return *this;
+}
 
-inline void LHCb::MCHit::setMCParticle( const LHCb::MCParticle* value ) { m_MCParticle = value; }
+inline LHCb::MCHit& LHCb::MCHit::setMCParticle( const LHCb::MCParticle* value ) {
+  m_MCParticle = value;
+  return *this;
+}
 
 inline const Gaudi::XYZPoint LHCb::MCHit::exit() const { return ( this->entry() + this->displacement() ); }
 

@@ -58,38 +58,37 @@ namespace LHCb {
     GhostTrackInfo( const LinkMap& lmap, const Classification& value ) : m_linkMap( lmap ), m_classification( value ) {}
 
     /// Default Constructor
-    GhostTrackInfo() : m_linkMap(), m_classification( Classification::None ) {}
+    GhostTrackInfo() = default;
 
     /// number of links, ie particles or noise contributing
-    unsigned int nLinked() const;
+    [[nodiscard]] unsigned int nLinked() const;
 
     /// fraction of hits linked to noise
-    double fractionNoise() const;
+    [[nodiscard]] double fractionNoise() const;
 
     /// best linked
-    LinkPair bestLink() const;
+    [[nodiscard]] LinkPair bestLink() const;
 
     /// Printin a human readable way
     std::ostream& fillStream( std::ostream& s ) const;
 
     /// Retrieve const  mapping of particles
-    const LinkMap& linkMap() const;
+    [[nodiscard]] const LinkMap& linkMap() const;
 
     /// Update  mapping of particles
-    void setLinkMap( const LinkMap& value );
+    GhostTrackInfo& setLinkMap( LinkMap value );
 
     /// Retrieve const
-    const Classification& classification() const;
+    [[nodiscard]] const Classification& classification() const;
 
     /// Update
-    void setClassification( const Classification& value );
+    GhostTrackInfo& setClassification( Classification value );
 
     friend std::ostream& operator<<( std::ostream& str, const GhostTrackInfo& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    LinkMap        m_linkMap;        ///< mapping of particles
-    Classification m_classification; ///<
+    LinkMap        m_linkMap;                              ///< mapping of particles
+    Classification m_classification{Classification::None}; ///<
 
   }; // class GhostTrackInfo
 
@@ -136,18 +135,24 @@ namespace LHCb {
 
 inline const LHCb::GhostTrackInfo::LinkMap& LHCb::GhostTrackInfo::linkMap() const { return m_linkMap; }
 
-inline void LHCb::GhostTrackInfo::setLinkMap( const LinkMap& value ) { m_linkMap = value; }
+inline LHCb::GhostTrackInfo& LHCb::GhostTrackInfo::setLinkMap( LinkMap value ) {
+  m_linkMap = std::move( value );
+  return *this;
+}
 
 inline const LHCb::GhostTrackInfo::Classification& LHCb::GhostTrackInfo::classification() const {
   return m_classification;
 }
 
-inline void LHCb::GhostTrackInfo::setClassification( const Classification& value ) { m_classification = value; }
+inline LHCb::GhostTrackInfo& LHCb::GhostTrackInfo::setClassification( Classification value ) {
+  m_classification = std::move( value );
+  return *this;
+}
 
 inline unsigned int LHCb::GhostTrackInfo::nLinked() const { return m_linkMap.size(); }
 
 inline double LHCb::GhostTrackInfo::fractionNoise() const {
 
-  LinkMap::const_iterator iter = m_linkMap.find( 0 );
+  auto iter = m_linkMap.find( nullptr );
   return ( iter == m_linkMap.end() ? 0.0 : iter->second );
 }

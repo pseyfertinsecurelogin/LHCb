@@ -52,20 +52,17 @@ namespace LHCb {
     typedef KeyedContainer<MCCaloDigit, Containers::HashMap> Container;
 
     /// Shortcut for references to Monte Carlo Hits
-    typedef SmartRefVector<LHCb::MCCaloHit> Hits;
+    using Hits = SmartRefVector<LHCb::MCCaloHit>;
 
     /// Non-default constructor
     MCCaloDigit( const LHCb::CaloCellID& id, double e, const Hits& d ) : Base( id ), m_activeE( e ), m_hits( d ) {}
 
     /// Default constructor
-    MCCaloDigit() : Base(), m_activeE( 0 ), m_hits() {}
+    MCCaloDigit() = default;
 
     /// Copy Constructor
     MCCaloDigit( const LHCb::MCCaloDigit& right )
         : Base( right.key() ), m_activeE( right.activeE() ), m_hits( right.hits() ) {}
-
-    /// Default Destructor
-    virtual ~MCCaloDigit() {}
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -78,10 +75,10 @@ namespace LHCb {
     const LHCb::CaloCellID& cellID() const;
 
     /// update cell identifier/key @attention alias to Base::setKey() method!
-    void setCellID( const LHCb::CaloCellID& CellID );
+    MCCaloDigit& setCellID( LHCb::CaloCellID CellID );
 
     /// Add the active energy
-    void addActiveE( const double value );
+    MCCaloDigit& addActiveE( const double value );
 
     /// Cloning of the object ('virtual constructor')
     virtual MCCaloDigit* clone() const;
@@ -90,35 +87,35 @@ namespace LHCb {
     double activeE() const;
 
     /// Update  Monte Carlo active energy deposition in the given cell
-    void setActiveE( double value );
+    MCCaloDigit& setActiveE( double value );
 
     /// Retrieve (const)  References to the Monte Carlo hits
     const SmartRefVector<LHCb::MCCaloHit>& hits() const;
 
     /// Update  References to the Monte Carlo hits
-    void setHits( const SmartRefVector<LHCb::MCCaloHit>& value );
+    MCCaloDigit& setHits( SmartRefVector<LHCb::MCCaloHit> value );
 
     /// Add to  References to the Monte Carlo hits
-    void addToHits( const SmartRef<LHCb::MCCaloHit>& value );
+    MCCaloDigit& addToHits( SmartRef<LHCb::MCCaloHit> value );
 
     /// Att to (pointer)  References to the Monte Carlo hits
-    void addToHits( const LHCb::MCCaloHit* value );
+    MCCaloDigit& addToHits( const LHCb::MCCaloHit* value );
 
     /// Remove from  References to the Monte Carlo hits
-    void removeFromHits( const SmartRef<LHCb::MCCaloHit>& value );
+    MCCaloDigit& removeFromHits( const SmartRef<LHCb::MCCaloHit>& value );
 
     /// Clear  References to the Monte Carlo hits
-    void clearHits();
+    MCCaloDigit& clearHits();
 
     friend std::ostream& operator<<( std::ostream& str, const MCCaloDigit& obj ) { return obj.fillStream( str ); }
 
   protected:
     /// Shortcut for own base class
-    typedef KeyedObject<LHCb::CaloCellID> Base;
+    using Base = KeyedObject<LHCb::CaloCellID>;
 
   private:
-    double                          m_activeE; ///< Monte Carlo active energy deposition in the given cell
-    SmartRefVector<LHCb::MCCaloHit> m_hits;    ///< References to the Monte Carlo hits
+    double                          m_activeE{0}; ///< Monte Carlo active energy deposition in the given cell
+    SmartRefVector<LHCb::MCCaloHit> m_hits;       ///< References to the Monte Carlo hits
 
   }; // class MCCaloDigit
 
@@ -146,27 +143,49 @@ inline std::ostream& LHCb::MCCaloDigit::fillStream( std::ostream& s ) const {
 
 inline double LHCb::MCCaloDigit::activeE() const { return m_activeE; }
 
-inline void LHCb::MCCaloDigit::setActiveE( double value ) { m_activeE = value; }
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::setActiveE( double value ) {
+  m_activeE = value;
+  return *this;
+}
 
 inline const SmartRefVector<LHCb::MCCaloHit>& LHCb::MCCaloDigit::hits() const { return m_hits; }
 
-inline void LHCb::MCCaloDigit::setHits( const SmartRefVector<LHCb::MCCaloHit>& value ) { m_hits = value; }
-
-inline void LHCb::MCCaloDigit::addToHits( const SmartRef<LHCb::MCCaloHit>& value ) { m_hits.push_back( value ); }
-
-inline void LHCb::MCCaloDigit::addToHits( const LHCb::MCCaloHit* value ) { m_hits.push_back( value ); }
-
-inline void LHCb::MCCaloDigit::removeFromHits( const SmartRef<LHCb::MCCaloHit>& value ) {
-  auto i = std::remove( m_hits.begin(), m_hits.end(), value );
-  m_hits.erase( i, m_hits.end() );
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::setHits( SmartRefVector<LHCb::MCCaloHit> value ) {
+  m_hits = value;
+  return *this;
 }
 
-inline void LHCb::MCCaloDigit::clearHits() { m_hits.clear(); }
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::addToHits( SmartRef<LHCb::MCCaloHit> value ) {
+  m_hits.push_back( std::move( value ) );
+  return *this;
+}
+
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::addToHits( const LHCb::MCCaloHit* value ) {
+  m_hits.push_back( value );
+  return *this;
+}
+
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::removeFromHits( const SmartRef<LHCb::MCCaloHit>& value ) {
+  auto i = std::remove( m_hits.begin(), m_hits.end(), value );
+  m_hits.erase( i, m_hits.end() );
+  return *this;
+}
+
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::clearHits() {
+  m_hits.clear();
+  return *this;
+}
 
 inline const LHCb::CaloCellID& LHCb::MCCaloDigit::cellID() const { return key(); }
 
-inline void LHCb::MCCaloDigit::setCellID( const LHCb::CaloCellID& CellID ) { setKey( CellID ); }
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::setCellID( LHCb::CaloCellID CellID ) {
+  setKey( std::move( CellID ) );
+  return *this;
+}
 
-inline void LHCb::MCCaloDigit::addActiveE( const double value ) { m_activeE += value; }
+inline LHCb::MCCaloDigit& LHCb::MCCaloDigit::addActiveE( const double value ) {
+  m_activeE += value;
+  return *this;
+}
 
 inline LHCb::MCCaloDigit* LHCb::MCCaloDigit::clone() const { return new LHCb::MCCaloDigit( *this ); }

@@ -46,10 +46,7 @@ namespace LHCb {
     typedef KeyedContainer<MCUTDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCUTDigit() {}
-
-    /// Default Destructor
-    virtual ~MCUTDigit() {}
+    MCUTDigit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -65,23 +62,22 @@ namespace LHCb {
     const SmartRefVector<LHCb::MCUTDeposit>& mcDeposit() const;
 
     /// Update  vector of MCUTDeposits
-    void setMcDeposit( const SmartRefVector<LHCb::MCUTDeposit>& value );
+    MCUTDigit& setMcDeposit( SmartRefVector<LHCb::MCUTDeposit> value );
 
     /// Add to  vector of MCUTDeposits
-    void addToMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value );
+    MCUTDigit& addToMcDeposit( SmartRef<LHCb::MCUTDeposit> value );
 
     /// Att to (pointer)  vector of MCUTDeposits
-    void addToMcDeposit( const LHCb::MCUTDeposit* value );
+    MCUTDigit& addToMcDeposit( const LHCb::MCUTDeposit* value );
 
     /// Remove from  vector of MCUTDeposits
-    void removeFromMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value );
+    MCUTDigit& removeFromMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value );
 
     /// Clear  vector of MCUTDeposits
-    void clearMcDeposit();
+    MCUTDigit& clearMcDeposit();
 
     friend std::ostream& operator<<( std::ostream& str, const MCUTDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     SmartRefVector<LHCb::MCUTDeposit> m_mcDeposit; ///< vector of MCUTDeposits
 
@@ -107,19 +103,30 @@ inline std::ostream& LHCb::MCUTDigit::fillStream( std::ostream& s ) const { retu
 
 inline const SmartRefVector<LHCb::MCUTDeposit>& LHCb::MCUTDigit::mcDeposit() const { return m_mcDeposit; }
 
-inline void LHCb::MCUTDigit::setMcDeposit( const SmartRefVector<LHCb::MCUTDeposit>& value ) { m_mcDeposit = value; }
-
-inline void LHCb::MCUTDigit::addToMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value ) {
-  m_mcDeposit.push_back( value );
+inline LHCb::MCUTDigit& LHCb::MCUTDigit::setMcDeposit( SmartRefVector<LHCb::MCUTDeposit> value ) {
+  m_mcDeposit = std::move( value );
+  return *this;
 }
 
-inline void LHCb::MCUTDigit::addToMcDeposit( const LHCb::MCUTDeposit* value ) { m_mcDeposit.push_back( value ); }
+inline LHCb::MCUTDigit& LHCb::MCUTDigit::addToMcDeposit( SmartRef<LHCb::MCUTDeposit> value ) {
+  m_mcDeposit.push_back( std::move( value ) );
+  return *this;
+}
 
-inline void LHCb::MCUTDigit::removeFromMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value ) {
+inline LHCb::MCUTDigit& LHCb::MCUTDigit::addToMcDeposit( const LHCb::MCUTDeposit* value ) {
+  m_mcDeposit.push_back( value );
+  return *this;
+}
+
+inline LHCb::MCUTDigit& LHCb::MCUTDigit::removeFromMcDeposit( const SmartRef<LHCb::MCUTDeposit>& value ) {
   auto i = std::remove( m_mcDeposit.begin(), m_mcDeposit.end(), value );
   m_mcDeposit.erase( i, m_mcDeposit.end() );
+  return *this;
 }
 
-inline void LHCb::MCUTDigit::clearMcDeposit() { m_mcDeposit.clear(); }
+inline LHCb::MCUTDigit& LHCb::MCUTDigit::clearMcDeposit() {
+  m_mcDeposit.clear();
+  return *this;
+}
 
 inline LHCb::UTChannelID LHCb::MCUTDigit::channelID() const { return key(); }

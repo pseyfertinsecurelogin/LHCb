@@ -48,10 +48,7 @@ namespace LHCb {
     typedef KeyedContainer<MCVPDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCVPDigit() : m_deposits() {}
-
-    /// Default Destructor
-    virtual ~MCVPDigit() {}
+    MCVPDigit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -64,35 +61,34 @@ namespace LHCb {
     VPChannelID channelID() const;
 
     /// Add MCHit and charge deposit
-    void addToMcHits( const SmartRef<LHCb::MCHit>& hit, const double deposit );
+    MCVPDigit& addToMcHits( SmartRef<LHCb::MCHit> hit, const double deposit );
 
     /// Retrieve const  charge deposits of contributing MCHits
     const std::vector<double>& deposits() const;
 
     /// Update  charge deposits of contributing MCHits
-    void setDeposits( const std::vector<double>& value );
+    MCVPDigit& setDeposits( std::vector<double> value );
 
     /// Retrieve (const)  references to contributing MCHits
     const SmartRefVector<LHCb::MCHit>& mcHits() const;
 
     /// Update  references to contributing MCHits
-    void setMcHits( const SmartRefVector<LHCb::MCHit>& value );
+    MCVPDigit& setMcHits( SmartRefVector<LHCb::MCHit> value );
 
     /// Add to  references to contributing MCHits
-    void addToMcHits( const SmartRef<LHCb::MCHit>& value );
+    MCVPDigit& addToMcHits( SmartRef<LHCb::MCHit> value );
 
     /// Att to (pointer)  references to contributing MCHits
-    void addToMcHits( const LHCb::MCHit* value );
+    MCVPDigit& addToMcHits( const LHCb::MCHit* value );
 
     /// Remove from  references to contributing MCHits
-    void removeFromMcHits( const SmartRef<LHCb::MCHit>& value );
+    MCVPDigit& removeFromMcHits( const SmartRef<LHCb::MCHit>& value );
 
     /// Clear  references to contributing MCHits
-    void clearMcHits();
+    MCVPDigit& clearMcHits();
 
     friend std::ostream& operator<<( std::ostream& str, const MCVPDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     std::vector<double>         m_deposits; ///< charge deposits of contributing MCHits
     SmartRefVector<LHCb::MCHit> m_mcHits;   ///< references to contributing MCHits
@@ -123,27 +119,43 @@ inline std::ostream& LHCb::MCVPDigit::fillStream( std::ostream& s ) const {
 
 inline const std::vector<double>& LHCb::MCVPDigit::deposits() const { return m_deposits; }
 
-inline void LHCb::MCVPDigit::setDeposits( const std::vector<double>& value ) { m_deposits = value; }
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::setDeposits( std::vector<double> value ) {
+  m_deposits = std::move( value );
+  return *this;
+}
 
 inline const SmartRefVector<LHCb::MCHit>& LHCb::MCVPDigit::mcHits() const { return m_mcHits; }
 
-inline void LHCb::MCVPDigit::setMcHits( const SmartRefVector<LHCb::MCHit>& value ) { m_mcHits = value; }
-
-inline void LHCb::MCVPDigit::addToMcHits( const SmartRef<LHCb::MCHit>& value ) { m_mcHits.push_back( value ); }
-
-inline void LHCb::MCVPDigit::addToMcHits( const LHCb::MCHit* value ) { m_mcHits.push_back( value ); }
-
-inline void LHCb::MCVPDigit::removeFromMcHits( const SmartRef<LHCb::MCHit>& value ) {
-  auto i = std::remove( m_mcHits.begin(), m_mcHits.end(), value );
-  m_mcHits.erase( i, m_mcHits.end() );
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::setMcHits( SmartRefVector<LHCb::MCHit> value ) {
+  m_mcHits = std::move( value );
+  return *this;
 }
 
-inline void LHCb::MCVPDigit::clearMcHits() { m_mcHits.clear(); }
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::addToMcHits( SmartRef<LHCb::MCHit> value ) {
+  m_mcHits.push_back( std::move( value ) );
+  return *this;
+}
+
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::addToMcHits( const LHCb::MCHit* value ) {
+  m_mcHits.push_back( value );
+  return *this;
+}
+
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::removeFromMcHits( const SmartRef<LHCb::MCHit>& value ) {
+  auto i = std::remove( m_mcHits.begin(), m_mcHits.end(), value );
+  m_mcHits.erase( i, m_mcHits.end() );
+  return *this;
+}
+
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::clearMcHits() {
+  m_mcHits.clear();
+  return *this;
+}
 
 inline LHCb::VPChannelID LHCb::MCVPDigit::channelID() const { return key(); }
 
-inline void LHCb::MCVPDigit::addToMcHits( const SmartRef<LHCb::MCHit>& hit, const double deposit ) {
-
-  m_mcHits.push_back( hit );
+inline LHCb::MCVPDigit& LHCb::MCVPDigit::addToMcHits( SmartRef<LHCb::MCHit> hit, const double deposit ) {
+  m_mcHits.push_back( std::move( hit ) );
   m_deposits.push_back( deposit );
+  return *this;
 }

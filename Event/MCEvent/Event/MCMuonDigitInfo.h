@@ -34,133 +34,129 @@ namespace LHCb {
    *
    */
 
-  class MCMuonDigitInfo {
+  class MCMuonDigitInfo final {
   public:
     /// Default Constructor
-    MCMuonDigitInfo() : m_DigitInfo( 0 ) {}
-
-    /// Default Destructor
-    virtual ~MCMuonDigitInfo() {}
+    MCMuonDigitInfo() = default;
 
     /// Fill the ASCII output stream
     virtual std::ostream& fillStream( std::ostream& s ) const;
 
     /// Is the earliest a GEANT hit?
-    bool isGeantHit();
+    [[nodiscard]] bool isGeantHit() const;
 
     /// set the nature of hit flag in the DIGITINFO word
-    void setNatureHit( unsigned int natureOfHit );
+    MCMuonDigitInfo& setNatureHit( unsigned int natureOfHit );
 
     /// Is the earliest a low energy background hit?
-    bool isBackgroundHit();
+    [[nodiscard]] bool isBackgroundHit() const;
 
     /// Is the earliest a chamber noise hit?
-    bool isChamberNoiseHit();
+    [[nodiscard]] bool isChamberNoiseHit() const;
 
     /// Is the earliest a flat spillover hit?
-    bool isFlatSpilloverHit();
+    [[nodiscard]] bool isFlatSpilloverHit() const;
 
     /// Is the earliest a xtalk hit?
-    bool isXTalkHit();
+    [[nodiscard]] bool isXTalkHit() const;
 
     /// Is the earliest a el noise hit?
-    bool isElNoiseHit();
+    [[nodiscard]] bool isElNoiseHit() const;
 
     /// Is the earliest a machine background hit?
-    bool isMachineBkgHit();
+    [[nodiscard]] bool isMachineBkgHit() const;
 
     /// which is the nature of the earliest  hit?
-    unsigned int natureOfHit();
+    [[nodiscard]] unsigned int natureOfHit() const;
 
     /// retrieve the second part of the ifno word
-    unsigned int secondPart();
+    [[nodiscard]] unsigned int secondPart() const;
 
     /// set the second part of the DIGITINFO word
-    void setSecondPart( unsigned int secondPart );
+    MCMuonDigitInfo& setSecondPart( unsigned int secondPart );
 
     /// Does earliest hit belong to the current event?
-    bool doesFiringHitBelongToCurrentEvent();
+    [[nodiscard]] bool doesFiringHitBelongToCurrentEvent() const;
 
     /// set the BX ID flag in the DIGITINFO word
-    void setBXIDFlagHit( unsigned int BXIDFlag );
+    MCMuonDigitInfo& setBXIDFlagHit( unsigned int BXIDFlag );
 
     /// which is the BX of the earliest hit?
-    unsigned int BX();
+    [[nodiscard]] unsigned int BX() const;
 
     /// Does earliest hit belong to the previous event?
-    bool doesFiringHitBelongToPrevEvent();
+    [[nodiscard]] bool doesFiringHitBelongToPrevEvent() const;
 
     /// Does earliest hit belong to the previous previous event?
-    bool doesFiringHitBelongToPrevPrevEvent();
+    [[nodiscard]] bool doesFiringHitBelongToPrevPrevEvent() const;
 
     /// Does earliest hit belong to the previous previous previous event?
-    bool doesFiringHitBelongToPrevPrevPrevEvent();
+    [[nodiscard]] bool doesFiringHitBelongToPrevPrevPrevEvent() const;
 
     /// Does earliest hit belong to the previous previous previous previous event?
-    bool doesFiringHitBelongToPrevPrevPrevPrevEvent();
+    [[nodiscard]] bool doesFiringHitBelongToPrevPrevPrevPrevEvent() const;
 
     /// is the digit fired ?
-    bool isAlive();
+    [[nodiscard]] bool isAlive() const;
 
     /// set the fired flag in the DIGITINFO word
-    void setAliveDigit( unsigned int digitFired );
+    MCMuonDigitInfo& setAliveDigit( unsigned int digitFired );
 
     /// is the digit in the deadtime?
-    bool isInDeadTime();
+    [[nodiscard]] bool isInDeadTime() const;
 
     /// set the killed by deadtime flag in the DIGITINFO word
-    void setDeadtimeDigit( unsigned int deadtimeKilled );
+    MCMuonDigitInfo& setDeadtimeDigit( unsigned int deadtimeKilled );
 
     /// is the digit in the dialog deadtime?
-    bool isInDialogDeadTime();
+    [[nodiscard]] bool isInDialogDeadTime() const;
 
     /// set the killed by deadtime flag in the DIGITINFO word
-    void setDialogDeadtimeDigit( unsigned int deadtimeKilled );
+    MCMuonDigitInfo& setDialogDeadtimeDigit( unsigned int deadtimeKilled );
 
     /// is the digit in chamber inefficiency?
-    bool isDeadForChamberInefficiency();
+    [[nodiscard]] bool isDeadForChamberInefficiency() const;
 
     /// set the killed by chamber inefficiency flag in the DIGITINFO word
-    void setChamberInefficiencyDigit( unsigned int chamberIneff );
+    MCMuonDigitInfo& setChamberInefficiencyDigit( unsigned int chamberIneff );
 
     /// is the digit killed by time jitter?
-    bool isDeadByTimeJitter();
+    [[nodiscard]] bool isDeadByTimeJitter() const;
 
     /// set the killed by time jitter flag in the DIGITINFO word
-    void setTimeJitteredDigit( unsigned int timeJitterKilled );
+    MCMuonDigitInfo& setTimeJitteredDigit( unsigned int timeJitterKilled );
 
     /// is the digit killed by time adjustment?
-    bool isDeadByTimeAdjustment();
+    [[nodiscard]] bool isDeadByTimeAdjustment() const;
 
     /// set the killed by time adjustment flag in the DIGITINFO word
-    void setTimeAdjDigit( unsigned int timeAdjustmentKilled );
+    MCMuonDigitInfo& setTimeAdjDigit( unsigned int timeAdjustmentKilled );
 
     /// is the digit alive due to time adjustment?
-    bool isAliveByTimeAdjustment();
+    [[nodiscard]] bool isAliveByTimeAdjustment() const;
 
     /// set the alive due to  time adjustment flag in the DIGITINFO word
-    void setAliveTimeAdjDigit( unsigned int timeAdjustmentKilled );
+    MCMuonDigitInfo& setAliveTimeAdjDigit( unsigned int timeAdjustmentKilled );
 
     /// is the digit killed by geometry acceptance?
-    bool isDeadByGeometry();
+    [[nodiscard]] bool isDeadByGeometry() const;
 
     /// set the killed by geometry inefficiency flag in the DIGITINFO word
-    void setGeometryInefficiency( unsigned int geometryIneffKilled );
+    MCMuonDigitInfo& setGeometryInefficiency( unsigned int geometryIneffKilled );
 
     /// Retrieve const  Packed information of the origin of the hit   generating the digit, the earliest, and the fate
     /// of the digit
-    unsigned int DigitInfo() const;
+    [[nodiscard]] unsigned int DigitInfo() const;
 
     /// Update  Packed information of the origin of the hit   generating the digit, the earliest, and the fate of the
     /// digit
-    void setDigitInfo( unsigned int value );
+    MCMuonDigitInfo& setDigitInfo( unsigned int value );
 
     friend std::ostream& operator<<( std::ostream& str, const MCMuonDigitInfo& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    unsigned int m_DigitInfo; ///< Packed information of the origin of the hit   generating the digit, the earliest, and
-                              ///< the fate of the digit
+    unsigned int m_DigitInfo{0}; ///< Packed information of the origin of the hit   generating the digit, the earliest,
+                                 ///< and the fate of the digit
 
   }; // class MCMuonDigitInfo
 
@@ -181,172 +177,185 @@ inline std::ostream& LHCb::MCMuonDigitInfo::fillStream( std::ostream& s ) const 
 
 inline unsigned int LHCb::MCMuonDigitInfo::DigitInfo() const { return m_DigitInfo; }
 
-inline void LHCb::MCMuonDigitInfo::setDigitInfo( unsigned int value ) { m_DigitInfo = value; }
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setDigitInfo( unsigned int value ) {
+  m_DigitInfo = value;
+  return *this;
+}
 
-inline bool LHCb::MCMuonDigitInfo::isGeantHit() {
+inline bool LHCb::MCMuonDigitInfo::isGeantHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::GEANT ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setNatureHit( unsigned int natureOfHit ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setNatureHit( unsigned int natureOfHit ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftOriginDigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                   natureOfHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isBackgroundHit() {
+inline bool LHCb::MCMuonDigitInfo::isBackgroundHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::BACKGROUND ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isChamberNoiseHit() {
+inline bool LHCb::MCMuonDigitInfo::isChamberNoiseHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::CHAMBERNOISE ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isFlatSpilloverHit() {
+inline bool LHCb::MCMuonDigitInfo::isFlatSpilloverHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::FLATSPILLOVER ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isXTalkHit() {
+inline bool LHCb::MCMuonDigitInfo::isXTalkHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::XTALK ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isElNoiseHit() {
+inline bool LHCb::MCMuonDigitInfo::isElNoiseHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::ELECTRONICNOISE ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isMachineBkgHit() {
+inline bool LHCb::MCMuonDigitInfo::isMachineBkgHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) == MuonOriginFlag::LHCBACKGROUND ) != 0;
 }
 
-inline unsigned int LHCb::MCMuonDigitInfo::natureOfHit() {
+inline unsigned int LHCb::MCMuonDigitInfo::natureOfHit() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskOriginDigitInfo,
                            PackMCMuonDigitInfo::shiftOriginDigitInfo ) );
 }
 
-inline unsigned int LHCb::MCMuonDigitInfo::secondPart() {
+inline unsigned int LHCb::MCMuonDigitInfo::secondPart() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskSecondPart, PackMCMuonDigitInfo::shiftSecondPart ) );
 }
 
-inline void LHCb::MCMuonDigitInfo::setSecondPart( unsigned int secondPart ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setSecondPart( unsigned int secondPart ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftSecondPart, PackMCMuonDigitInfo::maskSecondPart, secondPart );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToCurrentEvent() {
+inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToCurrentEvent() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                            PackMCMuonDigitInfo::shiftBXIDDigitInfo ) == MuonBXFlag::CURRENT ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setBXIDFlagHit( unsigned int BXIDFlag ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setBXIDFlagHit( unsigned int BXIDFlag ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftBXIDDigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                   BXIDFlag );
+  return *this;
 }
 
-inline unsigned int LHCb::MCMuonDigitInfo::BX() {
-  return (
-      Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo, PackMCMuonDigitInfo::shiftBXIDDigitInfo ) );
+inline unsigned int LHCb::MCMuonDigitInfo::BX() const {
+  return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo, PackMCMuonDigitInfo::shiftBXIDDigitInfo );
 }
 
-inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevEvent() {
+inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevEvent() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                            PackMCMuonDigitInfo::shiftBXIDDigitInfo ) == MuonBXFlag::PREV ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevEvent() {
+inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevEvent() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                            PackMCMuonDigitInfo::shiftBXIDDigitInfo ) == MuonBXFlag::TWOPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevPrevEvent() {
+inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevPrevEvent() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                            PackMCMuonDigitInfo::shiftBXIDDigitInfo ) == MuonBXFlag::THREEPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevPrevPrevEvent() {
+inline bool LHCb::MCMuonDigitInfo::doesFiringHitBelongToPrevPrevPrevPrevEvent() const {
   return ( Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskBXIDDigitInfo,
                            PackMCMuonDigitInfo::shiftBXIDDigitInfo ) == MuonBXFlag::FOURPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isAlive() {
+inline bool LHCb::MCMuonDigitInfo::isAlive() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskAliveDigitInfo,
                          PackMCMuonDigitInfo::shiftAliveDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setAliveDigit( unsigned int digitFired ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setAliveDigit( unsigned int digitFired ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftAliveDigitInfo, PackMCMuonDigitInfo::maskAliveDigitInfo,
                   digitFired );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isInDeadTime() {
+inline bool LHCb::MCMuonDigitInfo::isInDeadTime() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskDeadtimeDigitInfo,
                          PackMCMuonDigitInfo::shiftDeadtimeDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setDeadtimeDigit( unsigned int deadtimeKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setDeadtimeDigit( unsigned int deadtimeKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftDeadtimeDigitInfo, PackMCMuonDigitInfo::maskDeadtimeDigitInfo,
                   deadtimeKilled );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isInDialogDeadTime() {
+inline bool LHCb::MCMuonDigitInfo::isInDialogDeadTime() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskDialogDeadtimeDigitInfo,
                          PackMCMuonDigitInfo::shiftDialogDeadtimeDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setDialogDeadtimeDigit( unsigned int deadtimeKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setDialogDeadtimeDigit( unsigned int deadtimeKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftDialogDeadtimeDigitInfo,
                   PackMCMuonDigitInfo::maskDialogDeadtimeDigitInfo, deadtimeKilled );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isDeadForChamberInefficiency() {
+inline bool LHCb::MCMuonDigitInfo::isDeadForChamberInefficiency() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskChamberInefficiencyDigitInfo,
                          PackMCMuonDigitInfo::shiftChamberInefficiencyDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setChamberInefficiencyDigit( unsigned int chamberIneff ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setChamberInefficiencyDigit( unsigned int chamberIneff ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftChamberInefficiencyDigitInfo,
                   PackMCMuonDigitInfo::maskChamberInefficiencyDigitInfo, chamberIneff );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isDeadByTimeJitter() {
+inline bool LHCb::MCMuonDigitInfo::isDeadByTimeJitter() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskTimeJitterDigitInfo,
                          PackMCMuonDigitInfo::shiftTimeJitterDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setTimeJitteredDigit( unsigned int timeJitterKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setTimeJitteredDigit( unsigned int timeJitterKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftTimeJitterDigitInfo,
                   PackMCMuonDigitInfo::maskTimeJitterDigitInfo, timeJitterKilled );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isDeadByTimeAdjustment() {
+inline bool LHCb::MCMuonDigitInfo::isDeadByTimeAdjustment() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskTimeAdjustmentDigitInfo,
                          PackMCMuonDigitInfo::shiftTimeAdjustmentDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setTimeAdjDigit( unsigned int timeAdjustmentKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setTimeAdjDigit( unsigned int timeAdjustmentKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftTimeAdjustmentDigitInfo,
                   PackMCMuonDigitInfo::maskTimeAdjustmentDigitInfo, timeAdjustmentKilled );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isAliveByTimeAdjustment() {
+inline bool LHCb::MCMuonDigitInfo::isAliveByTimeAdjustment() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskAliveTimeAdjustmentDigitInfo,
                          PackMCMuonDigitInfo::shiftAliveTimeAdjustmentDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setAliveTimeAdjDigit( unsigned int timeAdjustmentKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setAliveTimeAdjDigit( unsigned int timeAdjustmentKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftAliveTimeAdjustmentDigitInfo,
                   PackMCMuonDigitInfo::maskAliveTimeAdjustmentDigitInfo, timeAdjustmentKilled );
+  return *this;
 }
 
-inline bool LHCb::MCMuonDigitInfo::isDeadByGeometry() {
+inline bool LHCb::MCMuonDigitInfo::isDeadByGeometry() const {
   return Packer::getBit( m_DigitInfo, PackMCMuonDigitInfo::maskGeometryAcceptanceDigitInfo,
                          PackMCMuonDigitInfo::shiftGeometryAcceptanceDigitInfo ) != 0;
 }
 
-inline void LHCb::MCMuonDigitInfo::setGeometryInefficiency( unsigned int geometryIneffKilled ) {
+inline LHCb::MCMuonDigitInfo& LHCb::MCMuonDigitInfo::setGeometryInefficiency( unsigned int geometryIneffKilled ) {
   Packer::setBit( m_DigitInfo, PackMCMuonDigitInfo::shiftGeometryAcceptanceDigitInfo,
                   PackMCMuonDigitInfo::maskGeometryAcceptanceDigitInfo, geometryIneffKilled );
+  return *this;
 }

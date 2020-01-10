@@ -20,65 +20,58 @@
 // stl
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace LHCb {
   class MCParticle;
 }
 
-namespace LHCb {
-  namespace MC {
+namespace LHCb::MC {
 
-    class MCTrackGeomCriteria {
+  class MCTrackGeomCriteria final {
+
+  public:
+    using Criteria = boost::function<bool( MCTrackInfo&, const LHCb::MCParticle* )>;
+
+    /** Constructor from vector of Criteria */
+    MCTrackGeomCriteria( std::vector<Criteria> criteria );
+
+    /** Constructor from vector of strings */
+    MCTrackGeomCriteria( const std::vector<std::string>& criteria );
+
+    /** fufulls Criteria or not */
+    bool accepted( MCTrackInfo& info, const LHCb::MCParticle* particle ) const;
+
+    class FunctionMap final {
 
     public:
-      typedef boost::function<bool( MCTrackInfo&, const LHCb::MCParticle* )> Criteria;
+      /// map to enum
+      Criteria toType( const std::string& aName ) const;
 
-      /** Constructor from vector of Criteria */
-      MCTrackGeomCriteria( const std::vector<Criteria>& criteria );
-
-      /** Constructor from vector of strings */
-      MCTrackGeomCriteria( const std::vector<std::string>& criteria );
-
-      /** destructor */
-      ~MCTrackGeomCriteria() = default;
-
-      /** fufulls Criteria or not */
-      bool accepted( MCTrackInfo& info, const LHCb::MCParticle* particle ) const;
-
-      class FunctionMap {
-
-      public:
-        /// map to enum
-        Criteria toType( const std::string& aName ) const;
-
-        /// destructer
-        ~FunctionMap() = default;
-
-        friend class MCTrackGeomCriteria;
-
-      private:
-        /// constructer
-        FunctionMap();
-        FunctionMap( const FunctionMap& rhs ) { m_mapping = rhs.m_mapping; }
-
-        typedef std::map<std::string, const Criteria> funMap;
-        mutable funMap                                m_mapping;
-      };
-
-      FunctionMap& theMap() {
-        static FunctionMap sMap;
-        return sMap;
-      }
+      friend class MCTrackGeomCriteria;
 
     private:
-      std::vector<Criteria> m_criteria;
-    };
-  } // namespace MC
-} // namespace LHCb
+      /// constructer
+      FunctionMap();
+      FunctionMap( const FunctionMap& rhs ) { m_mapping = rhs.m_mapping; }
 
-inline LHCb::MC::MCTrackGeomCriteria::MCTrackGeomCriteria( const std::vector<MCTrackGeomCriteria::Criteria>& criteria )
-    : m_criteria( criteria ) {}
+      typedef std::map<std::string, const Criteria> funMap;
+      mutable funMap                                m_mapping;
+    };
+
+    FunctionMap& theMap() {
+      static FunctionMap sMap;
+      return sMap;
+    }
+
+  private:
+    std::vector<Criteria> m_criteria;
+  };
+} // namespace LHCb::MC
+
+inline LHCb::MC::MCTrackGeomCriteria::MCTrackGeomCriteria( std::vector<MCTrackGeomCriteria::Criteria> criteria )
+    : m_criteria( std::move( criteria ) ) {}
 
 inline LHCb::MC::MCTrackGeomCriteria::Criteria
 LHCb::MC::MCTrackGeomCriteria::FunctionMap::toType( const std::string& aName ) const {

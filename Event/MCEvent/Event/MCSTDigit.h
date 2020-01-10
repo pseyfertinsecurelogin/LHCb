@@ -47,10 +47,7 @@ namespace LHCb {
     typedef KeyedContainer<MCSTDigit, Containers::HashMap> Container;
 
     /// Default Constructor
-    MCSTDigit() {}
-
-    /// Default Destructor
-    virtual ~MCSTDigit() {}
+    MCSTDigit() = default;
 
     // Retrieve pointer to class definition structure
     const CLID&        clID() const override;
@@ -82,7 +79,6 @@ namespace LHCb {
 
     friend std::ostream& operator<<( std::ostream& str, const MCSTDigit& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
     SmartRefVector<LHCb::MCSTDeposit> m_mcDeposit; ///< vector of MCSTDeposits
 

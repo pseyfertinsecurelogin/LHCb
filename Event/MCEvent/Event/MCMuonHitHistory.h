@@ -34,119 +34,118 @@ namespace LHCb {
   class MCMuonHitHistory {
   public:
     /// Default Constructor
-    MCMuonHitHistory() : m_hitHistory( 0 ) {}
+    MCMuonHitHistory() = default;
 
     /// Default Destructor
-    virtual ~MCMuonHitHistory() {}
+    virtual ~MCMuonHitHistory() = default;
 
     /// Fill the ASCII output stream
     virtual std::ostream& fillStream( std::ostream& s ) const;
 
     /// has the hit fired the channel?
-    bool hasFired();
+    [[nodiscard]] bool hasFired() const;
 
     /// set firing  flag in the hitHistory word
-    void setFiredFlag( unsigned int firedHit );
+    MCMuonHitHistory& setFiredFlag( unsigned int firedHit );
 
     /// is the hit out of geometrical acceptance?
-    bool isHitOutGeoAccemtance();
+    [[nodiscard]] bool isHitOutGeoAccemtance() const;
 
     /// set out of geometrical acceptance  flag in the hitHistory word
-    void setGeometricalNotAcceptedHitHistory( unsigned int geoOutHit );
+    MCMuonHitHistory& setGeometricalNotAcceptedHitHistory( unsigned int geoOutHit );
 
     /// is the hit killed by deadtime?
-    bool isHitInDeadtime();
+    [[nodiscard]] bool isHitInDeadtime() const;
 
     /// set the deadtime flag in the hitHistory word
-    void setHitInDeadtime( unsigned int deadtimeHit );
+    MCMuonHitHistory& setHitInDeadtime( unsigned int deadtimeHit );
 
     /// has the hit time jittered outside the time window?
-    bool hasTimeJittered();
+    [[nodiscard]] bool hasTimeJittered() const;
 
     /// set out of gate by time jitter  flag in the hitHistory word
-    void setHitOutByTimeJitter( unsigned int jitteredHit );
+    MCMuonHitHistory& setHitOutByTimeJitter( unsigned int jitteredHit );
 
     /// is the hit out after time adjustement ?
-    bool isOutForTimeAdjustment();
+    [[nodiscard]] bool isOutForTimeAdjustment() const;
 
     /// set out of gate after time adjustment flag in the hitHistory word
-    void setHitOutByTimeAdjustment( unsigned int timeAdjustedHit );
+    MCMuonHitHistory& setHitOutByTimeAdjustment( unsigned int timeAdjustedHit );
 
     /// set  again in gate by time adjustemt after out by time jitter or in for a hit with TOF out--- flag in the
     /// hitHistory word
-    void setHitInByTimeAdjustment( unsigned int adjustedJitteredHit );
+    MCMuonHitHistory& setHitInByTimeAdjustment( unsigned int adjustedJitteredHit );
 
     /// is the hit in after time adjustement while it was ouside for TOF or after timejitter?
-    bool isInForTimeAdjustment();
+    [[nodiscard]] bool isInForTimeAdjustment() const;
 
     /// has the hit been killed by chamber inefficiency  ?
-    bool isKilledByChamberInefficiency();
+    [[nodiscard]] bool isKilledByChamberInefficiency() const;
 
     /// set the killed by chamber inefficiency flag in the hitHistory word
-    void setKilledByChamberInefficiencyHit( unsigned int killedChamberIneff );
+    MCMuonHitHistory& setKilledByChamberInefficiencyHit( unsigned int killedChamberIneff );
 
     /// set the BX ID of hit in the hitHistory word
-    void setBXOfHit( unsigned int BXID );
+    MCMuonHitHistory& setBXOfHit( unsigned int BXID );
 
     /// in which BX the hit has originated ?
-    unsigned int BX();
+    [[nodiscard]] unsigned int BX() const;
 
     /// is the hit originated in the current BX ?
-    bool isHitOriginatedInCurrentEvent();
+    [[nodiscard]] bool isHitOriginatedInCurrentEvent() const;
 
     /// is the hit originated in the current BX ?
-    bool isHitOriginatedInPrevEvent();
+    [[nodiscard]] bool isHitOriginatedInPrevEvent() const;
 
     /// is the hit originated in the current BX ?
-    bool isHitOriginatedInPrevPrevEvent();
+    [[nodiscard]] bool isHitOriginatedInPrevPrevEvent() const;
 
     /// is the hit originated in the current BX ?
-    bool isHitOriginatedInPrevPrevPrevEvent();
+    [[nodiscard]] bool isHitOriginatedInPrevPrevPrevEvent() const;
 
     /// is the hit originated in the current BX ?
-    bool isHitOriginatedInPrevPrevPrevPrevEvent();
+    [[nodiscard]] bool isHitOriginatedInPrevPrevPrevPrevEvent() const;
 
     /// is the hit in dialog deadtime ?
-    bool isHitInDialogDeadtime();
+    [[nodiscard]] bool isHitInDialogDeadtime() const;
 
     /// set the killed by dilaog deadtime flag in the hitHistory word
-    void setKilledByDialogDeadtimeHit( unsigned int killedChamberIneff );
+    MCMuonHitHistory& setKilledByDialogDeadtimeHit( unsigned int killedChamberIneff );
 
     /// set the nature of hit in the hitHistory word
-    void setNatureOfHit( unsigned int NatureID );
+    MCMuonHitHistory& setNatureOfHit( unsigned int NatureID );
 
     /// which is the nature of the hit?
-    unsigned int natureOfHit();
+    [[nodiscard]] unsigned int natureOfHit() const;
 
     /// Is a GEANT hit?
-    bool isGeantHit();
+    [[nodiscard]] bool isGeantHit() const;
 
     /// Is a low energy background hit?
-    bool isBackgroundHit();
+    [[nodiscard]] bool isBackgroundHit() const;
 
     /// Is a chamber noise hit?
-    bool isChamberNoiseHit();
+    [[nodiscard]] bool isChamberNoiseHit() const;
 
     /// Is a flat spillover hit?
-    bool isFlatSpilloverHit();
+    [[nodiscard]] bool isFlatSpilloverHit() const;
 
     /// Is a xtalk hit?
-    bool isXTalkHit();
+    [[nodiscard]] bool isXTalkHit() const;
 
     /// Is a el noise hit?
-    bool isElNoiseHit();
+    [[nodiscard]] bool isElNoiseHit() const;
 
     /// Is a machine background ?
-    bool isMachineBkgHit();
+    [[nodiscard]] bool isMachineBkgHit() const;
 
     /// Is hit firing the frontend ?
-    bool isHitFiring();
+    [[nodiscard]] bool isHitFiring() const;
 
     friend std::ostream& operator<<( std::ostream& str, const MCMuonHitHistory& obj ) { return obj.fillStream( str ); }
 
-  protected:
   private:
-    unsigned int m_hitHistory; ///< hit history bit pattern
+    unsigned int m_hitHistory{0}; ///< hit history bit pattern
 
   }; // class MCMuonHitHistory
 
@@ -165,168 +164,178 @@ inline std::ostream& LHCb::MCMuonHitHistory::fillStream( std::ostream& s ) const
   return s;
 }
 
-inline bool LHCb::MCMuonHitHistory::hasFired() {
+inline bool LHCb::MCMuonHitHistory::hasFired() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskFiredHitHistory,
                          PackMCMuonDigitHistory::shiftFiredHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setFiredFlag( unsigned int firedHit ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setFiredFlag( unsigned int firedHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftFiredHitHistory,
                   PackMCMuonDigitHistory::maskFiredHitHistory, firedHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOutGeoAccemtance() {
+inline bool LHCb::MCMuonHitHistory::isHitOutGeoAccemtance() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskGeoAcceptanceHitHistory,
                          PackMCMuonDigitHistory::shiftGeoAcceptanceHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setGeometricalNotAcceptedHitHistory( unsigned int geoOutHit ) {
-
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setGeometricalNotAcceptedHitHistory( unsigned int geoOutHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftGeoAcceptanceHitHistory,
                   PackMCMuonDigitHistory::maskGeoAcceptanceHitHistory, geoOutHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitInDeadtime() {
+inline bool LHCb::MCMuonHitHistory::isHitInDeadtime() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskDeadtimeHitHistory,
                          PackMCMuonDigitHistory::shiftDeadtimeHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setHitInDeadtime( unsigned int deadtimeHit ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setHitInDeadtime( unsigned int deadtimeHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftDeadtimeHitHistory,
                   PackMCMuonDigitHistory::maskDeadtimeHitHistory, deadtimeHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonHitHistory::hasTimeJittered() {
+inline bool LHCb::MCMuonHitHistory::hasTimeJittered() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskJitteredHitHistory,
                          PackMCMuonDigitHistory::shiftJitteredHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setHitOutByTimeJitter( unsigned int jitteredHit ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setHitOutByTimeJitter( unsigned int jitteredHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftJitteredHitHistory,
                   PackMCMuonDigitHistory::maskJitteredHitHistory, jitteredHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonHitHistory::isOutForTimeAdjustment() {
+inline bool LHCb::MCMuonHitHistory::isOutForTimeAdjustment() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskAdjustmentHitHistory,
                          PackMCMuonDigitHistory::shiftAdjustmentHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setHitOutByTimeAdjustment( unsigned int timeAdjustedHit ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setHitOutByTimeAdjustment( unsigned int timeAdjustedHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftAdjustmentHitHistory,
                   PackMCMuonDigitHistory::maskAdjustmentHitHistory, timeAdjustedHit );
+  return *this;
 }
 
-inline void LHCb::MCMuonHitHistory::setHitInByTimeAdjustment( unsigned int adjustedJitteredHit ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setHitInByTimeAdjustment( unsigned int adjustedJitteredHit ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftAdjustmentJitterHitHistory,
                   PackMCMuonDigitHistory::maskAdjustmentJitterHitHistory, adjustedJitteredHit );
+  return *this;
 }
 
-inline bool LHCb::MCMuonHitHistory::isInForTimeAdjustment() {
+inline bool LHCb::MCMuonHitHistory::isInForTimeAdjustment() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskAdjustmentJitterHitHistory,
                          PackMCMuonDigitHistory::shiftAdjustmentJitterHitHistory ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isKilledByChamberInefficiency() {
+inline bool LHCb::MCMuonHitHistory::isKilledByChamberInefficiency() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskChamberIneffHitHistory,
                          PackMCMuonDigitHistory::shiftChamberIneffHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setKilledByChamberInefficiencyHit( unsigned int killedChamberIneff ) {
+inline LHCb::MCMuonHitHistory&
+LHCb::MCMuonHitHistory::setKilledByChamberInefficiencyHit( unsigned int killedChamberIneff ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftChamberIneffHitHistory,
                   PackMCMuonDigitHistory::maskChamberIneffHitHistory, killedChamberIneff );
+  return *this;
 }
 
-inline void LHCb::MCMuonHitHistory::setBXOfHit( unsigned int BXID ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setBXOfHit( unsigned int BXID ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftBXbelongOfHitHistory,
                   PackMCMuonDigitHistory::maskBXbelongOfHitHistory, BXID );
+  return *this;
 }
 
-inline unsigned int LHCb::MCMuonHitHistory::BX() {
+inline unsigned int LHCb::MCMuonHitHistory::BX() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) );
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOriginatedInCurrentEvent() {
+inline bool LHCb::MCMuonHitHistory::isHitOriginatedInCurrentEvent() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) == MuonBXFlag::CURRENT ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevEvent() {
+inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevEvent() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) == MuonBXFlag::PREV ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevEvent() {
+inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevEvent() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) == MuonBXFlag::TWOPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevPrevEvent() {
+inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevPrevEvent() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) == MuonBXFlag::THREEPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevPrevPrevEvent() {
+inline bool LHCb::MCMuonHitHistory::isHitOriginatedInPrevPrevPrevPrevEvent() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskBXbelongOfHitHistory,
                            PackMCMuonDigitHistory::shiftBXbelongOfHitHistory ) == MuonBXFlag::FOURPREV ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitInDialogDeadtime() {
+inline bool LHCb::MCMuonHitHistory::isHitInDialogDeadtime() const {
   return Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskDialogDeadtimeHitHistory,
                          PackMCMuonDigitHistory::shiftDialogDeadtimeHitHistory ) != 0;
 }
 
-inline void LHCb::MCMuonHitHistory::setKilledByDialogDeadtimeHit( unsigned int killedChamberIneff ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setKilledByDialogDeadtimeHit( unsigned int killedChamberIneff ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftDialogDeadtimeHitHistory,
                   PackMCMuonDigitHistory::maskDialogDeadtimeHitHistory, killedChamberIneff );
+  return *this;
 }
 
-inline void LHCb::MCMuonHitHistory::setNatureOfHit( unsigned int NatureID ) {
+inline LHCb::MCMuonHitHistory& LHCb::MCMuonHitHistory::setNatureOfHit( unsigned int NatureID ) {
   Packer::setBit( m_hitHistory, PackMCMuonDigitHistory::shiftNatureOfHitHistory,
                   PackMCMuonDigitHistory::maskNatureOfHitHistory, NatureID );
+  return *this;
 }
 
-inline unsigned int LHCb::MCMuonHitHistory::natureOfHit() {
+inline unsigned int LHCb::MCMuonHitHistory::natureOfHit() const {
 
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) );
 }
 
-inline bool LHCb::MCMuonHitHistory::isGeantHit() {
+inline bool LHCb::MCMuonHitHistory::isGeantHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::GEANT ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isBackgroundHit() {
+inline bool LHCb::MCMuonHitHistory::isBackgroundHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::BACKGROUND ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isChamberNoiseHit() {
+inline bool LHCb::MCMuonHitHistory::isChamberNoiseHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::CHAMBERNOISE ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isFlatSpilloverHit() {
+inline bool LHCb::MCMuonHitHistory::isFlatSpilloverHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::FLATSPILLOVER ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isXTalkHit() {
+inline bool LHCb::MCMuonHitHistory::isXTalkHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::XTALK ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isElNoiseHit() {
+inline bool LHCb::MCMuonHitHistory::isElNoiseHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::ELECTRONICNOISE ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isMachineBkgHit() {
+inline bool LHCb::MCMuonHitHistory::isMachineBkgHit() const {
   return ( Packer::getBit( m_hitHistory, PackMCMuonDigitHistory::maskNatureOfHitHistory,
                            PackMCMuonDigitHistory::shiftNatureOfHitHistory ) == MuonOriginFlag::LHCBACKGROUND ) != 0;
 }
 
-inline bool LHCb::MCMuonHitHistory::isHitFiring() {
+inline bool LHCb::MCMuonHitHistory::isHitFiring() const {
   return !( isHitOutGeoAccemtance() || isKilledByChamberInefficiency() || isHitInDeadtime() );
 }
