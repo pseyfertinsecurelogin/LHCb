@@ -20,7 +20,6 @@
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/System.h"
-
 namespace LHCb {
 
   /// Namespace for CPU dispatch helper methods
@@ -38,6 +37,61 @@ namespace LHCb {
       AVX512BWDQ = 11,
       UNKNOWN    = 999999
     };
+
+    // Define flags for each SIMD level
+    constexpr bool AVX512BWDQ_ENABLED =
+#if defined( __AVX512BW__ ) || defined( __AVX512DQ__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX512VL_ENABLED =
+#if defined( __AVX512VL__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX512F_ENABLED =
+#if defined( __AVX512F__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX2_ENABLED =
+#if defined( __AVX2__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool AVX_ENABLED =
+#if defined( __AVX__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool SSE4_2_ENABLED =
+#if defined( __SSE4_2__ )
+        true;
+#else
+        false;
+#endif
+    constexpr bool SSE3_ENABLED =
+#if defined( __SSE3__ )
+        true;
+#else
+        false;
+#endif
+
+    namespace {
+      // Define the SIMD allowed, based on compilation level and runtime flags
+      inline const bool allow_avx512bwdq = AVX512BWDQ_ENABLED && !getenv( "LHCBMATH_DISABLE_AVX512" );
+      inline const bool allow_avx512vl   = AVX512VL_ENABLED && !getenv( "LHCBMATH_DISABLE_AVX512" );
+      inline const bool allow_avx512f    = AVX512F_ENABLED && !getenv( "LHCBMATH_DISABLE_AVX512" );
+      inline const bool allow_avx2       = AVX2_ENABLED && !getenv( "LHCBMATH_DISABLE_AVX2" );
+      inline const bool allow_avx        = AVX_ENABLED && !getenv( "LHCBMATH_DISABLE_AVX" );
+      inline const bool allow_sse4       = SSE4_2_ENABLED && !getenv( "LHCBMATH_DISABLE_SSE4" );
+      inline const bool allow_sse3       = SSE3_ENABLED && !getenv( "LHCBMATH_DISABLE_SSE3" );
+    } // namespace
 
     /** @brief Method to set a dispatch function from a list of options based on CPU ID.
      *
@@ -60,7 +114,7 @@ namespace LHCb {
       {
         ID lastID = UNKNOWN;
         for ( const auto& i : vtbl ) {
-          if ( i.first >= lastID ) {
+          if ( UNLIKELY( i.first >= lastID ) ) {
             throw GaudiException( "Dispatch table must be strictly in decreasing ID order", "LHCb::CPU::dispatch",
                                   StatusCode::FAILURE );
           }
@@ -73,17 +127,20 @@ namespace LHCb {
 
       // find pointer to the appropriate version
       const auto impl = std::find_if( std::begin( vtbl ), std::end( vtbl ), [&level]( const auto& j ) {
-        return ( ( AVX512BWDQ == j.first && getenv( "LHCBMATH_DISABLE_AVX512" ) ) ||
-                         ( AVX512VL == j.first && getenv( "LHCBMATH_DISABLE_AVX512" ) ) ||
-                         ( AVX512 == j.first && getenv( "LHCBMATH_DISABLE_AVX512" ) ) ||
-                         ( AVX2 == j.first && getenv( "LHCBMATH_DISABLE_AVX2" ) ) ||
-                         ( AVX == j.first && getenv( "LHCBMATH_DISABLE_AVX" ) ) ||
-                         ( SSE4 == j.first && getenv( "LHCBMATH_DISABLE_SSE4" ) ) ||
-                         ( SSE3 == j.first && getenv( "LHCBMATH_DISABLE_SSE3" ) )
+        // check the runtime flags against the implementation
+        return ( ( ( AVX512BWDQ == j.first && !allow_avx512bwdq ) || //
+                   ( AVX512VL == j.first && !allow_avx512vl ) ||     //
+                   ( AVX512 == j.first && !allow_avx512f ) ||        //
+                   ( AVX2 == j.first && !allow_avx2 ) ||             //
+                   ( AVX == j.first && !allow_avx ) ||               //
+                   ( SSE4 == j.first && !allow_sse4 ) ||             //
+                   ( SSE3 == j.first && !allow_sse3 ) )
                      ? false
                      : level >= j.first );
       } );
-      if ( impl == std::end( vtbl ) ) {
+
+      // check we found something to use
+      if ( UNLIKELY( impl == std::end( vtbl ) ) ) {
         throw GaudiException( "No implementation for instruction set level " + std::to_string( level ),
                               "LHCb::CPU::dispatch", StatusCode::FAILURE );
       }
