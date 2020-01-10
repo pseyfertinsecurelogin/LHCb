@@ -80,15 +80,15 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  typedef std::pair<CLUSTERWORD, boost::container::small_vector<SiADCWord, 10>> SiDecodedCluster;
+  using SiDecodedCluster = std::pair<CLUSTERWORD, boost::container::small_vector<SiADCWord, 10>>;
 
   // decoding iterators
 
-  /** @class SiRawBankDecoder::pos_iterator SiRawBankDecoder.h
+  /** @class SiRawBankDecoder::pos_range SiRawBankDecoder.h
    *
-   *  Decoding iterator for cluster positions only
+   *  Decoding range for cluster positions only
    *
-   *  This completly trivial iterator allows you to traverse the cluster
+   *  This completly trivial range allows you to traverse the cluster
    *  positions in the raw bank and decode them at the same
    *  time.  Use this if you do not need the ADC counts and
    *  speed is a concern (e.g. in the trigger).
@@ -98,36 +98,36 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  struct Sentinel final {};
 
-  class pos_iterator final {
+  class pos_range final {
+
+    const LHCb::span<const uint16_t> m_bank;
+
+    struct Sentinel final {};
+
+    class Iterator final {
+      const LHCb::span<const uint16_t> m_bank;
+      unsigned int                     m_pos{0};
+
+    public:
+      Iterator( LHCb::span<const uint16_t> bank ) : m_bank{bank} {}
+
+      // dereferencing
+      CLUSTERWORD operator*() const { return CLUSTERWORD{m_bank[m_pos]}; }
+
+      Iterator& operator++() {
+        ++m_pos;
+        assert( m_pos <= m_bank.size() );
+        return *this;
+      }
+
+      bool operator!=( Sentinel ) const { return m_pos != m_bank.size(); }
+    };
+
   public:
-    pos_iterator& operator++() {
-      ++m_pos;
-      assert( m_pos <= m_bank.size() );
-      return *this;
-    }
-
-    bool operator!=( Sentinel ) const { return m_pos != m_bank.size(); }
-
-    // dereferencing
-    CLUSTERWORD operator*() const { return CLUSTERWORD( m_bank[m_pos] ); }
-
-  private:
-    /**  Construct with position in raw bank reference to decoder
-     *   Only friends (i.e. the decoder class) are allowed
-     *   to do that.  If applicable, the position will be
-     *   decoded.
-     *
-     * @see SiRawBankDecoder
-     */
-    pos_iterator( LHCb::span<const uint16_t> bank ) : m_bank{bank} {}
-
-  private:
-    LHCb::span<const uint16_t> m_bank;
-    unsigned int               m_pos{0};
-
-    friend class SiRawBankDecoder;
+    pos_range( LHCb::span<const uint16_t> bank ) : m_bank{std::move( bank )} {}
+    auto begin() const { return Iterator{m_bank}; }
+    auto end() const { return Sentinel{}; }
   };
 
   /** @class SiRawBankDecoder::posadc_iterator SiRawBankDecoder.h
@@ -151,10 +151,6 @@ public:
    */
   class posadc_iterator final {
   public:
-    // live and death
-
-    posadc_iterator() = default;
-
     /**  Increment
      *   The implementatio of this increment operator
      *   is non-trivial.  It reads the next cluster
@@ -311,11 +307,8 @@ public:
    */
   unsigned int nClusters() const { return m_nClusters; }
 
-  /// start iterator for cluster positions
-  pos_iterator posBegin() const { return {{reinterpret_cast<const uint16_t*>( m_bank ) + 2, m_nClusters}}; }
-
-  /// end iterator for cluster positions
-  Sentinel posEnd() const { return {}; }
+  /// range of cluster positions
+  auto posRange() const { return pos_range{{reinterpret_cast<const uint16_t*>( m_bank ) + 2, m_nClusters}}; }
 
   /// start iterator for decoded clusters with ADC values
   const posadc_iterator posAdcBegin() const { return posadc_iterator( 0, this ); }
