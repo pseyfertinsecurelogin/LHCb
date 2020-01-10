@@ -12,6 +12,9 @@
 #include "GaudiKernel/ConcurrencyFlags.h"
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/SerializeSTL.h"
+#include "Kernel/EventContextExt.h"
+#include "Kernel/EventLocalAllocator.h"
+
 #include <thread>
 #include <x86intrin.h>
 
@@ -230,6 +233,27 @@ StatusCode HLTControlFlowMgr::finalize() {
 
   StatusCode sc = StatusCode::SUCCESS;
 
+  if constexpr ( LHCb::Allocators::Utils::provides_stats_v<LHCb::Allocators::MonotonicBufferResource> ) {
+    // Print statistics about the shared per-event memory pool if it was enabled
+    if ( m_estMemoryPoolSize > 0 ) {
+      constexpr auto denominator = 1024 * 1024;
+      info() << "Memory pool: used " << float( m_memoryPoolSize.mean() / denominator ) << " +/- "
+             << float( m_memoryPoolSize.meanErr() / denominator )
+             << " MiB (min: " << float( m_memoryPoolSize.min() / denominator )
+             << ", max: " << float( m_memoryPoolSize.max() / denominator ) << ") in "
+             << float( m_memoryPoolBlocks.mean() ) << " +/- " << float( m_memoryPoolBlocks.meanErr() )
+             << " blocks (allocated >once in " << float( 100. * m_memoryPoolMultipleAllocations.efficiency() )
+             << " +/- " << float( 100. * m_memoryPoolMultipleAllocations.efficiencyErr() )
+             << "% events). Allocated capacity was " << float( m_memoryPoolCapacity.mean() / denominator ) << " +/- "
+             << float( m_memoryPoolCapacity.meanErr() / denominator )
+             << " MiB (min: " << float( m_memoryPoolCapacity.min() / denominator )
+             << ", max: " << float( m_memoryPoolCapacity.max() / denominator ) << ") and "
+             << m_memoryPoolAllocations.mean() << " +/- " << m_memoryPoolAllocations.meanErr()
+             << " (min: " << m_memoryPoolAllocations.min() << ", max: " << m_memoryPoolAllocations.max()
+             << ") requests were served" << endmsg;
+    }
+  }
+
   // Determine the size of the algorithm name field to use
   // Use max name size, clamped to 'reasonable' range
   const auto maxNameS =
@@ -349,19 +373,11 @@ StatusCode HLTControlFlowMgr::executeEvent( EventContext&& evtContext ) {
 }
 
 void HLTControlFlowMgr::push( EventContext&& evtContext ) {
-  // receive the data pointer
-  auto evt_root_ptr = evtContext.getExtension<IOpaqueAddress*>();
-
-  // giving the scheduler states to the evtContext, so that they are
-  // globally accessible within an event
-  // copy of states happens here!
-  evtContext.emplaceExtension<SchedulerStates>( m_NodeStates, m_AlgStates );
-
   // Now add event to the task pool
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-  auto event_task = [evt_root_ptr, evtContext = std::move( evtContext ), this]() mutable {
+  auto event_task = [evtContext = std::move( evtContext ), this]() mutable {
     StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
     if ( sc.isFailure() ) {
       fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
@@ -369,6 +385,9 @@ void HLTControlFlowMgr::push( EventContext&& evtContext ) {
       throw GaudiException( "Slot " + std::to_string( evtContext.slot() ) + " could not be selected for the WhiteBoard",
                             name(), sc );
     }
+
+    // receive the data pointer
+    auto evt_root_ptr = evtContext.getExtension<IOpaqueAddress*>();
 
     // set event root
     if ( not evt_root_ptr ) { // there is no data, we set an empty TES
@@ -379,11 +398,28 @@ void HLTControlFlowMgr::push( EventContext&& evtContext ) {
       if ( !sc.isSuccess() ) error() << "Error setting event root address." << endmsg;
     }
 
-    auto& [NodeStates, AlgStates] = evtContext.getExtension<SchedulerStates>();
+    // set up the LHCb-specific event context extension
+    auto& lhcbExt = evtContext.emplaceExtension<LHCb::EventContextExtension>();
 
+    // create a memory pool for algorithms processing this event
+    // note: the resource is owned by lhcbExt, memResource is just a non-owning handle
+    auto* memResource =
+        m_estMemoryPoolSize > 0
+            ? lhcbExt.emplaceMemResource<LHCb::Allocators::MonotonicBufferResource>( m_estMemoryPoolSize )
+            : nullptr;
+
+    // Save a shortcut directly into the event context
+    LHCb::setMemResource( evtContext, memResource );
+
+    // Note that this is a COPY and the scheduler extension will NOT be present in the copy
     Gaudi::Hive::setCurrentContext( evtContext );
 
     SmartIF<IProperty> appmgr( serviceLocator() );
+
+    // Copy the scheduler states into the event context so they're globally accessible within an event
+    auto& [NodeStates, AlgStates] = lhcbExt.emplaceSchedulerExtension<SchedulerStates>(
+        std::piecewise_construct, std::tuple{m_NodeStates.begin(), m_NodeStates.end(), memResource},
+        std::tuple{m_AlgStates.begin(), m_AlgStates.end(), memResource} );
 
     for ( AlgWrapper& toBeRun : m_definitelyRunTheseAlgs ) {
       try {
@@ -624,6 +660,23 @@ StatusCode HLTControlFlowMgr::eventFailed( EventContext const& eventContext ) co
   return StatusCode::FAILURE;
 }
 
+/** Farming this out to a separate template function means that if the if
+ *  constexpr branch is not taken, the code inside does not need to be
+ *  completely valid.
+ */
+template <typename Resource>
+void HLTControlFlowMgr::fillMemoryPoolStats( Resource* memResource ) const {
+  if constexpr ( LHCb::Allocators::Utils::provides_stats_v<Resource> ) {
+    if ( memResource ) {
+      m_memoryPoolSize += memResource->size();
+      m_memoryPoolBlocks += memResource->num_blocks();
+      m_memoryPoolCapacity += memResource->capacity();
+      m_memoryPoolAllocations += memResource->num_allocations();
+      m_memoryPoolMultipleAllocations += ( memResource->num_blocks() > 1 );
+    }
+  }
+}
+
 void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
   int si = eventContext.slot();
 
@@ -637,6 +690,24 @@ void HLTControlFlowMgr::promoteToExecuted( EventContext&& eventContext ) const {
     eventFailed( eventContext ).ignore();
     fatal() << "Failed event detected on " << eventContext << endmsg;
   }
+
+  if constexpr ( LHCb::Allocators::Utils::provides_stats_v<LHCb::Allocators::MonotonicBufferResource> ) {
+    // Fill some statistics about the per-event memory pool/arena
+    fillMemoryPoolStats( LHCb::getMemResource( eventContext ) );
+  }
+
+  // Move the memory resource out of the event context, this prevents the resource being
+  // kept alive on the done queue but ensures it lives for longer than the event store..
+  auto memResource = eventContext.getExtension<LHCb::EventContextExtension>().removeMemResource();
+
+  // In principle this isn't needed, it should just avoid an invalid pointer being kept
+  // in the done queue.
+  LHCb::setMemResource( eventContext, nullptr );
+
+  // Other parts of the extension may depend on the memory resource, so better to remove
+  // the whole thing before moving the event context onto the done queue.
+  // (concretely, the scheduler extension inside the generic extension uses the resource.)
+  eventContext.emplaceExtension<bool>( false ); // TODO: add a resetExtension() in Gaudi
 
   {
     std::lock_guard _{m_doneMutex};

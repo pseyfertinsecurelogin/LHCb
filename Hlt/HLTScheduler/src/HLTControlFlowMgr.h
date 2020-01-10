@@ -15,6 +15,7 @@
 // The following MUST be included before GaudiKernel/Parsers.h,
 // which means very early on in the compilation unit.
 #include "CFNodePropertiesParse.h"
+#include "Kernel/EventLocalAllocator.h"
 #include "ThreadPool.h"
 // FW includes
 #include "Gaudi/Accumulators.h"
@@ -162,6 +163,9 @@ private:
                                                  "Minimum width of component name comlumn in timing table"};
   Gaudi::Property<std::size_t> m_maxNameColWidth{this, "MaxNameColumnWidth", 100u,
                                                  "Maximum width of component name comlumn in timing table"};
+  Gaudi::Property<std::size_t> m_estMemoryPoolSize{
+      this, "MemoryPoolSize", 10 * 1024 * 1024,
+      "Estimated size of each event-local memory pool, in bytes. Set to zero to disable event-local memory pools."};
 
   Gaudi::Property<bool> m_createTimingTable{
       this, "CreateTimingTable", true,
@@ -203,8 +207,17 @@ private:
   std::vector<Gaudi::Accumulators::AveragingCounter<uint64_t>> m_TimingCounters;
   std::vector<Gaudi::Accumulators::BinomialCounter<uint32_t>>  m_NodeStateCounters;
 
+  // statistics for the per-event memory pool
+  // in principle these members could be removed if
+  // LHCb::Allocators::Utils::provides_stats_v<LHCb::Allocators::MonotonicBufferResource>
+  // is not true (it's constexpr), but that doesn't seem worth the effort
+  mutable Gaudi::Accumulators::BinomialCounter<uint32_t> m_memoryPoolMultipleAllocations;
+  mutable Gaudi::Accumulators::StatAccumulator<uint64_t> m_memoryPoolSize, m_memoryPoolBlocks, m_memoryPoolCapacity,
+      m_memoryPoolAllocations;
+
 public:
-  using SchedulerStates = decltype( std::pair{m_NodeStates, m_AlgStates} );
+  using SchedulerStates = std::pair<std::vector<NodeState, LHCb::Allocators::EventLocal<NodeState>>,
+                                    std::vector<AlgState, LHCb::Allocators::EventLocal<AlgState>>>;
 
 private:
   // all controlflownodes
@@ -224,6 +237,9 @@ private:
   std::vector<int> m_mapPrintToNodeStateOrder;
   // maximum width of the dependency tree
   int m_maxTreeWidth{};
+
+  template <typename Resource>
+  void fillMemoryPoolStats( Resource* memResource ) const;
 
   // runtime adding of states to print tree and states
 public:
