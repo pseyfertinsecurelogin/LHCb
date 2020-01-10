@@ -12,6 +12,7 @@
 
 #include <boost/container/small_vector.hpp>
 
+#include "Kernel/STLExtensions.h"
 #include "SiDAQ/SiADCBankTraits.h"
 #include "SiDAQ/SiADCWord.h"
 #include "SiDAQ/SiHeaderWord.h"
@@ -61,20 +62,8 @@ public:
    *  it will imediately decode the bank header bytes.  So
    *  if you don't need it, don't create it.
    */
-  SiRawBankDecoder( const SiDAQ::buffer_word* bank )
+  explicit SiRawBankDecoder( const SiDAQ::buffer_word* bank )
       : m_bank( bank ), m_header( SiHeaderWord( bank[0] ) ), m_nClusters( m_header.nClusters() ) {}
-
-  /// Copy construction
-  SiRawBankDecoder( const SiRawBankDecoder& ini )
-      : m_bank( ini.m_bank ), m_header( ini.m_header ), m_nClusters( ini.m_nClusters ) {}
-
-  /// Assignment
-  const SiRawBankDecoder& operator=( const SiRawBankDecoder& rhs ) {
-    m_bank      = rhs.m_bank;
-    m_header    = rhs.m_header;
-    m_nClusters = rhs.m_nClusters;
-    return *this;
-  }
 
   // shortcuts
 
@@ -109,21 +98,20 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
+  struct Sentinel final {};
+
   class pos_iterator final {
   public:
-    // live and death
-
-    pos_iterator() = default;
-
-    const pos_iterator& operator++() const {
+    pos_iterator& operator++() {
       ++m_pos;
+      assert( m_pos <= m_bank.size() );
       return *this;
     }
 
-    bool operator!=( const unsigned int end ) const { return m_pos != end; }
+    bool operator!=( Sentinel ) const { return m_pos != m_bank.size(); }
 
     // dereferencing
-    const CLUSTERWORD operator*() const { return CLUSTERWORD( m_bank[m_pos] ); }
+    CLUSTERWORD operator*() const { return CLUSTERWORD( m_bank[m_pos] ); }
 
   private:
     /**  Construct with position in raw bank reference to decoder
@@ -133,17 +121,14 @@ public:
      *
      * @see SiRawBankDecoder
      */
-    pos_iterator( unsigned int pos, const SiRawBankDecoder* decoder )
-        : m_pos( pos ), m_bank( &( (uint16_t*)decoder->m_bank )[2] ) {}
+    pos_iterator( LHCb::span<const uint16_t> bank ) : m_bank{bank} {}
 
   private:
-    mutable unsigned int m_pos;
-    const uint16_t*      m_bank;
+    LHCb::span<const uint16_t> m_bank;
+    unsigned int               m_pos{0};
 
     friend class SiRawBankDecoder;
   };
-
-  friend class pos_iterator;
 
   /** @class SiRawBankDecoder::posadc_iterator SiRawBankDecoder.h
    *
@@ -176,7 +161,7 @@ public:
      *   position word from the raw bank and decodes it.
      *
      */
-    const posadc_iterator& operator++() const {
+    posadc_iterator& operator++() {
       if ( *this != m_decoder->posAdcEnd() ) {
         ++m_pos;
         decode();
@@ -245,7 +230,7 @@ public:
      *
      * @see SiDecodedCluster
      */
-    void decode() const {
+    void decode() {
       if ( m_pos < m_decoder->m_nClusters ) doDecode( typename CLUSTERWORD::adc_bank_type() );
     }
 
@@ -253,7 +238,7 @@ public:
      *  The actual decoding for ADC only banks like
      *  specified for the Velo
      */
-    void doDecode( SiDAQ::adc_only_bank_tag ) const {
+    void doDecode( SiDAQ::adc_only_bank_tag ) {
       m_cluster.second.clear();
       doDecodeCommon( m_cluster );
     }
@@ -262,7 +247,7 @@ public:
      *  The actual decoding for ADC banks with prepended
      *  neighbour sums like specified for the ST
      */
-    void doDecode( SiDAQ::adc_neighboursum_bank_tag ) const {
+    void doDecode( SiDAQ::adc_neighboursum_bank_tag ) {
       m_cluster.second.clear();
 
       // fetch the neighbour sum first
@@ -277,7 +262,7 @@ public:
      *  independent of the specific ADC bank type, i.e.
      *  the common between Velo and ST
      */
-    void doDecodeCommon( SiDecodedCluster& cluster ) const {
+    void doDecodeCommon( SiDecodedCluster& cluster ) {
       // get the first adc count *without* checking the end-of-cluster bit
       cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
       ++m_nADC;
@@ -293,11 +278,11 @@ public:
     }
 
   private:
-    mutable unsigned int     m_pos  = 0;
-    mutable unsigned int     m_nADC = 0;
-    const unsigned int       m_offset;
-    const SiRawBankDecoder*  m_decoder;
-    mutable SiDecodedCluster m_cluster;
+    unsigned int            m_pos  = 0;
+    unsigned int            m_nADC = 0;
+    const unsigned int      m_offset;
+    const SiRawBankDecoder* m_decoder;
+    SiDecodedCluster        m_cluster;
 
     friend class SiRawBankDecoder;
   };
@@ -327,10 +312,10 @@ public:
   unsigned int nClusters() const { return m_nClusters; }
 
   /// start iterator for cluster positions
-  const pos_iterator posBegin() const { return pos_iterator( 0, this ); }
+  pos_iterator posBegin() const { return {{reinterpret_cast<const uint16_t*>( m_bank ) + 2, m_nClusters}}; }
 
   /// end iterator for cluster positions
-  unsigned int posEnd() const { return m_nClusters; }
+  Sentinel posEnd() const { return {}; }
 
   /// start iterator for decoded clusters with ADC values
   const posadc_iterator posAdcBegin() const { return posadc_iterator( 0, this ); }
