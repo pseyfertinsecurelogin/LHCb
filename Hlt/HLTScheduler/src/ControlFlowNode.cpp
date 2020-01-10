@@ -24,8 +24,8 @@
 // more children. If an executed child returns TRUE, a counter is decremented,
 // to be sure to finish execution after every child is executed.
 template <>
-void CompositeNode<nodeType::LAZY_AND>::updateStateAndNotify( int                     senderNodeID,
-                                                              std::vector<NodeState>& NodeStates ) const {
+void CompositeNode<nodeType::LAZY_AND>::updateStateAndNotify( int                   senderNodeID,
+                                                              LHCb::span<NodeState> NodeStates ) const {
   if ( !NodeStates[senderNodeID].passed ) {
     NodeStates[m_NodeID].executionCtr = 0;
     NodeStates[m_NodeID].passed       = false;
@@ -40,8 +40,8 @@ void CompositeNode<nodeType::LAZY_AND>::updateStateAndNotify( int               
 }
 
 template <>
-void CompositeNode<nodeType::LAZY_OR>::updateStateAndNotify( int                     senderNodeID,
-                                                             std::vector<NodeState>& NodeStates ) const {
+void CompositeNode<nodeType::LAZY_OR>::updateStateAndNotify( int                   senderNodeID,
+                                                             LHCb::span<NodeState> NodeStates ) const {
   if ( NodeStates[senderNodeID].passed ) {
     NodeStates[m_NodeID].executionCtr = 0;
     NodeStates[m_NodeID].passed       = true;
@@ -59,7 +59,7 @@ void CompositeNode<nodeType::LAZY_OR>::updateStateAndNotify( int                
 // all children, sets executed state as soon as every child ran and if one child
 // passed, this passes as well
 template <>
-void CompositeNode<nodeType::NONLAZY_OR>::updateStateAndNotify( int, std::vector<NodeState>& NodeStates ) const {
+void CompositeNode<nodeType::NONLAZY_OR>::updateStateAndNotify( int, LHCb::span<NodeState> NodeStates ) const {
   NodeStates[m_NodeID].executionCtr--;
   if ( NodeStates[m_NodeID].executionCtr == 0 ) {
     NodeStates[m_NodeID].passed = std::any_of( begin( m_children ), end( m_children ), [&]( VNode const* vchild ) {
@@ -70,7 +70,7 @@ void CompositeNode<nodeType::NONLAZY_OR>::updateStateAndNotify( int, std::vector
 }
 
 template <>
-void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify( int, std::vector<NodeState>& NodeStates ) const {
+void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify( int, LHCb::span<NodeState> NodeStates ) const {
   NodeStates[m_NodeID].executionCtr--;
   if ( NodeStates[m_NodeID].executionCtr == 0 ) {
     NodeStates[m_NodeID].passed = std::all_of( begin( m_children ), end( m_children ), [&]( VNode const* vchild ) {
@@ -81,7 +81,7 @@ void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify( int, std::vecto
 }
 
 template <>
-void CompositeNode<nodeType::NOT>::updateStateAndNotify( int, std::vector<NodeState>& NodeStates ) const {
+void CompositeNode<nodeType::NOT>::updateStateAndNotify( int, LHCb::span<NodeState> NodeStates ) const {
   NodeStates[m_NodeID].executionCtr--;
   NodeStates[m_NodeID].passed =
       !std::visit( [&]( auto const& child ) { return NodeStates[child.m_NodeID].passed; }, *m_children.front() );
@@ -89,7 +89,7 @@ void CompositeNode<nodeType::NOT>::updateStateAndNotify( int, std::vector<NodeSt
 }
 
 // just the same as CompositeNode::requested()
-bool BasicNode::requested( std::vector<NodeState> const& NodeStates ) const {
+bool BasicNode::requested( LHCb::span<NodeState const> NodeStates ) const {
   return m_parents.empty() || std::any_of( begin( m_parents ), end( m_parents ), [&]( VNode const* Vparent ) {
            return std::visit( overload{[&]( auto const& parent ) { return parent.isActive( NodeStates ); },
                                        []( BasicNode const& ) { return false; }},
@@ -98,7 +98,7 @@ bool BasicNode::requested( std::vector<NodeState> const& NodeStates ) const {
 } // end of requested
 
 // just the same as CompositeNode::notifyParents
-void BasicNode::notifyParents( std::vector<NodeState>& NodeStates ) const {
+void BasicNode::notifyParents( LHCb::span<NodeState> NodeStates ) const {
   for ( VNode* Vparent : m_parents ) {
     std::visit( overload{[&]( auto& parent ) {
                            if ( NodeStates[parent.m_NodeID].executionCtr != 0 )

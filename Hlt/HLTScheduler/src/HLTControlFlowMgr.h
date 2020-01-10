@@ -227,9 +227,10 @@ private:
 
   // runtime adding of states to print tree and states
 public:
-  template <typename printable>
-  std::stringstream buildPrintableStateTree( std::vector<printable> const& states ) const;
-  std::stringstream buildAlgsWithStates( std::vector<AlgState> const& states ) const;
+  template <typename Printable>
+  std::stringstream buildPrintableStateTree( LHCb::span<Printable const> states ) const;
+
+  std::stringstream buildAlgsWithStates( LHCb::span<AlgState const> states ) const;
 
   // to be able to check which states belong to which node (from the outside)
   auto getNodeNamesWithIndices() {

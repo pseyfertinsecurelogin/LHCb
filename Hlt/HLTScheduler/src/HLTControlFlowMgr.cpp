@@ -267,7 +267,7 @@ StatusCode HLTControlFlowMgr::finalize() {
   info() << endmsg;
 
   // print the counters
-  info() << buildPrintableStateTree( m_NodeStateCounters ).str() << endmsg;
+  info() << buildPrintableStateTree( LHCb::make_span( std::as_const( m_NodeStateCounters ) ) ).str() << endmsg;
 
   // Save Histograms Now
   if ( m_histoPersSvc ) {
@@ -422,7 +422,7 @@ void HLTControlFlowMgr::push( EventContext&& evtContext ) {
 
     // printing
     if ( UNLIKELY( msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0 ) ) {
-      verbose() << buildPrintableStateTree( NodeStates ).str() << endmsg;
+      verbose() << buildPrintableStateTree( LHCb::span<NodeState const>{NodeStates} ).str() << endmsg;
       verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
     }
 
@@ -889,7 +889,7 @@ void HLTControlFlowMgr::registerTreePrintWidth() {
 
 // build the full tree
 template <typename printable>
-std::stringstream HLTControlFlowMgr::buildPrintableStateTree( std::vector<printable> const& states ) const {
+std::stringstream HLTControlFlowMgr::buildPrintableStateTree( LHCb::span<printable const> states ) const {
   assert( !m_printableDependencyTree.empty() );
   std::stringstream ss;
   ss << '\n';
@@ -901,10 +901,10 @@ std::stringstream HLTControlFlowMgr::buildPrintableStateTree( std::vector<printa
 }
 
 template std::stringstream
-HLTControlFlowMgr::buildPrintableStateTree<NodeState>( std::vector<NodeState> const& states ) const;
+HLTControlFlowMgr::buildPrintableStateTree<NodeState>( LHCb::span<NodeState const> states ) const;
 
 // build the AlgState printout
-std::stringstream HLTControlFlowMgr::buildAlgsWithStates( std::vector<AlgState> const& states ) const {
+std::stringstream HLTControlFlowMgr::buildAlgsWithStates( LHCb::span<AlgState const> states ) const {
   std::stringstream ss;
   ss << '\n';
   for ( auto const& [name, state] : Gaudi::Functional::details::zip::range( m_AlgNames, states ) ) {

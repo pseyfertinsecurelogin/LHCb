@@ -95,7 +95,7 @@ LHCb::HltDecReports ExecutionReportsWriter::operator()( EventContext const& evtC
 
   if ( UNLIKELY( evtCtx.evt() % m_printFreq == 0 ) && msgLevel( MSG::DEBUG ) ) {
     debug() << m_schedulerPtr->buildAlgsWithStates( AlgStates ).str() << endmsg;
-    debug() << m_schedulerPtr->buildPrintableStateTree( NodeStates ).str() << endmsg;
+    debug() << m_schedulerPtr->buildPrintableStateTree( LHCb::make_span( NodeStates ) ).str() << endmsg;
   }
   LHCb::HltDecReports reports{};
   reports.reserve( m_name_indices.size() );
