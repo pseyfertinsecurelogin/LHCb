@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef CALOFUTUREUTILS_CLUSTERFUNCTORS_H
-#define CALOFUTUREUTILS_CLUSTERFUNCTORS_H 1
+#pragma once
 // ============================================================================
 // Include files
 // CaloDet
@@ -31,10 +30,10 @@ class DeCalorimeter;
 namespace LHCb {
   namespace ClusterFunctors {
 
-    using iterator       = LHCb::CaloCluster::Entries::iterator;
-    using const_iterator = LHCb::CaloCluster::Entries::const_iterator;
-    typedef std::pair<iterator, iterator>             iterator_pair;
-    typedef std::pair<const_iterator, const_iterator> const_iterator_pair;
+    using iterator            = LHCb::CaloCluster::Entries::iterator;
+    using const_iterator      = LHCb::CaloCluster::Entries::const_iterator;
+    using iterator_pair       = std::pair<iterator, iterator>;
+    using const_iterator_pair = std::pair<const_iterator, const_iterator>;
 
     /** @fn void throwException( const std::string& message )
      *  throw the exception
@@ -66,7 +65,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      */
     template <class IT>
-    double energy( IT begin, IT end ) {
+    decltype( auto ) energy( IT begin, IT end ) {
       return CaloDataFunctor::clusterEnergy( begin, end );
     }
 
@@ -99,7 +98,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      */
     template <class IT, class DE>
-    StatusCode calculateEXY( IT begin, IT end, DE de, double& e, double& x, double& y ) {
+    decltype( auto ) calculateEXY( IT begin, IT end, DE de, double& e, double& x, double& y ) {
       return CaloDataFunctor::calculateClusterEXY( begin, end, de, e, x, y );
     }
 
@@ -133,7 +132,7 @@ namespace LHCb {
      *  @date   xx/xx/xxxx
      */
     template <class IT>
-    std::pair<IT, IT> commonDigit( IT begin1, IT end1, IT begin2, IT end2 ) {
+    decltype( auto ) commonDigit( IT begin1, IT end1, IT begin2, IT end2 ) {
       return CaloDataFunctor::clusterCommonDigit( begin1, end1, begin2, end2 );
     }
 
@@ -149,7 +148,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      */
     template <class IT>
-    IT locateDigit( IT begin, IT end, const LHCb::CaloDigit* digit ) {
+    decltype( auto ) locateDigit( IT begin, IT end, const LHCb::CaloDigit* digit ) {
       return CaloDataFunctor::clusterLocateDigit( begin, end, digit );
     }
 
@@ -165,7 +164,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      */
     template <class IT>
-    IT locateDigit( IT begin, IT end, const LHCb::CaloDigitStatus::Status& st ) {
+    inline decltype( auto ) locateDigit( IT begin, IT end, const LHCb::CaloDigitStatus::Status& st ) {
       return CaloDataFunctor::clusterLocateDigit( begin, end, st );
     }
 
@@ -182,7 +181,7 @@ namespace LHCb {
        *  @param cluster pointer to CaloFutureCluster object
        *  @return index of calorimeter area for given cluster
        */
-      unsigned int operator()( const LHCb::CaloCluster* cluster ) const {
+      decltype( auto ) operator()( const LHCb::CaloCluster* cluster ) const {
         if ( !cluster ) { Exception( " CaloCluster* points to NULL! " ); }
         // find seed cell
         auto seed = locateDigit( cluster->entries().begin(), cluster->entries().end(), CaloDigitStatus::SeedCell );
@@ -191,7 +190,7 @@ namespace LHCb {
         if ( !digit ) { Exception( " CaloDigit* points to NULL for seed!" ); }
         // get the area
         return digit->cellID().area();
-      };
+      }
 
     protected:
       /** throw the exception
@@ -200,7 +199,7 @@ namespace LHCb {
        *  @param     message exception message
        *  @return    status code (fictive)
        */
-      [[noreturn]] void Exception( const std::string& message ) const { throwException( "ClusterArea() " + message ); };
+      [[noreturn]] void Exception( const std::string& message ) const { throwException( "ClusterArea() " + message ); }
     };
 
     /** The simple class/function to get the index of area in Calo
@@ -210,7 +209,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   02/12/2001
      */
-    inline unsigned int clusterArea( const LHCb::CaloCluster* cluster ) {
+    inline decltype( auto ) clusterArea( const LHCb::CaloCluster* cluster ) {
       ClusterArea evaluator;
       return evaluator( cluster );
     }
@@ -231,7 +230,7 @@ namespace LHCb {
        *  @param cluster pointer to CaloCluster object
        *  @return index of calorimeter area for given cluster
        */
-      unsigned int operator()( const LHCb::CaloCluster* cluster ) const {
+      decltype( auto ) operator()( const LHCb::CaloCluster* cluster ) const {
         if ( !cluster ) { Exception( " CaloCluster* points to NULL! " ); }
         // find seed cell
         auto seed =
@@ -241,7 +240,7 @@ namespace LHCb {
         if ( !digit ) { Exception( " CaloDigit* points to NULL for seed!" ); }
         // get the area
         return digit->cellID().calo();
-      };
+      }
 
     protected:
       /** throw the exception
@@ -252,7 +251,7 @@ namespace LHCb {
        */
       [[noreturn]] void Exception( const std::string& message ) const {
         throwException( "ClusterCaloFuture() " + message );
-      };
+      }
     };
 
     /** The simple class/function to get the index of calorimeter.
@@ -263,7 +262,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   02/12/2001
      */
-    inline unsigned int clusterCaloFuture( const LHCb::CaloCluster* cluster ) {
+    inline decltype( auto ) clusterCaloFuture( const LHCb::CaloCluster* cluster ) {
       ClusterCaloFuture evaluator;
       return evaluator( cluster );
     }
@@ -286,7 +285,7 @@ namespace LHCb {
       ClusterFromCaloFuture( const std::string& calo )
           : m_calo( CaloCellCode::CaloNumFromName( calo ) ), m_evaluator() {
         if ( m_calo < 0 ) { Exception( "Wrong Calo Name='" + calo + "'" ); }
-      };
+      }
       /** the only one essential method
        *  @see ClusterCaloFuture
        *  @exception CaloException fro ClusterCaloFuture class
@@ -315,7 +314,7 @@ namespace LHCb {
       };
 
     private:
-      CaloCellCode::CaloIndex m_calo = CaloCellCode::CaloIndex( -1 );
+      CaloCellCode::CaloIndex m_calo = CaloCellCode::CaloIndex::Undefined;
       ClusterCaloFuture       m_evaluator;
     };
 
@@ -340,7 +339,7 @@ namespace LHCb {
        *  @param cluster pointer to CaloCluster object
        *  @return true if cluster belongs to the selected area in calorimter
        */
-      bool operator()( const LHCb::CaloCluster* cluster ) const { return m_evaluator( cluster ) == m_area; };
+      bool operator()( const LHCb::CaloCluster* cluster ) const { return m_evaluator( cluster ) == m_area; }
 
     private:
       unsigned int m_area{};
@@ -365,13 +364,13 @@ namespace LHCb {
        */
       inline bool operator()( const LHCb::CaloCluster* cluster ) const {
         if ( !cluster ) { Exception( "CaloCluster* points to NULL!" ); }
-        const LHCb::CaloCluster::Entries& entries = cluster->entries();
+        const auto& entries = cluster->entries();
         if ( entries.size() <= 1 ) { return false; } // RETURN !!!
         auto seed = locateDigit( entries.begin(), entries.end(), LHCb::CaloDigitStatus::SeedCell );
         if ( entries.end() == seed ) { Exception( "'SeedCell' is not found!" ); }
         const LHCb::CaloDigit* sd = seed->digit();
         if ( !sd ) { Exception( "CaloDigit* for 'SeedCell' is  NULL!" ); }
-        const unsigned int seedArea = sd->cellID().area();
+        const auto seedArea = sd->cellID().area();
         for ( auto entry = entries.begin(); entries.end() != entry; ++entry ) {
           const LHCb::CaloDigit* digit = entry->digit();
           if ( !digit ) { continue; }
@@ -379,7 +378,7 @@ namespace LHCb {
         } // end of loop over all cluyster entries
         //
         return false;
-      };
+      }
 
     protected:
       /** throw the exception
@@ -390,7 +389,7 @@ namespace LHCb {
        */
       [[noreturn]] void Exception( const std::string& message ) const {
         throwException( "OnTheBoundary() " + message );
-      };
+      }
     };
 
     /** Simple utility to locate clusters, placed on the boundaries
@@ -404,7 +403,7 @@ namespace LHCb {
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   02/12/2001
      */
-    inline bool onTheBoundary( const LHCb::CaloCluster* cluster ) {
+    inline decltype( auto ) onTheBoundary( const LHCb::CaloCluster* cluster ) {
       OnTheBoundary evaluator;
       return evaluator( cluster );
     }
@@ -422,7 +421,8 @@ namespace LHCb {
       /** the explicit constructor
        *  @param detector source of calorimeter detector information
        */
-      ZPosition( const DeCalorimeter* detector ) : m_detector( detector ){};
+      ZPosition( const DeCalorimeter* detector ) : m_detector( detector ) {}
+
       /** the only one essential method
        *  @exception CaloException if detector is not valid
        *  @exception CaloException if cluster is NULL
@@ -432,18 +432,16 @@ namespace LHCb {
        *  @param cluster pointer to CaloCluster object
        *  @return z-position
        */
-      double operator()( const LHCb::CaloCluster* cluster ) const {
+      decltype( auto ) operator()( const LHCb::CaloCluster* cluster ) const {
         if ( !m_detector ) { Exception( " DeCalorimeter*     points to NULL! " ); }
         if ( !cluster ) { Exception( " const CaloCluster* points to NULL! " ); }
         if ( cluster->entries().empty() ) { Exception( " CaloCluster is empty! " ); }
         auto iseed = locateDigit( cluster->entries().begin(), cluster->entries().end(), CaloDigitStatus::SeedCell );
         if ( cluster->entries().end() == iseed ) { Exception( " The Seed Cell is not found! " ); }
-        ///
         const LHCb::CaloDigit* seed = iseed->digit();
         if ( !seed ) { Exception( " The Seed Digit points to NULL! " ); }
-        //
         return m_detector->cellCenter( seed->cellID() ).z();
-      };
+      }
 
     protected:
       /** throw the exception
@@ -452,10 +450,10 @@ namespace LHCb {
        *  @param     message exception message
        *  @return    status code (fictive)
        */
-      [[noreturn]] void Exception( const std::string& message ) const { throwException( "ZPosition() " + message ); };
+      [[noreturn]] void Exception( const std::string& message ) const { throwException( "ZPosition() " + message ); }
 
     private:
-      const DeCalorimeter* m_detector; ///< source of geometry information
+      const DeCalorimeter* m_detector = nullptr; ///< source of geometry information
     };
 
     /** Helpful function to tag the sub cluster according to the
@@ -484,7 +482,7 @@ namespace LHCb {
       // check the arguments
       if ( !cluster ) { return StatusCode( 225 ); }
       // get all entries
-      LHCb::CaloCluster::Entries& entries = cluster->entries();
+      auto& entries = cluster->entries();
       // find seed digit
       auto seedEntry = locateDigit( entries.begin(), entries.end(), CaloDigitStatus::SeedCell );
       // check the seed
@@ -504,7 +502,7 @@ namespace LHCb {
         const LHCb::CaloDigit* digit = entry->digit();
         if ( !digit ) { continue; }
         // evaluate the fraction
-        const double fraction = evaluator( seed->cellID(), digit->cellID() );
+        const auto fraction = evaluator( seed->cellID(), digit->cellID() );
         if ( 0 >= fraction ) { continue; }
         // update statuses
         entry->addStatus( status );
@@ -546,7 +544,7 @@ namespace LHCb {
       // check the arguments
       if ( !cluster ) { return StatusCode( 225 ); }
       // get all entries
-      LHCb::CaloCluster::Entries& entries = cluster->entries();
+      auto& entries = cluster->entries();
       // find seed digit
       auto seedEntry = locateDigit( entries.begin(), entries.end(), LHCb::CaloDigitStatus::SeedCell );
       // check the seed
@@ -565,13 +563,13 @@ namespace LHCb {
         const LHCb::CaloDigit* digit = entry->digit();
         if ( !digit ) { continue; } // CONTINUE
         // evaluate the fraction
-        const double fraction = evaluator( seed->cellID(), digit->cellID() );
+        const auto fraction = evaluator( seed->cellID(), digit->cellID() );
         if ( 0 >= fraction ) { continue; } // CONTINUE
         // modify the fractions
         entry->setFraction( entry->fraction() / fraction );
         entry->removeStatus( tag );
       }
-      ///
+      //
       return StatusCode::SUCCESS;
     }
 
@@ -579,4 +577,3 @@ namespace LHCb {
 } // namespace LHCb
 
 // ============================================================================
-#endif ///< CALOFUTUREUTILS_CLUSTERFUNCTORS_H

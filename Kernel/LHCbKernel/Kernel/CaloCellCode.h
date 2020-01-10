@@ -132,7 +132,8 @@ namespace CaloCellCode {
    *  @date 2009-09-28
    */
   enum CaloIndex {
-    SpdCalo = 0,
+    Undefined = -1,
+    SpdCalo   = 0,
     PrsCalo,
     EcalCalo,
     HcalCalo,
@@ -178,7 +179,7 @@ namespace CaloCellCode {
     auto begin = CaloNames.begin();
     auto end   = CaloNames.end();
     auto m     = std::find_if( begin, end, [=]( const auto& i ) { return name.find( i ) != std::string_view::npos; } );
-    return static_cast<CaloIndex>( m != end ? m - begin : -1 );
+    return CaloIndex( m != end ? CaloCellCode::CaloIndex( m - begin ) : CaloCellCode::CaloIndex::Undefined );
   }
   // =========================================================================
   /** get the calorimeter index from name, returns -1 for wrong name!

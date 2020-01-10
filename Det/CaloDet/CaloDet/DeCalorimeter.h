@@ -294,7 +294,7 @@ private:
 
   // Calo id
   std::string             m_caloDet;
-  CaloCellCode::CaloIndex m_caloIndex = static_cast<CaloCellCode::CaloIndex>( -1 );
+  CaloCellCode::CaloIndex m_caloIndex = CaloCellCode::CaloIndex::Undefined;
 
   // init flag
   bool m_initialized = false;
