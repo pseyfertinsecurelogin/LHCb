@@ -150,8 +150,9 @@ public:
    *  @date   2006-02-22
    */
   class posadc_range final {
-    struct Sentinel final {};
-    class Iterator  final {
+    const SiRawBankDecoder* m_decoder;
+    struct Sentinel         final {};
+    class Iterator          final {
     public:
       /**  Increment
        *   The implementatio of this increment operator
@@ -217,9 +218,9 @@ public:
        * @see SiRawBankDecoder
        */
       Iterator( const SiRawBankDecoder* decoder )
-          : m_offset( 4 + ( decoder->m_nClusters + decoder->m_nClusters % 2 ) * 2 )
-          , m_decoder( decoder )
-          , m_nClusters{decoder->nClusters()} {
+          : m_nClusters{decoder->m_nClusters}
+          , m_offset( 4 + ( decoder->m_nClusters + decoder->m_nClusters % 2 ) * 2 )
+          , m_bank( decoder->m_bank ) {
         decode();
       }
 
@@ -231,7 +232,7 @@ public:
        * @see SiDecodedCluster
        */
       void decode() {
-        if ( m_pos < m_decoder->m_nClusters ) doDecode( typename CLUSTERWORD::adc_bank_type() );
+        if ( m_pos < m_nClusters ) doDecode( typename CLUSTERWORD::adc_bank_type() );
       }
 
       /** Decoder for ADC bank with ADC counts only
@@ -251,7 +252,7 @@ public:
         m_cluster.second.clear();
 
         // fetch the neighbour sum first
-        m_cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
+        m_cluster.second.emplace_back( adcWord( m_nADC ) );
         ++m_nADC;
 
         doDecodeCommon( m_cluster );
@@ -264,28 +265,32 @@ public:
        */
       void doDecodeCommon( SiDecodedCluster& cluster ) {
         // get the first adc count *without* checking the end-of-cluster bit
-        cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
+        cluster.second.emplace_back( adcWord( m_nADC ) );
         ++m_nADC;
 
         // only move on if the end-of-cluster bit is not set
         while ( !cluster.second.back().endCluster() ) {
-          cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
+          cluster.second.emplace_back( adcWord( m_nADC ) );
           ++m_nADC;
         }
 
         // get cluster position
-        cluster.first = CLUSTERWORD( ( (uint16_t*)m_decoder->m_bank )[2 + m_pos] );
+        cluster.first = clusterWord( m_pos );
       }
 
     private:
-      unsigned int            m_pos  = 0;
-      unsigned int            m_nADC = 0;
-      const unsigned int      m_offset;
-      const SiRawBankDecoder* m_decoder;
-      SiDecodedCluster        m_cluster;
-      unsigned int            m_nClusters;
+      uint8_t     adcWord( unsigned int n ) const { return reinterpret_cast<const uint8_t*>( m_bank )[m_offset + n]; }
+      CLUSTERWORD clusterWord( unsigned int n ) const {
+        return CLUSTERWORD{reinterpret_cast<const uint16_t*>( m_bank )[2 + n]};
+      }
+
+      unsigned int              m_pos = 0;
+      const unsigned int        m_nClusters;
+      unsigned int              m_nADC = 0;
+      const unsigned int        m_offset;
+      const SiDAQ::buffer_word* m_bank;
+      SiDecodedCluster          m_cluster;
     };
-    const SiRawBankDecoder* m_decoder;
 
   public:
     posadc_range( const SiRawBankDecoder* decoder ) : m_decoder{decoder} {}
@@ -318,6 +323,8 @@ public:
 
   /// range of cluster positions
   auto posRange() const { return pos_range{{reinterpret_cast<const uint16_t*>( m_bank ) + 2, m_nClusters}}; }
+  [[deprecated( "please use posRange() instead" )]] auto posBegin() const { return posRange().begin(); }
+  [[deprecated( "please use posRange() instead" )]] auto posEnd() const { return posRange().end(); }
 
   /// range of clusters with ADC values
   auto posAdcRange() const { return posadc_range( this ); }
