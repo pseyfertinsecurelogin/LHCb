@@ -8,21 +8,13 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// HepMC
+#include "DumpHepMCDecay.h"
+#include "Event/HepMCEvent.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
-
-// PartProp
 #include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-
-// GenEvent
-#include "Event/HepMCEvent.h"
-
-// local
-#include "DumpHepMCDecay.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpHepMCDecay

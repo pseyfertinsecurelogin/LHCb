@@ -8,19 +8,48 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-#include "DumpHepMC.h"
-
 #include "Event/HepMCEvent.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GenEvent/HepMCUtils.h"
 #include "HepMC/GenEvent.h"
-
-#include "GaudiKernel/MsgStream.h"
 
 /** @file
  *  implementation file for the class DumpHepMC.
  *  Just a renaming of the DumpMC class that was in Gen/Generators package
  */
+
+class DumpHepMC : public GaudiAlgorithm {
+public:
+  /// the actual type of container with addresses
+  typedef std::vector<std::string> Addresses;
+
+public:
+  /** execution of the algoritm
+   *  @see IAlgorithm
+   *  @return status code
+   */
+  StatusCode execute() override;
+
+  /** standard constructor
+   *  @see GaudiAlgorithm
+   *  @see      Algorithm
+   *  @see      AlgFactory
+   *  @see     IAlgFactory
+   *  @param name algorithm instance's name
+   *  @param iscv pointer to Service Locator
+   */
+  DumpHepMC( const std::string& name, ISvcLocator* isvc );
+
+private:
+  Addresses m_addresses;
+
+  /// Print HepMC::GenEvent ordering particles according to barcodes
+  void orderedPrint( const HepMC::GenEvent* theEvent, std::ostream& ostr ) const;
+
+  /// Print HepMC::GenVertex ordering particles according to barcodes
+  void orderedVertexPrint( HepMC::GenVertex* theVertex, std::ostream& ostr ) const;
+};
 
 // ============================================================================
 

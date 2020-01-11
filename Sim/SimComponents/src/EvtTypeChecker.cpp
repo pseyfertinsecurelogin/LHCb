@@ -119,9 +119,7 @@ void EvtTypeChecker::operator()( const LHCb::GenHeader& header ) const {
   // If reading event type from data retrieve event header and set decay
   // unless already done (do it only for first time)
   if ( m_fromData.value() && !m_setDecay ) {
-    if ( ( setDecayToFind( header.evType() ).isFailure() ) ) {
-      throw GaudiException{" 'setDecayToFind' failed ", "EvtTypeChecker", StatusCode::FAILURE};
-    }
+    setDecayToFind( header.evType() ).orThrow( " 'setDecayToFind' failed ", "EvtTypeChecker" );
   }
   m_nMCFound += m_mcFinder->hasDecay();
 }

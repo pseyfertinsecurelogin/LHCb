@@ -8,27 +8,19 @@
  * granted to it by virtue of its status as an Intergovernmental Organization  *
  * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-// Include file
-// local
-#include "GenFSRJson.h"
-
-// from Event
 #include "Event/CrossSectionsFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
-
-// From GaudiKernel
+#include "FSRAlgs/IFSRNavigator.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/Time.h"
-
-// other libraries
+#include "boost/property_tree/json_parser.hpp"
+#include "boost/property_tree/ptree.hpp"
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include "boost/property_tree/json_parser.hpp"
-#include "boost/property_tree/ptree.hpp"
 
 using boost::property_tree::ptree;
 
@@ -45,6 +37,44 @@ using boost::property_tree::ptree;
 //      Since counters belonging to the same class have consecutive keys, the methods used by
 //      this service cut on the key variable in order to select the correct counter class.
 //-----------------------------------------------------------------------------
+
+/** @class GenFSRJson GenFSRJson.h
+ *
+ *
+ *  @author Davide Fazzini
+ *  @date   2018-06-26
+ */
+
+class GenFSRJson : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  using GaudiAlgorithm::GaudiAlgorithm;
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    // Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+
+  void printFSR(); // Print the GenFSR in a file .json
+
+private:
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+  Gaudi::Property<std::string> m_prodID{this, "prodID", "", "Production ID used in the generation"};
+  Gaudi::Property<std::string> m_appConfigVersion{this, "appConfigVersion", "",
+                                                  "Version of AppConfig used in the simulation"};
+  Gaudi::Property<std::string> m_appConfigFile{this, "appConfigFile", "", "Name of the AppConfig file"};
+  Gaudi::Property<std::string> m_gaussVersion{this, "gaussVersion", "", "Gauss version used in the simulation"};
+  Gaudi::Property<std::string> m_simCond{this, "simCond", "", "Tag for the SimCond database"};
+  Gaudi::Property<std::string> m_dddb{this, "dddb", "", "Tag for the DDDB database"};
+  Gaudi::Property<std::string> m_jsonOutputLocation{this, "jsonOutputLocation", "",
+                                                    "Path where to save the .json output"};
+  Gaudi::Property<std::string> m_jsonOutputName{this, "jsonOutputName", "GenerationFSR_" + m_appConfigFile + ".json",
+                                                "Name of the .json output"};
+
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
+  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+};
 
 namespace {
   std::string getCurrentTime() { return Gaudi::Time::current().format( true ); }
@@ -111,15 +141,12 @@ namespace {
                     key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUInt &&
                     key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUIntAcc );
 
-      double fraction = genFSR.getEfficiency( after, before, C );
-      double error    = genFSR.getEfficiencyError( after, before, C, flag );
-      auto   fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
-      if ( fullName == mapCross.end() )
-        throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
-                             __PRETTY_FUNCTION__, StatusCode::FAILURE};
+      double      fraction = genFSR.getEfficiency( after, before, C );
+      double      error    = genFSR.getEfficiencyError( after, before, C, flag );
+      const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
       ptree counter_tree;
-      counter_tree.put( "descr", fullName->second );
+      counter_tree.put( "descr", fullName );
       counter_tree.put( "type", "counter" );
       counter_tree.put( "value", fraction );
       counter_tree.put( "error", error );
@@ -158,14 +185,11 @@ namespace {
       double fraction = genFSR.getEfficiency( after, before );
       double error    = genFSR.getEfficiencyError( after, before );
 
-      auto fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
-      if ( fullName == mapCross.end() )
-        throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
-                             __PRETTY_FUNCTION__, StatusCode::FAILURE};
+      const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
       ptree efficiency_tree;
 
-      efficiency_tree.put( "descr", fullName->second );
+      efficiency_tree.put( "descr", fullName );
       efficiency_tree.put( "type", "counter" );
       efficiency_tree.put( "value", fraction );
       efficiency_tree.put( "error", error );
@@ -197,13 +221,10 @@ namespace {
         double fraction = genFSR.getEfficiency( after, before );
         double error    = genFSR.getEfficiencyError( after, before );
 
-        auto fullName = mapCross.find( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
-        if ( fullName == mapCross.end() )
-          throw GaudiException{"unknown key: " + LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ),
-                               __PRETTY_FUNCTION__, StatusCode::FAILURE};
+        const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
         ptree counter_tree;
-        counter_tree.put( "descr", fullName->second );
+        counter_tree.put( "descr", fullName );
         counter_tree.put( "type", "counter" );
         counter_tree.put( "value", fraction );
         counter_tree.put( "error", error );

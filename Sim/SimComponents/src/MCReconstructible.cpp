@@ -17,15 +17,88 @@
  *  @date 28/02/2007
  */
 //-----------------------------------------------------------------------------
-
-// local
-#include "MCReconstructible.h"
-
-// the data
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/MCParticle.h"
 #include "Event/MCTrackGeomCriteria.h"
+#include "Event/MCTrackInfo.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/VectorMap.h"
 #include "LHCbMath/LHCbMath.h"
+#include "MCInterfaces/IMCParticleSelector.h"
+#include "MCInterfaces/IMCReconstructible.h"
+#include <array>
+#include <optional>
+#include <string>
+#include <vector>
+
+//-----------------------------------------------------------------------------
+/** @class MCReconstructible MCReconstructible.h
+ *
+ *  Tool to provide standardised Reconstructibility information for neutral
+ *  and charged MCParticles
+ *
+ *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+ *  @date   2004-04-28
+ */
+//-----------------------------------------------------------------------------
+class MCReconstructible : public extends<GaudiTool, IMCReconstructible> {
+
+public:
+  /// Standard constructor
+  using base_class::base_class;
+
+  /// Initialize
+  StatusCode initialize() override;
+
+  /// Get the reconstruction category for the given MCParticle
+  IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const override;
+
+  /// Is the MCParticle in the detector acceptance?
+  bool inAcceptance( const LHCb::MCParticle* mcPart ) const override;
+
+  /// Is the MCParticle reconstructible as given type
+  bool isReconstructibleAs( const IMCReconstructible::RecCategory& category,
+                            const LHCb::MCParticle*                mcPart ) const override;
+
+private:
+  /// Trest acceptance for charged particles
+  bool accept_charged( const LHCb::MCParticle* mcPart ) const;
+
+  /// Trest acceptance for neutral particles
+  bool accept_neutral( const LHCb::MCParticle* mcPart ) const;
+
+  /// Acceptance parameters (neutrals)
+  // misc CALO params. Hopefully to go into specific CALO reconstructibility tool
+  double m_zECAL    = 12696.0 * Gaudi::Units::mm;
+  double m_xECALInn = 363.3 * Gaudi::Units::mm;
+  double m_yECALInn = 363.3 * Gaudi::Units::mm;
+  double m_xECALOut = 3757.2 * Gaudi::Units::mm;
+  double m_yECALOut = 3030.0 * Gaudi::Units::mm;
+
+  /// Threshold for Et gammas reconstructibility
+  Gaudi::Property<double> m_lowEt{this, "NeutralEtMin", 200 * Gaudi::Units::MeV};
+
+  /// Allow primary particles
+  Gaudi::Property<bool> m_allowPrimary{this, "AllowPrimaryParticles", true};
+
+  /// Pointer to MCTrackInfo object
+  mutable std::unique_ptr<MCTrackInfo> m_tkInfo;
+
+  /// MCParticle selector
+  IMCParticleSelector* m_mcSel = nullptr;
+
+  Gaudi::Property<std::vector<std::string>> m_chargedLongCriteria{this, "ChargedLong", {"hasVeloAndT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedUpstreamCriteria{this, "ChargedUpstream", {"hasVelo", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedDownstreamCriteria{this, "ChargedDownstream", {"hasT", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedVeloCriteria{this, "ChargedVelo", {"hasVelo"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedTCriteria{this, "ChargedTtrack", {"hasT"}};
+
+  // the std::optional is required to delay the construction...
+  std::array<std::optional<std::pair<IMCReconstructible::RecCategory, LHCb::MC::MCTrackGeomCriteria>>, 5> m_critMap;
+
+  // data handle for the TrackInfo location
+  DataObjectReadHandle<LHCb::MCProperty> m_track_info{this, "MCTrackInfo", LHCb::MCPropertyLocation::TrackInfo};
+};
 
 //-----------------------------------------------------------------------------
 

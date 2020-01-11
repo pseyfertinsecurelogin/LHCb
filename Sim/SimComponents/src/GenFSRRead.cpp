@@ -8,16 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// local
-#include "GenFSRRead.h"
-
-// from Event
 #include "Event/CrossSectionsFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
-
-// to write a file
+#include "FSRAlgs/IFSRNavigator.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -28,6 +24,33 @@
 //
 // 2015-06-23 : Davide Fazzini
 //-----------------------------------------------------------------------------
+
+/** @class GenFSRRead GenFSRRead.h
+ *
+ *
+ *  @author Davide Fazzini
+ *  @date   2015-06-23
+ */
+
+class GenFSRRead : public GaudiAlgorithm {
+public:
+  // Standard constructor
+  GenFSRRead( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; // Algorithm initialization
+  StatusCode execute() override;    // Algorithm execution
+  StatusCode finalize() override;   // Algorithm finalization
+
+  void printFSR(); // Print the GenFSR
+
+private:
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
+  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( GenFSRRead )
@@ -56,20 +79,13 @@ StatusCode GenFSRRead::initialize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRRead::execute() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  return StatusCode::SUCCESS;
-}
+StatusCode GenFSRRead::execute() { return StatusCode::SUCCESS; }
 
 //=============================================================================
 //  Finalize
 //=============================================================================
 StatusCode GenFSRRead::finalize() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
-
   GenFSRRead::printFSR();
-
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 

@@ -8,16 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// local
-#include "GenFSRLog.h"
-
-// from Event
 #include "Event/CrossSectionsFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
-
-// to write a file
+#include "FSRAlgs/IFSRNavigator.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -28,6 +24,35 @@
 //
 // 2015-06-23 : Davide Fazzini
 //-----------------------------------------------------------------------------
+
+/** @class GenFSRLog GenFSRLog.h
+ *
+ *
+ *  @author Davide Fazzini
+ *  @date   2015-06-23
+ */
+
+class GenFSRLog : public GaudiAlgorithm {
+public:
+  // Standard constructor
+  GenFSRLog( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; // Algorithm initialization
+  StatusCode execute() override;    // Algorithm execution
+  StatusCode finalize() override;   // Algorithm finalization
+
+private:
+  void printFSR(); // Print the GenFSR in a file .xml
+
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+  Gaudi::Property<std::string> m_xmlOutputLocation{this, "XmlOutputLocation", "", "Path where to save the .xml output"};
+  Gaudi::Property<std::string> m_xmlOutputName{this, "xmlOutputName", "GeneratorLogFSR.xml", "Name of the .xml output"};
+
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
+  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+};
 
 namespace {
   //=============================================================================
@@ -217,9 +242,7 @@ GenFSRLog::GenFSRLog( const std::string& name, ISvcLocator* pSvcLocator ) : Gaud
 //=============================================================================
 StatusCode GenFSRLog::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-
-  if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
   // get the File Records service
   m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
@@ -232,21 +255,13 @@ StatusCode GenFSRLog::initialize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRLog::execute() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  return StatusCode::SUCCESS;
-}
+StatusCode GenFSRLog::execute() { return StatusCode::SUCCESS; }
 
 //=============================================================================
 //  Finalize
 //=============================================================================
 StatusCode GenFSRLog::finalize() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
-
   GenFSRLog::printFSR();
-
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 

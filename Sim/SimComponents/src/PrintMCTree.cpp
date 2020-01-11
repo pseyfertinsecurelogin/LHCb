@@ -8,22 +8,39 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from PartProp
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/ParticleProperty.h"
-// from LHCb
 #include "MCInterfaces/IPrintMCDecayTreeTool.h"
-
-// local
-#include "PrintMCTree.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PrintMCTree
 //
 // 2004-09-10 : Patrick KOPPENBURG
 //-----------------------------------------------------------------------------
+
+/** @class PrintMCTree PrintMCTree.h
+ *
+ *  Prints the decay tree of all MC particles with a given PID
+ *
+ *  @author Patrick KOPPENBURG
+ *  @date   2004-09-10
+ */
+class PrintMCTree : public GaudiAlgorithm {
+public:
+  /// Standard constructor
+  PrintMCTree( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+
+private:
+  IPrintMCDecayTreeTool*                  m_printMCTree = nullptr;
+  std::vector<std::string>                m_particleNames; ///< particle names
+  std::vector<int>                        m_particleIDs;
+  int                                     m_depth = -1; ///< depth of tree
+  DataObjectReadHandle<LHCb::MCParticles> m_mcParts{this, "MCParticles", LHCb::MCParticleLocation::Default};
+};
 
 // Declaration of the Algorithm Factory
 
