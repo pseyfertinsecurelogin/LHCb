@@ -46,13 +46,14 @@ private:
                                         "MemoryTool/BooleMemory"}; ///< Pointer to (private) memory histogram tool
   PublicToolHandle<IGenericTool> m_odinTool{this, "OdinTool", "ODINEncodeTool"}; ///< Pointer to odin encoding tool
   Rndm::Numbers                  m_FlatDist;
-  bool                           m_modifyOdin           = false;
-  std::string                    m_genCollisionLocation = LHCb::GenCollisionLocation::Default;
-  std::vector<double>            m_thresInteraction     = {0.01, 0.03, 0.05};
-  std::vector<double>            m_thresDiffractive     = {0.1, 0.3, 0.6};
-  std::vector<double>            m_thresElastic         = {0.25, 0.5, 0.75};
-  double                         m_threstrigger         = 0.05;
-  bool                           m_odinRndTrig          = false;
+  Gaudi::Property<bool>          m_modifyOdin{this, "ModifyOdin", false};
+  Gaudi::Property<std::string>   m_genCollisionLocation{this, "GenCollisionLocation",
+                                                      LHCb::GenCollisionLocation::Default};
+  Gaudi::Property<std::vector<double>> m_thresInteraction{this, "ThresInteraction", {0.01, 0.03, 0.05}};
+  Gaudi::Property<std::vector<double>> m_thresDiffractive{this, "ThresDiffractive", {0.1, 0.3, 0.6}};
+  Gaudi::Property<std::vector<double>> m_thresElastic{this, "ThresElastic", {0.25, 0.5, 0.75}};
+  Gaudi::Property<double>              m_threstrigger{this, "ThresTiggerType", 0.05};
+  Gaudi::Property<bool>                m_odinRndTrig{this, "SetOdinRndTrigger", false};
 };
 //-----------------------------------------------------------------------------
 // Implementation file for class : BooleInit
@@ -66,16 +67,7 @@ DECLARE_COMPONENT( BooleInit )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-BooleInit::BooleInit( const std::string& name, ISvcLocator* pSvcLocator ) : LbAppInit( name, pSvcLocator ) {
-
-  declareProperty( "ModifyOdin", m_modifyOdin );
-  declareProperty( "GenCollisionLocation", m_genCollisionLocation );
-  declareProperty( "ThresInteraction", m_thresInteraction );
-  declareProperty( "ThresDiffractive", m_thresDiffractive );
-  declareProperty( "ThresElastic", m_thresElastic );
-  declareProperty( "ThresTiggerType", m_threstrigger );
-  declareProperty( "SetOdinRndTrigger", m_odinRndTrig );
-}
+BooleInit::BooleInit( const std::string& name, ISvcLocator* pSvcLocator ) : LbAppInit( name, pSvcLocator ) {}
 
 //=============================================================================
 // Initialization
@@ -86,7 +78,7 @@ StatusCode BooleInit::initialize() {
     m_memoryTool.setEnabled( rootInTES().empty() );
 
     // Initialize thresholds if we want to modify Odin:
-    if ( m_modifyOdin ) {
+    if ( m_modifyOdin.value() ) {
 
       const auto ok = m_FlatDist.initialize( randSvc(), Rndm::Flat( 0., 1. ) );
       if ( !ok ) { info() << "Flat distribution could not be initialized" << endmsg; }
@@ -146,7 +138,7 @@ StatusCode BooleInit::execute() {
   odin->setEventTime( evt->evtTime() );
 
   // Simulate ODIN data id requested
-  if ( m_modifyOdin ) {
+  if ( m_modifyOdin.value() ) {
     modifyOdin( odin );
   } else {
     // put some reasonable defaults
@@ -177,7 +169,7 @@ void BooleInit::simpleOdin( LHCb::ODIN* odin ) {
   odin->setTriggerType( TriggerType );
   odin->setBunchCurrent( BunchCurrent );
 
-  if ( m_odinRndTrig ) {
+  if ( m_odinRndTrig.value() ) {
     unsigned int EventType = 1 << 2;
     odin->setEventType( EventType );
   }
@@ -267,7 +259,7 @@ void BooleInit::modifyOdin( LHCb::ODIN* odin ) {
   odin->setTriggerType( TriggerType );
   odin->setBunchCurrent( BunchCurrent );
 
-  if ( m_odinRndTrig ) {
+  if ( m_odinRndTrig.value() ) {
     unsigned int EventType = 1 << 2;
     odin->setEventType( EventType );
   }

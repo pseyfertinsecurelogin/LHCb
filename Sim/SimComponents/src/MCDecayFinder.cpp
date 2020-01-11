@@ -133,7 +133,7 @@ struct yy_buffer_state;
 class MCDecayFinder : public extends<GaudiTool, IMCDecayFinder> {
 public:
   /// Standard Constructor
-  MCDecayFinder( const std::string& type, const std::string& name, const IInterface* parent );
+  using extends::extends;
 
   /// Destructor
   ~MCDecayFinder() override; ///< Destructor
@@ -241,13 +241,13 @@ private:
     std::string msg;
   };
 
-  LHCb::IParticlePropertySvc*    m_ppSvc   = nullptr;
-  std::string                    m_source  = "B0 -> pi+ pi-";
+  LHCb::IParticlePropertySvc*    m_ppSvc = nullptr;
+  Gaudi::Property<std::string>   m_source{this, "Decay", "B0 -> pi+ pi-"};
   Descriptor*                    m_decay   = nullptr;
   std::vector<ParticleMatcher*>* m_members = nullptr;
   Gaudi::Property<double>        m_resThreshold{this, "ResonanceThreshold", 1e-15 * Gaudi::Units::second};
 
-  bool compile( std::string& decay );
+  bool compile( const std::string& decay );
 
 #include "mcparser.h"
 
@@ -498,14 +498,6 @@ private:
 DECLARE_COMPONENT( MCDecayFinder )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MCDecayFinder::MCDecayFinder( const std::string& type, const std::string& name, const IInterface* parent )
-    : base_class( type, name, parent ) {
-  declareProperty( "Decay", m_source );
-}
-
-//=============================================================================
 // Standard destructor
 //=============================================================================
 
@@ -581,7 +573,7 @@ std::string MCDecayFinder::revert() const {
 #include "mclexer.icpp"
 #include "mcparser.icpp"
 
-bool MCDecayFinder::compile( std::string& source ) {
+bool MCDecayFinder::compile( const std::string& source ) {
   yy_buffer_state* bs = yy_scan_string( source.c_str() );
   try {
     if ( yparse() ) throw( "Syntax Error" );

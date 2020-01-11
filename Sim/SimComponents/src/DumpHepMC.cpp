@@ -42,7 +42,7 @@ public:
   DumpHepMC( const std::string& name, ISvcLocator* isvc );
 
 private:
-  Addresses m_addresses;
+  Gaudi::Property<Addresses> m_addresses{this, "Addresses", {LHCb::HepMCEventLocation::Default}};
 
   /// Print HepMC::GenEvent ordering particles according to barcodes
   void orderedPrint( const HepMC::GenEvent* theEvent, std::ostream& ostr ) const;
@@ -65,11 +65,7 @@ DECLARE_COMPONENT( DumpHepMC )
  *  @param iscv pointer to Service Locator
  */
 // ============================================================================
-DumpHepMC::DumpHepMC( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ), m_addresses() {
-  m_addresses.push_back( LHCb::HepMCEventLocation::Default ); // default!
-  // define the property
-  declareProperty( "Addresses", m_addresses );
-}
+DumpHepMC::DumpHepMC( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ) {}
 // ============================================================================
 
 // ============================================================================
@@ -85,13 +81,13 @@ StatusCode DumpHepMC::execute() {
   // get the stream
   MsgStream& log = info();
 
-  for ( auto ia = m_addresses.cbegin(); m_addresses.cend() != ia; ++ia ) {
+  for ( const auto& ia : m_addresses ) {
     //
-    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " Inspect the container '" << *ia << "'" << endmsg;
-    const LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( *ia );
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " Inspect the container '" << ia << "'" << endmsg;
+    const LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( ia );
     if ( !events ) { continue; }
     //
-    info() << " HepMC container '" << *ia << "' \t has " << events->size() << " event(s) " << endmsg;
+    info() << " HepMC container '" << ia << "' \t has " << events->size() << " event(s) " << endmsg;
     for ( const LHCb::HepMCEvent* event : *events ) {
       if ( !event ) { continue; }
       log << "  Generator '" << event->generatorName() << "'\n";

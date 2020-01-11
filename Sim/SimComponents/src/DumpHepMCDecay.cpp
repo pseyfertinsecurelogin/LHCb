@@ -9,11 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "DumpHepMCDecay.h"
-#include "Event/HepMCEvent.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
 #include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 
 //-----------------------------------------------------------------------------
@@ -28,18 +26,7 @@ DECLARE_COMPONENT( DumpHepMCDecay )
 //=============================================================================
 // Standard constructor
 //=============================================================================
-DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc )
-    : GaudiAlgorithm( name, isvc ), m_levels( 4 ), m_ppSvc( 0 ) {
-
-  m_addresses.push_back( LHCb::HepMCEventLocation::Default ); // default
-  m_quarks.push_back( LHCb::ParticleID::bottom );             // default
-
-  // define the property
-  declareProperty( "Addresses", m_addresses );
-  declareProperty( "Particles", m_particles );
-  declareProperty( "Quarks", m_quarks );
-  declareProperty( "MaxLevels", m_levels );
-}
+DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ) {}
 
 //=============================================================================
 // Initialization of the algoritm
