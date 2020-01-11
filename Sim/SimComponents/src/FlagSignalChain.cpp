@@ -30,7 +30,7 @@ struct FlagSignalChain : extends<GaudiTool, IFlagSignalChain> {
   using extends::extends;
 
   /// Set flag if particle is from signal
-  void setFromSignalFlag( const LHCb::MCParticle* mother ) {
+  void setFromSignalFlag( const LHCb::MCParticle* mother ) override {
     for ( auto& v : mother->endVertices() ) {
       for ( const auto& mcpc : v->products() ) {
         LHCb::MCParticle* mcp = const_cast<LHCb::MCParticle*>( mcpc.target() );

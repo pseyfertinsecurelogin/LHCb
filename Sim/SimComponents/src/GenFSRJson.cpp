@@ -12,7 +12,7 @@
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
 #include "FSRAlgs/IFSRNavigator.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Gaudi/Algorithm.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/Time.h"
 #include "boost/property_tree/json_parser.hpp"
@@ -45,14 +45,14 @@ using boost::property_tree::ptree;
  *  @date   2018-06-26
  */
 
-class GenFSRJson : public GaudiAlgorithm {
+class GenFSRJson : public Gaudi::Algorithm {
 public:
   /// Standard constructor
-  using GaudiAlgorithm::GaudiAlgorithm;
+  using Gaudi::Algorithm::Algorithm;
 
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    // Algorithm execution
-  StatusCode finalize() override;   ///< Algorithm finalization
+  StatusCode initialize() override;                         ///< Algorithm initialization
+  StatusCode execute( const EventContext& ) const override; // Algorithm execution
+  StatusCode finalize() override;                           ///< Algorithm finalization
 
   void printFSR(); // Print the GenFSR in a file .json
 
@@ -72,8 +72,9 @@ private:
   Gaudi::Property<std::string> m_jsonOutputName{this, "jsonOutputName", "GenerationFSR_" + m_appConfigFile + ".json",
                                                 "Name of the .json output"};
 
-  SmartIF<IDataProviderSvc> m_fileRecordSvc;
-  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+  SmartIF<IDataProviderSvc>       m_fileRecordSvc;
+  PublicToolHandle<IFSRNavigator> m_navigatorTool{this, "FSRNavigator",
+                                                  "FSRNavigator/FSRNavigator"}; // tool to navigate FSR
 };
 
 namespace {
@@ -318,7 +319,7 @@ DECLARE_COMPONENT( GenFSRJson )
 //=============================================================================
 
 StatusCode GenFSRJson::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
+  StatusCode sc = Algorithm::initialize(); // must be executed first
 
   if ( sc.isFailure() ) return sc; // error prinsted already by Service
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
@@ -326,15 +327,13 @@ StatusCode GenFSRJson::initialize() {
   // get the File Records service
   m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
 
-  m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator", "FSRNavigator" );
-
   return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRJson::execute() {
+StatusCode GenFSRJson::execute( const EventContext& ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   return StatusCode::SUCCESS;
@@ -348,7 +347,7 @@ StatusCode GenFSRJson::finalize() {
 
   GenFSRJson::printFSR();
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Algorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

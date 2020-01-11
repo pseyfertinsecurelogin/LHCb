@@ -12,7 +12,7 @@
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
 #include "FSRAlgs/IFSRNavigator.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Gaudi/Algorithm.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/Time.h"
 #include <cmath>
@@ -37,14 +37,14 @@ namespace fs = std::filesystem;
  *  @date   2015-07-29
  */
 
-class GenFSRStat : public GaudiAlgorithm {
+class GenFSRStat : public Gaudi::Algorithm {
 public:
   /// Standard constructor
   GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-  StatusCode finalize() override;   ///< Algorithm finalization
+  StatusCode initialize() override;                         ///< Algorithm initialization
+  StatusCode execute( const EventContext& ) const override; ///< Algorithm execution
+  StatusCode finalize() override;                           ///< Algorithm finalization
 
   void printFSR(); // Print the GenFSR in a file .html
 
@@ -64,8 +64,9 @@ private:
   Gaudi::Property<std::string> m_htmlOutputName{this, "htmlOutputName", "GenerationFSR_" + m_appConfigFile + ".html",
                                                 "Name of the .html output"};
 
-  SmartIF<IDataProviderSvc> m_fileRecordSvc;
-  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+  SmartIF<IDataProviderSvc>       m_fileRecordSvc;
+  PublicToolHandle<IFSRNavigator> m_navigatorTool{this, "FSRNavigator",
+                                                  "FSRNavigator/FSRNavigator"}; // tool to navigate FSR
 };
 
 namespace {
@@ -505,32 +506,24 @@ DECLARE_COMPONENT( GenFSRStat )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-GenFSRStat::GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {}
+GenFSRStat::GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator ) : Algorithm( name, pSvcLocator ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 
 StatusCode GenFSRStat::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-
-  if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  // get the File Records service
-  m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
-
-  m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator", "FSRNavigator" );
-
-  return sc;
+  return Algorithm::initialize().andThen( [&] {
+    // get the File Records service
+    m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
+  } );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRStat::execute() {
+StatusCode GenFSRStat::execute( const EventContext& ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
   return StatusCode::SUCCESS;
 }
 
@@ -543,7 +536,7 @@ StatusCode GenFSRStat::finalize() {
 
   GenFSRStat::printFSR();
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Algorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

@@ -56,7 +56,7 @@ PrintMCTree::PrintMCTree( const std::string& name, ISvcLocator* pSvcLocator )
 //=============================================================================
 StatusCode PrintMCTree::initialize() {
   StatusCode sc = FilterPredicate::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;               // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;               // error printed already
 
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialize" << endmsg;
 

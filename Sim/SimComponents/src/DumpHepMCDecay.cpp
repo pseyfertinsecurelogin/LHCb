@@ -32,13 +32,12 @@ DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc ) : G
 // Initialization of the algoritm
 //=============================================================================
 StatusCode DumpHepMCDecay::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) { return Error( "Unable to initialize 'GaudiAlgorithm' base ", sc ); }
-
-  auto i = std::find_if( m_quarks.begin(), m_quarks.end(), []( PIDs::const_reference q ) {
-    return q < LHCb::ParticleID::down || LHCb::ParticleID::top < q;
+  return GaudiAlgorithm::initialize().andThen( [&] {
+    auto i = std::find_if( m_quarks.begin(), m_quarks.end(), []( PIDs::const_reference q ) {
+      return q < LHCb::ParticleID::down || LHCb::ParticleID::top < q;
+    } );
+    return ( i != m_quarks.end() ) ? Error( " Invalid Quark ID=" + std::to_string( *i ) ) : StatusCode::SUCCESS;
   } );
-  return ( i != m_quarks.end() ) ? Error( " Invalid Quark ID=" + std::to_string( *i ) ) : StatusCode::SUCCESS;
 }
 
 //=============================================================================

@@ -62,10 +62,7 @@ DECLARE_COMPONENT( EvtTypeChecker )
 StatusCode EvtTypeChecker::initialize() {
 
   StatusCode sc = Consumer::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;        // error printed already by GaudiAlgorithm
-
-  // Retrieve the EvtTypeSvc here so that it is always done at initialization
-  m_evtTypeSvc.retrieve();
+  if ( sc.isFailure() ) return sc;        // error printed already
 
   // Check that EvtType code has been set with appropriate value
   // if it will not be read from data

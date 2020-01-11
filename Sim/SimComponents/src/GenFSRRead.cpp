@@ -12,7 +12,7 @@
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
 #include "FSRAlgs/IFSRNavigator.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Gaudi/Algorithm.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include <cstdlib>
 #include <fstream>
@@ -32,14 +32,14 @@
  *  @date   2015-06-23
  */
 
-class GenFSRRead : public GaudiAlgorithm {
+class GenFSRRead : public Gaudi::Algorithm {
 public:
   // Standard constructor
-  GenFSRRead( const std::string& name, ISvcLocator* pSvcLocator );
+  using Gaudi::Algorithm::Algorithm;
 
-  StatusCode initialize() override; // Algorithm initialization
-  StatusCode execute() override;    // Algorithm execution
-  StatusCode finalize() override;   // Algorithm finalization
+  StatusCode initialize() override;                         // Algorithm initialization
+  StatusCode execute( const EventContext& ) const override; // Algorithm execution
+  StatusCode finalize() override;                           // Algorithm finalization
 
   void printFSR(); // Print the GenFSR
 
@@ -48,45 +48,35 @@ private:
                                                 "TES location where FSRs are persisted"};
   Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
 
-  SmartIF<IDataProviderSvc> m_fileRecordSvc;
-  IFSRNavigator*            m_navigatorTool = nullptr; // tool to navigate FSR
+  SmartIF<IDataProviderSvc>       m_fileRecordSvc;
+  PublicToolHandle<IFSRNavigator> m_navigatorTool{this, "FSRNavigator",
+                                                  "FSRNavigator/FSRNavigator"}; // tool to navigate FSR
 };
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( GenFSRRead )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-GenFSRRead::GenFSRRead( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode GenFSRRead::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-
-  if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  // get the File Records service
-  m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
-  m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator", "FSRNavigator" );
-
-  return sc;
+  return Algorithm::initialize().andThen( [&] {
+    // get the File Records service
+    m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
+  } );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRRead::execute() { return StatusCode::SUCCESS; }
+StatusCode GenFSRRead::execute( const EventContext& ) const { return StatusCode::SUCCESS; }
 
 //=============================================================================
 //  Finalize
 //=============================================================================
 StatusCode GenFSRRead::finalize() {
   GenFSRRead::printFSR();
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Algorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================
@@ -112,7 +102,7 @@ void GenFSRRead::printFSR() {
 
     LHCb::GenFSR* genFSR = dynamic_cast<LHCb::GenFSR*>( obj );
 
-    if ( genFSR == nullptr ) {
+    if ( !genFSR ) {
       warning() << "genFSR record not found" << endmsg;
       if ( msgLevel( MSG::DEBUG ) ) debug() << genRecordAddress << " not found" << endmsg;
     } else {
