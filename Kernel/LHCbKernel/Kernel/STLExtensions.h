@@ -17,6 +17,7 @@
 #include <array>
 #include <functional>
 #include <memory>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -45,6 +46,20 @@
 #endif
 
 namespace LHCb {
+
+  namespace cxx {
+
+    // FIXME: C++20: replace with std::bind_front
+    template <typename F, typename... BoundArgs>
+    auto bind_front( F&& f, BoundArgs&&... boundArgs ) {
+      return [f         = std::forward<F>( f ),
+              boundArgs = std::tuple{std::forward<BoundArgs>( boundArgs )...}]( auto&&... args ) -> decltype( auto ) {
+        return std::apply(
+            f, std::tuple_cat( boundArgs, std::forward_as_tuple( std::forward<decltype( args )>( args )... ) ) );
+      };
+    }
+
+  } // namespace cxx
 
   // TODO: when we use a more recent version of range-v3, switch to its version of span
   using gsl::span;
