@@ -20,10 +20,11 @@ namespace LHCb::Math::detail {
 
   using gsl::span;
 
-  //----------------------------------------------------------------------
-  // AVX details
-  //----------------------------------------------------------------------
   namespace {
+
+    //----------------------------------------------------------------------
+    // AVX details
+    //----------------------------------------------------------------------
 #if defined( __AVX__ )
 
     auto to_Vec4d( span<const double, 4> s ) { return Vec4d{}.load( s.data() ); }
@@ -78,7 +79,7 @@ namespace LHCb::Math::detail {
           , c2{gather4d<3, 4, 5, 8>( d.data() )}
           , c3{gather4d<6, 7, 8, 9>( d.data() )}
           , c4{gather4d<10, 11, 12, 13>( d.data() )}
-          , c44{d[14]} {};
+          , c44{d[14]} {}
       // return a column of a rhs product with column-major f (aka. tranpose of row major f)
       template <int i = 0, int j = i + 1, int k = j + 1, int l = k + 1, int m = l + 1, std::ptrdiff_t extent>
       inline Vec4d c0i( span<const double, extent> f ) const {
@@ -121,7 +122,7 @@ namespace LHCb::Math::detail {
           , r16{d[8], d[9]}
           , r8{d[10], d[11]}
           , r18{d[12], d[13]}
-          , r24{d[14], 0.} {};
+          , r24{d[14], 0.} {}
       inline Vec2d g0( span<const double, 5> f ) const {
         return r0 * f[0] + r2 * f[1] + r4 * f[2] + r6 * f[3] + r8 * f[4];
       }
@@ -130,6 +131,7 @@ namespace LHCb::Math::detail {
       }
       inline double g4( span<const double, 5> f ) const { return dot5( f, r8, r18, r24[0] ); }
     };
+
 #endif
   } // namespace
   //----------------------------------------------------------------------

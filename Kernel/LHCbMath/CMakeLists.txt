@@ -100,6 +100,9 @@ endif()
 set(AVX512_BUILD_FLAGS " -Wno-strict-aliasing ${AVX512_BUILD_FLAGS}" )
 
 if(GAUDI_BUILD_TESTS)
+  gaudi_add_executable(TestSimilarity
+                       tests/Similarity.cpp
+                       LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestPow
                        tests/pow.cpp
                        LINK_LIBRARIES LHCbMathLib)
@@ -112,7 +115,7 @@ if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestKine
                        tests/kinematics.cpp
                        LINK_LIBRARIES LHCbMathLib)
- gaudi_add_executable(TestTruncate
+  gaudi_add_executable(TestTruncate
                        tests/truncate.cpp
                        LINK_LIBRARIES LHCbMathLib)
   gaudi_add_executable(TestLomont
