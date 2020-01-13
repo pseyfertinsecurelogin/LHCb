@@ -46,8 +46,6 @@ public:
   /// Standard constructor
   ChargedProtoParticleAddMuonInfo( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ChargedProtoParticleAddMuonInfo(); ///< Destructor
-
   StatusCode execute() override; ///< Algorithm execution
 
 private:
@@ -58,8 +56,11 @@ private:
   void updateMuon( LHCb::ProtoParticle* proto ) const;
 
 private:
-  std::string m_muonPath;  ///< Location of MuonPID data objects in the TES
-  std::string m_protoPath; ///< Location of the ProtoParticles in the TES
+  DataObjectReadHandle<LHCb::MuonPIDs> m_muonPath{
+      this, "InputMuonPIDLocation", LHCb::MuonPIDLocation::Offline}; ///< Location of MuonPID data objects in the TES
+  DataObjectReadHandle<LHCb::ProtoParticles> m_protoPath{
+      this, "ProtoParticleLocation",
+      LHCb::ProtoParticleLocation::Charged}; ///< Location of the ProtoParticles in the TES
 
   /// mapping type from Track to MuonPID data objects
   typedef std::map<const LHCb::Track*, const LHCb::MuonPID*> TrackToMuonPID;

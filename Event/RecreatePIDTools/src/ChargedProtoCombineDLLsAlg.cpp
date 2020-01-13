@@ -39,14 +39,7 @@ ChargedProtoCombineDLLsAlg::ChargedProtoCombineDLLsAlg( const std::string& name,
     , m_deCombDll( 0xFFFF ) {
 
   // context specific locations
-  if ( context() == "HLT" || context() == "Hlt" ) {
-    m_protoPath = LHCb::ProtoParticleLocation::HltCharged;
-  } else {
-    m_protoPath = LHCb::ProtoParticleLocation::Charged;
-  }
-
-  // Job Options
-  declareProperty( "ProtoParticleLocation", m_protoPath );
+  if ( context() == "HLT" || context() == "Hlt" ) { m_protoPath.setKey( LHCb::ProtoParticleLocation::HltCharged ); }
 
   declareProperty( "ElectronDllDisable", m_elDisable );
   declareProperty( "MuonDllDisable", m_muDisable );
@@ -130,10 +123,12 @@ StatusCode ChargedProtoCombineDLLsAlg::initialize() {
 StatusCode ChargedProtoCombineDLLsAlg::execute() {
 
   // Load the charged ProtoParticles
-  LHCb::ProtoParticles* protos = getIfExists<LHCb::ProtoParticles>( m_protoPath );
+  LHCb::ProtoParticles* protos = m_protoPath.getIfExists();
 
   // If ProtoParticles do not exist, exit cleanly with a warning
-  if ( !protos ) { return Warning( "ProtoParticles do not exist at '" + m_protoPath + "'", StatusCode::SUCCESS ); }
+  if ( !protos ) {
+    return Warning( "ProtoParticles do not exist at '" + m_protoPath.objKey() + "'", StatusCode::SUCCESS );
+  }
 
   // Loop over the protos
   for ( auto* proto : *protos ) {
@@ -169,7 +164,7 @@ StatusCode ChargedProtoCombineDLLsAlg::execute() {
     }
 
   } // loop over protos
-  counter( "CombineDLL ==> " + m_protoPath ) += protos->size();
+  counter( "CombineDLL ==> " + m_protoPath.objKey() ) += protos->size();
 
   return StatusCode::SUCCESS;
 }

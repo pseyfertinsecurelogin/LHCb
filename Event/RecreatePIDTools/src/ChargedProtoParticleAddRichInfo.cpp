@@ -38,35 +38,21 @@ ChargedProtoParticleAddRichInfo::ChargedProtoParticleAddRichInfo( const std::str
 
   // context specific locations
   if ( context() == "HLT" || context() == "Hlt" ) {
-    m_richPath  = LHCb::RichPIDLocation::HLT;
-    m_protoPath = LHCb::ProtoParticleLocation::HltCharged;
-  } else {
-    m_richPath  = LHCb::RichPIDLocation::Offline;
-    m_protoPath = LHCb::ProtoParticleLocation::Charged;
+    m_richPath.setKey( LHCb::RichPIDLocation::HLT );
+    m_protoPath.setKey( LHCb::ProtoParticleLocation::HltCharged );
   }
-
-  // RICH data
-  declareProperty( "InputRichPIDLocation", m_richPath );
-
-  // ProtoParticles
-  declareProperty( "ProtoParticleLocation", m_protoPath );
 
   // setProperty( "OutputLevel", MSG::DEBUG );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-ChargedProtoParticleAddRichInfo::~ChargedProtoParticleAddRichInfo() {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
 StatusCode ChargedProtoParticleAddRichInfo::execute() {
   // ProtoParticle container
-  LHCb::ProtoParticles* protos = getIfExists<ProtoParticles>( m_protoPath );
+  LHCb::ProtoParticles* protos = m_protoPath.getIfExists();
   if ( !protos ) {
-    return Warning( "No existing ProtoParticle container at " + m_protoPath + " thus do nothing.",
+    return Warning( "No existing ProtoParticle container at " + m_protoPath.objKey() + " thus do nothing.",
                     StatusCode::SUCCESS );
   }
 
@@ -76,7 +62,7 @@ StatusCode ChargedProtoParticleAddRichInfo::execute() {
 
   // Loop over proto particles and add RICH info
   for ( auto* proto : *protos ) { updateRICH( proto ); }
-  counter( m_richPath + " ==> " + m_protoPath ) += protos->size();
+  counter( m_richPath.objKey() + " ==> " + m_protoPath.objKey() ) += protos->size();
 
   // return
   return StatusCode::SUCCESS;
@@ -129,14 +115,15 @@ bool ChargedProtoParticleAddRichInfo::getRichData() {
   m_richMap.clear();
 
   // Do we have any RichPID results
-  const RichPIDs* richpids = getIfExists<RichPIDs>( m_richPath );
+  const RichPIDs* richpids = m_richPath.getIfExists();
   if ( !richpids ) {
-    Warning( "No RichPIDs at '" + m_richPath + "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS, 1 )
+    Warning( "No RichPIDs at '" + m_richPath.objKey() + "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS,
+             1 )
         .ignore();
     return false;
   }
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Successfully loaded " << richpids->size() << " RichPIDs from " << m_richPath << " Version "
+    debug() << "Successfully loaded " << richpids->size() << " RichPIDs from " << m_richPath.objKey() << " Version "
             << (unsigned int)richpids->version() << endmsg;
 
   // refresh the reverse mapping

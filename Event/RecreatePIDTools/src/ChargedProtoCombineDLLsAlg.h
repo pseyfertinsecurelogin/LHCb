@@ -97,8 +97,9 @@ private: // methods
   /// Add the Calo DLL information to the combined DLL
   bool addCalo( LHCb::ProtoParticle* proto, CombinedLL& combDLL );
 
-private:                                  // data
-  std::string                m_protoPath; ///< Location in TES of ProtoParticles
+private: // data
+  DataObjectReadHandle<LHCb::ProtoParticles> m_protoPath{
+      this, "ProtoParticleLocation", LHCb::ProtoParticleLocation::Charged}; ///< Location in TES of ProtoParticles
   std::vector<std::string>   m_elDisable, m_muDisable, m_kaDisable, m_prDisable, m_piDisable, m_deDisable;
   int                        m_elCombDll, m_muCombDll, m_prCombDll, m_piCombDll, m_kaCombDll, m_deCombDll;
   std::map<std::string, int> m_maskTechnique;

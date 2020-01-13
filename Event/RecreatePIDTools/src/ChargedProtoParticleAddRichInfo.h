@@ -46,8 +46,6 @@ public:
   /// Standard constructor
   ChargedProtoParticleAddRichInfo( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ChargedProtoParticleAddRichInfo(); ///< Destructor
-
   StatusCode execute() override; ///< Algorithm execution
 
 private:
@@ -58,8 +56,11 @@ private:
   void updateRICH( LHCb::ProtoParticle* proto ) const;
 
 private:
-  std::string m_protoPath; ///< Location of the ProtoParticles in the TES
-  std::string m_richPath;  ///< Location in TES of input RichPIDs
+  DataObjectReadHandle<LHCb::ProtoParticles> m_protoPath{
+      this, "ProtoParticleLocation",
+      LHCb::ProtoParticleLocation::Charged}; ///< Location of the ProtoParticles in the TES
+  DataObjectReadHandle<LHCb::RichPIDs> m_richPath{
+      this, "InputRichPIDLocation", LHCb::RichPIDLocation::Offline}; ///< Location in TES of input RichPIDs
 
   /// mapping type from Track to RichPID data objects
   typedef std::map<const LHCb::Track*, const LHCb::RichPID*> TrackToRichPID;
