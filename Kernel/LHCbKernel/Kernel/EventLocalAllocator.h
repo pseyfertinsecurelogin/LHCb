@@ -11,7 +11,7 @@
 #pragma once
 #include "EventContextExt.h"    // LHCb::getMemResource( EventContext const& )
 #include "EventLocalResource.h" // Defines/documents LHCB_CUSTOM_ALLOCATOR_IMPL
-#if LHCB_CUSTOM_ALLOCATOR_IMPL == 3 || LHCB_CUSTOM_ALLOCATOR_IMPL == 5
+#if LHCB_CUSTOM_ALLOCATOR_IMPL == 5
 // TODO remove this once the default resource is nullptr in this case
 #  include "GaudiKernel/ThreadLocalContext.h" // Gaudi::Hive::currentContext()
 #endif
@@ -49,11 +49,7 @@ namespace LHCb {
     using EventLocal = std::pmr::polymorphic_allocator<T>;
   } // namespace Allocators
 #elif LHCB_CUSTOM_ALLOCATOR_IMPL == 3
-  [[nodiscard]] inline Allocators::MemoryResource* defaultMemResource() {
-    // Get a memory resource from the thread-local EventContext
-    // TODO change this to return nullptr, so the default behaviour is to fall back to new/delete
-    return getMemResource( Gaudi::Hive::currentContext() );
-  }
+  [[nodiscard]] constexpr Allocators::MemoryResource* defaultMemResource() { return nullptr; }
 
   namespace Allocators {
     template <typename T>
@@ -68,8 +64,8 @@ namespace LHCb {
       template <typename U>
       constexpr EventLocal( EventLocal<U> const& other ) noexcept : m_resource{other.m_resource} {}
 
-      __attribute__( ( always_inline ) ) T* allocate( std::size_t n ) {
-        if ( LIKELY( m_resource != nullptr ) ) {
+      [[nodiscard]] __attribute__( ( always_inline ) ) T* allocate( std::size_t n ) {
+        if ( LIKELY( m_resource != defaultMemResource() ) ) {
           return reinterpret_cast<T*>( m_resource->template allocate<alignof( T )>( n * sizeof( T ) ) );
         } else {
           return default_allocate( n );
@@ -77,7 +73,7 @@ namespace LHCb {
       }
 
       __attribute__( ( always_inline ) ) void deallocate( T* p, std::size_t n ) noexcept {
-        if ( LIKELY( m_resource != nullptr ) ) {
+        if ( LIKELY( m_resource != defaultMemResource() ) ) {
           m_resource->deallocate( reinterpret_cast<std::byte*>( p ), n * sizeof( T ) );
         } else {
           default_deallocate( p, n );
@@ -89,8 +85,12 @@ namespace LHCb {
         return lhs.m_resource == rhs.m_resource;
       }
 
+      [[nodiscard]] MemoryResource* resource() const noexcept { return m_resource; }
+
     private:
-      __attribute__( ( noinline ) ) T* default_allocate( std::size_t n ) { return std::allocator<T>{}.allocate( n ); }
+      [[nodiscard]] __attribute__( ( noinline ) ) T* default_allocate( std::size_t n ) {
+        return std::allocator<T>{}.allocate( n );
+      }
 
       __attribute__( ( noinline ) ) void default_deallocate( T* p, std::size_t n ) noexcept {
         std::allocator<T>{}.deallocate( p, n );
@@ -99,7 +99,7 @@ namespace LHCb {
       template <typename>
       friend struct EventLocal;
 
-      MemoryResource* m_resource{nullptr};
+      MemoryResource* m_resource{defaultMemResource()}; //! transient (ROOT should not persist the value)
     };
 
     template <typename T, typename U>
@@ -117,8 +117,9 @@ namespace LHCb {
       constexpr EventLocal( MemoryResource* ) noexcept {}
       template <typename U>
       constexpr EventLocal( EventLocal<U> const& ) noexcept {}
-      T*   allocate( std::size_t n ) { return std::allocator<T>().allocate( n ); }
-      void deallocate( T* p, std::size_t n ) noexcept { std::allocator<T>().deallocate( p, n ); }
+      [[nodiscard]] T* allocate( std::size_t n ) { return std::allocator<T>().allocate( n ); }
+      void             deallocate( T* p, std::size_t n ) noexcept { std::allocator<T>().deallocate( p, n ); }
+      [[nodiscard]] MemoryResource* resource() const noexcept { return nullptr; }
     };
 
     template <typename T, typename U>
