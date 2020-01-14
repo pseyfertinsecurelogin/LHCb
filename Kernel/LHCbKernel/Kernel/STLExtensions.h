@@ -194,6 +194,19 @@ namespace LHCb {
 
   } // namespace range
 
+  namespace details_se {
+    template <typename T, std::size_t... Is, typename... Args>
+    std::array<T, sizeof...( Is )> make_object_array( std::index_sequence<Is...>, Args&&... args ) {
+      return {std::conditional_t<Is, T, T>{std::forward<Args>( args )...}...};
+    }
+  } // namespace details_se
+
+  /** Construct std::array<T, N>, explicitly forwarding the given arguments to the constructor of each T.
+   */
+  template <typename T, std::size_t N, typename... Args>
+  std::array<T, N> make_object_array( Args&&... args ) {
+    return details_se::make_object_array<T>( std::make_index_sequence<N>{}, std::forward<Args>( args )... );
+  }
 } // namespace LHCb
 
 // gsl::span has no `front` or `back`
