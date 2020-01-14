@@ -36,9 +36,9 @@ def _get_new_ref_filename(reference_path):
 LOG_LINE_RE = re.compile(
     r'^(?P<component>[^. ]+(?:\.[^. ]+)*(?:\.\.\.)?)\s*'
     r'(?P<level>SUCCESS|VERBOSE|  DEBUG|   INFO|  ERROR|  FATAL)'
-    r'\s*(?P<message>.*)$'
-    # Note: the space after the message might be stripped if \n follows
-)
+    # Note: the space after the level might be stripped if \n follows
+    r'\s*(?P<message>.*)$',
+    flags=re.DOTALL)
 
 
 class GroupMessages(FilePreprocessor):
@@ -50,14 +50,17 @@ class GroupMessages(FilePreprocessor):
 
     """
 
-    def __processFile__(self, lines):
+    def __processFile__(self, lines, sep=None):
         indices = [i for i, m in enumerate(map(LOG_LINE_RE.match, lines)) if m]
         if not indices:
             return []
         # everything until the first message is one message per line
         indices = range(indices[0]) + indices
+        if sep is None:
+            # try to automatically deduce how lines should be joined
+            sep = '' if all(l.endswith('\n') for l in lines) else '\n'
         messages = [
-            '\n'.join(lines[i1:i2])
+            sep.join(lines[i1:i2])
             for i1, i2 in zip(indices, indices[1:] + [None])
         ]
         return messages
