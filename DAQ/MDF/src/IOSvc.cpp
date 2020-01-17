@@ -29,7 +29,7 @@ std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>> LHCb::MDF::IOSvc:
   // pick an event in it atomically
   auto event = buffer->get();
   if ( event.has_value() ) {
-    return {std::move( event.value() ), buffer};
+    return {std::move( event.value() ), std::move( buffer )};
   } else {
     // No events remaining in current buffer, we need to renew the buffer
     while ( true ) {
@@ -38,10 +38,10 @@ std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>> LHCb::MDF::IOSvc:
       // We got the lock, but maybe the buffer was renewed while we waited. So double check
       // get hold of current buffer, by copying the shared_ptr
       buffer = m_curBuffer;
-      // pick an event in it atomicall
+      // pick an event in it atomically
       auto event = buffer->get();
       if ( event.has_value() ) {
-        return {std::move( event.value() ), buffer};
+        return {std::move( event.value() ), std::move( buffer )};
       } else {
         // ok, buffers still need to be renewed, or needs it again. Anyway we are in charge now
         // let's just use the "ready to use" nextBuffer. Note that in case it's not yet

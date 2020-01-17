@@ -32,9 +32,14 @@ namespace LHCb::MDF {
                     {KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
                      KeyValue{"RawBanksBufferLocation", LHCb::RawEventLocation::Default + "Banks"}} ){};
 
-    std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>> operator()() const override { return iosvc->next(); }
+    std::tuple<LHCb::RawEvent, std::shared_ptr<LHCb::MDF::Buffer>> operator()() const override {
+      auto ret = iosvc->next();
+      m_numBanks += std::get<0>( ret ).size();
+      return ret;
+    }
 
   private:
+    mutable Gaudi::Accumulators::StatCounter<std::size_t> m_numBanks{this, "#banks in raw event"};
     ServiceHandle<LHCb::IIOSvc> iosvc{this, "IOSvc", "LHCb::MDF::IOSvcFileRead", "Service to use to read input data"};
   };
 } // namespace LHCb::MDF

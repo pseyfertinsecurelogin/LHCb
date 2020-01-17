@@ -14,6 +14,9 @@
 
 #include "GaudiKernel/GaudiException.h"
 
+// This can be overriden from options, see LHCb::MDF::IOSvc
+unsigned int LHCb::MDF::Buffer::s_nbBanksReserve = 1200;
+
 std::optional<LHCb::RawEvent> LHCb::MDF::Buffer::get() {
   /// Atomically returns a unique eventID or <= 0 number if no events remain
   int evtId = m_nbAvailableEvents--;
@@ -22,7 +25,7 @@ std::optional<LHCb::RawEvent> LHCb::MDF::Buffer::get() {
   /// get the event we've picked
   auto& event = m_events[size() - evtId];
   // Decode banks of the event
-  event.event().reserve( 1000 ); // reserving enough space for all banks in most cases
+  event.event().reserve( s_nbBanksReserve );
   std::byte* start = event.data();
   std::byte* end   = event.data() + event.size();
   while ( start < end ) {
