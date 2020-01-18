@@ -8,89 +8,121 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// local
-#include "TrackToMCParticleRelations.h"
 
-using namespace Rich::Future::MC;
+// Rich (Future) Kernel
+#include "RichFutureKernel/RichAlgBase.h"
 
-//-----------------------------------------------------------------------------
-// Implementation file for class : TrackToMCParticleRelations
-//
-// 2016-12-07 : Chris Jones
-//-----------------------------------------------------------------------------
+// Gaudi Functional
+#include "GaudiAlg/Transformer.h"
 
-TrackToMCParticleRelations::TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
-    : Transformer( name, pSvcLocator,
-                   // inputs
-                   {
-                       KeyValue{"TracksLocation", LHCb::TrackLocation::Default},
-                       KeyValue{"MCParticlesLocation", LHCb::MCParticleLocation::Default},
-                       KeyValue{"MCParticlesLinkLocation", "Link/" + LHCb::TrackLocation::Default},
-                   },
-                   // output
-                   {KeyValue{"TrackToMCParticlesRelations", Rich::Future::MC::Relations::TrackToMCParticles}} ) {}
+// Event
+#include "Event/LinksByKey.h"
+#include "Event/MCParticle.h"
+#include "Event/Track.h"
 
-Rich::Future::MC::Relations::TkToMCPRels                                  //
-TrackToMCParticleRelations::operator()( const LHCb::Tracks&      tks,     //
-                                        const LHCb::MCParticles& mcParts, //
-                                        const LHCb::LinksByKey&  links    //
-                                        ) const {
+// Relations
+#include "RichFutureMCUtils/RichMCRelations.h"
 
-  // make a relations table
-  Relations::TkToMCPRels rels( 2 * tks.size() );
+namespace Rich::Future::MC {
 
-  // loop over the tracks and fill relations table
-  for ( auto* tk : tks ) {
-    if ( !tk ) continue;
+  // Use the functional framework
+  using namespace Gaudi::Functional;
 
-    if ( m_allowMultMPs ) {
-      // Save all the MCPs for each track
-      links.applyToLinks( tk->key(), [&rels, &tk, &mcParts]( unsigned int, unsigned int tgtKey, float weight ) {
-        rels.i_push( tk, static_cast<const LHCb::MCParticle*>( mcParts.containedObject( tgtKey ) ),
-                     weight ); // NB! i_push is used!
-      } );
-    } else {
-      // find best MCP based on weight and save only that
-      double                 bestWeight = -1;
-      const ContainedObject* bestMCP    = nullptr;
-      links.applyToLinks( tk->key(),
-                          [&bestMCP, &bestWeight, &mcParts]( unsigned int, unsigned int tgtKey, float weight ) {
-                            if ( weight > bestWeight ) {
-                              bestWeight = weight;
-                              bestMCP    = mcParts.containedObject( tgtKey );
-                            }
-                          } );
-      if ( bestMCP ) {
-        rels.i_push( tk, static_cast<const LHCb::MCParticle*>( bestMCP ), bestWeight ); // NB! i_push is used!
+  /** @class TrackToMCParticleRelations TrackToMCParticleRelations.h
+   *
+   *  (Temporary) algorithm that takes the Track<->MCParticle linker and forms
+   *  a relations object from it. Temporary in that the linker object as it stands
+   *  is not compatible with the functional framework, given the way it internal
+   *  interacts with the TES. Longer term the usage of the linkers in the future
+   *  algorithms needs reviewing, and most probably removing.
+   *
+   *  @author Chris Jones
+   *  @date   2016-12-07
+   */
+  class TrackToMCParticleRelations final : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&,      //
+                                                                                      const LHCb::MCParticles&, //
+                                                                                      const LHCb::LinksByKey& ),
+                                                              Traits::BaseClass_t<AlgBase<>>> {
+
+  public:
+    /// Standard constructor
+    TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
+        : Transformer( name, pSvcLocator,
+                       // inputs
+                       {KeyValue{"TracksLocation", LHCb::TrackLocation::Default},
+                        KeyValue{"MCParticlesLocation", LHCb::MCParticleLocation::Default},
+                        KeyValue{"MCParticlesLinkLocation", "Link/" + LHCb::TrackLocation::Default}},
+                       // output
+                       {KeyValue{"TrackToMCParticlesRelations", Rich::Future::MC::Relations::TrackToMCParticles}} ) {}
+
+  public:
+    /// Algorithm execution via transform
+    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks&      tks,     //
+                                                         const LHCb::MCParticles& mcParts, //
+                                                         const LHCb::LinksByKey&  links    //
+                                                         ) const override {
+
+      // make a relations table
+      Relations::TkToMCPRels rels( 2 * tks.size() );
+
+      // loop over the tracks and fill relations table
+      for ( auto* tk : tks ) {
+        if ( !tk ) continue;
+
+        if ( m_allowMultMPs ) {
+          // Save all the MCPs for each track
+          links.applyToLinks( tk->key(), [&rels, &tk, &mcParts]( auto, auto tgtKey, auto weight ) {
+            const auto mcp = dynamic_cast<const LHCb::MCParticle*>( mcParts.containedObject( tgtKey ) );
+            if ( mcp ) { rels.i_push( tk, mcp, weight ); }
+          } );
+        } else {
+          // find best MCP based on weight and save only that
+          double                  bestWeight = -1;
+          const LHCb::MCParticle* bestMCP    = nullptr;
+          links.applyToLinks( tk->key(), [&bestMCP, &bestWeight, &mcParts]( auto, auto tgtKey, auto weight ) {
+            if ( weight > bestWeight ) {
+              const auto mcp = dynamic_cast<const LHCb::MCParticle*>( mcParts.containedObject( tgtKey ) );
+              if ( mcp ) {
+                bestWeight = weight;
+                bestMCP    = mcp;
+              }
+            }
+          } );
+          if ( bestMCP ) { rels.i_push( tk, bestMCP, bestWeight ); }
+        }
       }
+
+      if ( msgLevel( MSG::VERBOSE ) ) {
+        verbose() << "Rels before sort" << endmsg;
+        for ( const auto& i : rels.i_relations() ) {
+          verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
+                    << i.weight() << endmsg;
+        }
+      }
+
+      // MANDATORY usage of i_sort after i_push
+      rels.i_sort();
+
+      if ( msgLevel( MSG::VERBOSE ) ) {
+        verbose() << "Rels after sort" << endmsg;
+        for ( const auto& i : rels.i_relations() ) {
+          verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
+                    << i.weight() << endmsg;
+        }
+      }
+
+      // return the final relations
+      return rels;
     }
-  }
 
-  if ( msgLevel( MSG::VERBOSE ) ) {
-    verbose() << "Rels before sort" << endmsg;
-    for ( const auto& i : rels.i_relations() ) {
-      verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
-                << i.weight() << endmsg;
-    }
-  }
+  private:
+    // properties
 
-  // MANDATORY usage of i_sort after i_push
-  rels.i_sort();
+    /// Allow more than one MCParticle per track ?
+    Gaudi::Property<bool> m_allowMultMPs{this, "AllowMultipleMCPsPerTrack", true};
+  };
 
-  if ( msgLevel( MSG::VERBOSE ) ) {
-    verbose() << "Rels after sort" << endmsg;
-    for ( const auto& i : rels.i_relations() ) {
-      verbose() << std::setprecision( 20 ) << "  TK " << i.from()->key() << "  MCP " << i.to()->key() << "  Weight "
-                << i.weight() << endmsg;
-    }
-  }
+  // Declaration of the Algorithm Factory
+  DECLARE_COMPONENT( TrackToMCParticleRelations )
 
-  // check for some "strange" status
-  if ( rels.i_relations().empty() ) { ++m_emptyWarn; }
-
-  // return the final relations
-  return rels;
-}
-
-// Declaration of the Algorithm Factory
-DECLARE_COMPONENT( TrackToMCParticleRelations )
+} // namespace Rich::Future::MC
