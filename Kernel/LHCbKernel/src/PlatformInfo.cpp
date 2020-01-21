@@ -109,7 +109,11 @@ namespace {
                                                     "x86_64-centos7-gcc9-dbg+asan",
                                                     "x86_64-centos7-gcc9-dbg+lsan",
                                                     "x86_64-centos7-gcc9-dbg+ubsan",
-                                                    "x86_64-centos7-gcc9-dbg+tsan"};
+                                                    "x86_64-centos7-gcc9-dbg+tsan",
+                                                    "skylake_avx512+vecwid256-centos7-gcc9-opt",
+                                                    "skylake_avx512+vecwid256-centos7-gcc9-opt+g",
+                                                    "skylake_avx512+vecwid256-centos7-gcc9-dbg",
+                                                    "skylake_avx512+vecwid256-centos7-gcc9-do0"};
 
   const std::string invalid_platform = "invalid";
 
