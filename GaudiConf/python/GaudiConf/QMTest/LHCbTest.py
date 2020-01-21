@@ -197,6 +197,11 @@ def _extract_counter_blocks(s, header_pattern, preproc=None):
     return blocks
 
 
+def splitCounterLine(line):
+    # split on '|' character, but respect quoted strings
+    return re.findall(r'(?:[^|"]|"(?:\\.|[^"])*")+', line)
+
+
 def _extract_counters(blocks, comp_type='Counters'):
     """
     Then the lines are parsed and a dictionary is returned where key is the algorithm name and value a list of counters.
@@ -216,7 +221,7 @@ def _extract_counters(blocks, comp_type='Counters'):
             # remove /Event/
             items = [
                 v.strip()
-                for v in line.strip().replace('/Event/', '').split('|')
+                for v in splitCounterLine(line.strip().replace('/Event/', ''))
                 if v.strip() != ""
             ]
             counters[component][items[0].strip('"*')] = items[firstValueIndex:]
