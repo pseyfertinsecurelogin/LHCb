@@ -32,13 +32,13 @@ using FTLiteClusters = LHCb::FTLiteCluster::FTLiteClusters;
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
-class FTRawBankDecoder : public Transformer<FTLiteClusters( const LHCb::RawEvent& ),
+class FTRawBankDecoder : public Transformer<FTLiteClusters( const EventContext&, const LHCb::RawEvent& ),
                                             Gaudi::Functional::Traits::BaseClass_t<FixTESPath<Gaudi::Algorithm>>> {
 public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
-  FTLiteClusters operator()( const LHCb::RawEvent& rawEvent ) const override;
+  FTLiteClusters operator()( const EventContext& evtCtx, const LHCb::RawEvent& rawEvent ) const override;
 
 private:
   PublicToolHandle<IFTReadoutTool> m_readoutTool = {this, "FTReadoutTool", "FTReadoutTool"};
@@ -57,7 +57,7 @@ private:
       "Set the decoding version"};
 
   template <unsigned int version>
-  FTLiteClusters decode( LHCb::span<const LHCb::RawBank*>, unsigned int nClusters ) const;
+  FTLiteClusters decode( const EventContext& evtCtx, LHCb::span<const LHCb::RawBank*>, unsigned int nClusters ) const;
 
   mutable Gaudi::Accumulators::MsgCounter<MSG::ERROR>   m_corrupt{this, "Possibly corrupt data. Ignoring the cluster."};
   mutable Gaudi::Accumulators::MsgCounter<MSG::WARNING> m_nonExistingModule{

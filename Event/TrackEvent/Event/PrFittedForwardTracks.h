@@ -12,11 +12,10 @@
 #pragma once
 #include "Event/PrForwardTracks.h"
 #include "Event/PrVeloHits.h"
-
+#include "Kernel/EventLocalAllocator.h"
 #include "Kernel/LHCbID.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
-
 #include "SOAExtensions/ZipUtils.h"
 
 /**
@@ -27,35 +26,42 @@
 
 namespace LHCb::Pr::Fitted::Forward {
   class Tracks {
-    constexpr static int max_tracks = align_size( 1024 );
+    constexpr static int         max_tracks = align_size( 1024 );
+    constexpr static int         row_size   = 15;
+    constexpr static std::size_t array_size = max_tracks * row_size;
+    using data_t                            = union {
+      float f;
+      int   i;
+    };
 
   public:
+    using allocator_type = LHCb::Allocators::EventLocal<data_t>;
     Tracks( Pr::Forward::Tracks const* forward_ancestors,
-            Zipping::ZipFamilyNumber   zipIdentifier = Zipping::generateZipIdentifier() )
-        : m_forward_ancestors{forward_ancestors}, m_zipIdentifier{zipIdentifier} {
-      const size_t size = max_tracks * 15;
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-      ;
-    }
+            Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier(), allocator_type alloc = {} )
+        : m_alloc{std::move( alloc )}
+        , m_data{std::allocator_traits<allocator_type>::allocate( m_alloc, array_size )}
+        , m_forward_ancestors{forward_ancestors}
+        , m_zipIdentifier{zipIdentifier} {}
 
     // Special constructor for zipping machinery
     Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& tracks )
-        : Tracks( tracks.getForwardAncestors(), zipIdentifier ) {}
+        : Tracks( tracks.getForwardAncestors(), zipIdentifier, tracks.m_alloc ) {}
 
     Tracks( const Tracks& ) = delete;
 
     Tracks( Tracks&& other )
-        : m_data{std::exchange( other.m_data, nullptr )}
+        : m_alloc{std::move( other.m_alloc )}
+        , m_data{std::exchange( other.m_data, nullptr )}
         , m_size{other.m_size}
         , m_forward_ancestors{other.m_forward_ancestors}
         , m_zipIdentifier{other.m_zipIdentifier} {}
 
-    [[nodiscard]] bool                     empty() const { return m_size == 0; }
-    [[nodiscard]] inline int               size() const { return m_size; }
-    inline int&                            size() { return m_size; }
-    [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
-
-    [[nodiscard]] Pr::Forward::Tracks const* getForwardAncestors() const { return m_forward_ancestors; };
+    [[nodiscard]] allocator_type             get_allocator() const noexcept { return m_alloc; }
+    [[nodiscard]] bool                       empty() const noexcept { return m_size == 0; }
+    [[nodiscard]] int                        size() const noexcept { return m_size; }
+    int&                                     size() noexcept { return m_size; }
+    [[nodiscard]] Zipping::ZipFamilyNumber   zipIdentifier() const noexcept { return m_zipIdentifier; }
+    [[nodiscard]] Pr::Forward::Tracks const* getForwardAncestors() const noexcept { return m_forward_ancestors; };
 
     // Index in TracksFT container of the track's ancestor
     SOA_ACCESSOR( trackFT, &( m_data->i ) )
@@ -154,16 +160,13 @@ namespace LHCb::Pr::Fitted::Forward {
       return nHits;
     }
 
-    ~Tracks() { std::free( m_data ); }
+    ~Tracks() { std::allocator_traits<allocator_type>::deallocate( m_alloc, m_data, array_size ); }
 
   private:
-    using data_t = union {
-      float f;
-      int   i;
-    };
-    alignas( 64 ) data_t* m_data;
-    int                        m_size              = 0;
-    Pr::Forward::Tracks const* m_forward_ancestors = nullptr;
+    allocator_type             m_alloc;
+    data_t*                    m_data;
+    int                        m_size{0};
+    Pr::Forward::Tracks const* m_forward_ancestors{nullptr};
     Zipping::ZipFamilyNumber   m_zipIdentifier;
   };
 } // namespace LHCb::Pr::Fitted::Forward

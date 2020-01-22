@@ -30,6 +30,8 @@ namespace ranges::views {
 #  endif
 #endif
 
+#include "EventLocalAllocator.h"
+
 #include "GaudiKernel/Range.h"
 
 namespace LHCb::Container {
@@ -124,8 +126,9 @@ namespace LHCb::Container {
     using offset_t        = unsigned short;
     using const_reference = const Hit&;
     using value_type      = Hit;
+    using allocator_type  = LHCb::Allocators::EventLocal<value_type>;
 
-    using Hits                   = typename std::vector<value_type>;
+    using Hits                   = typename std::vector<value_type, allocator_type>;
     using iterator               = typename Hits::iterator;
     using const_iterator         = typename Hits::const_iterator;
     using const_reverse_iterator = typename Hits::const_reverse_iterator;
@@ -142,16 +145,17 @@ namespace LHCb::Container {
     /**
      * Constructor for a relatively empty hit container.
      */
-    MultiIndexedContainer( size_t reserve = 0 ) {
+    MultiIndexedContainer( std::size_t reserve = 0, allocator_type alloc = {} ) : m_hits{alloc} {
       if ( reserve != 0 ) m_hits.reserve( reserve );
       clearOffsets();
       std::fill( begin( m_nIds ), end( m_nIds ), 0u );
     }
 
-    MultiIndexedContainer( std::vector<Hit>&& hits, Offsets&& offsets )
+    MultiIndexedContainer( Hits&& hits, Offsets&& offsets )
         : m_hits( std::move( hits ) ), m_offsets( std::move( offsets ) ) {}
 
-    void reserve( size_t reserve ) { m_hits.reserve( reserve ); }
+    [[nodiscard]] allocator_type get_allocator() const { return m_hits.get_allocator(); }
+    void                         reserve( size_t reserve ) { m_hits.reserve( reserve ); }
 
     template <typename... Args>
     std::pair<iterator, iterator> range_( Args&&... args ) {
@@ -315,7 +319,7 @@ namespace LHCb::Container {
     auto offsets() const { return m_offsets; }
 
   private:
-    std::vector<Hit> m_hits;
+    Hits m_hits;
 
     Offsets m_offsets;
 
