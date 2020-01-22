@@ -15,6 +15,7 @@ gaudi_subdir(SOAExtensions)
 
 gaudi_depends_on_subdirs(
   Kernel/SOAContainer
+  Kernel/LHCbKernel
   Kernel/LHCbMath
   GaudiAlg)
 

@@ -12,7 +12,7 @@
 
 #ifndef ZipAlgorithms_h
 #define ZipAlgorithms_h
-
+#include "Kernel/AllocatorUtils.h"
 #include "SOAContainer/SOAContainer.h"
 #include "SOAExtensions/ZipContainer.h"
 #include "SOAExtensions/ZipSelection.h"
@@ -116,7 +116,7 @@ namespace Zipping {
    */
   template <typename Output, typename Input, typename Operation>
   Output transform( Input const& input, Operation&& operation ) {
-    Output output( input.zipIdentifier() );
+    auto output = LHCb::make_obj_propagating_allocator<Output>( input, input.zipIdentifier() );
     output.reserve( input.size() );
 
     for ( auto const in : input ) { output.emplace_back( std::invoke( operation, in ) ); }

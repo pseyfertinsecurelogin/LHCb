@@ -426,6 +426,14 @@ namespace LHCb::Pr {
       return std::get<0>( m_containers )->zipIdentifier();
     }
 
+    /** Get an allocator from the zip. We just provide the allocator from the
+     *  first member of the zip. This could be made more sophisticated to:
+     *  1) ignore zip members with no get_allocator() method
+     *  2) check that all zip members with a get_allocator() have return types
+     *     from that method that are convertible to one another
+     */
+    [[nodiscard]] auto get_allocator() const noexcept { return std::get<0>( m_containers )->get_allocator(); }
+
     /** Get a component of the zip.
      */
     template <typename T>
