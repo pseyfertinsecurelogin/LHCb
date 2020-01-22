@@ -8,35 +8,38 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
 #pragma once
 
+#include "Kernel/EventLocalAllocator.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
+#include "SOAExtensions/ZipUtils.h"
 
 /**
  * Hits in VP
  *
  * @author: Arthur Hennequin
  */
-
 namespace LHCb::Pr::Velo {
   class Hits {
-    constexpr static int max_hits = align_size( 10000 );
+    constexpr static int         max_hits = align_size( 10000 );
+    constexpr static std::size_t capacity = max_hits * 4;
+    using data_t                          = union {
+      float f;
+      int   i;
+    };
 
   public:
-    Hits() {
-      const size_t size = max_hits * 4;
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-    }
+    using allocator_type = LHCb::Allocators::EventLocal<data_t>;
+    Hits( Zipping::ZipFamilyNumber = Zipping::generateZipIdentifier(), allocator_type alloc = {} )
+        : m_alloc{std::move( alloc )}, m_data{std::allocator_traits<allocator_type>::allocate( m_alloc, capacity )} {}
 
     Hits( const Hits& ) = delete;
 
-    Hits( Hits&& other ) {
-      m_data       = other.m_data;
-      other.m_data = nullptr;
-      m_size       = other.m_size;
-    }
+    Hits( Hits&& other )
+        : m_alloc{std::move( other.m_alloc )}
+        , m_data{std::exchange( other.m_data, nullptr )}
+        , m_size{std::exchange( other.m_size, 0 )} {}
 
     [[nodiscard]] int size() const { return m_size; }
     int&              size() { return m_size; }
@@ -45,14 +48,11 @@ namespace LHCb::Pr::Velo {
 
     SOA_ACCESSOR( ChannelId, &m_data[3 * max_hits].i )
 
-    ~Hits() { std::free( m_data ); }
+    ~Hits() { std::allocator_traits<allocator_type>::deallocate( m_alloc, m_data, capacity ); }
 
   private:
-    using data_t = union {
-      float f;
-      int   i;
-    };
-    alignas( 64 ) data_t* m_data;
-    int m_size = 0;
+    allocator_type m_alloc;
+    data_t*        m_data{nullptr};
+    int            m_size{0};
   };
 } // namespace LHCb::Pr::Velo
