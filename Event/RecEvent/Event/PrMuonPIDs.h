@@ -10,13 +10,13 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/MuonPID_v2.h"
-
 #include "GaudiKernel/GaudiException.h"
+#include "Kernel/AllocatorUtils.h"
+#include "Kernel/EventLocalAllocator.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/TypeMapping.h"
 #include "SOAExtensions/ZipUtils.h"
 
-// Include files
 #include <functional>
 #include <utility>
 #include <vector>
@@ -52,14 +52,22 @@ namespace LHCb::Pr::Muon {
    *
    */
   class PIDs {
-    std::vector<int>         m_statuses;
-    std::vector<float>       m_chi2Corrs;
-    Zipping::ZipFamilyNumber m_zipIdentifier;
+  public:
+    using allocator_type = LHCb::Allocators::EventLocal<void>;
+
+  private:
+    std::vector<int, std::allocator_traits<allocator_type>::rebind_alloc<int>>     m_statuses;
+    std::vector<float, std::allocator_traits<allocator_type>::rebind_alloc<float>> m_chi2Corrs;
+    Zipping::ZipFamilyNumber                                                       m_zipIdentifier;
 
   public:
     /** Constructor which takes tracks and an operation acting on tracks, similar to transform in ZipAlgorithms.h */
-    template <typename Tracks, typename Operation>
-    PIDs( Tracks const& tracks, Operation&& operation ) : m_zipIdentifier{tracks.zipIdentifier()} {
+    template <typename Tracks, typename Operation,
+              std::enable_if_t<!std::is_same_v<std::decay_t<Tracks>, Zipping::ZipFamilyNumber>, int> = 0>
+    PIDs( Tracks const& tracks, Operation&& operation )
+        : m_statuses{LHCb::make_obj_propagating_allocator<decltype( m_statuses )>( tracks )}
+        , m_chi2Corrs{LHCb::make_obj_propagating_allocator<decltype( m_chi2Corrs )>( tracks )}
+        , m_zipIdentifier{tracks.zipIdentifier()} {
       reserve( tracks.size() );
 
       // Assume the container is iterable -- for LHCb::Pr::*::Tracks this means
@@ -67,16 +75,20 @@ namespace LHCb::Pr::Muon {
       for ( auto const track : tracks ) { emplace_back( std::invoke( operation, track ) ); }
 
       if ( tracks.size() != size() ) {
-        throw GaudiException{"Asked to zip containers that are not the same size", "LHCb::Pr::Zip",
+        throw GaudiException{"Asked to zip containers that are not the same size", "LHCb::Pr::Muon::PIDs",
                              StatusCode::FAILURE};
       }
     }
 
     /** Default constructor, requires to be given a family id. */
-    PIDs( Zipping::ZipFamilyNumber family ) : m_zipIdentifier{std::move( family )} {}
+    PIDs( Zipping::ZipFamilyNumber family, allocator_type alloc = {} )
+        : m_statuses{alloc}, m_chi2Corrs{std::move( alloc )}, m_zipIdentifier{std::move( family )} {}
 
     /** Special constructor for zipping and selections */
-    PIDs( Zipping::ZipFamilyNumber family, PIDs const& /*old*/ ) : m_zipIdentifier{std::move( family )} {}
+    PIDs( Zipping::ZipFamilyNumber family, PIDs const& old )
+        : m_statuses{old.m_statuses.get_allocator()}
+        , m_chi2Corrs{old.m_chi2Corrs.get_allocator()}
+        , m_zipIdentifier{std::move( family )} {}
 
     /** Force use of move constructor and forbid copying */
     PIDs( PIDs const& ) = delete;

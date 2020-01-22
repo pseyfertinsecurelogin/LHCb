@@ -191,15 +191,16 @@ namespace LHCb::Muon::DAQ {
   // Implementation file for class : RawToHits
   //-----------------------------------------------------------------------------
   class RawToHits final
-      : public Gaudi::Functional::Transformer<MuonHitContainer( const RawEvent&, const DeMuonDetector&,
-                                                                const ComputeTilePosition& ),
+      : public Gaudi::Functional::Transformer<MuonHitContainer( const EventContext&, const RawEvent&,
+                                                                const DeMuonDetector&, const ComputeTilePosition& ),
                                               DetDesc::usesConditions<DeMuonDetector, ComputeTilePosition>> {
   public:
     /// Standard constructor
     RawToHits( const std::string& name, ISvcLocator* pSvcLocator );
 
     StatusCode       initialize() override; ///< Algorithm initialization
-    MuonHitContainer operator()( const RawEvent&, const DeMuonDetector&, const ComputeTilePosition& ) const override;
+    MuonHitContainer operator()( const EventContext&, const RawEvent&, const DeMuonDetector&,
+                                 const ComputeTilePosition& ) const override;
 
   private:
     mutable Gaudi::Accumulators::MsgCounter<MSG::ERROR> m_invalid_add{this, "invalid add"};
@@ -229,20 +230,22 @@ namespace LHCb::Muon::DAQ {
   //=============================================================================
   // Main execution
   //=============================================================================
-  MuonHitContainer RawToHits::operator()( const RawEvent& raw, const DeMuonDetector& det,
+  MuonHitContainer RawToHits::operator()( const EventContext& evtCtx, const RawEvent& raw, const DeMuonDetector& det,
                                           const ComputeTilePosition& compute ) const {
 
     if ( msgLevel( MSG::DEBUG ) ) { debug() << "==> Execute the decoding" << endmsg; }
     size_t nStations = boost::numeric_cast<size_t>( det.stations() );
     assert( nStations <= 4 );
-    const auto&                      mb = raw.banks( RawBank::Muon );
-    std::array<CommonMuonStation, 4> stations;
-    if ( mb.empty() ) return MuonHitContainer{std::move( stations )};
+    const auto& mb          = raw.banks( RawBank::Muon );
+    auto        memResource = LHCb::getMemResource( evtCtx );
+    // Maybe not actually important to set up the memory resource properly here..?
+    auto stations = LHCb::make_object_array<CommonMuonStation, 4>( memResource );
+    if ( mb.empty() ) return {std::move( stations )};
 
     // array of vectors of hits
     // each element of the array correspond to hits from a single station
     // this will ease the sorting after
-    std::array<std::vector<Digit>, 4> decoding;
+    auto decoding = LHCb::make_object_array<std::vector<Digit, LHCb::Allocators::EventLocal<Digit>>, 4>( memResource );
 
     auto n_digits = nDigits( mb );
     for ( auto& decode : decoding ) { decode.reserve( n_digits ); }
@@ -288,7 +291,7 @@ namespace LHCb::Muon::DAQ {
 
     unsigned station = 0;
     for ( auto& decode : decoding ) {
-      CommonMuonHits commonHits{};
+      CommonMuonHits commonHits{memResource};
       commonHits.reserve( decode.size() * 2 );
 
       for ( auto i = decode.begin(); i != decode.end(); i = addCrossings( i, decode.end(), commonHits ) )

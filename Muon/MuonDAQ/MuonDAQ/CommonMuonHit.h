@@ -9,6 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #pragma once
+#include "Kernel/EventLocalAllocator.h"
 #include "Kernel/MuonTileID.h"
 #include "Kernel/STLExtensions.h"
 
@@ -73,7 +74,7 @@ private:
   std::array<LHCb::MuonTileID, 2> m_subtiles;
 };
 
-typedef std::vector<CommonMuonHit>               CommonMuonHits;
+using CommonMuonHits = std::vector<CommonMuonHit, LHCb::Allocators::EventLocal<CommonMuonHit>>;
 typedef std::vector<const CommonMuonHit*>        CommonConstMuonHits;
 typedef const Gaudi::Range_<CommonMuonHits>      CommonMuonHitRange;
 typedef const Gaudi::Range_<CommonConstMuonHits> CommonConstMuonHitRange;
