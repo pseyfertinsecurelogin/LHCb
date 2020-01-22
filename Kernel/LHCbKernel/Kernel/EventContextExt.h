@@ -22,13 +22,22 @@ namespace LHCb {
    */
   inline void setMemResource( EventContext& evtContext, Allocators::MemoryResource* memResource ) {
     // if std::size_t is too narrow then this should emit a compile-time warning...
-    evtContext.setSubSlot( std::size_t{reinterpret_cast<std::uintptr_t>( memResource )} );
+    static_assert(
+        EventContext::INVALID_CONTEXT_ID == std::numeric_limits<std::size_t>::max(),
+        "LHCb::setMemResource() made use of the default subSlot being std::numeric_limits<std::size_t>::max()!" );
+    evtContext.setSubSlot( EventContext::INVALID_CONTEXT_ID -
+                           std::size_t{reinterpret_cast<std::uintptr_t>( memResource )} );
   }
 
   /** Retrieve an Allocators::MemoryResource* from the given EventContext. Ownership is not transferred.
    */
-  [[nodiscard]] inline Allocators::MemoryResource* getMemResource( EventContext const& evtContext ) {
-    return reinterpret_cast<Allocators::MemoryResource*>( evtContext.subSlot() );
+  [[nodiscard]] __attribute__( ( always_inline ) ) inline Allocators::MemoryResource*
+  getMemResource( EventContext const& evtContext ) {
+    // This is rather ugly, much nicer to have a dedicated slot in EventContext that is default-initialised to nullptr
+    static_assert(
+        EventContext::INVALID_CONTEXT_ID == std::numeric_limits<std::size_t>::max(),
+        "LHCb::getMemResource() made use of the default subSlot being std::numeric_limits<std::size_t>::max()!" );
+    return reinterpret_cast<Allocators::MemoryResource*>( EventContext::INVALID_CONTEXT_ID - evtContext.subSlot() );
   }
 
   struct EventContextExtension {
