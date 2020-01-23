@@ -978,7 +978,7 @@ HLTControlFlowMgr::buildPrintableStateTree<NodeState>( LHCb::span<NodeState cons
 std::stringstream HLTControlFlowMgr::buildAlgsWithStates( LHCb::span<AlgState const> states ) const {
   std::stringstream ss;
   ss << '\n';
-  for ( auto const& [name, state] : Gaudi::Functional::details::zip::range( m_AlgNames, states ) ) {
+  for ( auto const& [name, state] : Gaudi::Functional::details::zip::range( LHCb::make_span( m_AlgNames ), states ) ) {
     ss << std::left << std::setw( 20 ) << name << state.isExecuted << '\n';
   }
   return ss;
