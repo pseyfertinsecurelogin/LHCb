@@ -21,7 +21,10 @@ preprocessor = (LHCbPreprocessor +
   LineSkipper(["EventSelector        INFO Stream:EventSelector.DataStreamTool_1 Def:DATAFILE"]) +
   LineSkipper(["InputCopyStream"]) +
   LineSkipper(["FileRecordPersi...   INFO Added successfully Conversion service:FileRecordCnvSvc"]) +
-  RegexpReplacer(r'x86_64-centos7-gcc8-opt:.*', '{0}:AVX2'.format(os.environ.get('CMTCONFIG')), 'platformInfo')
+  # Read x86_64-centos7-gcc8-opt as magic_string_in_reference_file
+  RegexpReplacer(r'x86_64-centos7-gcc8-opt:AVX2', r'{0}:DUMMY_INSTRUCTION_SET'.format(os.environ.get('BINARY_TAG')), 'platformInfo') +
+  # Blank out the second part, which tells you about the hardware of the machine running the tests
+  RegexpReplacer(r'(.*?):.*', r'\1:DUMMY_INSTRUCTION_SET', 'platformInfo')
 )
 validateWithReference(preproc = preprocessor)
 </text></argument>
