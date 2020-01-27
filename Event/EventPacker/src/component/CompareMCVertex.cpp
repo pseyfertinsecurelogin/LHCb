@@ -78,16 +78,14 @@ struct CompareMCVertex : Gaudi::Functional::Consumer<void( const LHCb::MCVertice
 
       if ( oVert->mother() != tVert->mother() ) isOK = false;
       if ( isOK && msgLevel( MSG::VERBOSE ) ) verbose() << "diff mother OK" << endmsg;
-      unsigned int kk;
-      if ( oVert->products().size() != tVert->products().size() ) {
+      const auto& oProd = oVert->products();
+      const auto& tProd = tVert->products();
+      if ( !std::equal( oProd.begin(), oProd.end(), tProd.begin(), tProd.end(),
+                        []( const LHCb::MCParticle* dum, const LHCb::MCParticle* dum1 ) { // convert smartref to
+                                                                                          // pointers
+                          return dum == dum1;
+                        } ) )
         isOK = false;
-      } else {
-        for ( kk = 0; oVert->products().size() > kk; kk++ ) {
-          const LHCb::MCParticle* dum  = oVert->products()[kk]; // convert smartref to pointers
-          const LHCb::MCParticle* dum1 = tVert->products()[kk];
-          if ( dum != dum1 ) isOK = false;
-        }
-      }
       if ( isOK && msgLevel( MSG::VERBOSE ) ) verbose() << "diff products OK" << endmsg;
       if ( !isOK || msgLevel( MSG::VERBOSE ) ) {
         if ( !isOK ) {
@@ -102,9 +100,9 @@ struct CompareMCVertex : Gaudi::Functional::Consumer<void( const LHCb::MCVertice
         debug() << format( " test point %12.5f %12.5f %12.5f %12.4f %2d", tVert->position().x(), tVert->position().y(),
                            tVert->position().z(), tVert->time(), tVert->type() )
                 << " mother " << tVert->mother() << endmsg << "  old products ";
-        for ( kk = 0; oVert->products().size() > kk; kk++ ) { debug() << " " << oVert->products()[kk]; }
+        for ( auto& kk : oVert->products() ) { debug() << " " << kk; }
         debug() << endmsg << " test products ";
-        for ( kk = 0; tVert->products().size() > kk; kk++ ) { debug() << " " << tVert->products()[kk]; }
+        for ( auto& kk : tVert->products() ) { debug() << " " << kk; }
         debug() << endmsg;
       }
     }

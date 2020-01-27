@@ -40,10 +40,10 @@ struct CompareTwoProngVertex
       err() << "Old TwoProngVertex size " << old.size() << " differs form Test " << test.size() << endmsg;
       throw GaudiException{"Sizes differ", "CompareTwoProngVertex", StatusCode::FAILURE};
     }
-    LHCb::TwoProngVertices::const_iterator itOld  = old.begin();
-    LHCb::TwoProngVertices::const_iterator itTest = test.begin();
+    auto itOld  = old.begin();
+    auto itTest = test.begin();
 
-    while ( old.end() != itOld ) {
+    while ( itOld != old.end() ) {
       LHCb::TwoProngVertex* oVtx = ( *itOld++ );
       LHCb::TwoProngVertex* tVtx = ( *itTest++ );
       if ( oVtx->key() != tVtx->key() ) {
@@ -128,42 +128,30 @@ struct CompareTwoProngVertex
                      tVtx->mommomcov()( 2, 1 ) / tDiag[8] / tDiag[4],  tVtx->mommomcov()( 2, 2 ) / tDiag[8] / tDiag[5],
                      tVtx->momcovB()( 2, 0 ) / tDiag[8] / tDiag[6],    tVtx->momcovB()( 2, 1 ) / tDiag[8] / tDiag[7]};
 
-      unsigned int kk;
-      for ( kk = 0; oFrac.size() > kk; ++kk ) {
-        if ( 2.e-5 < fabs( oFrac[kk] - tFrac[kk] ) ) isOK = false;
-      }
+      if ( !std::equal( oFrac.begin(), oFrac.end(), tFrac.begin(), tFrac.end(),
+                        []( double o, double t ) { return std::abs( o - t ) < 2.e-5; } ) )
+        isOK = false;
       //== Compare extra info
       LHCb::TwoProngVertex::ExtraInfo oExtra = oVtx->extraInfo();
       LHCb::TwoProngVertex::ExtraInfo tExtra = tVtx->extraInfo();
-      if ( oExtra.size() != tExtra.size() ) isOK = false;
-      LHCb::TwoProngVertex::ExtraInfo::const_iterator oIt = oExtra.begin();
-      LHCb::TwoProngVertex::ExtraInfo::const_iterator tIt = tExtra.begin();
-      for ( kk = 0; tExtra.size() > kk; ++kk, ++oIt, ++tIt ) {
-        if ( ( *oIt ).first != ( *tIt ).first ) isOK = false;
-        if ( 1.e-7 < fabs( ( ( *oIt ).second - ( *oIt ).second ) / ( *oIt ).second ) ) isOK = false;
-      }
+      if ( !std::equal( oExtra.begin(), oExtra.end(), tExtra.begin(), tExtra.end(), []( const auto& o, const auto& t ) {
+             return o.first == t.first && std::abs( ( o.second - t.second ) / o.second ) < 1.e-7;
+           } ) )
+        isOK = false;
 
       //== Compare tracks
-      if ( oVtx->tracks().size() != tVtx->tracks().size() ) {
+      const auto& oTracks = oVtx->tracks();
+      const auto& tTracks = tVtx->tracks();
+      if ( !std::equal( oTracks.begin(), oTracks.end(), tTracks.begin(), tTracks.end(),
+                        []( const LHCb::Track* oTrk, const LHCb::Track* tTrk ) { // convert smartref to pointers
+                          return oTrk == tTrk;
+                        } ) )
         isOK = false;
-      } else {
-        for ( kk = 0; oVtx->tracks().size() > kk; kk++ ) {
-          const LHCb::Track* dum  = oVtx->tracks()[kk]; // convert smartref to pointers
-          const LHCb::Track* dum1 = tVtx->tracks()[kk];
-          if ( dum != dum1 ) isOK = false;
-        }
-      }
 
       //== compare ParticleID
       const std::vector<LHCb::ParticleID>& oPid = oVtx->compatiblePIDs();
       const std::vector<LHCb::ParticleID>& tPid = tVtx->compatiblePIDs();
-      if ( oPid.size() != tPid.size() ) {
-        isOK = false;
-      } else {
-        for ( kk = 0; oPid.size() > kk; kk++ ) {
-          if ( oPid[kk] != tPid[kk] ) isOK = false;
-        }
-      }
+      if ( !std::equal( oPid.begin(), oPid.end(), tPid.begin(), tPid.end() ) ) isOK = false;
 
       if ( !isOK || MSG::DEBUG >= msgLevel() ) {
         info() << "===== TwoProngVertex key " << oVtx->key() << endmsg;
@@ -175,9 +163,9 @@ struct CompareTwoProngVertex
                << endmsg;
         if ( oVtx->tracks().size() == tVtx->tracks().size() ) {
           info() << "Old  tracks ";
-          for ( kk = 0; oVtx->tracks().size() > kk; kk++ ) info() << " " << oVtx->tracks()[kk];
+          for ( auto& kk : oVtx->tracks() ) info() << " " << kk;
           info() << endmsg << "Test tracks ";
-          for ( kk = 0; tVtx->tracks().size() > kk; kk++ ) info() << " " << tVtx->tracks()[kk];
+          for ( auto& kk : tVtx->tracks() ) info() << " " << kk;
           info() << endmsg;
         }
         // position
@@ -205,18 +193,18 @@ struct CompareTwoProngVertex
           info() << format( "  %10.5g", tDiag[krow] ) << endmsg;
         }
         //== extraInfo
-        oIt = oExtra.begin();
-        tIt = tExtra.begin();
-        for ( kk = 0; oExtra.size() != kk; ++kk, ++oIt, ++tIt ) {
+        auto oIt = oExtra.begin();
+        auto tIt = tExtra.begin();
+        for ( unsigned kk = 0; oExtra.size() != kk; ++kk, ++oIt, ++tIt ) {
           info() << format( "   old Extra %5d %12.4f     new %5d %12.4f", ( *oIt ).first, ( *oIt ).second,
                             ( *tIt ).first, ( *tIt ).second )
                  << endmsg;
         }
         //== Compatible PID
         info() << " old compatiblePID : ";
-        for ( kk = 0; oPid.size() > kk; ++kk ) { info() << format( " %12d", oPid[kk].pid() ); }
+        for ( auto& kk : oPid ) { info() << format( " %12d", kk.pid() ); }
         info() << endmsg << "Test compatiblePID : ";
-        for ( kk = 0; tPid.size() > kk; ++kk ) { info() << format( " %12d", tPid[kk].pid() ); }
+        for ( auto& kk : tPid ) { info() << format( " %12d", kk.pid() ); }
         info() << endmsg;
       }
     }

@@ -54,61 +54,49 @@ struct CompareRecVertex : Gaudi::Functional::Consumer<void( LHCb::RecVertices co
       if ( 5.e-5 < fabs( oVtx->position().y() - tVtx->position().y() ) ) isOK = false;
       if ( 5.e-5 < fabs( oVtx->position().z() - tVtx->position().z() ) ) isOK = false;
 
-      std::vector<double> oDiag, tDiag, oFrac, tFrac;
-      oDiag.push_back( sqrt( oVtx->covMatrix()( 0, 0 ) ) );
-      oDiag.push_back( sqrt( oVtx->covMatrix()( 1, 1 ) ) );
-      oDiag.push_back( sqrt( oVtx->covMatrix()( 2, 2 ) ) );
+      auto oDiag = std::array{sqrt( oVtx->covMatrix()( 0, 0 ) ), sqrt( oVtx->covMatrix()( 1, 1 ) ),
+                              sqrt( oVtx->covMatrix()( 2, 2 ) )};
 
-      tDiag.push_back( sqrt( tVtx->covMatrix()( 0, 0 ) ) );
-      tDiag.push_back( sqrt( tVtx->covMatrix()( 1, 1 ) ) );
-      tDiag.push_back( sqrt( tVtx->covMatrix()( 2, 2 ) ) );
+      auto tDiag = std::array{sqrt( tVtx->covMatrix()( 0, 0 ) ), sqrt( tVtx->covMatrix()( 1, 1 ) ),
+                              sqrt( tVtx->covMatrix()( 2, 2 ) )};
 
       if ( 5.e-5 < fabs( oDiag[0] - tDiag[0] ) ) isOK = false;
       if ( 5.e-5 < fabs( oDiag[1] - tDiag[1] ) ) isOK = false;
       if ( 5.e-5 < fabs( oDiag[2] - tDiag[2] ) ) isOK = false;
 
-      oFrac.push_back( oVtx->covMatrix()( 1, 0 ) / oDiag[1] / oDiag[0] );
-      oFrac.push_back( oVtx->covMatrix()( 2, 0 ) / oDiag[2] / oDiag[0] );
-      oFrac.push_back( oVtx->covMatrix()( 2, 1 ) / oDiag[2] / oDiag[1] );
+      auto oFrac =
+          std::array{oVtx->covMatrix()( 1, 0 ) / oDiag[1] / oDiag[0], oVtx->covMatrix()( 2, 0 ) / oDiag[2] / oDiag[0],
+                     oVtx->covMatrix()( 2, 1 ) / oDiag[2] / oDiag[1]};
 
-      tFrac.push_back( tVtx->covMatrix()( 1, 0 ) / tDiag[1] / tDiag[0] );
-      tFrac.push_back( tVtx->covMatrix()( 2, 0 ) / tDiag[2] / tDiag[0] );
-      tFrac.push_back( tVtx->covMatrix()( 2, 1 ) / tDiag[2] / tDiag[1] );
+      auto tFrac =
+          std::array{tVtx->covMatrix()( 1, 0 ) / tDiag[1] / tDiag[0], tVtx->covMatrix()( 2, 0 ) / tDiag[2] / tDiag[0],
+                     tVtx->covMatrix()( 2, 1 ) / tDiag[2] / tDiag[1]};
 
-      unsigned int kk;
-      for ( kk = 0; oFrac.size() > kk; ++kk ) {
-        if ( 2.e-5 < fabs( oFrac[kk] - tFrac[kk] ) ) isOK = false;
-      }
-
-      LHCb::RecVertex::ExtraInfo oExtra = oVtx->extraInfo();
-      LHCb::RecVertex::ExtraInfo tExtra = tVtx->extraInfo();
-      if ( oExtra.size() != tExtra.size() ) isOK = false;
-      LHCb::RecVertex::ExtraInfo::const_iterator oIt = oExtra.begin();
-      LHCb::RecVertex::ExtraInfo::const_iterator tIt = tExtra.begin();
-      for ( kk = 0; tExtra.size() > kk; ++kk, ++oIt, ++tIt ) {
-        if ( ( *oIt ).first != ( *tIt ).first ) isOK = false;
-        if ( 1.e-7 < fabs( ( ( *oIt ).second - ( *oIt ).second ) / ( *oIt ).second ) ) isOK = false;
-      }
-
-      if ( oVtx->tracks().size() != tVtx->tracks().size() ) {
+      if ( !std::equal( oFrac.begin(), oFrac.end(), tFrac.begin(), tFrac.end(),
+                        []( double o, double t ) { return std::abs( t - o ) < 2.e-5; } ) )
         isOK = false;
-      } else {
-        for ( kk = 0; oVtx->tracks().size() > kk; kk++ ) {
-          const LHCb::Track* dum  = oVtx->tracks()[kk]; // convert smartref to pointers
-          const LHCb::Track* dum1 = tVtx->tracks()[kk];
-          if ( dum != dum1 ) isOK = false;
-        }
-      }
 
-      if ( oVtx->weights().size() != tVtx->weights().size() || oVtx->weights().size() != oVtx->tracks().size() ) {
+      const auto& oExtra = oVtx->extraInfo();
+      const auto& tExtra = tVtx->extraInfo();
+      if ( !std::equal( oExtra.begin(), oExtra.end(), tExtra.begin(), tExtra.end(), []( const auto& o, const auto& t ) {
+             return o.first == t.first && std::abs( ( o.second - t.second ) / o.second ) < 1.e-7;
+           } ) )
         isOK = false;
-      } else {
-        for ( kk = 0; oVtx->weights().size() > kk; kk++ ) {
-          const float& oW = oVtx->weights()[kk];
-          const float& tW = tVtx->weights()[kk];
-          if ( 2.e-5 < fabs( oW - tW ) ) isOK = false;
-        }
-      }
+
+      const auto& oTrks = oVtx->tracks();
+      const auto& tTrks = tVtx->tracks();
+      if ( !std::equal( oTrks.begin(), oTrks.end(), tTrks.begin(), tTrks.end(),
+                        []( const LHCb::Track* dum, const LHCb::Track* dum1 ) { // convert smartref
+                                                                                // to pointers
+                          return dum == dum1;
+                        } ) )
+        isOK = false;
+
+      const auto& oWeights = oVtx->weights();
+      const auto& tWeights = tVtx->weights();
+      if ( !std::equal( oWeights.begin(), oWeights.end(), tWeights.begin(), tWeights.end(),
+                        []( double o, double t ) { return std::abs( o - t ) < 2.e-5; } ) )
+        isOK = false;
 
       if ( !isOK || MSG::DEBUG >= msgLevel() ) {
         info() << "===== RecVertex key " << oVtx->key() << endmsg;
@@ -120,16 +108,16 @@ struct CompareRecVertex : Gaudi::Functional::Consumer<void( LHCb::RecVertices co
                << endmsg;
         if ( oVtx->tracks().size() == tVtx->tracks().size() ) {
           info() << "Old  tracks ";
-          for ( kk = 0; oVtx->tracks().size() > kk; kk++ ) info() << " " << oVtx->tracks()[kk];
+          for ( auto& kk : oVtx->tracks() ) info() << " " << kk;
           info() << endmsg << "Test tracks ";
-          for ( kk = 0; tVtx->tracks().size() > kk; kk++ ) info() << " " << tVtx->tracks()[kk];
+          for ( auto& kk : tVtx->tracks() ) info() << " " << kk;
           info() << endmsg;
         }
         if ( oVtx->weights().size() == tVtx->weights().size() ) {
           info() << "Old  weights ";
-          for ( kk = 0; oVtx->weights().size() > kk; kk++ ) info() << " " << oVtx->weights()[kk];
+          for ( auto& kk : oVtx->weights() ) info() << " " << kk;
           info() << endmsg << "Test weights ";
-          for ( kk = 0; tVtx->weights().size() > kk; kk++ ) info() << " " << tVtx->weights()[kk];
+          for ( auto& kk : tVtx->weights() ) info() << " " << kk;
           info() << endmsg;
         }
         // position
@@ -143,14 +131,14 @@ struct CompareRecVertex : Gaudi::Functional::Consumer<void( LHCb::RecVertices co
         info() << format( " old Diag %10.5f %10.5f %10.5f", oDiag[0], oDiag[1], oDiag[2] ) << endmsg;
         info() << format( "test Diag %10.5f %10.5f %10.5f", tDiag[0], tDiag[1], tDiag[2] ) << endmsg;
         info() << " old Frac ";
-        for ( kk = 0; oFrac.size() > kk; ++kk ) { info() << format( " %8.5f", oFrac[kk] ); }
+        for ( auto& kk : oFrac ) { info() << format( " %8.5f", kk ); }
         info() << endmsg << "test Frac ";
-        for ( kk = 0; tFrac.size() > kk; ++kk ) { info() << format( " %8.5f", tFrac[kk] ); }
+        for ( auto& kk : tFrac ) { info() << format( " %8.5f", kk ); }
         info() << endmsg;
         //== extraInfo
-        oIt = oExtra.begin();
-        tIt = tExtra.begin();
-        for ( kk = 0; oExtra.size() != kk; ++kk, ++oIt, ++tIt ) {
+        auto oIt = oExtra.begin();
+        auto tIt = tExtra.begin();
+        for ( unsigned kk = 0; oExtra.size() != kk; ++kk, ++oIt, ++tIt ) {
           info() << format( "   old Extra %5d %12.4f     new %5d %12.4f", ( *oIt ).first, ( *oIt ).second,
                             ( *tIt ).first, ( *tIt ).second )
                  << endmsg;

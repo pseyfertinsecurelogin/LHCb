@@ -58,15 +58,11 @@ struct CompareMCParticle : Gaudi::Functional::Consumer<void( const LHCb::MCParti
 
       if ( massTol < fabs( oPart->momentum().M() - tPart->momentum().M() ) ) isOK = false;
       if ( oPart->originVertex() != tPart->originVertex() ) isOK = false;
-      unsigned int kk;
-      if ( oPart->endVertices().size() != tPart->endVertices().size() ) {
+      if ( !std::equal( oPart->endVertices().begin(), oPart->endVertices().end(), tPart->endVertices().begin(),
+                        tPart->endVertices().end(), []( const auto& dum, const auto& dum1 ) {
+                          return dum.target() == dum1.target(); // convert smartref to pointers
+                        } ) ) {
         isOK = false;
-      } else {
-        for ( kk = 0; oPart->endVertices().size() > kk; kk++ ) {
-          const LHCb::MCVertex* dum  = oPart->endVertices()[kk]; // convert smartref to pointers
-          const LHCb::MCVertex* dum1 = tPart->endVertices()[kk];
-          if ( dum != dum1 ) isOK = false;
-        }
       }
 
       if ( !isOK || MSG::VERBOSE >= msgLevel() ) {
@@ -82,9 +78,9 @@ struct CompareMCParticle : Gaudi::Functional::Consumer<void( const LHCb::MCParti
                 << endmsg;
         debug() << format( " test pid %6d ", tPart->particleID().pid() ) << " endVert " << tPart->originVertex()
                 << endmsg << "  old endVertices ";
-        for ( kk = 0; oPart->endVertices().size() > kk; kk++ ) { debug() << " " << oPart->endVertices()[kk]; }
+        for ( const auto& kk : oPart->endVertices() ) { debug() << " " << kk; }
         debug() << endmsg << " test endVertices ";
-        for ( kk = 0; tPart->endVertices().size() > kk; kk++ ) { debug() << " " << tPart->endVertices()[kk]; }
+        for ( const auto& kk : tPart->endVertices() ) { debug() << " " << kk; }
         debug() << endmsg;
       }
     }
