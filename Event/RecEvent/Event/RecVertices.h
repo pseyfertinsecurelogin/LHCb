@@ -17,30 +17,12 @@
 #include "Kernel/STLExtensions.h" // LHCb::span
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
-#include "SOAContainer/SOAField.h"  // for FieldBase, SOAFIELD_TRIVIAL
-#include "SOAContainer/SOASkin.h"   // for SOASkinCreatorSimple<>::type
 #include "SOAExtensions/ZipUtils.h" // zip identifiers
 #include <boost/container/small_vector.hpp>
 #include <cstddef> // std::size_t
 #include <vector>
 
 namespace LHCb::Rec::PV {
-  // some definitions how references to tracks in the TES work, precision of weights, and how many track references
-  // should go into small object optimization.
-  using TrackRef                        = std::size_t;
-  using weight_t                        = float;
-  const std::size_t default_vertex_size = 200;
-
-  // SOA definitions purely for read convenience e.g.
-  // @code
-  //   auto weighted_tracks = SOA::make_soaview<LHCb::Rec::PV::WeightedTrack>( vertices.fwdTracks( i ),
-  //   vertices.fwdWeights( i ) );
-  // @endcode
-  // These are not used in the PVs's class definition. If you're interested in the PVs class itself, skip.
-  SOAFIELD_TRIVIAL( ref_field, index, LHCb::Rec::PV::TrackRef );
-  SOAFIELD_TRIVIAL( wei_field, weight, weight_t );
-  SOASKIN_TRIVIAL( WeightedTrack, ref_field, wei_field );
-
   class PVs {
   public:
     struct Vertex {
@@ -48,21 +30,10 @@ namespace LHCb::Rec::PV {
       Gaudi::SymMatrix3x3                m_covMatrix;
       LHCb::Event::v2::Track::Chi2PerDoF m_chi2PerDoF;
     };
-
-    // todo: data members public is questionable but done to disentangle TBL internal logic from event model files
   public:
     std::vector<Vertex> m_vertices;
 
-    std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_fwdTracks;
-    std::vector<boost::container::small_vector<TrackRef, default_vertex_size>> m_bkwTracks;
-    std::vector<boost::container::small_vector<weight_t, default_vertex_size>> m_fwdWeights;
-    std::vector<boost::container::small_vector<weight_t, default_vertex_size>> m_bkwWeights;
-
     Zipping::ZipFamilyNumber m_zipIdentifier{Zipping::generateZipIdentifier()};
-
-    // initializers to enable default constructors - results in physically meaningless instances
-    Zipping::ZipFamilyNumber m_fwdTracksIdentifier{Zipping::generateZipIdentifier()};
-    Zipping::ZipFamilyNumber m_bkwTracksIdentifier{Zipping::generateZipIdentifier()};
 
   public:
     // construction/destruction
@@ -74,45 +45,19 @@ namespace LHCb::Rec::PV {
     //  identifier // TODO: make harder to use wrong
     PVs() = default;
     PVs( Zipping::ZipFamilyNumber family ) : m_zipIdentifier( family ) {}
-    PVs( Zipping::ZipFamilyNumber fwd, Zipping::ZipFamilyNumber bkw )
-        : m_fwdTracksIdentifier{fwd}, m_bkwTracksIdentifier{bkw} {}
     PVs( PVs const& ) = delete;
     PVs( PVs&& )      = default;
 
     // TODO: copied from example, intent unclear
     PVs( Zipping::ZipFamilyNumber family, PVs const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
-    [[nodiscard]] const boost::container::small_vector<weight_t, default_vertex_size>& fwdWeights( const int i ) const {
-      return m_fwdWeights[i];
-    }
-    [[nodiscard]] const boost::container::small_vector<weight_t, default_vertex_size>& bkwWeights( const int i ) const {
-      return m_bkwWeights[i];
-    }
-    [[nodiscard]] const boost::container::small_vector<TrackRef, default_vertex_size>& fwdTracks( const int i ) const {
-      return m_fwdTracks[i];
-    }
-    [[nodiscard]] const boost::container::small_vector<TrackRef, default_vertex_size>& bkwTracks( const int i ) const {
-      return m_bkwTracks[i];
-    }
-
-    [[nodiscard]] Zipping::ZipFamilyNumber fwdZipIdentifier() const { return m_fwdTracksIdentifier; }
-    [[nodiscard]] Zipping::ZipFamilyNumber bkwZipIdentifier() const { return m_bkwTracksIdentifier; }
-
     // container interfaces
     [[nodiscard]] std::size_t size() const { return m_vertices.size(); }
     void                      reserve( std::size_t capacity ) {
       m_vertices.reserve( capacity );
-      m_fwdTracks.reserve( capacity );
-      m_bkwTracks.reserve( capacity );
-      m_fwdWeights.reserve( capacity );
-      m_bkwWeights.reserve( capacity );
     }
     void resize( std::size_t capacity ) {
       m_vertices.resize( capacity );
-      m_fwdTracks.resize( capacity );
-      m_bkwTracks.resize( capacity );
-      m_fwdWeights.resize( capacity );
-      m_bkwWeights.resize( capacity );
     }
 
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
