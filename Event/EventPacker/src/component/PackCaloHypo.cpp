@@ -69,23 +69,17 @@ StatusCode PackCaloHypo::execute() {
     packer.check( *hypos, *unpacked ).ignore();
 
     // clean up after checks
-    const StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if ( sc.isSuccess() ) {
-      delete unpacked;
-    } else {
-      return Error( "Failed to delete test data after unpacking check", sc );
-    }
+    const StatusCode sc = evtSvc()->unregisterObject( unpacked ).andThen( [&] { delete unpacked; } );
+    if ( sc.isFailure() ) return sc;
   }
 
   // If requested, remove the input data from the TES and delete
   if ( UNLIKELY( m_deleteInput ) ) {
-    const StatusCode sc = evtSvc()->unregisterObject( hypos );
-    if ( sc.isSuccess() ) {
+    const StatusCode sc = evtSvc()->unregisterObject( hypos ).andThen( [&] {
       delete hypos;
       hypos = nullptr;
-    } else {
-      return Error( "Failed to delete input data as requested", sc );
-    }
+    } );
+    if ( sc.isFailure() ) return sc;
   } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     if ( m_clearRegistry ) {

@@ -70,13 +70,11 @@ StatusCode PackRecVertex::execute() {
 
   // If requested, remove the input data from the TES and delete
   if ( UNLIKELY( m_deleteInput ) ) {
-    const StatusCode sc = evtSvc()->unregisterObject( verts );
-    if ( sc.isSuccess() ) {
+    const StatusCode sc = evtSvc()->unregisterObject( verts ).andThen( [&] {
       delete verts;
       verts = nullptr;
-    } else {
-      return Error( "Failed to delete input data as requested", sc );
-    }
+    } );
+    if ( sc.isFailure() ) return sc;
   } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     auto* pReg = verts->registry();
