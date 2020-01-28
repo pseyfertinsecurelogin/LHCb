@@ -18,6 +18,7 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/Context.h"
 #include "LoKi/IGenHybridTool.h"
 // ============================================================================
 /** @file
@@ -117,6 +118,9 @@ namespace LoKi {
       StatusCode process( const std::string& name, const LoKi::Types::GSources& func ) const;
       /// add the source
       StatusCode process( const std::string& name, const LoKi::Types::GVSources& func ) const;
+      // ======================================================================
+      /// get the current context
+      const LoKi::Context* context() const;
       // ======================================================================
     };
     // ========================================================================
