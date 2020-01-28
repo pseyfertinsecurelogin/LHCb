@@ -13,7 +13,7 @@
 #include "Event/Chi2PerDoF.h"
 #include "Event/Track_v2.h" // Chi2PerDof
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h" // IWYU pragma: export
 #include "Kernel/STLExtensions.h" // LHCb::span
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
