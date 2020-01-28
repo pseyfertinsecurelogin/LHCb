@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -30,15 +30,9 @@ namespace LHCb::Calo::Interfaces {
 
     struct Observables {
       double clmatch = std::numeric_limits<double>::quiet_NaN();
-      double prse    = std::numeric_limits<double>::quiet_NaN();
       double e19     = std::numeric_limits<double>::quiet_NaN();
       double hclecl  = std::numeric_limits<double>::quiet_NaN();
-      double prse19  = std::numeric_limits<double>::quiet_NaN();
-      double prse49  = std::numeric_limits<double>::quiet_NaN();
       double sprd    = std::numeric_limits<double>::quiet_NaN();
-      double prse4mx = std::numeric_limits<double>::quiet_NaN();
-      double prsm    = std::numeric_limits<double>::quiet_NaN();
-      double spdm    = std::numeric_limits<double>::quiet_NaN();
     };
 
     virtual std::optional<double> isNotE( const CaloHypo& hypo, const Observables& v ) const = 0;
