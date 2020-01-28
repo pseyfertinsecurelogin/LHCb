@@ -40,6 +40,22 @@ LOG_LINE_RE = re.compile(
     r'\s*(?P<message>.*)$',
     flags=re.DOTALL)
 
+CUT_ALGO_NAME_WITH_NB_RE = re.compile('^(\w*\.\.\.)\d*$')
+
+
+def getSensitivity(sensitivities, algoName, counterNameRef):
+    # default in case nothing given for this algo and counter
+    sensitivity = 0.0001
+    # rework the algo name for cases where is has been cut and
+    # extra numbers have been added at the end (collisions management)
+    matchObj = re.match(CUT_ALGO_NAME_WITH_NB_RE, algoName)
+    if matchObj:
+        algoName = matchObj.group(1)
+        # check whether we have a dedicated sensibility number
+    if algoName in sensitivities and counterNameRef in sensitivities[algoName]:
+        sensitivity = sensitivities[algoName][counterNameRef]
+    return sensitivity
+
 
 class GroupMessages(FilePreprocessor):
     """Preprocessor that groups multi-line messages.
@@ -462,14 +478,11 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             headerPrinted = False
             for counterNameRef, counterNameStdout in counterPairs:
                 # floating point comparison precision
-                sensitivity = 0.0001
-                if algoName in sensitivities and counterNameRef in sensitivities[
-                        algoName]:
-                    sensitivity = sensitivities[algoName][counterNameRef]
                 if not self._compareCounterLine(
                         refCounters[algoName][counterNameRef],
                         newCounters[algoName][counterNameStdout], comp_type,
-                        sensitivity):
+                        getSensitivity(sensitivities, algoName,
+                                       counterNameRef)):
                     if not headerPrinted:
                         msg += 'Different content of ' + comp_type + ' for algo %s\n' % algoName
                         headerPrinted = True
