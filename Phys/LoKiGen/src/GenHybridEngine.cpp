@@ -132,6 +132,13 @@ StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi
   return _process( name, cut );
 }
 // ============================================================================
+// get the current context
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::GenEngine::context() const {
+  const LoKi::Hybrid::GenEngineActor& actor = LoKi::Hybrid::GenEngineActor::instance();
+  return actor.context();
+}
+// ============================================================================
 
 // ============================================================================
 // The END
