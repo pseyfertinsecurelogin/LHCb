@@ -77,16 +77,20 @@ StatusCode ExecutionReportsWriter::start() {
       return StatusCode::FAILURE;
     }
 
-    // Translate each node name to an int, which will be written to the DecReport
-    // If the node name isn't known to the ANNSvc we can't translate it
-    auto ann_idx =
-        std::find_if( ann_items.begin(), ann_items.end(), [&]( const auto& p ) { return std::get<0>( p ) == name; } );
+    // Historically names in DecReports end with decision, so we keep this.
+    // Thus ANNSvc and is expected to contain (node name + "Decision") <-> int
+    auto decision_name = name + "Decision";
+
+    // Translate each decision name to an int, which will be written to the DecReport
+    // If the decision name isn't known to the ANNSvc we can't translate it
+    auto ann_idx = std::find_if( ann_items.begin(), ann_items.end(),
+                                 [&]( const auto& p ) { return std::get<0>( p ) == decision_name; } );
     if ( ann_idx == ann_items.end() ) {
-      error() << "Line name not known to ANNSvc: " << name << endmsg;
+      error() << "Decision name not known to ANNSvc: " << decision_name << endmsg;
       return StatusCode::FAILURE;
     }
 
-    m_name_indices[name] = {std::get<1>( *node_idx ), std::get<1>( *ann_idx )};
+    m_name_indices[decision_name] = {std::get<1>( *node_idx ), std::get<1>( *ann_idx )};
   }
   return sc;
 }
@@ -102,9 +106,9 @@ LHCb::HltDecReports ExecutionReportsWriter::operator()( EventContext const& evtC
   LHCb::HltDecReports reports{};
   reports.reserve( m_name_indices.size() );
   for ( const auto& item : m_name_indices ) {
-    const auto& name                = std::get<0>( item );
+    const auto& decision_name       = std::get<0>( item );
     const auto& [node_idx, ann_idx] = std::get<1>( item );
-    reports.insert( name, {NodeStates[node_idx].passed, 0, 0, 0, ann_idx} );
+    reports.insert( decision_name, {NodeStates[node_idx].passed, 0, 0, 0, ann_idx} );
   }
   return reports; // write down something better?
 }
