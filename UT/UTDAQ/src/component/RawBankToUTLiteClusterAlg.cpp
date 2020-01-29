@@ -207,13 +207,13 @@ StatusCode RawBankToUTLiteClusterAlg::decodeBanks( const RawEvent&              
     if ( !m_skipErrors && !checkDataIntegrity( decoder, aBoard, ( *iterBank )->size(), bankVersion ) ) continue;
 
     // read in the first half of the bank
-    for ( auto iterDecoder = decoder.posBegin(); iterDecoder != decoder.posEnd(); ++iterDecoder ) {
+    for ( auto iterDecoder : decoder.posRange() ) {
 
       if ( !recover ) {
-        createCluster( aBoard, bankVersion, *iterDecoder, fCont, isUT );
+        createCluster( aBoard, bankVersion, iterDecoder, fCont, isUT );
       } else {
-        if ( errorBank && canBeRecovered( errorBank, *iterDecoder, pcn ) ) {
-          createCluster( aBoard, bankVersion, *iterDecoder, fCont, isUT );
+        if ( errorBank && canBeRecovered( errorBank, iterDecoder, pcn ) ) {
+          createCluster( aBoard, bankVersion, iterDecoder, fCont, isUT );
         } // errorbank
       }   // recover == false
 

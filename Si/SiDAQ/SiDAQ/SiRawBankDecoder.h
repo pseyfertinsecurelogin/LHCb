@@ -12,6 +12,7 @@
 
 #include <boost/container/small_vector.hpp>
 
+#include "Kernel/STLExtensions.h"
 #include "SiDAQ/SiADCBankTraits.h"
 #include "SiDAQ/SiADCWord.h"
 #include "SiDAQ/SiHeaderWord.h"
@@ -61,20 +62,8 @@ public:
    *  it will imediately decode the bank header bytes.  So
    *  if you don't need it, don't create it.
    */
-  SiRawBankDecoder( const SiDAQ::buffer_word* bank )
+  explicit SiRawBankDecoder( const SiDAQ::buffer_word* bank )
       : m_bank( bank ), m_header( SiHeaderWord( bank[0] ) ), m_nClusters( m_header.nClusters() ) {}
-
-  /// Copy construction
-  SiRawBankDecoder( const SiRawBankDecoder& ini )
-      : m_bank( ini.m_bank ), m_header( ini.m_header ), m_nClusters( ini.m_nClusters ) {}
-
-  /// Assignment
-  const SiRawBankDecoder& operator=( const SiRawBankDecoder& rhs ) {
-    m_bank      = rhs.m_bank;
-    m_header    = rhs.m_header;
-    m_nClusters = rhs.m_nClusters;
-    return *this;
-  }
 
   // shortcuts
 
@@ -91,15 +80,15 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  typedef std::pair<CLUSTERWORD, boost::container::small_vector<SiADCWord, 10>> SiDecodedCluster;
+  using SiDecodedCluster = std::pair<CLUSTERWORD, boost::container::small_vector<SiADCWord, 10>>;
 
   // decoding iterators
 
-  /** @class SiRawBankDecoder::pos_iterator SiRawBankDecoder.h
+  /** @class SiRawBankDecoder::pos_range SiRawBankDecoder.h
    *
-   *  Decoding iterator for cluster positions only
+   *  Decoding range for cluster positions only
    *
-   *  This completly trivial iterator allows you to traverse the cluster
+   *  This completly trivial range allows you to traverse the cluster
    *  positions in the raw bank and decode them at the same
    *  time.  Use this if you do not need the ADC counts and
    *  speed is a concern (e.g. in the trigger).
@@ -109,43 +98,39 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  class pos_iterator final {
+
+  class pos_range final {
+
+    const LHCb::span<const uint16_t> m_bank;
+
+    struct Sentinel final {};
+
+    class Iterator final {
+      const LHCb::span<const uint16_t> m_bank;
+      unsigned int                     m_pos{0};
+
+    public:
+      Iterator( LHCb::span<const uint16_t> bank ) : m_bank{bank} {}
+
+      // dereferencing
+      CLUSTERWORD operator*() const { return CLUSTERWORD{m_bank[m_pos]}; }
+
+      Iterator& operator++() {
+        ++m_pos;
+        assert( m_pos <= m_bank.size() );
+        return *this;
+      }
+
+      bool operator!=( Sentinel ) const { return m_pos != m_bank.size(); }
+    };
+
   public:
-    // live and death
-
-    pos_iterator() = default;
-
-    const pos_iterator& operator++() const {
-      ++m_pos;
-      return *this;
-    }
-
-    bool operator!=( const unsigned int end ) const { return m_pos != end; }
-
-    // dereferencing
-    const CLUSTERWORD operator*() const { return CLUSTERWORD( m_bank[m_pos] ); }
-
-  private:
-    /**  Construct with position in raw bank reference to decoder
-     *   Only friends (i.e. the decoder class) are allowed
-     *   to do that.  If applicable, the position will be
-     *   decoded.
-     *
-     * @see SiRawBankDecoder
-     */
-    pos_iterator( unsigned int pos, const SiRawBankDecoder* decoder )
-        : m_pos( pos ), m_bank( &( (uint16_t*)decoder->m_bank )[2] ) {}
-
-  private:
-    mutable unsigned int m_pos;
-    const uint16_t*      m_bank;
-
-    friend class SiRawBankDecoder;
+    pos_range( LHCb::span<const uint16_t> bank ) : m_bank{std::move( bank )} {}
+    auto begin() const { return Iterator{m_bank}; }
+    auto end() const { return Sentinel{}; }
   };
 
-  friend class pos_iterator;
-
-  /** @class SiRawBankDecoder::posadc_iterator SiRawBankDecoder.h
+  /** @class SiRawBankDecoder::Iterator SiRawBankDecoder.h
    *
    *  Decoding iterator for cluster positions only
    *
@@ -164,144 +149,154 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  class posadc_iterator final {
-  public:
-    // live and death
+  class posadc_range final {
+    const SiRawBankDecoder* m_decoder;
+    struct Sentinel         final {};
+    class Iterator          final {
+    public:
+      /**  Increment
+       *   The implementatio of this increment operator
+       *   is non-trivial.  It reads the next cluster
+       *   position word from the raw bank and decodes it.
+       *
+       */
+      Iterator& operator++() {
+        if ( *this != Sentinel{} ) {
+          ++m_pos;
+          decode();
+        }
+        return *this;
+      }
 
-    posadc_iterator() = default;
+      bool operator!=( Sentinel ) const { return m_pos != m_nClusters; }
 
-    /**  Increment
-     *   The implementatio of this increment operator
-     *   is non-trivial.  It reads the next cluster
-     *   position word from the raw bank and decodes it.
-     *
-     */
-    const posadc_iterator& operator++() const {
-      if ( *this != m_decoder->posAdcEnd() ) {
-        ++m_pos;
+      // dereferencing
+
+      /**  dereference to reference to SiDecodedCluster instance
+       *   Gives access to the decoded cluster.  Note that the return value
+       *   is a const reference.  The object it refers to does no longer
+       *   exist once the iterator goes out of scope.  So if you need to hold
+       *   a copy longer than that you have to initialise an instance.
+       *   I am well aware that this is a somewhat dangerous behaviour.  However,
+       *   this is performance critical code.  So please simply refrain from
+       *   creating instances and be aware of the lifetime of the returned
+       *   reference.
+       *
+       * @see SiDecodedCluster
+       */
+      const SiDecodedCluster& operator*() const { return m_cluster; }
+
+      /**  dereference to pointer
+       *   Gives access to pointer to decoded cluster
+       *
+       * @see SiDecodedCluster
+       */
+      const SiDecodedCluster* operator->() const { return &m_cluster; }
+
+      /** Number of bytes read
+       *  Returns the number of bytes (of 8 bit size) read by this
+       *  iterator so far.  The purpose is to compare this to
+       *  RawBank::size() after reading the whole bank as a
+       *  consistency check.
+       *  For a newly constructed iterator that did not yet
+       *  read anything the returned number is 4, corresponding to the number
+       *  of bytes in the bank header.
+       *  After reading the first cluster it always includes
+       *  the number of padding bytes between the cluster position and
+       *  ADC part of the bank.  This means this method can return the
+       *  actual number of bytes read or this number plus two, depending
+       *  on whether the number of clusters in the bank is even or odd.
+       *
+       *  @see RawBank
+       */
+      int bytesRead() const { return static_cast<int>( 4 + ( m_pos + m_pos % 2 ) * 2 + m_nADC ); }
+
+      /**  Construct with position in raw bank and reference to decoder
+       *   Only friends (i.e. the decoder class) are allowed
+       *   to do that.  If applicable, the position is decoded.
+       *
+       * @see SiRawBankDecoder
+       */
+      Iterator( const SiRawBankDecoder* decoder )
+          : m_nClusters{decoder->m_nClusters}
+          , m_offset( 4 + ( decoder->m_nClusters + decoder->m_nClusters % 2 ) * 2 )
+          , m_bank( decoder->m_bank ) {
         decode();
       }
-      return *this;
-    }
 
-    bool operator!=( const unsigned int end ) const { return m_pos != end; }
-
-    // dereferencing
-
-    /**  dereference to reference to SiDecodedCluster instance
-     *   Gives access to the decoded cluster.  Note that the return value
-     *   is a const reference.  The object it refers to does no longer
-     *   exist once the iterator goes out of scope.  So if you need to hold
-     *   a copy longer than that you have to initialise an instance.
-     *   I am well aware that this is a somewhat dangerous behaviour.  However,
-     *   this is performance critical code.  So please simply refrain from
-     *   creating instances and be aware of the lifetime of the returned
-     *   reference.
-     *
-     * @see SiDecodedCluster
-     */
-    const SiDecodedCluster& operator*() const { return m_cluster; }
-
-    /**  dereference to pointer
-     *   Gives access to pointer to decoded cluster
-     *
-     * @see SiDecodedCluster
-     */
-    const SiDecodedCluster* operator->() const { return &m_cluster; }
-
-    /** Number of bytes read
-     *  Returns the number of bytes (of 8 bit size) read by this
-     *  iterator so far.  The purpose is to compare this to
-     *  RawBank::size() after reading the whole bank as a
-     *  consistency check.
-     *  For a newly constructed iterator that did not yet
-     *  read anything the returned number is 4, corresponding to the number
-     *  of bytes in the bank header.
-     *  After reading the first cluster it always includes
-     *  the number of padding bytes between the cluster position and
-     *  ADC part of the bank.  This means this method can return the
-     *  actual number of bytes read or this number plus two, depending
-     *  on whether the number of clusters in the bank is even or odd.
-     *
-     *  @see RawBank
-     */
-    int bytesRead() const { return static_cast<int>( 4 + ( m_pos + m_pos % 2 ) * 2 + m_nADC ); }
-
-  private:
-    /**  Construct with position in raw bank and reference to decoder
-     *   Only friends (i.e. the decoder class) are allowed
-     *   to do that.  If applicable, the position is decoded.
-     *
-     * @see SiRawBankDecoder
-     */
-    posadc_iterator( unsigned int pos, const SiRawBankDecoder* decoder )
-        : m_pos( pos ), m_offset( 4 + ( decoder->m_nClusters + decoder->m_nClusters % 2 ) * 2 ), m_decoder( decoder ) {
-      decode();
-    }
-
-    /** Decode cluster position and ADC counts
-     *  This method wraps the call to the bank type specific
-     *  doDecode() methods.
-     *
-     * @see SiDecodedCluster
-     */
-    void decode() const {
-      if ( m_pos < m_decoder->m_nClusters ) doDecode( typename CLUSTERWORD::adc_bank_type() );
-    }
-
-    /** Decoder for ADC bank with ADC counts only
-     *  The actual decoding for ADC only banks like
-     *  specified for the Velo
-     */
-    void doDecode( SiDAQ::adc_only_bank_tag ) const {
-      m_cluster.second.clear();
-      doDecodeCommon( m_cluster );
-    }
-
-    /** Decoder for ADC bank with neighboursum
-     *  The actual decoding for ADC banks with prepended
-     *  neighbour sums like specified for the ST
-     */
-    void doDecode( SiDAQ::adc_neighboursum_bank_tag ) const {
-      m_cluster.second.clear();
-
-      // fetch the neighbour sum first
-      m_cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
-      ++m_nADC;
-
-      doDecodeCommon( m_cluster );
-    }
-
-    /** Decoding common to all ADC bank types
-     *  The part of the decoding for ADC banks which
-     *  independent of the specific ADC bank type, i.e.
-     *  the common between Velo and ST
-     */
-    void doDecodeCommon( SiDecodedCluster& cluster ) const {
-      // get the first adc count *without* checking the end-of-cluster bit
-      cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
-      ++m_nADC;
-
-      // only move on if the end-of-cluster bit is not set
-      while ( !cluster.second.back().endCluster() ) {
-        cluster.second.emplace_back( ( (uint8_t*)m_decoder->m_bank )[m_offset + m_nADC] );
-        ++m_nADC;
+    private:
+      /** Decode cluster position and ADC counts
+       *  This method wraps the call to the bank type specific
+       *  doDecode() methods.
+       *
+       * @see SiDecodedCluster
+       */
+      void decode() {
+        if ( m_pos < m_nClusters ) doDecode( typename CLUSTERWORD::adc_bank_type() );
       }
 
-      // get cluster position
-      cluster.first = CLUSTERWORD( ( (uint16_t*)m_decoder->m_bank )[2 + m_pos] );
-    }
+      /** Decoder for ADC bank with ADC counts only
+       *  The actual decoding for ADC only banks like
+       *  specified for the Velo
+       */
+      void doDecode( SiDAQ::adc_only_bank_tag ) {
+        m_cluster.second.clear();
+        doDecodeCommon( m_cluster );
+      }
 
-  private:
-    mutable unsigned int     m_pos  = 0;
-    mutable unsigned int     m_nADC = 0;
-    const unsigned int       m_offset;
-    const SiRawBankDecoder*  m_decoder;
-    mutable SiDecodedCluster m_cluster;
+      /** Decoder for ADC bank with neighboursum
+       *  The actual decoding for ADC banks with prepended
+       *  neighbour sums like specified for the ST
+       */
+      void doDecode( SiDAQ::adc_neighboursum_bank_tag ) {
+        m_cluster.second.clear();
 
-    friend class SiRawBankDecoder;
+        // fetch the neighbour sum first
+        m_cluster.second.emplace_back( adcWord( m_nADC ) );
+        ++m_nADC;
+
+        doDecodeCommon( m_cluster );
+      }
+
+      /** Decoding common to all ADC bank types
+       *  The part of the decoding for ADC banks which
+       *  independent of the specific ADC bank type, i.e.
+       *  the common between Velo and ST
+       */
+      void doDecodeCommon( SiDecodedCluster& cluster ) {
+        // get the first adc count *without* checking the end-of-cluster bit
+        cluster.second.emplace_back( adcWord( m_nADC ) );
+        ++m_nADC;
+
+        // only move on if the end-of-cluster bit is not set
+        while ( !cluster.second.back().endCluster() ) {
+          cluster.second.emplace_back( adcWord( m_nADC ) );
+          ++m_nADC;
+        }
+
+        // get cluster position
+        cluster.first = clusterWord( m_pos );
+      }
+
+    private:
+      uint8_t     adcWord( unsigned int n ) const { return reinterpret_cast<const uint8_t*>( m_bank )[m_offset + n]; }
+      CLUSTERWORD clusterWord( unsigned int n ) const {
+        return CLUSTERWORD{reinterpret_cast<const uint16_t*>( m_bank )[2 + n]};
+      }
+
+      unsigned int              m_pos = 0;
+      const unsigned int        m_nClusters;
+      unsigned int              m_nADC = 0;
+      const unsigned int        m_offset;
+      const SiDAQ::buffer_word* m_bank;
+      SiDecodedCluster          m_cluster;
+    };
+
+  public:
+    posadc_range( const SiRawBankDecoder* decoder ) : m_decoder{decoder} {}
+    auto begin() const { return Iterator{m_decoder}; }
+    auto end() const { return Sentinel{}; }
   };
-  friend class posadc_iterator;
 
   // accessors
 
@@ -326,17 +321,15 @@ public:
    */
   unsigned int nClusters() const { return m_nClusters; }
 
-  /// start iterator for cluster positions
-  const pos_iterator posBegin() const { return pos_iterator( 0, this ); }
+  /// range of cluster positions
+  auto posRange() const { return pos_range{{reinterpret_cast<const uint16_t*>( m_bank ) + 2, m_nClusters}}; }
+  [[deprecated( "please use posRange() instead" )]] auto posBegin() const { return posRange().begin(); }
+  [[deprecated( "please use posRange() instead" )]] auto posEnd() const { return posRange().end(); }
 
-  /// end iterator for cluster positions
-  unsigned int posEnd() const { return m_nClusters; }
-
-  /// start iterator for decoded clusters with ADC values
-  const posadc_iterator posAdcBegin() const { return posadc_iterator( 0, this ); }
-
-  /// end iterator for decoded clusters with ADC values
-  unsigned int posAdcEnd() const { return m_nClusters; }
+  /// range of clusters with ADC values
+  auto posAdcRange() const { return posadc_range( this ); }
+  auto posAdcBegin() const { return posAdcRange().begin(); }
+  auto posAdcEnd() const { return posAdcRange().end(); }
 
 private:
   const SiDAQ::buffer_word* m_bank;

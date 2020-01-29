@@ -31,9 +31,9 @@ int VeloDAQ::decodeRawBankToClustersV2( const SiDAQ::buffer_word* bank, const De
 
   // decode the clusterpositions, create  clusters and
   // append them to the container
-  unsigned int                        sensorNumber = sensor->sensorNumber();
-  unsigned int                        stripNumber;
-  VeloRawBankDecoder::posadc_iterator padci = decoder.posAdcBegin();
+  unsigned int sensorNumber = sensor->sensorNumber();
+  unsigned int stripNumber;
+  auto         padci = decoder.posAdcBegin();
   for ( ; padci != decoder.posAdcEnd(); ++padci ) {
 
     stripNumber = padci->first.channelID();
@@ -95,9 +95,9 @@ int VeloDAQ::decodeRawBankToClustersV3( const SiDAQ::buffer_word* bank, const De
 
   // decode the clusterpositions, create  clusters and
   // append them to the container
-  unsigned int                        sensorNumber = sensor->sensorNumber();
-  unsigned int                        stripNumber;
-  VeloRawBankDecoder::posadc_iterator padci = decoder.posAdcBegin();
+  unsigned int sensorNumber = sensor->sensorNumber();
+  unsigned int stripNumber;
+  auto         padci = decoder.posAdcBegin();
   for ( ; padci != decoder.posAdcEnd(); ++padci ) {
 
     stripNumber = padci->first.channelID();
