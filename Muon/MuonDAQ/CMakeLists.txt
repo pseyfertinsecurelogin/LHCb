@@ -42,3 +42,5 @@ gaudi_add_dictionary(MuonDAQ
                      INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
                      LINK_LIBRARIES MuonDetLib DAQEventLib RecEvent GaudiAlgLib MuonKernelLib
                      OPTIONS "-U__MINGW32__ -DBOOST_DISABLE_ASSERTS")
+
+gaudi_add_test(QMTest QMTEST)
