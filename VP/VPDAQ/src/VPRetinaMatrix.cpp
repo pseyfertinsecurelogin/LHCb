@@ -38,16 +38,14 @@ VPRetinaMatrix::VPRetinaMatrix( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pix
 // Check if a SP coordinate are inside the Retina
 //=============================================================================
 bool VPRetinaMatrix::IsInRetina( uint32_t SP_row, uint32_t SP_col ) const {
-  if ( Coordinate_Retina_row <= (int32_t)SP_row && (int32_t)SP_row < Coordinate_Retina_row + 3 &&
-       Coordinate_Retina_col <= (int32_t)SP_col && (int32_t)SP_col < Coordinate_Retina_col + 5 )
-    return true;
-  return false;
+  return Coordinate_Retina_row <= (int32_t)SP_row && (int32_t)SP_row < Coordinate_Retina_row + 3 &&
+         Coordinate_Retina_col <= (int32_t)SP_col && (int32_t)SP_col < Coordinate_Retina_col + 5;
 }
 
 //=============================================================================
 // Add a SP to the Retina
 //=============================================================================
-void VPRetinaMatrix::AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel ) {
+VPRetinaMatrix& VPRetinaMatrix::AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel ) {
   // record which SP is added
   SPixel_Matrix[SP_row - Coordinate_Retina_row][SP_col - Coordinate_Retina_col] = 1;
 
@@ -62,6 +60,7 @@ void VPRetinaMatrix::AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel )
     SP_pixel = SP_pixel >> 1;
     if ( 0 == SP_pixel ) break;
   }
+  return *this;
 }
 
 //=============================================================================

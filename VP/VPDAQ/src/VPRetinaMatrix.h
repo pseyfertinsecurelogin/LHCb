@@ -11,10 +11,6 @@
 #ifndef VPRETINAMATRIX_H
 #define VPRETINAMATRIX_H 1
 
-// LHCb
-#include "Event/StateVector.h"
-// Local
-
 #include <array>
 #include <vector>
 
@@ -39,7 +35,7 @@ public:
   bool IsInRetina( uint32_t SP_row, uint32_t SP_col ) const;
 
   /// Add a SP to the Retina
-  void AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel );
+  VPRetinaMatrix& AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel );
 
   /// Search cluster
   std::vector<uint32_t> SearchCluster() const;

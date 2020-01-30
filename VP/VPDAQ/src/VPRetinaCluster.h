@@ -47,7 +47,7 @@ namespace LHCb {
   };                 // class VPRetinaCluster
 
   /// lightweight container for VPRetinaCluster
-  typedef std::vector<VPRetinaCluster> VPRetinaClusters;
+  using VPRetinaClusters = std::vector<VPRetinaCluster>;
 
 } // namespace LHCb
 
