@@ -96,6 +96,9 @@ namespace DeRichLocations {
   /// Inactive PD condition locations
   inline std::vector<std::string> inactivePDs() noexcept { return {"Rich1InactivePDs", "Rich2InactivePDs"}; }
 
+  // PMT channel properties condition location
+  inline const std::string PMTPropertiesCondName = "PMTProperties";
+
   // ----------------------------------------------------------------------------------------
   // Utility methods
   // ----------------------------------------------------------------------------------------

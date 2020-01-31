@@ -87,6 +87,12 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID& smartID ) const;
 
+  /** Converts a RichSmartID to the pixel number in a PMT as in the hardware readout scheme.
+   *  @param[in] smartID The RichSmartID for the PMT channel
+   *  @return Pixel nr in a PMT as in the hardware readout scheme
+   */
+  int getPixelNumberInPmt( const LHCb::RichSmartID& smartID ) const;
+
   void setPmtIsGrandFlag( const bool isGrand );
 
   inline bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
@@ -103,6 +109,21 @@ public:
   /// Access the zeroInPanelLocal position
   inline const Gaudi::XYZPoint& zeroInPanelLocal() const noexcept { return m_zeroInPanelLocal; }
 
+  // Access the PMT channel properties
+  inline double PmtChannelGainMean( const LHCb::RichSmartID& smartID ) const noexcept {
+    return m_PmtChannelGainMean[getPixelNumberInPmt( smartID )];
+  }
+  inline double PmtChannelGainRms( const LHCb::RichSmartID& smartID ) const noexcept {
+    return m_PmtChannelGainRms[getPixelNumberInPmt( smartID )];
+  }
+  inline double PmtChannelThreshold( const LHCb::RichSmartID& smartID ) const noexcept {
+    return m_PmtChannelThreshold[getPixelNumberInPmt( smartID )];
+  }
+  inline double PmtChannelSinProbability( const LHCb::RichSmartID& smartID ) const noexcept {
+    return m_PmtChannelSinProbability[getPixelNumberInPmt( smartID )];
+  }
+  inline double PmtAverageOccupancy() const noexcept { return m_PmtAverageOccupancy; }
+
 private:
   // definitions
 
@@ -115,6 +136,7 @@ private:
   DetectorElement* getFirstRich();
 
   StatusCode getPMTParameters();
+  StatusCode readPMTPropertiesFromDB();
   StatusCode initPMTQuantumEff();
   StatusCode updateGeometry();
 
@@ -251,4 +273,12 @@ private:
 
   /// The PMT Anode detector element
   IDetectorElement* m_dePmtAnode = nullptr;
+
+  // PMT properties (different for each PMT)
+  using PMTChannelPropertyVector = std::vector<double>;
+  PMTChannelPropertyVector m_PmtChannelGainMean;
+  PMTChannelPropertyVector m_PmtChannelGainRms;
+  PMTChannelPropertyVector m_PmtChannelThreshold;
+  PMTChannelPropertyVector m_PmtChannelSinProbability;
+  double                   m_PmtAverageOccupancy{0};
 };
