@@ -196,7 +196,11 @@ StatusCode DeRichPMT::getPMTParameters() {
                                         (FP)zx, (FP)zy, (FP)zz, (FP)dz );
   }
 
-  return StatusCode::SUCCESS;
+  // read PMT properties from SIMCOND
+  auto sc = readPMTPropertiesFromDB();
+  if ( !sc ) { return sc; }
+
+  return sc;
 }
 
 //=============================================================================
@@ -308,6 +312,59 @@ DeRichPD::SIMDFP::mask_type DeRichPMT::detectionPoint( const SmartIDs& smartID, 
 Gaudi::XYZPoint DeRichPMT::detPointOnAnode( const LHCb::RichSmartID& smartID ) const {
   return ( m_dePmtAnode->geometry()->toGlobal(
       getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), smartID.pixelRow() ) ) );
+}
+
+//=============================================================================
+
+int DeRichPMT::getPixelNumberInPmt( const LHCb::RichSmartID& smartID ) const {
+  return smartID.pixelRow() * m_pddata.PmtNumPixCol[0] + ( m_pddata.PmtNumPixRow[0] - 1 - smartID.pixelCol() );
+}
+
+//=============================================================================
+
+StatusCode DeRichPMT::readPMTPropertiesFromDB() {
+
+  const auto nrOfPixelsInPmt = m_pddata.PmtNumPixCol[0] * m_pddata.PmtNumPixRow[0];
+
+  // check if the condition exists
+  if ( !hasCondition( DeRichLocations::PMTPropertiesCondName ) ) {
+
+    debug() << "Condition with PMT properties not found. Filling channel properties with zero values." << endmsg;
+
+    m_PmtChannelGainMean       = PMTChannelPropertyVector( nrOfPixelsInPmt, 0 );
+    m_PmtChannelGainRms        = PMTChannelPropertyVector( nrOfPixelsInPmt, 0 );
+    m_PmtChannelThreshold      = PMTChannelPropertyVector( nrOfPixelsInPmt, 0 );
+    m_PmtChannelSinProbability = PMTChannelPropertyVector( nrOfPixelsInPmt, 0 );
+
+    return StatusCode::SUCCESS;
+
+  } else {
+
+    const auto cond = condition( DeRichLocations::PMTPropertiesCondName );
+
+    m_PmtChannelGainMean       = cond->paramAsDoubleVect( "GainMean" );
+    m_PmtChannelGainRms        = cond->paramAsDoubleVect( "GainRms" );
+    m_PmtChannelThreshold      = cond->paramAsDoubleVect( "Threshold" );
+    m_PmtChannelSinProbability = cond->paramAsDoubleVect( "SINProbability" );
+    m_PmtAverageOccupancy      = cond->paramAsDouble( "AverageOccupancy" );
+
+    // check consistency
+    if ( nrOfPixelsInPmt != m_PmtChannelGainMean.size() || nrOfPixelsInPmt != m_PmtChannelGainRms.size() ||
+         nrOfPixelsInPmt != m_PmtChannelThreshold.size() || nrOfPixelsInPmt != m_PmtChannelSinProbability.size() ) {
+
+      error() << "Nr of channel properties from SIMCOND doesn't match the expected number of channels.\n"
+              << "Condition   :\t" << cond.path() << "\n"
+              << "#channels   :\t" << nrOfPixelsInPmt << "\n"
+              << "#Gain mean  :\t" << m_PmtChannelGainMean.size() << "\n"
+              << "#Gain rms   :\t" << m_PmtChannelGainRms.size() << "\n"
+              << "#Threshold  :\t" << m_PmtChannelThreshold.size() << "\n"
+              << "#SIN prob   :\t" << m_PmtChannelSinProbability.size() << "\n"
+              << endmsg;
+      return StatusCode::FAILURE;
+    }
+
+    return StatusCode::SUCCESS;
+  }
 }
 
 //=============================================================================
