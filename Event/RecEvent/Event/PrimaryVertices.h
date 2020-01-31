@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Event/Chi2PerDoF.h"
+#include "Event/PrZip.h"
 #include "Event/Track_v2.h" // Chi2PerDof
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h" // IWYU pragma: export
@@ -23,7 +24,7 @@
 #include <vector>
 
 namespace LHCb::Rec::PV {
-  class PVs {
+  class PrimaryVertices {
   public:
     struct Vertex {
       Gaudi::XYZPoint                    m_position;
@@ -44,13 +45,13 @@ namespace LHCb::Rec::PV {
     //  - default move
     //  - constructor with two family identifieres (initialize forward and backward families and auto-generate the own
     //  identifier // TODO: make harder to use wrong
-    PVs() = default;
-    PVs( Zipping::ZipFamilyNumber family ) : m_zipIdentifier( family ) {}
-    PVs( PVs const& ) = delete;
-    PVs( PVs&& )      = default;
+    PrimaryVertices() = default;
+    PrimaryVertices( Zipping::ZipFamilyNumber family ) : m_zipIdentifier( family ) {}
+    PrimaryVertices( PrimaryVertices const& ) = delete;
+    PrimaryVertices( PrimaryVertices&& )      = default;
 
     // TODO: copied from example, intent unclear
-    PVs( Zipping::ZipFamilyNumber family, PVs const& /*unused*/ ) : m_zipIdentifier( family ) {}
+    PrimaryVertices( Zipping::ZipFamilyNumber family, PrimaryVertices const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
     // container interfaces
     [[nodiscard]] std::size_t size() const { return m_vertices.size(); }
@@ -151,3 +152,29 @@ namespace LHCb::Rec::PV {
     }
   };
 } // namespace LHCb::Rec::PV
+
+namespace LHCb::Rec::PV {
+  // copy&pasted
+  DECLARE_PROXY( Proxy ) {
+    PROXY_METHODS( dType, unwrap, PrimaryVertices, m_pvs );
+
+    [[nodiscard]] auto x() const { return this->m_pvs->template pos_x<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto y() const { return this->m_pvs->template pos_y<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto z() const { return this->m_pvs->template pos_z<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto pos() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto position() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto covMatrix() const { return this->m_pvs->template cov<dType, unwrap>( this->offset() ); }
+    [[nodiscard]] auto chi2perdof() const { return this->m_pvs->template chi2perdof<dType, unwrap>( this->offset() ); }
+  };
+} // namespace LHCb::Rec::PV
+
+REGISTER_PROXY( LHCb::Rec::PV::PrimaryVertices, LHCb::Rec::PV::Proxy );
+REGISTER_HEADER( LHCb::Rec::PV::PrimaryVertices, "Event/PrimaryVertices.h" );
+
+namespace LHCb::Rec::Iterable::PV {
+  using PrimaryVertices = LHCb::Pr::zip_t<LHCb::Rec::PV::PrimaryVertices>;
+} // namespace LHCb::Rec::Iterable::PV
+
+namespace LHCb::Rec::Iterable::Scalar::PV {
+  using PrimaryVertices = LHCb::Pr::unwrapped_zip_t<LHCb::Rec::PV::PrimaryVertices>;
+} // namespace LHCb::Rec::Iterable::Scalar::PV
