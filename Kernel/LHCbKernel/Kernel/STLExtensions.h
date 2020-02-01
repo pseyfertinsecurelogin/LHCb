@@ -197,7 +197,7 @@ namespace LHCb {
   namespace details_se {
     template <typename T, std::size_t... Is, typename... Args>
     std::array<T, sizeof...( Is )> make_object_array( std::index_sequence<Is...>, Args&&... args ) {
-      return {std::conditional_t<Is, T, T>{std::forward<Args>( args )...}...};
+      return {std::conditional_t<bool( Is ), T, T>{std::forward<Args>( args )...}...};
     }
   } // namespace details_se
 
