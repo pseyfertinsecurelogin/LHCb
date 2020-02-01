@@ -128,7 +128,7 @@ namespace LHCb::Event::v2 {
     void setTechnique( const RecVertexType& value ) { m_technique = value; }
 
     /// Retrieve const Tracks this vertex was made from
-    [[nodiscard]] LHCb::span<const WeightedTrack> tracks() const { return m_tracks; }
+    [[nodiscard]] auto const& tracks() const { return m_tracks; }
 
   private:
     /// Position in LHCb reference system
