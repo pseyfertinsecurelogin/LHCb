@@ -11,6 +11,9 @@
 #pragma once
 #include "GaudiKernel/Kernel.h"
 
+#include <functional> // see discussion on lhcb/LHCb#73, including this before
+                      // the small_vector header seems to avoid clang8 errors..
+
 #include <boost/container/small_vector.hpp>
 
 #include <gsl/span>
