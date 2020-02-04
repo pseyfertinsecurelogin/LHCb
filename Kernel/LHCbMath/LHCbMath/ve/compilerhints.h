@@ -51,21 +51,7 @@
 #define ASSUME(x) assert(x)
 #endif
 
-// FIXME: what is the defined value of compliant C++17 compilers?
-#if __cplusplus > 201402L
 #include <type_traits>
-#else
-namespace std {
-    /// little helper for the SFINAE idiom we'll use (not required in C++17)
-    template <typename... Ts>
-    struct make_void {
-        using type = void;
-    };
-    /// little helper for the SFINAE idiom we'll use (not required in C++17)
-    template <typename... Ts>
-    using void_t = typename make_void<Ts...>::type;
-} // namespace std
-#endif // __cplusplus
 
 /* Copyright (C) CERN for the benefit of the LHCb collaboration
  *
@@ -87,4 +73,3 @@ namespace std {
  * or submit itself to any jurisdiction.
  */
 
-// vim: sw=4:tw=78:ft=cpp:et
