@@ -195,13 +195,22 @@ namespace LHCb {
   } // namespace range
 
   namespace details_se {
+    /** Helper for expanding a pack of values and discarding them.
+     */
+    template <auto, typename T>
+    using second_arg_t = T;
+
     template <typename T, std::size_t... Is, typename... Args>
-    std::array<T, sizeof...( Is )> make_object_array( std::index_sequence<Is...>, Args&&... args ) {
-      return {std::conditional_t<bool( Is ), T, T>{std::forward<Args>( args )...}...};
+    std::array<T, 1 + sizeof...( Is )> make_object_array( std::index_sequence<0, Is...>, Args&&... args ) {
+      return {second_arg_t<Is, T>{static_cast<std::remove_reference_t<Args>&>( args )...}...,
+              T{std::forward<Args>( args )...}};
     }
   } // namespace details_se
 
-  /** Construct std::array<T, N>, explicitly forwarding the given arguments to the constructor of each T.
+  /** Construct std::array<T, N>, explicitly forwarding the given arguments to the
+   *  constructor of each T. For the first N-1 elements the arguments are forwarded
+   *  as possibly-const lvalue references, and for the Nth element they are perfectly
+   *  fowarded.
    */
   template <typename T, std::size_t N, typename... Args>
   std::array<T, N> make_object_array( Args&&... args ) {
