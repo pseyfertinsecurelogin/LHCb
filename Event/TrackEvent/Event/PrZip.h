@@ -638,6 +638,12 @@ namespace LHCb::Pr {
 
   template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
   inline constexpr bool is_zip_v<LHCb::Pr::Zip<def_simd, def_unwrap, ContainerTypes...>> = true;
+
+  template <typename T>
+  inline constexpr bool is_unwrapped_zip_v = false;
+
+  template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... ContainerTypes>
+  inline constexpr bool is_unwrapped_zip_v<LHCb::Pr::Zip<def_simd, def_unwrap, ContainerTypes...>> = def_unwrap;
 } // namespace LHCb::Pr
 
 // Enable header lookup for non-owning zips
