@@ -66,7 +66,7 @@ namespace LHCb::Arena {
     std::byte* m_current_end{nullptr};
 
     /// All memory blocks owned by this arena.
-    boost::container::small_vector<gsl::span<std::byte>, 1> m_all_blocks;
+    boost::container::small_vector<gsl::span<std::byte>, 1, void> m_all_blocks;
 
     /// Approximate factor by which each block is larger than its predecessor.
     static constexpr std::size_t growth_factor = 2;
