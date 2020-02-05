@@ -84,8 +84,14 @@ namespace LHCb::Pr::Muon {
     /** Move constructor */
     PIDs( PIDs&& other ) = default;
 
+    PIDs& operator=( PIDs&& ) = default;
+
+    PIDs& operator=( const PIDs& ) = delete;
+
     /** Return the size of our containers. */
     [[nodiscard]] std::size_t size() const { return m_statuses.size(); }
+
+    static std::tuple<int, float> invalid_entry() { return {0, std::numeric_limits<float>::lowest()}; };
 
     /** Make sure our containers have at least this capacity, rounded up to be a
      *  multiple of the vector unit size so that compressstore() will never write
