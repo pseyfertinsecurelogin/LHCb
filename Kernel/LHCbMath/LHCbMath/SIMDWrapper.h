@@ -117,6 +117,8 @@ namespace SIMDWrapper {
 
       operator int() const { return data; }
 
+      constexpr static std::size_t size() { return 1; }
+
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
       friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
       friend mask_v operator!( const mask_v& x ) { return !x.data; }
@@ -137,6 +139,8 @@ namespace SIMDWrapper {
     class float_v {
     public:
       float_v() {} // Constructor must be empty
+      template <typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+      float_v( T f ) : data( f ) {}
       float_v( float f ) : data( f ) {}
       float_v( const float* f ) : data( *f ) {}
 
@@ -155,12 +159,31 @@ namespace SIMDWrapper {
         if ( mask ) *ptr = data;
       }
 
+      constexpr static std::size_t size() { return 1; }
+
       float hmax() const { return data; }
       float hmin() const { return data; }
       float hadd() const { return data; }
       float hmax( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::lowest(); }
       float hmin( float mask ) const { return ( mask ) ? data : std::numeric_limits<float>::max(); }
       float hadd( float mask ) const { return ( mask ) ? data : 0; }
+
+      float_v& operator+=( const float_v& rhs ) {
+        this->data += rhs.data;
+        return *this;
+      }
+      float_v& operator-=( const float_v& rhs ) {
+        this->data -= rhs.data;
+        return *this;
+      }
+      float_v& operator*=( const float_v& rhs ) {
+        this->data *= rhs.data;
+        return *this;
+      }
+      float_v& operator/=( const float_v& rhs ) {
+        this->data /= rhs.data;
+        return *this;
+      }
 
       friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return ( lhs.data + rhs.data ); }
       friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return ( lhs.data - rhs.data ); }
@@ -212,12 +235,27 @@ namespace SIMDWrapper {
         if ( mask ) *ptr = data;
       }
 
+      constexpr static std::size_t size() { return 1; }
+
       int hmax() const { return data; }
       int hmin() const { return data; }
       int hadd() const { return data; }
       int hmax( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::min(); }
       int hmin( int mask ) const { return ( mask ) ? data : std::numeric_limits<int>::max(); }
       int hadd( int mask ) const { return ( mask ) ? data : 0; }
+
+      int_v& operator+=( const int_v& rhs ) {
+        this->data += rhs.data;
+        return *this;
+      }
+      int_v& operator-=( const int_v& rhs ) {
+        this->data -= rhs.data;
+        return *this;
+      }
+      int_v& operator*=( const int_v& rhs ) {
+        this->data *= rhs.data;
+        return *this;
+      }
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return lhs.data + rhs.data; }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return lhs.data - rhs.data; }
@@ -362,6 +400,8 @@ namespace SIMDWrapper {
         return *this;
       }
 
+      constexpr static std::size_t size() { return 4; }
+
              operator __m128() const { return data; }
       inline operator int_v() const;
 
@@ -395,6 +435,23 @@ namespace SIMDWrapper {
       }
       float hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
       float hadd( const mask_v& mask ) const { return select( mask, *this, 0.f ).hadd(); }
+
+      float_v& operator+=( const float_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      float_v& operator-=( const float_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      float_v& operator*=( const float_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+      float_v& operator/=( const float_v& rhs ) {
+        *this = *this / rhs;
+        return *this;
+      }
 
       friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm_add_ps( lhs, rhs ); }
       friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm_sub_ps( lhs, rhs ); }
@@ -451,6 +508,8 @@ namespace SIMDWrapper {
         return *this;
       }
 
+      constexpr static std::size_t size() { return 4; }
+
       operator __m128i() const { return data; }
       operator float_v() const { return float_v( _mm_cvtepi32_ps( data ) ); }
 
@@ -482,6 +541,19 @@ namespace SIMDWrapper {
       int hmax( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
       int hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
       int hadd( const mask_v& mask ) const { return select( mask, *this, 0 ).hadd(); }
+
+      int_v& operator+=( const int_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      int_v& operator-=( const int_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      int_v& operator*=( const int_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm_sub_epi32( lhs, rhs ); }
@@ -678,6 +750,8 @@ namespace SIMDWrapper {
     public:
       float_v() {} // Constructor must be empty
       float_v( scalar::float_v& f ) : data( _mm256_set1_ps( f.cast() ) ) {}
+      template <typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+      float_v( T f ) : data( _mm256_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm256_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm256_loadu_ps( f ) ) {}
       float_v( __m256 f ) : data( f ) {}
@@ -699,6 +773,25 @@ namespace SIMDWrapper {
         _mm256_storeu_ps( ptr, _mm256_permutevar8x32_ps( data, perm ) );
       }
 
+      constexpr static std::size_t size() { return 8; }
+
+      float_v& operator+=( const float_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      float_v& operator-=( const float_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      float_v& operator*=( const float_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+      float_v& operator/=( const float_v& rhs ) {
+        *this = *this / rhs;
+        return *this;
+      }
+
       friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm256_add_ps( lhs, rhs ); }
       friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm256_sub_ps( lhs, rhs ); }
       friend float_v operator*( const float_v& lhs, const float_v& rhs ) { return _mm256_mul_ps( lhs, rhs ); }
@@ -714,7 +807,7 @@ namespace SIMDWrapper {
       friend float_v operator!( const float_v& x ) { return x ^ _mm256_castsi256_ps( _mm256_set1_epi32( -1 ) ); }
 
       friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
-        return print_vector<float, 8>( os, x, "avx2" );
+        return print_vector<float, size()>( os, x, "avx2" );
       }
 
       friend float_v min( const float_v& lhs, const float_v& rhs ) { return _mm256_min_ps( lhs, rhs ); }
@@ -805,6 +898,8 @@ namespace SIMDWrapper {
         _mm256_storeu_si256( (__m256i*)ptr, _mm256_permutevar8x32_epi32( data, perm ) );
       }
 
+      constexpr static std::size_t size() { return 8; }
+
       int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
@@ -827,6 +922,19 @@ namespace SIMDWrapper {
       int hmin( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
       int hadd( const __m256 mask ) const { return select( mask, *this, 0 ).hadd(); }
 
+      int_v& operator+=( const int_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      int_v& operator-=( const int_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      int_v& operator*=( const int_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
       friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mullo_epi32( lhs, rhs ); }
@@ -838,7 +946,7 @@ namespace SIMDWrapper {
       friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
 
       friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
-        return print_vector<int, 8>( os, x, "avx2" );
+        return print_vector<int, size()>( os, x, "avx2" );
       }
 
       friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm256_min_epi32( lhs, rhs ); }
@@ -939,6 +1047,8 @@ namespace SIMDWrapper {
         return *this;
       }
 
+      constexpr static std::size_t size() { return 8; }
+
       operator __mmask8() const { return data; }
 
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs & rhs; }
@@ -966,6 +1076,8 @@ namespace SIMDWrapper {
     public:
       float_v() {} // Constructor must be empty
       float_v( scalar::float_v& f ) : data( _mm256_set1_ps( f.cast() ) ) {}
+      template <typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+      float_v( T f ) : data( _mm256_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm256_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm256_loadu_ps( f ) ) {}
       float_v( __m256 f ) : data( f ) {}
@@ -981,6 +1093,8 @@ namespace SIMDWrapper {
       void store( float* ptr ) const { _mm256_storeu_ps( ptr, data ); }
 
       void compressstore( const mask_v& mask, float* ptr ) const { _mm256_mask_compressstoreu_ps( ptr, mask, data ); }
+
+      constexpr static std::size_t size() { return 8; }
 
       float hmax() const {
         __m128 r = _mm_max_ps( _mm256_extractf128_ps( data, 0 ), _mm256_extractf128_ps( data, 1 ) );
@@ -1005,6 +1119,23 @@ namespace SIMDWrapper {
       }
       float hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<float>::max() ).hmin(); }
       float hadd( const mask_v& mask ) const { return select( mask, *this, 0.f ).hadd(); }
+
+      float_v& operator+=( const float_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      float_v& operator-=( const float_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      float_v& operator*=( const float_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+      float_v& operator/=( const float_v& rhs ) {
+        *this = *this / rhs;
+        return *this;
+      }
 
       friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm256_add_ps( lhs, rhs ); }
       friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm256_sub_ps( lhs, rhs ); }
@@ -1048,7 +1179,7 @@ namespace SIMDWrapper {
         return _mm256_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
       }
       friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
-        return print_vector<float, 8>( os, x, "avx256" );
+        return print_vector<float, size()>( os, x, "avx256" );
       }
 
     private:
@@ -1074,6 +1205,8 @@ namespace SIMDWrapper {
 
       void compressstore( const mask_v& mask, int* ptr ) const { _mm256_mask_compressstoreu_epi32( ptr, mask, data ); }
 
+      constexpr static std::size_t size() { return 8; }
+
       int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
         r = _mm_max_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 2, 3, 0, 1 ) ) );
@@ -1096,6 +1229,19 @@ namespace SIMDWrapper {
       int hmin( const mask_v& mask ) const { return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
       int hadd( const mask_v& mask ) const { return select( mask, *this, 0 ).hadd(); }
 
+      int_v& operator+=( const int_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      int_v& operator-=( const int_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      int_v& operator*=( const int_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
       friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mullo_epi32( lhs, rhs ); }
@@ -1117,7 +1263,7 @@ namespace SIMDWrapper {
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm256_cmpeq_epi32_mask( lhs, rhs ); }
       friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
-        return print_vector<int, 8>( os, x, "avx256" );
+        return print_vector<int, size()>( os, x, "avx256" );
       }
 
     private:
@@ -1172,6 +1318,8 @@ namespace SIMDWrapper {
         return *this;
       }
 
+      constexpr static std::size_t size() { return 16; }
+
       operator __mmask16() const { return data; }
 
       friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs & rhs; }
@@ -1199,6 +1347,8 @@ namespace SIMDWrapper {
     public:
       float_v() {} // Constructor must be empty
       float_v( scalar::float_v& f ) : data( _mm512_set1_ps( f.cast() ) ) {}
+      template <typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+      float_v( T f ) : data( _mm512_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm512_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm512_loadu_ps( f ) ) {}
       float_v( __m512 f ) : data( f ) {}
@@ -1215,12 +1365,31 @@ namespace SIMDWrapper {
 
       void compressstore( const mask_v& mask, float* ptr ) const { _mm512_mask_compressstoreu_ps( ptr, mask, data ); }
 
+      constexpr static std::size_t size() { return 16; }
+
       float hmax() const { return _mm512_reduce_max_ps( data ); }
       float hmin() const { return _mm512_reduce_min_ps( data ); }
       float hadd() const { return _mm512_reduce_add_ps( data ); }
       float hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_ps( mask, data ); }
       float hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_ps( mask, data ); }
       float hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_ps( mask, data ); }
+
+      float_v& operator+=( const float_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      float_v& operator-=( const float_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      float_v& operator*=( const float_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
+      float_v& operator/=( const float_v& rhs ) {
+        *this = *this / rhs;
+        return *this;
+      }
 
       friend float_v operator+( const float_v& lhs, const float_v& rhs ) { return _mm512_add_ps( lhs, rhs ); }
       friend float_v operator-( const float_v& lhs, const float_v& rhs ) { return _mm512_sub_ps( lhs, rhs ); }
@@ -1264,7 +1433,7 @@ namespace SIMDWrapper {
         return _mm512_cmp_ps_mask( lhs, rhs, _CMP_EQ_OS );
       }
       friend std::ostream& operator<<( std::ostream& os, float_v const& x ) {
-        return print_vector<float, 16>( os, x, "avx512" );
+        return print_vector<float, size()>( os, x, "avx512" );
       }
 
     private:
@@ -1290,12 +1459,27 @@ namespace SIMDWrapper {
 
       void compressstore( const mask_v& mask, int* ptr ) const { _mm512_mask_compressstoreu_epi32( ptr, mask, data ); }
 
+      constexpr static std::size_t size() { return 16; }
+
       int hmax() const { return _mm512_reduce_max_epi32( data ); }
       int hmin() const { return _mm512_reduce_min_epi32( data ); }
       int hadd() const { return _mm512_reduce_add_epi32( data ); }
       int hmax( const mask_v& mask ) const { return _mm512_mask_reduce_max_epi32( mask, data ); }
       int hmin( const mask_v& mask ) const { return _mm512_mask_reduce_min_epi32( mask, data ); }
       int hadd( const mask_v& mask ) const { return _mm512_mask_reduce_add_epi32( mask, data ); }
+
+      int_v& operator+=( const int_v& rhs ) {
+        *this = *this + rhs;
+        return *this;
+      }
+      int_v& operator-=( const int_v& rhs ) {
+        *this = *this - rhs;
+        return *this;
+      }
+      int_v& operator*=( const int_v& rhs ) {
+        *this = *this * rhs;
+        return *this;
+      }
 
       friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm512_add_epi32( lhs, rhs ); }
       friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm512_sub_epi32( lhs, rhs ); }
@@ -1318,7 +1502,7 @@ namespace SIMDWrapper {
       friend mask_v operator>( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpgt_epi32_mask( lhs, rhs ); }
       friend mask_v operator==( const int_v& lhs, const int_v& rhs ) { return _mm512_cmpeq_epi32_mask( lhs, rhs ); }
       friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
-        return print_vector<int, 16>( os, x, "avx512" );
+        return print_vector<int, size()>( os, x, "avx512" );
       }
 
     private:

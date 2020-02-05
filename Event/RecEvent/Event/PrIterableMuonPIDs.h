@@ -16,7 +16,7 @@
 namespace LHCb::Pr::Muon {
   /** Proxy type for iterating over BestVertexRelations objects. */
   DECLARE_PROXY( Proxy ) {
-    PROXY_METHODS( dType, unwrap, PIDs, m_pids );
+    PROXY_METHODS( Proxy, dType, unwrap, PIDs, m_pids );
     auto IsMuon() const { return this->m_pids->template IsMuon<dType, unwrap>( this->offset() ); }
     auto Chi2Corr() const { return this->m_pids->template Chi2Corr<dType, unwrap>( this->offset() ); }
   };

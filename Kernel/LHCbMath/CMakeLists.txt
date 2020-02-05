@@ -231,3 +231,4 @@ gaudi_install_python_modules()
 gaudi_add_test(QMTest QMTEST)
 
 gaudi_add_unit_test(test_md5 tests/test_md5.cpp LINK_LIBRARIES LHCbMathLib TYPE Boost)
+gaudi_add_unit_test(test_matvec tests/test_matvec.cpp LINK_LIBRARIES LHCbMathLib TYPE Boost)
