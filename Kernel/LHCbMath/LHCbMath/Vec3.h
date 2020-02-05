@@ -72,6 +72,10 @@ public:
   T       Z() const { return z; }
   T       Rho() const { return rho(); }
   Vec3<T> Cross( Vec3<T> const& b ) const { return cross( b ); }
+
+  friend std::ostream& operator<<( std::ostream& s, Vec3<T> const& v ) {
+    return s << '[' << v.X() << ", " << v.Y() << ", " << v.Z() << ']';
+  }
 };
 
 #define VEC3_SOA_ACCESSOR( name, locX, locY, locZ )                                                                    \

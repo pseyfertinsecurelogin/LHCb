@@ -17,7 +17,7 @@
 namespace LHCb::Pr::Velo {
   /** Proxy for iterating over LHCb::Pr::Velo::Tracks objects. */
   DECLARE_PROXY( Proxy ) {
-    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    PROXY_METHODS( Proxy, dType, unwrap, Tracks, m_tracks );
     using FType = typename dType::float_v;
     using IType = typename dType::int_v;
 

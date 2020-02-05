@@ -41,7 +41,7 @@ namespace LHCb::Pr {
  *
  *  namespace Some::Appropriate::Namespace {
  *    DECLARE_PROXY( Proxy ) {
- *      PROXY_METHODS( dType, unwrap, ContainerType, m_container );
+ *      PROXY_METHODS( Proxy, dType, unwrap, ContainerType, m_container );
  *      auto someField() const { return unwrap_helper<dType, unwrap>( m_container->field<dType>( this->offset() ) ); }
  *    };
  *  } // namespace Some::Appropriate::Namespace
@@ -55,7 +55,7 @@ namespace LHCb::Pr {
 
 /** Define methods that are common to all proxy types.
  */
-#define PROXY_METHODS( dType, unwrap, Tracks, m_tracks )                                                               \
+#define PROXY_METHODS( Proxy, dType, unwrap, Tracks, m_tracks )                                                        \
   using dType                  = typename SIMDWrapper::type_map<LHCb__Pr__Proxy__simd>::type;                          \
   static constexpr bool unwrap = LHCb__Pr__Proxy__unwrap__tparam;                                                      \
   Tracks const*         m_tracks{nullptr};                                                                             \
@@ -282,6 +282,7 @@ namespace LHCb::Pr {
     friend struct detail::merged_object_helper;
 
   public:
+    using ContainedTypes                 = std::tuple<ContainerTypes...>;
     static constexpr auto default_simd   = def_simd;
     static constexpr bool default_unwrap = def_unwrap;
     using default_simd_t                 = typename SIMDWrapper::type_map<def_simd>::type;
@@ -290,37 +291,60 @@ namespace LHCb::Pr {
     struct Iterator {
       using value_type        = detail::proxy_type<simd, unwrap, ContainerTypes...>;
       using pointer           = value_type const*;
-      using reference         = value_type const&;
+      using reference         = value_type&;
+      using const_reference   = value_type const&;
       using difference_type   = int;
       using iterator_category = std::random_access_iterator_tag;
       using simd_t            = typename SIMDWrapper::type_map<simd>::type;
       container_ptr_tuple m_containers;
       int                 m_offset{0};
+      Iterator() : m_containers{}, m_offset{} {}
       Iterator( container_ptr_tuple containers, int offset ) : m_containers{containers}, m_offset{offset} {}
+
       auto operator*() const {
         return std::make_from_tuple<value_type>( std::tuple_cat( m_containers, std::tuple{m_offset} ) );
       }
-      Iterator operator++() {
+
+      Iterator& operator++() {
         m_offset += simd_t::size;
         return *this;
       }
-      Iterator operator--() {
+      Iterator& operator--() {
         m_offset -= simd_t::size;
         return *this;
+      }
+      Iterator operator++( int ) {
+        Iterator retval = *this;
+        m_offset += simd_t::size;
+        return retval;
+      }
+      Iterator operator--( int ) {
+        Iterator retval = *this;
+        m_offset -= simd_t::size;
+        return retval;
       }
       Iterator& operator+=( difference_type n ) {
         m_offset += n * simd_t::size;
         return *this;
       }
-      friend bool operator!=( Iterator const& lhs, Iterator const& rhs ) {
-        return lhs.m_containers != rhs.m_containers || lhs.m_offset != rhs.m_offset;
+      friend bool operator==( Iterator const& lhs, Iterator const& rhs ) {
+        return lhs.m_containers == rhs.m_containers && lhs.m_offset == rhs.m_offset;
       }
+      friend bool            operator!=( Iterator const& lhs, Iterator const& rhs ) { return not( lhs == rhs ); }
       friend difference_type operator-( Iterator const& lhs, Iterator const& rhs ) {
         return ( lhs.m_offset - rhs.m_offset );
       }
     };
 
-    using value_type = detail::proxy_type<default_simd, default_unwrap, ContainerTypes...>;
+    // member types
+    using const_iterator = const Iterator<default_simd, default_unwrap>;
+    using iterator       = Iterator<default_simd, default_unwrap>;
+    using value_type     = detail::proxy_type<default_simd, default_unwrap, ContainerTypes...>;
+
+    using iterator_category = typename iterator::iterator_category;
+    using reference         = typename iterator::reference;
+    using pointer           = typename iterator::pointer;
+    using difference_type   = typename iterator::difference_type;
 
     /** Construct an iterable zip of the given containers. */
     template <typename std::enable_if_t<( is_zippable_v<ContainerTypes> && ... ), int> = 0>
@@ -328,11 +352,13 @@ namespace LHCb::Pr {
       // We assume that size() and zipIdentifier() can just be taken from the
       // 0th container, now's the time to check that assumption...!
       if ( !Zipping::areSemanticallyCompatible( containers... ) ) {
-        throw GaudiException{"Asked to zip containers that are not semantically compatible", "LHCb::Pr::Zip",
+        auto info = ( std::string{System::typeinfoName( typeid( ContainerTypes ) )} + ", " + ... );
+        throw GaudiException{"Asked to zip containers that are not semantically compatible: " + info, "LHCb::Pr::Zip",
                              StatusCode::FAILURE};
       }
       if ( !Zipping::areSameSize( containers... ) ) {
-        throw GaudiException{"Asked to zip containers that are not the same size", "LHCb::Pr::Zip",
+        auto info = ( std::string{System::typeinfoName( typeid( ContainerTypes ) )} + ", " + ... );
+        throw GaudiException{"Asked to zip containers that are not the same size: " + info, "LHCb::Pr::Zip",
                              StatusCode::FAILURE};
       }
     }
@@ -410,7 +436,7 @@ namespace LHCb::Pr {
     /** Make a new structure by conditionally copying the underlying structures
      */
     template <SIMDWrapper::InstructionSet simd = default_simd, bool unwrap = default_unwrap, typename F>
-    auto filter( F filt ) const {
+    auto filter( F&& filt ) const {
       using simd_t = typename SIMDWrapper::type_map<simd>::type;
       // If the current object is a zip of multiple containers, we need to
       // return a detail::merged_t object. If there's only one container, we
@@ -630,6 +656,13 @@ namespace LHCb::Pr {
   // of zip_t<T...>
   template <typename... T>
   using unwrapped_zip_t = detail::full_zip_t<SIMDWrapper::InstructionSet::Scalar, true, T...>;
+
+  template <typename...>
+  struct is_zip : std::false_type {};
+
+  template <SIMDWrapper::InstructionSet def_simd, bool def_unwrap, typename... Args>
+  struct is_zip<Zip<def_simd, def_unwrap, Args...>> : std::true_type {};
+
 } // namespace LHCb::Pr
 
 namespace LHCb::Pr {

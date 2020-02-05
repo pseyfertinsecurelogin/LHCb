@@ -39,7 +39,7 @@ namespace LHCb::Pr::Fitted::Forward {
 
   /** Proxy type for iterating over LHCb::Pr::Fitted::Forward::Tracks objects. */
   DECLARE_PROXY( Proxy ) {
-    PROXY_METHODS( dType, unwrap, Tracks, m_tracks );
+    PROXY_METHODS( Proxy, dType, unwrap, Tracks, m_tracks );
     using IType = typename dType::int_v;
     using FType = typename dType::float_v;
 
