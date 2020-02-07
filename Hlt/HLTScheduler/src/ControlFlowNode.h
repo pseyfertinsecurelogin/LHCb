@@ -38,6 +38,8 @@
 #include "GaudiKernel/FunctionalFilterDecision.h"
 #include "GaudiKernel/MsgStream.h"
 
+#include "Kernel/STLExtensions.h"
+
 struct NodeState {
   uint16_t executionCtr;
   bool     passed;
@@ -59,14 +61,15 @@ struct AlgWrapper {
     assert( m_alg != nullptr );
   }
 
-  bool isExecuted( std::vector<AlgState> const& AlgoStates ) const { return AlgoStates[m_executedIndex].isExecuted; }
-  bool getFilterPassed( std::vector<AlgState> const& AlgoStates ) const {
+  bool isExecuted( LHCb::span<AlgState const> AlgoStates ) const { return AlgoStates[m_executedIndex].isExecuted; }
+
+  bool getFilterPassed( LHCb::span<AlgState const> AlgoStates ) const {
     return AlgoStates[m_executedIndex].filterPassed;
   }
 
   void setIndex( uint16_t i ) { m_executedIndex = i; }
 
-  void execute( EventContext& evtCtx, std::vector<AlgState>& AlgoStates ) const {
+  void execute( EventContext& evtCtx, LHCb::span<AlgState> AlgoStates ) const {
     m_alg->whiteboard()->selectStore( evtCtx.valid() ? evtCtx.slot() : 0 ).ignore();
 
     auto ret = m_callSysExecute ? m_alg->sysExecute( evtCtx ) : m_alg->execute( evtCtx );
@@ -121,7 +124,7 @@ public:
 
   BasicNode( std::string const& name, MsgStream& msg ) : m_name( name ), m_msg( msg ){};
 
-  void execute( std::vector<NodeState>& NodeStates, std::vector<AlgState>& AlgStates,
+  void execute( LHCb::span<NodeState> NodeStates, LHCb::span<AlgState> AlgStates,
                 std::vector<Gaudi::Accumulators::AveragingCounter<uint64_t>>& TimingCounters,
                 bool const createTimingTable, EventContext& evtCtx, IAlgExecStateSvc* aess,
                 SmartIF<IProperty>& appmgr ) const {
@@ -158,9 +161,9 @@ public:
 
   } // end of execute
 
-  void notifyParents( std::vector<NodeState>& NodeStates ) const;
+  void notifyParents( LHCb::span<NodeState> NodeStates ) const;
 
-  bool requested( std::vector<NodeState> const& NodeStates ) const;
+  bool requested( LHCb::span<NodeState const> NodeStates ) const;
 
 }; // end of BasicNode
 
@@ -186,7 +189,7 @@ public:
 
   // this calls this->updateStateAndNotify on all parents of the ControlFlowNode that
   // calls this->notifyParents() and recursively notifyParents again
-  void notifyParents( std::vector<NodeState>& NodeStates ) const {
+  void notifyParents( LHCb::span<NodeState> NodeStates ) const {
     for ( gsl::not_null<VNode*> Vparent : m_parents ) {
       std::visit( overload{[&]( auto& parent ) {
                              if ( NodeStates[parent.m_NodeID].executionCtr != 0 )
@@ -209,7 +212,7 @@ public:
   // and we continue to resolve the recursion, asking each composite
   // ControlFlowNode if it is active. If any of the parents of the basic
   // ControlFlowNode, it will be executed.
-  bool requested( std::vector<NodeState> const& NodeStates ) const {
+  bool requested( LHCb::span<NodeState const> NodeStates ) const {
     return m_parents.empty() || std::any_of( begin( m_parents ), end( m_parents ), [&]( VNode const* Vparent ) {
              return std::visit( overload{[&]( auto const& parent ) { return parent.isActive( NodeStates ); },
                                          []( BasicNode const& ) { return false; }},
@@ -217,7 +220,7 @@ public:
            } );
   } // end of requested
 
-  bool isActive( std::vector<NodeState> const& NodeStates ) const {
+  bool isActive( LHCb::span<NodeState const> NodeStates ) const {
     return NodeStates[m_NodeID].executionCtr != 0 && requested( NodeStates );
   }
 
@@ -239,7 +242,7 @@ public:
 
   // this should update the passed and executionCtr flags after each
   // loop
-  void updateStateAndNotify( int senderNodeID, std::vector<NodeState>& NodeStates ) const;
+  void updateStateAndNotify( int senderNodeID, LHCb::span<NodeState> NodeStates ) const;
 
   std::string getType() const { return nodeTypeNames.at( nType ); }
 

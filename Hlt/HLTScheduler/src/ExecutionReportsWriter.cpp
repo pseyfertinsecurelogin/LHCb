@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#include "Kernel/EventContextExt.h"
 
 // as this one also includes a parser, lets put that first
 #include "HLTControlFlowMgr.h"
@@ -91,11 +92,12 @@ StatusCode ExecutionReportsWriter::start() {
 }
 
 LHCb::HltDecReports ExecutionReportsWriter::operator()( EventContext const& evtCtx ) const {
-  auto const& [NodeStates, AlgStates] = evtCtx.getExtension<HLTControlFlowMgr::SchedulerStates>();
+  auto const& lhcbExt                 = evtCtx.getExtension<LHCb::EventContextExtension>();
+  auto const& [NodeStates, AlgStates] = lhcbExt.getSchedulerExtension<HLTControlFlowMgr::SchedulerStates>();
 
   if ( UNLIKELY( evtCtx.evt() % m_printFreq == 0 ) && msgLevel( MSG::DEBUG ) ) {
     debug() << m_schedulerPtr->buildAlgsWithStates( AlgStates ).str() << endmsg;
-    debug() << m_schedulerPtr->buildPrintableStateTree( NodeStates ).str() << endmsg;
+    debug() << m_schedulerPtr->buildPrintableStateTree( LHCb::make_span( NodeStates ) ).str() << endmsg;
   }
   LHCb::HltDecReports reports{};
   reports.reserve( m_name_indices.size() );

@@ -70,6 +70,7 @@ preprocessor = (
         "OMP: Hint Consider unsetting",
     ],
                 regexps=[
+                    r"HLTControlFlowMgr\s*INFO Memory pool:",
                     r"HLTControlFlowMgr\s*INFO Timing table:",
                     r"HLTControlFlowMgr\s*INFO Average ticks per millisecond:",
                     r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
