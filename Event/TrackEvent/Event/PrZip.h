@@ -114,6 +114,38 @@ namespace LHCb::Pr::detail {
   template <typename T>
   inline constexpr bool has_size_v = Gaudi::cpp17::is_detected_v<has_size_, T>;
 
+  /** Helper to determine if the given type has a .get_allocator() method
+   */
+  template <typename T>
+  using has_get_allocator_ = decltype( std::declval<T>().get_allocator() );
+
+  template <typename T>
+  inline constexpr bool has_get_allocator_v = Gaudi::cpp17::is_detected_v<has_get_allocator_, T>;
+
+  /** Helper to get std::tuple<Ts...> for the subset of Ts... with a get_allocator() method
+   */
+  template <typename... Ts>
+  using filtered_on_get_allocator_t =
+      boost::mp11::mp_append<std::conditional_t<has_get_allocator_v<Ts>, std::tuple<Ts>, std::tuple<>>...>;
+
+  /** Helper to get std::tuple<Allocs...> corresponding to calling .get_allocator() on each Ts...
+   */
+  template <typename>
+  struct get_allocator_helper {};
+
+  template <typename... Ts>
+  struct get_allocator_helper<std::tuple<Ts...>> {
+    using type = std::tuple<has_get_allocator_<Ts>...>;
+  };
+
+  /** Helper to check that all types in a tuple are convertible to the first type.
+   */
+  template <typename>
+  struct convertible_from_first : std::false_type {};
+
+  template <typename U, typename... Us>
+  struct convertible_from_first<std::tuple<U, Us...>> : std::bool_constant<( std::is_convertible_v<U, Us> && ... )> {};
+
   /** Helper to deterimine if the given type has a .zipIdentifier method that
    *  returns a Zipping::ZipFamilyNumber
    */
@@ -270,6 +302,15 @@ namespace LHCb::Pr {
     // assumed to be stored on the TES and have a sufficiently long lifetime
     using container_ptr_tuple = std::tuple<ContainerTypes const*...>;
 
+    // std::tuple<A, B, ...> for those types in ContainerTypes that have a .get_allocator() method
+    using containers_with_get_allocator_tuple = detail::filtered_on_get_allocator_t<ContainerTypes...>;
+
+    // std::tuple<Alloc1, Alloc2, ...> allocator types corresponding to containers_with_get_allocator_tuple
+    using allocator_types_tuple = typename detail::get_allocator_helper<containers_with_get_allocator_tuple>::type;
+
+    // is the get_allocator() method going to be enabled based on the above?
+    static constexpr bool has_get_allocator = detail::convertible_from_first<allocator_types_tuple>::value;
+
     // Storage of underlying container pointers for the iterable tracks wrapper
     container_ptr_tuple m_containers;
 
@@ -424,6 +465,22 @@ namespace LHCb::Pr {
      */
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const {
       return std::get<0>( m_containers )->zipIdentifier();
+    }
+
+    /** Get an allocator from the zip.
+     *
+     * This method is only enabled if at least one member of the zip has a method named
+     * get_allocator() and all members providing that method yield types are mutually
+     * convertible. The allocator from the first such member is returned.
+     *
+     * @todo We don't actually check that all the allocator types are mutually
+     *       convertible, just that the first one (which we return) is convertible to all
+     *       of the others. This should be good enough...
+     */
+    template <bool enable = has_get_allocator, std::enable_if_t<enable, int> = 0>
+    [[nodiscard]] auto get_allocator() const noexcept {
+      using container_to_query_t = std::tuple_element_t<0, containers_with_get_allocator_tuple>;
+      return std::get<container_to_query_t const*>( m_containers )->get_allocator();
     }
 
     /** Get a component of the zip.

@@ -15,9 +15,11 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/EventLocalAllocator.h"
 #include "Kernel/meta_enum.h"
 #include <optional>
 #include <ostream>
+#include <scoped_allocator>
 #include <utility>
 #include <vector>
 
@@ -57,9 +59,15 @@ namespace LHCb::Event::v2 {
     using Vector      = std::vector<RecVertex*>;
     using ConstVector = std::vector<const RecVertex*>;
 
+    using allocator_type = LHCb::Allocators::EventLocal<WeightedTrack>;
+
+    /// allocator-aware copy constructor
+    RecVertex( RecVertex const& other, allocator_type const& ) : RecVertex{other} {}
+
     /// constructor
-    RecVertex( Gaudi::XYZPoint position, const Gaudi::SymMatrix3x3& covMatrix, const Track::Chi2PerDoF chi2PerDof )
-        : m_position( std::move( position ) ), m_covMatrix( covMatrix ), m_chi2PerDoF( chi2PerDof ) {}
+    RecVertex( Gaudi::XYZPoint position, const Gaudi::SymMatrix3x3& covMatrix, const Track::Chi2PerDoF chi2PerDof,
+               allocator_type alloc = {} )
+        : m_position( std::move( position ) ), m_covMatrix( covMatrix ), m_chi2PerDoF( chi2PerDof ), m_tracks{alloc} {}
 
     /// Is the vertex a primary?
     [[nodiscard]] bool isPrimary() const { return RecVertexType::Primary == technique(); }
@@ -120,7 +128,7 @@ namespace LHCb::Event::v2 {
     void setTechnique( const RecVertexType& value ) { m_technique = value; }
 
     /// Retrieve const Tracks this vertex was made from
-    [[nodiscard]] const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
+    [[nodiscard]] auto const& tracks() const { return m_tracks; }
 
   private:
     /// Position in LHCb reference system
@@ -132,10 +140,10 @@ namespace LHCb::Event::v2 {
     /// How the vertex was made
     RecVertexType m_technique{};
     /// Tracks this vertex was made from
-    std::vector<WeightedTrack> m_tracks;
-
+    std::vector<WeightedTrack, allocator_type> m_tracks;
   }; // class RecVertex
 
   inline std::ostream& operator<<( std::ostream& str, const RecVertex& obj ) { return obj.fillStream( str ); }
 
+  using RecVertices = std::vector<RecVertex, std::scoped_allocator_adaptor<LHCb::Allocators::EventLocal<RecVertex>>>;
 } // namespace LHCb::Event::v2
