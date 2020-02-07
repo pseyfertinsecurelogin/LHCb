@@ -40,7 +40,7 @@ namespace LHCb::MC {
     /** Constructor from vector of strings */
     MCTrackGeomCriteria( const std::vector<std::string>& criteria );
 
-    /** fufulls Criteria or not */
+    /** fulfils Criteria or not */
     bool accepted( MCTrackInfo& info, const LHCb::MCParticle* particle ) const;
 
     class FunctionMap final {

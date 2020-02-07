@@ -41,9 +41,6 @@ StatusCode MCReconstructible::initialize() {
   // tools
   m_mcSel = tool<IMCParticleSelector>( "MCParticleSelector", "Selector", this );
 
-  // Setup incident services
-  incSvc()->addListener( this, IncidentType::BeginEvent );
-
   using namespace LHCb::MC;
   // n.b prioritized list - the order matters!
   m_critMap[0].emplace( ChargedLong, m_chargedLongCriteria.value() );
@@ -62,14 +59,6 @@ StatusCode MCReconstructible::initialize() {
   m_yECALOut              = std::abs( m_calo->cellY( refOut ) );
 
   return sc;
-}
-
-// Method that handles various Gaudi "software events"
-void MCReconstructible::handle( const Incident& incident ) {
-  if ( IncidentType::BeginEvent == incident.type() ) {
-    m_tkInfo.reset();
-    ;
-  }
 }
 
 bool MCReconstructible::inAcceptance( const LHCb::MCParticle* mcPart ) const {
@@ -115,7 +104,8 @@ bool MCReconstructible::accept_neutral( const LHCb::MCParticle* mcPart ) const {
 // Check if a charged MCParticle is within the geomtrical acceptance
 //====================================================================
 bool MCReconstructible::accept_charged( const LHCb::MCParticle* mcPart ) const {
-  return mcTkInfo().accVelo( mcPart ) || mcTkInfo().accTT( mcPart ) || mcTkInfo().accT( mcPart );
+  auto mcTkInfo = MCTrackInfo{*m_track_info.get()};
+  return mcTkInfo.accVelo( mcPart ) || mcTkInfo.accTT( mcPart ) || mcTkInfo.accT( mcPart );
 }
 
 //=============================================================================
@@ -136,11 +126,12 @@ IMCReconstructible::RecCategory MCReconstructible::reconstructible( const LHCb::
       const bool isCharged = mcPart->particleID().threeCharge() != 0;
       if ( isCharged ) {
         // n.b the order matters !
-        auto cat = std::find_if(
+        auto mcTkInfo = MCTrackInfo{*m_track_info.get()};
+        auto cat      = std::find_if(
             m_critMap.begin(), m_critMap.end(),
             [&](
                 const std::optional<std::pair<IMCReconstructible::RecCategory, LHCb::MC::MCTrackGeomCriteria>>& crit ) {
-              return crit->second.accepted( mcTkInfo(), mcPart );
+              return crit->second.accepted( mcTkInfo, mcPart );
             } );
         if ( cat != m_critMap.end() ) return ( *cat )->first;
       } else { // neutral
@@ -168,6 +159,7 @@ bool MCReconstructible::isReconstructibleAs( const IMCReconstructible::RecCatego
 
   const bool isCharged = mcPart->particleID().threeCharge() != 0;
   if ( isCharged && category != Neutral && category != NotReconstructible ) {
+    auto mcTkInfo = MCTrackInfo{*m_track_info.get()};
     auto criteria = std::find_if(
         m_critMap.begin(), m_critMap.end(),
         [&]( const std::optional<std::pair<IMCReconstructible::RecCategory, LHCb::MC::MCTrackGeomCriteria>>& crit ) {
@@ -177,7 +169,7 @@ bool MCReconstructible::isReconstructibleAs( const IMCReconstructible::RecCatego
       Warning( "Category not found - defaulting to false", StatusCode::SUCCESS );
       return false;
     }
-    return ( *criteria )->second.accepted( mcTkInfo(), mcPart ) && m_mcSel->accept( mcPart );
+    return ( *criteria )->second.accepted( mcTkInfo, mcPart ) && m_mcSel->accept( mcPart );
   }
   if ( !isCharged && category == Neutral ) return true;
   // stupid but true !
