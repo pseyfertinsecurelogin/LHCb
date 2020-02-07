@@ -313,7 +313,7 @@ namespace SIMDWrapper {
       static int_v  indices() { return 0; }
       static int_v  indices( int start ) { return start; }
       static int    popcount( mask_v const& mask ) { return scalar::popcount( mask ); }
-      static mask_v loop_mask( int, int ) { return true; }
+      static mask_v loop_mask( int offset, int size ) { return size > offset; }
     };
   } // namespace scalar
 
