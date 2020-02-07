@@ -21,14 +21,13 @@
  */
 class CommonMuonStation final {
 public:
-  CommonMuonStation() = default;
+  using allocator_type = CommonMuonHits::allocator_type;
+  CommonMuonStation( allocator_type alloc = {} ) : m_hits{alloc} {}
   CommonMuonStation( const DeMuonDetector& det, unsigned int station, CommonMuonHits hits )
-      : m_z{det.getStationZ( station )}, m_station{station} {
-    setHits( std::move( hits ) );
-  }
+      : m_hits{std::move( hits )}, m_z{det.getStationZ( station )}, m_station{station} {}
 
-  CommonMuonStation( const DeMuonDetector& det, unsigned int station )
-      : m_hits{}, m_z{det.getStationZ( station )}, m_station{station} {}
+  CommonMuonStation( const DeMuonDetector& det, unsigned int station, allocator_type alloc = {} )
+      : m_hits{alloc}, m_z{det.getStationZ( station )}, m_station{station} {}
 
   double z() const { return m_z; }
 
