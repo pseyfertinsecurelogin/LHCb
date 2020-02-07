@@ -94,8 +94,9 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLo
 }
 
 template <>
-FTLiteClusters FTRawBankDecoder::decode<6>( LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters ) const {
-  FTLiteClusters clus{nClusters};
+FTLiteClusters FTRawBankDecoder::decode<6>( const EventContext& evtCtx, LHCb::span<const LHCb::RawBank*> banks,
+                                            unsigned int nClusters ) const {
+  FTLiteClusters clus{nClusters, LHCb::getMemResource( evtCtx )};
   for ( const LHCb::RawBank* bank : banks ) { // Iterates over the banks
     LHCb::FTChannelID offset  = m_readoutTool->channelIDShift( bank->sourceID() );
     auto              quarter = quarterFromChannel( offset );
@@ -167,8 +168,9 @@ FTLiteClusters FTRawBankDecoder::decode<6>( LHCb::span<const LHCb::RawBank*> ban
 }
 
 template <>
-FTLiteClusters FTRawBankDecoder::decode<4>( LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters ) const {
-  FTLiteClusters clus{nClusters};
+FTLiteClusters FTRawBankDecoder::decode<4>( const EventContext& evtCtx, LHCb::span<const LHCb::RawBank*> banks,
+                                            unsigned int nClusters ) const {
+  FTLiteClusters clus{nClusters, LHCb::getMemResource( evtCtx )};
   for ( const LHCb::RawBank* bank : banks ) { // Iterates over the banks
     LHCb::FTChannelID offset = m_readoutTool->channelIDShift( bank->sourceID() );
     auto              first  = bank->begin<short int>() + 2; // skip first 32b of the header
@@ -185,8 +187,9 @@ FTLiteClusters FTRawBankDecoder::decode<4>( LHCb::span<const LHCb::RawBank*> ban
 }
 
 template <>
-FTLiteClusters FTRawBankDecoder::decode<5>( LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters ) const {
-  FTLiteClusters clus{nClusters};
+FTLiteClusters FTRawBankDecoder::decode<5>( const EventContext& evtCtx, LHCb::span<const LHCb::RawBank*> banks,
+                                            unsigned int nClusters ) const {
+  FTLiteClusters clus{nClusters, LHCb::getMemResource( evtCtx )};
   for ( const LHCb::RawBank* bank : banks ) { // Iterates over the banks
     LHCb::FTChannelID offset  = m_readoutTool->channelIDShift( bank->sourceID() );
     auto              quarter = quarterFromChannel( offset );
@@ -244,9 +247,10 @@ FTLiteClusters FTRawBankDecoder::decode<5>( LHCb::span<const LHCb::RawBank*> ban
 }
 
 template <unsigned int vrsn>
-FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters ) const {
+FTLiteClusters FTRawBankDecoder::decode( const EventContext& evtCtx, LHCb::span<const LHCb::RawBank*> banks,
+                                         unsigned int nClusters ) const {
   static_assert( vrsn == 2 || vrsn == 3 );
-  FTLiteClusters clus{nClusters};
+  FTLiteClusters clus{nClusters, LHCb::getMemResource( evtCtx )};
   for ( const LHCb::RawBank* bank : banks ) {
     int      source  = bank->sourceID();
     unsigned station = source / 16 + 1u;
@@ -416,7 +420,7 @@ FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks,
 //=============================================================================
 // Main execution
 //=============================================================================
-FTLiteClusters FTRawBankDecoder::operator()( const LHCb::RawEvent& rawEvent ) const {
+FTLiteClusters FTRawBankDecoder::operator()( const EventContext& evtCtx, const LHCb::RawEvent& rawEvent ) const {
   const auto& banks = rawEvent.banks( LHCb::RawBank::FTCluster );
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Number of raw banks " << banks.size() << endmsg;
@@ -441,15 +445,15 @@ FTLiteClusters FTRawBankDecoder::operator()( const LHCb::RawEvent& rawEvent ) co
   auto clus = [&]( unsigned int nClusters ) {
     switch ( m_decodingVersion.value() ) {
     case 2:
-      return decode<2>( banks, nClusters );
+      return decode<2>( evtCtx, banks, nClusters );
     case 3:
-      return decode<3>( banks, nClusters );
+      return decode<3>( evtCtx, banks, nClusters );
     case 4:
-      return decode<4>( banks, nClusters );
+      return decode<4>( evtCtx, banks, nClusters );
     case 5:
-      return decode<5>( banks, nClusters );
+      return decode<5>( evtCtx, banks, nClusters );
     case 6:
-      return decode<6>( banks, nClusters );
+      return decode<6>( evtCtx, banks, nClusters );
     default:
       throw GaudiException( "Unknown decoder version: " + std::to_string( vrsn ), __FILE__, StatusCode::FAILURE );
     };
