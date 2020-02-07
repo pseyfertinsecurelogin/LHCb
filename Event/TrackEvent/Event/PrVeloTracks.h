@@ -11,6 +11,7 @@
 
 #pragma once
 #include "Event/PrVeloHits.h"
+#include "Kernel/EventLocalAllocator.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/VPChannelID.h"
 #include "LHCbMath/SIMDWrapper.h"
@@ -25,29 +26,37 @@
 
 namespace LHCb::Pr::Velo {
   class Tracks {
-    constexpr static int max_tracks       = align_size( 1024 );
-    constexpr static int max_hits         = 26;
-    constexpr static int max_states       = 2;
-    constexpr static int params_per_state = 11;
-    constexpr static int other_params     = 1;
+    constexpr static int         max_tracks       = align_size( 1024 );
+    constexpr static int         max_hits         = 26;
+    constexpr static int         max_states       = 2;
+    constexpr static int         params_per_state = 11;
+    constexpr static int         other_params     = 1;
+    constexpr static int         row_size         = max_hits + max_states * params_per_state + other_params;
+    constexpr static std::size_t array_size       = max_tracks * row_size;
+    using data_t                                  = union {
+      float f;
+      int   i;
+    };
 
   public:
-    Tracks( Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier() )
-        : m_zipIdentifier{zipIdentifier} {
-      const size_t size = max_tracks * ( max_hits + max_states * params_per_state + other_params );
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-    }
+    using allocator_type = LHCb::Allocators::EventLocal<data_t>;
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier = Zipping::generateZipIdentifier(), allocator_type alloc = {} )
+        : m_alloc{std::move( alloc )}
+        , m_data{std::allocator_traits<allocator_type>::allocate( m_alloc, array_size )}
+        , m_zipIdentifier{zipIdentifier} {}
 
     Tracks( const Tracks& ) = delete;
 
     // Special constructor for zipping machinery
-    Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& ) : Tracks( zipIdentifier ) {}
+    Tracks( Zipping::ZipFamilyNumber zipIdentifier, Tracks const& old ) : Tracks( zipIdentifier, old.m_alloc ) {}
 
     Tracks( Tracks&& other )
-        : m_data{std::exchange( other.m_data, nullptr )}
+        : m_alloc{std::move( other.m_alloc )}
+        , m_data{std::exchange( other.m_data, nullptr )}
         , m_size{other.m_size}
         , m_zipIdentifier{other.m_zipIdentifier} {}
 
+    [[nodiscard]] allocator_type           get_allocator() const noexcept { return m_alloc; }
     [[nodiscard]] int                      size() const { return m_size; }
     int&                                   size() { return m_size; }
     [[nodiscard]] bool                     empty() const { return m_size == 0; }
@@ -93,7 +102,7 @@ namespace LHCb::Pr::Velo {
     template <typename simd, typename maskT>
     void copy_back( const Tracks& from, int at, maskT mask ) {
       using intT = typename simd::int_v;
-      for ( int i = 0; i < max_hits + max_states * params_per_state + other_params; i++ ) {
+      for ( int i = 0; i < row_size; i++ ) {
         intT( &( from.m_data[i * max_tracks + at].i ) ).compressstore( mask, &( m_data[i * max_tracks + m_size].i ) );
       }
       m_size += simd::popcount( mask );
@@ -122,15 +131,12 @@ namespace LHCb::Pr::Velo {
       return ids;
     }
 
-    ~Tracks() { std::free( m_data ); }
+    ~Tracks() { std::allocator_traits<allocator_type>::deallocate( m_alloc, m_data, array_size ); }
 
   private:
-    using data_t = union {
-      float f;
-      int   i;
-    };
-    alignas( 64 ) data_t* m_data;
-    int                      m_size = 0;
+    allocator_type           m_alloc;
+    data_t*                  m_data;
+    int                      m_size{0};
     Zipping::ZipFamilyNumber m_zipIdentifier;
   };
 } // namespace LHCb::Pr::Velo
