@@ -12,6 +12,7 @@
 #define EVENT_PRUTHITS_H 1
 
 // Include files
+#include "Kernel/EventLocalAllocator.h"
 #include "LHCbMath/SIMDWrapper.h"
 
 /** @class PrUTHits PrUTHits.h
@@ -21,21 +22,28 @@
  */
 
 namespace LHCb::Pr::UT {
-
   class Hits {
-    constexpr static int max_hits = align_size( 10000 );
+    constexpr static int         max_hits = align_size( 10000 );
+    constexpr static std::size_t capacity = max_hits * 8;
+    using data_t                          = union {
+      float f;
+      int   i;
+    };
 
   public:
-    Hits() {
-      const size_t size = max_hits * 8;
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-    }
+    using allocator_type = LHCb::Allocators::EventLocal<data_t>;
+    Hits( allocator_type alloc = {} )
+        : m_data{std::allocator_traits<allocator_type>::allocate( alloc, capacity )}, m_alloc{std::move( alloc )} {}
 
     Hits( const Hits& ) = delete;
 
-    Hits( Hits&& other ) : m_data{std::exchange( other.m_data, nullptr )}, m_size{other.m_size} {}
-    int  size() const { return m_size; }
-    int& size() { return m_size; }
+    Hits( Hits&& other )
+        : m_data{std::exchange( other.m_data, nullptr )}
+        , m_size{std::exchange( other.m_size, 0 )}
+        , m_alloc{std::move( other.m_alloc )} {}
+
+    [[nodiscard]] int size() const { return m_size; }
+    int&              size() { return m_size; }
 
     SOA_ACCESSOR( channelID, &m_data[0 * max_hits].i )
     SOA_ACCESSOR( weight, &m_data[1 * max_hits].f )
@@ -46,15 +54,12 @@ namespace LHCb::Pr::UT {
     SOA_ACCESSOR( dxDy, &m_data[6 * max_hits].f )
     SOA_ACCESSOR( cos, &m_data[7 * max_hits].f )
 
-    ~Hits() { std::free( m_data ); }
+    ~Hits() { std::allocator_traits<allocator_type>::deallocate( m_alloc, m_data, capacity ); }
 
   private:
-    using data_t = union {
-      float f;
-      int   i;
-    };
-    alignas( 64 ) data_t* m_data;
-    int m_size = 0;
+    data_t*        m_data{nullptr};
+    int            m_size{0};
+    allocator_type m_alloc;
   };
 } // namespace LHCb::Pr::UT
 

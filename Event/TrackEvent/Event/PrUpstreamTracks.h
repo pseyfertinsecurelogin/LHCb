@@ -11,7 +11,7 @@
 
 #pragma once
 #include "Event/PrVeloTracks.h"
-
+#include "Kernel/EventLocalAllocator.h"
 #include "Kernel/LHCbID.h"
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
@@ -27,25 +27,33 @@
 
 namespace LHCb::Pr::Upstream {
   class Tracks {
-    constexpr static int max_tracks = align_size( 1024 );
-    constexpr static int max_hits   = 30;
+    constexpr static int         max_tracks = align_size( 1024 );
+    constexpr static int         max_hits   = 30;
+    constexpr static int         row_size   = max_hits + 11;
+    constexpr static std::size_t array_size = max_tracks * row_size;
+    using data_t                            = union {
+      float f;
+      int   i;
+    };
 
   public:
-    Tracks( Velo::Tracks const* velo_ancestors ) {
-      const size_t size = max_tracks * ( max_hits + 11 );
-      m_data            = static_cast<data_t*>( std::aligned_alloc( 64, size * sizeof( int ) ) );
-      m_velo_ancestors  = velo_ancestors;
-    }
+    using allocator_type = LHCb::Allocators::EventLocal<data_t>;
+    Tracks( Velo::Tracks const* velo_ancestors, allocator_type alloc = {} )
+        : m_alloc{std::move( alloc )}
+        , m_data{std::allocator_traits<allocator_type>::allocate( m_alloc, array_size )}
+        , m_velo_ancestors{velo_ancestors} {}
 
     Tracks( const Tracks& ) = delete;
 
     Tracks( Tracks&& other )
-        : m_data{std::exchange( other.m_data, nullptr )}
+        : m_alloc{std::move( other.m_alloc )}
+        , m_data{std::exchange( other.m_data, nullptr )}
         , m_size{other.m_size}
         , m_velo_ancestors{other.m_velo_ancestors} {}
 
-    [[nodiscard]] int size() const { return m_size; }
-    int&              size() { return m_size; }
+    [[nodiscard]] allocator_type get_allocator() const noexcept { return m_alloc; }
+    [[nodiscard]] int            size() const { return m_size; }
+    int&                         size() { return m_size; }
 
     // Return pointer to ancestor container
     [[nodiscard]] Velo::Tracks const* getVeloAncestors() const { return m_velo_ancestors; };
@@ -118,15 +126,12 @@ namespace LHCb::Pr::Upstream {
       return ids;
     }
 
-    ~Tracks() { std::free( m_data ); }
+    ~Tracks() { std::allocator_traits<allocator_type>::deallocate( m_alloc, m_data, array_size ); }
 
   private:
-    using data_t = union {
-      float f;
-      int   i;
-    };
-    alignas( 64 ) data_t* m_data;
-    int                 m_size           = 0;
-    Velo::Tracks const* m_velo_ancestors = nullptr;
+    allocator_type      m_alloc;
+    data_t*             m_data{nullptr};
+    int                 m_size{0};
+    Velo::Tracks const* m_velo_ancestors{nullptr};
   };
 } // namespace LHCb::Pr::Upstream
