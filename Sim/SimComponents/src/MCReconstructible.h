@@ -28,6 +28,7 @@
 #include <vector>
 
 // Gaudi
+#include "GaudiKernel/DataObjectHandle.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/VectorMap.h"
@@ -53,7 +54,7 @@
  *  @date   2004-04-28
  */
 //-----------------------------------------------------------------------------
-class MCReconstructible : public extends<GaudiTool, IMCReconstructible, IIncidentListener> {
+class MCReconstructible : public extends<GaudiTool, IMCReconstructible> {
 
 public:
   /// Standard constructor
@@ -61,12 +62,6 @@ public:
 
   /// Initialize
   StatusCode initialize() override;
-
-  /** Implement the handle method for the Incident service.
-   *  This is used to inform the tool of software incidents.
-   *  @param incident The incident identifier
-   */
-  void handle( const Incident& incident ) override;
 
   /// Get the reconstruction category for the given MCParticle
   IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const override;
@@ -85,15 +80,6 @@ private: // methods
   /// Trest acceptance for neutral particles
   bool accept_neutral( const LHCb::MCParticle* mcPart ) const;
 
-  /// get the MCTrackInfo object
-  inline MCTrackInfo& mcTkInfo() const {
-    if ( UNLIKELY( !m_tkInfo ) ) {
-      m_tkInfo = std::make_unique<MCTrackInfo>( evtSvc(), msgSvc() );
-      if ( !m_tkInfo ) { Exception( "Failed to load MCTrackInfo" ); }
-    }
-    return *m_tkInfo;
-  }
-
 private: // data
   /// Acceptance parameters (neutrals)
   // misc CALO params. Hopefully to go into specific CALO reconstructibility tool
@@ -109,9 +95,6 @@ private: // data
   /// Allow primary particles
   Gaudi::Property<bool> m_allowPrimary{this, "AllowPrimaryParticles", true};
 
-  /// Pointer to MCTrackInfo object
-  mutable std::unique_ptr<MCTrackInfo> m_tkInfo;
-
   /// MCParticle selector
   IMCParticleSelector* m_mcSel = nullptr;
 
@@ -123,6 +106,9 @@ private: // data
 
   // the std::optional is required to delay the construction...
   std::array<std::optional<std::pair<IMCReconstructible::RecCategory, LHCb::MC::MCTrackGeomCriteria>>, 5> m_critMap;
+
+  // data handle for the TrackInfo location
+  DataObjectReadHandle<LHCb::MCProperty> m_track_info{this, "MCTrackInfo", LHCb::MCPropertyLocation::TrackInfo};
 };
 
 #endif // SIMCOMPONENTS_MCReconstructible_H
