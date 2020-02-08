@@ -133,6 +133,9 @@ namespace LHCb {
       HltTrackReports,  // 71
       HCError,          // 72
       VPRetinaCluster,  // 73
+      FTGeneric,        // 74
+      FTCalibration,    // 75
+      FTNZS,            // 76
       // Add new types here. Don't forget to update also RawBank.cpp
       LastType // LOOP Marker; add new bank types ONLY before!
     };
