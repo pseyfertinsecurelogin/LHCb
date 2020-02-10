@@ -316,9 +316,9 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
 
         # construct new reference
         try:
-            from StringIO import StringIO ## for Python 2
+            from StringIO import StringIO  ## for Python 2
         except ImportError:
-            from io import StringIO ## for Python 3
+            from io import StringIO  ## for Python 3
         newref = StringIO()
         # sanitize newlines
         new = stdout.splitlines()
