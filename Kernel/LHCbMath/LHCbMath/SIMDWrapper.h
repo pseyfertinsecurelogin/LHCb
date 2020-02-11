@@ -119,8 +119,16 @@ namespace SIMDWrapper {
 
       constexpr static std::size_t size() { return 1; }
 
-      friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data & rhs.data; }
-      friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data | rhs.data; }
+      // matching the other mask_v types, & | and ^ perform logic rather than
+      // bitwise operations
+      friend mask_v operator&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data && rhs.data; }
+      friend mask_v operator|( const mask_v& lhs, const mask_v& rhs ) { return lhs.data || rhs.data; }
+      // ugly looking XOR (cast to bool and make sure they are different; i.e. one
+      // true and one false)
+      friend mask_v operator^( const mask_v& lhs, const mask_v& rhs ) { return ( !!lhs.data ) != ( !!rhs.data ); }
+
+      friend mask_v operator&&( const mask_v& lhs, const mask_v& rhs ) { return lhs.data && rhs.data; }
+      friend mask_v operator||( const mask_v& lhs, const mask_v& rhs ) { return lhs.data || rhs.data; }
       friend mask_v operator!( const mask_v& x ) { return !x.data; }
 
       friend bool all( const mask_v& mask ) { return mask == 1; }
