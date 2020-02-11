@@ -31,6 +31,10 @@
  * Each execution node of the HltControlFlowMgr is converted to a DecReport
  * object, with the decision corresponding to the state of the node. The ID
  * used in the DecReport is taken from the ANNSvc.
+ *
+ * Note that historically, the names that we expect to see in the DecReports end in "Decision",
+ * and we keep this behaviour, so the ANNSvc will look for trigger decisions called <node_name> +
+ * "Decision" (see the decision_name variable).
  */
 class ExecutionReportsWriter final
     : public Gaudi::Functional::Transformer<LHCb::HltDecReports( EventContext const& ),
