@@ -149,8 +149,7 @@ StatusCode PackTwoProngVertex::execute() {
 
     //== Store the Tracks
     pVert.firstTrack = out->refs().size();
-    for ( SmartRefVector<LHCb::Track>::const_iterator itT = vert->tracks().begin(); vert->tracks().end() != itT;
-          ++itT ) {
+    for ( auto itT = vert->tracks().begin(); vert->tracks().end() != itT; ++itT ) {
       out->refs().push_back( 0 == pVer ? pack.reference32( out, ( *itT )->parent(), ( *itT )->key() )
                                        : pack.reference64( out, ( *itT )->parent(), ( *itT )->key() ) );
     }
@@ -158,17 +157,15 @@ StatusCode PackTwoProngVertex::execute() {
 
     //== Store the ParticleID
     pVert.firstPid = out->refs().size();
-    for ( std::vector<LHCb::ParticleID>::const_iterator itP = vert->compatiblePIDs().begin();
-          vert->compatiblePIDs().end() != itP; ++itP ) {
+    for ( auto itP = vert->compatiblePIDs().begin(); vert->compatiblePIDs().end() != itP; ++itP ) {
       out->refs().emplace_back( ( *itP ).pid() );
     }
     pVert.lastPid = out->refs().size();
 
     //== Handles the ExtraInfo
     pVert.firstInfo = out->extras().size();
-    for ( GaudiUtils::VectorMap<int, double>::iterator itE = vert->extraInfo().begin(); vert->extraInfo().end() != itE;
-          ++itE ) {
-      out->extras().emplace_back( std::make_pair( ( *itE ).first, pack.fltPacked( ( *itE ).second ) ) );
+    for ( const auto& itE : vert->extraInfo() ) {
+      out->extras().emplace_back( itE.first, pack.fltPacked( itE.second ) );
     }
     pVert.lastInfo = out->extras().size();
   }

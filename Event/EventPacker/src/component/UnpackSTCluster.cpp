@@ -58,7 +58,7 @@ StatusCode UnpackSTCluster::execute() {
     int                          id = packedCluster.id & 0x1FFFFFFF;
     LHCb::VeloCluster::ADCVector adcs;
     for ( unsigned int idx = packedCluster.begin; packedCluster.end != idx; ++idx ) {
-      adcs.push_back( std::pair<int, unsigned int>( packedClusters->strips()[idx], packedClusters->adcs()[idx] ) );
+      adcs.emplace_back( packedClusters->strips()[idx], packedClusters->adcs()[idx] );
     }
 
     const LHCb::STChannelID sId( id & 0xFFFFFF );

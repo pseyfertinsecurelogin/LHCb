@@ -8,10 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "CompareTrack.h"
+#include "Event/PackedTrack.h"
+#include "Event/Track.h"
+#include "GaudiAlg/Consumer.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareTrack
@@ -19,29 +18,25 @@
 // 2008-11-14 : Olivier Callot
 //-----------------------------------------------------------------------------
 
+/** @class CompareTrack CompareTrack.h
+ *  Compare two containers of Tracks
+ *
+ *  @author Olivier Callot
+ *  @date   2008-11-14
+ */
+struct CompareTrack : Gaudi::Functional::Consumer<void( LHCb::Tracks const&, LHCb::Tracks const& )> {
+
+  CompareTrack( const std::string& name, ISvcLocator* pSvcLocator )
+      : Consumer{name,
+                 pSvcLocator,
+                 {KeyValue{"InputName", LHCb::TrackLocation::Default},
+                  KeyValue{"TestName", LHCb::TrackLocation::Default + "Test"}}} {}
+
+  void operator()( LHCb::Tracks const& old, LHCb::Tracks const& test ) const override {
+    const LHCb::TrackPacker packer( this );
+    packer.check( old, test ).orThrow( "Comparison failed", "CompareTrack" );
+  }
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( CompareTrack )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-CompareTrack::CompareTrack( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = LHCb::TrackLocation::Default );
-  declareProperty( "TestName", m_testName = LHCb::TrackLocation::Default + "Test" );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode CompareTrack::execute() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  LHCb::Tracks* old  = get<LHCb::Tracks>( m_inputName );
-  LHCb::Tracks* test = get<LHCb::Tracks>( m_testName );
-
-  // Track Packer
-  const LHCb::TrackPacker packer( this );
-
-  // compare
-  return packer.check( *old, *test );
-}

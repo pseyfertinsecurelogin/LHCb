@@ -8,10 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "CompareProtoParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
+#include "GaudiAlg/Consumer.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareProtoParticle
@@ -19,30 +18,28 @@
 // 2008-11-14 : Olivier Callot
 //-----------------------------------------------------------------------------
 
+/** @class CompareProtoParticle CompareProtoParticle.h
+ *  Compare two containers of ProtoParticles
+ *
+ *  @author Olivier Callot
+ *  @date   2008-11-14
+ */
+struct CompareProtoParticle
+    : Gaudi::Functional::Consumer<void( LHCb::ProtoParticles const&, LHCb::ProtoParticles const& )> {
+
+  /// Standard constructor
+  CompareProtoParticle( const std::string& name, ISvcLocator* pSvcLocator )
+      : Consumer{name,
+                 pSvcLocator,
+                 {KeyValue{"InputName", LHCb::ProtoParticleLocation::Charged},
+                  KeyValue{"TestName", LHCb::ProtoParticleLocation::Charged + "Test"}}} {}
+
+  void operator()( LHCb::ProtoParticles const& old, LHCb::ProtoParticles const& test ) const override {
+    // check and return
+    const LHCb::ProtoParticlePacker packer( this );
+    packer.check( old, test ).orThrow( "CompareProtoParticle failed", "CompareProtoParticle" );
+  }
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( CompareProtoParticle )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-CompareProtoParticle::CompareProtoParticle( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "InputName", m_inputName = LHCb::ProtoParticleLocation::Charged );
-  declareProperty( "TestName", m_testName = LHCb::ProtoParticleLocation::Charged + "Test" );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode CompareProtoParticle::execute() {
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  LHCb::ProtoParticles* old  = get<LHCb::ProtoParticles>( m_inputName );
-  LHCb::ProtoParticles* test = get<LHCb::ProtoParticles>( m_testName );
-
-  // check and return
-  const LHCb::ProtoParticlePacker packer( this );
-  return packer.check( *old, *test );
-}
-
-//=============================================================================

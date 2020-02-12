@@ -34,15 +34,12 @@ PackParticlesAndVertices::PackParticlesAndVertices( const std::string& name, ISv
 }
 
 StatusCode PackParticlesAndVertices::initialize() {
-  const StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) return sc;
-
-  if ( m_alwaysOutput && m_createConts.empty() )
-    warning() << "AlwaysCreateOutput is true but AlwaysCreateContainers "
-                 "is empty!"
-              << endmsg;
-
-  return sc;
+  return GaudiAlgorithm::initialize().andThen( [&] {
+    if ( m_alwaysOutput && m_createConts.empty() )
+      warning() << "AlwaysCreateOutput is true but AlwaysCreateContainers "
+                   "is empty!"
+                << endmsg;
+  } );
 }
 
 //=============================================================================

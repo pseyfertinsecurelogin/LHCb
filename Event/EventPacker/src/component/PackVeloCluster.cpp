@@ -45,12 +45,8 @@ StatusCode PackVeloCluster::execute() {
 
   // If requested, remove the input data from the TES and delete
   if ( UNLIKELY( m_deleteInput ) ) {
-    const StatusCode sc = evtSvc()->unregisterObject( clusters );
-    if ( sc.isSuccess() ) {
-      delete clusters;
-    } else {
-      return Error( "Failed to delete input data as requested", sc );
-    }
+    const StatusCode sc = evtSvc()->unregisterObject( clusters ).andThen( [&] { delete clusters; } );
+    if ( sc.isFailure() ) return sc;
   } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     clusters->registry()->setAddress( 0 );

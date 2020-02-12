@@ -71,22 +71,17 @@ StatusCode PackTrack::execute() {
     packer.check( *tracks, *unpacked ).ignore();
 
     // clean up after checks
-    StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if ( sc.isSuccess() )
-      delete unpacked;
-    else
-      return Error( "Failed to delete test data after unpacking check", sc );
+    StatusCode sc = evtSvc()->unregisterObject( unpacked ).andThen( [&] { delete unpacked; } );
+    if ( sc.isFailure() ) return sc;
   }
 
   // If requested, remove the input data from the TES and delete
   if ( UNLIKELY( m_deleteInput ) ) {
-    const StatusCode sc = evtSvc()->unregisterObject( tracks );
-    if ( sc.isSuccess() ) {
+    const StatusCode sc = evtSvc()->unregisterObject( tracks ).andThen( [&] {
       delete tracks;
       tracks = nullptr;
-    } else {
-      return Error( "Failed to delete input data as requested", sc );
-    }
+    } );
+    if ( sc.isFailure() ) return sc;
   } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     auto* pReg = tracks->registry();
