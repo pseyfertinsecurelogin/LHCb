@@ -51,7 +51,8 @@ accessSvc = ConfigCDBAccessSvc(File=filename, Mode='ReadWrite')
 
 # Sequence, actually only a prescaler
 seq = GaudiSequencer("TestSequence")
-prescaler = DeterministicPrescaler("TestScaler", AcceptFraction=scale)
+prescaler = DeterministicPrescaler(
+    "TestScaler", SeedName="TestScaler", AcceptFraction=scale)
 seq.Members = [prescaler]
 
 # The HltLinePersistenceSvc (for the TCKLinePersistenceSvc test)

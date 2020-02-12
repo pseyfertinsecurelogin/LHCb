@@ -24,12 +24,12 @@
 class DeterministicPrescaler final : public Gaudi::Functional::FilterPredicate<bool( const LHCb::ODIN& )> {
 public:
   DeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator )
-      : FilterPredicate( name, pSvcLocator, KeyValue{"ODINLocation", LHCb::ODINLocation::Default} )
-      , m_initial{mixString( name.size(), name )} {}
+      : FilterPredicate( name, pSvcLocator, KeyValue{"ODINLocation", LHCb::ODINLocation::Default} ) {}
 
   StatusCode initialize() override {
     const StatusCode sc = FilterPredicate::initialize();
     if ( !sc ) return sc;
+    if ( m_seed_name.empty() ) { return Error( "Required property SeedName is empty" ); }
     if ( msgLevel( MSG::DEBUG ) ) debug() << " generated initial value " << m_initial << endmsg;
     if ( m_acc != std::numeric_limits<uint32_t>::max() ) {
       info() << "Prescaling events; keeping " << m_accFrac.value() << " of events " << endmsg;
@@ -54,6 +54,16 @@ public:
   }
 
 private:
+  Gaudi::Property<std::string> m_seed_name{this, "SeedName", "",
+                                           [=]( Property& ) {
+                                             if ( m_seed_name.empty() ) {
+                                               throw GaudiException( "Required property SeedName is empty", name(),
+                                                                     StatusCode::FAILURE );
+                                             }
+                                             m_initial = mixString( m_seed_name.size(), m_seed_name );
+                                           },
+                                           "String used to seed pseudo-random number generation"};
+
   /// initial seed unique to this instance (computed from the name)
   std::uint32_t m_initial{0};
   /// integer representation of the above
