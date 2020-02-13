@@ -21,6 +21,18 @@
 
 #include "DeterministicPrescalerGenerator.h"
 
+/** @class DeterministicPrescaler DeterministicPrescaler.cpp
+ *
+ * @brief Return a positive decision for a configurable fraction of executions.
+ *
+ * A random seed is set based on the SeedName property, and the accept fraction
+ * is governed by the AcceptFraction property. For each execution a random
+ * number distributed in [0, 1] is drawn based on the seed and the ODIN event
+ * and run numbers. The filter passes if this number is smaller than the accept
+ * fraction. An accept fraction of zero results in the filter always returning
+ * false.
+ *
+ */
 class DeterministicPrescaler final : public Gaudi::Functional::FilterPredicate<bool( const LHCb::ODIN& )> {
 public:
   DeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator )
