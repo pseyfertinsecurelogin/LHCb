@@ -15,6 +15,7 @@
                       // the small_vector header seems to avoid clang8 errors..
 
 #include <boost/container/small_vector.hpp>
+#include <boost/version.hpp>
 
 #include <gsl/span>
 
@@ -65,8 +66,15 @@ namespace LHCb::Arena {
     /// One byte past the end of the current block, or nullptr if it doesn't exist.
     std::byte* m_current_end{nullptr};
 
+    // Explicitly specify boost::container::small_vector default template arguments
+    // to sidestep cling error, see lhcb/LHCb#75
+#if BOOST_VERSION < 107100
     /// All memory blocks owned by this arena.
     boost::container::small_vector<gsl::span<std::byte>, 1, void> m_all_blocks;
+#else
+    /// All memory blocks owned by this arena.
+    boost::container::small_vector<gsl::span<std::byte>, 1, void, void> m_all_blocks;
+#endif
 
     /// Approximate factor by which each block is larger than its predecessor.
     static constexpr std::size_t growth_factor = 2;
