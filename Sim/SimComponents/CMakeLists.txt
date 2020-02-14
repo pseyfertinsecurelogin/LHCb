@@ -35,3 +35,4 @@ gaudi_add_module(SimComponents
                  INCLUDE_DIRS Boost AIDA Kernel/MCInterfaces Event/EventBase
                  LINK_LIBRARIES Boost CaloDetLib DAQEventLib GenEvent MCEvent RecEvent TrackEvent GaudiAlgLib)
 
+gaudi_install_python_modules()
