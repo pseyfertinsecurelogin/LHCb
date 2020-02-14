@@ -57,6 +57,9 @@ class SimConf(LHCbConfigurableUser):
         ,
         "SaveHepMC":
         True  # If False, do not save HepMC on output file
+        ,
+        "pGun":
+        False  # If using a PGUN configuration, write the "reco" vertex as well
     }
 
     def allEventLocations(self):
@@ -432,7 +435,13 @@ class SimConf(LHCbConfigurableUser):
                     simList = [self.tapeLocation(slot, 'MC', 'Vertices')]
                 else:
                     simList = [self.tapeLocation(slot, 'pSim', 'MCVertices')]
-
+                #add PGun primary vertex writing
+                if self.getProp('pGun'):
+                    simList += [
+                        self.tapeLocation(slot, 'Rec/Vertex', 'Primary')
+                    ]
+                else:
+                    pass
                 # main event is manditory, spillover events optional.
                 if slot != '':
                     tape.OptItemList += simList
