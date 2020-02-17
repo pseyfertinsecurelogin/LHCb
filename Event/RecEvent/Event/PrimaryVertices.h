@@ -67,17 +67,11 @@ namespace LHCb::Rec::PV {
       return m_vertices.emplace_back( std::forward<T>( t )... );
     }
 
-    auto& back() {
-      return m_vertices.back();
-    }
+    auto& back() { return m_vertices.back(); }
 
-    auto back() const {
-      return m_vertices.back();
-    }
+    auto back() const { return m_vertices.back(); }
 
-    void pop_back() {
-      m_vertices.pop_back();
-    }
+    void pop_back() { m_vertices.pop_back(); }
 
     [[nodiscard]] Zipping::ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
@@ -103,16 +97,14 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] decltype( auto ) nTracks( const std::size_t i ) const {
       if constexpr ( unwrap ) {
         auto chi2perdof = m_vertices[i].m_chi2PerDoF;
-        return (chi2perdof.nDoF + 3)/2;
+        return ( chi2perdof.nDoF + 3 ) / 2;
       } else {
-        std::array<int, dType::size>   tmp_i;
-        for ( std::size_t j = 0; j < dType::size; j++ ) {
-          tmp_i[j] = m_vertices[i + j].m_chi2PerDoF.nDoF;
-        }
+        std::array<int, dType::size> tmp_i;
+        for ( std::size_t j = 0; j < dType::size; j++ ) { tmp_i[j] = m_vertices[i + j].m_chi2PerDoF.nDoF; }
         using int_v = typename dType::int_v;
         int_v ndofs{&tmp_i[0]};
         // return (ndofs + int_v{3})/int_v{2};
-        return (ndofs + int_v{3}) >> int_v{1};
+        return ( ndofs + int_v{3} ) >> int_v{1};
       }
     }
 
@@ -144,7 +136,7 @@ namespace LHCb::Rec::PV {
         using float_v = typename dType::float_v;
         std::array<float, dType::size> tmp;
         // second requirement in the if statement should normally not matter (enough space reserved)
-        if(!(chunkposition + dType::size - 1 < m_vertices.capacity())) {
+        if ( !( chunkposition + dType::size - 1 < m_vertices.capacity() ) ) {
           throw GaudiException{"you done fucked up", "PrimaryVertices.h", StatusCode::FAILURE};
         }
         for ( std::size_t simdelement = 0; simdelement < dType::size && chunkposition + simdelement < m_vertices.size();
@@ -205,7 +197,7 @@ namespace LHCb::Rec::PV {
         std::array<float, dType::size> tmp;
         // second requirement in the if statement should normally not matter (enough space reserved)
         // but asan claims it does
-        if(!(i + dType::size - 1 < m_vertices.capacity())) {
+        if ( !( i + dType::size - 1 < m_vertices.capacity() ) ) {
           throw GaudiException{"you done fucked up", "PrimaryVertices.h", StatusCode::FAILURE};
         }
         for ( std::size_t j = 0; j < dType::size && i + j < m_vertices.size(); j++ ) {
@@ -228,7 +220,9 @@ namespace LHCb::Rec::PV {
     [[nodiscard]] auto pos() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto position() const { return this->m_pvs->template pos<dType, unwrap>( this->offset() ); }
     [[nodiscard]] auto covMatrix() const { return this->m_pvs->template cov<dType, unwrap>( this->offset() ); }
-    [[nodiscard]] auto covMatrixElement(int row, int col) const { return this->m_pvs->template cov<dType, unwrap>( this->offset(), row, col ); }
+    [[nodiscard]] auto covMatrixElement( int row, int col ) const {
+      return this->m_pvs->template cov<dType, unwrap>( this->offset(), row, col );
+    }
     [[nodiscard]] auto chi2perdof() const { return this->m_pvs->template chi2perdof<dType, unwrap>( this->offset() ); }
   };
 } // namespace LHCb::Rec::PV

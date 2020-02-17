@@ -21,9 +21,9 @@
 #include <boost/test/unit_test.hpp>
 
 [[nodiscard]] LHCb::Rec::PV::PrimaryVertices make_PVs() {
-  LHCb::Rec::PV::PrimaryVertices  retval( Zipping::generateZipIdentifier(), Zipping::generateZipIdentifier() );
-  Gaudi::XYZPoint     pos{0.1, 0.2, 0.3};
-  Gaudi::SymMatrix3x3 covmatrix;
+  LHCb::Rec::PV::PrimaryVertices retval( Zipping::generateZipIdentifier(), Zipping::generateZipIdentifier() );
+  Gaudi::XYZPoint                pos{0.1, 0.2, 0.3};
+  Gaudi::SymMatrix3x3            covmatrix;
 
   float chi2{42};
   int   ndof{23};
