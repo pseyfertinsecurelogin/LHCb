@@ -373,7 +373,9 @@ namespace LHCb::Pr {
       }
       friend bool            operator!=( Iterator const& lhs, Iterator const& rhs ) { return not( lhs == rhs ); }
       friend difference_type operator-( Iterator const& lhs, Iterator const& rhs ) {
-        return ( lhs.m_offset - rhs.m_offset );
+        // TODO: assert divisibility without remainder?
+        // if not -> put a comment here that this has been thought about
+        return ( lhs.m_offset - rhs.m_offset ) / simd_t::size;
       }
     };
 
