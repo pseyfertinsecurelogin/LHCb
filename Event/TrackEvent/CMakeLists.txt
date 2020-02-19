@@ -39,6 +39,9 @@ gaudi_add_unit_test(test_track_v2 tests/src/test_track_v2.cpp
 gaudi_add_unit_test(test_pruthits tests/src/test_pruthits.cpp
                     LINK_LIBRARIES GaudiKernel TrackEvent
                     TYPE Boost)
+gaudi_add_unit_test(test_przipSTL tests/src/stl.cpp
+                    LINK_LIBRARIES GaudiKernel TrackEvent
+                    TYPE Boost)
 
 
 gaudi_add_dictionary(TrackEvent dict/dictionary.h dict/selection.xml LINK_LIBRARIES Boost GSL LHCbKernel TrackEvent INCLUDE_DIRS GSL Boost)
