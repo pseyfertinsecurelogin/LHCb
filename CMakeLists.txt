@@ -29,8 +29,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${XERCESC_INCLUDE_DIRS} ${XercesC_INCLUDE_DIRS})
 
 # Declare project name and version
-gaudi_project(LHCb v50r6
-              USE Gaudi v32r2
+gaudi_project(LHCb v51r0
+              USE Gaudi v33r0
               DATA Gen/DecFiles
                    FieldMap
                    ParamFiles
