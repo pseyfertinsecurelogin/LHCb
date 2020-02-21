@@ -15,7 +15,8 @@
 #include "Event/Track_v2.h" // Chi2PerDof
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h" // IWYU pragma: export
-#include "Kernel/STLExtensions.h"             // LHCb::span
+#include "Kernel/EventLocalAllocator.h"
+#include "Kernel/STLExtensions.h" // LHCb::span
 #include "LHCbMath/SIMDWrapper.h"
 #include "LHCbMath/Vec3.h"
 #include "SOAExtensions/ZipUtils.h" // zip identifiers
@@ -33,7 +34,9 @@ namespace LHCb::Rec::PV {
     };
 
   public:
-    std::vector<Vertex> m_vertices;
+    using allocator_type = LHCb::Allocators::EventLocal<Vertex>;
+
+    std::vector<Vertex, allocator_type> m_vertices;
 
     Zipping::ZipFamilyNumber m_zipIdentifier{Zipping::generateZipIdentifier()};
 
@@ -46,7 +49,9 @@ namespace LHCb::Rec::PV {
     //  - constructor with two family identifieres (initialize forward and backward families and auto-generate the own
     //  identifier // TODO: make harder to use wrong
     PrimaryVertices() = default;
-    PrimaryVertices( Zipping::ZipFamilyNumber family ) : m_zipIdentifier( family ) {}
+    PrimaryVertices( allocator_type alloc ) : m_vertices{alloc} {}
+    PrimaryVertices( Zipping::ZipFamilyNumber family, allocator_type alloc = {} )
+        : m_vertices{alloc}, m_zipIdentifier( family ) {}
     PrimaryVertices( PrimaryVertices const& ) = delete;
     PrimaryVertices( PrimaryVertices&& )      = default;
 
