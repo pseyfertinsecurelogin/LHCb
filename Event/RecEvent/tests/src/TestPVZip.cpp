@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( create_PVs ) {
 
   auto iterable_pvs = LHCb::Pr::make_zip( pvs );
 
-  std::cout << "pvs are of type " << System::typeinfoName( typeid( iterable_pvs ) ) << '\n';
+  // std::cout << "pvs are of type " << System::typeinfoName( typeid( iterable_pvs ) ) << '\n';
   // LHCb::Pr::Zip<(SIMDWrapper::InstructionSet)0,false,LHCb::Rec::PV::PrimaryVertices>
 
   for ( auto const& pv : iterable_pvs.with<SIMDWrapper::InstructionSet::Scalar>() ) {
