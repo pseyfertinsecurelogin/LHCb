@@ -23,8 +23,13 @@
 namespace Examples {
   SOAFIELD_TRIVIAL( NumberField, number, int );
   SOASKIN_TRIVIAL( NumberSkin, NumberField );
+  SOAFIELD_TRIVIAL( SquaredNumberField, squarednumber, int );
+  SOASKIN_TRIVIAL( SquaredNumberSkin, SquaredNumberField );
+  SOASKIN_TRIVIAL( NumberAndSquaredNumberSkin, NumberField, SquaredNumberField );
 
-  using NumberContainer = Zipping::ZipContainer<SOA::Container<std::vector, NumberSkin>>;
+  using NumberContainer                 = Zipping::ZipContainer<SOA::Container<std::vector, NumberSkin>>;
+  using SquaredNumberContainer          = Zipping::ZipContainer<SOA::Container<std::vector, SquaredNumberSkin>>;
+  using NumberAndSquaredNumberContainer = Zipping::ZipContainer<SOA::Container<std::vector, SquaredNumberSkin>>;
 
 } // namespace Examples
 #endif

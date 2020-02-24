@@ -32,4 +32,44 @@ namespace Examples {
   };
 
   DECLARE_COMPONENT( PrintInts )
+
+  struct PrintSquaredInts final
+      : Gaudi::Functional::Consumer<void( const SquaredNumberContainer&, const Zipping::ExportedSelection<>& ),
+                                    BaseClass_t> {
+    PrintSquaredInts( const std::string& name, ISvcLocator* svcLoc )
+        : Consumer( name, svcLoc,
+                    {
+                        KeyValue( "InputLocation", "/Event/MyInt" ),
+                        KeyValue( "InputSelection", "/Event/SelectAll" ),
+                    } ) {}
+
+    void operator()( const SquaredNumberContainer& data, const Zipping::ExportedSelection<>& sel ) const override {
+      Zipping::SelectionView input{&data, sel};
+      for ( const auto& i : input ) { info() << "found a " << i << endmsg; }
+    }
+  };
+
+  DECLARE_COMPONENT( PrintSquaredInts )
+
+  struct PrintIntsAndSquaredInts final
+      : Gaudi::Functional::Consumer<void( const NumberContainer&, const SquaredNumberContainer&,
+                                          const Zipping::ExportedSelection<>& ),
+                                    BaseClass_t> {
+    PrintIntsAndSquaredInts( const std::string& name, ISvcLocator* svcLoc )
+        : Consumer( name, svcLoc,
+                    {
+                        KeyValue( "InputIntLocation", "/Event/MyInt" ),
+                        KeyValue( "InputSquaredIntLocation", "/Event/MyInt" ),
+                        KeyValue( "InputSelection", "/Event/SelectAll" ),
+                    } ) {}
+
+    void operator()( const NumberContainer& data1, const SquaredNumberContainer& data2,
+                     const Zipping::ExportedSelection<>& sel ) const override {
+      auto                   data = Zipping::semantic_zip<NumberAndSquaredNumberSkin>( data1, data2 );
+      Zipping::SelectionView input{&data, sel};
+      for ( const auto& i : input ) { info() << "found a " << i << endmsg; }
+    }
+  };
+
+  DECLARE_COMPONENT( PrintIntsAndSquaredInts )
 } // namespace Examples

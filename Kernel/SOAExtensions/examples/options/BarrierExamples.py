@@ -10,7 +10,10 @@
 
 from Configurables import Examples__ZipBarrierExampleSelector as ZipBarrierExampleSelector
 from Configurables import Examples__PrintInts as PrintInts
+from Configurables import Examples__PrintSquaredInts as PrintSquaredInts
+from Configurables import Examples__PrintIntsAndSquaredInts as PrintIntsAndSquaredInts
 from Configurables import Examples__ZipBarrierExampleProducer as ZipBarrierExampleProducer
+from Configurables import Examples__ZipBarrierExampleWorker as ZipBarrierExampleWorker
 from Configurables import ZipBarrierGatherer, ZipBarrierMerger
 from Gaudi.Configuration import *
 
@@ -55,7 +58,12 @@ gather2.OutputSelection = "/Event/RareGathers"
 merger2 = ZipBarrierMerger("merge_rares")
 merger2.InputSelection = gather2.OutputSelection
 merger2.OutputSelection = "/Event/RareMerges"
+worker = ZipBarrierExampleWorker("worker_rares")
+worker.InputSelection = merger2.OutputSelection
+worker.InputLocation = prod.OutputLocation
+worker.OutputLocation = "/Event/ProcessedVector"
 
+# Select_42 is never created. gather3 has it last, gather4 has it first in the inputs to test corner cases of the merging step.
 gather3 = ZipBarrierGatherer("gather_rares_")
 gather3.InputSelections = [sel.OutputSelection.Path
                            for sel in [sel3, sel4]] + ["/Event/Select_42"]
@@ -107,7 +115,18 @@ for a in topalgs:
     printer.InputSelection = a.OutputSelection.Path
     printers.append(printer)
 
+topalgs += [worker]
 topalgs += printers
+
+printsquares = PrintSquaredInts("PrintRareSquares")
+printsquares.InputLocation = worker.OutputLocation.Path
+printsquares.InputSelection = worker.InputSelection.Path
+printsquares_v = PrintIntsAndSquaredInts("PrintRareSquaresVerbose")
+printsquares_v.InputSelection = worker.InputSelection.Path
+printsquares_v.InputIntLocation = prod.OutputLocation.Path
+printsquares_v.InputSquaredIntLocation = worker.OutputLocation.Path
+
+topalgs += [printsquares, printsquares_v]
 
 app.TopAlg = topalgs
 

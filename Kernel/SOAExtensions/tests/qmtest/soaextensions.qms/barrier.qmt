@@ -17,7 +17,7 @@
 # Prerequisites: Working AnyData and MergingTransformer framework from Gaudi and set operations on ZipSelections
 #######################################################
 -->
-<extension class="SOAExtensions.apples_example" kind="test">
+<extension class="SOAExtensions.barrier_example" kind="test">
 <argument name="program"><text>gaudirun.py</text></argument>
 <argument name="args"><set><text>$SOAEXTENSIONSROOT/examples/options/BarrierExamples.py</text></set></argument>
 <argument name="use_temp_dir"><enumeral>true</enumeral></argument>
