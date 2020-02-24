@@ -140,9 +140,11 @@ namespace LHCb::Rec::PV {
       } else {
         using float_v = typename dType::float_v;
         std::array<float, dType::size> tmp;
-        // second requirement in the if statement should normally not matter (enough space reserved)
+        // should not be needed once https://gitlab.cern.ch/lhcb/LHCb/issues/77 is fixed
         if ( !( chunkposition + dType::size - 1 < m_vertices.capacity() ) ) {
-          throw GaudiException{"you done fucked up", "PrimaryVertices.h", StatusCode::FAILURE};
+          throw GaudiException{
+              "Insufficient space allocated during PrimaryVertices creation to perform SIMD operations",
+              "PrimaryVertices.h", StatusCode::FAILURE};
         }
         for ( std::size_t simdelement = 0; simdelement < dType::size && chunkposition + simdelement < m_vertices.size();
               simdelement++ ) {
@@ -200,10 +202,11 @@ namespace LHCb::Rec::PV {
         return m_vertices[i].m_position.z();
       } else {
         std::array<float, dType::size> tmp;
-        // second requirement in the if statement should normally not matter (enough space reserved)
-        // but asan claims it does
+        // should not be needed once https://gitlab.cern.ch/lhcb/LHCb/issues/77 is fixed
         if ( !( i + dType::size - 1 < m_vertices.capacity() ) ) {
-          throw GaudiException{"you done fucked up", "PrimaryVertices.h", StatusCode::FAILURE};
+          throw GaudiException{
+              "Insufficient space allocated during PrimaryVertices creation to perform SIMD operations",
+              "PrimaryVertices.h", StatusCode::FAILURE};
         }
         for ( std::size_t j = 0; j < dType::size && i + j < m_vertices.size(); j++ ) {
           tmp[j] = m_vertices[i + j].m_position.z();
