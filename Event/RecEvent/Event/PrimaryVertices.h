@@ -55,7 +55,7 @@ namespace LHCb::Rec::PV {
     PrimaryVertices( PrimaryVertices const& ) = delete;
     PrimaryVertices( PrimaryVertices&& )      = default;
 
-    // TODO: copied from example, intent unclear
+    // needed for the ThOr functor filtering framework
     PrimaryVertices( Zipping::ZipFamilyNumber family, PrimaryVertices const& /*unused*/ ) : m_zipIdentifier( family ) {}
 
     // container interfaces
