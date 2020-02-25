@@ -25,6 +25,11 @@
 #include <vector>
 
 namespace LHCb::Rec::PV {
+  namespace details {
+    // Copied from PrMuonPIDs.h
+    // TODO: move to PrZip.h???
+    constexpr int popcount( bool x ) { return x; }
+  } // namespace details
   class PrimaryVertices {
   public:
     struct Vertex {
@@ -70,6 +75,33 @@ namespace LHCb::Rec::PV {
     decltype( auto ) emplace_back( T&&... t ) {
       reserve( size() + 1 );
       return m_vertices.emplace_back( std::forward<T>( t )... );
+    }
+
+    /**
+     * @brief helper for filtering containers. copy&paste from PrMuonPIDs.h
+     *
+     * @param from   origin of the copied PVs
+     * @param at     at which position in the source container to start copying
+     * @param mask   which of the source PVs to copy
+     * @tparam dType SIMDWrapper that is used (specifies stride length
+     * @tparam Mask  type of mask (auto deduced)
+     *
+     * since the internal data structure is not SIMDified, this method does
+     * not exploit the full potential of our SIMDWrappers. The
+     * SIMDWrapper-compatible interface is just provided for caller
+     * convenience.
+     *
+     */
+    template <typename dType, typename Mask>
+    void copy_back( PrimaryVertices const& from, int at, Mask mask ) {
+      using details::popcount;
+      auto to_add   = popcount( mask );
+      auto old_size = size();
+      reserve( old_size + to_add );
+
+      for ( std::size_t i = 0; i < dType::size; ++i ) {
+        if ( testbit( mask, i ) ) { m_vertices.push_back( from.m_vertices[at + i] ); }
+      }
     }
 
     auto& back() { return m_vertices.back(); }
