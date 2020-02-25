@@ -98,6 +98,8 @@ namespace LHCb::Muon::DAQ {
     }
 #define OOPS( x ) throw_exception( x, __PRETTY_FUNCTION__ )
 
+    enum class Orientation { X, Y };
+
     template <typename Iterator>
     Iterator addCoordsCrossingMap( Iterator first, Iterator last, CommonMuonHits& commonHits,
                                    const ComputeTilePosition& compute, size_t nStations ) {
@@ -143,26 +145,21 @@ namespace LHCb::Muon::DAQ {
         }
       }
 
+      const auto append_hit = [&compute, s = nStations - 3]( auto& container, const Digit& digit,
+                                                             Orientation orientation ) {
+        auto pos = ( digit.tile.station() > s && digit.tile.region() == 0 )
+                       ? compute.tilePosition( digit.tile )
+                       : orientation == Orientation::X ? compute.stripXPosition( digit.tile )
+                                                       : compute.stripYPosition( digit.tile );
+        container.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
+                                digit.tdc );
+      };
       // copy over "uncrossed" digits
       unsigned m = 0;
-      for ( const Digit& digit : digitsOne ) {
-        if ( !used[m++] ) {
-          auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
-                           ? compute.tilePosition( digit.tile )
-                           : compute.stripXPosition( digit.tile ) );
-          commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
-                                   digit.tdc );
-        }
-      }
-      for ( const Digit& digit : digitsTwo ) {
-        if ( !used[m++] ) {
-          auto pos = ( ( digit.tile.station() > ( nStations - 3 ) && digit.tile.region() == 0 )
-                           ? compute.tilePosition( digit.tile )
-                           : compute.stripYPosition( digit.tile ) );
-          commonHits.emplace_back( digit.tile, pos.p.X(), pos.dX, pos.p.Y(), pos.dY, pos.p.Z(), 0., 1, digit.tdc,
-                                   digit.tdc );
-        }
-      }
+      for ( const Digit& digit : digitsOne )
+        if ( !used[m++] ) append_hit( commonHits, digit, Orientation::X );
+      for ( const Digit& digit : digitsTwo )
+        if ( !used[m++] ) append_hit( commonHits, digit, Orientation::Y );
       return last;
     }
 
@@ -298,7 +295,7 @@ namespace LHCb::Muon::DAQ {
         ; /* empty on purpose */
 
       stations[station] = CommonMuonStation{det, station, std::move( commonHits )};
-      station++;
+      ++station;
     }
     return MuonHitContainer{std::move( stations )};
   }
