@@ -10,12 +10,25 @@
  * or submit itself to any jurisdiction.
  */
 
+/** @file
+ *
+ * A producer that serve purely for the purpose of giving an example of a barrier
+ * using SOAExtensions. The algorithm produces a container of integers (in the
+ * ZipContainer format) and puts it onto TES, from where it is used as input
+ * into selections and transformers.
+ *
+ */
+
 #include "GaudiAlg/Producer.h"
 #include "barrier_types.h"
 
 namespace Examples {
   using BaseClass_t = Gaudi::Functional::Traits::BaseClass_t<::Algorithm>;
 
+  /** @class ZipBarrierExampleProducer Producer.cpp
+   *
+   * @brief Create a NumberContainer
+   */
   struct ZipBarrierExampleProducer final
       : Gaudi::Functional::Producer<std::tuple<NumberContainer, Zipping::ExportedSelection<>>(), BaseClass_t> {
 

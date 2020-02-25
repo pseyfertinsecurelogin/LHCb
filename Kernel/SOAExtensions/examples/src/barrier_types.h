@@ -10,6 +10,12 @@
  * or submit itself to any jurisdiction.
  */
 
+/** @file
+ *
+ * Data types that are used in the example how to use SOAExtensions for a barrier.
+ *
+ */
+
 #ifndef BARRIER_EXAMPLE_TYPES
 #define BARRIER_EXAMPLE_TYPES
 
@@ -21,14 +27,58 @@
 #include <vector>
 
 namespace Examples {
+  /*
+   * @class NumberField
+   *
+   * data type that is stored in a NumberContainer.
+   *
+   * @brief an alias for int for the type system (could be a track in a real LHCb example)
+   */
   SOAFIELD_TRIVIAL( NumberField, number, int );
+  /*
+   * @class NumberSkin
+   *
+   * @brief  data type that defines the proxy API of a NumberContainer.
+   */
   SOASKIN_TRIVIAL( NumberSkin, NumberField );
+  /*
+   * @class SquaredNumberField
+   *
+   * data type that is stored in a SquaredNumberContainer.
+   *
+   * @brief an alias for int for the type system (could be a MUON PID in a real LHCb example)
+   */
   SOAFIELD_TRIVIAL( SquaredNumberField, squarednumber, int );
+  /*
+   * @class SquaredNumberSkin
+   *
+   * @brief data type that defines the proxy API of a SquaredNumberContainer.
+   */
   SOASKIN_TRIVIAL( SquaredNumberSkin, SquaredNumberField );
+  /*
+   * @class NumberAndSquaredNumberSkin
+   *
+   * @brief data type that defines the proxy API of a NumberAndSquaredNumberContainer.
+   */
   SOASKIN_TRIVIAL( NumberAndSquaredNumberSkin, NumberField, SquaredNumberField );
 
-  using NumberContainer                 = Zipping::ZipContainer<SOA::Container<std::vector, NumberSkin>>;
-  using SquaredNumberContainer          = Zipping::ZipContainer<SOA::Container<std::vector, SquaredNumberSkin>>;
+  /*
+   * @class NumberContainer
+   *
+   * @brief container of NumberField objects in the SOAExtensions framework
+   */
+  using NumberContainer = Zipping::ZipContainer<SOA::Container<std::vector, NumberSkin>>;
+  /*
+   * @class SquaredNumberContainer
+   *
+   * @brief container of SquaredNumberField objects in the SOAExtensions framework
+   */
+  using SquaredNumberContainer = Zipping::ZipContainer<SOA::Container<std::vector, SquaredNumberSkin>>;
+  /*
+   * @class NumberAndSquaredNumberContainer
+   *
+   * @brief zip of a NumberContainer and a SquaredNumberContainer
+   */
   using NumberAndSquaredNumberContainer = Zipping::ZipContainer<SOA::Container<std::vector, SquaredNumberSkin>>;
 
 } // namespace Examples

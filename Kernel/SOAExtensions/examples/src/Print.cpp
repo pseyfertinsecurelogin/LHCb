@@ -10,12 +10,25 @@
  * or submit itself to any jurisdiction.
  */
 
+/** @file
+ *
+ * Consumers that serve purely for the purpose of giving an example of a barrier
+ * using SOAExtensions. All algorithms in this file are consumers and print
+ * contents of TES locations while taking selections (in the form of ExportedSelection)
+ * into account.
+ *
+ */
+
 #include "GaudiAlg/Consumer.h"
 #include "barrier_types.h"
 
 namespace Examples {
   using BaseClass_t = Gaudi::Functional::Traits::BaseClass_t<::Algorithm>;
 
+  /** @class PrintInts Print.cpp
+   *
+   * @brief Print the selected content of a NumberContainer
+   */
   struct PrintInts final
       : Gaudi::Functional::Consumer<void( const NumberContainer&, const Zipping::ExportedSelection<>& ), BaseClass_t> {
     PrintInts( const std::string& name, ISvcLocator* svcLoc )
@@ -33,6 +46,10 @@ namespace Examples {
 
   DECLARE_COMPONENT( PrintInts )
 
+  /** @class PrintSquaredInts Print.cpp
+   *
+   * @brief Print the selected content of a SquaredNumberContainer
+   */
   struct PrintSquaredInts final
       : Gaudi::Functional::Consumer<void( const SquaredNumberContainer&, const Zipping::ExportedSelection<>& ),
                                     BaseClass_t> {
@@ -51,6 +68,10 @@ namespace Examples {
 
   DECLARE_COMPONENT( PrintSquaredInts )
 
+  /** @class PrintIntsAndSquaredInts Print.cpp
+   *
+   * @brief Print the selected content of a (internally zipped) NumberContainer and a SquaredNumberContainer
+   */
   struct PrintIntsAndSquaredInts final
       : Gaudi::Functional::Consumer<void( const NumberContainer&, const SquaredNumberContainer&,
                                           const Zipping::ExportedSelection<>& ),

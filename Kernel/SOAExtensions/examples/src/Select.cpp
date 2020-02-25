@@ -10,12 +10,25 @@
  * or submit itself to any jurisdiction.
  */
 
+/** @file
+ *
+ * Selection algorithms (implemented as transformers in the GaudiFunctional framework)
+ *  that serve purely for the purpose of giving an example of a barrier
+ * using SOAExtensions. A container of "data" is read from the TES and a selection
+ * (in the form of ExportedSelection) is written back to TES.
+ *
+ */
+
 #include "GaudiAlg/Transformer.h"
 #include "barrier_types.h"
 
 namespace Examples {
   using BaseClass_t = Gaudi::Functional::Traits::BaseClass_t<::Algorithm>;
 
+  /** @class ZipBarrierExampleSelector Select.cpp
+   *
+   * @brief Select elements in a NumberContainer (if and only if they are divisible by "Divisor")
+   */
   struct ZipBarrierExampleSelector final
       : Gaudi::Functional::Transformer<
             Zipping::ExportedSelection<>( const NumberContainer&, const Zipping::ExportedSelection<>& ), BaseClass_t> {
@@ -27,7 +40,7 @@ namespace Examples {
                        },
                        KeyValue( "OutputSelection", "/Event/MySelection" ) ) {}
 
-    Gaudi::Property<int> m_divisor{this, "Divisor", 2};
+    Gaudi::Property<int> m_divisor{this, "Divisor", 2}; /// divisor that determines if a number is selected.
 
     Zipping::ExportedSelection<> operator()( const NumberContainer&              data,
                                              const Zipping::ExportedSelection<>& sel ) const override {

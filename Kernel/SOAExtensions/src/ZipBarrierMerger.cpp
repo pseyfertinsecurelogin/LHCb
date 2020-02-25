@@ -15,7 +15,8 @@
 #include <iterator> // std::iterator_traits
 #include <type_traits>
 
-/*  ZipBarrier algorithms:
+/** @file
+ * ZipBarrier algorithms:
  *
  *  - The Gatherer takes multiple optional input-containers (LHCb::Tracks for
  *    instance) (selections from different lines) and puts them into one big
@@ -32,6 +33,14 @@
  *  - The scatterer takes the output of the shared algorithm + the gatherer
  *    output + merger output how to scatter the inputs to the different lines
  *    again
+ */
+
+/** @class ZipBarrierMerger ZipBarrierMerger.cpp
+ *
+ * The Merger creates the union of all those containers to have one container
+ * where some shared algorithm can loop over (implemented for
+ * Keyed(SharedObject)Containers and Masks (with integral types of values 0 and 1)
+ *
  */
 
 struct ZipBarrierMerger final
