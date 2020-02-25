@@ -61,13 +61,13 @@ LoKi::Pids::GetPids::GetPids( const std::vector<std::string>& id ) : LoKi::AuxFu
 }
 // ============================================================================
 bool LoKi::Pids::GetPids::in_list( const long id ) const {
-  if ( m_ints.empty() && !m_names.empty() ) { getData(); }
+  if ( m_ints.empty() && !m_names.empty() ) { getData().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   return m_ints.end() != std::find( m_ints.begin(), m_ints.end(), id );
 }
 // ============================================================================
 bool LoKi::Pids::GetPids::in_abs_list( const long id ) const {
   //
-  if ( m_ints.empty() && !m_names.empty() ) { getData(); }
+  if ( m_ints.empty() && !m_names.empty() ) { getData().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   //
   return std::any_of( m_ints.begin(), m_ints.end(),
                       [absid = std::abs( id )]( const long i ) { return std::abs( i ) == absid; } );

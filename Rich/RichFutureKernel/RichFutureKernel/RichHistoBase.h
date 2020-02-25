@@ -71,14 +71,14 @@ namespace Rich::Future {
     /// Histogram Constructor initisalisations
     inline void initRichHistoConstructor() {
       // Place all histograms under RICH/ sub-dir
-      this->setProperty( "HistoTopDir", "RICH/" );
+      this->setProperty( "HistoTopDir", "RICH/" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
 
     /// Tuple Constructor initisalisations
     inline void initRichTupleConstructor() {
       // Place all tuples under RICH/ sub-dir
-      this->setProperty( "NTupleTopDir", "RICH/" );
-      this->setProperty( "NTupleLUN", "RICHTUPLE1" );
+      this->setProperty( "NTupleTopDir", "RICH/" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      this->setProperty( "NTupleLUN", "RICHTUPLE1" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
 
   public:

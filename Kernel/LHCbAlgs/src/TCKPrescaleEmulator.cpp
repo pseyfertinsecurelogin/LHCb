@@ -97,7 +97,7 @@ StatusCode TCKPrescaleEmulator::initialize() {
     fatal() << "FAILED TO GET PRESCALES FROM TCK! " << endmsg;
     return sc;
   }
-  getPrescalers();
+  getPrescalers().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   firstevent = true;
   return sc;
 }
@@ -149,7 +149,7 @@ StatusCode TCKPrescaleEmulator::execute() {
           report.setExecutionStage( 6 );
         }
       }
-      reports->insert( dec.first, report );
+      reports->insert( dec.first, report ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
     const_cast<HltDecReports*>( decreports )->setDecReports( reports->decReports() );
     if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << *decreports << endmsg;
@@ -183,7 +183,7 @@ const HltDecReports* TCKPrescaleEmulator::getReports() {
         warning() << "*************** DANGER ****************" << endmsg;
         lasttck = decreports->configuredTCK();
         sc      = getPrescalesFromTCK( lasttck, prescalesInMC, postscalesInMC, scaleProductsInMC );
-        updatePrescalers();
+        updatePrescalers().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
     } else {
       // If it's the first event save the tck to lasttck, update the prescalers
@@ -192,7 +192,7 @@ const HltDecReports* TCKPrescaleEmulator::getReports() {
         verbose() << "First event, getting prescales for MC using TCK " << lasttck << endmsg;
 
       sc = getPrescalesFromTCK( lasttck, prescalesInMC, postscalesInMC, scaleProductsInMC );
-      updatePrescalers();
+      updatePrescalers().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       firstevent = false;
     }
   }

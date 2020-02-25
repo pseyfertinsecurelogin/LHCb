@@ -47,7 +47,7 @@ template <class PBASE>
 void Rich::HistoBase<PBASE>::initRichHistoConstructor() {
   this->declareProperty( "NBins1DHistos", m_nBins1D = 100 );
   this->declareProperty( "NBins2DHistos", m_nBins2D = 50 );
-  this->setProperty( "HistoTopDir", "RICH/" );
+  this->setProperty( "HistoTopDir", "RICH/" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 
 //=============================================================================
@@ -55,8 +55,8 @@ void Rich::HistoBase<PBASE>::initRichHistoConstructor() {
 //=============================================================================
 template <class PBASE>
 void Rich::HistoBase<PBASE>::initRichTupleConstructor() {
-  this->setProperty( "NTupleTopDir", "RICH/" );
-  this->setProperty( "NTupleLUN", "RICHTUPLE1" );
+  this->setProperty( "NTupleTopDir", "RICH/" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  this->setProperty( "NTupleLUN", "RICHTUPLE1" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 
 //=============================================================================

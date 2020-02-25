@@ -410,17 +410,22 @@ void VeloDetChecker::CheckAllSensorGeometry() {
     const DeVeloSensor* sensor = ( *iSens );
     for ( unsigned int strip = 0; strip != sensor->numberOfStrips(); ++strip ) {
       Tuple sensorTuple = nTuple( "allStrips", "Every channel in the VeLo" );
-      sensorTuple->column( "sensor", sensor->sensorNumber() );
-      sensorTuple->column( "strip", strip );
-      sensorTuple->column( "VeloChannelID", LHCb::VeloChannelID( ( sensor->sensorNumber() ), strip ) );
-      sensorTuple->column( "isLeft", sensor->isLeft() );
-      sensorTuple->column( "isDownstream", sensor->isDownstream() );
-      sensorTuple->column( "isR", sensor->isR() );
-      sensorTuple->column( "isPhi", sensor->isPhi() );
-      sensorTuple->column( "isPileUp", sensor->isPileUp() );
-      sensorTuple->column( "routLine", sensor->StripToRoutingLine( strip ) );
-      sensorTuple->column( "chipChan", sensor->StripToChipChannel( strip ) );
-      sensorTuple->column( "stripNoise", sensor->stripNoise( strip ) );
+      sensorTuple->column( "sensor", sensor->sensorNumber() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "strip", strip ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "VeloChannelID", LHCb::VeloChannelID( ( sensor->sensorNumber() ), strip ) )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "isLeft", sensor->isLeft() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "isDownstream", sensor->isDownstream() )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "isR", sensor->isR() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "isPhi", sensor->isPhi() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "isPileUp", sensor->isPileUp() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "routLine", sensor->StripToRoutingLine( strip ) )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "chipChan", sensor->StripToChipChannel( strip ) )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->column( "stripNoise", sensor->stripNoise( strip ) )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> stripLimits;
       // Strip co-ordinates in the global frame
       stripLimits = sensor->globalStripLimits( strip );
@@ -428,25 +433,28 @@ void VeloDetChecker::CheckAllSensorGeometry() {
       globalBeginXYZ.push_back( stripLimits.first.x() );
       globalBeginXYZ.push_back( stripLimits.first.y() );
       globalBeginXYZ.push_back( stripLimits.first.z() );
-      sensorTuple->farray( "globalBeginXYZ", globalBeginXYZ, "n", 3 );
+      sensorTuple->farray( "globalBeginXYZ", globalBeginXYZ, "n", 3 )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       std::vector<double> globalEndXYZ;
       globalEndXYZ.push_back( stripLimits.second.x() );
       globalEndXYZ.push_back( stripLimits.second.y() );
       globalEndXYZ.push_back( stripLimits.second.z() );
-      sensorTuple->farray( "globalEndXYZ", globalEndXYZ, "n", 3 );
+      sensorTuple->farray( "globalEndXYZ", globalEndXYZ, "n", 3 )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       // Strip co-ordinates in the local frame
       stripLimits = sensor->localStripLimits( strip );
       std::vector<double> localBeginXYZ;
       localBeginXYZ.push_back( stripLimits.first.x() );
       localBeginXYZ.push_back( stripLimits.first.y() );
       localBeginXYZ.push_back( stripLimits.first.z() );
-      sensorTuple->farray( "localBeginXYZ", localBeginXYZ, "n", 3 );
+      sensorTuple->farray( "localBeginXYZ", localBeginXYZ, "n", 3 )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       std::vector<double> localEndXYZ;
       localEndXYZ.push_back( stripLimits.second.x() );
       localEndXYZ.push_back( stripLimits.second.y() );
       localEndXYZ.push_back( stripLimits.second.z() );
-      sensorTuple->farray( "localEndXYZ", localEndXYZ, "n", 3 );
-      sensorTuple->write();
+      sensorTuple->farray( "localEndXYZ", localEndXYZ, "n", 3 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      sensorTuple->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
   }
 }
@@ -458,28 +466,30 @@ void VeloDetChecker::CheckRSensorGeometry() {
   const DeVeloRType* rSensor = ( *m_velo->rSensorsBegin() );
   for ( unsigned int strip = 0; strip != rSensor->numberOfStrips(); ++strip ) {
     Tuple rTuple = nTuple( "rStrips", "R sensor" );
-    rTuple->column( "strip", strip );
-    rTuple->column( "sensor", rSensor->sensorNumber() );
-    rTuple->column( "z", rSensor->z() );
-    rTuple->column( "routLine", rSensor->StripToRoutingLine( strip ) );
-    rTuple->column( "chipChan", rSensor->StripToChipChannel( strip ) );
-    rTuple->column( "r", rSensor->rOfStrip( strip ) );
-    rTuple->column( "pitch", rSensor->rPitch( strip ) );
-    rTuple->column( "phiMin", rSensor->phiMinStrip( strip ) );
-    rTuple->column( "phiMax", rSensor->phiMaxStrip( strip ) );
-    rTuple->column( "length", rSensor->stripLength( strip ) );
+    rTuple->column( "strip", strip ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "sensor", rSensor->sensorNumber() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "z", rSensor->z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "routLine", rSensor->StripToRoutingLine( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "chipChan", rSensor->StripToChipChannel( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "r", rSensor->rOfStrip( strip ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "pitch", rSensor->rPitch( strip ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "phiMin", rSensor->phiMinStrip( strip ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "phiMax", rSensor->phiMaxStrip( strip ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->column( "length", rSensor->stripLength( strip ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> stripLimits = rSensor->globalStripLimits( strip );
     std::vector<double>                         beginXYZ;
     beginXYZ.push_back( stripLimits.first.x() );
     beginXYZ.push_back( stripLimits.first.y() );
     beginXYZ.push_back( stripLimits.first.z() );
-    rTuple->farray( "beginXYZ", beginXYZ, "n", 3 );
+    rTuple->farray( "beginXYZ", beginXYZ, "n", 3 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     std::vector<double> endXYZ;
     endXYZ.push_back( stripLimits.second.x() );
     endXYZ.push_back( stripLimits.second.y() );
     endXYZ.push_back( stripLimits.second.z() );
-    rTuple->farray( "endXYZ", endXYZ, "n", 3 );
-    rTuple->write();
+    rTuple->farray( "endXYZ", endXYZ, "n", 3 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    rTuple->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 }
 //==============================================================================
@@ -490,27 +500,33 @@ void VeloDetChecker::CheckPhiSensorGeometry() {
   const DeVeloPhiType* phiSensor = ( *m_velo->phiSensorsBegin() );
   for ( unsigned int strip = 0; strip != phiSensor->numberOfStrips(); ++strip ) {
     Tuple phiTuple = nTuple( "phiStrips", "Phi sensor" );
-    phiTuple->column( "strip", strip );
-    phiTuple->column( "sensor", phiSensor->sensorNumber() );
-    phiTuple->column( "z", phiSensor->z() );
-    phiTuple->column( "routLine", phiSensor->StripToRoutingLine( strip ) );
-    phiTuple->column( "chipChan", phiSensor->StripToChipChannel( strip ) );
-    phiTuple->column( "idealPhiOfStrip", phiSensor->idealPhiOfStrip( strip ) );
-    phiTuple->column( "angleOfStrip", phiSensor->angleOfStrip( strip ) );
-    phiTuple->column( "trgPhiDirectionOfStrip", phiSensor->trgPhiDirectionOfStrip( strip ) );
-    phiTuple->column( "length", phiSensor->stripLength( strip ) );
+    phiTuple->column( "strip", strip ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "sensor", phiSensor->sensorNumber() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "z", phiSensor->z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "routLine", phiSensor->StripToRoutingLine( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "chipChan", phiSensor->StripToChipChannel( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "idealPhiOfStrip", phiSensor->idealPhiOfStrip( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "angleOfStrip", phiSensor->angleOfStrip( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "trgPhiDirectionOfStrip", phiSensor->trgPhiDirectionOfStrip( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->column( "length", phiSensor->stripLength( strip ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> stripLimits = phiSensor->globalStripLimits( strip );
     std::vector<double>                         beginXYZ;
     beginXYZ.push_back( stripLimits.first.x() );
     beginXYZ.push_back( stripLimits.first.y() );
     beginXYZ.push_back( stripLimits.first.z() );
-    phiTuple->farray( "beginXYZ", beginXYZ, "n", 3 );
+    phiTuple->farray( "beginXYZ", beginXYZ, "n", 3 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     std::vector<double> endXYZ;
     endXYZ.push_back( stripLimits.second.x() );
     endXYZ.push_back( stripLimits.second.y() );
     endXYZ.push_back( stripLimits.second.z() );
-    phiTuple->farray( "endXYZ", endXYZ, "n", 3 );
-    phiTuple->write();
+    phiTuple->farray( "endXYZ", endXYZ, "n", 3 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    phiTuple->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 }
 //==============================================================================

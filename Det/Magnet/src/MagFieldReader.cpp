@@ -92,23 +92,23 @@ StatusCode MagFieldReader::execute() {
       for ( double x = m_xMin; x <= m_xMax; x += m_step ) {
         Gaudi::XYZPoint P( x, y, z );
 
-        m_pIMF->fieldVector( P, B );
+        m_pIMF->fieldVector( P, B ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
         // fill ntuple
-        nt1->column( "x", P.x() / Gaudi::Units::cm );
-        nt1->column( "y", P.y() / Gaudi::Units::cm );
-        nt1->column( "z", P.z() / Gaudi::Units::cm );
-        nt1->column( "Bx", B.x() / Gaudi::Units::tesla );
-        nt1->column( "By", B.y() / Gaudi::Units::tesla );
-        nt1->column( "Bz", B.z() / Gaudi::Units::tesla );
+        nt1->column( "x", P.x() / Gaudi::Units::cm ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        nt1->column( "y", P.y() / Gaudi::Units::cm ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        nt1->column( "z", P.z() / Gaudi::Units::cm ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        nt1->column( "Bx", B.x() / Gaudi::Units::tesla ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        nt1->column( "By", B.y() / Gaudi::Units::tesla ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        nt1->column( "Bz", B.z() / Gaudi::Units::tesla ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-        nt1->write();
+        nt1->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
     }
 
     Gaudi::XYZPoint P0( 0.0, 0.0, z );
     Gaudi::XYZPoint P02( 0.0, 0.0, z );
-    m_pIMF->fieldVector( P0, B );
+    m_pIMF->fieldVector( P0, B ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
       debug() << "Magnetic Field at (" << P0.x() << ", " << P0.y() << ", " << P0.z()
@@ -149,15 +149,16 @@ void MagFieldReader::TestBdl() {
     double ty = gaussty();
     if ( fabs( tx ) < sigtx && fabs( ty ) < sigty ) {
 
-      bIntegrator->calculateBdlAndCenter( start, stop, tx, ty, zC, bdl );
+      bIntegrator->calculateBdlAndCenter( start, stop, tx, ty, zC, bdl )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-      nt2->column( "tx", tx );
-      nt2->column( "ty", ty );
-      nt2->column( "Bdlx", bdl.x() );
-      nt2->column( "Bdly", bdl.y() );
-      nt2->column( "Bdlz", bdl.z() );
-      nt2->column( "zCenter", zC );
-      nt2->write();
+      nt2->column( "tx", tx ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->column( "ty", ty ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->column( "Bdlx", bdl.x() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->column( "Bdly", bdl.y() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->column( "Bdlz", bdl.z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->column( "zCenter", zC ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      nt2->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
   }
 

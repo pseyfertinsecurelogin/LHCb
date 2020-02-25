@@ -103,7 +103,7 @@ StatusCode LoKi::DecayBase::_parse( Decays::Node& node, std::string input ) cons
   // get symbols
   _s.symbols( _symbols );
   // get particles
-  _s.particles( ppSvc(), _particles );
+  _s.particles( ppSvc(), _particles ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   // parse the node:
   StatusCode sc = Decays::Parsers::parse( node, input, _symbols, _particles, err.stream() );
   if ( sc.isFailure() ) {
@@ -143,7 +143,7 @@ StatusCode LoKi::DecayBase::_parse( Decays::Parsers::Tree& tree, std::string inp
   // get symbols
   _s.symbols( _symbols );
   // get particles
-  _s.particles( ppSvc(), _particles );
+  _s.particles( ppSvc(), _particles ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   // parse the node:
   StatusCode sc = Decays::Parsers::parse( tree, input, _symbols, _particles, err.stream() );
   if ( sc.isFailure() ) {
@@ -219,14 +219,14 @@ Decays::Node LoKi::DecayBase::node( const std::string& descriptor ) const {
   StatusCode   sc    = _parse( _node, descriptor );
   //
   if ( sc.isFailure() ) {
-    Error( "Error from _parse('" + descriptor + "')", sc );
+    Error( "Error from _parse('" + descriptor + "')", sc ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return Decays::Nodes::Invalid(); // RETURN
   }
   if ( _node.valid() ) { return _node; } // RETURN
   // try to validate it:
   sc = _node.validate( ppSvc() );
   if ( sc.isFailure() ) {
-    Error( "Unable to validate '" + descriptor + "'", sc );
+    Error( "Unable to validate '" + descriptor + "'", sc ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return Decays::Nodes::Invalid(); // RETURN
   }
   return _node; // REUTRN

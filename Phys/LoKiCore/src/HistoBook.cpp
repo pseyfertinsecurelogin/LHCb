@@ -59,7 +59,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const std::string& path, const Gaudi:
   //
   if ( !svc ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( path ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid IHistogramSvc" );
+                         Gaudi::Utils::toString( hist ) + "): invalid IHistogramSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // check the existing histogram:
@@ -70,7 +71,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const std::string& path, const Gaudi:
   histo = Gaudi::Histos::book( svc, path, hist );
   if ( !histo ) {
     LoKi::Report::Error( "LoKi::HistoBook::book('" + path + "'," + Gaudi::Utils::toString( hist ) +
-                         "): invalid AIDA::IHistogramID" );
+                         "): invalid AIDA::IHistogramID" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -101,7 +103,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const std::string& dir, const GaudiAl
   //
   if ( !svc ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( dir ) + "," + Gaudi::Utils::toString( id ) +
-                         "," + Gaudi::Utils::toString( hist ) + "): invalid IHistogramSvc" );
+                         "," + Gaudi::Utils::toString( hist ) + "): invalid IHistogramSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // check the existing histogram:
@@ -118,7 +121,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const std::string& dir, const GaudiAl
   //
   if ( !histo ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( dir ) + "," + Gaudi::Utils::toString( id ) +
-                         "," + Gaudi::Utils::toString( hist ) + "): invaild AIDA::IHistogramID" );
+                         "," + Gaudi::Utils::toString( hist ) + "): invaild AIDA::IHistogramID" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -201,14 +205,16 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const GaudiHistoAlg* alg, const Gaudi
                                            const Gaudi::Histo1DDef& hist ) {
   if ( !alg ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid GaudiHistoAlg" );
+                         Gaudi::Utils::toString( hist ) + "): invalid GaudiHistoAlg" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
   if ( !alg->produceHistos() ) {
     LoKi::Report::Warning( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
                            Gaudi::Utils::toString( hist ) + ")," + " histos are disabled for GaudiHistoAlg: '" +
-                           alg->name() + "'" );
+                           alg->name() + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // book the histogram:
@@ -216,7 +222,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const GaudiHistoAlg* alg, const Gaudi
   //
   if ( !histo ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogram1D" );
+                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogram1D" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -239,14 +246,16 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const GaudiHistoTool* tool, const Gau
                                            const Gaudi::Histo1DDef& hist ) {
   if ( !tool ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid GaudiHistoTool" );
+                         Gaudi::Utils::toString( hist ) + "): invalid GaudiHistoTool" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
   if ( !tool->produceHistos() ) {
     LoKi::Report::Warning( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
                            Gaudi::Utils::toString( hist ) + ")," + " histos are disabled for GaudiHistoTool: '" +
-                           tool->name() + "'" );
+                           tool->name() + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // book the histogram:
@@ -254,7 +263,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const GaudiHistoTool* tool, const Gau
   //
   if ( !histo ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogramID" );
+                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogramID" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -277,7 +287,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const IHistoTool* tool, const GaudiAl
                                            const Gaudi::Histo1DDef& hist ) {
   if ( !tool ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid IHistoTool" );
+                         Gaudi::Utils::toString( hist ) + "): invalid IHistoTool" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // book the histogram:
@@ -285,7 +296,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const IHistoTool* tool, const GaudiAl
   //
   if ( !histo ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogramID" );
+                         Gaudi::Utils::toString( hist ) + "): invalid AIDA::IHistogramID" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -307,7 +319,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const IAlgContextSvc* svc, const Gaud
                                            const Gaudi::Histo1DDef& hist ) {
   if ( !svc ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( id ) + "," +
-                         Gaudi::Utils::toString( hist ) + "): invalid IAlgContextSvc" );
+                         Gaudi::Utils::toString( hist ) + "): invalid IAlgContextSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   GaudiHistoAlg* alg = Gaudi::Utils::getHistoAlg( svc );
@@ -330,7 +343,8 @@ AIDA::IHistogram1D* LoKi::HistoBook::book( const Gaudi::Histo1DDef& hist, const 
   //
   if ( !svc ) {
     LoKi::Report::Error( "LoKi::HistoBook::book(" + Gaudi::Utils::toString( hist ) + "," +
-                         Gaudi::Utils::toString( id ) + "): invalid IAlgContextSvc" );
+                         Gaudi::Utils::toString( id ) + "): invalid IAlgContextSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr; // RETURN
   }
   return book( svc, id, hist );

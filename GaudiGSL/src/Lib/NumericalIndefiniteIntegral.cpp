@@ -101,7 +101,9 @@ namespace Genfun {
         , m_size( size )
         , m_argument( function.dimensionality() ) {
       if ( GaudiMath::Integration::Fixed == m_rule ) { m_rule = GaudiMath::Integration::Default; }
-      if ( m_index >= m_DIM ) { Exception( "::constructor: invalid variable index" ); }
+      if ( m_index >= m_DIM ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
     }
     // ========================================================================
 
@@ -135,7 +137,9 @@ namespace Genfun {
         //
         , m_size( size )
         , m_argument( function.dimensionality() ) {
-      if ( m_index >= m_DIM ) { Exception( "::constructor: invalid variable index" ); }
+      if ( m_index >= m_DIM ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       m_points.push_back( a );
       std::sort( m_points.begin(), m_points.end() );
       m_points.erase( std::unique( m_points.begin(), m_points.end() ), m_points.end() );
@@ -167,7 +171,9 @@ namespace Genfun {
         , m_epsrel( epsrel )
         , m_size( size )
         , m_argument( function.dimensionality() ) {
-      if ( m_index >= m_DIM ) { Exception( "::constructor: invalid variable index" ); }
+      if ( m_index >= m_DIM ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
     }
     // ========================================================================
 
@@ -209,7 +215,9 @@ namespace Genfun {
       m_error  = GSL_POSINF;
 
       // check the argument
-      if ( 1 != m_DIM ) { Exception( "operator(): invalid argument size " ); };
+      if ( 1 != m_DIM ) {
+        Exception( "operator(): invalid argument size " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
       m_argument[0] = argument;
       return ( *this )( m_argument );
@@ -220,7 +228,9 @@ namespace Genfun {
     /// Derivatives
     // ========================================================================
     Genfun::Derivative NumericalIndefiniteIntegral::partial( unsigned int idx ) const {
-      if ( idx >= m_DIM ) { Exception( "::partial(i): invalid variable index " ); };
+      if ( idx >= m_DIM ) {
+        Exception( "::partial(i): invalid variable index " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
       if ( idx != m_index ) {
         const AbsFunction& aux = NumericalDerivative( *this, idx );
         return Genfun::FunctionNoop( &aux );
@@ -241,7 +251,9 @@ namespace Genfun {
       m_error  = GSL_POSINF;
 
       // check the argument
-      if ( argument.dimension() != m_DIM ) { Exception( "operator(): invalid argument size " ); };
+      if ( argument.dimension() != m_DIM ) {
+        Exception( "operator(): invalid argument size " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
       // copy the argument
       for ( size_t i = 0; i < m_DIM; ++i ) { m_argument[i] = argument[i]; }
@@ -270,11 +282,11 @@ namespace Genfun {
         case GaudiMath::Integration::AdaptiveSingular:
           return QAGS( &F1 );
         default:
-          Exception( "::operator(): invalid type " );
+          Exception( "::operator(): invalid type " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         }
         break;
       default:
-        Exception( "::operator(): invalid category " );
+        Exception( "::operator(): invalid category " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
       return 0;
     }
@@ -287,7 +299,9 @@ namespace Genfun {
       if ( !m_ws ) {
         m_ws.reset( new _Workspace() );
         m_ws->ws = gsl_integration_workspace_alloc( size() );
-        if ( !m_ws->ws ) { Exception( "allocate()::invalid workspace" ); };
+        if ( !m_ws->ws ) {
+          Exception( "allocate()::invalid workspace" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        };
       }
       return m_ws.get();
     }
@@ -298,7 +312,7 @@ namespace Genfun {
     // ========================================================================
     double NumericalIndefiniteIntegral::QAGI( _Function* F ) const {
       // check the argument
-      if ( !F ) { Exception( "::QAGI: invalid function" ); }
+      if ( !F ) { Exception( "::QAGI: invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       const double x = m_argument[m_index];
 
@@ -314,7 +328,7 @@ namespace Genfun {
         ierror = gsl_integration_qagil( F->fn, x, m_epsabs, m_epsrel, size(), ws()->ws, &m_result, &m_error );
         break;
       default:
-        Exception( "::QAGI: invalid mode" );
+        Exception( "::QAGI: invalid mode" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       };
 
       if ( ierror ) { gsl_error( "NumericalIndefiniteIntegral::QAGI", __FILE__, __LINE__, ierror ); }
@@ -327,7 +341,7 @@ namespace Genfun {
     // adaptive integration with known singular points
     // ========================================================================
     double NumericalIndefiniteIntegral::QAGP( _Function* F ) const {
-      if ( !F ) { Exception( "QAGP::invalid function" ); }
+      if ( !F ) { Exception( "QAGP::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       const double x = m_argument[m_index];
       if ( m_a == x ) {
@@ -373,7 +387,7 @@ namespace Genfun {
     // non-adaptive integration
     // ========================================================================
     double NumericalIndefiniteIntegral::QNG( _Function* F ) const {
-      if ( !F ) { Exception( "QNG::invalid function" ); }
+      if ( !F ) { Exception( "QNG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       const double x = m_argument[m_index];
       if ( m_a == x ) {
@@ -405,7 +419,7 @@ namespace Genfun {
     // simple adaptive integration
     // ========================================================================
     double NumericalIndefiniteIntegral::QAG( _Function* F ) const {
-      if ( !F ) { Exception( "QAG::invalid function" ); }
+      if ( !F ) { Exception( "QAG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       const double x = m_argument[m_index];
       if ( m_a == x ) {
@@ -440,7 +454,7 @@ namespace Genfun {
     // adaptive integration with singularities
     // ========================================================================
     double NumericalIndefiniteIntegral::QAGS( _Function* F ) const {
-      if ( !F ) { Exception( "QAG::invalid function" ); }
+      if ( !F ) { Exception( "QAG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       const double x = m_argument[m_index];
       if ( m_a == x ) {

@@ -184,17 +184,17 @@ void OTMultiBXRawBankDecoder::handle( const Incident& incident ) {
 }
 
 size_t OTMultiBXRawBankDecoder::totalNumberOfHits() const {
-  if ( !m_hitdata->isDecoded() ) decodeAll();
+  if ( !m_hitdata->isDecoded() ) decodeAll().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return m_hitdata->totalNumberOfHits();
 }
 
 LHCb::OTLiteTimeRange OTMultiBXRawBankDecoder::decodeModule( const LHCb::OTChannelID& moduleid ) const {
-  if ( !m_hitdata->isDecoded() ) decodeAll();
+  if ( !m_hitdata->isDecoded() ) decodeAll().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return m_hitdata->module( moduleid.station(), moduleid.layer(), moduleid.quarter(), moduleid.module() ).range();
 }
 
 StatusCode OTMultiBXRawBankDecoder::decode( LHCb::OTLiteTimeContainer& ottimes ) const {
-  if ( !m_hitdata->isDecoded() ) decodeAll();
+  if ( !m_hitdata->isDecoded() ) decodeAll().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   auto numhits = m_hitdata->totalNumberOfHits();
   ottimes.clear();
   ottimes.reserve( numhits );
@@ -266,7 +266,7 @@ StatusCode OTMultiBXRawBankDecoder::decode( OTDAQ::RawEvent& otrawevent ) const 
 }
 
 LHCb::OTLiteTime OTMultiBXRawBankDecoder::time( LHCb::OTChannelID channel ) const {
-  if ( !m_hitdata->isDecoded() ) decodeAll();
+  if ( !m_hitdata->isDecoded() ) decodeAll().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   const LocalHelpers::ModuleHitData& moduledata = m_hitdata->module( channel );
   // if we would sort them, we could use a binary search ...
   auto jhit = std::find_if( moduledata.begin(), moduledata.end(),

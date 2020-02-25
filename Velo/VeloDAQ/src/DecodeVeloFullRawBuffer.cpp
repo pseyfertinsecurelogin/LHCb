@@ -120,9 +120,9 @@ StatusCode DecodeVeloFullRawBuffer::execute() {
 
   if ( m_isDebug ) debug() << "==> Execute" << endmsg;
   //
-  getData();
+  getData().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   // decode ADC, Pedestals and EvtInfos data
-  decodeData();
+  decodeData().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   sortAndWriteDecodedData();
   resetMemory();
   //

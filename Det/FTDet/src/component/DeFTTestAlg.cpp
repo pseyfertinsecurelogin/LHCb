@@ -59,15 +59,15 @@ StatusCode DeFTTestAlg::execute() {
     Gaudi::XYZPoint pIn  = aHit->entry();
     Gaudi::XYZPoint pOut = aHit->exit();
 
-    tuple->column( "Hit_X", pMid.X() );
-    tuple->column( "Hit_Y", pMid.Y() );
-    tuple->column( "Hit_Z", pMid.Z() );
-    tuple->column( "HitIn_X", pIn.X() );
-    tuple->column( "HitIn_Y", pIn.Y() );
-    tuple->column( "HitIn_Z", pIn.Z() );
-    tuple->column( "HitOut_X", pOut.X() );
-    tuple->column( "HitOut_Y", pOut.Y() );
-    tuple->column( "HitOut_Z", pOut.Z() );
+    tuple->column( "Hit_X", pMid.X() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "Hit_Y", pMid.Y() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "Hit_Z", pMid.Z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitIn_X", pIn.X() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitIn_Y", pIn.Y() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitIn_Z", pIn.Z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitOut_X", pOut.X() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitOut_Y", pOut.Y() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    tuple->column( "HitOut_Z", pOut.Z() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     // Make DeFT checks
     if ( msgLevel( MSG::DEBUG ) ) {
@@ -84,31 +84,34 @@ StatusCode DeFTTestAlg::execute() {
     /// check isInside FT
     bool isInsideFT = m_deFT->isInside( pMid );
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Global Point " << pMid << "; isInside =  " << isInsideFT << endmsg;
-    tuple->column( "InFT", isInsideFT );
+    tuple->column( "InFT", isInsideFT ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     /// test findStation method
     const DeFTStation* pStation = m_deFT->findStation( pMid );
     lVolName                    = ( pStation ? pStation->geometry()->lvolumeName() : "" );
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Found Station: " << lVolName << endmsg;
-    tuple->column( "StationID", ( pStation ? pStation->stationID() : -1 ) );
+    tuple->column( "StationID", ( pStation ? pStation->stationID() : -1 ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     /// test findLayer method
     const DeFTLayer* pLayer = m_deFT->findLayer( pMid );
     lVolName                = ( pLayer ? pLayer->geometry()->lvolumeName() : "" );
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Found Layer  : " << lVolName << endmsg;
-    tuple->column( "LayerID", ( pLayer ? pLayer->layerID() : -1 ) );
+    tuple->column( "LayerID", ( pLayer ? pLayer->layerID() : -1 ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     /// test findModule method
     const DeFTModule* pModule = m_deFT->findModule( pMid );
     lVolName                  = ( pModule ? pModule->geometry()->lvolumeName() : "" );
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Found Module  : " << lVolName << endmsg;
-    tuple->column( "ModuleID", ( pModule ? pModule->moduleID() : -1 ) );
+    tuple->column( "ModuleID", ( pModule ? pModule->moduleID() : -1 ) )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     /// test findMat method
     const DeFTMat* pMat = m_deFT->findMat( pMid );
     lVolName            = ( pMat ? pMat->geometry()->lvolumeName() : "" );
     if ( msgLevel( MSG::DEBUG ) ) debug() << "Found Mat  : " << lVolName << endmsg;
-    tuple->column( "MatID", ( pMat ? pMat->matID() : -1 ) );
+    tuple->column( "MatID", ( pMat ? pMat->matID() : -1 ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     // ok, write tuple row
     StatusCode status = tuple->write();

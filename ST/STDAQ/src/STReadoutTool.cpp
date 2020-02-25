@@ -59,7 +59,7 @@ StatusCode STReadoutTool::initialize() {
 
 StatusCode STReadoutTool::finalize() {
 
-  if ( m_writeXML ) writeMappingToXML();
+  if ( m_writeXML ) writeMappingToXML().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return base_class::finalize();
 }
 
@@ -223,7 +223,7 @@ std::vector<LHCb::STChannelID> STReadoutTool::sectorIDs( const STTell1ID board )
   if ( theBoard ) {
     sectors.insert( sectors.begin(), theBoard->sectorIDs().begin(), theBoard->sectorIDs().end() );
   } else {
-    Error( "Failed to find Board", StatusCode::SUCCESS, 100 );
+    Error( "Failed to find Board", StatusCode::SUCCESS, 100 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
   return sectors;
 }

@@ -118,7 +118,7 @@ StatusCode TurboPrescaler::execute() {
           }
         }
       }
-      reports->insert( totName, report );
+      reports->insert( totName, report ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
 
     setFilterPassed( m_filter ? globalPass : true );
@@ -257,13 +257,13 @@ void TurboPrescaler::updatePrescalers() {
         const double ratio = j->second / i.second;
         if ( ratio <= 1.0 ) {
           DoubleProperty acceptFractionProperty( "AcceptFraction", ratio );
-          pre->setProperty( acceptFractionProperty );
+          pre->setProperty( acceptFractionProperty ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         } else {
           warning() << "*********************************************************************************" << endmsg;
           warning() << "OUTPUT HAS LARGER ACCEPTFRACTION THAN INPUT, CANNOT CREATE EVENTS. LEAVING AS UNITY" << endmsg;
           warning() << "*********************************************************************************" << endmsg;
           DoubleProperty acceptFractionProperty( "AcceptFraction", 1.0 );
-          pre->setProperty( acceptFractionProperty );
+          pre->setProperty( acceptFractionProperty ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         }
       }
     }

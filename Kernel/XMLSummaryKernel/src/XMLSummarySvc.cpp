@@ -289,8 +289,8 @@ void XMLSummarySvc::handle( const Incident& incident ) {
 
     PyGILGuard gil;
     PyObject_CallMethod( m_summary, chr( "set_step" ), chr( "s" ), chr( "execute" ) );
-    printXML();
-    writeXML();
+    printXML().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    writeXML().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 
 #endif // GAUDI_FILE_INCIDENTS

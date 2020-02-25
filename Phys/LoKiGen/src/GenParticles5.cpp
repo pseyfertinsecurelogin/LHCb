@@ -57,14 +57,16 @@ namespace LoKi {
     double Flight::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( !p ) {
-        Error( "HepMC::GenParticle* points to NULL, return -1*km " );
+        Error( "HepMC::GenParticle* points to NULL, return -1*km " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1 * Gaudi::Units::km;
       }
       // end vertex
       const HepMC::GenVertex* ev = p->end_vertex();
       //
       if ( !ev ) {
-        Error( "HepMC::GenParticle::end_vertex points to NULL, return +1*km " );
+        Error( "HepMC::GenParticle::end_vertex points to NULL, return +1*km " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return Gaudi::Units::km;
       }
       //
@@ -73,13 +75,15 @@ namespace LoKi {
         //
         const HepMC::GenEvent* evt = p->parent_event();
         if ( !evt ) {
-          Error( "HepMC::GenParticle::parent_event points to NULL, return -1*km " );
+          Error( "HepMC::GenParticle::parent_event points to NULL, return -1*km " )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           return -1 * Gaudi::Units::km;
         }
         //
         v0 = evt->signal_process_vertex();
         if ( !v0 ) {
-          Error( "HepMC::GenEvent::signal_process_vertex points to NULL, return -1*km " );
+          Error( "HepMC::GenEvent::signal_process_vertex points to NULL, return -1*km " )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           return -1 * Gaudi::Units::km;
         }
         //
@@ -87,7 +91,8 @@ namespace LoKi {
         //
         v0 = p->production_vertex();
         if ( !v0 ) {
-          Error( "HepMC::GenParticle::production_vertex points to NULL, return -1*km " );
+          Error( "HepMC::GenParticle::production_vertex points to NULL, return -1*km " )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           return -1 * Gaudi::Units::km;
         }
         //

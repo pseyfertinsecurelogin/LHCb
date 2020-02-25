@@ -124,7 +124,7 @@ public:
     if ( m_validRuns.find( rci->runNumber() ) == end( m_validRuns ) ) {
       error() << "Database not up-to-date. No valid data for run " << rci->runNumber() << " at "
               << when.format( false, "%Y-%m-%d %H:%M:%S" ) << "." << when.nanoformat() << " UTC" << endmsg;
-      m_evtProc->stopRun();
+      m_evtProc->stopRun().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
   }
 

@@ -59,7 +59,7 @@ Gaudi::Math::GSL::EigenSystem::eigenValues( const ROOT::Math::SMatrix<T, D, D, R
                                             const bool sorted ) const {
   ROOT::Math::SVector<T, D> result;
   StatusCode                sc = eigenValues( mtrx, result, sorted );
-  if ( sc.isFailure() ) { Exception( sc ); }
+  if ( sc.isFailure() ) { Exception( sc ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   return result;
 }
 // ============================================================================

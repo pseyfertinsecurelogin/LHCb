@@ -76,7 +76,8 @@ namespace LoKi {
     double Count::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( !p ) {
-        Error( "HepMC::GenParticle* points to NULL, return -1000 " );
+        Error( "HepMC::GenParticle* points to NULL, return -1000 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000;
       }
       //
@@ -93,7 +94,7 @@ namespace LoKi {
                                            : count_parts( p->end_vertex(), m_range, m_cut ); // RETURN
       default:
         // =
-        Error( "Invalid HepMC::Ityerator range, return -900 " );
+        Error( "Invalid HepMC::Ityerator range, return -900 " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -900;
       }
     }
@@ -155,7 +156,8 @@ namespace LoKi {
     bool Has::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( !p ) {
-        Error( "HepMC::GenParticle* points to NULL, return false" );
+        Error( "HepMC::GenParticle* points to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //
@@ -172,7 +174,7 @@ namespace LoKi {
                                            : has_parts( p->end_vertex(), m_range, m_cut ); // RETURN
       default:
         // =
-        Error( "Invalid HepMC::Ityerator range, return false" );
+        Error( "Invalid HepMC::Ityerator range, return false" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
     }

@@ -409,7 +409,8 @@ void* RawDataCnvSvc::openIO( CSTR fname, CSTR mode ) const {
       return ent.release();
     }
   }
-  error( "Unknown openmode " + mode + " for MDF file :" + fname );
+  error( "Unknown openmode " + mode + " for MDF file :" + fname )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return nullptr;
 }
 

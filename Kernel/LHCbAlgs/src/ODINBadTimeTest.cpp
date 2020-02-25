@@ -79,7 +79,7 @@ namespace LHCbAlgsTests {
   StatusCode ODINBadTimeTest::finalize() {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
-    releaseTool( m_evtTimeTool );
+    releaseTool( m_evtTimeTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     m_evtTimeTool = nullptr;
 
     return GaudiAlgorithm::finalize(); // must be called after all other actions

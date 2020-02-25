@@ -117,7 +117,7 @@ namespace LoKi {
       // evaluate the result
       if ( 0 < m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
       if ( 0 == value ) {
-        this->Error( " ZERO in NEGATIVE power! return -1.e+9" );
+        this->Error( " ZERO in NEGATIVE power! return -1.e+9" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1.e+9;
       }
       //

@@ -90,7 +90,7 @@ StatusCode EqSolverPAlg::execute() {
   arg[2] = 5;
 
   // Call of the method
-  m_publicTool->solver( function, arg );
+  m_publicTool->solver( function, arg ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   log << endmsg;
   log << "START OF THE METHOD" << endmsg;
   log << "SOLUTION FOUND AT: " << endmsg;
@@ -111,8 +111,8 @@ StatusCode EqSolverPAlg::finalize() {
   MsgStream log( msgSvc(), name() );
   log << MSG::INFO << "==> Finalize" << endmsg;
 
-  toolSvc()->releaseTool( m_publicTool );
-  toolSvc()->releaseTool( m_privateTool );
+  toolSvc()->releaseTool( m_publicTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  toolSvc()->releaseTool( m_privateTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return StatusCode::SUCCESS;
 }

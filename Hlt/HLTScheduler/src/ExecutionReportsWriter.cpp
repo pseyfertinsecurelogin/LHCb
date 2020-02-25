@@ -112,7 +112,8 @@ LHCb::HltDecReports ExecutionReportsWriter::operator()( EventContext const& evtC
   for ( const auto& item : m_name_indices ) {
     const auto& decision_name       = std::get<0>( item );
     const auto& [node_idx, ann_idx] = std::get<1>( item );
-    reports.insert( decision_name, {NodeStates[node_idx].passed, 0, 0, 0, ann_idx} );
+    reports.insert( decision_name, {NodeStates[node_idx].passed, 0, 0, 0, ann_idx} )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
   return reports; // write down something better?
 }

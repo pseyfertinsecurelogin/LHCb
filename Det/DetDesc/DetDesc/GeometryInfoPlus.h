@@ -224,12 +224,12 @@ public:
 
   /// (reference to) container of children IGeometryInfo
   inline IGeometryInfo::IGIChildrens& childIGeometryInfos() override {
-    if ( UNLIKELY( !m_gi_childLoaded ) ) loadChildren();
+    if ( UNLIKELY( !m_gi_childLoaded ) ) loadChildren().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return m_gi_childrens;
   }
   /// (reference to) container of children IGeometryInfo
   inline const IGeometryInfo::IGIChildrens& childIGeometryInfos() const override {
-    if ( UNLIKELY( !m_gi_childLoaded ) ) loadChildren();
+    if ( UNLIKELY( !m_gi_childLoaded ) ) loadChildren().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return m_gi_childrens;
   }
   /// iterators for manipulation of daughter elements

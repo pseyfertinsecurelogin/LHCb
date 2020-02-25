@@ -373,7 +373,7 @@ StatusCode AlgorithmCorrelations::printTable( void ) {
   always() << endmsg;
 
   if ( msgLevel( MSG::VERBOSE ) ) {
-    printList();
+    printList().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     for ( const auto& srm : m_AlgoMatrices ) {
       std::string a1, a2;
@@ -437,6 +437,6 @@ double AlgorithmCorrelations::algoRate( const std::string& name ) const {
       return ( m_nEvents > 0 ? (double)srm.getFullStatistics() / (double)m_nEvents : 0 );
     }
   }
-  Error( "Could not find algorithm " + name );
+  Error( "Could not find algorithm " + name ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return -1;
 }

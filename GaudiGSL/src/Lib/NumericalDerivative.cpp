@@ -62,7 +62,9 @@ namespace Genfun {
         , m_argument( function.dimensionality() )
         , m_result( GSL_NEGINF )
         , m_error( GSL_POSINF ) {
-      if ( m_index >= m_DIM ) { Exception( "::constructor invalid variable index " ); };
+      if ( m_index >= m_DIM ) {
+        Exception( "::constructor invalid variable index " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
     }
     // ========================================================================
 
@@ -93,7 +95,9 @@ namespace Genfun {
     /// Derivatives
     // ========================================================================
     Genfun::Derivative NumericalDerivative::partial( unsigned int idx ) const {
-      if ( idx >= m_DIM ) { Exception( "::partial(i): invalid variable index" ); }
+      if ( idx >= m_DIM ) {
+        Exception( "::partial(i): invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       const AbsFunction& aux = NumericalDerivative( *this, idx, type() );
       return FunctionNoop( &aux );
     }
@@ -108,7 +112,9 @@ namespace Genfun {
       m_error  = GSL_POSINF;
 
       // check the argument
-      if ( argument.dimension() != m_DIM ) { Exception( "::operator():invalid argument size" ); };
+      if ( argument.dimension() != m_DIM ) {
+        Exception( "::operator():invalid argument size" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
       /// copy the argument
       {
@@ -136,7 +142,8 @@ namespace Genfun {
         ierrno = gsl_diff_backward( &F, x, &m_result, &m_error );
         break;
       default:
-        Exception( "::operator(): invalid diffrentiation type " );
+        Exception( "::operator(): invalid diffrentiation type " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
 
       if ( ierrno ) { gsl_error( " NumericalDerivative:: the error from gsl_diff_XXXX", __FILE__, __LINE__, ierrno ); }
@@ -154,7 +161,9 @@ namespace Genfun {
       m_error  = GSL_POSINF;
 
       // check the argument
-      if ( 1 != m_DIM ) { Exception( "operator(): invalid argument size " ); }
+      if ( 1 != m_DIM ) {
+        Exception( "operator(): invalid argument size " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       Argument arg( 1 );
       arg[0] = argument;

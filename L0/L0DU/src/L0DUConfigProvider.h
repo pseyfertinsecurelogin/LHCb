@@ -40,7 +40,7 @@ public:
   LHCb::L0DUConfig* config( long tck = LHCb::L0DUTemplateConfig::TCKValue, std::string slot = "T0" ) override {
     if ( !m_uptodate ) {
       reset();
-      update();
+      update().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
     if ( slot.empty() ) slot = "T0";
     // first : handle TEMPLATE configuration
@@ -72,7 +72,7 @@ public:
   LHCb::L0DUConfigs* configs( std::string slot = "T0" ) override {
     if ( !m_uptodate ) {
       reset();
-      update();
+      update().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
     return m_configs[slot.empty() ? "T0" : slot].get();
   }

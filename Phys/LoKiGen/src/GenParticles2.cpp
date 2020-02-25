@@ -103,7 +103,7 @@ namespace LoKi {
                                                    Decays::IGenDecay::iTree::Collection& vct ) const {
       //
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL" );
+        Error( "HepMC::GenParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE; //                                 RETURN
       }
       //
@@ -112,14 +112,16 @@ namespace LoKi {
       //
       const HepMC::GenParticle* c1 = m_first.child( p );
       if ( 0 == c1 ) {
-        Error( "Invalid first  child : '" + m_first.printOut() + "'" );
+        Error( "Invalid first  child : '" + m_first.printOut() + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE;
       }
       vct.push_back( c1 );
       //
       const HepMC::GenParticle* c2 = m_second.child( p );
       if ( 0 == c2 ) {
-        Error( "Invalid second child : '" + m_second.printOut() + "'" );
+        Error( "Invalid second child : '" + m_second.printOut() + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE;
       }
       vct.push_back( c2 );
@@ -131,7 +133,7 @@ namespace LoKi {
     // ==========================================================================
     double PolarizationAngle::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL" );
+        Error( "HepMC::GenParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return 1.0; //                                 RETURN
       }
       //
@@ -140,11 +142,13 @@ namespace LoKi {
       StatusCode sc = getComponents12( p, vct );
 
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'", sc );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'", sc )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 2 != vct.size() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'", sc );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'", sc )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -233,7 +237,7 @@ namespace LoKi {
     StatusCode SinChi::getComponents34( const HepMC::GenParticle* p, Decays::IGenDecay::iTree::Collection& vct ) const {
       //
       if ( 0 == p ) {
-        Error( "LHCb::GenParticle* points to NULL" );
+        Error( "LHCb::GenParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE; //                                 RETURN
       }
       //
@@ -242,14 +246,16 @@ namespace LoKi {
       //
       const HepMC::GenParticle* c1 = m_tree3.child( p );
       if ( 0 == c1 ) {
-        Error( "Invalid third  child : '" + m_tree3.printOut() + "'" );
+        Error( "Invalid third  child : '" + m_tree3.printOut() + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE;
       }
       vct.push_back( c1 );
       //
       const HepMC::GenParticle* c2 = m_tree4.child( p );
       if ( 0 == c2 ) {
-        Error( "Invalid fourth child : '" + m_tree4.printOut() + "'" );
+        Error( "Invalid fourth child : '" + m_tree4.printOut() + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE;
       }
       vct.push_back( c2 );
@@ -263,13 +269,13 @@ namespace LoKi {
       vct.clear();
       StatusCode sc1 = getComponents12( p, vct );
       if ( sc1.isFailure() ) {
-        Error( "Unable to pickup 12-components", sc1 );
+        Error( "Unable to pickup 12-components", sc1 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return sc1;
       }
       //
       StatusCode sc2 = getComponents34( p, vct );
       if ( sc2.isFailure() ) {
-        Error( "Unable to pickup 34-components", sc2 );
+        Error( "Unable to pickup 34-components", sc2 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return sc2;
       }
       return StatusCode::SUCCESS;
@@ -283,7 +289,8 @@ namespace LoKi {
     // ============================================================================
     double SinChi::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -293,11 +300,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the angle chi:
@@ -355,7 +364,8 @@ namespace LoKi {
     // ============================================================================
     double CosChi::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -365,11 +375,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the angle chi:
@@ -427,7 +439,8 @@ namespace LoKi {
     // ============================================================================
     double AngleChi::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -437,11 +450,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the angle chi:
@@ -499,7 +514,8 @@ namespace LoKi {
     // ============================================================================
     double CosThetaTr::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -509,11 +525,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the angle chi:
@@ -571,7 +589,8 @@ namespace LoKi {
     // ============================================================================
     double SinPhiTr::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -581,11 +600,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the angle chi:
@@ -643,7 +664,8 @@ namespace LoKi {
     // ============================================================================
     double CosPhiTr::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -653,11 +675,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the cos(phi_tr)
@@ -715,7 +739,8 @@ namespace LoKi {
     // ============================================================================
     double AnglePhiTr::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'Invaild Angle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       //
@@ -725,11 +750,13 @@ namespace LoKi {
       StatusCode sc = getComponents( p, daughters );
       //
       if ( sc.isFailure() ) {
-        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (1), return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       if ( 4 != daughters.size() ) {
-        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" );
+        Error( "Unable to get proper decay components (2) , return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       // finally evaluate the phi_tr

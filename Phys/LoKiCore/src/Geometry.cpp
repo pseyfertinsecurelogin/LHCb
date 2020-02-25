@@ -64,7 +64,8 @@ double LoKi::Geometry::distance( const LoKi::Point3D& point, const LoKi::Point3D
   // v0*v0
   const double v02 = v0.Mag2();
   if ( 0 == v02 ) {
-    LoKi::Report::Error( "distance: 'v0' is invalid! return 'InvalidDistance'" );
+    LoKi::Report::Error( "distance: 'v0' is invalid! return 'InvalidDistance'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidDistance;
   }
   //   p0-p

@@ -186,7 +186,8 @@ StatusCode MCEventTypeFinder::findDecayType( LHCb::EventTypeSet& found, const LH
   LHCb::MCParticle::ConstVector dummyvec( 0 ); // stupid way, but is the only way!
   dummyvec.push_back( mc_mother );
 
-  if ( m_mcFinders.empty() ) fillMCTools(); // fill the vector of tools on the first use
+  if ( m_mcFinders.empty() )
+    fillMCTools().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // fill the vector of tools on the first use
   std::vector<IMCDecayFinder*>::const_iterator iD = m_mcFinders.begin();
   std::vector<bool>::const_iterator            iB = m_decProdCut.begin();
 
@@ -237,7 +238,7 @@ StatusCode MCEventTypeFinder::findDecayType( LHCb::EventTypeSet&                
     // in acceptance?
     if ( ( *iParticle )->pseudoRapidity() < m_acc_min || ( *iParticle )->pseudoRapidity() > m_acc_max ) continue;
 
-    findDecayType( found, ( *iParticle ) );
+    findDecayType( found, ( *iParticle ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
   // check for dimuon events
 
@@ -267,7 +268,7 @@ StatusCode MCEventTypeFinder::findDecayType( LHCb::EventTypeSet& found, const LH
     if ( !p ) continue;
     // in acceptance?
     if ( p->pseudoRapidity() < m_acc_min || p->pseudoRapidity() > m_acc_max ) continue;
-    findDecayType( found, p );
+    findDecayType( found, p ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 
   if ( dimuon( mc_mothers ) ) appendDiMuon( found ); // it's a dimuon event
@@ -428,7 +429,7 @@ void MCEventTypeFinder::appendParents( LHCb::EventTypeSet& aset ) {
   }
 
   for ( LHCb::EventTypeSet::const_iterator n = parents.begin(); n != parents.end(); n++ ) {
-    parentEventTypes( *n, aset ); // append parents to aset
+    parentEventTypes( *n, aset ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // append parents to aset
   }
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "parents appended, final size:" << aset.size() << endmsg;
 

@@ -94,7 +94,7 @@ StatusCode L0MuonFromRawTrans::execute() {
   // Loop over time slots
   for ( int bx = -7; bx < 8; ++bx ) {
 
-    setProperty( "RootInTES", timeSlot( bx ) );
+    setProperty( "RootInTES", timeSlot( bx ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     if ( !exist<LHCb::RawEvent>( LHCb::RawEventLocation::Default ) ) continue;
 
     sc = decodeRawBanks();

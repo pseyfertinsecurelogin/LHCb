@@ -360,7 +360,8 @@ StatusCode L0DURawBankMonitor::execute() {
       // reset processor data from L0DU location when changed
       if ( m_locs.size() != 0 ) {
         config->decrementCounters(); // replay the same event with different input data
-        m_emuTool->process( config, m_fromRaw->L0ProcessorDatas() );
+        m_emuTool->process( config, m_fromRaw->L0ProcessorDatas() )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
     }
 

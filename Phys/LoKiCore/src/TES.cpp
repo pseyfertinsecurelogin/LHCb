@@ -308,14 +308,15 @@ double LoKi::TES::Counter::operator()() const {
   //
   const auto* data = LoKi::TES::get_<Gaudi::Numbers>( *this );
   if ( !data ) {
-    Error( "No valid object is found for TES location, return 'bad'" );
+    Error( "No valid object is found for TES location, return 'bad'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return m_bad;
   }
   //
   const Gaudi::Numbers::Map& m     = data->counters();
   auto                       ifind = m.find( counter() );
   if ( m.end() == ifind ) {
-    Error( "No counter is found, return 'bad'" );
+    Error( "No counter is found, return 'bad'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return m_bad; // RETURN
   }
   //
@@ -543,14 +544,15 @@ double LoKi::TES::Stat::operator()() const {
   //
   const auto* data = LoKi::TES::get_<Gaudi::Counters>( *this );
   if ( !data ) {
-    Error( "No valid object is found for TES location, return 'bad'" );
+    Error( "No valid object is found for TES location, return 'bad'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return bad();
   }
   //
   const Gaudi::Counters::Map& m     = data->counters();
   auto                        ifind = m.find( counter() );
   if ( m.end() == ifind ) {
-    Error( "No counter is found, return 'bad'" );
+    Error( "No counter is found, return 'bad'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return bad(); // RETURN
   }
 

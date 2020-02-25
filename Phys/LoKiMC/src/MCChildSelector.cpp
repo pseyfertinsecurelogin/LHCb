@@ -223,10 +223,13 @@ StatusCode LoKi::MCChild::Selector::buildTree( const std::string& descriptor, co
   //
   m_finder = tool->tree( descriptor );
   //
-  toolSvc->releaseTool( tool ); // do not need the tool anymore
+  toolSvc->releaseTool( tool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // do not need the tool anymore
   //
   if ( !m_finder ) { return Error( "getTree: the tree is invalid:  '" + descriptor + "'" ); }
-  if ( !m_finder.marked() ) { Warning( "getTree: the tree is unmarked: '" + descriptor + "'" ); }
+  if ( !m_finder.marked() ) {
+    Warning( "getTree: the tree is unmarked: '" + descriptor + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
   //
   return StatusCode::SUCCESS;
 }
@@ -288,7 +291,7 @@ std::ostream& LoKi::MCChild::Selector::fillStream( std::ostream& s ) const {
 unsigned int LoKi::MCChild::Selector::children( const LHCb::MCParticle*        head,
                                                 LHCb::MCParticle::ConstVector& daughters ) const {
   if ( 0 == head ) {
-    Error( "children: LHCb::MCParticle* points to NULL" );
+    Error( "children: LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return 0; // RETURN
   }
   //
@@ -320,7 +323,7 @@ unsigned int LoKi::MCChild::Selector::children( const LHCb::MCParticle*        h
 const LHCb::MCParticle* LoKi::MCChild::Selector::child( const LHCb::MCParticle* head ) const {
   //
   if ( 0 == head ) {
-    Error( "child: LHCb::MCParticle points to NULL" );
+    Error( "child: LHCb::MCParticle points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return 0;
   }
   //
@@ -340,7 +343,10 @@ const LHCb::MCParticle* LoKi::MCChild::Selector::child( const LHCb::MCParticle* 
   //
   if ( daughters.empty() ) { return 0; } // REUTRN
   //
-  if ( 1 < daughters.size() ) { Warning( "child: >1 daughter particles are found, return the first" ); }
+  if ( 1 < daughters.size() ) {
+    Warning( "child: >1 daughter particles are found, return the first" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
   //
   return daughters[0];
 }

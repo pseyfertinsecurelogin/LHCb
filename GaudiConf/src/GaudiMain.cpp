@@ -39,7 +39,7 @@ int main( int argc, char** argv ) {
   // Get the input configuration file from arguments
   std::string opts = ( argc > 1 ) ? argv[1] : "";
 
-  propMgr->setProperty( "JobOptionsPath", opts );
+  propMgr->setProperty( "JobOptionsPath", opts ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   // Set the program name and version using macros defined in compilation flags
 #if defined APPNAME
@@ -50,10 +50,10 @@ int main( int argc, char** argv ) {
 #endif
 
   if ( opts != "" && opts.substr( opts.length() - 3, 3 ) == ".py" ) {
-    propMgr->setProperty( "EvtSel", "NONE" );
-    propMgr->setProperty( "JobOptionsType", "NONE" );
-    propMgr->setProperty( "DLLs", "['GaudiPython']" );
-    propMgr->setProperty( "Runable", "PythonScriptingSvc" );
+    propMgr->setProperty( "EvtSel", "NONE" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    propMgr->setProperty( "JobOptionsType", "NONE" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    propMgr->setProperty( "DLLs", "['GaudiPython']" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    propMgr->setProperty( "Runable", "PythonScriptingSvc" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 
   // Run the application manager and process events

@@ -175,7 +175,7 @@ StatusCode DeRichGasRadiator::updateProperties() {
   sc = initTabPropInterpolators();
 
   // Update the HLT ref index
-  generateHltRefIndex();
+  generateHltRefIndex().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return sc;
 }

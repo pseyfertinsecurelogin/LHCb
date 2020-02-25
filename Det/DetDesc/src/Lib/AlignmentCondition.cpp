@@ -47,7 +47,8 @@ AlignmentCondition::AlignmentCondition( std::vector<double> translation, std::ve
     log << MSG::VERBOSE << "Constructing AlignmentCondition from transformation parameters. classID " << classID()
         << endmsg;
 
-  setOffNominalTransformation( std::move( translation ), std::move( rotation ), std::move( pivot ) );
+  setOffNominalTransformation( std::move( translation ), std::move( rotation ), std::move( pivot ) )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 
 //=============================================================================

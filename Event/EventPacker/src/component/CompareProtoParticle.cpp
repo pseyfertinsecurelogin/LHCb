@@ -37,7 +37,9 @@ struct CompareProtoParticle
   void operator()( LHCb::ProtoParticles const& old, LHCb::ProtoParticles const& test ) const override {
     // check and return
     const LHCb::ProtoParticlePacker packer( this );
-    packer.check( old, test ).orThrow( "CompareProtoParticle failed", "CompareProtoParticle" );
+    packer.check( old, test )
+        .orThrow( "CompareProtoParticle failed", "CompareProtoParticle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 };
 

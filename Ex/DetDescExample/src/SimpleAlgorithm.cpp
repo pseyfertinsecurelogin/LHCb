@@ -187,7 +187,7 @@ StatusCode SimpleAlgorithm::finalize() {
   IDataManagerSvc* storeManager = svc<IDataManagerSvc>( "DetectorDataSvc" );
 
   /// Let's traverse the transient detector data store
-  storeManager->traverseTree( &agent );
+  storeManager->traverseTree( &agent ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }

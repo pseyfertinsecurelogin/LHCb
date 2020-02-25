@@ -74,7 +74,8 @@ std::ostream& LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, std::
                                          const LoKi::MCTypes::MCCuts& cut, const bool decayOnly, const int level,
                                          const std::string& blank ) {
   if ( 0 == particle ) {
-    LoKi::Report::Warning( "LoKi::printMCDecay, invalid particle" );
+    LoKi::Report::Warning( "LoKi::printMCDecay, invalid particle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return stream << " <NULL> "; // RETURN
   }
   //

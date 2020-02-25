@@ -124,9 +124,9 @@ int main() {
   //
   Gaudi::Math::GSL::Hesse hesse( &my_f, x, (void*)p, 0.5 );
 
-  if ( 0 == hesse.hesse() ) { hesse.calcHesse(); }
+  if ( 0 == hesse.hesse() ) { hesse.calcHesse().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   const gsl_matrix* h = hesse.hesse();
-  if ( 0 == hesse.cov2() ) { hesse.calcCov2(); }
+  if ( 0 == hesse.cov2() ) { hesse.calcCov2().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   const gsl_matrix* c = hesse.cov2();
 
   std::cout << " HESSE \n" << ( *h ) << std::endl;

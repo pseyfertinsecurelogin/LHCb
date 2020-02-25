@@ -654,7 +654,7 @@ StatusCode MuonRawBuffer::decodeNZSupp( const LHCb::RawBank* r ) {
 StatusCode MuonRawBuffer::dumpNZSupp( const LHCb::RawBank* r, unsigned int ode_num ) {
   unsigned int tell1Number = ( r )->sourceID();
   if ( tell1Number >= MuonDAQHelper_maxTell1Number ) return StatusCode::FAILURE;
-  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r );
+  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   for ( int iLink = 0; iLink < 24; iLink++ ) {
     unsigned int ODE_num = m_muonDet->getDAQInfo()->getODENumberInLink( tell1Number, iLink );
     if ( ODE_num == ode_num ) {
@@ -675,7 +675,7 @@ StatusCode MuonRawBuffer::getNZSupp( const LHCb::RawBank*                       
   int fix_size = ( c_NLink * 36 + 8 * 4 ) * 4;
   if ( r->size() != fix_size ) return StatusCode::FAILURE;
 
-  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r );
+  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   // now copy the ODE info in a more suitable format
   // first loop on ODE
@@ -727,7 +727,7 @@ MuonPPEventInfo MuonRawBuffer::getPPInfo( unsigned int tell1Number, unsigned int
 MuonODEData MuonRawBuffer::getODEData( const LHCb::RawBank* r, unsigned int link ) {
   if ( link > 23 ) return {};
   unsigned int tell1Number = ( r )->sourceID();
-  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r );
+  if ( !m_ODEAlreadyDecoded[tell1Number] ) decodeNZSupp( r ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return ( m_ODEData[tell1Number * 24 + link] );
 }
 

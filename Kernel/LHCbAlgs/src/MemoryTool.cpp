@@ -29,7 +29,7 @@ MemoryTool::MemoryTool( const std::string& type, const std::string& name, const 
     : base_class( type, name, parent )
     , m_totMem( counter( "Total Memory/MB" ) )
     , m_delMem( counter( "Delta Memory/MB" ) ) {
-  setProperty( "HistoPrint", false );
+  setProperty( "HistoPrint", false ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   declareInterface<IGenericTool>( this );
 }
 // ============================================================================

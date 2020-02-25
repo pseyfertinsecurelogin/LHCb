@@ -136,7 +136,7 @@ std::tuple<LHCb::HltSelReports, LHCb::HltObjectSummary::Container> HltSelReports
         summary.addToInfo( std::to_string( temp1 ), temp2 );
     }
 
-    output.insert( "0#Candidates", std::move( summary ) );
+    output.insert( "0#Candidates", std::move( summary ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     Warning( "Version (99) indicates too many objects were requested to be saved. Returning debugging reports",
              StatusCode::SUCCESS, 20 )
         .ignore();

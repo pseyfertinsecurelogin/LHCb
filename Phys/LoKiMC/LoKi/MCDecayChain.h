@@ -120,7 +120,7 @@ namespace LoKi {
       //
       // invalid particle
       if ( 0 == particle ) {
-        Error( " LHCb::MCParticle* points to NULL" );
+        Error( " LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream; // RETURN
       }
       //
@@ -263,7 +263,7 @@ namespace LoKi {
                    const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid particle
       if ( 0 == particles ) {
-        Error( " LHCb::MCParticle::Container* points to NULL" );
+        Error( " LHCb::MCParticle::Container* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream; // RETURN
       }
       //

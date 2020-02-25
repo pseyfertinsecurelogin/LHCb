@@ -71,7 +71,7 @@ std::tuple<LHCb::HltSelReports, LHCb::HltObjectSummary::Container> HltSelReports
   for ( const auto& selReport : selReports ) {
     if ( std::find( std::begin( m_lines ), std::end( m_lines ), selReport.first ) != std::end( m_lines ) ) {
       auto clone = cloneSummary( selReport.second, clones );
-      outputSelReports.insert( selReport.first, *clone );
+      outputSelReports.insert( selReport.first, *clone ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
   }
 

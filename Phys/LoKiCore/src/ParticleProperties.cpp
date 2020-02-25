@@ -94,7 +94,8 @@ LHCb::ParticleID LoKi::Particles::pidFromName( const std::string& name ) {
   const LHCb::ParticleProperty* pp = ppFromName( name );
   if ( UNLIKELY( !pp ) ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::pidFromName:" ) +
-                         "LHCb::ParticleProperty* points to NULL for '" + name + "' return ParticleID() " );
+                         "LHCb::ParticleProperty* points to NULL for '" + name + "' return ParticleID() " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LHCb::ParticleID();
   }
   // update the map:
@@ -123,7 +124,8 @@ const LHCb::ParticleProperty* LoKi::Particles::_ppFromName( const std::string& n
   LHCb::IParticlePropertySvc* ppSvc    = services.ppSvc();
   if ( !ppSvc ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::pidFromName:" ) +
-                         "LHCb::IParticlePropertySvc* points to NULL!" + " return NULL " );
+                         "LHCb::IParticlePropertySvc* points to NULL!" + " return NULL " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   //
@@ -139,7 +141,8 @@ const LHCb::ParticleProperty* LoKi::Particles::ppFromName( const std::string& na
   const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromName( name );
   if ( !pp ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::ppFromName:" ) + "ParticleProperty* points to NULL for '" +
-                         name + "' return NULL " );
+                         name + "' return NULL " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   return pp;
@@ -155,7 +158,8 @@ const LHCb::ParticleProperty* LoKi::Particles::_ppFromPID( const LHCb::ParticleI
   LHCb::IParticlePropertySvc* ppSvc    = services.ppSvc();
   if ( !ppSvc ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::_ppFromPID(" ) + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::IParticlePropertySvc* points to NULL!" + " return NULL " );
+                         "): LHCb::IParticlePropertySvc* points to NULL!" + " return NULL " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   const LHCb::ParticleProperty* pp = ppSvc->find( pid );
@@ -183,7 +187,8 @@ const LHCb::ParticleProperty* LoKi::Particles::ppFromPID( const LHCb::ParticleID
   const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromPID( pid );
   if ( !pp ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::ppFromPID(" ) + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::ParticleProperty* points to NULL," + " return NULL " );
+                         "): LHCb::ParticleProperty* points to NULL," + " return NULL " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   return pp;
@@ -198,7 +203,8 @@ double LoKi::Particles::massFromPID( const LHCb::ParticleID& pid ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::ppFromPID( pid );
   if ( !pp ) {
     LoKi::Report::Error( " LoKi::Particles::massFromPID(" + boost::lexical_cast<std::string>( pid ) +
-                         ") : LHCb::ParticleProperty* points to NULL, return -1 * TeV " );
+                         ") : LHCb::ParticleProperty* points to NULL, return -1 * TeV " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return -1.0 * Gaudi::Units::TeV;
   }
   return pp->mass();
@@ -213,7 +219,8 @@ double LoKi::Particles::massFromName( const std::string& name ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::ppFromName( name );
   if ( !pp ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::massFromName('" ) + name + "')" +
-                         "LHCb::ParticleProperty* points to NULL, return -1 * TeV " );
+                         "LHCb::ParticleProperty* points to NULL, return -1 * TeV " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return -1.0 * Gaudi::Units::TeV;
   }
   return pp->mass();
@@ -228,13 +235,15 @@ std::string LoKi::Particles::antiParticle( const std::string& name ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::ppFromName( name );
   if ( !pp ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::antiParticle('" ) + name + "')" +
-                         "ParticleProperty* points to NULL, return '" + s_InvalidPIDName + "'" );
+                         "ParticleProperty* points to NULL, return '" + s_InvalidPIDName + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return s_InvalidPIDName;
   }
   const LHCb::ParticleProperty* antiPP = LoKi::Particles::antiParticle( pp );
   if ( !antiPP ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::antiParticle:" ) + "antiParticle('" + ( pp->particle() ) +
-                         "')points to NULL" + " return '" + s_InvalidPIDName + "'" );
+                         "')points to NULL" + " return '" + s_InvalidPIDName + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return s_InvalidPIDName;
   }
   return antiPP->particle();
@@ -248,13 +257,15 @@ std::string LoKi::Particles::antiParticle( const std::string& name ) {
 const LHCb::ParticleProperty* LoKi::Particles::antiParticle( const LHCb::ParticleProperty* pp ) {
   if ( !pp ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::antiParticle" ) +
-                         "ParticleProperty* points to NULL, return NULL" );
+                         "ParticleProperty* points to NULL, return NULL" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   const LHCb::ParticleProperty* antiPP = pp->antiParticle();
   if ( !antiPP ) {
     LoKi::Report::Error( std::string( " LoKi::Particles::antiParticle():" ) + "antiParticle('" + ( pp->particle() ) +
-                         "') points to NULL" + " return NULL" );
+                         "') points to NULL" + " return NULL" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   return antiPP;
@@ -271,14 +282,16 @@ LHCb::ParticleID LoKi::Particles::antiParticle( const LHCb::ParticleID& pid ) {
   //
   if ( !p1 ) {
     LoKi::Report::Error( " LoKi::Particles::antiParticle(" + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::ParticleProperty* points to NULL " + " return LHCb::ParticleID()  " );
+                         "): LHCb::ParticleProperty* points to NULL " + " return LHCb::ParticleID()  " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LHCb::ParticleID();
   }
   // get the anti particle
   const LHCb::ParticleProperty* antiPP = p1->antiParticle();
   if ( !antiPP ) {
     LoKi::Report::Error( " LoKi::Particles::antiParticle(" + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::ParticleProperty* points to NULL " + " return LHCb::ParticleID()  " );
+                         "): LHCb::ParticleProperty* points to NULL " + " return LHCb::ParticleID()  " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LHCb::ParticleID();
   }
   //
@@ -322,12 +335,14 @@ std::string LoKi::Particles::nameFromPID( const LHCb::ParticleID& pid ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromPID( pid );
   if ( !pp && 0 == pid.abspid() ) {
     LoKi::Report::Error( " LoKi::Particles::nameFromPID(" + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::ParticleProperty* points to NULL " + " return '" + s_InvalidPIDName + "'" );
+                         "): LHCb::ParticleProperty* points to NULL " + " return '" + s_InvalidPIDName + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return s_InvalidPIDName;
   } else if ( !pp ) {
     std::string invalid_name = Gaudi::Utils::toString( pid.pid() );
     LoKi::Report::Error( " LoKi::Particles::nameFromPID(" + boost::lexical_cast<std::string>( pid ) +
-                         "): LHCb::ParticleProperty* points to NULL " + " return 'Unknown(" + invalid_name + ")'" );
+                         "): LHCb::ParticleProperty* points to NULL " + " return 'Unknown(" + invalid_name + ")'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return "Unknown(" + invalid_name + ")";
   }
   // update the map
@@ -342,7 +357,8 @@ std::string LoKi::Particles::nameFromPID( const LHCb::ParticleID& pid ) {
 double LoKi::Particles::ctau( const std::string& name ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromName( name );
   if ( UNLIKELY( !pp ) ) {
-    LoKi::Report::Error( "LoKi::Particles::lifeTime('" + name + "'): ParticleProperty is NULL" );
+    LoKi::Report::Error( "LoKi::Particles::lifeTime('" + name + "'): ParticleProperty is NULL" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidTime;
   }
   //
@@ -357,7 +373,8 @@ double LoKi::Particles::ctau( const LHCb::ParticleID& pid ) {
   const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromPID( pid );
   if ( UNLIKELY( !pp ) ) {
     LoKi::Report::Error( "LoKi::Particles::lifeTime('" + boost::lexical_cast<std::string>( pid ) +
-                         "'): LHCb::ParticleProperty* is NULL" );
+                         "'): LHCb::ParticleProperty* is NULL" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidTime;
   }
   //

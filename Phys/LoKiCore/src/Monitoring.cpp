@@ -47,7 +47,8 @@ StatEntity* LoKi::Monitoring::getCounter( IStatSvc* csvc, const std::string& nam
   }
   //
   if ( !csvc ) {
-    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid IStatSvc" );
+    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid IStatSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr; // RETURN
   }
   // get the counter
@@ -56,7 +57,8 @@ StatEntity* LoKi::Monitoring::getCounter( IStatSvc* csvc, const std::string& nam
   const StatEntity* counter = stat.entity();
   //
   if ( !counter ) {
-    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid StatEntity" );
+    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid StatEntity" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr; // RETURN
   }
   //
@@ -77,7 +79,8 @@ StatEntity* LoKi::Monitoring::getCounter( IStatSvc* csvc, const std::string& nam
 StatEntity* LoKi::Monitoring::getCounter( GaudiAlgorithm* alg, const std::string& name ) {
   if ( !alg ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) +
-                         "): invalid GaudiAlgorithm" );
+                         "): invalid GaudiAlgorithm" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // get the counter
@@ -98,7 +101,8 @@ StatEntity* LoKi::Monitoring::getCounter( GaudiAlgorithm* alg, const std::string
 // ============================================================================
 StatEntity* LoKi::Monitoring::getCounter( GaudiTool* tool, const std::string& name ) {
   if ( !tool ) {
-    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid GaudiTool" );
+    LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) + "): invalid GaudiTool" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   // get the counter
@@ -126,7 +130,8 @@ StatEntity* LoKi::Monitoring::getCounter( const IAlgContextSvc* csvc, const std:
   //
   if ( !csvc ) {
     LoKi::Report::Error( "LoKi::Monitoring::getCounter(" + Gaudi::Utils::toString( name ) +
-                         "): invalid IAlgContextSvc" );
+                         "): invalid IAlgContextSvc" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr; // RETURN
   }
   // get GaudiAlgorithm for the context:

@@ -128,7 +128,7 @@ ILinePersistenceSvc::LineDecNames DecisionBankKiller::filteredLines( const LHCb:
     LHCb::HltDecReport dummy_report{true, turbo, 0, 1, static_cast<int>( report.intDecisionID() )};
 
     LHCb::HltDecReports dummy_hdr{};
-    dummy_hdr.insert( report_pair.first, dummy_report );
+    dummy_hdr.insert( report_pair.first, dummy_report ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     dummy_hdr.setConfiguredTCK( hdr.configuredTCK() );
     if ( m_lineFilterTool->predicate( dummy_hdr ) ) { lines.insert( report_pair.first ); }
   }

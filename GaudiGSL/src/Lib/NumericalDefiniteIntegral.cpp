@@ -123,8 +123,12 @@ namespace Genfun {
         , m_epsrel( epsrel )
         , m_size( size ) {
       if ( GaudiMath::Integration::Fixed == m_rule ) { m_rule = GaudiMath::Integration::Default; }
-      if ( function.dimensionality() < 2 ) { Exception( "::constructor: invalid dimensionality " ); }
-      if ( m_index >= function.dimensionality() ) { Exception( "::constructor: invalid variable index" ); }
+      if ( function.dimensionality() < 2 ) {
+        Exception( "::constructor: invalid dimensionality " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
+      if ( m_index >= function.dimensionality() ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       m_DIM      = function.dimensionality() - 1;
       m_argument = Argument( m_DIM );
@@ -155,8 +159,12 @@ namespace Genfun {
         , m_epsabs( epsabs )
         , m_epsrel( epsrel )
         , m_size( size ) {
-      if ( function.dimensionality() < 2 ) { Exception( "::constructor: invalid dimensionality " ); }
-      if ( m_index >= function.dimensionality() ) { Exception( "::constructor: invalid variable index" ); }
+      if ( function.dimensionality() < 2 ) {
+        Exception( "::constructor: invalid dimensionality " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
+      if ( m_index >= function.dimensionality() ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       m_DIM      = function.dimensionality() - 1;
       m_argument = Argument( m_DIM );
@@ -209,8 +217,12 @@ namespace Genfun {
         , m_epsabs( epsabs )
         , m_epsrel( epsrel )
         , m_size( size ) {
-      if ( function.dimensionality() < 2 ) { Exception( "::constructor: invalid dimensionality " ); }
-      if ( m_index >= function.dimensionality() ) { Exception( "::constructor: invalid variable index" ); }
+      if ( function.dimensionality() < 2 ) {
+        Exception( "::constructor: invalid dimensionality " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
+      if ( m_index >= function.dimensionality() ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       m_DIM      = function.dimensionality() - 1;
       m_argument = Argument( m_DIM );
@@ -256,8 +268,12 @@ namespace Genfun {
         , m_epsrel( epsrel )
         //
         , m_size( size ) {
-      if ( function.dimensionality() < 2 ) { Exception( "::constructor: invalid dimensionality " ); }
-      if ( m_index >= function.dimensionality() ) { Exception( "::constructor: invalid variable index" ); }
+      if ( function.dimensionality() < 2 ) {
+        Exception( "::constructor: invalid dimensionality " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
+      if ( m_index >= function.dimensionality() ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       m_DIM      = function.dimensionality() - 1;
       m_argument = Argument( m_DIM );
@@ -298,8 +314,12 @@ namespace Genfun {
         , m_epsabs( epsabs )
         , m_epsrel( epsrel )
         , m_size( size ) {
-      if ( function.dimensionality() < 2 ) { Exception( "::constructor: invalid dimensionality " ); }
-      if ( m_index >= function.dimensionality() ) { Exception( "::constructor: invalid variable index" ); }
+      if ( function.dimensionality() < 2 ) {
+        Exception( "::constructor: invalid dimensionality " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
+      if ( m_index >= function.dimensionality() ) {
+        Exception( "::constructor: invalid variable index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
 
       m_DIM      = function.dimensionality() - 1;
       m_argument = Argument( m_DIM );
@@ -342,7 +362,9 @@ namespace Genfun {
       m_error  = std::numeric_limits<double>::infinity();
 
       // check the argument
-      if ( 1 != m_DIM ) { Exception( "operator(): invalid argument size " ); };
+      if ( 1 != m_DIM ) {
+        Exception( "operator(): invalid argument size " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
       m_argument[0] = argument;
       return ( *this )( m_argument );
@@ -353,7 +375,9 @@ namespace Genfun {
     /// Derivatives
     // ========================================================================
     Genfun::Derivative NumericalDefiniteIntegral::partial( unsigned int idx ) const {
-      if ( idx >= m_DIM ) { Exception( "::partial(i): invalid variable index " ); };
+      if ( idx >= m_DIM ) {
+        Exception( "::partial(i): invalid variable index " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
       //
       const AbsFunction& aux = NumericalDerivative( *this, idx );
       return Genfun::FunctionNoop( &aux );
@@ -369,7 +393,9 @@ namespace Genfun {
       m_error  = std::numeric_limits<double>::infinity();
 
       // check the argument
-      if ( argument.dimension() != m_DIM ) { Exception( "operator(): invalid argument size " ); };
+      if ( argument.dimension() != m_DIM ) {
+        Exception( "operator(): invalid argument size " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
       // copy the argument
 
@@ -409,11 +435,11 @@ namespace Genfun {
         case GaudiMath::Integration::AdaptiveSingular:
           return QAGS( &F1 );
         default:
-          Exception( "::operator(): invalid type " );
+          Exception( "::operator(): invalid type " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         }
         break;
       default:
-        Exception( "::operator(): invalid category " );
+        Exception( "::operator(): invalid category " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
 
       return 0;
@@ -427,7 +453,9 @@ namespace Genfun {
       if ( !m_ws ) {
         m_ws.reset( new _Workspace() );
         m_ws->ws = gsl_integration_workspace_alloc( size() );
-        if ( !m_ws->ws ) { Exception( "allocate()::invalid workspace" ); };
+        if ( !m_ws->ws ) {
+          Exception( "allocate()::invalid workspace" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        };
       }
       return m_ws.get();
     }
@@ -438,7 +466,7 @@ namespace Genfun {
     // ========================================================================
     double NumericalDefiniteIntegral::QAGI( _Function* F ) const {
       // check the argument
-      if ( !F ) { Exception( "::QAGI: invalid function" ); }
+      if ( !F ) { Exception( "::QAGI: invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       // allocate workspace
       allocate();
@@ -452,7 +480,7 @@ namespace Genfun {
       } else if ( m_b == std::numeric_limits<double>::infinity() ) {
         ierror = gsl_integration_qagiu( F->fn, m_a, m_epsabs, m_epsrel, size(), ws()->ws, &m_result, &m_error );
       } else {
-        Exception( "::QAGI: invalid mode" );
+        Exception( "::QAGI: invalid mode" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       };
 
       if ( ierror ) { gsl_error( "NumericalDefiniteIntegral::QAGI", __FILE__, __LINE__, ierror ); }
@@ -465,7 +493,7 @@ namespace Genfun {
     // adaptive integration with known singular points
     // ========================================================================
     double NumericalDefiniteIntegral::QAGP( _Function* F ) const {
-      if ( !F ) { Exception( "QAGP::invalid function" ); }
+      if ( !F ) { Exception( "QAGP::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       // no known singular points ?
       if ( points().empty() ) { return QAGS( F ); }
@@ -487,7 +515,7 @@ namespace Genfun {
     // non-adaptive integration
     // ========================================================================
     double NumericalDefiniteIntegral::QNG( _Function* F ) const {
-      if ( !F ) { Exception( "QNG::invalid function" ); }
+      if ( !F ) { Exception( "QNG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       // integration limits
       const auto lim = std::minmax( m_a, m_b );
@@ -507,7 +535,7 @@ namespace Genfun {
     // simple adaptive integration
     // ========================================================================
     double NumericalDefiniteIntegral::QAG( _Function* F ) const {
-      if ( !F ) { Exception( "QAG::invalid function" ); }
+      if ( !F ) { Exception( "QAG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       // allocate workspace
       allocate();
@@ -530,7 +558,7 @@ namespace Genfun {
     // adaptive integration with singularities
     // ========================================================================
     double NumericalDefiniteIntegral::QAGS( _Function* F ) const {
-      if ( !F ) { Exception( "QAG::invalid function" ); }
+      if ( !F ) { Exception( "QAG::invalid function" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       if ( m_a == m_b ) {
         m_result = 0;

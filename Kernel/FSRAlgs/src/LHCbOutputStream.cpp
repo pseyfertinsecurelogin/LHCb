@@ -116,7 +116,9 @@ StatusCode LHCbOutputStream::initialize() {
   }
 
   if ( m_doPreLoadOpt ) {
-    for ( auto& j : m_optItemList ) { m_pDataProvider->addPreLoadItem( *j ); }
+    for ( auto& j : m_optItemList ) {
+      m_pDataProvider->addPreLoadItem( *j ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    }
   }
   log << MSG::INFO << "Data source: " << m_storeName << " output: " << m_output << endmsg;
 

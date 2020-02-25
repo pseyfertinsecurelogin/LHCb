@@ -95,7 +95,8 @@ StatusCode LoKi::Hybrid::GenEngineActor::connect( const LoKi::IGenHybridTool* fa
 // ============================================================================
 const LoKi::Context* LoKi::Hybrid::GenEngineActor::context() const {
   if ( m_stack.empty() ) {
-    LoKi::Report::Error( "LoKi::Hybrid::GenEngineActor::context: empty stack" );
+    LoKi::Report::Error( "LoKi::Hybrid::GenEngineActor::context: empty stack" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   const Entry& last = m_stack.top();

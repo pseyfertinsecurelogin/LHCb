@@ -70,7 +70,9 @@ StatusCode DumpHepMCTree::execute() {
           continue;
         }
       }
-      if ( log.isActive() ) { printDecay( signal, log.stream(), 0 ); }
+      if ( log.isActive() ) {
+        printDecay( signal, log.stream(), 0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
     }
   }
   log << endmsg;
@@ -86,8 +88,11 @@ StatusCode DumpHepMCTree::execute() {
 // ============================================================================
 StatusCode DumpHepMCTree::printDecay( HepMC::GenVertex* vertex, std::ostream& stream, unsigned int level ) const {
   if ( !vertex ) { return StatusCode::FAILURE; }
-  std::for_each( vertex->particles_begin( HepMC::children ), vertex->particles_end( HepMC::children ),
-                 [&]( const HepMC::GenParticle* p ) { DumpHepMCDecay::printDecay( p, stream, level ); } );
+  std::for_each(
+      vertex->particles_begin( HepMC::children ), vertex->particles_end( HepMC::children ),
+      [&]( const HepMC::GenParticle* p ) {
+        DumpHepMCDecay::printDecay( p, stream, level ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      } );
   return StatusCode::SUCCESS;
 }
 // ============================================================================

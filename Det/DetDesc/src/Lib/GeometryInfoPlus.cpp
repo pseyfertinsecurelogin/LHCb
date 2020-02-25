@@ -299,8 +299,8 @@ StatusCode GeometryInfoPlus::setLocalOffNominalDeltaMatrix( const Gaudi::Transfo
 //=============================================================================
 StatusCode GeometryInfoPlus::updateChildren() {
   for ( auto gi = this->childBegin(); gi != this->childEnd(); ++gi ) {
-    ( *gi )->cache();
-    ( *gi )->updateChildren();
+    ( *gi )->cache().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    ( *gi )->updateChildren().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
   return StatusCode::SUCCESS;
 }

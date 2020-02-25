@@ -199,7 +199,7 @@ StatusCode EqSolverIAlg::execute() {
   arg[2] = 29;
 
   // Call of the method
-  m_publicTool->solver( function, arg );
+  m_publicTool->solver( function, arg ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   info() << endmsg;
   info() << "START OF THE METHOD" << endmsg;
   info() << "SOLUTION FOUND AT: " << endmsg;
@@ -219,8 +219,8 @@ StatusCode EqSolverIAlg::finalize() {
 
   info() << "==> Finalize" << endmsg;
 
-  toolSvc()->releaseTool( m_publicTool );
-  toolSvc()->releaseTool( m_privateTool );
+  toolSvc()->releaseTool( m_publicTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  toolSvc()->releaseTool( m_privateTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return StatusCode::SUCCESS;
 }

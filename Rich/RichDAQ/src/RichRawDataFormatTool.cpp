@@ -301,7 +301,7 @@ const PDDataBank* RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Ve
   } else {
     std::ostringstream message;
     message << "Unknown RICH Raw Buffer version " << version << " -> No data bank";
-    Warning( message.str() );
+    Warning( message.str() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
 
@@ -1002,7 +1002,7 @@ void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& pdID, LHCb::
           std::ostringstream mess;
           mess << "L1HardID=" << l1ID << " L1Input=" << l1Input << " L0ID=" << l0ID << " " << ID
                << " is software SUPPRESSED";
-          Warning( mess.str(), StatusCode::SUCCESS );
+          Warning( mess.str(), StatusCode::SUCCESS ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         }
 
       } // loop over pixels

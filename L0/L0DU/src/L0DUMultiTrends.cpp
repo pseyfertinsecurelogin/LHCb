@@ -141,7 +141,7 @@ StatusCode L0DUMultiTrends::execute() {
     int               itck   = tck2int( *it );
     LHCb::L0DUConfig* config = m_config->config( itck );
     if ( !config ) continue;
-    m_emulator->process( config, m_datas );
+    m_emulator->process( config, m_datas ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     bin++;
     if ( m_dMon != 0 ) {
       if ( ( Physics & m_dMon ) != 0 && config->emulatedDecision( Physics ) )

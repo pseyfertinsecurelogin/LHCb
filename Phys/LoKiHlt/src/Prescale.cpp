@@ -98,8 +98,12 @@ LoKi::Odin::Prescale::Prescale( const double accept, const std::string& seed )
     , m_seed( seed )
     , m_initial() {
   m_initial = mixString( seed.size(), seed );
-  if ( 0 >= m_accept ) { Warning( "Non-positive 'AcceptFraction is specified" ); }
-  if ( 1 < m_accept ) { Warning( "'AcceptFraction exceeds 1" ); }
+  if ( 0 >= m_accept ) {
+    Warning( "Non-positive 'AcceptFraction is specified" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
+  if ( 1 < m_accept ) {
+    Warning( "'AcceptFraction exceeds 1" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
 }
 // =============================================================================
 // MANDATORY: clone method ("virtual constructor")

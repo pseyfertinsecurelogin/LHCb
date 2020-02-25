@@ -183,7 +183,7 @@ namespace Gaudi {
             std::string      pfn = c->pfn();
             if ( ( j = m_fidMap.find( pfn ) ) != m_fidMap.end() ) m_fidMap.erase( j );
             if ( c->isConnected() ) {
-              c->disconnect();
+              c->disconnect().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
               log << MSG::INFO << "Disconnect from dataset " << dsn << " [" << fid << "]" << endmsg;
             }
             delete i->second;
@@ -226,7 +226,7 @@ namespace Gaudi {
           MsgStream log( msgSvc(), name() );
           for ( auto& j : to_retire ) {
             IDataConnection* c = j->connection;
-            c->disconnect();
+            c->disconnect().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
             log << MSG::INFO << "Disconnect from dataset " << c->pfn() << " [" << c->fid() << "]" << endmsg;
           }
         }

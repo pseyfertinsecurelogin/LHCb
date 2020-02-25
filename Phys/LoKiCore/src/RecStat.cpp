@@ -63,7 +63,8 @@ bool LoKi::TES::HasRecSummary::operator()() const {
   const auto* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
   if ( !summary ) {
-    Error( "No LHCb::RecSummary is available at '" + location() + "'" );
+    Error( "No LHCb::RecSummary is available at '" + location() + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return false;
   }
   //
@@ -108,7 +109,8 @@ double LoKi::TES::RecSummary::operator()() const {
   const auto* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
   if ( !summary ) {
-    Error( "No LHCb::RecSummary is available at '" + location() + "'" );
+    Error( "No LHCb::RecSummary is available at '" + location() + "'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return m_bad;
   }
   //
