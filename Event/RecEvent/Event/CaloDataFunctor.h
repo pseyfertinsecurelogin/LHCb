@@ -17,6 +17,7 @@
 #include <cmath>
 #include <functional>
 #include <iterator>
+#include <optional>
 #include <type_traits>
 // ============================================================================
 // MathCore
@@ -510,8 +511,6 @@ namespace LHCb::CaloDataFunctor {
     e = 0;
     x = 0;
     y = 0;
-    // use counter
-    unsigned num = 0;
     // energy for position
     double epos = 0;
     // no detector
@@ -530,16 +529,18 @@ namespace LHCb::CaloDataFunctor {
         e += eDigit; // accumulate digit energy
       }
       if ( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) {
-        const Gaudi::XYZPoint& pos = de->cellCenter( digit->cellID() );
-        if ( !refPos ) refPos = pos;
         epos += eDigit; // accumulate digit energy for position
-        ++num;
-        x += eDigit * ( pos.x() - refPos->x() );
-        y += eDigit * ( pos.y() - refPos->y() );
+        const Gaudi::XYZPoint& pos = de->cellCenter( digit->cellID() );
+        if ( refPos ) {
+          x += eDigit * ( pos.x() - refPos->x() );
+          y += eDigit * ( pos.y() - refPos->y() );
+        } else {
+          refPos = pos;
+        }
       }
     }
     // at least one useful digit ?
-    if ( 0 == num ) { return StatusCode( 202 ); }
+    if ( !refPos ) { return StatusCode( 202 ); }
     // accumulated energy is NULL!
     if ( 0 == epos ) { return StatusCode( 203 ); }
     // rescale x and y
