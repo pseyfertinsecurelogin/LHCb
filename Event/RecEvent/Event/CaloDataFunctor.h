@@ -515,25 +515,27 @@ namespace LHCb::CaloDataFunctor {
     // energy for position
     double epos = 0;
     // no detector
-    if ( 0 == de ) { return StatusCode( 200 ); }
+    if ( !de ) { return StatusCode( 200 ); }
     // empty sequence
-    if ( 0 == de || begin == end ) { return StatusCode( 201 ); }
+    if ( begin == end ) { return StatusCode( 201 ); }
     // explicit loop over all entries
+    std::optional<Gaudi::XYZPoint> refPos{};
     for ( ; begin != end; ++begin ) {
       // extract the digit
       const LHCb::CaloDigit* digit = begin->digit();
       // skip nulls
-      if ( nullptr == digit ) { continue; }
+      if ( !digit ) { continue; }
       double eDigit = digit->e() * begin->fraction();
       if ( ( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) != 0 ) {
         e += eDigit; // accumulate digit energy
       }
       if ( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) {
+        const Gaudi::XYZPoint& pos = de->cellCenter( digit->cellID() );
+        if ( !refPos ) refPos = pos;
         epos += eDigit; // accumulate digit energy for position
         ++num;
-        const Gaudi::XYZPoint pos = de->cellCenter( digit->cellID() );
-        x += eDigit * pos.x();
-        y += eDigit * pos.y();
+        x += eDigit * ( pos.x() - refPos->x() );
+        y += eDigit * ( pos.y() - refPos->y() );
       }
     }
     // at least one useful digit ?
@@ -541,8 +543,8 @@ namespace LHCb::CaloDataFunctor {
     // accumulated energy is NULL!
     if ( 0 == epos ) { return StatusCode( 203 ); }
     // rescale x and y
-    x /= epos;
-    y /= epos;
+    x = refPos->x() + x / epos;
+    y = refPos->y() + y / epos;
     //
     return StatusCode::SUCCESS;
   }
