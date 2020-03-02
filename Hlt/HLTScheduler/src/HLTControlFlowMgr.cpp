@@ -315,7 +315,7 @@ StatusCode HLTControlFlowMgr::finalize() {
     }
   }
 
-  releaseEvtSelContext();
+  releaseEvtSelContext().ignore();
 
   auto sc2 = Service::finalize();
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
@@ -425,7 +425,8 @@ void HLTControlFlowMgr::push( EventContext&& evtContext ) {
           } catch ( ... ) {
             m_algExecStateSvc->updateEventStatus( true, evtContext );
             fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
-            Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure );
+            if ( !Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure ) )
+              warning() << "failed to set application return code to " << Gaudi::ReturnCode::AlgorithmFailure << endmsg;
             break;
           }
         }
@@ -595,7 +596,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   shutdown_threadpool();
   while ( not empty() ) pop();
 
-  releaseEvtSelContext();
+  releaseEvtSelContext().ignore();
 
   if ( UNLIKELY( !startTime ) ) {
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
