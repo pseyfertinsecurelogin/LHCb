@@ -81,7 +81,8 @@ namespace Zipping {
      *
      * @brief Generator for "unique" family numbers across all threads.
      *
-     * Uniqueness is only needed within each event. Generation disabled in optimized builds.
+     * Uniqueness is only needed within each event. Generation can be disabled
+     * by unsetting ZIPPING_SEMANTIC_CHECKS (e.g. for optimized builds).
      */
     class ZipFamilyNumberGenerator final {
       inline static std::atomic_uint64_t s_generator; ///< static tracker of used ZipFamilyNumbers
@@ -134,11 +135,20 @@ namespace Zipping {
    * @param others  remaining Zipping::ZipContainer<...>s that should be zipped
    *
    * @return true if all arguments belong to the same container family
+   *
+   * The check is only performed if ZIPPING_SEMANTIC_CHECKS defined.
    */
+#ifdef ZIPPING_SEMANTIC_CHECKS
   template <typename FIRST, typename... OTHERS>
   bool areSemanticallyCompatible( FIRST& first, OTHERS&... others ) {
     return ( ... && ( others.zipIdentifier() == first.zipIdentifier() ) );
   }
+#else
+  template <typename FIRST, typename... OTHERS>
+  constexpr bool areSemanticallyCompatible( FIRST&, OTHERS&... ) noexcept {
+    return true
+  }
+#endif
 
   /** Helper to check that the given set of containers are all the same size.
    */
