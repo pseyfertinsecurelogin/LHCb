@@ -113,11 +113,11 @@ namespace LoKi {
       // helper function
       LoKi::MCParticles::FromMCDecayTree fromDecay( first, last );
       for ( ; first != last; ++first ) {
-        fromDecay.remove( *first ); // remove 'self'
+        fromDecay.remove( *first ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // remove 'self'
         // use the helper function
-        const bool result = fromDecay( *first ); // evaluate the cut
-        fromDecay.add( *first );                 // add    'self'
-        if ( result ) { continue; }              // CONTINUE
+        const bool result = fromDecay( *first );                                         // evaluate the cut
+        fromDecay.add( *first ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // add    'self'
+        if ( result ) { continue; }                                                      // CONTINUE
         // it is a head of decay tree!
         std::iter_swap( output, first );
         ++output;

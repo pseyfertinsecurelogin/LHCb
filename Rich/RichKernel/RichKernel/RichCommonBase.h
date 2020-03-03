@@ -190,7 +190,7 @@ namespace Rich {
         if ( UNLIKELY( this->msgLevel( MSG::DEBUG ) ) ) {
           this->debug() << " Forced release for tool '" << pTool->name() << "'" << endmsg;
         }
-        this->release( pTool );
+        this->release( pTool ).ignore();
         pTool = nullptr;
       } else {
         this->Warning( "Attempt to release a NULL Tool pointer" ).ignore();

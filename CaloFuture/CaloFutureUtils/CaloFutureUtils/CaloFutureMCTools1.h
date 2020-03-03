@@ -370,7 +370,7 @@ namespace CaloFutureMCTools {
     // and use it!
     for ( const auto& entry : cluster->entries() ) {
       const LHCb::CaloDigit* digit = entry.digit();
-      if ( digit ) { evaluator( digit ); }
+      if ( digit ) { evaluator( digit ).ignore(); }
     }
 
     return StatusCode::SUCCESS;

@@ -189,7 +189,7 @@ void Object2MCLinker<SOURCE>::createLinks( const std::string& contName ) {
       }
       // Call the algorithm to get the table done
       debug() << "==> Executing Linker builder algorithm " << m_linkerAlg->name() << endmsg;
-      m_linkerAlg->sysExecute( Gaudi::Hive::currentContext() );
+      m_linkerAlg->sysExecute( Gaudi::Hive::currentContext() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       test = To( evtSvc(), nullptr, name );
     }
     if ( *contIt == contName ) m_linkTo = test;

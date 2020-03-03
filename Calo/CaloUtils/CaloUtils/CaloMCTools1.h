@@ -376,7 +376,7 @@ namespace CaloMCTools {
     // and use it!
     for ( LHCb::CaloCluster::Entries::const_iterator entry = entries.begin(); entries.end() != entry; ++entry ) {
       const LHCb::CaloDigit* digit = entry->digit();
-      if ( 0 != digit ) { evaluator( digit ); }
+      if ( 0 != digit ) { evaluator( digit ).ignore(); }
     }
 
     return StatusCode::SUCCESS;
