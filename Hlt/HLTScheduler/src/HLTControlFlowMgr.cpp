@@ -40,6 +40,15 @@ namespace {
     _mm_lfence();
     return ticksPerMilliSecond;
   }
+
+  template <typename F>
+  struct EventTask {
+    mutable EventContext evtctx;
+    F                    f;
+    void                 operator()() const { return f( evtctx ); }
+  };
+  template <typename F>
+  EventTask( EventContext&&, F && )->EventTask<F>;
 } // namespace
 
 // Instantiation of a static factory class used by clients to create instances of this service
@@ -72,33 +81,12 @@ namespace {
 
   using GaudiUtils::operator<<;
 
-  template <typename fun>
-  class Wrapper final : public tbb::task {
-    fun m_f;
-
-  public:
-    Wrapper( fun f ) : m_f( std::move( f ) ) {}
-    tbb::task* execute() override {
-      m_f();
-      return nullptr;
-    }
-  };
-
-  template <typename fun>
-  void enqueue( fun&& f ) {
-    tbb::task* task = new ( tbb::task::allocate_root() ) Wrapper{std::forward<fun>( f )};
-    tbb::task::enqueue( *task );
-  }
-
   // observe threads to be able to join in the end
   struct task_observer final : public tbb::task_scheduler_observer {
-    task_observer() { observe( true ); }
-
+    task_observer( tbb::task_arena& arena ) : tbb::task_scheduler_observer{arena} { observe( true ); }
     std::atomic<int> m_thread_count{0};
-
-    void on_scheduler_entry( bool ) override { m_thread_count++; }
-
-    void on_scheduler_exit( bool ) override { m_thread_count--; }
+    void             on_scheduler_entry( bool ) override { m_thread_count++; }
+    void             on_scheduler_exit( bool ) override { m_thread_count--; }
   };
 } // namespace
 
@@ -327,7 +315,7 @@ StatusCode HLTControlFlowMgr::finalize() {
     }
   }
 
-  releaseEvtSelContext();
+  releaseEvtSelContext().ignore();
 
   auto sc2 = Service::finalize();
   return sc.isFailure() ? sc2.ignore(), sc : sc2;
@@ -377,103 +365,105 @@ void HLTControlFlowMgr::push( EventContext&& evtContext ) {
   if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
     verbose() << "Event " << evtContext.evt() << " submitting in slot " << evtContext.slot() << endmsg;
 
-  auto event_task = [evtContext = std::move( evtContext ), this]() mutable {
-    StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
-    if ( sc.isFailure() ) {
-      fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
-              << "Impossible to create event context" << endmsg;
-      throw GaudiException( "Slot " + std::to_string( evtContext.slot() ) + " could not be selected for the WhiteBoard",
-                            name(), sc );
-    }
-
-    // receive the data pointer
-    auto evt_root_ptr = evtContext.getExtension<IOpaqueAddress*>();
-
-    // set event root
-    if ( not evt_root_ptr ) { // there is no data, we set an empty TES
-      auto sc = m_evtDataMgrSvc->setRoot( "/Event", new DataObject() );
-      if ( !sc.isSuccess() ) error() << "Error declaring event root DataObject" << endmsg;
-    } else {
-      auto sc = m_evtDataMgrSvc->setRoot( "/Event", evt_root_ptr );
-      if ( !sc.isSuccess() ) error() << "Error setting event root address." << endmsg;
-    }
-
-    // set up the LHCb-specific event context extension
-    auto& lhcbExt = evtContext.emplaceExtension<LHCb::EventContextExtension>();
-
-    // create a memory pool for algorithms processing this event
-    // note: the resource is owned by lhcbExt, memResource is just a non-owning handle
-    auto* memResource =
-        m_estMemoryPoolSize > 0
-            ? lhcbExt.emplaceMemResource<LHCb::Allocators::MonotonicBufferResource>( m_estMemoryPoolSize )
-            : nullptr;
-
-    // Save a shortcut directly into the event context
-    LHCb::setMemResource( evtContext, memResource );
-
-    // Note that this is a COPY and the scheduler extension will NOT be present in the copy
-    Gaudi::Hive::setCurrentContext( evtContext );
-
-    SmartIF<IProperty> appmgr( serviceLocator() );
-
-    // Copy the scheduler states into the event context so they're globally accessible within an event
-    auto& [NodeStates, AlgStates] = lhcbExt.emplaceSchedulerExtension<SchedulerStates>(
-        std::piecewise_construct, std::tuple{m_NodeStates.begin(), m_NodeStates.end(), memResource},
-        std::tuple{m_AlgStates.begin(), m_AlgStates.end(), memResource} );
-
-    for ( AlgWrapper& toBeRun : m_definitelyRunTheseAlgs ) {
-      try {
-        if ( m_createTimingTable ) {
-          uint64_t const start = __rdtsc();
-          toBeRun.execute( evtContext, AlgStates );
-          m_TimingCounters[toBeRun.m_executedIndex] += __rdtsc() - start;
-        } else {
-          toBeRun.execute( evtContext, AlgStates );
-          // this is just so that we can use the counter to count executions
-          m_TimingCounters[toBeRun.m_executedIndex] += 0;
+  EventTask event_task{
+      std::move( evtContext ), [this]( EventContext& evtContext ) {
+        StatusCode sc = m_whiteboard->selectStore( evtContext.slot() );
+        if ( sc.isFailure() ) {
+          fatal() << "Slot " << evtContext.slot() << " could not be selected for the WhiteBoard\n"
+                  << "Impossible to create event context" << endmsg;
+          throw GaudiException(
+              "Slot " + std::to_string( evtContext.slot() ) + " could not be selected for the WhiteBoard", name(), sc );
         }
 
-      } catch ( ... ) {
-        m_algExecStateSvc->updateEventStatus( true, evtContext );
-        fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
-        Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure );
-        break;
-      }
-    }
+        // receive the data pointer
+        auto evt_root_ptr = evtContext.getExtension<IOpaqueAddress*>();
 
-    for ( gsl::not_null<VNode*> execNode : m_orderedNodesVec ) {
+        // set event root
+        if ( not evt_root_ptr ) { // there is no data, we set an empty TES
+          auto sc = m_evtDataMgrSvc->setRoot( "/Event", new DataObject() );
+          if ( !sc.isSuccess() ) error() << "Error declaring event root DataObject" << endmsg;
+        } else {
+          auto sc = m_evtDataMgrSvc->setRoot( "/Event", evt_root_ptr );
+          if ( !sc.isSuccess() ) error() << "Error setting event root address." << endmsg;
+        }
 
-      std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates ),
-                            ts = std::ref( m_TimingCounters )]( BasicNode& bNode ) {
-                             if ( bNode.requested( ns.get() ) ) {
-                               bNode.execute( ns.get(), as.get(), ts.get(), m_createTimingTable, evtContext,
-                                              m_algExecStateSvc, appmgr );
-                               bNode.notifyParents( ns.get() );
-                             }
-                           },
-                           []( ... ) {}},
-                  *execNode );
-    }
-    m_algExecStateSvc->updateEventStatus( false, evtContext );
+        // set up the LHCb-specific event context extension
+        auto& lhcbExt = evtContext.emplaceExtension<LHCb::EventContextExtension>();
 
-    // printing
-    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0 ) ) {
-      verbose() << buildPrintableStateTree( LHCb::span<NodeState const>{NodeStates} ).str() << endmsg;
-      verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
-    }
+        // create a memory pool for algorithms processing this event
+        // note: the resource is owned by lhcbExt, memResource is just a non-owning handle
+        auto* memResource =
+            m_estMemoryPoolSize > 0
+                ? lhcbExt.emplaceMemResource<LHCb::Allocators::MonotonicBufferResource>( m_estMemoryPoolSize )
+                : nullptr;
 
-    // update node state counters
-    for ( auto const& [ctr, ns] : Gaudi::Functional::details::zip::range( m_NodeStateCounters, NodeStates ) )
-      if ( ns.executionCtr == 0 ) ctr += ns.passed; // only add when actually executed
+        // Save a shortcut directly into the event context
+        LHCb::setMemResource( evtContext, memResource );
 
-    // update scheduler state
-    promoteToExecuted( std::move( evtContext ) );
-  };
+        // Note that this is a COPY and the scheduler extension will NOT be present in the copy
+        Gaudi::Hive::setCurrentContext( evtContext );
+
+        SmartIF<IProperty> appmgr( serviceLocator() );
+
+        // Copy the scheduler states into the event context so they're globally accessible within an event
+        auto& [NodeStates, AlgStates] = lhcbExt.emplaceSchedulerExtension<SchedulerStates>(
+            std::piecewise_construct, std::tuple{m_NodeStates.begin(), m_NodeStates.end(), memResource},
+            std::tuple{m_AlgStates.begin(), m_AlgStates.end(), memResource} );
+
+        for ( AlgWrapper& toBeRun : m_definitelyRunTheseAlgs ) {
+          try {
+            if ( m_createTimingTable ) {
+              uint64_t const start = __rdtsc();
+              toBeRun.execute( evtContext, AlgStates );
+              m_TimingCounters[toBeRun.m_executedIndex] += __rdtsc() - start;
+            } else {
+              toBeRun.execute( evtContext, AlgStates );
+              // this is just so that we can use the counter to count executions
+              m_TimingCounters[toBeRun.m_executedIndex] += 0;
+            }
+
+          } catch ( ... ) {
+            m_algExecStateSvc->updateEventStatus( true, evtContext );
+            fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
+            if ( !Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure ) )
+              warning() << "failed to set application return code to " << Gaudi::ReturnCode::AlgorithmFailure << endmsg;
+            break;
+          }
+        }
+
+        for ( gsl::not_null<VNode*> execNode : m_orderedNodesVec ) {
+
+          std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates ),
+                                ts = std::ref( m_TimingCounters )]( BasicNode& bNode ) {
+                                 if ( bNode.requested( ns.get() ) ) {
+                                   bNode.execute( ns.get(), as.get(), ts.get(), m_createTimingTable, evtContext,
+                                                  m_algExecStateSvc, appmgr );
+                                   bNode.notifyParents( ns.get() );
+                                 }
+                               },
+                               []( ... ) {}},
+                      *execNode );
+        }
+        m_algExecStateSvc->updateEventStatus( false, evtContext );
+
+        // printing
+        if ( UNLIKELY( msgLevel( MSG::VERBOSE ) && m_nextevt % m_printFreq == 0 ) ) {
+          verbose() << buildPrintableStateTree( LHCb::span<NodeState const>{NodeStates} ).str() << endmsg;
+          verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
+        }
+
+        // update node state counters
+        for ( auto const& [ctr, ns] : Gaudi::Functional::details::zip::range( m_NodeStateCounters, NodeStates ) )
+          if ( ns.executionCtr == 0 ) ctr += ns.passed; // only add when actually executed
+
+        // update scheduler state
+        promoteToExecuted( std::move( evtContext ) );
+      }};
 
   if constexpr ( use_debuggable_threadpool ) {
     m_debug_pool->enqueue( std::move( event_task ) );
   } else {
-    enqueue( std::move( event_task ) );
+    m_taskArena->enqueue( std::move( event_task ) );
   }
 }
 
@@ -527,12 +517,12 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
     m_debug_pool = std::make_unique<ThreadPool>( m_threadPoolSize.value() );
   }
   // create th tbb thread pool
-  tbb::task_scheduler_init tbbSchedInit( m_threadPoolSize.value() + 1 );
-  task_observer            taskObsv{};
+  m_taskArena = std::make_unique<tbb::task_arena>( m_threadPoolSize.value() + 1 );
+  task_observer taskObsv{*m_taskArena};
 
   auto shutdown_threadpool = [&]() {
     if constexpr ( !use_debuggable_threadpool ) {
-      tbbSchedInit.terminate();             // non blocking
+      m_taskArena->terminate();
       while ( taskObsv.m_thread_count > 0 ) // this is our "threads.join()" alternative
         std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
     }
@@ -606,7 +596,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt ) {
   shutdown_threadpool();
   while ( not empty() ) pop();
 
-  releaseEvtSelContext();
+  releaseEvtSelContext().ignore();
 
   if ( UNLIKELY( !startTime ) ) {
     info() << "---> Loop over " << m_finishedEvt << " Events Finished - "

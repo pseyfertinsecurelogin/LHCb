@@ -50,7 +50,7 @@
 
 // tbb
 #include "tbb/task.h"
-#include "tbb/task_scheduler_init.h"
+#include "tbb/task_arena.h"
 #include "tbb/task_scheduler_observer.h"
 
 // locals
@@ -190,6 +190,9 @@ private:
   IAlgExecStateSvc* m_algExecStateSvc = nullptr;
   // the used databroker
   IDataBroker* m_databroker = nullptr;
+
+  // the tbb "threadpool"
+  std::unique_ptr<tbb::task_arena> m_taskArena;
 
   /// atomic count of the number of finished events
   mutable std::atomic<uint32_t> m_finishedEvt{0};
