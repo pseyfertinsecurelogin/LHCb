@@ -126,7 +126,7 @@ namespace LHCb::Rec::PV {
           tmp_f[j] = m_vertices[i + j].m_chi2PerDoF.chi2PerDoF;
           tmp_i[j] = m_vertices[i + j].m_chi2PerDoF.nDoF;
         }
-        return LHCb::Rec::Chi2PerDoF<dType>{typename dType::float_v{&tmp_f[0]}, typename dType::int_v{&tmp_i[0]}};
+        return LHCb::Rec::Chi2PerDoF<dType>{typename dType::float_v{tmp_f}, typename dType::int_v{tmp_i}};
       }
     }
 
@@ -139,7 +139,7 @@ namespace LHCb::Rec::PV {
         std::array<int, dType::size> tmp_i;
         for ( std::size_t j = 0; j < dType::size; j++ ) { tmp_i[j] = m_vertices[i + j].m_chi2PerDoF.nDoF; }
         using int_v = typename dType::int_v;
-        int_v ndofs{&tmp_i[0]};
+        int_v ndofs{tmp_i};
         // return (ndofs + int_v{3})/int_v{2};
         return ( ndofs + int_v{3} ) >> int_v{1};
       }
@@ -158,7 +158,7 @@ namespace LHCb::Rec::PV {
             for ( std::size_t simdelement = 0; simdelement < dType::size; simdelement++ ) {
               tmp[simdelement] = m_vertices[chunkposition + simdelement].m_covMatrix.At( i, j );
             }
-            retval.At( i, j ) = float_v{&tmp[0]};
+            retval.At( i, j ) = float_v{tmp};
           }
         }
         return retval;
@@ -182,7 +182,7 @@ namespace LHCb::Rec::PV {
               simdelement++ ) {
           tmp[simdelement] = std::as_const( m_vertices[chunkposition + simdelement].m_covMatrix ).At( row, col );
         }
-        return float_v{&tmp[0]};
+        return float_v{tmp};
       }
     }
 
@@ -213,7 +213,7 @@ namespace LHCb::Rec::PV {
       } else {
         std::array<float, dType::size> tmp;
         for ( std::size_t j = 0; j < dType::size; j++ ) { tmp[j] = m_vertices[i + j].m_position.x(); }
-        return {&tmp[0]};
+        return {tmp};
       }
     }
     template <typename dType, bool unwrap>
@@ -224,7 +224,7 @@ namespace LHCb::Rec::PV {
       } else {
         std::array<float, dType::size> tmp;
         for ( std::size_t j = 0; j < dType::size; j++ ) { tmp[j] = m_vertices[i + j].m_position.y(); }
-        return {&tmp[0]};
+        return {tmp};
       }
     }
     template <typename dType, bool unwrap>
@@ -243,7 +243,7 @@ namespace LHCb::Rec::PV {
         for ( std::size_t j = 0; j < dType::size && i + j < m_vertices.size(); j++ ) {
           tmp[j] = m_vertices[i + j].m_position.z();
         }
-        return {&tmp[0]};
+        return {tmp};
       }
     }
   };
