@@ -47,6 +47,9 @@ set(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS
     CACHE FILEPATH "Special options file for LoKi Functors cache generation.")
 mark_as_advanced(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS)
 
+# Workaround for gaudi/Gaudi#117
+set(DISABLE_EXPANDVARS_OPTS ${CMAKE_CURRENT_LIST_DIR}/disable_expandvars.py)
+
 option(LOKI_BUILD_FUNCTOR_CACHE "Enable building of LoKi Functors Caches."
        TRUE)
 
@@ -113,7 +116,7 @@ function(loki_functors_cache name)
                      COMMAND ${env_cmd} --xml ${env_xml}
                          LOKI_GENERATE_CPPCODE=${ARG_SPLIT}
                          LOKI_DISABLE_CACHE=1
-                       gaudirun.py ${name}.${tmp_ext}
+                       gaudirun.py ${DISABLE_EXPANDVARS_OPTS} ${name}.${tmp_ext}
                      COMMAND touch ${output_names}
                      WORKING_DIRECTORY ${name}_srcs
                      DEPENDS ${name}_srcs/${name}.${tmp_ext}
