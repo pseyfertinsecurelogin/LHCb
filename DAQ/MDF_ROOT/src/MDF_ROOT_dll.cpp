@@ -161,15 +161,15 @@ extern "C" LHCb::PosixIO* MDF_ROOT() {
     p.fstat      = root_fstat;
     p.fstat64    = root_fstat64;
 
-    p.buffered = LHCb::PosixIO::NONE;
-    p.fopen    = 0;
-    p.fclose   = 0;
-    p.fwrite   = 0;
-    p.fread    = 0;
-    p.fseek    = 0;
-    p.ftell    = 0;
-    p.fseek64  = 0;
-    p.ftell64  = 0;
+    p.buffered  = LHCb::PosixIO::NONE;
+    p.fopen     = 0;
+    p.fclose    = 0;
+    p.fwrite    = 0;
+    p.fread     = 0;
+    p.fseek     = 0;
+    p.ftell     = 0;
+    p.fseek64   = 0;
+    p.ftell64   = 0;
     p.directory = LHCb::PosixIO::NONE;
     p.rmdir     = 0;
     p.mkdir     = 0;

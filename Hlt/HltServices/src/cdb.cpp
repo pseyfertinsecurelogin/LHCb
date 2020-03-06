@@ -14,8 +14,8 @@
  * Public domain.
  */
 
-#include <sys/types.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 #ifndef MAP_FAILED
 #  define MAP_FAILED ( (void*)-1 )
 #endif

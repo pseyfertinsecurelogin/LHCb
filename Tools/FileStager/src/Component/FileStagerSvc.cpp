@@ -9,11 +9,11 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // system headers
-#  include <errno.h>
-#  include <fcntl.h>
-#  include <sys/statvfs.h>
-#  include <sys/wait.h>
-#  include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/statvfs.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 // stdlib
 #include <cstdio>

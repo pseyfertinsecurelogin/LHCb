@@ -42,8 +42,8 @@ namespace Networking {
   int ( *closesocket )( int ) = ::close;
   typedef int       SockOpt_t;
   typedef socklen_t AddrLen_t;
-  static const int _SOCK_STREAM = SOCK_STREAM;
-  static const int _IPPROTO_IP  = IPPROTO_IP;
+  static const int  _SOCK_STREAM = SOCK_STREAM;
+  static const int  _IPPROTO_IP  = IPPROTO_IP;
 } // namespace Networking
 #include "GaudiKernel/System.h"
 #include "MDF/PosixIO.h"
@@ -56,9 +56,7 @@ namespace FileIO {
 typedef LHCb::StreamDescriptor::Access Access;
 
 namespace {
-  int file_open( const char* fn, int f1, int f2 = 0 ) {
-    return ::open64( fn, f1, f2 );
-  }
+  int file_open( const char* fn, int f1, int f2 = 0 ) { return ::open64( fn, f1, f2 ); }
   int file_read( const Access& con, void* buff, int len ) {
     int   tmp = 0;
     char* p   = (char*)buff;

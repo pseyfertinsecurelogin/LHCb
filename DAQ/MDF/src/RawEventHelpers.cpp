@@ -26,8 +26,8 @@
 #include <numeric> // For std::accumulate
 #include <stdexcept>
 
-#include <netinet/in.h>
 #include "Event/ODIN.h"
+#include <netinet/in.h>
 
 #include "RVersion.h"
 #include "RZip.h"

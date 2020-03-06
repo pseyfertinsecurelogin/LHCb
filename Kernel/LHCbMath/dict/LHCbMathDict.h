@@ -202,7 +202,7 @@ namespace {
     Gaudi::Math::Polar3DLineF   __linePolar3DF;
     Gaudi::Math::RhoEtaPhiLineF __lineRhoEtaPhiF;
     Gaudi::Math::RhoZPhiLineF   __lineRhoZPhiF;
-    Gaudi::Math::XYZGeomFun __geomFunXYZ;
+    Gaudi::Math::XYZGeomFun     __geomFunXYZ;
 
     Gaudi::Math::MD5              __mathMD5;
     std::vector<Gaudi::Math::MD5> __stdvector_mathMD5;

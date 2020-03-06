@@ -196,7 +196,7 @@ namespace LHCb {
     }
 
     std::vector<std::string> decisions() const {
-      std::vector<std::string> d;
+      std::vector<std::string>            d;
       typedef std::map<std::string, bool> map_t;
       for ( map_t::const_iterator it = m_decisions.begin(), end = m_decisions.end(); it != end; ++it ) {
         d.push_back( it->first );
