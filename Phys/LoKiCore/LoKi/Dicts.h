@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -11,15 +11,6 @@
 // ============================================================================
 #ifndef LOKI_DICTS_H
 #define LOKI_DICTS_H 1
-// ============================================================================
-// Pragmas
-// ============================================================================
-#ifdef _WIN32
-// Disable the warnings from distionaries:
-//  warning c4345: behavior change: an object of POD type constructed with
-//                 an initializer of the form () will be default-initialized
-#  pragma warning( disable : 4345 )
-#endif
 // ============================================================================
 // Include files
 // ============================================================================

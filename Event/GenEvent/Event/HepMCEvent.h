@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -11,10 +11,6 @@
 #pragma once
 
 // Include files
-#ifdef _WIN32
-// Disable warning C4800 forcing value to bool true or false (performance warning), caused by HepMC/Flow.h
-#  pragma warning( disable : 4800 )
-#endif
 #ifdef __INTEL_COMPILER
 #  pragma warning( disable : 1572 ) // floating-point equality and inequality comparisons are unreliable
 #  pragma warning( push )

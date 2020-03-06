@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -39,7 +39,7 @@
  *  @date   2011-06-03
  */
 // ============================================================================
-/*  set the colors for output stream (not actiev for WIN32)
+/*  set the colors for output stream
  *  @param  stream  reference for stream
  *  @param  fg      color for foreground
  *  @param  fg      color for foreground
@@ -47,30 +47,22 @@
  */
 // ============================================================================
 bool LoKi::Colors::setColor( std::ostream& stream, const MSG::Color& fg, const MSG::Color& bg ) {
-#ifndef WIN32
   int fc = 30 + fg;
   int bc = 40 + bg;
   stream << "\033[" << bc << "m\033[1;" << fc << "m";
   return true;
-#else
-  return false;
-#endif
 }
 // ============================================================================
-/* reset the colors for output stream (not active for WIN32)
+/* reset the colors for output stream
  *  @param  stream  reference for stream
  *  @return true if color are changed
  */
 bool LoKi::Colors::resetColor( std::ostream& stream ) {
-#ifndef WIN32
   stream << "\033[0m";
   return true;
-#else
-  return false;
-#endif
 }
 // ============================================================================
-/* reset the colors for output stream (not active for WIN32)
+/* reset the colors for output stream
  *  @param  stream  reference for stream
  *  @return true if color are changed
  */

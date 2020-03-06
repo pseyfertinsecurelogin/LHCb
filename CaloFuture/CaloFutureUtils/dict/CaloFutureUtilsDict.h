@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -26,14 +26,6 @@
 // ============================================================================
 #include "Event/CaloAdc.h"
 #include "Event/CaloDigit.h"
-// ============================================================================
-// Stefan Roiser's trick to allow compilation on Win32
-// ============================================================================
-#ifdef WIN32
-#  ifdef CONST
-#    undef CONST
-#  endif
-#endif
 // ============================================================================
 namespace {
   // ==========================================================================

@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,14 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef WIN32
 // system headers
 #  include <errno.h>
 #  include <fcntl.h>
 #  include <sys/statvfs.h>
 #  include <sys/wait.h>
 #  include <unistd.h>
-#endif
 
 // stdlib
 #include <cstdio>
@@ -54,12 +52,10 @@
 // 2009-11-21 : Roel Aaij
 //-----------------------------------------------------------------------------
 
-#ifndef WIN32
 namespace fs  = boost::filesystem;
 namespace ba  = boost::algorithm;
 namespace pt  = boost::posix_time;
 namespace bio = boost::iostreams;
-#endif
 
 namespace {
   using Gaudi::IIODataManager;

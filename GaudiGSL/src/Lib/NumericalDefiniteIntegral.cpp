@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -39,12 +39,6 @@
 // disable icc remark #1572: floating-point equality and inequality comparisons are unreliable
 //   The comparison are meant
 #  pragma warning( disable : 1572 )
-#endif
-#ifdef WIN32
-// Disable the warning
-//    C4996: 'std::copy': Function call with parameters that may be unsafe
-// The parameters are checked
-#  pragma warning( disable : 4996 )
 #endif
 
 namespace Genfun {

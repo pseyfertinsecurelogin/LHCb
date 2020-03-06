@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -30,18 +30,12 @@ namespace {
   using std::stringstream;
 } // namespace
 
-#ifndef WIN32
 namespace ba = boost::algorithm;
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
-#endif
 
 int main( int argc, char* argv[] ) {
 
-#ifdef WIN32
-  cout << "Windows is not supported." << endl;
-  return -1;
-#else
   // Setup the command line option parser
   po::options_description config( "Possible options" );
   config.add_options()( "help,h", "print help message" );
@@ -107,5 +101,3 @@ int main( int argc, char* argv[] ) {
   cout << temp.str() << endl;
   return 0;
 }
-
-#endif

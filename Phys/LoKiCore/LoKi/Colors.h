@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -44,7 +44,7 @@ namespace LoKi {
    */
   namespace Colors {
     // ========================================================================
-    /** set the colors for output stream (not active for WIN32)
+    /** set the colors for output stream
      *  @param  stream  reference for stream
      *  @param  fg      color for foreground
      *  @param  bg      color for background
@@ -53,7 +53,7 @@ namespace LoKi {
     GAUDI_API
     bool setColor( std::ostream& stream, const MSG::Color& fg = MSG::BLACK, const MSG::Color& bg = MSG::WHITE );
     // ========================================================================
-    /** set the colors for output stream (not active for WIN32)
+    /** set the colors for output stream
      *  @param  stream  reference for stream
      *  @param  fg      color for foreground
      *  @param  bg      color for background
@@ -62,14 +62,14 @@ namespace LoKi {
     GAUDI_API
     bool setColor( MsgStream& stream, const MSG::Color& fg = MSG::BLACK, const MSG::Color& bg = MSG::WHITE );
     // ========================================================================
-    /** reset the colors for output stream (not active for WIN32)
+    /** reset the colors for output stream
      *  @param  stream  reference for stream
      *  @return true if color are changed
      */
     GAUDI_API
     bool resetColor( std::ostream& stream );
     // ========================================================================
-    /** reset the colors for output stream (not active for WIN32)
+    /** reset the colors for output stream
      *  @param  stream  reference for stream
      *  @return true if color are changed
      */

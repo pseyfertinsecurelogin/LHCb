@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -211,7 +211,6 @@ inline unsigned int* LHCb::HltSelRepRBHits::sequenceEnd( unsigned int iSeq ) con
 inline std::vector<LHCb::LHCbID> LHCb::HltSelRepRBHits::sequence( unsigned int iSeq ) const {
 
   validateIndex( iSeq );
-  // doesn't work on WIN32  return (std::vector< LHCbID >(sequenceBegin(iSeq),sequenceEnd(iSeq)));
   std::vector<LHCbID> hitseq;
   unsigned int*       iend = sequenceEnd( iSeq );
   unsigned int*       i    = sequenceBegin( iSeq );

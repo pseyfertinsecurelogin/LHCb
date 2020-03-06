@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,12 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// stdlig
+// stdlib
 #include <csignal>
 #include <iostream>
 #include <string>
 
-#ifndef WIN32
 // boost
 #  include <boost/date_time/posix_time/posix_time.hpp>
 #  include <boost/filesystem.hpp>
@@ -38,16 +37,11 @@ void cleanup( int ) {
     exit( 0 );
   }
 }
-#endif
 
 using namespace std;
 
 int main( int argc, char* argv[] ) {
 
-#ifdef WIN32
-  cout << "Windows is not supported." << endl;
-  return -1;
-#else
   // Setup the command line option parser
   po::options_description config( "Possible options" );
   config.add_options()( "help,h", "print help message" );
@@ -108,5 +102,4 @@ int main( int argc, char* argv[] ) {
   cleanup( 0 );
 
   return 0;
-#endif
 }

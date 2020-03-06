@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -160,13 +160,6 @@ namespace ST {
 #include "GaudiAlg/GaudiTupleTool.h"
 #include "Kernel/LHCbConstants.h"
 #include "Kernel/STLexicalCaster.h"
-
-// ============================================================================
-// Disable warning on windows missing definition for template instantiation
-#ifdef _WIN32
-#  pragma warning( disable : 4661 )
-#endif
-// ============================================================================
 
 //=============================================================================
 // Initialisation
