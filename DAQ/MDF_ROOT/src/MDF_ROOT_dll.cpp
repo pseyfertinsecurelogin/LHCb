@@ -23,7 +23,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #define O_BINARY 0
-#define EXPORT
 
 #include "TFile.h"
 #include "TSystem.h"
@@ -144,7 +143,7 @@ namespace {
   char* root_serror() { return (char*)gSystem->GetError(); }
 } // namespace
 
-extern "C" EXPORT LHCb::PosixIO* MDF_ROOT() {
+extern "C" LHCb::PosixIO* MDF_ROOT() {
   static LHCb::PosixIO p;
   if ( !p.open ) {
     p            = {};
