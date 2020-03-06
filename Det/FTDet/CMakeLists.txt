@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: FTDet
-################################################################################
 gaudi_subdir(FTDet)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
@@ -44,5 +41,4 @@ gaudi_add_dictionary(FTDet
                      dict/FTDetDict.h
                      dict/FTDetDict.xml
                      INCLUDE_DIRS Boost Event/FTEvent
-                     LINK_LIBRARIES Boost DetDescCnvLib MCEvent GaudiAlgLib GaudiKernel LHCbKernel LHCbMathLib FTDetLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES Boost DetDescCnvLib MCEvent GaudiAlgLib GaudiKernel LHCbKernel LHCbMathLib FTDetLib)

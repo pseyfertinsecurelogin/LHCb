@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: RichInterfaces
-################################################################################
 gaudi_subdir(RichInterfaces)
 
 gaudi_depends_on_subdirs(Kernel/LHCbKernel
@@ -21,8 +18,7 @@ gaudi_add_dictionary(RichInterfaces
                      dict/RichInterfacesDict.h
                      dict/RichInterfacesDict.xml
                      INCLUDE_DIRS AIDA Boost RichDet
-                     LINK_LIBRARIES LHCbKernel
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES LHCbKernel)
 
 find_package(Vc)
 include_directories(SYSTEM ${Vc_INCLUDE_DIR})

@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: RichDet
-################################################################################
 gaudi_subdir(RichDet)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
@@ -42,7 +39,7 @@ gaudi_add_dictionary(RichDet
                      dict/RichDetDict.xml
                      INCLUDE_DIRS GSL Boost
                      LINK_LIBRARIES GSL Boost DetDescCnvLib RichUtils RichDetLib
-                     OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
+                     OPTIONS " -Wno-undefined-var-template")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.

@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: LoKiGen
-################################################################################
 gaudi_subdir(LoKiGen)
 
 find_package(Graphviz) 
@@ -30,8 +27,7 @@ gaudi_add_module(LoKiGen
 gaudi_add_dictionary(LoKiGen
                      dict/LoKiGenDict.h
                      dict/LoKiGen.xml
-                     LINK_LIBRARIES GenEvent LoKiCoreLib LoKiGenLib
-                     OPTIONS " -U__MINGW32__ ")
+                     LINK_LIBRARIES GenEvent LoKiCoreLib LoKiGenLib)
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(GenDecayGrammarTest

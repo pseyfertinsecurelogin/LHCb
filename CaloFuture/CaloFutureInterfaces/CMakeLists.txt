@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: CaloFutureInterfaces
-################################################################################
 gaudi_subdir(CaloFutureInterfaces)
 
 gaudi_depends_on_subdirs(Det/CaloDet
@@ -27,7 +24,6 @@ gaudi_add_dictionary(CaloFutureInterfaces
                      dict/CaloFutureInterfacesDict.h
                      dict/CaloFutureInterfacesDict.xml
                      INCLUDE_DIRS Event/DigiEvent
-                     LINK_LIBRARIES CaloDetLib L0Event RecEvent GaudiKernel LHCbKernel
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES CaloDetLib L0Event RecEvent GaudiKernel LHCbKernel)
 
 gaudi_install_headers(CaloFutureInterfaces)

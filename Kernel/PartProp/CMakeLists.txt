@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: PartProp
-################################################################################
 gaudi_subdir(PartProp)
 
 gaudi_depends_on_subdirs(GaudiKernel
@@ -33,8 +30,7 @@ gaudi_add_module(PartProp
 gaudi_add_dictionary(PartProp
                      dict/PartPropDict.h
                      dict/PartProp.xml
-                     LINK_LIBRARIES GaudiKernel LHCbMathLib PartPropLib
-                     OPTIONS " -U__MINGW32__ ")
+                     LINK_LIBRARIES GaudiKernel LHCbMathLib PartPropLib)
 
 gaudi_install_python_modules()
 gaudi_install_scripts()

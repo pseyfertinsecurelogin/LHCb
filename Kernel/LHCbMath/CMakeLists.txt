@@ -8,8 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# Package: LHCbMath
-###############################################################################
 gaudi_subdir(LHCbMath)
 
 gaudi_depends_on_subdirs(GaudiGSL
@@ -62,7 +60,7 @@ gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.xml
                      INCLUDE_DIRS VDT Vc Boost GSL ROOT
                      LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiKernel LHCbMathLib
-                     OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
+                     OPTIONS " -Wno-undefined-var-template ")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.

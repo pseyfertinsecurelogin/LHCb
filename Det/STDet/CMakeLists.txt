@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: STDet
-################################################################################
 gaudi_subdir(STDet)
 
 gaudi_depends_on_subdirs(Det/DetDesc
@@ -38,6 +35,5 @@ gaudi_add_dictionary(STDet
                      dict/STDetDict.h
                      dict/STDetDict.xml
                      INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost DetDescLib DetDescCnvLib LHCbKernel STDetLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES Boost DetDescLib DetDescCnvLib LHCbKernel STDetLib)
 
