@@ -12,6 +12,7 @@ gaudi_subdir(LHCbMath)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
+                         LHCbKernel
                          GaudiPython)
 
 find_package(Boost)
