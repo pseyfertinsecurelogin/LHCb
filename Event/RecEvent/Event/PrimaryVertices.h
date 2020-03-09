@@ -41,6 +41,7 @@ namespace LHCb::Rec::PV {
   public:
     using allocator_type = LHCb::Allocators::EventLocal<Vertex>;
 
+  private:
     std::vector<Vertex, allocator_type> m_vertices;
 
     Zipping::ZipFamilyNumber m_zipIdentifier{Zipping::generateZipIdentifier()};
@@ -71,6 +72,17 @@ namespace LHCb::Rec::PV {
     void                      resize( std::size_t capacity ) {
       reserve( capacity );
       m_vertices.resize( capacity );
+    }
+
+    template <typename... T>
+    decltype( auto ) push_back_unchecked( T&&... t ) {
+      return m_vertices.push_back( std::forward<T>( t )... );
+    }
+
+    template <typename... T>
+    decltype( auto ) push_back( T&&... t ) {
+      reserve( size() + 1 );
+      return m_vertices.push_back( std::forward<T>( t )... );
     }
 
     template <typename... T>
