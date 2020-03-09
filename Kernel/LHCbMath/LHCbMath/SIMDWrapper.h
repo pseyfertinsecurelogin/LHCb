@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Kernel/STLExtensions.h"
 #include "LHCbMath/TypeMapping.h"
 #include "LHCbMath/bit_cast.h"
 
@@ -166,7 +167,7 @@ namespace SIMDWrapper {
       float_v( T f ) : data( f ) {}
       float_v( float f ) : data( f ) {}
       float_v( const float* f ) : data( *f ) {}
-      float_v( const std::array<float, scalar::types::size>& f ) : data( f[0] ) {}
+      float_v( LHCb::span<const float, scalar::types::size> f ) : data( f[0] ) {}
 
       float_v& operator=( const float& f ) {
         data = f;
@@ -244,7 +245,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( f ) {}
       int_v( const int* f ) : data( *f ) {}
-      int_v( const std::array<int, scalar::types::size>& f ) : data( f[0] ) {}
+      int_v( LHCb::span<const int, scalar::types::size> f ) : data( f[0] ) {}
 
       int_v& operator=( const int& f ) {
         data = f;
@@ -426,7 +427,7 @@ namespace SIMDWrapper {
       float_v( scalar::float_v& f ) : data( _mm_set1_ps( f.cast() ) ) {}
       float_v( float f ) : data( _mm_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm_loadu_ps( f ) ) {}
-      float_v( const std::array<float, sse::types::size> f ) : data( _mm_loadu_ps( f.data() ) ) {}
+      float_v( LHCb::span<const float, sse::types::size> f ) : data( _mm_loadu_ps( f.data() ) ) {}
       float_v( __m128 f ) : data( f ) {}
 
       float_v& operator=( const __m128& f ) {
@@ -535,7 +536,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( _mm_set1_epi32( f ) ) {}
       int_v( const int* f ) : data( _mm_loadu_si128( (__m128i*)f ) ) {}
-      int_v( const std::array<int, sse::types::size> f ) : data( _mm_loadu_si128( (__m128i*)f.data() ) ) {}
+      int_v( LHCb::span<const int, sse::types::size> f ) : data( _mm_loadu_si128( (__m128i*)f.data() ) ) {}
       constexpr int_v( __m128i f ) : data( f ) {}
 
       int_v& operator=( const __m128i& f ) {
@@ -793,7 +794,7 @@ namespace SIMDWrapper {
       float_v( T f ) : data( _mm256_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm256_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm256_loadu_ps( f ) ) {}
-      float_v( const std::array<float, avx2::types::size>& f ) : data( _mm256_loadu_ps( f.data() ) ) {}
+      float_v( LHCb::span<const float, avx2::types::size> f ) : data( _mm256_loadu_ps( f.data() ) ) {}
       float_v( __m256 f ) : data( f ) {}
 
       float_v& operator=( const __m256& f ) {
@@ -920,7 +921,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( _mm256_set1_epi32( f ) ) {}
       int_v( const int* f ) : data( _mm256_loadu_si256( (__m256i*)f ) ) {}
-      int_v( const std::array<int, avx2::types::size>& f ) : data( _mm256_loadu_si256( (__m256i*)f.data()( ) ) {}
+      int_v( LHCb::span<const int, avx2::types::size> f ) : data( _mm256_loadu_si256( (__m256i*)f.data()( ) ) {}
       int_v( __m256i f ) : data( f ) {}
 
       int_v& operator=( const __m256i& f ) {
@@ -1137,7 +1138,7 @@ namespace SIMDWrapper {
       float_v( T f ) : data( _mm256_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm256_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm256_loadu_ps( f ) ) {}
-      float_v( const std::array<float, avx256::types::size>& f ) : data( _mm256_loadu_ps( f.data() ) ) {}
+      float_v( LHCb::span<const float, avx256::types::size> f ) : data( _mm256_loadu_ps( f.data() ) ) {}
       float_v( __m256 f ) : data( f ) {}
 
       float_v& operator=( const __m256& f ) {
@@ -1249,7 +1250,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( _mm256_set1_epi32( f ) ) {}
       int_v( const int* f ) : data( _mm256_loadu_si256( (__m256i*)f ) ) {}
-      int_v( const std::array<int, avx256::types::size>& f ) : data( _mm256_loadu_si256( (__m256i*)f.data() ) ) {}
+      int_v( LHCb::span<const int, avx256::types::size> f ) : data( _mm256_loadu_si256( (__m256i*)f.data() ) ) {}
       constexpr int_v( __m256i f ) : data( f ) {}
 
       int_v& operator=( const __m256i& f ) {
@@ -1412,7 +1413,7 @@ namespace SIMDWrapper {
       float_v( T f ) : data( _mm512_set1_ps( float( f ) ) ) {}
       float_v( float f ) : data( _mm512_set1_ps( f ) ) {}
       float_v( const float* f ) : data( _mm512_loadu_ps( f ) ) {}
-      float_v( const std::array<float, avx512::types::size> f ) : data( _mm512_loadu_ps( f.data() ) ) {}
+      float_v( LHCb::span<const float, avx512::types::size> f ) : data( _mm512_loadu_ps( f.data() ) ) {}
       float_v( __m512 f ) : data( f ) {}
 
       float_v& operator=( const __m512& f ) {
@@ -1507,7 +1508,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( _mm512_set1_epi32( f ) ) {}
       int_v( const int* f ) : data( _mm512_loadu_si512( f ) ) {}
-      int_v( const std::array<int, avx512::types::size> f ) : data( _mm512_loadu_si512( f.data() ) ) {}
+      int_v( LHCb::span<const int, avx512::types::size> f ) : data( _mm512_loadu_si512( f.data() ) ) {}
       constexpr int_v( __m512i f ) : data( f ) {}
 
       int_v& operator=( const __m512i& f ) {
