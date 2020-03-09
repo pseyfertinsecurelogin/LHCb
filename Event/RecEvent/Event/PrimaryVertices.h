@@ -58,7 +58,9 @@ namespace LHCb::Rec::PV {
     PrimaryVertices( Zipping::ZipFamilyNumber family, allocator_type alloc = {} )
         : m_vertices{alloc}, m_zipIdentifier( family ) {}
     PrimaryVertices( PrimaryVertices const& ) = delete;
-    PrimaryVertices( PrimaryVertices&& )      = default;
+    PrimaryVertices& operator=( PrimaryVertices const& ) = delete;
+    PrimaryVertices( PrimaryVertices&& )                 = default;
+    PrimaryVertices& operator=( PrimaryVertices&& ) = default;
 
     // needed for the ThOr functor filtering framework
     PrimaryVertices( Zipping::ZipFamilyNumber family, PrimaryVertices const& /*unused*/ ) : m_zipIdentifier( family ) {}
