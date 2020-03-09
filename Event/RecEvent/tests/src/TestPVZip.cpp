@@ -28,7 +28,7 @@
   float chi2{42};
   int   ndof{23};
 
-  retval.m_vertices.push_back(
+  retval.push_back(
       LHCb::Rec::PV::PrimaryVertices::Vertex{pos, covmatrix, LHCb::Event::v2::Track::Chi2PerDoF{chi2 / ndof, ndof}} );
 
   return retval;
