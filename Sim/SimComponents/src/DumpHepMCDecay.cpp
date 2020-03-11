@@ -100,7 +100,7 @@ StatusCode DumpHepMCDecay::execute() {
             found = true;
             if ( info().isActive() ) {
               info() << std::endl;
-              printDecay( particle, info().stream(), 0 );
+              printDecay( particle, info().stream(), 0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
             }
           }
         }
@@ -147,8 +147,8 @@ StatusCode DumpHepMCDecay::printDecay( const HepMC::GenParticle* particle, std::
   typedef HepMC::GenVertex::particles_out_const_iterator IT;
   for ( IT ip = vertex->particles_out_const_begin(); vertex->particles_out_const_end() != ip; ++ip ) {
     const HepMC::GenParticle* daughter = *ip;
-    if ( 0 == daughter ) { continue; }         // CONTINUE
-    printDecay( daughter, stream, level + 1 ); // RECURSION
+    if ( 0 == daughter ) { continue; }                                                                 // CONTINUE
+    printDecay( daughter, stream, level + 1 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // RECURSION
   }
 
   return StatusCode::SUCCESS;

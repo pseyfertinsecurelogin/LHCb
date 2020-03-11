@@ -351,7 +351,8 @@ double LoKi::HLT::ErrorBits::operator()( const LHCb::HltDecReports* a ) const {
   // find the selection by name
   auto isel = a->find( m_key );
   if ( isel != std::end( *a ) ) return isel->second.errorBits();
-  Error( "No decision has been found for '" + m_key.str() + "', return -1" );
+  Error( "No decision has been found for '" + m_key.str() + "', return -1" )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return -1;
   //
 }
@@ -422,7 +423,8 @@ double LoKi::HLT::ExecutionStage::operator()( const LHCb::HltDecReports* a ) con
   // find the selection by name
   auto isel = a->find( channel() );
   if ( isel != std::end( *a ) ) return isel->second.executionStage();
-  Error( "No decision has been found for '" + channel().str() + "', return -1" );
+  Error( "No decision has been found for '" + channel().str() + "', return -1" )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return -1;
   //
 }
@@ -453,7 +455,8 @@ double LoKi::HLT::NumberOfCandidates::operator()( const LHCb::HltDecReports* a )
   // find the selection by name
   auto isel = a->find( channel() );
   if ( isel != std::end( *a ) ) return isel->second.numberOfCandidates();
-  Error( "No decision has been found for '" + channel().str() + "', return -1" );
+  Error( "No decision has been found for '" + channel().str() + "', return -1" )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return -1;
 }
 // ============================================================================
@@ -482,7 +485,8 @@ bool LoKi::HLT::Saturated::operator()( const LHCb::HltDecReports* a ) const {
   if ( isel != std::end( *a ) ) {
     return isel->second.numberOfCandidates() == LHCb::HltDecReport::saturatedNumberOfCandidates();
   }
-  Error( "No decision has been found for '" + channel().str() + "', return false" );
+  Error( "No decision has been found for '" + channel().str() + "', return false" )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   return false;
   //
 }
@@ -519,7 +523,7 @@ double LoKi::HLT::CountErrorBits::operator()( const LHCb::HltDecReports* a ) con
     // find the selection by name
     auto isel = a->find( line );
     if ( isel == std::end( *a ) ) {
-      Error( "No decision found for '" + line.str() + "'" );
+      Error( "No decision found for '" + line.str() + "'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       continue;
     }
     if ( isel->second.errorBits() & m_mask ) { ++result; }

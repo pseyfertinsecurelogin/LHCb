@@ -45,7 +45,7 @@ namespace LoKi {
     // ============================================================================
     double TypeOfMCVertex::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return -1000000." );
+        Error( " MCVertex* points to NULL, return -1000000." ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000000.0;
       }
       return v->type();
@@ -59,7 +59,8 @@ namespace LoKi {
     // ============================================================================
     double TimeOfFlight::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return -1000 * ms " );
+        Error( " MCVertex* points to NULL, return -1000 * ms " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000. * Gaudi::Units::ms;
       }
       return v->time();
@@ -73,7 +74,8 @@ namespace LoKi {
     // ============================================================================
     double VertexPositionX::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'InvalidDistance'" );
+        Error( " MCVertex* points to NULL, return 'InvalidDistance'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidDistance;
       }
       return v->position().x();
@@ -87,7 +89,8 @@ namespace LoKi {
     // ============================================================================
     double VertexPositionY::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'InvalidDistance'" );
+        Error( " MCVertex* points to NULL, return 'InvalidDistance'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidDistance;
       }
       return v->position().y();
@@ -101,7 +104,8 @@ namespace LoKi {
     // ============================================================================
     double VertexPositionZ::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'InvalidDistance'" );
+        Error( " MCVertex* points to NULL, return 'InvalidDistance'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidDistance;
       }
       return v->position().z();
@@ -115,7 +119,8 @@ namespace LoKi {
     // ============================================================================
     double VertexTime::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'InvalidTime'" );
+        Error( " MCVertex* points to NULL, return 'InvalidTime'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime;
       }
       return v->time();
@@ -129,7 +134,7 @@ namespace LoKi {
     // ============================================================================
     bool Primary::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'false' " );
+        Error( " MCVertex* points to NULL, return 'false' " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return v->isPrimary();
@@ -143,7 +148,7 @@ namespace LoKi {
     // ============================================================================
     bool Decay::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return 'false' " );
+        Error( " MCVertex* points to NULL, return 'false' " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return v->isDecay();
@@ -158,7 +163,7 @@ namespace LoKi {
     // ============================================================================
     MCVertexDistance::MCVertexDistance( const LHCb::MCVertex* point ) {
       if ( !point ) {
-        Error( "MCVertex* points to NULL!" );
+        Error( "MCVertex* points to NULL!" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         m_point = LoKi::Point3D( -1.0 * Gaudi::Units::km, -1.0 * Gaudi::Units::km, -1.0 * Gaudi::Units::km );
       } else {
         m_point = point->position();
@@ -169,7 +174,7 @@ namespace LoKi {
     // ============================================================================
     double MCVertexDistance::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( "MCVertex* points to NULL, return -1.0 * km " );
+        Error( "MCVertex* points to NULL, return -1.0 * km " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1.0 * Gaudi::Units::km;
       }
       return ( v->position() - m_point ).R();
@@ -186,11 +191,13 @@ namespace LoKi {
     // ============================================================================
     double MCVFunAsMCFun::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* points to NULL, return -1000000." );
+        Error( "MCParticle* points to NULL, return -1000000." ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000000;
       };
       const LHCb::MCVertex* vertex = p->originVertex();
-      if ( !vertex ) { Warning( "'origin' MCVertex* points to NULL" ); }
+      if ( !vertex ) {
+        Warning( "'origin' MCVertex* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       //
       return m_fun( vertex );
     }
@@ -203,7 +210,7 @@ namespace LoKi {
     // ============================================================================
     double Key::operator()( const LHCb::MCVertex* v ) const {
       if ( !v ) {
-        Error( " MCVertex* points to NULL, return -1000 " );
+        Error( " MCVertex* points to NULL, return -1000 " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000;
       }
       return v->key();
@@ -221,12 +228,14 @@ namespace LoKi {
     double MCVPFunAsMCFun::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Error( "MCParticle* points to NULL, return -1000000." );
+        Error( "MCParticle* points to NULL, return -1000000." ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1000000;
       }
       //
       const LHCb::MCVertex* vertex = p->primaryVertex();
-      if ( !vertex ) { Warning( "'primary' MCVertex* points to NULL" ); }
+      if ( !vertex ) {
+        Warning( "'primary' MCVertex* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       //
       return func()( vertex );
     }
@@ -284,7 +293,7 @@ namespace LoKi {
     double MCVFunction::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Warning( "MCParticle* points to NULL, return -1e+9 " );
+        Warning( "MCParticle* points to NULL, return -1e+9 " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1.e+9;
       }
       //
@@ -293,20 +302,26 @@ namespace LoKi {
       if ( m_case && Origin == m_index ) {
         //
         v = p->originVertex();
-        if ( !v ) { Warning( " Origin     MCVertex* points to NULL" ); }
+        if ( !v ) {
+          Warning( " Origin     MCVertex* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        }
         //
         return func()( v );
       } else if ( m_case && Primary == m_index ) {
         //
         v = p->primaryVertex();
-        if ( !v ) { Warning( " Primary    MCVertex* points to NULL" ); }
+        if ( !v ) {
+          Warning( " Primary    MCVertex* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        }
         //
         return func()( v );
       }
       //
       const auto& evs = p->endVertices();
       //
-      if ( evs.empty() ) { Warning( " Empty EndVertices list " ); }
+      if ( evs.empty() ) {
+        Warning( " Empty EndVertices list " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       //
       if ( m_case && Last == m_index ) {
         if ( !evs.empty() ) { v = evs.back(); }
@@ -315,7 +330,7 @@ namespace LoKi {
         v = evs[m_index];
         return func()( v );
       } else if ( m_case ) {
-        Error( " Invalid EndVertices index" );
+        Error( " Invalid EndVertices index" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return func()( v );
       }
       // now we deal with cuts:
@@ -324,7 +339,7 @@ namespace LoKi {
       if ( evs.end() != igood ) {
         v = *igood;
       } else {
-        Error( " No proper vertex is found " );
+        Error( " No proper vertex is found " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
       //
       return func()( v );

@@ -410,7 +410,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateODIN() // update ODIN-variables
             << "'" << endmsg;
   }
   //
-  release( factory ); // we do not need the factory anymore
+  release( factory ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // we do not need the factory anymore
   //
   return StatusCode::SUCCESS;
 }
@@ -436,7 +436,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateL0DU() // update ODIN-variables
             << "'" << endmsg;
   }
   //
-  release( factory ); // we do not need the factory anymore
+  release( factory ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // we do not need the factory anymore
   //
   return StatusCode::SUCCESS;
 }
@@ -462,7 +462,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateHLT() // update HLT-variables
             << "'" << endmsg;
   }
   //
-  release( factory ); // we do not need the factory anymore
+  release( factory ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // we do not need the factory anymore
   //
   return StatusCode::SUCCESS;
 }
@@ -488,7 +488,7 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateVOID() // update VOID-variables
             << "'" << endmsg;
   }
   //
-  release( factory ); // we do not need the factory anymore
+  release( factory ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // we do not need the factory anymore
   //
   return StatusCode::SUCCESS;
 }

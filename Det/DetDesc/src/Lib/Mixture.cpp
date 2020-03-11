@@ -67,7 +67,7 @@ void Mixture::addElement( const SmartRef<Element>& e, const int nOfAtoms, const 
   m_elements.emplace_back( 0, e );
   m_atoms.push_back( nOfAtoms );
   //
-  if ( comp ) { computeByAtoms(); }
+  if ( comp ) { computeByAtoms().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   //
 }
 //
@@ -84,7 +84,7 @@ void Mixture::addElement( const SmartRef<Element>& e, const double fraction, con
     it->first += fraction;
   }
   //
-  if ( comp ) { compute(); }
+  if ( comp ) { compute().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 }
 //
 void Mixture::addMixture( const SmartRef<Mixture>& mx, const double fraction, const bool comp ) {
@@ -92,7 +92,7 @@ void Mixture::addMixture( const SmartRef<Mixture>& mx, const double fraction, co
   //
   for ( const auto& e : mx->elements() ) { addElement( e.second, fraction * e.first ); }
   //
-  if ( comp ) { compute(); }
+  if ( comp ) { compute().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 }
 //
 StatusCode Mixture::compute() {
@@ -107,7 +107,7 @@ StatusCode Mixture::compute() {
 //
 StatusCode Mixture::computeByAtoms() {
   //
-  if ( m_elements.empty() ) { addMyself(); }
+  if ( m_elements.empty() ) { addMyself().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
   //
   if ( m_elements.size() != m_atoms.size() ) {
     throw MaterialException( std::string( "Mixture::computeByAtoms::" ) + "mismatch in container sizes!", this );
@@ -138,7 +138,7 @@ StatusCode Mixture::computeByFraction() {
   }
   //
   if ( m_elements.empty() ) {
-    addMyself();
+    addMyself().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     m_atoms.clear();
   }
   //

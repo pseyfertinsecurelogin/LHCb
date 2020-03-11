@@ -275,7 +275,9 @@ namespace Relations {
     void setInverseBase( Inverse* inverse ) { m_inverse_aux = inverse; }
     /// reserve the relations (for efficiency reasons)
     StatusCode reserve( const size_t num ) {
-      if ( 0 != m_inverse_aux ) { m_inverse_aux->i_reserve( num ); }
+      if ( 0 != m_inverse_aux ) {
+        m_inverse_aux->i_reserve( num ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return m_direct.i_reserve( num );
     }
     // ========================================================================

@@ -205,7 +205,8 @@ bool LoKi::L0::ConditionValue::operator()( const LHCb::L0DUReport* a ) const {
     for ( const auto& name : names() ) {
       auto ifind = m.find( name );
       if ( m.end() == ifind ) {
-        Error( "Non-existing condition '" + name + "' has been requested" );
+        Error( "Non-existing condition '" + name + "' has been requested" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         continue;
       }
       const auto* channel = ifind->second;
@@ -269,7 +270,8 @@ bool LoKi::L0::ChannelDecision::operator()( const LHCb::L0DUReport* a ) const {
     for ( const auto& name : names() ) {
       auto ifind = m.find( name );
       if ( m.end() == ifind ) {
-        Error( "Non-existing channel '" + name + "' has been requested" );
+        Error( "Non-existing channel '" + name + "' has been requested" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         continue;
       }
       const auto* channel = ifind->second;
@@ -322,7 +324,8 @@ bool LoKi::L0::ChannelPreDecision::operator()( const LHCb::L0DUReport* a ) const
     for ( const auto& name : names() ) {
       LHCb::L0DUChannel::Map::const_iterator ifind = m.find( name );
       if ( m.end() == ifind ) {
-        Error( "Non-existing channel '" + name + "' has been requested" );
+        Error( "Non-existing channel '" + name + "' has been requested" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         continue;
       }
       const auto* channel = ifind->second;
@@ -375,7 +378,8 @@ bool LoKi::L0::TriggerDecision::operator()( const LHCb::L0DUReport* a ) const {
     for ( const auto& name : names() ) {
       LHCb::L0DUTrigger::Map::const_iterator ifind = m.find( name );
       if ( m.end() == ifind ) {
-        Error( "Unknown trigger '" + name + "' has been requested" );
+        Error( "Unknown trigger '" + name + "' has been requested" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         continue;
       }
       const auto* trigger = ifind->second;

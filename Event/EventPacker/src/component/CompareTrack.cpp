@@ -34,7 +34,9 @@ struct CompareTrack : Gaudi::Functional::Consumer<void( LHCb::Tracks const&, LHC
 
   void operator()( LHCb::Tracks const& old, LHCb::Tracks const& test ) const override {
     const LHCb::TrackPacker packer( this );
-    packer.check( old, test ).orThrow( "Comparison failed", "CompareTrack" );
+    packer.check( old, test )
+        .orThrow( "Comparison failed", "CompareTrack" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 };
 

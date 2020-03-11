@@ -78,19 +78,19 @@ StatusCode PrepareVeloFullRawBuffer::execute() {
 
   if ( rawEvtStatus.isSuccess() ) {
 
-    getRawBanks();
+    getRawBanks().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     // if there is adc bank or pedestal bank begin ordering
 
     if ( adcBankFlag() || pedBankFlag() ) {
 
       if ( adcBankFlag() || pedBankFlag() ) createOrderedSections();
-      writeVeloFull();
+      writeVeloFull().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       // flush the memory after each event
       resetMemory();
 
     } else if ( m_roundRobin ) {
 
-      writeVeloFull();
+      writeVeloFull().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
 
   } else {

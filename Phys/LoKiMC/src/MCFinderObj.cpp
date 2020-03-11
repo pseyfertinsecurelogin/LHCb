@@ -124,7 +124,8 @@ LoKi::Types::MCRange LoKi::MCFinderObj::findDecays( const std::string& decay, co
 LoKi::Types::MCRange LoKi::MCFinderObj::findDecays( const std::string&                 decay,
                                                     const LHCb::MCParticle::Container* particles ) const {
   if ( 0 == particles ) {
-    Error( "LHCb::MCParticles* points ot NULL, return MCRange()" );
+    Error( "LHCb::MCParticles* points ot NULL, return MCRange()" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Types::MCRange(); // RETURN
   }
   return _findDecays( decay, *particles );

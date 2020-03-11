@@ -281,7 +281,7 @@ StatusCode LHCb::MDFIO::commitRawBuffer( const void* data, size_t len, int type,
     MDFHeader*     h       = (MDFHeader*)hdr->data();
     int            hdrSize = sizeof( MDFHeader ) + h->subheaderLength();
     int            bnkSize = hdr->totalSize();
-    writeBuffer( ioDesc, h, hdrSize );
+    writeBuffer( ioDesc, h, hdrSize ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     // Need two write due to RAW bank alignment
     sc = writeBuffer( ioDesc, ptr + bnkSize, len - bnkSize );
     sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;

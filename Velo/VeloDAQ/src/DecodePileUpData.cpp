@@ -79,7 +79,7 @@ StatusCode DecodePileUpData::execute() {
   if ( sc ) {
     // get PU banks (NZS and ZS)
     // fill in a LUT
-    decode();
+    decode().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     LHCb::VeloClusters* clusters    = new LHCb::VeloClusters();
     LHCb::VeloClusters* clustersNZS = new LHCb::VeloClusters();
@@ -95,7 +95,7 @@ StatusCode DecodePileUpData::execute() {
     }
 
     // put the cluster in the TES
-    writePUBanks( clusters, clustersNZS );
+    writePUBanks( clusters, clustersNZS ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   } else {
     return ( StatusCode::SUCCESS );
   }

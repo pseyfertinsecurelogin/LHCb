@@ -78,7 +78,7 @@ StatusCode FuncMinimumPAlg::execute() {
   IFuncMinimum::Covariance matrix_error( arg.dimension(), 0 );
 
   // Call of the method
-  m_publicTool->minimum( func, arg );
+  m_publicTool->minimum( func, arg ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   log << endmsg;
   log << "START OF THR METHOD" << endmsg;
   log << "MINIMUM FOUND AT: " << endmsg;
@@ -95,7 +95,7 @@ StatusCode FuncMinimumPAlg::execute() {
   arg[1] = 4;
 
   // Call of the method(with covariance matrix (matrix of error))
-  m_publicTool->minimum( func, arg, matrix_error );
+  m_publicTool->minimum( func, arg, matrix_error ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   log << endmsg;
   log << "THE METHOD WITH MATRIX OF ERROR" << endmsg;
   log << "MINIMUM FOUND AT: " << endmsg;
@@ -126,8 +126,8 @@ StatusCode FuncMinimumPAlg::finalize() {
   MsgStream log( msgSvc(), name() );
   log << MSG::INFO << "==> Finalize" << endmsg;
 
-  toolSvc()->releaseTool( m_publicTool );
-  toolSvc()->releaseTool( m_privateTool );
+  toolSvc()->releaseTool( m_publicTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  toolSvc()->releaseTool( m_privateTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return StatusCode::SUCCESS;
 }

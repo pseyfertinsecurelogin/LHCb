@@ -140,7 +140,8 @@ namespace LoKi {
     // ============================================================================
     LoKi::LorentzVector FourMomentum::momentum( const HepMC::GenParticle* p ) const {
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return empty 4-momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return empty 4-momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::LorentzVector();
       }
       //
@@ -151,7 +152,8 @@ namespace LoKi {
       for ( auto ii = m_children.begin(); m_children.end() != ii; ++ii ) {
         const HepMC::GenParticle* c = ii->child( p );
         if ( !c ) {
-          Error( "daughter HepMC::GenParticle* points to NULL, skip it" );
+          Error( "daughter HepMC::GenParticle* points to NULL, skip it" )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           continue;
         }
         result += LoKi::LorentzVector( c->momentum() );
@@ -216,7 +218,8 @@ namespace LoKi {
     double Mass::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Mass" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Mass" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMass;
       }
       //
@@ -238,7 +241,8 @@ namespace LoKi {
     double Energy::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Energy" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Energy" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidEnergy;
       }
       //
@@ -259,7 +263,8 @@ namespace LoKi {
     double Momentum::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMomentum;
       }
       //
@@ -280,7 +285,8 @@ namespace LoKi {
     double MomentumX::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMomentum;
       }
       //
@@ -301,7 +307,8 @@ namespace LoKi {
     double MomentumY::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMomentum;
       }
       //
@@ -322,7 +329,8 @@ namespace LoKi {
     double MomentumZ::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMomentum;
       }
       //
@@ -343,7 +351,8 @@ namespace LoKi {
     double TransverseMomentum::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" );
+        Error( "HepMC::GenParticle* points to NULL, return Invalid Momentum" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidMomentum;
       }
       //
@@ -364,7 +373,8 @@ namespace LoKi {
     double PseudoRapidity::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" );
+        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::NegativeInfinity;
       }
       //
@@ -385,7 +395,8 @@ namespace LoKi {
     double Rapidity::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" );
+        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::NegativeInfinity;
       }
       //
@@ -407,7 +418,8 @@ namespace LoKi {
     double Rapidity0::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" );
+        Error( "HepMC::GenParticle* points to NULL, return NegativeInfinity" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::NegativeInfinity;
       }
       //
@@ -429,7 +441,8 @@ namespace LoKi {
     double Phi::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return -100 " );
+        Error( "HepMC::GenParticle* points to NULL, return -100 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -100;
       }
       //
@@ -452,7 +465,8 @@ namespace LoKi {
     double Theta::operator()( const HepMC::GenParticle* p ) const {
       //
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return -100 " );
+        Error( "HepMC::GenParticle* points to NULL, return -100 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -100;
       }
       //
@@ -473,7 +487,8 @@ namespace LoKi {
     // ============================================================================
     double Beta::beta( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return -1 " );
+        Error( "HepMC::GenParticle* points to NULL, return -1 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1;
       }
       //
@@ -485,7 +500,8 @@ namespace LoKi {
     // ============================================================================
     double Beta::gamma( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return -1 " );
+        Error( "HepMC::GenParticle* points to NULL, return -1 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1;
       }
       //
@@ -499,7 +515,7 @@ namespace LoKi {
       if ( UNLIKELY( s_equal( m, 0 ) ) ) {
         //
         //
-        Error( "Light-like particle, return +infinity" );
+        Error( "Light-like particle, return +infinity" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::PositiveInfinity;
       }
       //
@@ -511,7 +527,8 @@ namespace LoKi {
     // ============================================================================
     double Beta::betagamma( const HepMC::GenParticle* p ) const {
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return -1 " );
+        Error( "HepMC::GenParticle* points to NULL, return -1 " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1;
       }
       //
@@ -522,7 +539,7 @@ namespace LoKi {
       const double m = lv.M();
       if ( s_equal( m, 0 ) ) {
         //
-        Error( "Light-like particle, return +infinity" );
+        Error( "Light-like particle, return +infinity" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::PositiveInfinity;
       }
       //
@@ -593,7 +610,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaPhi::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'InvalidAngle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       return dphi( p );
@@ -632,7 +650,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaEta::operator()( const HepMC::GenParticle* p ) const {
       if ( UNLIKELY( !p ) ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'InvalidAngle'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       return deta( p );
@@ -668,7 +687,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaR2::operator()( const HepMC::GenParticle* p ) const {
       if ( 0 == p ) {
-        Error( "HepMC::GenParticle* points to NULL, return 'InvalidDustance'" );
+        Error( "HepMC::GenParticle* points to NULL, return 'InvalidDustance'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidDistance;
       }
       //

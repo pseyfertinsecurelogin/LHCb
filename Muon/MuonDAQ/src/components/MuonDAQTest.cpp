@@ -53,7 +53,7 @@ StatusCode MuonDAQTest::execute() {
     }
   }
   std::vector<LHCb::MuonTileID> decodingTile;
-  m_MuonBuffer->getTile( decodingTile );
+  m_MuonBuffer->getTile( decodingTile ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   for ( auto jitile = decodingTile.begin(); jitile < decodingTile.end(); jitile++ ) {
     LHCb::MuonTileID digitTile = ( *jitile );
     if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " ;ist of tile " << (unsigned int)digitTile << endmsg;
@@ -63,7 +63,7 @@ StatusCode MuonDAQTest::execute() {
   }
 
   std::vector<std::pair<LHCb::MuonTileID, unsigned int>> decoding;
-  m_MuonBuffer->getTileAndTDC( decoding );
+  m_MuonBuffer->getTileAndTDC( decoding ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   for ( auto ji = decoding.begin(); ji < decoding.end(); ji++ ) {
     std::pair<LHCb::MuonTileID, unsigned int> digit     = ( *ji );
     LHCb::MuonTileID                          digitTile = digit.first;

@@ -151,7 +151,8 @@ bool MCReconstructible::isReconstructibleAs( const IMCReconstructible::RecCatego
 
   // protect against the strip case
   if ( category == NoClassification ) {
-    Warning( "Called with no classification", StatusCode::SUCCESS );
+    Warning( "Called with no classification", StatusCode::SUCCESS )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return false;
   }
 
@@ -166,7 +167,8 @@ bool MCReconstructible::isReconstructibleAs( const IMCReconstructible::RecCatego
           return crit->first == category;
         } );
     if ( criteria == m_critMap.end() ) {
-      Warning( "Category not found - defaulting to false", StatusCode::SUCCESS );
+      Warning( "Category not found - defaulting to false", StatusCode::SUCCESS )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return false;
     }
     return ( *criteria )->second.accepted( mcTkInfo, mcPart ) && m_mcSel->accept( mcPart );

@@ -58,8 +58,8 @@ StatusCode LoadDDDB::execute() {
   info() << "Loading the DDDB" << endmsg;
 
   try {
-    detSvc()->addPreLoadItem( m_treeToLoad );
-    detSvc()->preLoad();
+    detSvc()->addPreLoadItem( m_treeToLoad ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    detSvc()->preLoad().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   } catch ( GaudiException& x ) {
     fatal() << "Caught GaudiException" << endmsg;
     int i = 0;

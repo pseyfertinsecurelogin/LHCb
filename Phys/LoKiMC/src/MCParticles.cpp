@@ -61,7 +61,7 @@ namespace LoKi {
     // ============================================================================
     double Momentum::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().P(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -71,7 +71,7 @@ namespace LoKi {
     // ============================================================================
     double Energy::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().e(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidEnergy'" );
+      Error( " Invalid Particle, return 'InvalidEnergy'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidEnergy; // RETURN
     }
     // ============================================================================
@@ -81,7 +81,7 @@ namespace LoKi {
     // ============================================================================
     bool Oscillated::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->hasOscillated(); } // RETURN
-      Error( " Invalid Particle, return 'false'" );
+      Error( " Invalid Particle, return 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return false; // RETURN
     }
     // ============================================================================
@@ -91,7 +91,7 @@ namespace LoKi {
     // ============================================================================
     double TransverseMomentum::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().Pt(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomentum'" );
+      Error( " Invalid Particle, return 'InvalidMomentum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -101,7 +101,7 @@ namespace LoKi {
     // ============================================================================
     double MomentumX::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().px(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -111,7 +111,7 @@ namespace LoKi {
     // ============================================================================
     double MomentumY::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().py(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -121,7 +121,7 @@ namespace LoKi {
     // ============================================================================
     double MomentumZ::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().pz(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -131,7 +131,7 @@ namespace LoKi {
     // ============================================================================
     double PseudoRapidity::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return eta( p ); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -157,13 +157,13 @@ namespace LoKi {
     // ============================================================================
     double Rapidity::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return y( p ); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
     double Rapidity0::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return y0( p ); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -175,7 +175,7 @@ namespace LoKi {
     // ============================================================================
     double Theta::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().theta(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -185,7 +185,7 @@ namespace LoKi {
     // ============================================================================
     double Phi::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return adjust( phi( p ) ); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMomenum'" );
+      Error( " Invalid Particle, return 'InvalidMomenum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum; // RETURN
     }
     // ============================================================================
@@ -195,7 +195,7 @@ namespace LoKi {
     // ============================================================================
     double Mass::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->momentum().M(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidMass'" );
+      Error( " Invalid Particle, return 'InvalidMass'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMass; // RETURN
     }
     // ============================================================================
@@ -205,7 +205,7 @@ namespace LoKi {
     // ============================================================================
     double Identifier::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->particleID().pid(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidID'" );
+      Error( " Invalid Particle, return 'InvalidID'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidID; // RETURN
     }
     // ============================================================================
@@ -215,7 +215,7 @@ namespace LoKi {
     // ============================================================================
     double AbsIdentifier::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->particleID().abspid(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidID'" );
+      Error( " Invalid Particle, return 'InvalidID'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidID; // RETURN
     }
     // ============================================================================
@@ -269,7 +269,7 @@ namespace LoKi {
     bool IsID::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Error( "Invalid Particle, return 'False'" );
+        Error( "Invalid Particle, return 'False'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false; // RETURN
       }
       //
@@ -322,7 +322,7 @@ namespace LoKi {
     bool IsNotID::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Error( "Invalid Particle, return 'False'" );
+        Error( "Invalid Particle, return 'False'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false; // RETURN
       }
       return not_in_list( p->particleID() );
@@ -377,7 +377,7 @@ namespace LoKi {
     bool IsAbsID::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Error( "Invalid Particle, return 'False'" );
+        Error( "Invalid Particle, return 'False'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false; // RETURN
       }
       //
@@ -435,7 +435,7 @@ namespace LoKi {
     bool IsNotAbsID::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( !p ) {
-        Error( "Invalid Particle, return 'False'" );
+        Error( "Invalid Particle, return 'False'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false; // RETURN
       }
       //
@@ -450,7 +450,7 @@ namespace LoKi {
     // ============================================================================
     double ThreeCharge::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return p->particleID().threeCharge(); } // RETURN
-      Error( " Invalid Particle, return 'InvalidCharge'" );
+      Error( " Invalid Particle, return 'InvalidCharge'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidCharge; // RETURN
     }
     // ============================================================================
@@ -460,13 +460,14 @@ namespace LoKi {
     // ============================================================================
     double ProperLifeTime::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( " Invalid Particle, return 'InvalidTime'" );
+        Error( " Invalid Particle, return 'InvalidTime'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime; // RETURN
       }
       //
       const LHCb::MCVertex* originVertex = p->originVertex();
       if ( !originVertex ) {
-        Error( " Invalid 'originVertex' , return 'InvalidTime'" );
+        Error( " Invalid 'originVertex' , return 'InvalidTime'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime; // RETURN
       }
       //
@@ -497,7 +498,7 @@ namespace LoKi {
       }
       //
       if ( !endVertex ) {
-        Error( " Invalid 'endVertex' , return 'InfiniteTime'" );
+        Error( " Invalid 'endVertex' , return 'InfiniteTime'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InfiniteTime; // RETURN
       }
       // evaluate the distance
@@ -507,17 +508,18 @@ namespace LoKi {
       const double mom  = p->momentum().P();
 
       if ( 0 >= mass ) {
-        Error( " Mass is invalid, return 'InvalidTime' " );
+        Error( " Mass is invalid, return 'InvalidTime' " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime; // RETURN
       }
       if ( 0 >= mom ) {
-        Error( " |Momentum| is invalid, return 'InvalidTime' " );
+        Error( " |Momentum| is invalid, return 'InvalidTime' " )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime; // RETURN
       }
       const double betagamma = mom / mass;
       //
       if ( 0 >= betagamma ) {
-        Error( " betagamma is invalid, return 'InvalidTime' " );
+        Error( " betagamma is invalid, return 'InvalidTime' " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidTime; // RETURN
       }
       //
@@ -536,7 +538,7 @@ namespace LoKi {
     // ============================================================================
     bool HasQuark::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().hasQuark( quark() );
@@ -568,7 +570,7 @@ namespace LoKi {
     // ============================================================================
     bool IsCharged::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return 0 != p->particleID().threeCharge();
@@ -582,7 +584,7 @@ namespace LoKi {
     // ============================================================================
     bool IsNeutral::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return 0 == p->particleID().threeCharge();
@@ -596,7 +598,7 @@ namespace LoKi {
     // ============================================================================
     bool IsLepton::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().isLepton();
@@ -610,7 +612,7 @@ namespace LoKi {
     // ============================================================================
     bool IsMeson::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().isMeson();
@@ -624,7 +626,7 @@ namespace LoKi {
     // ============================================================================
     bool IsBaryon::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().isBaryon();
@@ -638,7 +640,7 @@ namespace LoKi {
     // ============================================================================
     bool IsHadron::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().isHadron();
@@ -652,7 +654,7 @@ namespace LoKi {
     // ============================================================================
     bool IsNucleus::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* point to NULL, returs 'false'" );
+        Error( "MCParticle* point to NULL, returs 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return p->particleID().isNucleus();
@@ -670,7 +672,7 @@ namespace LoKi {
     // ============================================================================
     FromMCDecayTree::FromMCDecayTree( const LHCb::MCParticles* cnt ) : m_cont() {
       if ( !cnt ) {
-        Error( " ::MCParticles* points to NULL!" );
+        Error( " ::MCParticles* points to NULL!" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       } else {
         m_cont.reserve( cnt->size() );
         std::copy( cnt->begin(), cnt->end(), std::back_inserter( m_cont ) );
@@ -681,12 +683,12 @@ namespace LoKi {
     // ============================================================================
     bool FromMCDecayTree::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "MCParticle* points to NULL, return 'false'" );
+        Error( "MCParticle* points to NULL, return 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       for ( const LHCb::MCParticle* parent : m_cont ) {
         if ( !parent ) {
-          Error( "MCParticle* point to NULL, skip it " );
+          Error( "MCParticle* point to NULL, skip it " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           continue;
         }
         if ( LoKi::MCTrees::fromMCTree( p, parent ) ) { return true; } // RETURN
@@ -701,7 +703,7 @@ namespace LoKi {
     // ============================================================================
     StatusCode FromMCDecayTree::add( const LHCb::MCParticle* p ) {
       if ( !p ) {
-        Error( "add(): MCParticle* points to NULL" );
+        Error( "add(): MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return StatusCode::FAILURE;
       }
       m_cont.push_back( p );
@@ -727,7 +729,7 @@ namespace LoKi {
     NinMCdownTree* NinMCdownTree::clone() const { return new NinMCdownTree( *this ); }
     // ============================================================================
     double NinMCdownTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "MCParticle* points to NULL" ); }
+      if ( !p ) { Warning( "MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 
       double number = 0;
       // check the particle itself
@@ -759,7 +761,7 @@ namespace LoKi {
     // ============================================================================
     double MCMotherFunction::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( ": MCParticle* point to NULL, return -1.e+6" );
+        Error( ": MCParticle* point to NULL, return -1.e+6" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return -1.e+6;
       }
       const LHCb::MCParticle* mother = p->mother();
@@ -779,7 +781,7 @@ namespace LoKi {
     // ============================================================================
     bool MCMotherPredicate::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( ": MCParticle* point to NULL, return 'false'" );
+        Error( ": MCParticle* point to NULL, return 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       const LHCb::MCParticle* mother = p->mother();
@@ -853,7 +855,8 @@ namespace LoKi {
     // ============================================================================
     double MomentumDistance::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return LoKi::Kinematics::delta2euclidian( p->momentum(), m_vct ); }
-      Error( "Invalid MCParticle*, return (InvalidMomentum)^2" );
+      Error( "Invalid MCParticle*, return (InvalidMomentum)^2" )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum * LoKi::Constants::InvalidMomentum;
     }
     // ============================================================================
@@ -886,7 +889,7 @@ namespace LoKi {
     // ============================================================================
     double TransverseMomentumRel::operator()( const LHCb::MCParticle* p ) const {
       if ( p ) { return LoKi::Kinematics::transverseMomentumDir( p->momentum(), m_vct ); }
-      Error( "Invalid MCParticle*, return 'InvalidMomentum'" );
+      Error( "Invalid MCParticle*, return 'InvalidMomentum'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return LoKi::Constants::InvalidMomentum;
     }
     // ============================================================================
@@ -904,7 +907,7 @@ namespace LoKi {
     // ============================================================================
     bool ValidOrigin::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( " MCParticle* points to NULL, return 'false' " );
+        Error( " MCParticle* points to NULL, return 'false' " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       };
       return 0 != p->originVertex();
@@ -931,7 +934,7 @@ namespace LoKi {
     // ============================================================================
     double MCVertexFunAdapter::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( " MCParticle* points to NULL, return 'm_err'" );
+        Error( " MCParticle* points to NULL, return 'm_err'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return m_err;
       }
       //
@@ -969,17 +972,19 @@ namespace LoKi {
     bool MCDecayPattern::operator()( const LHCb::MCParticle* p ) const {
       const LHCb::MCParticle* mc = p;
       if ( !p || !mc ) {
-        Error( " MCParticle* points to NULL, return 'false'" );
+        Error( " MCParticle* points to NULL, return 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       if ( !m_finder.validPointer() ) {
-        Error( " IMCDecayFinder* points to NULL, return 'false'" );
+        Error( " IMCDecayFinder* points to NULL, return 'false'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       if ( m_finder->decay() != m_decay ) {
         StatusCode sc = m_finder->setDecay( m_decay );
         if ( sc.isFailure() ) {
-          Error( "Error from IMCDecayFinder::setDecay('" + m_decay + "') , return 'false' ", sc );
+          Error( "Error from IMCDecayFinder::setDecay('" + m_decay + "') , return 'false' ", sc )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           return false;
         }
       }
@@ -1005,11 +1010,12 @@ namespace LoKi {
     // ============================================================================
     bool MCFilter::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( " MCParticle* points to NULL, return 'false'" );
+        Error( " MCParticle* points to NULL, return 'false'" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       if ( !m_selector.validPointer() ) {
-        Error( " IMCParticleSelector* points to NULL, return 'false'" );
+        Error( " IMCParticleSelector* points to NULL, return 'false'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       // use the tool
@@ -1052,7 +1058,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaPhi::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return 'InvalidAngle'" );
+        Error( "LHCb::MCParticle* points to NULL, return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       return dphi( p );
@@ -1087,7 +1094,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaEta::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return 'InvalidAngle'" );
+        Error( "LHCb::MCParticle* points to NULL, return 'InvalidAngle'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidAngle;
       }
       return deta( p );
@@ -1118,7 +1126,8 @@ namespace LoKi {
     // ============================================================================
     double DeltaR2::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return 'InvalidDistance'" );
+        Error( "LHCb::MCParticle* points to NULL, return 'InvalidDistance'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return LoKi::Constants::InvalidDistance;
       }
       const double dphi_ = dphi( p );
@@ -1151,11 +1160,13 @@ namespace LoKi {
       static const IMCReconstructible::RecCategory s_bad = IMCReconstructible::NoClassification;
       //
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return '" + IMCReconstructible::text( s_bad ) + "'" );
+        Error( "LHCb::MCParticle* points to NULL, return '" + IMCReconstructible::text( s_bad ) + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return s_bad;
       }
       if ( !m_eval.validPointer() ) {
-        Error( "IMCRecontructible* points to NULL, return '" + IMCReconstructible::text( s_bad ) + "'" );
+        Error( "IMCRecontructible* points to NULL, return '" + IMCReconstructible::text( s_bad ) + "'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return s_bad;
       }
       // use the tool
@@ -1200,12 +1211,14 @@ namespace LoKi {
     // ============================================================================
     bool MCReconstructibleAs::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return 'False'" );
+        Error( "LHCb::MCParticle* points to NULL, return 'False'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //
       if ( !m_eval.validPointer() ) {
-        Error( "IMCRecontructible* points to NULL, return 'False'" );
+        Error( "IMCRecontructible* points to NULL, return 'False'" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       // use the tool!
@@ -1286,12 +1299,15 @@ namespace LoKi {
     // ============================================================================
     double ChildFunction::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return " + LoKi::Print::toString( m_bad ) );
+        Error( "LHCb::MCParticle* points to NULL, return " + LoKi::Print::toString( m_bad ) )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return m_bad;
       }
       // extract the daughter
       const LHCb::MCParticle* daughter = m_child.child( p );
-      if ( !daughter ) { Warning( "Daughter particle points to NULL!" ); }
+      if ( !daughter ) {
+        Warning( "Daughter particle points to NULL!" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return m_fun( daughter );
     }
     // ============================================================================
@@ -1377,12 +1393,15 @@ namespace LoKi {
     // ============================================================================
     bool ChildPredicate::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return " + LoKi::Print::toString( m_bad ) );
+        Error( "LHCb::MCParticle* points to NULL, return " + LoKi::Print::toString( m_bad ) )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return m_bad;
       }
       // extract the daughter
       const LHCb::MCParticle* daughter = m_child.child( p );
-      if ( !daughter ) { Warning( "Daughter particle points to NULL" ); }
+      if ( !daughter ) {
+        Warning( "Daughter particle points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return m_cut( daughter );
     }
     // ============================================================================
@@ -1409,7 +1428,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     bool InTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::found( p, m_cut, m_decayOnly );
     }
     // ============================================================================
@@ -1434,7 +1455,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     double NinTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::count_if( p, m_cut, m_decayOnly );
     }
     // ============================================================================
@@ -1481,7 +1504,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     double SumTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::accumulate( p, m_fun, m_cut, m_res, std::plus<>(), m_decayOnly );
     }
     // ============================================================================
@@ -1530,7 +1555,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     double MultTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::accumulate( p, m_fun, m_cut, m_res, std::multiplies<>(), m_decayOnly );
     }
     // ============================================================================
@@ -1579,7 +1606,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     double MinTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::accumulate( p, m_fun, m_cut, m_res, std::multiplies<>(), m_decayOnly );
     }
     // ============================================================================
@@ -1628,7 +1657,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     double MaxTree::operator()( const LHCb::MCParticle* p ) const {
-      if ( !p ) { Warning( "LHCb::MCParticle* points to NULL" ); }
+      if ( !p ) {
+        Warning( "LHCb::MCParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::MCAlgs::accumulate( p, m_fun, m_cut, m_res, std::multiplies<>(), m_decayOnly );
     }
     // ============================================================================
@@ -1658,7 +1689,7 @@ namespace LoKi {
     // ============================================================================
     unsigned int NinAncestors::nInAncestors( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* point to NULL, return 0" );
+        Error( "LHCb::MCParticle* point to NULL, return 0" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return 0;
       }
       unsigned int            found  = 0;
@@ -1701,7 +1732,8 @@ namespace LoKi {
     // ============================================================================
     bool InAncestors::inAncestors( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* point to NULL, return false" );
+        Error( "LHCb::MCParticle* point to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       const LHCb::MCVertex*   ov     = p->originVertex();
@@ -1733,7 +1765,8 @@ namespace LoKi {
     // ============================================================================
     bool FromDecays::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return false" );
+        Error( "LHCb::MCParticle* points to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       const LHCb::MCVertex* vertex = p->originVertex();
@@ -1776,7 +1809,8 @@ namespace LoKi {
     // ============================================================================
     bool FromInteractions::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return false" );
+        Error( "LHCb::MCParticle* points to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       const LHCb::MCVertex* vertex = p->originVertex();
@@ -1819,7 +1853,8 @@ namespace LoKi {
     // ============================================================================
     bool Signal::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return false" );
+        Error( "LHCb::MCParticle* points to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       return signal( p );
@@ -1839,7 +1874,8 @@ namespace LoKi {
     // ============================================================================
     bool FromSignal::operator()( const LHCb::MCParticle* p ) const {
       if ( !p ) {
-        Error( "LHCb::MCParticle* points to NULL, return false" );
+        Error( "LHCb::MCParticle* points to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       const LHCb::MCParticle* mother = p;

@@ -66,7 +66,7 @@ MuonChamberLayout::MuonChamberLayout( MuonLayout R1, MuonLayout R2, MuonLayout R
   m_detSvc    = detSvc;
   m_msgSvc    = msgSvc;
   // Performing vectors and grid initialization
-  initialize();
+  initialize().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 
 StatusCode MuonChamberLayout::initialize() {

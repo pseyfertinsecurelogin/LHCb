@@ -46,7 +46,8 @@ namespace {
       }
       //
       if ( !m_t ) {
-        Error( "No valid object is found at '" + m_get.location() + "', return False" );
+        Error( "No valid object is found at '" + m_get.location() + "', return False" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //
@@ -83,7 +84,8 @@ namespace {
       }
       //
       if ( !m_t ) {
-        Error( "No valid object is found at '" + m_get.location() + "', return -inf" );
+        Error( "No valid object is found at '" + m_get.location() + "', return -inf" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //

@@ -108,7 +108,8 @@ StatusCode LoKi::Hybrid::CoreEngineActor::connect( const LoKi::Hybrid::ICoreAnti
 // ============================================================================
 const LoKi::Context* LoKi::Hybrid::CoreEngineActor::context() const {
   if ( m_stack.empty() ) {
-    LoKi::Report::Error( "LoKi::Hybrid::CoreEngineActor::context: empty stack" );
+    LoKi::Report::Error( "LoKi::Hybrid::CoreEngineActor::context: empty stack" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   const Entry& last = m_stack.top();

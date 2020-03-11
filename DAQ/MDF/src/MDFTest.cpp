@@ -28,9 +28,10 @@ extern "C" int MDFTest( int argc, char** argv ) {
     return 1;
   }
   // Get the input configuration file from arguments
-  propMgr->setProperty( "JobOptionsPath", std::string( ( argc > 1 ) ? argv[1] : "" ) );
+  propMgr->setProperty( "JobOptionsPath", std::string( ( argc > 1 ) ? argv[1] : "" ) )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   // Run the application manager and process events
-  appMgr->run();
+  appMgr->run().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   // Release Application Manager
   iface->release();
   // All done - exit

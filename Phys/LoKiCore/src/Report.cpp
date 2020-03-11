@@ -112,7 +112,9 @@ void LoKi::Report::Exception( const std::string& msg, const StatusCode& sc ) {
 // ============================================================================
 //  make a report
 // ============================================================================
-void LoKi::Report::report() { LoKi::ErrorReport::instance().report(); }
+void LoKi::Report::report() {
+  LoKi::ErrorReport::instance().report().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+}
 // ============================================================================
 
 // ============================================================================

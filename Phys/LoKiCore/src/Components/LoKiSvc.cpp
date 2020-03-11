@@ -328,7 +328,9 @@ public:
     if ( !LoKi::AuxFunBase::lokiSvc() ) { LoKi::AuxFunBase::setLoKiSvc( this ); }
     //
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
-    if ( !rep.reporter() && m_reporter ) { rep.setReporter( m_reporter ); }
+    if ( !rep.reporter() && m_reporter ) {
+      rep.setReporter( m_reporter ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    }
     //
     return StatusCode::SUCCESS;
   }
@@ -478,7 +480,7 @@ public:
     //
     { // static services:
       LoKi::Services& svc = LoKi::Services::instance();
-      svc.releaseAll();
+      svc.releaseAll().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       if ( !svc.lokiSvc() ) { svc.setLoKi( this ); }
     }
     //
@@ -589,7 +591,9 @@ public:
   // ==========================================================================
   /// virtual and protected destructor
   ~LoKiSvc() override {
-    if ( m_reporter && m_toolSvc ) { m_toolSvc->releaseTool( m_reporter ); }
+    if ( m_reporter && m_toolSvc ) {
+      m_toolSvc->releaseTool( m_reporter ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    }
     //
     if ( m_toolSvc ) { m_toolSvc->release(); }
     if ( m_ppSvc ) { m_ppSvc->release(); }

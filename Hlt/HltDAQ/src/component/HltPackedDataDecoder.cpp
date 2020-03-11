@@ -41,7 +41,7 @@ HltPackedDataDecoder::HltPackedDataDecoder( const std::string& name, ISvcLocator
   initRawEventSearch();
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
-  setProperty( "SourceID", kSourceID_Hlt2 );
+  setProperty( "SourceID", kSourceID_Hlt2 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   m_rawEventLocations.push_back( LHCb::RawEventLocation::PersistReco );
 }
 

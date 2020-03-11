@@ -117,7 +117,7 @@ namespace LoKi {
     Svc* svc( SmartIF<Svc>& s, LoKi::ILoKiSvc* lokiSvc, const char* msg ) const {
       if ( UNLIKELY( !s ) ) {
         s = SmartIF<Svc>{lokiSvc};
-        if ( !s ) Error( msg );
+        if ( !s ) Error( msg ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
       return s;
     }

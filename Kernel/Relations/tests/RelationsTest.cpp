@@ -36,21 +36,21 @@ int main() {
   LHCb::RelationWeighted1D<int, float, double> t3;
   LHCb::RelationWeighted2D<int, float, double> t4;
 
-  t1.relate( 0, 0.0 );
-  t1.relate( 1, 1.0 );
-  t1.relate( 2, 2.0 );
+  t1.relate( 0, 0.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t1.relate( 1, 1.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t1.relate( 2, 2.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-  t2.relate( "0", 0 );
-  t2.relate( "1", 1 );
-  t2.relate( "2", 2 );
+  t2.relate( "0", 0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t2.relate( "1", 1 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t2.relate( "2", 2 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-  t3.relate( 0, 0.f, 0.0 );
-  t3.relate( 1, 1.f, 1.0 );
-  t3.relate( 2, 2.f, 2.0 );
+  t3.relate( 0, 0.f, 0.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t3.relate( 1, 1.f, 1.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t3.relate( 2, 2.f, 2.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-  t4.relate( 0, 0.f, 0.0 );
-  t4.relate( 1, 1.f, 1.0 );
-  t4.relate( 2, 2.f, 2.0 );
+  t4.relate( 0, 0.f, 0.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t4.relate( 1, 1.f, 1.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  t4.relate( 2, 2.f, 2.0 ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   std::cout << " Table size: "
             << " t1 " << t1.relations().size() << " t2 " << t2.relations().size() << " t3 " << t3.relations().size()

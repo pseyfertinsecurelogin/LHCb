@@ -181,7 +181,7 @@ void LoKi::MCParticles::SourceTES::buildFinder() const {
   //
   m_finder = tool->tree( m_decay );
   //
-  toolSvc->releaseTool( tool ); // do not need the tool anymore
+  toolSvc->releaseTool( tool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // do not need the tool anymore
   //
   Assert( !( !m_finder ), "the tree is invalid:  '" + m_decay + "'" );
 }

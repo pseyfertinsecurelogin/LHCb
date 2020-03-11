@@ -150,7 +150,8 @@ public:
     } catch ( ... ) {
       aess->updateEventStatus( true, evtCtx );
       m_msg << MSG::FATAL << "Event failed in Node " << m_name << endmsg;
-      Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure );
+      Gaudi::setAppReturnCode( appmgr, Gaudi::ReturnCode::AlgorithmFailure )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return;
     }
 

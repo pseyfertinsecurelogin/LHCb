@@ -83,12 +83,14 @@ namespace {
           } else {
             throw GaudiException( prop.second, "failed to find reference property ", StatusCode::FAILURE );
           }
-          m_jos->addPropertyToCatalogue( m_name, StringProperty( prop.first, value ) );
+          m_jos->addPropertyToCatalogue( m_name, StringProperty( prop.first, value ) )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
           // Q: we do not chase references (to references, to ... ) -- should we?
           // A: no, as the JobOptionsSvc parser substitutes values, so what we get back from
           //    the jos NEVER has references in it...
         } else {
-          m_jos->addPropertyToCatalogue( m_name, StringProperty( prop.first, prop.second ) );
+          m_jos->addPropertyToCatalogue( m_name, StringProperty( prop.first, prop.second ) )
+              .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         }
       }
       return *this;
@@ -406,7 +408,7 @@ StatusCode PropertyConfigSvc::configure( const ConfigTreeNode::digest_type& conf
   //      of m_configPushed to configure only!
   if ( msgLevel( MSG::DEBUG ) ) debug() << " configuring using " << configID << endmsg;
   if ( !configID.valid() ) return StatusCode::FAILURE;
-  setTopAlgs( configID ); // do this last instead of first?
+  setTopAlgs( configID ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // do this last instead of first?
   std::vector<const PropertyConfig*> configs;
   if ( auto sc = outOfSyncConfigs( configID, std::back_inserter( configs ) ); sc.isFailure() ) return sc;
   for ( const auto& i : configs ) {

@@ -86,7 +86,7 @@ LoKi::ErrorReport::~ErrorReport() {
   // reset the reporter
   m_reporter = nullptr;
   // make a report
-  report();
+  report().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 // ============================================================================
 LoKi::ErrorReport& LoKi::ErrorReport::instance() {
@@ -121,8 +121,11 @@ StatusCode LoKi::ErrorReport::Error( const std::string& msg, const StatusCode& s
   const size_t ne = ++m_errors[msg];
   //
   const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxErrorPrint() );
-  if ( ne <= mx_ ) { Print( msg, st, MSG::ERROR ); }
-  if ( ne == mx_ ) { Print( "The ERROR   message '" + msg + "' is suppressed from now", st, MSG::ERROR ); }
+  if ( ne <= mx_ ) { Print( msg, st, MSG::ERROR ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
+  if ( ne == mx_ ) {
+    Print( "The ERROR   message '" + msg + "' is suppressed from now", st, MSG::ERROR )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
   return st;
 }
 // ============================================================================
@@ -138,8 +141,11 @@ StatusCode LoKi::ErrorReport::Warning( const std::string& msg, const StatusCode&
   const size_t ne = ++m_warnings[msg];
   //
   const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxWarningPrint() );
-  if ( ne <= mx_ ) { Print( msg, st, MSG::WARNING ); }
-  if ( ne == mx_ ) { Print( "The WARNING message '" + msg + "' is suppressed from now", st, MSG::WARNING ); }
+  if ( ne <= mx_ ) { Print( msg, st, MSG::WARNING ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
+  if ( ne == mx_ ) {
+    Print( "The WARNING message '" + msg + "' is suppressed from now", st, MSG::WARNING )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
   return st;
 }
 // ============================================================================
@@ -201,7 +207,8 @@ void LoKi::ErrorReport::Exception( const std::string& msg, const GaudiException&
   }
   // increase local counter of exceptions
   ++m_exceptions[msg];
-  Print( "Exception (re)throw: " + msg + " : tag/message='" + exc.tag() + "'/'" + exc.message() + "'", sc, MSG::FATAL );
+  Print( "Exception (re)throw: " + msg + " : tag/message='" + exc.tag() + "'/'" + exc.message() + "'", sc, MSG::FATAL )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   throw LoKi::Exception( "LoKi::" + msg, sc, exc );
 }
 // ============================================================================
@@ -215,7 +222,8 @@ void LoKi::ErrorReport::Exception( const std::string& msg, const std::exception&
   }
   // increase local counter of exceptions
   ++m_exceptions[msg];
-  Print( "Exception (re)throw: " + msg + " : what='" + exc.what() + "'", sc, MSG::FATAL );
+  Print( "Exception (re)throw: " + msg + " : what='" + exc.what() + "'", sc, MSG::FATAL )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   throw LoKi::Exception( "LoKi::" + msg + " (re)throw:" + exc.what(), sc );
 }
 // ============================================================================
@@ -229,7 +237,7 @@ void LoKi::ErrorReport::Exception( const std::string& msg, const StatusCode& sc 
   }
   // increase local counter of exceptions
   ++m_exceptions[msg];
-  Print( "Exception throw: " + msg, sc, MSG::FATAL );
+  Print( "Exception throw: " + msg, sc, MSG::FATAL ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   throw LoKi::Exception( msg, sc );
 }
 // ============================================================================

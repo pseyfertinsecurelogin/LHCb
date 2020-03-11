@@ -25,8 +25,8 @@
 FSRCleaner::FSRCleaner( const std::string& name, ISvcLocator* pSvcLocator )
     : EmptyEventNodeCleaner( name, pSvcLocator ) {
   // Set sensible FSR defaults
-  setProperty( "InputStream", "/FileRecords" );
-  setProperty( "DataService", "FileRecordDataSvc" );
+  setProperty( "InputStream", "/FileRecords" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  setProperty( "DataService", "FileRecordDataSvc" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 }
 
 //=============================================================================

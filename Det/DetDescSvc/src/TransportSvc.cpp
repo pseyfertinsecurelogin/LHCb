@@ -286,7 +286,7 @@ void TransportSvc::inspect( const ILVolume* volume, const Gaudi::XYZPoint& pnt, 
     // get the central point:
     Gaudi::XYZPoint       c = pnt + 0.5 * ( i->first.first + i->first.second ) * vect;
     ILVolume::PVolumePath pvs;
-    volume->belongsTo( c, 1, pvs );
+    volume->belongsTo( c, 1, pvs ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     if ( pvs.empty() || 0 == pvs.front() ) {
       fmt % -1;
       fmt % "<mother>";

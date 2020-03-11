@@ -91,7 +91,8 @@ std::ostream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, 
                                             const LoKi::GenTypes::GCuts& cut, const int level,
                                             const std::string& blank ) {
   if ( !particle ) {
-    LoKi::Report::Warning( "LoKi::printDecay, invalid particle" );
+    LoKi::Report::Warning( "LoKi::printDecay, invalid particle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return stream << " <NULL> "; // RETURN
   }
   //
@@ -114,7 +115,8 @@ std::ostream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, 
   //      osc1 != 0 , osc2 != 0
   //      invalid case
   if ( osc1 && osc2 ) {
-    LoKi::Report::Error( "LoKi::printDecay, invalid oscillation pattern" );
+    LoKi::Report::Error( "LoKi::printDecay, invalid oscillation pattern" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return stream << " <INVALID OSCILLATION PATTERN> "; // RETURN
   }
   const HepMC::GenParticle* self   = particle;

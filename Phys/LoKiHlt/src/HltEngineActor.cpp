@@ -98,7 +98,8 @@ StatusCode LoKi::Hybrid::HltEngineActor::connect( const LoKi::Hybrid::IHltAntiFa
 // ============================================================================
 const LoKi::Context* LoKi::Hybrid::HltEngineActor::context() const {
   if ( m_stack.empty() ) {
-    LoKi::Report::Error( "LoKi::Hybrid::HltEngineActor::context: empty stack" );
+    LoKi::Report::Error( "LoKi::Hybrid::HltEngineActor::context: empty stack" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return nullptr;
   }
   const Entry& last = m_stack.top();

@@ -46,7 +46,7 @@ double TimingTool::normalize() {
 
   { // Use dummy loop suggested by Vanya Belyaev:
     Rndm::Numbers gauss;
-    gauss.initialize( randSvc(), Rndm::Gauss( 0., 1.0 ) );
+    gauss.initialize( randSvc(), Rndm::Gauss( 0., 1.0 ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     unsigned int shots = m_shots;
     while ( 0 < --shots ) { sum += gauss() * sum; }
   }

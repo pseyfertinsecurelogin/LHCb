@@ -724,7 +724,7 @@ void UpdateManagerSvc::handle( const Incident& inc ) {
     } catch ( ... ) { error() << "unknown exception" << endmsg; }
     if ( !sc.isSuccess() ) {
       fatal() << "***** The update failed. I schedule a stop of the run *****" << endmsg;
-      m_evtProc->stopRun();
+      m_evtProc->stopRun().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
   }
 }

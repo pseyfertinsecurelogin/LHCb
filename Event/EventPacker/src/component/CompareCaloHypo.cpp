@@ -36,7 +36,9 @@ public:
   void operator()( LHCb::CaloHypos const& old, LHCb::CaloHypos const& test ) const override {
     // compare and return
     const LHCb::CaloHypoPacker packer( this );
-    packer.check( old, test ).orThrow( "CompareCaloHypo failed", "CompareCaloHypo" );
+    packer.check( old, test )
+        .orThrow( "CompareCaloHypo failed", "CompareCaloHypo" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 };
 

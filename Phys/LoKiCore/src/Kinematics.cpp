@@ -171,7 +171,8 @@ double LoKi::Kinematics::decayAngle( const LoKi::LorentzVector& P, const LoKi::L
 
   const double value = ( pq * pq - mq2 * mp2 ) * ( qd * qd - mq2 * md2 );
   if ( 0 > value ) {
-    LoKi::Report::Error( "LoKi::Kinematics::decayAngle(P,Q,D):: invalid 4-momenta, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngle(P,Q,D):: invalid 4-momenta, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -195,13 +196,15 @@ double LoKi::Kinematics::decayAngle( const LoKi::LorentzVector& P, const LoKi::L
 double LoKi::Kinematics::restMomentum( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M ) {
   const double M2 = M.M2();
   if ( 0 >= M2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: rest-system is not time-like, reuturn InvalidMomentum" );
+    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: rest-system is not time-like, reuturn InvalidMomentum" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMomentum;
   }
   const double vM = v.Dot( M );
   const double P2 = vM * vM / M2 - v.M2();
   if ( 0 > P2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: P2 < 0, return InvalidMomentum" );
+    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: P2 < 0, return InvalidMomentum" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMomentum;
   }
   return ::sqrt( P2 );
@@ -223,7 +226,8 @@ double LoKi::Kinematics::restMomentum( const LoKi::LorentzVector& v, const LoKi:
 double LoKi::Kinematics::restEnergy( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M ) {
   const double M2 = M.M2();
   if ( 0 >= M2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::restEnergy():: rest-system is not time-like, return InvaildEnergy" );
+    LoKi::Report::Error( "LoKi::Kinematics::restEnergy():: rest-system is not time-like, return InvaildEnergy" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidEnergy;
   }
   // evaluate the energy
@@ -245,7 +249,8 @@ double LoKi::Kinematics::cosThetaRest( const LoKi::LorentzVector& v1, const LoKi
                                        const LoKi::LorentzVector& M ) {
   const double M2 = M.M2();
   if ( 0 >= M2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: rest-system is not time-like, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: rest-system is not time-like, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   ///
@@ -261,7 +266,8 @@ double LoKi::Kinematics::cosThetaRest( const LoKi::LorentzVector& v1, const LoKi
   const double p1p2_ = ( ( v1M * v1M ) / M2 - m1_2 ) * ( ( v2M * v2M ) / M2 - m2_2 ); // calculate (|p1|*|p2|)^2
   //
   if ( 0 >= p1p2_ ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: (|p1|*|p2|)^2 < 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: (|p1|*|p2|)^2 < 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -289,11 +295,13 @@ double LoKi::Kinematics::cosDecayAngleChi( const LoKi::LorentzVector& d1, const 
   const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,M] |
 
   if ( 0 <= l1 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L1^2 >= 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   if ( 0 <= l2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L2^2 >= 0, return InvaildAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
 
@@ -315,13 +323,15 @@ double LoKi::Kinematics::decayAngleChi( const LoKi::LorentzVector& d1, const LoK
   //
   const double cosChi = cosDecayAngleChi( d1, d2, h1, h2 );
   if ( LoKi::Constants::InvalidAngle == cosChi ) {
-    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid cosine, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid cosine, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
   const double sinChi = sinDecayAngleChi( d1, d2, h1, h2 );
   if ( LoKi::Constants::InvalidAngle == sinChi ) {
-    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid   sine, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid   sine, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -339,7 +349,8 @@ double LoKi::Kinematics::sinDecayAngleChi( const LoKi::LorentzVector& d1, const 
   // ========================================================================
   const double M2 = M.M2();
   if ( 0 >= M2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi():: rest-system is not time-like, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi():: rest-system is not time-like, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   // ========================================================================
@@ -351,11 +362,13 @@ double LoKi::Kinematics::sinDecayAngleChi( const LoKi::LorentzVector& d1, const 
   const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,M] |
 
   if ( 0 <= l1 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L1^2 >= 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   if ( 0 <= l2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L2^2 >= 0, return InvaildAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
 
@@ -368,7 +381,8 @@ double LoKi::Kinematics::sinDecayAngleChi( const LoKi::LorentzVector& d1, const 
   const double HM  = H.Dot( M );
   const double p_H = HM * HM - H.M2() * M2;
   if ( 0 >= p_H ) {
-    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : |H| < 0, return InvaildAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : |H| < 0, return InvaildAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -447,7 +461,8 @@ double LoKi::Kinematics::cosThetaTr( const LoKi::LorentzVector& d1, const LoKi::
   // evaluate the length of normales :
   const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,D] |
   if ( 0 <= l2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosThetaTh () : L^2 >= 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaTh () : L^2 >= 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -492,7 +507,8 @@ double LoKi::Kinematics::cosPhiTr( const LoKi::LorentzVector& d1, const LoKi::Lo
   LoKi::LorentzVector l  = e( h1, h2, D );
   const double        l2 = l.M2();
   if ( l2 >= 0 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::cosPhiTr () : L^2 >= 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::cosPhiTr () : L^2 >= 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -550,7 +566,8 @@ double LoKi::Kinematics::sinPhiTr( const LoKi::LorentzVector& d1, const LoKi::Lo
   LoKi::LorentzVector l  = e( h1, h2, D );
   const double        l2 = l.M2();
   if ( l2 >= 0 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::sinPhiTr () : L^2 >= 0, return InvalidAngle" );
+    LoKi::Report::Error( "LoKi::Kinematics::sinPhiTr () : L^2 >= 0, return InvalidAngle" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidAngle;
   }
   //
@@ -781,7 +798,8 @@ LoKi::ThreeVector LoKi::Kinematics::parallel( const LoKi::ThreeVector& a, const 
   const double ab = a.Dot( b );
   const double b2 = b.Mag2();
   if ( 0 >= b2 ) {
-    LoKi::Report::Error( "LoKi::Kinematics::parallel () : b^2<=0 return vector a itself" );
+    LoKi::Report::Error( "LoKi::Kinematics::parallel () : b^2<=0 return vector a itself" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return a;
   }
   //

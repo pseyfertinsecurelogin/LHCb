@@ -54,14 +54,14 @@ StatusCode OfflineRateLimiter::initializeOnFirstEvent() {
           sc          = m_tckReader->runUpdate();
           if ( !sc ) {
             warning() << "Failed to update condDB for RateFromTCK. Will assume there is no preccale." << endmsg;
-            release( m_tckReader );
+            release( m_tckReader ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
             m_tckReader = nullptr;
           }
         }
       } else if ( m_fallback ) {
         info() << "Failed to get rate from condition database. This is normal for <2012." << endmsg;
         info() << "Fill fallback on TCK" << endmsg;
-        release( m_condTriggerTool );
+        release( m_condTriggerTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         m_useCondDB = false;
       } else {
         Exception( "Failed to get rate from condition database and no fallback" );

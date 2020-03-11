@@ -91,9 +91,13 @@ namespace Rich {
                 bool create = true ) const {
       TOOL* Tool = nullptr;
       if ( name.empty() ) {
-        this->toolSvc()->retrieveTool( type, Tool, parent, create );
+        this->toolSvc()
+            ->retrieveTool( type, Tool, parent, create )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       } else {
-        this->toolSvc()->retrieveTool( type, name, Tool, parent, create );
+        this->toolSvc()
+            ->retrieveTool( type, name, Tool, parent, create )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       }
       // add the tool into list of known tools to be properly released
       addToToolList( Tool );

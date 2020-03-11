@@ -88,7 +88,7 @@ Decays::IGenDecay::Tree LoKi::GenDecay::tree( const std::string& decay ) const {
   Decays::Parsers::Tree ptree;
   StatusCode            sc = _parse( ptree, decay );
   if ( sc.isFailure() ) {
-    Error( "Error from _parse('" + decay + "')", sc );
+    Error( "Error from _parse('" + decay + "')", sc ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return Invalid(); // RETURN
   }
   // 2) convert parsed tree into reasonable decay tree
@@ -96,14 +96,16 @@ Decays::IGenDecay::Tree LoKi::GenDecay::tree( const std::string& decay ) const {
   sc        = Decays::Trees::factory( tree, ptree, err.stream() );
   if ( sc.isFailure() ) {
     err << endmsg;
-    Error( "Unable to create the tree from '" + ptree.toString() + "'", sc );
+    Error( "Unable to create the tree from '" + ptree.toString() + "'", sc )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return Invalid(); // RETURN
   }
   // 3) validate the tree
   if ( !tree ) {
     sc = tree.validate( ppSvc() );
     if ( sc.isFailure() ) {
-      Error( "Unable to validate the tree '" + tree.toString() + "'", sc );
+      Error( "Unable to validate the tree '" + tree.toString() + "'", sc )
+          .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
       return Invalid(); // RETURN
     }
   }

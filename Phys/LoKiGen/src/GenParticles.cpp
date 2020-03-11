@@ -875,7 +875,9 @@ namespace LoKi {
     // MANDATORY: the only one essential method
     // ============================================================================
     bool InTree::operator()( const HepMC::GenParticle* p ) const {
-      if ( 0 == p ) { Warning( "HepMC::GenParticle* points to NULL" ); }
+      if ( 0 == p ) {
+        Warning( "HepMC::GenParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      }
       return LoKi::GenAlgs::found( p, m_cut );
     }
     // ============================================================================
@@ -1005,7 +1007,8 @@ namespace LoKi {
       Assert( 0 != tool, "Decays::IGenDecay* points to NULL" );
       //
       m_tree = tool->tree( descriptor );
-      toolSvc->releaseTool( tool ); // do not need the tool anymore
+      toolSvc->releaseTool( tool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // do not need the tool
+                                                                                            // anymore
       //
       Assert( !( !m_tree ), "The tree is invalid : '" + descriptor + "'" );
       Assert( !m_tree.marked(), "The tree is marked  : '" + descriptor + "'" );

@@ -315,7 +315,8 @@ StatusCode L0MuonAlg::execute() {
       if ( sc.isFailure() ) return Error( "Failed to get Hits from Muon NZS bank ... abort", StatusCode::SUCCESS, 50 );
     }
 
-    if ( m_modify_digits ) m_modifyInputTool->modifyInput( m_digits );
+    if ( m_modify_digits )
+      m_modifyInputTool->modifyInput( m_digits ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     // Fill the OL register with the input hits
     sc = fillOLsfromDigits();

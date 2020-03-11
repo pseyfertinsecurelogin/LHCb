@@ -57,7 +57,7 @@ namespace LHCbAlgsTest {
       info() << "Adding RecHeader with event time " << t << endmsg;
       LHCb::RecHeader* h = new LHCb::RecHeader();
       h->setGpsTime( t.ns() / 1000 );
-      m_dataProvider->registerObject( m_recHeaderLoc, h );
+      m_dataProvider->registerObject( m_recHeaderLoc, h ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
 
   private:

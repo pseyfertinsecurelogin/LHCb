@@ -61,7 +61,7 @@ StatusCode TestEventCounter::execute() {
 StatusCode TestEventCounter::finalize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
-  release( m_eventCounter );
+  release( m_eventCounter ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   m_eventCounter = nullptr;
 
   return GaudiAlgorithm::finalize(); // must be called after all other actions

@@ -203,7 +203,7 @@ void HltConfigSvc::createHltDecReports() {
     auto hdr = std::make_unique<LHCb::HltDecReports>();
     hdr->setConfiguredTCK( m_configuredTCK.uint() );
     hdr->setTaskID( m_id );
-    m_evtSvc->registerObject( location, hdr.release() );
+    m_evtSvc->registerObject( location, hdr.release() ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 }
 

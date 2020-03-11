@@ -79,7 +79,8 @@ namespace LoKi {
     bool DecNode::operator()( const LHCb::MCParticle* p ) const {
       //
       if ( 0 == p ) {
-        Error( "LHCb::MCParticle* point to NULL, return false" );
+        Error( "LHCb::MCParticle* point to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //
@@ -155,7 +156,8 @@ namespace LoKi {
       Assert( 0 != tool, "Decays::IDecay* points to NULL" );
       //
       m_tree = tool->tree( m_string );
-      toolSvc->releaseTool( tool ); // do not need the tool anymore
+      toolSvc->releaseTool( tool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // do not need the tool
+                                                                                            // anymore
       //
       Assert( !( !m_tree ), "The tree is invalid : '" + m_string + "'" );
     }
@@ -164,7 +166,8 @@ namespace LoKi {
     // ============================================================================
     bool DecTree::operator()( const LHCb::MCParticle* p ) const {
       if ( 0 == p ) {
-        Error( "LHCb::MCParticle* point to NULL, return false" );
+        Error( "LHCb::MCParticle* point to NULL, return false" )
+            .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return false;
       }
       //

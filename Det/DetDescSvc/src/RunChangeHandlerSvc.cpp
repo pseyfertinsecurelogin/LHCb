@@ -112,7 +112,7 @@ void RunChangeHandlerSvc::update( unsigned long run ) {
       }
     } catch ( const std::exception& x ) {
       // something went wrong, so we change the exception type and rethrow
-      evtProc()->stopRun(); // schedule a stop
+      evtProc()->stopRun().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); // schedule a stop
       throw GaudiException( x.what(), name(), StatusCode::FAILURE );
     }
   } );

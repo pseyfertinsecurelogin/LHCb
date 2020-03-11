@@ -197,7 +197,9 @@ StatusCode LoKi::Hybrid::Base::finalize() {
     Py_Finalize();
   }
   //
-  if ( Py_IsInitialized() && m_pyInit ) { Warning( "Python is still initialized!" ); }
+  if ( Py_IsInitialized() && m_pyInit ) {
+    Warning( "Python is still initialized!" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
   //
   // Write C++ code
   //

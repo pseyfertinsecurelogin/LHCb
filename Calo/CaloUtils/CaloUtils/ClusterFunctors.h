@@ -200,7 +200,9 @@ namespace LHCb {
        *  @exception CaloException
        *  @param     message exception message
        */
-      void Exception( const std::string& message ) const { throwException( "ClusterArea() " + message ); };
+      void Exception( const std::string& message ) const {
+        throwException( "ClusterArea() " + message ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
     };
 
     /** The simple class/function to get the index of area in Calo
@@ -249,7 +251,9 @@ namespace LHCb {
        *  @exception CaloException
        *  @param     message exception message
        */
-      void Exception( const std::string& message ) const { throwException( "ClusterCalo() " + message ); };
+      void Exception( const std::string& message ) const {
+        throwException( "ClusterCalo() " + message ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
     };
 
     /** The simple class/function to get the index of calorimeter.
@@ -307,7 +311,9 @@ namespace LHCb {
        *  @exception CaloException
        *  @param     message exception message
        */
-      void Exception( const std::string& message ) const { throwException( "ClusterFromCalo() " + message ); };
+      void Exception( const std::string& message ) const {
+        throwException( "ClusterFromCalo() " + message ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
     private:
       /// default constructor is private
@@ -386,7 +392,9 @@ namespace LHCb {
        *  @exception CaloException
        *  @param     message exception message
        */
-      void Exception( const std::string& message ) const { throwException( "OnTheBoundary() " + message ); };
+      void Exception( const std::string& message ) const {
+        throwException( "OnTheBoundary() " + message ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
     };
 
     /** Simple utility to locate clusters, placed on the boundaries
@@ -448,7 +456,9 @@ namespace LHCb {
        *  @exception CaloException
        *  @param     message exception message
        */
-      void Exception( const std::string& message ) const { throwException( "ZPosition() " + message ); };
+      void Exception( const std::string& message ) const {
+        throwException( "ZPosition() " + message ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+      };
 
     private:
       const DeCalorimeter* m_detector; ///< source of geometry information

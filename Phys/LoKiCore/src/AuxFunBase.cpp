@@ -146,7 +146,8 @@ StatusCode LoKi::AuxFunBase::Warning( const std::string& msg, const StatusCode& 
 void LoKi::AuxFunBase::Exception( const std::string& msg, const StatusCode& sc ) const {
   sc.ignore();
   //
-  LoKi::Report::Error( objType() + " *EXCEPTION* : \t" + msg, sc );
+  LoKi::Report::Error( objType() + " *EXCEPTION* : \t" + msg, sc )
+      .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   //
   throw LoKi::Exception( objType() + ": \t" + msg, sc );
   //
@@ -201,7 +202,8 @@ void LoKi::AuxFunBase::setEvent() const {
   if ( svc ) {
     m_event = svc->event();
   } else {
-    Error( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0" );
+    Error( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 }
 // ============================================================================
@@ -212,7 +214,8 @@ bool LoKi::AuxFunBase::sameEvent() const {
   // get the service
   LoKi::ILoKiSvc* svc = lokiSvc();
   if ( !svc ) {
-    Warning( "sameEvent(): could not check the event, return false " );
+    Warning( "sameEvent(): could not check the event, return false " )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return false; // RETURN
   }
   return svc->event() == m_event;

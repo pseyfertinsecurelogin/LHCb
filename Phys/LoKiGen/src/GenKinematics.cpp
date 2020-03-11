@@ -46,7 +46,8 @@
 // ============================================================================
 double LoKi::GenKinematics::mass( const HepMC::GenParticle* p ) {
   if ( !p ) {
-    LoKi::Report::Error( "mass(HepMC::GenParticle*),invaild argument,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(HepMC::GenParticle*),invaild argument,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   return LoKi::Kinematics::mass( LoKi::LorentzVector( p->momentum() ) );
@@ -63,11 +64,13 @@ double LoKi::GenKinematics::mass( const HepMC::GenParticle* p ) {
 // ============================================================================
 double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2 ) {
   if ( !p1 ) {
-    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p2 ) {
-    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 2,return'InvalidMass'" );
+    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 2,return'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   //
@@ -87,15 +90,18 @@ double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::Gen
 double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2,
                                   const HepMC::GenParticle* p3 ) {
   if ( !p1 ) {
-    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p2 ) {
-    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p3 ) {
-    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   //
@@ -117,19 +123,23 @@ double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::Gen
 double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2,
                                   const HepMC::GenParticle* p3, const HepMC::GenParticle* p4 ) {
   if ( !p1 ) {
-    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p2 ) {
-    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p3 ) {
-    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( !p4 ) {
-    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 4,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 4,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   //

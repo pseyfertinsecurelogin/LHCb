@@ -122,7 +122,7 @@ void ODINDecodeTool::execute() {
       put( odin, m_odinLocation );
     }
   } else {
-    Warning( "Cannot find ODIN bank in RawEvent" );
+    Warning( "Cannot find ODIN bank in RawEvent" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 }
 

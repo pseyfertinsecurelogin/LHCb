@@ -115,7 +115,9 @@ StatusCode HltRawDataMonitor::execute() {
   sc = fillRawBank();
   sc = fillHltSelRep();
 
-  if ( m_diagnosticsFrequency > 0 && ( m_event % m_diagnosticsFrequency ) == 0 ) { selectionDiagnostics(); }
+  if ( m_diagnosticsFrequency > 0 && ( m_event % m_diagnosticsFrequency ) == 0 ) {
+    selectionDiagnostics().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
 
   return StatusCode::SUCCESS;
 }
@@ -127,7 +129,7 @@ StatusCode HltRawDataMonitor::finalize() {
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
-  if ( m_diagnosticsFrequency >= 0 ) selectionDiagnostics();
+  if ( m_diagnosticsFrequency >= 0 ) selectionDiagnostics().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return GaudiHistoAlg::finalize(); // must be called after all other actions
 }

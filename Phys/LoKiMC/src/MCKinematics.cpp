@@ -51,7 +51,8 @@
 // ============================================================================
 double LoKi::MCKinematics::mass( const LHCb::MCParticle* p ) {
   if ( 0 == p ) {
-    LoKi::Report::Error( "mass(LHCb::MCParticle*),invalid argument,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(LHCb::MCParticle*),invalid argument,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   return LoKi::Kinematics::mass( p->momentum() );
@@ -68,11 +69,13 @@ double LoKi::MCKinematics::mass( const LHCb::MCParticle* p ) {
 // ============================================================================
 double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2 ) {
   if ( 0 == p1 ) {
-    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p2 ) {
-    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   return LoKi::Kinematics::mass( p1->momentum(), p2->momentum() );
@@ -90,15 +93,18 @@ double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParti
 // ============================================================================
 double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2, const LHCb::MCParticle* p3 ) {
   if ( 0 == p1 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p2 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p3 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   return LoKi::Kinematics::mass( p1->momentum(), p2->momentum(), p3->momentum() );
@@ -118,19 +124,23 @@ double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParti
 double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2, const LHCb::MCParticle* p3,
                                  const LHCb::MCParticle* p4 ) {
   if ( 0 == p1 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p2 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p3 ) {
-    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   if ( 0 == p4 ) {
-    LoKi::Report::Error( "mass(4*LHCb::MCParticle*),invalid argument 4,return 'InvalidMass'" );
+    LoKi::Report::Error( "mass(4*LHCb::MCParticle*),invalid argument 4,return 'InvalidMass'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidMass;
   }
   return LoKi::Kinematics::mass( p1->momentum(), p2->momentum(), p3->momentum(), p4->momentum() );

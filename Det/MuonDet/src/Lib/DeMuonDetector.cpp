@@ -407,10 +407,12 @@ DeMuonDetector::listOfPhysChannels( Gaudi::XYZPoint my_entry, Gaudi::XYZPoint my
   int gapCnt   = 0;
   if ( ( region == -1 ) || ( chamber == -1 ) ) {
     // Hit entry
-    Hit2ChamberNumber( my_entry, station, chamberNumber, regNum );
+    Hit2ChamberNumber( my_entry, station, chamberNumber, regNum )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     // Hit exit
-    Hit2ChamberNumber( my_exit, station1, chamberNumber1, regNum1 );
+    Hit2ChamberNumber( my_exit, station1, chamberNumber1, regNum1 )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
     if ( chamberNumber != chamberNumber1 || regNum != regNum1 ) {
       msgStream() << MSG::ERROR << "Hit entry and exit are in different chambers! Returning a void list." << endmsg;

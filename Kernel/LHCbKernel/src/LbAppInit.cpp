@@ -97,7 +97,7 @@ StatusCode LbAppInit::initialize() {
   if ( m_preload ) {
     auto* preloadTool = tool<IGenericTool>( "PreloadGeometryTool" );
     preloadTool->execute();
-    release( preloadTool );
+    release( preloadTool ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
 
   m_condDBInfo = service( "XmlParserSvc", true );
@@ -185,7 +185,7 @@ StatusCode LbAppInit::initRndm( const std::vector<long int>& seeds ) const {
     int           shots = m_skipFactor;
     double        sum   = 0.;
     Rndm::Numbers gauss;
-    gauss.initialize( m_randSvc.get(), Rndm::Gauss( 0., 1.0 ) );
+    gauss.initialize( m_randSvc.get(), Rndm::Gauss( 0., 1.0 ) ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     while ( 0 < --shots ) { sum += gauss() * sum; }
   }
 

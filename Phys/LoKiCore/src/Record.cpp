@@ -69,7 +69,7 @@ LoKi::Record::Record( const Tuples::Tuple& ntuple, const char* format... ) : Tup
 // destructor
 // ============================================================================
 LoKi::Record::~Record() {
-  if ( valid() ) { tuple()->write(); }
+  if ( valid() ) { tuple()->write().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ ); }
 }
 // ============================================================================
 

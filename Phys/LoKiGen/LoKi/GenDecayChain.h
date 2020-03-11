@@ -114,7 +114,7 @@ namespace LoKi {
                    const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid particle
       if ( 0 == particle ) {
-        Error( " HepMC::GenParticle* points to NULL" );
+        Error( " HepMC::GenParticle* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream; // RETURN
       }
       //
@@ -213,7 +213,7 @@ namespace LoKi {
                    const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
       if ( !event ) {
-        Error( " HepMC::GenEvent* points to NULL" );
+        Error( " HepMC::GenEvent* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream;
       }
       // select the trees
@@ -251,7 +251,7 @@ namespace LoKi {
                    const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
       if ( !event ) {
-        Error( " LHCb::HepMCEvent* points to NULL" );
+        Error( " LHCb::HepMCEvent* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream;
       }
       // print HepMC::GenEvent
@@ -285,7 +285,7 @@ namespace LoKi {
                    const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
       if ( !events ) {
-        Error( " LHCb::HepMCEvent::Container* points to NULL" );
+        Error( " LHCb::HepMCEvent::Container* points to NULL" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
         return stream;
       }
       // print HepMC::GenEvent

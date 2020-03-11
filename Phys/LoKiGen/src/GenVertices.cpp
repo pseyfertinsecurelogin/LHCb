@@ -50,7 +50,7 @@ LoKi::GenVertices::BarCode* LoKi::GenVertices::BarCode::clone() const {
 // ============================================================================
 double LoKi::GenVertices::BarCode::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 0" );
+    Error( "HepMC::GenVertex* points to NULL; return 0" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return 0;
   }
   return v->barcode();
@@ -68,7 +68,8 @@ LoKi::GenVertices::PositionX* LoKi::GenVertices::PositionX::clone() const { retu
 // ============================================================================
 double LoKi::GenVertices::PositionX::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" );
+    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidDistance;
   }
   return v->position().x();
@@ -86,7 +87,8 @@ LoKi::GenVertices::PositionY* LoKi::GenVertices::PositionY::clone() const { retu
 // ============================================================================
 double LoKi::GenVertices::PositionY::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" );
+    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidDistance;
   }
   return v->position().y();
@@ -104,7 +106,8 @@ LoKi::GenVertices::PositionZ* LoKi::GenVertices::PositionZ::clone() const { retu
 // ============================================================================
 double LoKi::GenVertices::PositionZ::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" );
+    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidDistance;
   }
   return v->position().z();
@@ -122,7 +125,8 @@ LoKi::GenVertices::PositionT* LoKi::GenVertices::PositionT::clone() const { retu
 // ============================================================================
 double LoKi::GenVertices::PositionT::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 'InvalidTime'" );
+    Error( "HepMC::GenVertex* points to NULL; return 'InvalidTime'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidTime;
   }
   return v->position().t();
@@ -141,7 +145,8 @@ LoKi::GenVertices::Rho* LoKi::GenVertices::Rho::clone() const { return new Rho( 
 // ============================================================================
 double LoKi::GenVertices::Rho::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" );
+    Error( "HepMC::GenVertex* points to NULL; return 'InvalidDistance'" )
+        .ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return LoKi::Constants::InvalidDistance;
   }
   return v->position().perp();
@@ -272,20 +277,20 @@ LoKi::GenVertices::SumIF* LoKi::GenVertices::SumIF::clone() const { return new S
 // ============================================================================
 double LoKi::GenVertices::SumIF::operator()( const HepMC::GenVertex* v ) const {
   if ( UNLIKELY( !v ) ) {
-    Error( "HepMC::GenVertex* poitns to NULL, return 0 " );
+    Error( "HepMC::GenVertex* poitns to NULL, return 0 " ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     return 0;
   }
   HepMC::GenVertex* _v = const_cast<HepMC::GenVertex*>( v );
 
-  return std::accumulate( _v->particles_begin( m_range ), _v->particles_end( m_range ), 0.,
-                          [&]( double r, const HepMC::GenParticle* p ) {
-                            if ( UNLIKELY( !p ) ) {
-                              Warning( "HepMC::GenParticle* points to 0; skip it" );
-                            } else if ( m_cut( p ) ) {
-                              r += m_fun( p );
-                            }
-                            return r;
-                          } );
+  return std::accumulate(
+      _v->particles_begin( m_range ), _v->particles_end( m_range ), 0., [&]( double r, const HepMC::GenParticle* p ) {
+        if ( UNLIKELY( !p ) ) {
+          Warning( "HepMC::GenParticle* points to 0; skip it" ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+        } else if ( m_cut( p ) ) {
+          r += m_fun( p );
+        }
+        return r;
+      } );
 }
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
