@@ -62,8 +62,7 @@ void DumpMCEventAlg::operator()( const LHCb::MCHeader& evt, const LHCb::MCVertic
 
   info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n" << evt << endmsg;
 
-  m_checker->check().orThrow( "Checker Failed", "DumpMCEventAlg" );
-  ;
+  m_checker->check().orThrow( "Checker Failed", "DumpMCEventAlg" ).ignore();
   info() << "MCVertex/MCParticle tree structure is OK" << endmsg;
 
   info() << "There are " << verts.size() << " Vertices:" << endmsg;

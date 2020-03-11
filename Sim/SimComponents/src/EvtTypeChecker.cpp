@@ -95,7 +95,7 @@ StatusCode EvtTypeChecker::setDecayToFind( const int evtCode ) const {
   }
 
   // Retrieve tool nd set decay descriptor
-  m_mcFinder.retrieve();
+  m_mcFinder.retrieve().ignore();
   std::string sdecay = m_evtTypeSvc->decayDescriptor( evtCode );
   if ( ( m_mcFinder->setDecay( sdecay ) ).isFailure() ) {
     fatal() << "Unable to set decay for EvtCode " << evtCode << endmsg;
@@ -116,7 +116,7 @@ void EvtTypeChecker::operator()( const LHCb::GenHeader& header ) const {
   // If reading event type from data retrieve event header and set decay
   // unless already done (do it only for first time)
   if ( m_fromData.value() && !m_setDecay ) {
-    setDecayToFind( header.evType() ).orThrow( " 'setDecayToFind' failed ", "EvtTypeChecker" );
+    setDecayToFind( header.evType() ).orThrow( " 'setDecayToFind' failed ", "EvtTypeChecker" ).ignore();
   }
   m_nMCFound += m_mcFinder->hasDecay();
 }
