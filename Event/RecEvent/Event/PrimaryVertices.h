@@ -214,8 +214,7 @@ namespace LHCb::Rec::PV {
           tmpy[j] = m_vertices[i + j].m_position.y();
           tmpz[j] = m_vertices[i + j].m_position.z();
         }
-        Vec3<typename dType::float_v> tmp{&tmpx[0], &tmpy[0], &tmpz[0]};
-        return tmp;
+        return Vec3<typename dType::float_v>{&tmpx[0], &tmpy[0], &tmpz[0]};
       }
     }
 
