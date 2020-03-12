@@ -373,7 +373,8 @@ namespace LHCb::Pr {
       }
       friend bool            operator!=( Iterator const& lhs, Iterator const& rhs ) { return not( lhs == rhs ); }
       friend difference_type operator-( Iterator const& lhs, Iterator const& rhs ) {
-        return ( lhs.m_offset - rhs.m_offset );
+        assert( ( lhs.m_offset - rhs.m_offset ) % simd_t::size == 0 );
+        return ( lhs.m_offset - rhs.m_offset ) / simd_t::size;
       }
     };
 
