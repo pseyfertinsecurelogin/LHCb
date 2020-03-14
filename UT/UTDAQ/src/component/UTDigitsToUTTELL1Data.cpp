@@ -70,7 +70,7 @@ LHCb::UTTELL1Datas UTDigitsToUTTELL1Data::operator()( const LHCb::UTDigits& digi
 
   // make a new digits container
   UTTELL1Datas outCont;
-  createTell1Data( &digitCont, &outCont ).orThrow( "Problems creating Tell1 data", "UTDigitsToUTTELL1Data" );
+  createTell1Data( &digitCont, &outCont ).orThrow( "Problems creating Tell1 data", "UTDigitsToUTTELL1Data" ).ignore();
   return outCont;
 }
 

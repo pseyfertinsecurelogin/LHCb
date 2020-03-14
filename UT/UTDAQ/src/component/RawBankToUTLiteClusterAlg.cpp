@@ -132,7 +132,7 @@ LHCb::UTLiteCluster::UTLiteClusters RawBankToUTLiteClusterAlg::operator()( const
   } else {
     fCont.reserve( 5000 );
     // decode banks
-    decodeBanks( rawEvt, fCont ).orThrow( "Problems in decoding event", "RawBankToUTLiteClusterAlg" );
+    decodeBanks( rawEvt, fCont ).orThrow( "Problems in decoding event", "RawBankToUTLiteClusterAlg" ).ignore();
   }
   return fCont;
 }
