@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/MDF/PosixIO.h,v 1.5 2008-02-05 16:44:18 frankb Exp $
 //  ====================================================================
 //  PosixIO.h
 //  --------------------------------------------------------------------
@@ -25,11 +24,7 @@
 struct stat;
 struct stat64;
 struct dirent;
-#ifdef _WIN32
-struct DIR;
-#else
-#  include <dirent.h>
-#endif
+#include <dirent.h>
 
 /*
  *    LHCb namespace
@@ -80,10 +75,6 @@ namespace LHCb {
 
     int ( *setopt )( int opt, int* pval, int len );
     char* ( *serror )();
-#ifdef _WIN32
-    int* ( *serrno )( void );
-    int* ( *ioerrno )( void );
-#endif
   };
 } // End namespace LHCb
 #endif // MDF_POSIXIO_H

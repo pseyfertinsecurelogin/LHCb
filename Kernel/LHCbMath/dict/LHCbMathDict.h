@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -16,11 +16,6 @@
 // ============================================================================
 #include <list>
 #include <vector>
-// ============================================================================
-#ifdef _WIN32
-#  pragma warning( disable : 4305 ) // truncation double to Scalar in GenVector
-#  pragma warning( disable : 4244 ) // conversion double to float in GenVector
-#endif
 // ============================================================================
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/BSpline.h"
@@ -198,7 +193,6 @@ namespace {
   struct LHCbMath_Instantiations {
     LHCbMath_Instantiations();
 
-#ifndef WIN32 // FIXME: Does not compile on Windows
     Gaudi::Math::XYZLine       __lineXYZ;
     Gaudi::Math::Polar3DLine   __linePolar3D;
     Gaudi::Math::RhoEtaPhiLine __lineRhoEtaPhi;
@@ -208,8 +202,7 @@ namespace {
     Gaudi::Math::Polar3DLineF   __linePolar3DF;
     Gaudi::Math::RhoEtaPhiLineF __lineRhoEtaPhiF;
     Gaudi::Math::RhoZPhiLineF   __lineRhoZPhiF;
-#endif // WIN32
-    Gaudi::Math::XYZGeomFun __geomFunXYZ;
+    Gaudi::Math::XYZGeomFun     __geomFunXYZ;
 
     Gaudi::Math::MD5              __mathMD5;
     std::vector<Gaudi::Math::MD5> __stdvector_mathMD5;

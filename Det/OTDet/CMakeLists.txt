@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: OTDet
-################################################################################
 gaudi_subdir(OTDet)
 
 gaudi_depends_on_subdirs(Det/DetDescCnv
@@ -40,6 +37,5 @@ gaudi_add_dictionary(OTDet
                      dict/OTDetDict.h
                      dict/OTDetDict.xml
                      INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost DetDescCnvLib LHCbKernel LHCbMathLib OTDetLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES Boost DetDescCnvLib LHCbKernel LHCbMathLib OTDetLib)
 

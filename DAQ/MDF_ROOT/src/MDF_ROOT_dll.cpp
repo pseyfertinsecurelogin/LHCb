@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -20,16 +20,9 @@
 #include <cstring>
 #include <sys/stat.h>
 
-#ifdef _WIN32
-#  include <io.h>
-static const int S_IRWXU = ( S_IREAD | S_IWRITE );
-#  define EXPORT __declspec( dllexport )
-#else
-#  include <ctype.h>
-#  include <unistd.h>
-#  define O_BINARY 0
-#  define EXPORT
-#endif
+#include <ctype.h>
+#include <unistd.h>
+#define O_BINARY 0
 
 #include "TFile.h"
 #include "TSystem.h"
@@ -150,7 +143,7 @@ namespace {
   char* root_serror() { return (char*)gSystem->GetError(); }
 } // namespace
 
-extern "C" EXPORT LHCb::PosixIO* MDF_ROOT() {
+extern "C" LHCb::PosixIO* MDF_ROOT() {
   static LHCb::PosixIO p;
   if ( !p.open ) {
     p            = {};
@@ -168,22 +161,15 @@ extern "C" EXPORT LHCb::PosixIO* MDF_ROOT() {
     p.fstat      = root_fstat;
     p.fstat64    = root_fstat64;
 
-    p.buffered = LHCb::PosixIO::NONE;
-    p.fopen    = 0;
-    p.fclose   = 0;
-    p.fwrite   = 0;
-    p.fread    = 0;
-    p.fseek    = 0;
-    p.ftell    = 0;
-#ifdef __linux__
-    p.fseek64 = 0;
-    p.ftell64 = 0;
-#else
-#  ifndef WIN32
-    p.fseek64 = 0;
-    p.ftell64 = 0;
-#  endif // WIN32
-#endif
+    p.buffered  = LHCb::PosixIO::NONE;
+    p.fopen     = 0;
+    p.fclose    = 0;
+    p.fwrite    = 0;
+    p.fread     = 0;
+    p.fseek     = 0;
+    p.ftell     = 0;
+    p.fseek64   = 0;
+    p.ftell64   = 0;
     p.directory = LHCb::PosixIO::NONE;
     p.rmdir     = 0;
     p.mkdir     = 0;
@@ -194,10 +180,6 @@ extern "C" EXPORT LHCb::PosixIO* MDF_ROOT() {
     p.serror = root_serror;
 
     p.setopt = 0;
-#ifdef _WIN32
-    p.serrno  = 0;
-    p.ioerrno = 0;
-#endif
   }
   return &p;
 }

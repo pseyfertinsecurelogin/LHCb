@@ -8,8 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# Package: MuonDAQ
-###############################################################################
 gaudi_subdir(MuonDAQ)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
@@ -41,6 +39,6 @@ gaudi_add_dictionary(MuonDAQ
                      dict/MuonDAQDict.xml
                      INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent
                      LINK_LIBRARIES MuonDetLib DAQEventLib RecEvent GaudiAlgLib MuonKernelLib
-                     OPTIONS "-U__MINGW32__ -DBOOST_DISABLE_ASSERTS")
+                     OPTIONS "-DBOOST_DISABLE_ASSERTS")
 
 gaudi_add_test(QMTest QMTEST)

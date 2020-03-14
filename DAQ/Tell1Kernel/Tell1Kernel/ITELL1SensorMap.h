@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -38,8 +38,7 @@ namespace Velo {
    *
    *  Currently the only reliable source for this mapping is the hardware
    *  connectivity data base.  Accessing this from within a Gaudi job requires
-   *  a number of system calls and network access. It is therefore unlikely that
-   *  there will be an implementation on the WIN32 platform.
+   *  a number of system calls and network access.
    *
    *  @author Kurt Rinnert
    *  @date   2009-08-11

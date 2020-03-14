@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: VeloDet
-################################################################################
 gaudi_subdir(VeloDet)
 
 gaudi_depends_on_subdirs(Det/DetDesc
@@ -37,8 +34,7 @@ gaudi_add_dictionary(VeloDet
                      dict/VeloDetDict.h
                      dict/VeloDetDict.xml
                      INCLUDE_DIRS VDT Boost
-                     LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib)
 
 # Prepare test Git CondDB overlay
 file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test/DB)

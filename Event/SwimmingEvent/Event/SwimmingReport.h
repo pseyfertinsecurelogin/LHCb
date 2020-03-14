@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -21,13 +21,6 @@
 
 // Event
 #include <Event/Particle.h>
-
-#ifdef _WIN32
-// Avoid conflict of Windows macro with std::max
-#  ifndef NOMINMAX
-#    define NOMINMAX
-#  endif
-#endif
 
 #include "GaudiKernel/SmartRef.h"
 #include "GaudiKernel/SmartRefVector.h"

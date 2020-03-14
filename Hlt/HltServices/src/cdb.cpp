@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -14,14 +14,10 @@
  * Public domain.
  */
 
+#include <sys/mman.h>
 #include <sys/types.h>
-#ifdef _WIN32
-#  include <windows.h>
-#else
-#  include <sys/mman.h>
-#  ifndef MAP_FAILED
-#    define MAP_FAILED ( (void*)-1 )
-#  endif
+#ifndef MAP_FAILED
+#  define MAP_FAILED ( (void*)-1 )
 #endif
 #include <sys/stat.h>
 
@@ -69,9 +65,6 @@ int cdb_init( struct cdb* cdbp, int fd ) {
   struct stat    st;
   unsigned char* mem;
   unsigned       fsize, dend;
-#ifdef _WIN32
-  HANDLE hFile, hMapping;
-#endif
 
   /* get file size */
   if ( fd < 0 || fstat( fd, &st ) < 0 ) return -1;
@@ -79,18 +72,8 @@ int cdb_init( struct cdb* cdbp, int fd ) {
   if ( st.st_size < 2048 ) return errno = EPROTO, -1;
   fsize = st.st_size < 0xffffffffu ? st.st_size : 0xffffffffu;
   /* memory-map file */
-#ifdef _WIN32
-  hFile = (HANDLE)_get_osfhandle( fd );
-  if ( hFile == (HANDLE)-1 ) return -1;
-  hMapping = CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
-  if ( !hMapping ) return -1;
-  mem = (unsigned char*)MapViewOfFile( hMapping, FILE_MAP_READ, 0, 0, 0 );
-  CloseHandle( hMapping );
-  if ( !mem ) return -1;
-#else
   mem = (unsigned char*)mmap( nullptr, fsize, PROT_READ, MAP_SHARED, fd, 0 );
   if ( mem == MAP_FAILED ) return -1;
-#endif /* _WIN32 */
 
   cdbp->cdb_fd    = fd;
   cdbp->cdb_fsize = fsize;
@@ -123,11 +106,7 @@ int cdb_init( struct cdb* cdbp, int fd ) {
 
 void cdb_free( struct cdb* cdbp ) {
   if ( cdbp->cdb_mem ) {
-#ifdef _WIN32
-    UnmapViewOfFile( (void*)cdbp->cdb_mem );
-#else
     munmap( (void*)cdbp->cdb_mem, cdbp->cdb_fsize );
-#endif /* _WIN32 */
     cdbp->cdb_mem = nullptr;
   }
   cdbp->cdb_fsize = 0;

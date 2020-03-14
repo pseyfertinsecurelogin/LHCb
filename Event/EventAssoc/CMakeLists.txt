@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: EventAssoc
-################################################################################
 gaudi_subdir(EventAssoc)
 
 gaudi_depends_on_subdirs(Event/GenEvent
@@ -24,12 +21,10 @@ gaudi_depends_on_subdirs(Event/GenEvent
 gaudi_add_dictionary(EventAssocPhys
                      dict/selPhys.h
                      dict/selPhys.xml
-                     LINK_LIBRARIES GenEvent L0Event MCEvent PhysEvent TrackEvent RelationsLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES GenEvent L0Event MCEvent PhysEvent TrackEvent RelationsLib)
 
 gaudi_add_dictionary(EventAssocMC
                      dict/selMC.h
                      dict/selMC.xml
-                     LINK_LIBRARIES GenEvent L0Event MCEvent PhysEvent TrackEvent RelationsLib
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES GenEvent L0Event MCEvent PhysEvent TrackEvent RelationsLib)
 

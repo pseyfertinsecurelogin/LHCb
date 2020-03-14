@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -83,8 +83,6 @@ namespace {
     map_sd::iterator                            _i30;
     std::pair<map_sd::iterator, bool>           _p30;
 
-#ifndef WIN32
-    // Windows somehow doesn't like the first item of a pair to be const.
     map_ulb::const_iterator _i01;
 
     typedef std::map<const size_t, bool> map_culb;
@@ -101,7 +99,6 @@ namespace {
     typedef std::map<const std::string, double> map_csd;
     map_sd::iterator                            _i31;
     std::pair<map_csd::iterator, bool>          _p31;
-#endif
     // end instantiations
   };
 } // namespace

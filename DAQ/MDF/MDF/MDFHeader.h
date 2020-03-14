@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/MDF/MDFHeader.h,v 1.10 2009-10-09 12:57:08 frankb Exp $
 #ifndef EVENT_MDFHEADER
 #define EVENT_MDFHEADER
 
@@ -22,12 +21,7 @@
 #define DAQ_PROCERR_BANK 33
 #define DAQ_FILEID_BANK 255
 
-#ifdef _WIN32
-#  pragma pack( push, mdfheader_aligment, 1 )
-#  define MDFHEADER_ALIGNED( x ) x
-#else
-#  define MDFHEADER_ALIGNED( x ) x __attribute__( ( __packed__ ) )
-#endif
+#define MDFHEADER_ALIGNED( x ) x __attribute__( ( __packed__ ) )
 
 /*
  *   LHCb namespace
@@ -241,7 +235,4 @@ namespace LHCb {
 } // End namespace LHCb
 
 #undef MDFHEADER_ALIGNED
-#ifdef _WIN32
-#  pragma pack( pop, mdfheader_aligment )
-#endif
 #endif // EVENT_MDFHEADER

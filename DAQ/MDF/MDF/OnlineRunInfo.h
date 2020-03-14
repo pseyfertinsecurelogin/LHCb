@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,16 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-//====================================================================
 #ifndef MDF_ONLINERUNINFO_H
 #define MDF_ONLINERUNINFO_H
 
-#ifdef _WIN32
-#  pragma pack( push, onlineruninfo_aligment, 1 )
-#  define ONLINERUNINFO_ALIGN( x ) x
-#else
-#  define ONLINERUNINFO_ALIGN( x ) x __attribute__( ( __packed__ ) )
-#endif
+#define ONLINERUNINFO_ALIGN( x ) x __attribute__( ( __packed__ ) )
 
 /*
  *  LHCb namespace declaration
@@ -49,8 +43,5 @@ namespace LHCb {
   };
 } // end namespace LHCb
 #undef ONLINERUNINFO_ALIGN
-#ifdef _WIN32
-#  pragma pack( pop, onlineruninfo_aligment )
-#endif
 
 #endif // MDF_ONLINERUNINFO_H

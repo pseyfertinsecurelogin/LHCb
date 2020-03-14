@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -25,13 +25,6 @@
 #include <Event/Particle.h>
 #include <Event/ProtoParticle.h>
 #include <Event/Track.h>
-
-#ifdef _WIN32
-// Avoid conflict of Windows macro with std::max
-#  ifndef NOMINMAX
-#    define NOMINMAX
-#  endif
-#endif
 
 namespace {
   GaudiUtils::Hash<std::vector<unsigned int>> _hash;
@@ -184,22 +177,16 @@ namespace LHCb {
 
     std::vector<std::string> extraNames() const {
       std::vector<std::string> names;
-#ifndef WIN32
       for ( std::map<std::string, double>::const_iterator it = m_extra.begin(), end = m_extra.end(); it != end; ++it ) {
         names.push_back( it->first );
       }
-#endif
       return names;
     }
 
     double extra( const std::string& name ) const {
       std::map<std::string, double>::const_iterator it = m_extra.find( name );
       if ( it != m_extra.end() ) {
-#ifndef WIN32
         return it->second;
-#else
-        return 0.;
-#endif
       } else {
         std::string msg = "Extra turningpoint with name ";
         msg += name;
@@ -209,24 +196,18 @@ namespace LHCb {
     }
 
     std::vector<std::string> decisions() const {
-      std::vector<std::string> d;
-#ifndef WIN32
+      std::vector<std::string>            d;
       typedef std::map<std::string, bool> map_t;
       for ( map_t::const_iterator it = m_decisions.begin(), end = m_decisions.end(); it != end; ++it ) {
         d.push_back( it->first );
       }
-#endif
       return d;
     }
 
     bool decision( const std::string& name ) const {
       std::map<std::string, bool>::const_iterator it = m_decisions.find( name );
       if ( it != m_decisions.end() ) {
-#ifndef WIN32
         return it->second;
-#else
-        return true;
-#endif
       } else {
         std::stringstream msg;
         msg << "Decision with name " << name << " does not exist.";
@@ -236,12 +217,10 @@ namespace LHCb {
 
     std::vector<std::string> infoNames() const {
       std::vector<std::string> names;
-#ifndef WIN32
       for ( std::map<std::string, std::map<size_t, bool>>::const_iterator it = m_info.begin(), end = m_info.end();
             it != end; ++it ) {
         names.push_back( it->first );
       }
-#endif
       return names;
     }
 
@@ -262,11 +241,7 @@ namespace LHCb {
       const map_t&                   i  = info( name );
       map_t::const_iterator          it = i.find( h );
       if ( it != i.end() ) {
-#ifndef WIN32
         return it->second;
-#else
-        return true;
-#endif
       } else {
         std::stringstream msg;
         msg << "No entry present for daughter with hash " << h << " in info with with name " << name << ".";

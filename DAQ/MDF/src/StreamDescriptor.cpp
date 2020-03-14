@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -28,50 +28,22 @@
 #include <map>
 #include <sys/stat.h>
 
-#ifdef _WIN32
-#  include <io.h>
-static const int S_IRWXU = ( S_IREAD | S_IWRITE );
-static const int S_IRWXG = 0;
-#  define lseek64 _lseeki64
-#else
-#  include <ctype.h>
-#  include <unistd.h>
+#include <ctype.h>
+#include <unistd.h>
 static const int O_BINARY = 0;
-#  ifdef __APPLE__
+#ifdef __APPLE__
 inline long long lseek64( int fd, long long offset, int where ) { return lseek( fd, offset, where ); }
-#  endif
 #endif
 
 namespace Networking {
-#ifdef _WIN32
-#  include "Winsock2.h"
-  typedef char SockOpt_t;
-  typedef int  AddrLen_t;
-  struct __init__ {
-    __init__() {
-      static bool g_first = true;
-      if ( g_first ) {
-        g_first = false;
-        static WSADATA g_WSAData;
-        memset( &g_WSAData, 0, sizeof( WSADATA ) );
-        if ( WSAStartup( MAKEWORD( 1, 1 ), &g_WSAData ) != 0 ) {
-          std::runtime_error( "MDF::StreamDescriptor> WSAStartup failed!" );
-        }
-      }
-    }
-  };
-  static __init__ g_init;
-
-#else
-#  include <arpa/inet.h>
-#  include <netdb.h>
-#  include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
   int ( *closesocket )( int ) = ::close;
   typedef int       SockOpt_t;
   typedef socklen_t AddrLen_t;
-#endif
-  static const int _SOCK_STREAM = SOCK_STREAM;
-  static const int _IPPROTO_IP  = IPPROTO_IP;
+  static const int  _SOCK_STREAM = SOCK_STREAM;
+  static const int  _IPPROTO_IP  = IPPROTO_IP;
 } // namespace Networking
 #include "GaudiKernel/System.h"
 #include "MDF/PosixIO.h"
@@ -84,13 +56,7 @@ namespace FileIO {
 typedef LHCb::StreamDescriptor::Access Access;
 
 namespace {
-  int file_open( const char* fn, int f1, int f2 = 0 ) {
-#ifdef _WIN32
-    return ::open( fn, f1, f2 );
-#else
-    return ::open64( fn, f1, f2 );
-#endif
-  }
+  int file_open( const char* fn, int f1, int f2 = 0 ) { return ::open64( fn, f1, f2 ); }
   int file_read( const Access& con, void* buff, int len ) {
     int   tmp = 0;
     char* p   = (char*)buff;

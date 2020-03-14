@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -10,13 +10,6 @@
 \*****************************************************************************/
 #ifndef DETDESC_DETECTORELEMENT_H
 #define DETDESC_DETECTORELEMENT_H 1
-
-// Some pragmas to avoid warnings in VisualC
-#ifdef WIN32
-// Disable warning C4786: identifier was truncated to '255' characters
-// in the debug information
-#  pragma warning( disable : 4786 )
-#endif
 
 // Include Files
 #include <map>

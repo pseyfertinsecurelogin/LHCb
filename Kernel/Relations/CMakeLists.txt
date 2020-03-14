@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: Relations
-################################################################################
 gaudi_subdir(Relations)
 
 gaudi_depends_on_subdirs(GaudiKernel)
@@ -28,8 +25,7 @@ gaudi_add_dictionary(Relations
                      dict/selection.h
                      dict/selection.xml
                      INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost GaudiKernel RelationsLib
-                     OPTIONS " -U__MINGW32__ ")
+                     LINK_LIBRARIES Boost GaudiKernel RelationsLib)
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(RelationsTests

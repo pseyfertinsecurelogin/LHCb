@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: LoKiCore
-################################################################################
 gaudi_subdir(LoKiCore)
 
 gaudi_depends_on_subdirs(Event/RecEvent
@@ -44,8 +41,7 @@ gaudi_add_dictionary(LoKiCore
                      dict/LoKiCoreDict.h
                      dict/LoKiCore.xml
                      INCLUDE_DIRS ROOT AIDA Boost RELAX ROOT PythonLibs
-                     LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PhysInterfacesLib PartPropLib LoKiCoreLib
-                     OPTIONS " -U__MINGW32__ ")
+                     LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PhysInterfacesLib PartPropLib LoKiCoreLib)
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(NodeGrammarTest

@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -8,9 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: LHCbTrackInterfaces
-################################################################################
 gaudi_subdir(LHCbTrackInterfaces)
 
 gaudi_depends_on_subdirs(Det/DetDesc
@@ -20,8 +17,7 @@ gaudi_depends_on_subdirs(Det/DetDesc
 gaudi_add_dictionary(LHCbTrackInterfaces
                      dict/LHCbTrackInterfacesDict.h
                      dict/LHCbTrackInterfacesDict.xml
-                     LINK_LIBRARIES DetDescLib GaudiKernel LHCbKernel
-                     OPTIONS "-U__MINGW32__")
+                     LINK_LIBRARIES DetDescLib GaudiKernel LHCbKernel)
 
 gaudi_install_headers(TrackInterfaces)
 

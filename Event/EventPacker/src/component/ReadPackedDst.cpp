@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2000-2020 CERN for the benefit of the LHCb Collaboration      *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -37,11 +37,6 @@
 
 // local
 #include "ReadPackedDst.h"
-
-#ifdef _WIN32
-// Disable warning C4355: 'this' : used in base member initializer list
-#  pragma warning( disable : 4355 )
-#endif
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : ReadPackedDst
