@@ -1120,8 +1120,8 @@ namespace SIMDWrapper {
       using mask_v = avx256::mask_v;
       static mask_v mask_true() { return 0xFF; }
       static mask_v mask_false() { return 0x00; }
-      static int_v indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
-      static int_v indices( int start ) { return indices() + start; }
+      static int_v indices();
+      static int_v indices( int start );
       static int popcount( mask_v const& mask ) { return avx256::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 8 ) > n ) ? ~( 0xFF << ( n & 7 ) ) : 0xFF; }
     };
@@ -1347,6 +1347,10 @@ namespace SIMDWrapper {
     inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
       return _mm256_mmask_i32gather_ps( source, mask, idx, base, sizeof( float ) );
     }
+
+    inline int_v types::indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
+
+    inline int_v types::indices( int start ) { return indices() + start; }
   } // namespace avx256
 
   namespace avx512 {
@@ -1395,8 +1399,8 @@ namespace SIMDWrapper {
       using mask_v = avx512::mask_v;
       static mask_v mask_true() { return 0xFFFF; }
       static mask_v mask_false() { return 0x0000; }
-      static int_v indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
-      static int_v indices( int start ) { return indices() + start; }
+      static int_v indices();
+      static int_v indices( int start );
       static int popcount( mask_v const& mask ) { return avx512::popcount( mask ); }
       static mask_v loop_mask( int i, int n ) { return ( ( i + 16 ) > n ) ? ~( 0xFFFF << ( n & 15 ) ) : 0xFFFF; }
     };
@@ -1590,6 +1594,11 @@ namespace SIMDWrapper {
     inline float_v maskgather( const float* base, const int_v& idx, const mask_v& mask, const float_v& source ) {
       return _mm512_mask_i32gather_ps( source, mask, idx, base, sizeof( float ) );
     }
+
+    inline int_v types::indices() { return _mm512_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ); }
+
+    inline int_v types::indices( int start ) { return indices() + start; }
+
   } // namespace avx512
 } // namespace SIMDWrapper
 
