@@ -927,13 +927,10 @@ namespace SIMDWrapper {
         return *this;
       }
 
-      operator __m256i() const {
-        return data; }
-      operator float_v() const {
-        return float_v( _mm256_cvtepi32_ps( data ) ); }
+      operator __m256i() const { return data; }
+      operator float_v() const { return float_v( _mm256_cvtepi32_ps( data ) ); }
 
-      void store( int* ptr ) const {
-        _mm256_storeu_si256( (__m256i*)ptr, data ); }
+      void store( int* ptr ) const { _mm256_storeu_si256( (__m256i*)ptr, data ); }
 
       void compressstore( __m256 mask, int* ptr ) const {
         __m256i perm =
@@ -941,8 +938,7 @@ namespace SIMDWrapper {
         _mm256_storeu_si256( (__m256i*)ptr, _mm256_permutevar8x32_epi32( data, perm ) );
       }
 
-      constexpr static std::size_t size() {
-        return 8; }
+      constexpr static std::size_t size() { return 8; }
 
       int hmax() const {
         __m128i r = _mm_max_epi32( _mm256_extractf128_si256( data, 0 ), _mm256_extractf128_si256( data, 1 ) );
@@ -962,12 +958,9 @@ namespace SIMDWrapper {
         r = _mm_add_epi32( r, _mm_shuffle_epi32( r, _MM_SHUFFLE( 1, 0, 3, 2 ) ) );
         return _mm_extract_epi32( r, 0 );
       }
-      int hmax( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
-      int hmin( const __m256 mask ) const {
-        return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
-      int hadd( const __m256 mask ) const {
-        return select( mask, *this, 0 ).hadd(); }
+      int hmax( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<int>::min() ).hmax(); }
+      int hmin( const __m256 mask ) const { return select( mask, *this, std::numeric_limits<int>::max() ).hmin(); }
+      int hadd( const __m256 mask ) const { return select( mask, *this, 0 ).hadd(); }
 
       int_v& operator+=( const int_v& rhs ) {
         *this = *this + rhs;
@@ -982,31 +975,22 @@ namespace SIMDWrapper {
         return *this;
       }
 
-      friend int_v operator+( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_add_epi32( lhs, rhs ); }
-      friend int_v operator-( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_sub_epi32( lhs, rhs ); }
-      friend int_v operator*( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_mullo_epi32( lhs, rhs ); }
+      friend int_v operator+( const int_v& lhs, const int_v& rhs ) { return _mm256_add_epi32( lhs, rhs ); }
+      friend int_v operator-( const int_v& lhs, const int_v& rhs ) { return _mm256_sub_epi32( lhs, rhs ); }
+      friend int_v operator*( const int_v& lhs, const int_v& rhs ) { return _mm256_mullo_epi32( lhs, rhs ); }
 
-      friend int_v operator&( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_and_si256( lhs, rhs ); }
-      friend int_v operator|( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_or_si256( lhs, rhs ); }
+      friend int_v operator&( const int_v& lhs, const int_v& rhs ) { return _mm256_and_si256( lhs, rhs ); }
+      friend int_v operator|( const int_v& lhs, const int_v& rhs ) { return _mm256_or_si256( lhs, rhs ); }
 
-      friend int_v operator<<( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_sllv_epi32( lhs, rhs ); }
-      friend int_v operator>>( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_srlv_epi32( lhs, rhs ); }
+      friend int_v operator<<( const int_v& lhs, const int_v& rhs ) { return _mm256_sllv_epi32( lhs, rhs ); }
+      friend int_v operator>>( const int_v& lhs, const int_v& rhs ) { return _mm256_srlv_epi32( lhs, rhs ); }
 
       friend std::ostream& operator<<( std::ostream& os, int_v const& x ) {
         return print_vector<int, size()>( os, x, "avx2" );
       }
 
-      friend int_v min( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_min_epi32( lhs, rhs ); }
-      friend int_v max( const int_v& lhs, const int_v& rhs ) {
-        return _mm256_max_epi32( lhs, rhs ); }
+      friend int_v min( const int_v& lhs, const int_v& rhs ) { return _mm256_min_epi32( lhs, rhs ); }
+      friend int_v max( const int_v& lhs, const int_v& rhs ) { return _mm256_max_epi32( lhs, rhs ); }
 
       friend int_v signselect( const float_v& s, const int_v& a, const int_v& b ) {
         return _mm256_castps_si256( _mm256_blendv_ps( _mm256_castsi256_ps( a ), _mm256_castsi256_ps( b ), s ) );
