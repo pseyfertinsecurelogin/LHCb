@@ -12,6 +12,7 @@ gaudi_subdir(LHCbMath)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
+                         LHCbKernel
                          GaudiPython)
 
 find_package(Boost)
@@ -50,7 +51,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
+                  INCLUDE_DIRS Vc VDT Boost GSL ROOT Kernel/LHCbKernel ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiGSLLib GaudiKernel)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
