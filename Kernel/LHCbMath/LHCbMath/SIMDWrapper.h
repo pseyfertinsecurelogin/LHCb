@@ -776,14 +776,12 @@ namespace SIMDWrapper {
       using int_v = avx2::int_v;
       using float_v = avx2::float_v;
       using mask_v = avx2::float_v;
-      static mask_v mask_true() { return mask_v( -1.f ); }
-      static mask_v mask_false() { return mask_v( 0.f ); }
-      static int_v indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
-      static int_v indices( int start ) { return indices() + start; }
-      static int popcount( mask_v const& mask ) { return avx2::popcount( mask ); }
-      static float_v loop_mask( int i, int n ) {
-        return _mm256_cmp_ps( _mm256_setr_ps( 0, 1, 2, 3, 4, 5, 6, 7 ), _mm256_set1_ps( n - i ), _CMP_LT_OS );
-      }
+      static mask_v mask_true();
+      static mask_v mask_false();
+      static int_v indices();
+      static int_v indices( int start );
+      static int popcount( mask_v const& mask );
+      static float_v loop_mask( int i, int n );
     };
 
     class float_v {
@@ -921,7 +919,7 @@ namespace SIMDWrapper {
       int_v() {} // Constructor must be empty
       int_v( int f ) : data( _mm256_set1_epi32( f ) ) {}
       int_v( const int* f ) : data( _mm256_loadu_si256( (__m256i*)f ) ) {}
-      int_v( LHCb::span<const int, avx2::types::size> f ) : data( _mm256_loadu_si256( (__m256i*)f.data()( ) ) {}
+      int_v( LHCb::span<const int, avx2::types::size> f ) : data( _mm256_loadu_si256( (__m256i*)f.data() ) ) {}
       int_v( __m256i f ) : data( f ) {}
 
       int_v& operator=( const __m256i& f ) {
@@ -1051,6 +1049,20 @@ namespace SIMDWrapper {
 
     inline float_v maskgather( const float* base, const int_v& idx, const float_v& mask, const float_v& source ) {
       return _mm256_mask_i32gather_ps( source, base, idx, mask, sizeof( float ) );
+    }
+
+    inline types::mask_v types::mask_true() { return mask_v( -1.f ); }
+
+    inline types::mask_v types::mask_false() { return mask_v( 0.f ); }
+
+    inline int_v types::indices() { return _mm256_setr_epi32( 0, 1, 2, 3, 4, 5, 6, 7 ); }
+
+    inline int_v types::indices( int start ) { return indices() + start; }
+
+    inline int types::popcount( mask_v const& mask ) { return avx2::popcount( mask ); }
+
+    inline float_v types::loop_mask( int i, int n ) {
+      return _mm256_cmp_ps( _mm256_setr_ps( 0, 1, 2, 3, 4, 5, 6, 7 ), _mm256_set1_ps( n - i ), _CMP_LT_OS );
     }
   } // namespace avx2
 } // namespace SIMDWrapper
