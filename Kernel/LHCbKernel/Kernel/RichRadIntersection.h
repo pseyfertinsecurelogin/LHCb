@@ -57,7 +57,7 @@ namespace Rich {
 
   public:
     /// Definition of a vector of intersections
-    using Vector = boost::container::small_vector<Rich::RadIntersection, 1>;
+    using Vector = boost::container::small_vector<Rich::RadIntersection, 1, void>;
 
   public:
     /// Default constructor
