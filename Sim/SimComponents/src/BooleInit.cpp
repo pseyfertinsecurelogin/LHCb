@@ -8,25 +8,53 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
 
-// from Gaudi
+// Include files
+#include "Event/GenCollision.h"
+#include "Event/MCHeader.h"
+#include "Event/ODIN.h"
+#include "Event/ProcessHeader.h"
+#include "Event/RawEvent.h"
 #include "GaudiAlg/IGenericTool.h"
 #include "GaudiKernel/RndmGenerators.h"
+#include "Kernel/LbAppInit.h"
+#include <string>
+#include <vector>
 
-// from EventBase
-#include "Event/GenCollision.h"
-#include "Event/ProcessHeader.h"
+class IGenericTool;
 
-// from MCEvent
-#include "Event/MCHeader.h"
+/** @class BooleInit BooleInit.h
+ *  First TopAlg for Boole. Initializes random number and fills memory histogram
+ *
+ *  @author Marco Cattaneo
+ *  @date   2005-12-15
+ */
+class BooleInit : public LbAppInit {
+public:
+  /// Standard constructor
+  BooleInit( const std::string& name, ISvcLocator* pSvcLocator );
 
-// from DAQEvent
-#include "Event/RawEvent.h"
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
-// local
-#include "BooleInit.h"
+protected:
+  virtual void modifyOdin( LHCb::ODIN* odin ); ///< fills some Odin fields
+  virtual void simpleOdin( LHCb::ODIN* odin ); ///< sets reasonable defaults for some Odin fields
 
+private:
+  ToolHandle<IGenericTool>       m_memoryTool{this, "MemoryTool",
+                                        "MemoryTool/BooleMemory"}; ///< Pointer to (private) memory histogram tool
+  PublicToolHandle<IGenericTool> m_odinTool{this, "OdinTool", "ODINEncodeTool"}; ///< Pointer to odin encoding tool
+  Rndm::Numbers                  m_FlatDist;
+  Gaudi::Property<bool>          m_modifyOdin{this, "ModifyOdin", false};
+  Gaudi::Property<std::string>   m_genCollisionLocation{this, "GenCollisionLocation",
+                                                      LHCb::GenCollisionLocation::Default};
+  Gaudi::Property<std::vector<double>> m_thresInteraction{this, "ThresInteraction", {0.01, 0.03, 0.05}};
+  Gaudi::Property<std::vector<double>> m_thresDiffractive{this, "ThresDiffractive", {0.1, 0.3, 0.6}};
+  Gaudi::Property<std::vector<double>> m_thresElastic{this, "ThresElastic", {0.25, 0.5, 0.75}};
+  Gaudi::Property<double>              m_threstrigger{this, "ThresTiggerType", 0.05};
+  Gaudi::Property<bool>                m_odinRndTrig{this, "SetOdinRndTrigger", false};
+};
 //-----------------------------------------------------------------------------
 // Implementation file for class : BooleInit
 //
@@ -39,63 +67,27 @@ DECLARE_COMPONENT( BooleInit )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-BooleInit::BooleInit( const std::string& name, ISvcLocator* pSvcLocator )
-    : LbAppInit( name, pSvcLocator ), m_memoryTool( 0 ), m_odinTool( 0 ) {
-  m_thresInteraction.clear();
-  m_thresInteraction.push_back( 0.01 );
-  m_thresInteraction.push_back( 0.03 );
-  m_thresInteraction.push_back( 0.05 );
-
-  m_thresDiffractive.clear();
-  m_thresDiffractive.push_back( 0.1 );
-  m_thresDiffractive.push_back( 0.3 );
-  m_thresDiffractive.push_back( 0.6 );
-
-  m_thresElastic.clear();
-  m_thresElastic.push_back( 0.25 );
-  m_thresElastic.push_back( 0.5 );
-  m_thresElastic.push_back( 0.75 );
-
-  declareProperty( "ModifyOdin", m_modifyOdin = false );
-  declareProperty( "GenCollisionLocation", m_genCollisionLocation = LHCb::GenCollisionLocation::Default );
-  declareProperty( "ThresInteraction", m_thresInteraction );
-  declareProperty( "ThresDiffractive", m_thresDiffractive );
-  declareProperty( "ThresElastic", m_thresElastic );
-  declareProperty( "ThresTiggerType", m_threstrigger = 0.05 );
-  declareProperty( "SetOdinRndTrigger", m_odinRndTrig = false );
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-BooleInit::~BooleInit() {}
+BooleInit::BooleInit( const std::string& name, ISvcLocator* pSvcLocator ) : LbAppInit( name, pSvcLocator ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode BooleInit::initialize() {
-  StatusCode sc = LbAppInit::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;         // error printed already by LbAppInit
+  return LbAppInit::initialize().andThen( [&] {
+    // Private tool to plot the memory usage
+    m_memoryTool.setEnabled( rootInTES().empty() );
 
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
+    // Initialize thresholds if we want to modify Odin:
+    if ( m_modifyOdin.value() ) {
 
-  // Private tool to plot the memory usage
-  if ( "" == rootInTES() ) m_memoryTool = tool<IGenericTool>( "MemoryTool", "BooleMemory", this, true );
+      const auto ok = m_FlatDist.initialize( randSvc(), Rndm::Flat( 0., 1. ) );
+      if ( !ok ) { info() << "Flat distribution could not be initialized" << endmsg; }
 
-  // Tool to put add the ODIN object to RawEvent
-  m_odinTool = tool<IGenericTool>( "ODINEncodeTool" );
-
-  // Initialize thresholds if we want to modify Odin:
-  if ( m_modifyOdin ) {
-
-    const auto ok = m_FlatDist.initialize( randSvc(), Rndm::Flat( 0., 1. ) );
-    if ( !ok ) { info() << "Flat distribution could not be initialized" << endmsg; }
-
-    info() << "Thresholds for Interaction processes : " << m_thresInteraction << endmsg;
-    info() << "Thresholds for Diffractive processes : " << m_thresDiffractive << endmsg;
-    info() << "Thresholds for Elastic processes : " << m_thresElastic << endmsg;
-  }
-
-  return StatusCode::SUCCESS;
+      info() << "Thresholds for Interaction processes : " << m_thresInteraction << endmsg;
+      info() << "Thresholds for Diffractive processes : " << m_thresDiffractive << endmsg;
+      info() << "Thresholds for Elastic processes : " << m_thresElastic << endmsg;
+    }
+  } );
 }
 
 //=============================================================================
@@ -110,15 +102,15 @@ StatusCode BooleInit::execute() {
   checkMem();
 
   // Plot the memory usage
-  if ( "" == rootInTES() ) m_memoryTool->execute();
+  if ( m_memoryTool.isEnabled() ) m_memoryTool->execute();
 
   // Get the run and event number from the MC Header
   LHCb::MCHeader* evt = get<LHCb::MCHeader>( LHCb::MCHeaderLocation::Default, IgnoreRootInTES );
-  if ( "" == rootInTES() ) printEventRun( evt->evtNumber(), evt->runNumber(), 0, evt->evtTime() );
+  if ( rootInTES().empty() ) printEventRun( evt->evtNumber(), evt->runNumber(), 0, evt->evtTime() );
 
   // Initialize the random number:
 
-  if ( "" == rootInTES() ) {
+  if ( rootInTES().empty() ) {
     std::vector<long int> seeds = getSeeds( evt->runNumber(), evt->evtNumber() );
     auto                  sc    = this->initRndm( seeds );
     if ( sc.isFailure() ) return sc; // error printed already by initRndm
@@ -146,7 +138,7 @@ StatusCode BooleInit::execute() {
   odin->setEventTime( evt->evtTime() );
 
   // Simulate ODIN data id requested
-  if ( m_modifyOdin ) {
+  if ( m_modifyOdin.value() ) {
     modifyOdin( odin );
   } else {
     // put some reasonable defaults
@@ -177,7 +169,7 @@ void BooleInit::simpleOdin( LHCb::ODIN* odin ) {
   odin->setTriggerType( TriggerType );
   odin->setBunchCurrent( BunchCurrent );
 
-  if ( m_odinRndTrig ) {
+  if ( m_odinRndTrig.value() ) {
     unsigned int EventType = 1 << 2;
     odin->setEventType( EventType );
   }
@@ -192,9 +184,8 @@ void BooleInit::modifyOdin( LHCb::ODIN* odin ) {
 
   int interaction = 0;
 
-  for ( std::vector<LHCb::GenCollision*>::iterator process = Collisions->begin(); process != Collisions->end();
-        process++ ) {
-    int type = ( *process )->processType();
+  for ( const auto& process : *Collisions ) {
+    int type = process->processType();
 
     if ( msgLevel( MSG::DEBUG ) ) {
       debug() << "Collision type: " << type << endmsg;
@@ -268,7 +259,7 @@ void BooleInit::modifyOdin( LHCb::ODIN* odin ) {
   odin->setTriggerType( TriggerType );
   odin->setBunchCurrent( BunchCurrent );
 
-  if ( m_odinRndTrig ) {
+  if ( m_odinRndTrig.value() ) {
     unsigned int EventType = 1 << 2;
     odin->setEventType( EventType );
   }

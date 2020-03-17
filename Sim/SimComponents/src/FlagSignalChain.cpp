@@ -8,14 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from LHCb
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-
-// local
-#include "FlagSignalChain.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "MCInterfaces/IFlagSignalChain.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FlagSignalChain
@@ -23,20 +19,26 @@
 // 2015-07-23 : Gloria Corti
 //-----------------------------------------------------------------------------
 
-// Declaration of the Tool Factory
-DECLARE_COMPONENT( FlagSignalChain )
+/** @class FlagSignalChain FlagSignalChain.h
+ *
+ *
+ *  @author Gloria Corti
+ *  @date   2015-07-23
+ */
+struct FlagSignalChain : extends<GaudiTool, IFlagSignalChain> {
 
-//==============================================================================
-// Set from signal flag
-//==============================================================================
-void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
+  using extends::extends;
 
-  for ( auto& v : mother->endVertices() ) {
-    for ( const auto& mcpc : v->products() ) {
-      LHCb::MCParticle* mcp = const_cast<LHCb::MCParticle*>( mcpc.target() );
-      mcp->setFromSignal( true );
-      setFromSignalFlag( mcpc );
+  /// Set flag if particle is from signal
+  void setFromSignalFlag( const LHCb::MCParticle* mother ) override {
+    for ( auto& v : mother->endVertices() ) {
+      for ( const auto& mcpc : v->products() ) {
+        LHCb::MCParticle* mcp = const_cast<LHCb::MCParticle*>( mcpc.target() );
+        mcp->setFromSignal( true );
+        setFromSignalFlag( mcpc );
+      }
     }
   }
-}
-//==============================================================================
+};
+// Declaration of the Tool Factory
+DECLARE_COMPONENT( FlagSignalChain )

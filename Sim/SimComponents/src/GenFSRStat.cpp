@@ -8,19 +8,13 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// local
-#include "GenFSRStat.h"
-
-// from Event
 #include "Event/CrossSectionsFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
-
-// From GaudiKernel
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/Time.h"
-
-// other libraries
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -35,6 +29,45 @@ namespace fs = std::filesystem;
 //
 // 2015-08-03 : Davide Fazzini
 //-----------------------------------------------------------------------------
+
+/** @class GenFSRStat GenFSRStat.h
+ *
+ *
+ *  @author Davide Fazzini
+ *  @date   2015-07-29
+ */
+
+class GenFSRStat : public Gaudi::Algorithm {
+public:
+  /// Standard constructor
+  GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override;                         ///< Algorithm initialization
+  StatusCode execute( const EventContext& ) const override; ///< Algorithm execution
+  StatusCode finalize() override;                           ///< Algorithm finalization
+
+  void printFSR(); // Print the GenFSR in a file .html
+
+private:
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+  Gaudi::Property<std::string> m_prodID{this, "prodID", "", "Production ID used in the generation"};
+  Gaudi::Property<std::string> m_appConfigVersion{this, "appConfigVersion", "",
+                                                  "Version of AppConfig used in the simulation"};
+  Gaudi::Property<std::string> m_appConfigFile{this, "appConfigFile", "", "Name of the AppConfig file"};
+  Gaudi::Property<std::string> m_gaussVersion{this, "gaussVersion", "", "Gauss version used in the simulation"};
+  Gaudi::Property<std::string> m_simCond{this, "simCond", "", "Tag for the SimCond database"};
+  Gaudi::Property<std::string> m_dddb{this, "dddb", "", "Tag for the DDDB database"};
+  Gaudi::Property<std::string> m_htmlOutputLocation{this, "htmlOutputLocation", "",
+                                                    "Path where to save the .html output"};
+  Gaudi::Property<std::string> m_htmlOutputName{this, "htmlOutputName", "GenerationFSR_" + m_appConfigFile + ".html",
+                                                "Name of the .html output"};
+
+  SmartIF<IDataProviderSvc>       m_fileRecordSvc;
+  PublicToolHandle<IFSRNavigator> m_navigatorTool{this, "FSRNavigator",
+                                                  "FSRNavigator/FSRNavigator"}; // tool to navigate FSR
+};
 
 namespace {
   //=============================================================================
@@ -52,7 +85,7 @@ namespace {
     std::string path_decFile = System::getEnv( "DECFILESROOT" );
     std::string description;
 
-    if ( path_decFile != "" ) {
+    if ( !path_decFile.empty() ) {
       std::string  evtType_str = std::to_string( evtType );
       std::string  path_desc   = path_decFile + "/options/" + evtType_str + ".py";
       std::fstream file_desc( path_desc, std::fstream::in );
@@ -120,8 +153,7 @@ namespace {
   //=============================================================================
 
   void writeGeneratorCounters( LHCb::GenFSR& genFSR, int count, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     // write the table options
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
@@ -138,7 +170,7 @@ namespace {
         continue;
 
       std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-      std::string fullName = mapCross[name];
+      const auto& fullName = mapCross.at( name );
 
       longlong before = genFSR.getDenominator( key );
       longlong after  = genFSR.getGenCounterInfo( key ).second;
@@ -217,8 +249,8 @@ namespace {
   //  Add generator level cut efficiencies in the xml file
   //=============================================================================
   void writeCutEfficiencies( LHCb::GenFSR& genFSR, int count, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
     htmlOutput << "><div class=firstcell>Generator Efficiencies</div></th>\n";
@@ -236,7 +268,7 @@ namespace {
         continue;
 
       std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-      std::string fullName = mapCross[name];
+      const auto& fullName = mapCross.at( name );
 
       longlong before = genFSR.getDenominator( key );
       if ( before == 0 ) continue;
@@ -299,8 +331,8 @@ namespace {
   //=============================================================================
 
   void writeGenHadronCounters( LHCb::GenFSR& genFSR, int countGen, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR ::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countGen;
     htmlOutput << "><div class=firstcell> Generated Hadron Counters</div></th>\n" << std::endl;
@@ -315,7 +347,7 @@ namespace {
            ( key >= LHCb::GenCountersFSR::CounterKey::BGen && key <= LHCb::GenCountersFSR::CounterKey::B2starGen ) ||
            ( key >= LHCb::GenCountersFSR::CounterKey::DGen && key <= LHCb::GenCountersFSR::CounterKey::D2starGen ) ) {
         std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-        std::string fullName = mapCross[name];
+        const auto& fullName = mapCross.at( name );
 
         longlong before = genFSR.getDenominator( key );
         if ( before == 0 ) continue;
@@ -374,8 +406,8 @@ namespace {
   //=============================================================================
 
   void writeAccHadronCounters( LHCb::GenFSR& genFSR, int countAcc, std::ostream& htmlOutput ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+
+    const auto& mapCross = LHCb::CrossSectionsFSR ::getFullNames();
 
     htmlOutput << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countAcc;
     htmlOutput << "><div class=firstcell> Accepted Hadron Counters</div></th>\n" << std::endl;
@@ -391,7 +423,7 @@ namespace {
            ( key >= LHCb::GenCountersFSR::CounterKey::DAcc && key <= LHCb::GenCountersFSR::CounterKey::D2starAcc ) ) {
 
         std::string name     = LHCb::CrossSectionsFSR::CrossSectionKeyToString( key );
-        std::string fullName = mapCross[name];
+        const auto& fullName = mapCross.at( name );
 
         longlong before = genFSR.getDenominator( key );
         if ( before == 0 ) continue;
@@ -474,32 +506,24 @@ DECLARE_COMPONENT( GenFSRStat )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-GenFSRStat::GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {}
+GenFSRStat::GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator ) : Algorithm( name, pSvcLocator ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
 
 StatusCode GenFSRStat::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-
-  if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  // get the File Records service
-  m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
-
-  m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator", "FSRNavigator" );
-
-  return sc;
+  return Algorithm::initialize().andThen( [&] {
+    // get the File Records service
+    m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
+  } );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRStat::execute() {
+StatusCode GenFSRStat::execute( const EventContext& ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
   return StatusCode::SUCCESS;
 }
 
@@ -512,7 +536,7 @@ StatusCode GenFSRStat::finalize() {
 
   GenFSRStat::printFSR();
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Algorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

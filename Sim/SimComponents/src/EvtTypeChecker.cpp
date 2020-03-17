@@ -8,19 +8,45 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Event
 #include "Event/GenCollision.h"
 #include "Event/GenHeader.h"
 #include "Event/HepMCEvent.h"
-
-// from LHCb
+#include "Gaudi/Accumulators.h"
+#include "GaudiAlg/Consumer.h"
+#include "Kernel/IEvtTypeSvc.h"
 #include "MCInterfaces/IMCDecayFinder.h"
+#include <string>
 
-// local
-#include "EvtTypeChecker.h"
+/** @class EvtTypeChecker EvtTypeChecker.h
+ *  Algorithm that verifies if at least one decay of the desired type
+ *  is present in the event and counts for how many this occurs.
+ *
+ *  @author Gloria CORTI
+ *  @date   2005-08-08
+ */
+class EvtTypeChecker : public Gaudi::Functional::Consumer<void( const LHCb::GenHeader& )> {
+public:
+  /// Standard constructor
+  EvtTypeChecker( const std::string& name, ISvcLocator* pSvcLocator )
+      : Consumer{name, pSvcLocator, {"GenHeader", LHCb::GenHeaderLocation::Default}} {}
 
+  StatusCode initialize() override;                               ///< Algorithm initialization
+  void       operator()( const LHCb::GenHeader& ) const override; ///< Algorithm execution
+  StatusCode finalize() override;                                 ///< Algorithm finalization
+
+private:
+  /** Set the description of the decay to be found
+   *  @param evtCode 7-digits code to identify event types
+   */
+  StatusCode setDecayToFind( const int evtCode ) const;
+
+  Gaudi::Property<bool>        m_fromData{this, "EvtCodeFromData", true}; ///< flag read event code from data
+  mutable Gaudi::Property<int> m_evtCode{this, "EvtCode", 0};             ///< event code to test
+  mutable Gaudi::Accumulators::BinomialCounter<> m_nMCFound{this, "Fraction of decays found"};
+  mutable bool                                   m_setDecay = false; ///< Flag is decay has been set
+  ServiceHandle<IEvtTypeSvc>                     m_evtTypeSvc{this, "EvtTypeSvc", "EvtTypeSvc"}; ///< Pointer to service
+  mutable ToolHandle<IMCDecayFinder> m_mcFinder{this, "MCDecayFinder", "MCDecayFinder"};         ///< Pointer to tool
+};
 //-----------------------------------------------------------------------------
 // Implementation file for class : EvtTypeChecker
 //
@@ -31,42 +57,23 @@
 DECLARE_COMPONENT( EvtTypeChecker )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-EvtTypeChecker::EvtTypeChecker( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator )
-    , m_nEvents( 0 )
-    , m_nMCFound( 0 )
-    , m_setDecay( false )
-    , m_evtTypeSvc( NULL )
-    , m_mcFinder( NULL ) {
-  declareProperty( "EvtCodeFromData", m_fromData = true );
-  declareProperty( "EvtCode", m_evtCode = 0 );
-}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode EvtTypeChecker::initialize() {
 
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialize" << endmsg;
-
-  // Retrieve the EvtTypeSvc here so that it is always done at initialization
-  m_evtTypeSvc = svc<IEvtTypeSvc>( "EvtTypeSvc", true );
+  StatusCode sc = Consumer::initialize(); // must be executed first
+  if ( sc.isFailure() ) return sc;        // error printed already
 
   // Check that EvtType code has been set with appropriate value
   // if it will not be read from data
-  if ( !m_fromData ) {
+  if ( !m_fromData.value() ) {
     if ( m_evtCode == 0 ) {
       fatal() << "With EvtCodeFromData = false you MUST set EvtCode" << endmsg;
       return StatusCode::FAILURE;
     }
 
     // Set the decay descriptor to pass to the MCDecayFinder if using evtCode
-    if ( ( setDecayToFind( m_evtCode ) ).isFailure() ) {
+    if ( ( setDecayToFind( m_evtCode.value() ) ).isFailure() ) {
       fatal() << " 'setDecayToFind' failed in 'initialize' " << endmsg;
       return StatusCode::FAILURE;
     }
@@ -79,7 +86,7 @@ StatusCode EvtTypeChecker::initialize() {
 // Set the decay descriptor of the MCdecayFinder tool based on the evtCode,
 // after checking it exists
 //=============================================================================
-StatusCode EvtTypeChecker::setDecayToFind( const int evtCode ) {
+StatusCode EvtTypeChecker::setDecayToFind( const int evtCode ) const {
 
   // Check if code exist
   if ( !( m_evtTypeSvc->typeExists( evtCode ) ) ) {
@@ -87,8 +94,8 @@ StatusCode EvtTypeChecker::setDecayToFind( const int evtCode ) {
     return StatusCode::FAILURE;
   }
 
-  // Retrieve tool and set decay descriptor
-  m_mcFinder         = tool<IMCDecayFinder>( "MCDecayFinder", this );
+  // Retrieve tool nd set decay descriptor
+  m_mcFinder.retrieve().ignore();
   std::string sdecay = m_evtTypeSvc->decayDescriptor( evtCode );
   if ( ( m_mcFinder->setDecay( sdecay ) ).isFailure() ) {
     fatal() << "Unable to set decay for EvtCode " << evtCode << endmsg;
@@ -104,26 +111,14 @@ StatusCode EvtTypeChecker::setDecayToFind( const int evtCode ) {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode EvtTypeChecker::execute() {
-
+void EvtTypeChecker::operator()( const LHCb::GenHeader& header ) const {
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
-
-  // Counter of events processed
-  m_nEvents++;
-
   // If reading event type from data retrieve event header and set decay
   // unless already done (do it only for first time)
-  if ( m_fromData && !m_setDecay ) {
-    LHCb::GenHeader* header = get<LHCb::GenHeader>( evtSvc(), LHCb::GenHeaderLocation::Default );
-    if ( ( setDecayToFind( header->evType() ).isFailure() ) ) {
-      fatal() << " 'setDecayToFind' failed in 'execute' " << endmsg;
-      return StatusCode::FAILURE;
-    }
+  if ( m_fromData.value() && !m_setDecay ) {
+    setDecayToFind( header.evType() ).orThrow( " 'setDecayToFind' failed ", "EvtTypeChecker" ).ignore();
   }
-
-  if ( m_mcFinder->hasDecay() ) { m_nMCFound++; }
-
-  return StatusCode::SUCCESS;
+  m_nMCFound += m_mcFinder->hasDecay();
 }
 
 //=============================================================================
@@ -135,14 +130,13 @@ StatusCode EvtTypeChecker::finalize() {
 
   auto decayAnalyzed = ( m_mcFinder ? m_mcFinder->decay() : "Unknown" );
 
-  double multiplicity = double( m_nMCFound ) / double( m_nEvents );
   info() << endmsg << " EvtType analyzed = " << m_evtCode << endmsg << " Decay            = " << decayAnalyzed << endmsg
          << " NickName         = " << m_evtTypeSvc->nickName( m_evtCode ) << endmsg
-         << "   events processed = " << format( "%8d", m_nEvents ) << endmsg
-         << "   events found     = " << format( "%8d", m_nMCFound ) << endmsg
-         << "   fraction/event   = " << format( "%8.2f", multiplicity ) << endmsg;
+         << "   events processed = " << format( "%8d", m_nMCFound.nEntries() ) << endmsg
+         << "   events found     = " << format( "%8d", m_nMCFound.nTrueEntries() ) << endmsg
+         << "   fraction/event   = " << format( "%8.2f", m_nMCFound.efficiency() ) << endmsg;
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Consumer::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

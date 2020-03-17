@@ -8,19 +8,84 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
+#include "EvtTypeInfo.h"
 #include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/MsgStream.h"
-
-// local
-#include "EvtTypeSvc.h"
-
+#include "GaudiKernel/Service.h"
+#include "Kernel/IEvtTypeSvc.h"
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <set>
+#include <string>
+#include <vector>
+//-----------------------------------------------------------------------------
+// Implementation file for class : EvtTypeSvc
+//
+// 2004-06-24 : Gloria CORTI
+//-----------------------------------------------------------------------------
+
+/** @class EvtTypeSvc EvtTypeSvc.h
+ *
+ *  Service that provide information for (MC)EVTTYPE code.
+ *
+ *  @author Gloria CORTI
+ *  @date   2004-04-30
+ *
+ *  Edited R. Lambert  2009-03-04
+ *  Added implimentation of allTypes(void), returning a std::set of all known types
+ *
+ */
+class EvtTypeSvc : public extends<Service, IEvtTypeSvc> {
+public:
+  /// Initialize the service.
+  StatusCode initialize() override;
+
+  /// Finalize the service.
+  StatusCode finalize() override;
+
+  /** Given the integer code of an Event type provide its Nick Name
+   *  if it does not exist returns an empty string
+   *  @see IEvtTypeSvc
+   */
+  std::string nickName( const int evtCode ) const override;
+
+  /** Given an EventType provide its ASCII decay descriptor
+   *  @see IEvtTypeSvc
+   */
+  std::string decayDescriptor( const int evtCode ) const override;
+
+  /** Check if an event type corresponding to the integer code is known
+   *  @see IEvtTypeSvc
+   */
+  bool typeExists( const int evtCode ) const override;
+
+  /** return a set of all known event types
+   *  @see IEvtTypeSvc
+   */
+  LHCb::EventTypeSet allTypes() const override;
+
+  /** Standard Constructor.
+   */
+  using extends::extends;
+
+private:
+  /// Parse the input table containing all known event types and
+  /// theirs' nicknames and ascii descriptor
+  StatusCode parseFile( const std::string input );
+
+  /// Name of file with input table
+  const std::string& inputFile() const { return m_inputFile; }
+
+  /// Typedefs
+
+  // Data
+  Gaudi::Property<std::string> m_inputFile{this, "EvtTypesFile",
+                                           getenv( "DECFILESROOT" )
+                                               ? std::string( getenv( "DECFILESROOT" ) ) + "/doc/table_event.txt"
+                                               : std::string{}}; ///< Name of input file with necessary info
+  std::vector<EvtTypeInfo>     m_evtTypeInfos;                   ///< List of objects containing all EvtType info
+};
 
 namespace {
   // Function to compare evtcode of an evttype
@@ -30,31 +95,13 @@ namespace {
   public:
     EvtCodeEqual( int code = 10000000 ) : m_code( code ) {}
 
-    inline bool operator()( const EvtTypeInfo& type ) const { return ( type.evtCode() == m_code ); }
+    bool operator()( const EvtTypeInfo& type ) const { return type.evtCode() == m_code; }
   };
 } // namespace
-
-//-----------------------------------------------------------------------------
-// Implementation file for class : EvtTypeSvc
-//
-// 2004-06-24 : Gloria CORTI
-//-----------------------------------------------------------------------------
 
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 DECLARE_COMPONENT( EvtTypeSvc )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-EvtTypeSvc::EvtTypeSvc( const std::string& name, ISvcLocator* svc ) : base_class( name, svc ) {
-  // m_mcFinder=NULL; //don't make it unless needed
-
-  // Default file to parse
-  if ( getenv( "DECFILESROOT" ) ) { m_inputFile = std::string( getenv( "DECFILESROOT" ) ) + "/doc/table_event.txt"; }
-
-  declareProperty( "EvtTypesFile", m_inputFile );
-}
 
 //=============================================================================
 // Initialize
@@ -65,7 +112,7 @@ StatusCode EvtTypeSvc::initialize() {
   if ( status.isFailure() ) return status;
 
   // Check if the input file is set
-  if ( "" == inputFile() ) {
+  if ( inputFile().empty() ) {
     fatal() << "==> You MUST set the input file containing the event type" << endmsg
             << "    the default is set to $DECFILESROOT/doc/table_event.txt" << endmsg
             << "    check if $DECFILESROOT is set" << endmsg;
@@ -80,8 +127,7 @@ StatusCode EvtTypeSvc::initialize() {
 //=============================================================================
 StatusCode EvtTypeSvc::finalize() {
 
-  MsgStream msg( msgSvc(), name() );
-  if ( msg.level() <= MSG::DEBUG ) {
+  if ( msgLevel( MSG::DEBUG ) ) {
     debug() << "==> Finalize" << endmsg;
     debug() << "Table size before clean up" << m_evtTypeInfos.size() << endmsg;
   }
@@ -89,7 +135,7 @@ StatusCode EvtTypeSvc::finalize() {
   // Clean up list of evttypes
   m_evtTypeInfos.clear();
 
-  if ( msg.level() <= MSG::DEBUG ) debug() << "Table size after clean up" << m_evtTypeInfos.size() << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "Table size after clean up" << m_evtTypeInfos.size() << endmsg;
 
   return Service::finalize();
 }
@@ -172,8 +218,7 @@ std::string EvtTypeSvc::nickName( const int evtCode ) const {
 
   auto iEvtTypeInfo = std::find_if( m_evtTypeInfos.begin(), m_evtTypeInfos.end(), EvtCodeEqual( evtCode ) );
   if ( m_evtTypeInfos.end() == iEvtTypeInfo ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << evtCode << "not known" << endmsg;
+    warning() << evtCode << "not known" << endmsg;
     return {};
   }
   return iEvtTypeInfo->nickName();
@@ -186,8 +231,7 @@ std::string EvtTypeSvc::decayDescriptor( const int evtCode ) const {
 
   auto iEvtTypeInfo = std::find_if( m_evtTypeInfos.begin(), m_evtTypeInfos.end(), EvtCodeEqual( evtCode ) );
   if ( m_evtTypeInfos.end() == iEvtTypeInfo ) {
-    MsgStream msg( msgSvc(), name() );
-    msg << MSG::WARNING << evtCode << "not known" << endmsg;
+    warning() << evtCode << "not known" << endmsg;
     return {};
   }
   return iEvtTypeInfo->decayDescriptor();

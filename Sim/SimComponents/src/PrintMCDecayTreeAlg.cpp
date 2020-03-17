@@ -8,16 +8,34 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Event
 #include "Event/MCParticle.h"
-
-// from MCInterfaces
+#include "GaudiAlg/Consumer.h"
 #include "MCInterfaces/IPrintMCDecayTreeTool.h"
 
-// local
-#include "PrintMCDecayTreeAlg.h"
+/** @class PrintMCDecayTreeAlg PrintMCDecayTreeAlg.h
+ *  Prints a dump of the MC event tree, using an implementation of the
+ *  IPrintMCDecayTreeTool interface.
+ *
+ *  The MC event tree is defined by the TES location of an
+ *  LHCb::MCParticle container. This is controlled by the property
+ *  <b>MCParticleLocation</b>. The default is LHCb::MCParticleLocation::Default
+ *
+ *  The IPrintMCDecayTreeTool implementation to use is controlled by the
+ *  property <b>PrintTool</b>. the default is "PrintMCDecayTreeTool".
+ *
+ *  @author Vladimir Gligorov, adapted by Marco Cattaneo
+ *  @date   26/11/2007
+ */
+class PrintMCDecayTreeAlg : public Gaudi::Functional::Consumer<void( const LHCb::MCParticles& )> {
+public:
+  /// Standard constructor
+  PrintMCDecayTreeAlg( const std::string& name, ISvcLocator* pSvcLocator );
+
+  void operator()( const LHCb::MCParticles& ) const override; ///< Algorithm execution
+
+private:
+  ToolHandle<IPrintMCDecayTreeTool> m_printTool{this, "PrintTool", "PrintMCDecayTreeTool"};
+};
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PrintMCDecayTreeAlg
@@ -29,40 +47,20 @@ DECLARE_COMPONENT( PrintMCDecayTreeAlg )
 // Standard constructor, initializes variables
 //=============================================================================
 PrintMCDecayTreeAlg::PrintMCDecayTreeAlg( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "PrintTool", m_printToolName );
-  declareProperty( "MCParticleLocation", m_particleLocation );
-}
-
-//=============================================================================
-// Initialisation. Check parameters
-//=============================================================================
-StatusCode PrintMCDecayTreeAlg::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialise" << endmsg;
-
-  m_printTool = tool<IPrintMCDecayTreeTool>( m_printToolName, this );
-
-  return sc;
-}
+    : Consumer( name, pSvcLocator, KeyValue{"MCParticleLocation", LHCb::MCParticleLocation::Default} ) {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PrintMCDecayTreeAlg::execute() {
+void PrintMCDecayTreeAlg::operator()( const LHCb::MCParticles& parts ) const {
 
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
     debug() << "==> Execute" << endmsg;
-    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
-      verbose() << "Getting MCParticles from " << m_particleLocation << endmsg;
+    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << "Getting MCParticles from " << inputLocation() << endmsg;
   }
 
-  for ( const auto& part : *get<LHCb::MCParticles>( m_particleLocation ) ) {
+  for ( const auto& part : parts ) {
     if ( !part->originVertex() || !part->originVertex()->mother() ) m_printTool->printTree( part, -1 );
   }
-
-  return StatusCode::SUCCESS;
 }
 //=============================================================================

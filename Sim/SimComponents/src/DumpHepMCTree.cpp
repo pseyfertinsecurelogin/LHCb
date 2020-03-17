@@ -8,18 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// HepMC
+#include "DumpHepMCDecay.h"
+#include "Event/HepMCEvent.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
-
-// GenEvent
-#include "Event/HepMCEvent.h"
-
-// Local
-#include "DumpHepMCDecay.h"
 // ============================================================================
 /** @class DumpHepMCTree
  *  simple class to dump HepMC::GenEvent obejcts

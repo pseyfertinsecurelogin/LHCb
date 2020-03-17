@@ -8,27 +8,19 @@
  * granted to it by virtue of its status as an Intergovernmental Organization  *
  * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-// Include file
-// local
-#include "GenFSRJson.h"
-
-// from Event
 #include "Event/CrossSectionsFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/GenFSR.h"
-
-// From GaudiKernel
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/Time.h"
-
-// other libraries
+#include "boost/property_tree/json_parser.hpp"
+#include "boost/property_tree/ptree.hpp"
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include "boost/property_tree/json_parser.hpp"
-#include "boost/property_tree/ptree.hpp"
 
 using boost::property_tree::ptree;
 
@@ -46,6 +38,45 @@ using boost::property_tree::ptree;
 //      this service cut on the key variable in order to select the correct counter class.
 //-----------------------------------------------------------------------------
 
+/** @class GenFSRJson GenFSRJson.h
+ *
+ *
+ *  @author Davide Fazzini
+ *  @date   2018-06-26
+ */
+
+class GenFSRJson : public Gaudi::Algorithm {
+public:
+  /// Standard constructor
+  using Gaudi::Algorithm::Algorithm;
+
+  StatusCode initialize() override;                         ///< Algorithm initialization
+  StatusCode execute( const EventContext& ) const override; // Algorithm execution
+  StatusCode finalize() override;                           ///< Algorithm finalization
+
+  void printFSR(); // Print the GenFSR in a file .json
+
+private:
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+  Gaudi::Property<std::string> m_prodID{this, "prodID", "", "Production ID used in the generation"};
+  Gaudi::Property<std::string> m_appConfigVersion{this, "appConfigVersion", "",
+                                                  "Version of AppConfig used in the simulation"};
+  Gaudi::Property<std::string> m_appConfigFile{this, "appConfigFile", "", "Name of the AppConfig file"};
+  Gaudi::Property<std::string> m_gaussVersion{this, "gaussVersion", "", "Gauss version used in the simulation"};
+  Gaudi::Property<std::string> m_simCond{this, "simCond", "", "Tag for the SimCond database"};
+  Gaudi::Property<std::string> m_dddb{this, "dddb", "", "Tag for the DDDB database"};
+  Gaudi::Property<std::string> m_jsonOutputLocation{this, "jsonOutputLocation", "",
+                                                    "Path where to save the .json output"};
+  Gaudi::Property<std::string> m_jsonOutputName{this, "jsonOutputName", "GenerationFSR_" + m_appConfigFile + ".json",
+                                                "Name of the .json output"};
+
+  SmartIF<IDataProviderSvc>       m_fileRecordSvc;
+  PublicToolHandle<IFSRNavigator> m_navigatorTool{this, "FSRNavigator",
+                                                  "FSRNavigator/FSRNavigator"}; // tool to navigate FSR
+};
+
 namespace {
   std::string getCurrentTime() { return Gaudi::Time::current().format( true ); }
 
@@ -54,21 +85,21 @@ namespace {
     std::string path_decFile = System::getEnv( "DECFILESROOT" );
 
     if ( path_decFile != "" ) {
-      std::string  evtType_str = std::to_string( evtType );
-      std::string  path_desc   = path_decFile + "/options/" + evtType_str + ".py";
-      std::fstream file_desc( path_desc, std::fstream::in );
-      std::string  line_ref  = "$DECFILESROOT/dkfiles/";
-      std::string  line_stop = ".dec\"";
-      std::string  line;
+      std::string                evtType_str = std::to_string( evtType );
+      std::string                path_desc   = path_decFile + "/options/" + evtType_str + ".py";
+      std::fstream               file_desc( path_desc, std::fstream::in );
+      constexpr std::string_view line_ref  = "$DECFILESROOT/dkfiles/";
+      constexpr std::string_view line_stop = ".dec\"";
+      std::string                line;
 
       while ( getline( file_desc, line ) ) {
-        std::size_t pos_ref = line.find( line_ref );
+        auto pos_ref = line.find( line_ref );
 
         if ( pos_ref != std::string::npos ) {
-          std::size_t pos_end = line.find( line_stop );
-          pos_ref             = pos_ref + line_ref.length();
-          int count           = pos_end - pos_ref;
-          description         = line.substr( pos_ref, count );
+          auto pos_end = line.find( line_stop );
+          pos_ref      = pos_ref + line_ref.length();
+          int count    = pos_end - pos_ref;
+          description  = line.substr( pos_ref, count );
           break;
         }
       }
@@ -82,8 +113,7 @@ namespace {
   //=============================================================================
 
   ptree writeGeneratorCounters( const LHCb::GenFSR& genFSR ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     ptree array_tree;
 
@@ -114,7 +144,7 @@ namespace {
 
       double      fraction = genFSR.getEfficiency( after, before, C );
       double      error    = genFSR.getEfficiencyError( after, before, C, flag );
-      std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+      const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
       ptree counter_tree;
       counter_tree.put( "descr", fullName );
@@ -122,7 +152,7 @@ namespace {
       counter_tree.put( "value", fraction );
       counter_tree.put( "error", error );
 
-      array_tree.push_back( std::make_pair( "", counter_tree ) );
+      array_tree.push_back( {"", counter_tree} );
     }
 
     return array_tree;
@@ -133,8 +163,7 @@ namespace {
   //=============================================================================
 
   ptree writeCutEfficiencies( const LHCb::GenFSR& genFSR ) {
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     ptree array_tree;
 
@@ -157,7 +186,7 @@ namespace {
       double fraction = genFSR.getEfficiency( after, before );
       double error    = genFSR.getEfficiencyError( after, before );
 
-      std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+      const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
       ptree efficiency_tree;
 
@@ -166,7 +195,7 @@ namespace {
       efficiency_tree.put( "value", fraction );
       efficiency_tree.put( "error", error );
 
-      array_tree.push_back( std::make_pair( "", efficiency_tree ) );
+      array_tree.push_back( {"", efficiency_tree} );
     }
 
     return array_tree;
@@ -179,8 +208,7 @@ namespace {
   ptree writeHadronCounters( const LHCb::GenFSR& genFSR ) {
     ptree array_tree;
 
-    LHCb::CrossSectionsFSR             crossFSR;
-    std::map<std::string, std::string> mapCross = crossFSR.getFullNames();
+    const auto& mapCross = LHCb::CrossSectionsFSR::getFullNames();
 
     for ( const auto& counter : genFSR.genCounters() ) {
       auto key = counter.first;
@@ -194,7 +222,7 @@ namespace {
         double fraction = genFSR.getEfficiency( after, before );
         double error    = genFSR.getEfficiencyError( after, before );
 
-        std::string fullName = mapCross[LHCb::CrossSectionsFSR::CrossSectionKeyToString( key )];
+        const auto& fullName = mapCross.at( LHCb::CrossSectionsFSR::CrossSectionKeyToString( key ) );
 
         ptree counter_tree;
         counter_tree.put( "descr", fullName );
@@ -202,7 +230,7 @@ namespace {
         counter_tree.put( "value", fraction );
         counter_tree.put( "error", error );
 
-        array_tree.push_back( std::make_pair( "", counter_tree ) );
+        array_tree.push_back( {"", counter_tree} );
       }
     }
 
@@ -228,7 +256,7 @@ namespace {
       cross_tree.put( "type", "cross-section" );
       cross_tree.put( "value", value );
 
-      array_tree.push_back( std::make_pair( "", cross_tree ) );
+      array_tree.push_back( {"", cross_tree} );
     }
 
     return array_tree;
@@ -275,8 +303,8 @@ namespace {
     interaction_tree.put( "numer", countIntAcc );
     interaction_tree.put( "denom", countIntGen );
 
-    array_tree.push_back( std::make_pair( "", event_tree ) );
-    array_tree.push_back( std::make_pair( "", interaction_tree ) );
+    array_tree.push_back( {"", event_tree} );
+    array_tree.push_back( {"", interaction_tree} );
 
     return array_tree;
   }
@@ -287,16 +315,11 @@ namespace {
 DECLARE_COMPONENT( GenFSRJson )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-GenFSRJson::GenFSRJson( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {}
-
-//=============================================================================
 //  Initialization
 //=============================================================================
 
 StatusCode GenFSRJson::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
+  StatusCode sc = Algorithm::initialize(); // must be executed first
 
   if ( sc.isFailure() ) return sc; // error prinsted already by Service
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
@@ -304,15 +327,13 @@ StatusCode GenFSRJson::initialize() {
   // get the File Records service
   m_fileRecordSvc = Gaudi::svcLocator()->service( "FileRecordDataSvc" );
 
-  m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator", "FSRNavigator" );
-
   return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRJson::execute() {
+StatusCode GenFSRJson::execute( const EventContext& ) const {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   return StatusCode::SUCCESS;
@@ -326,7 +347,7 @@ StatusCode GenFSRJson::finalize() {
 
   GenFSRJson::printFSR();
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
+  return Algorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

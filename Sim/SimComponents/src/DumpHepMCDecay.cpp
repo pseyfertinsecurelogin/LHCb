@@ -8,21 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// HepMC
+#include "DumpHepMCDecay.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
-
-// PartProp
 #include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-
-// GenEvent
-#include "Event/HepMCEvent.h"
-
-// local
-#include "DumpHepMCDecay.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpHepMCDecay
@@ -36,30 +26,18 @@ DECLARE_COMPONENT( DumpHepMCDecay )
 //=============================================================================
 // Standard constructor
 //=============================================================================
-DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc )
-    : GaudiAlgorithm( name, isvc ), m_levels( 4 ), m_ppSvc( 0 ) {
-
-  m_addresses.push_back( LHCb::HepMCEventLocation::Default ); // default
-  m_quarks.push_back( LHCb::ParticleID::bottom );             // default
-
-  // define the property
-  declareProperty( "Addresses", m_addresses );
-  declareProperty( "Particles", m_particles );
-  declareProperty( "Quarks", m_quarks );
-  declareProperty( "MaxLevels", m_levels );
-}
+DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ) {}
 
 //=============================================================================
 // Initialization of the algoritm
 //=============================================================================
 StatusCode DumpHepMCDecay::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) { return Error( "Unable to initialize 'GaudiAlgorithm' base ", sc ); }
-
-  auto i = std::find_if( m_quarks.begin(), m_quarks.end(), []( PIDs::const_reference q ) {
-    return q < LHCb::ParticleID::down || LHCb::ParticleID::top < q;
+  return GaudiAlgorithm::initialize().andThen( [&] {
+    auto i = std::find_if( m_quarks.begin(), m_quarks.end(), []( PIDs::const_reference q ) {
+      return q < LHCb::ParticleID::down || LHCb::ParticleID::top < q;
+    } );
+    return ( i != m_quarks.end() ) ? Error( " Invalid Quark ID=" + std::to_string( *i ) ) : StatusCode::SUCCESS;
   } );
-  return ( i != m_quarks.end() ) ? Error( " Invalid Quark ID=" + std::to_string( *i ) ) : StatusCode::SUCCESS;
 }
 
 //=============================================================================

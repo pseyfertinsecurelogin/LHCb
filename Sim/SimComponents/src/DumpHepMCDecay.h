@@ -9,13 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef SIM_DUMPHEPMCDECAY_H
-#define SIM_DUMPHEPMCDECAY_H 1
-// ============================================================================
-// GaudiAlg
-// ============================================================================
+#pragma once
+#include "Event/HepMCEvent.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
-// ============================================================================
+#include "Kernel/ParticleID.h"
 #include <string>
 #include <vector>
 
@@ -82,28 +79,20 @@ public:
    */
   DumpHepMCDecay( const std::string& name, ISvcLocator* isvc );
 
-  // default constructor   is disabled
-  DumpHepMCDecay() = delete;
-  // copy constructor      is disabled
-  DumpHepMCDecay( const DumpHepMCDecay& ) = delete;
-  // assigenemtn operator  is disabled
-  DumpHepMCDecay& operator=( const DumpHepMCDecay& ) = delete;
-
 protected:
   // addresses of HepMC events
-  Addresses m_addresses;
+  Gaudi::Property<Addresses> m_addresses{this, "Addresses", {LHCb::HepMCEventLocation::Default}};
   // particles to be printed
-  PIDs m_particles;
+  Gaudi::Property<PIDs> m_particles{this, "Particles", {}};
   // quarks to be printes
-  PIDs m_quarks;
+  Gaudi::Property<PIDs> m_quarks{this, "Quarks", {LHCb::ParticleID::bottom}};
   // maximal number of levels
-  int m_levels;
+  Gaudi::Property<int> m_levels{this, "MaxLevels", 4};
 
 private:
   // pointer to particle property service
-  mutable LHCb::IParticlePropertySvc* m_ppSvc;
+  mutable LHCb::IParticlePropertySvc* m_ppSvc{nullptr};
 };
 // ============================================================================
 // The END
 // ============================================================================
-#endif // SIM_DUMPHEPMCDECAY_H

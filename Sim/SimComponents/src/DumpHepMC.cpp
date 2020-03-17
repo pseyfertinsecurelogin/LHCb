@@ -8,19 +8,48 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-
-#include "DumpHepMC.h"
-
 #include "Event/HepMCEvent.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GenEvent/HepMCUtils.h"
 #include "HepMC/GenEvent.h"
-
-#include "GaudiKernel/MsgStream.h"
 
 /** @file
  *  implementation file for the class DumpHepMC.
  *  Just a renaming of the DumpMC class that was in Gen/Generators package
  */
+
+class DumpHepMC : public GaudiAlgorithm {
+public:
+  /// the actual type of container with addresses
+  typedef std::vector<std::string> Addresses;
+
+public:
+  /** execution of the algoritm
+   *  @see IAlgorithm
+   *  @return status code
+   */
+  StatusCode execute() override;
+
+  /** standard constructor
+   *  @see GaudiAlgorithm
+   *  @see      Algorithm
+   *  @see      AlgFactory
+   *  @see     IAlgFactory
+   *  @param name algorithm instance's name
+   *  @param iscv pointer to Service Locator
+   */
+  DumpHepMC( const std::string& name, ISvcLocator* isvc );
+
+private:
+  Gaudi::Property<Addresses> m_addresses{this, "Addresses", {LHCb::HepMCEventLocation::Default}};
+
+  /// Print HepMC::GenEvent ordering particles according to barcodes
+  void orderedPrint( const HepMC::GenEvent* theEvent, std::ostream& ostr ) const;
+
+  /// Print HepMC::GenVertex ordering particles according to barcodes
+  void orderedVertexPrint( HepMC::GenVertex* theVertex, std::ostream& ostr ) const;
+};
 
 // ============================================================================
 
@@ -36,11 +65,7 @@ DECLARE_COMPONENT( DumpHepMC )
  *  @param iscv pointer to Service Locator
  */
 // ============================================================================
-DumpHepMC::DumpHepMC( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ), m_addresses() {
-  m_addresses.push_back( LHCb::HepMCEventLocation::Default ); // default!
-  // define the property
-  declareProperty( "Addresses", m_addresses );
-}
+DumpHepMC::DumpHepMC( const std::string& name, ISvcLocator* isvc ) : GaudiAlgorithm( name, isvc ) {}
 // ============================================================================
 
 // ============================================================================
@@ -56,15 +81,14 @@ StatusCode DumpHepMC::execute() {
   // get the stream
   MsgStream& log = info();
 
-  for ( auto ia = m_addresses.cbegin(); m_addresses.cend() != ia; ++ia ) {
+  for ( const auto& ia : m_addresses ) {
     //
-    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " Inspect the container '" << *ia << "'" << endmsg;
-    const LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( *ia );
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << " Inspect the container '" << ia << "'" << endmsg;
+    const LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( ia );
     if ( !events ) { continue; }
     //
-    info() << " HepMC container '" << *ia << "' \t has " << events->size() << " event(s) " << endmsg;
-    for ( auto ie = events->begin(); events->end() != ie; ++ie ) {
-      const LHCb::HepMCEvent* event = *ie;
+    info() << " HepMC container '" << ia << "' \t has " << events->size() << " event(s) " << endmsg;
+    for ( const LHCb::HepMCEvent* event : *events ) {
       if ( !event ) { continue; }
       log << "  Generator '" << event->generatorName() << "'\n";
       if ( log.isActive() ) orderedPrint( event->pGenEvt(), log.stream() );
