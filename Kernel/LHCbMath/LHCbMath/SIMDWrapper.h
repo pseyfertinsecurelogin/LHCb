@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "Kernel/STLExtensions.h"
+#include "Kernel/STLExtensionsImplementation.h"
 #include "LHCbMath/TypeMapping.h"
 #include "LHCbMath/bit_cast.h"
 

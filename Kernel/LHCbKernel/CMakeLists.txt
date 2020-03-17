@@ -58,8 +58,6 @@ gaudi_add_unit_test(test_SynchronizedValue tests/src/test_SynchronizedValue.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_PolymorphicValue tests/src/test_PolymorphicValue.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
-gaudi_add_unit_test(test_STLExtensions tests/src/test_STLExtensions.cpp
-                    LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_MultiIndexContainer tests/src/test_MultiIndexContainer.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_PlatformInfo tests/src/test_PlatformInfo.cpp
