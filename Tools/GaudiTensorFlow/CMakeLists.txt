@@ -19,11 +19,7 @@ gaudi_depends_on_subdirs(GaudiAlg)
 find_package (Boost) 
 
 ### Find GSL libraries
-find_package (GSL)
-find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
-if(NOT CPP_GSL_INCLUDE_DIR)
-  message(FATAL "required headers from C++ GSL missing")
-endif()
+find_package(cppgsl)
 
 ### Find tensorflow
 find_path(TENSORFLOW_INCLUDE_DIR NAMES tensorflow/c/c_api.h)
@@ -40,8 +36,8 @@ set(TENSORFLOW_LIBRARIES ${TENSORFLOW_LIBRARY} ${TENSORFLOW_FRAMEWORK_LIBRARY})
 gaudi_add_library (GaudiTensorFlow
                     src/*.cpp
                     PUBLIC_HEADERS GaudiTensorFlow 
-                    INCLUDE_DIRS Boost GSL ${CPP_GSL_INCLUDE_DIR} ${TENSORFLOW_INCLUDE_DIR}
-                    LINK_LIBRARIES ${TENSORFLOW_LIBRARIES} Boost GSL
+                    INCLUDE_DIRS Boost cppgsl ${TENSORFLOW_INCLUDE_DIR}
+                    LINK_LIBRARIES ${TENSORFLOW_LIBRARIES} Boost
                   ) 
 
 gaudi_add_executable(testTensor
