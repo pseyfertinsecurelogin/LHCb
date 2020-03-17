@@ -12,7 +12,7 @@
 #define BOOST_TEST_MODULE test_PlatformInfo
 #include <boost/test/unit_test.hpp>
 
-#include "Kernel/STLExtensions.h"
+#include "Kernel/STLExtensionsImplementation.h"
 #include <numeric>
 #include <type_traits>
 

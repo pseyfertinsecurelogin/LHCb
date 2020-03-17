@@ -14,6 +14,7 @@
 gaudi_subdir(CPPKernel)
 
 find_package(Boost)
+find_package(cppgsl)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -27,4 +28,5 @@ gaudi_install_headers(Kernel)
 gaudi_add_test(QMTest QMTEST)
 
 gaudi_add_unit_test(test_STLExtensions tests/src/test_STLExtensions.cpp
+                    INCLUDE_DIRS cppgsl
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
