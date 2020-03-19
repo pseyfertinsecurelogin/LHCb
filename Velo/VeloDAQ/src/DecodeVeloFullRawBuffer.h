@@ -35,72 +35,67 @@ using namespace VeloTELL1;
 class DecodeVeloFullRawBuffer : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  DecodeVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~DecodeVeloFullRawBuffer(); ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override;    ///< Algorithm execution
-
+private:
   StatusCode getData();
   StatusCode decodeData();
 
-protected:
-  std::string adcContName();
-  std::string pedContName();
-  std::string decADCName();
-  std::string decPedName();
-  std::string decHeaderName();
-  std::string evtInfoName();
-  void        sortAndWriteDecodedData();
-  void        setADCDataFlag();
-  void        setPedDataFlag();
-  bool        adcDataFlag();
-  bool        pedDataFlag();
-  void        resetMemory();
-  void        unsetADCDataFlag();
-  void        unsetPedDataFlag();
+  void sortAndWriteDecodedData();
+  void setADCDataFlag();
+  void setPedDataFlag();
+  bool adcDataFlag();
+  bool pedDataFlag();
+  void resetMemory();
+  void unsetADCDataFlag();
+  void unsetPedDataFlag();
 
 private:
   // location paths
-  std::string m_veloADCLocation;
-  std::string m_veloPartialADCLocation;
-  std::string m_veloPedLocation;
-  std::string m_decodedADCLocation;
-  std::string m_decodedPartialADCLocation;
-  std::string m_decodedPedLocation;
-  std::string m_decodedHeaderLocation;
-  std::string m_evtInfoLocation;
+  DataObjectReadHandle<VeloFullBanks> m_veloADCLocation{this, "ADCLocation", VeloFullBankLocation::Default};
+  DataObjectReadHandle<VeloFullBanks> m_veloPartialADCLocation{this, "PartialADCLocation",
+                                                               "Raw/Velo/PreparedPartialADC"};
+  DataObjectReadHandle<VeloFullBanks> m_veloPedLocation{this, "PedestalLocation", VeloFullBankLocation::Pedestals};
+  DataObjectWriteHandle<LHCb::VeloTELL1Datas> m_decodedADCLocation{this, "DecodedADCLocation",
+                                                                   LHCb::VeloTELL1DataLocation::ADCs};
+  DataObjectWriteHandle<LHCb::VeloTELL1Datas> m_decodedPartialADCLocation{this, "DecodedPartialADCLocation",
+                                                                          "Raw/Velo/PartialADCs"};
+  DataObjectWriteHandle<LHCb::VeloTELL1Datas> m_decodedPedLocation{this, "DecodedPedestalLocation",
+                                                                   LHCb::VeloTELL1DataLocation::Pedestals};
+  DataObjectWriteHandle<LHCb::VeloTELL1Datas> m_decodedHeaderLocation{this, "DecodedHeaderLocation",
+                                                                      LHCb::VeloTELL1DataLocation::Headers};
+  DataObjectWriteHandle<EvtInfos>             m_evtInfoLocation{this, "EventInfoLocation", EvtInfoLocation::Default};
   // input data
-  VeloFullBanks* m_veloADCs;
-  VeloFullBanks* m_veloPartialADCs;
-  VeloFullBanks* m_veloPeds;
+  const VeloFullBanks* m_veloADCs        = nullptr;
+  const VeloFullBanks* m_veloPartialADCs = nullptr;
+  const VeloFullBanks* m_veloPeds        = nullptr;
   // decoded data for futher processing
-  LHCb::VeloTELL1Datas* m_decodedADC;
-  LHCb::VeloTELL1Datas* m_decodedPartialADC;
-  LHCb::VeloTELL1Datas* m_decodedPed;
-  LHCb::VeloTELL1Datas* m_decodedHeader;
-  EvtInfos*             m_evtInfo;
+  LHCb::VeloTELL1Datas* m_decodedADC        = nullptr;
+  LHCb::VeloTELL1Datas* m_decodedPartialADC = nullptr;
+  LHCb::VeloTELL1Datas* m_decodedPed        = nullptr;
+  LHCb::VeloTELL1Datas* m_decodedHeader     = nullptr;
+  EvtInfos*             m_evtInfo           = nullptr;
   // flags
-  bool m_adcDataPresent;
-  bool m_pedDataPresent;
-  bool m_sectorCorrection;
-  bool m_isDebug;
+  bool                  m_adcDataPresent = false;
+  bool                  m_pedDataPresent = false;
+  Gaudi::Property<bool> m_sectorCorrection{this, "SectorCorrection", true};
   // data buffers
-  sdataVec m_signADC;
-  sdataVec m_signPartialADC;
-  sdataVec m_signADCReordered;
-  sdataVec m_signPartialADCReordered;
-  sdataVec m_signHeader;
-  sdataVec m_signHeaderReordered;
-  sdataVec m_signPed;
-  sdataVec m_signPedReordered;
+  sdataVec m_signADC                 = sdataVec( VeloTELL1::SENSOR_CHANNELS );
+  sdataVec m_signPartialADC          = sdataVec( VeloTELL1::SENSOR_CHANNELS );
+  sdataVec m_signADCReordered        = sdataVec( VeloTELL1::SENSOR_CHANNELS );
+  sdataVec m_signPartialADCReordered = sdataVec( VeloTELL1::SENSOR_CHANNELS );
+  sdataVec m_signHeader              = sdataVec( 256 );
+  sdataVec m_signHeaderReordered     = sdataVec( 256 );
+  sdataVec m_signPed                 = sdataVec( VeloTELL1::SENSOR_CHANNELS );
+  sdataVec m_signPedReordered        = sdataVec( VeloTELL1::SENSOR_CHANNELS );
   // decoders
-  VeloFullDecoder m_ADCDecoder;
-  VeloFullDecoder m_ADCPartialDecoder;
-  VeloFullDecoder m_HeaderDecoder;
-  VeloFullDecoder m_PedDecoder;
+  VeloFullDecoder m_ADCDecoder{VeloFull};
+  VeloFullDecoder m_ADCPartialDecoder{VeloFull};
+  VeloFullDecoder m_HeaderDecoder{VeloHeader};
+  VeloFullDecoder m_PedDecoder{VeloPedestal};
   // cable order
-  std::vector<unsigned int> m_cableOrder;
+  Gaudi::Property<std::vector<unsigned int>> m_cableOrder{this, "CableOrder", {}};
 };
 #endif // DECODEVELOFULLRAWBUFFER_H

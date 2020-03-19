@@ -113,37 +113,42 @@ private:
   DataObjectWriteHandle<LHCb::VeloClusters> m_clusters = {this, "VeloClusterLocation",
                                                           LHCb::VeloClusterLocation::Default};
 
-  bool m_decodeToVeloLiteClusters;
-  bool m_decodeToVeloClusters;
+  Gaudi::Property<bool> m_decodeToVeloLiteClusters{this, "DecodeToVeloLiteClusters", true};
+  Gaudi::Property<bool> m_decodeToVeloClusters{this, "DecodeToVeloClusters", false};
 
-  bool m_dumpVeloClusters;
+  Gaudi::Property<bool> m_dumpVeloClusters{this, "DumpVeloClusters", false};
 
-  unsigned int m_forcedBankVersion; ///< user forced bank version
+  Gaudi::Property<unsigned int> m_forcedBankVersion{this, "ForceBankVersion",
+                                                    0}; // there is no version 0, so this means bank version is not
+                                                        // enforced ///< user forced bank version
 
   /// do we assume chip channels instead of strips in the raw buffer?
   /// (useful for some testbeam TELL1 cinfigurations, defaults to false)
-  bool m_assumeChipChannelsInRawBuffer;
+  Gaudi::Property<bool> m_assumeChipChannelsInRawBuffer{this, "AssumeChipChannelsInRawBuffer", false};
 
   /// helpers
   const DeVelo* m_velo = nullptr;
 
   /// maximum permissible number of VELO clusters,
   /// more than this will force an IncidentType::AbortEvent
-  unsigned int m_maxVeloClusters;
+  Gaudi::Property<unsigned int> m_maxVeloClusters{this, "MaxVeloClusters", 10000};
 
   /// m_errorCount is the number of errors per fault to print
   /// default = 0
   /// 10 is added to it if the message level is debug
-  unsigned int m_errorCount;
+  Gaudi::Property<unsigned int> m_errorCount{this, "ErrorCount", 0};
 
   /// if true, clusters will be decoded even in the presence of errors
-  bool m_ignoreErrors = false;
+  Gaudi::Property<bool> m_ignoreErrors{
+      this, "IgnoreErrors", false,
+      "Decode clusters even if errors are present. Use with care, can cause crashes on corrupted banks."};
 
   /// if true hide the errors from multiple cluster using the same strip
-  bool m_hideWarnings;
+  Gaudi::Property<bool> m_hideWarnings{this, "HideWarnings", true};
 
   /// Check when decoding lite clusters that the bank length is correct
-  bool m_doLengthCheck;
+  Gaudi::Property<bool> m_doLengthCheck{this, "DoLengthCheck", false,
+                                        "Check when decoding lite clusters that the bank length is correct"};
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;

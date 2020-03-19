@@ -20,7 +20,6 @@
 #include "VeloClusterPtrLessThan.h"
 #include "VeloClusterWord.h"
 #include "VeloRawBankDecoder.h"
-#include "VeloRawBankVersions.h"
 #include "VeloRawWordSizes.h"
 
 #include "VeloClustersToRaw.h"
@@ -32,20 +31,6 @@
 //-----------------------------------------------------------------------------
 
 DECLARE_COMPONENT( VeloClustersToRaw )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-VeloClustersToRaw::VeloClustersToRaw( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator )
-    , m_clusterLoc( LHCb::VeloClusterLocation::Default )
-    , m_rawEventLoc( LHCb::RawEventLocation::Default )
-    , m_bankVersion( VeloDAQ::v3 ) {
-  declareProperty( "VeloClusterLocation", m_clusterLoc = "Raw/Velo/ClustersSelected" );
-  declareProperty( "RawEventLocation", m_rawEventLoc = "DAQ/RawEventSelected" );
-  declareProperty( "RunSelfTest", m_runSelfTest = false, "Decodes endoced bank and compares to input clusters." );
-  declareProperty( "BankVersion", m_bankVersion = VeloDAQ::v3 );
-}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -78,7 +63,7 @@ StatusCode VeloClustersToRaw::execute() {
 
   // Get the input container
   // Get the VeloClusters from their default location
-  const LHCb::VeloClusters* clusters = getIfExists<LHCb::VeloClusters>( m_clusterLoc );
+  const LHCb::VeloClusters* clusters = m_clusterLoc.getIfExists();
   if ( !clusters ) return Error( " ==> There are no VeloClusters in TES! " );
 
   m_sortedClusters.clear();
@@ -88,10 +73,10 @@ StatusCode VeloClustersToRaw::execute() {
   // Then sort the clusters by sensor number and strip number
   std::sort( m_sortedClusters.begin(), m_sortedClusters.end(), VeloDAQ::veloClusterPtrLessThan() );
 
-  m_rawEventOut = getIfExists<LHCb::RawEvent>( m_rawEventLoc );
+  m_rawEventOut = m_rawEventLoc.getIfExists();
   if ( !m_rawEventOut ) {
     m_rawEventOut = new LHCb::RawEvent();
-    put( m_rawEventOut, m_rawEventLoc );
+    m_rawEventLoc.put( m_rawEventOut );
   }
 
   // loop over all clusters and write one bank per sensor
@@ -110,7 +95,7 @@ StatusCode VeloClustersToRaw::execute() {
     if ( !sc ) { return StatusCode::FAILURE; }
   }
 
-  if ( m_runSelfTest ) {
+  if ( m_runSelfTest.value() ) {
     if ( selfTest() ) {
       info() << "Self test passed." << endmsg;
     } else {

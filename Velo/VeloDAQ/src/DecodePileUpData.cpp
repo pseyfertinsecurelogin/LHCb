@@ -36,9 +36,6 @@ DECLARE_COMPONENT( DecodePileUpData )
 //=============================================================================
 DecodePileUpData::DecodePileUpData( const std::string& name, ISvcLocator* pSvcLocator )
     : Decoder::AlgBase( name, pSvcLocator ), m_rawEvent( 0 ) {
-  declareProperty( "NonZeroSupp", m_isNonZeroSupp = true );
-  declareProperty( "PUClusterLocation", m_PUClusterLocation = "Raw/Velo/PUClusters" );
-  declareProperty( "PUClusterNZSLocation", m_PUClusterNZSLocation = "Raw/Velo/PUClustersNZS" );
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
 }
@@ -88,7 +85,7 @@ StatusCode DecodePileUpData::execute() {
     for ( int sensorIt = 0; sensorIt < PuTell1::NUM_SENSORS; sensorIt++ ) {
       for ( int beetleIt = 0; beetleIt < PuTell1::NUM_BEETLES; beetleIt++ ) {
         sc = findPileUpHitsBee( m_PUcontainerBee[sensorIt][beetleIt], sensorIt, beetleIt, clusters );
-        if ( m_isNonZeroSupp ) {
+        if ( m_isNonZeroSupp.value() ) {
           sc = findPileUpHitsBeeNZS( m_PUcontainerBee_NZS[sensorIt][beetleIt], sensorIt, beetleIt, clustersNZS );
         }
       }
@@ -112,14 +109,13 @@ StatusCode DecodePileUpData::getRawEvent() {
   // Retrieve the RawEvent:
   m_rawEvent = findFirstRawEvent();
 
-  if ( m_rawEvent == NULL ) {
+  if ( !m_rawEvent ) {
     error() << "Raw Event not found in " << m_rawEventLocations << endmsg;
-    VeloClusters* clusters = new LHCb::VeloClusters();
-    put( clusters, m_PUClusterLocation );
-    return ( StatusCode::FAILURE );
+    m_PUClusterLocation.put( new LHCb::VeloClusters() );
+    return StatusCode::FAILURE;
   }
 
-  return ( StatusCode::SUCCESS );
+  return StatusCode::SUCCESS;
 }
 
 //==============================================================================
@@ -590,9 +586,9 @@ StatusCode DecodePileUpData::writePUBanks( LHCb::VeloClusters* clusters, LHCb::V
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> writePUBanks()" << endmsg;
 
-  put( clusters, m_PUClusterLocation );
-  // info() << "put clusters in " <<  m_PUClusterLocation << endmsg();
-  if ( m_isNonZeroSupp ) { put( clustersNZS, m_PUClusterNZSLocation ); }
+  m_PUClusterLocation.put( clusters );
+  // info() << "put clusters in " <<  m_PUClusterLocation.objKey() << endmsg();
+  if ( m_isNonZeroSupp.value() ) { m_PUClusterNZSLocation.put( clustersNZS ); }
   return ( StatusCode::SUCCESS );
 }
 

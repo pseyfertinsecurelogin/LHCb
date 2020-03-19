@@ -19,7 +19,6 @@
 #include "PrepareVeloFullRawBuffer.h"
 
 // data model
-#include "Event/RawEvent.h"
 
 // stl
 #include <algorithm>
@@ -34,39 +33,6 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( PrepareVeloFullRawBuffer )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-PrepareVeloFullRawBuffer::PrepareVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiTupleAlg( name, pSvcLocator )
-    , m_rawEvent( 0 )
-    , m_veloADCData( 0 )
-    , m_veloADCPartialData( 0 )
-    , m_veloPedestals( 0 )
-    , m_veloPedestalsLoc( VeloFullBankLocation::Pedestals )
-    , m_adcBankPresent( false )
-    , m_pedBankPresent( false ) {
-
-  declareProperty( "RunWithODIN", m_runWithODIN = true );
-  declareProperty( "RawEventLocation", m_rawEventLoc = LHCb::RawEventLocation::Default );
-  declareProperty( "ADCLocation", m_veloADCDataLoc = VeloFullBankLocation::Default );
-  declareProperty( "ADCPartialLoc", m_veloADCPartialDataLoc = "Raw/Velo/PreparedPartialADC" );
-  declareProperty( "RoundRobin", m_roundRobin = false );
-  declareProperty( "IgnoreErrorBanks", m_ignoreErrorBanks = true );
-}
-
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode PrepareVeloFullRawBuffer::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-  //
-  //  setHistoTopDir( "Vetra/" );
-  return StatusCode::SUCCESS;
-}
 //=============================================================================
 // Main execution
 //=============================================================================
@@ -88,7 +54,7 @@ StatusCode PrepareVeloFullRawBuffer::execute() {
       // flush the memory after each event
       resetMemory();
 
-    } else if ( m_roundRobin ) {
+    } else if ( m_roundRobin.value() ) {
 
       writeVeloFull().ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
@@ -111,12 +77,12 @@ StatusCode PrepareVeloFullRawBuffer::getRawEvent() {
   }
   //
   // get the RawEvent from default TES location
-  m_rawEvent = getIfExists<LHCb::RawEvent>( m_rawEventLoc );
-  if ( NULL == m_rawEvent ) {
-    return Error( " ==> There is no RawEvent at: " + m_rawEventLoc );
+  m_rawEvent = m_rawEventLoc.getIfExists();
+  if ( !m_rawEvent ) {
+    return Error( " ==> There is no RawEvent at: " + m_rawEventLoc.objKey() );
   } else {
     if ( msgLevel( MSG::DEBUG ) )
-      debug() << " ==> The RawEvent has been read-in from location: " << m_rawEventLoc << endmsg;
+      debug() << " ==> The RawEvent has been read-in from location: " << m_rawEventLoc.objKey() << endmsg;
   }
   //
   return ( StatusCode::SUCCESS );
@@ -151,10 +117,12 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks() {
       // get the sensor number == sourceID
       int sensor = aBank->sourceID();
 
-      if ( !m_ignoreErrorBanks ) {
+      if ( !m_ignoreErrorBanks.value() ) {
 
         // handle the data sent out together with an error bank properly
-        auto isError = std::find_if( errorBanks.begin(), errorBanks.end(), errorBankFinder( sensor ) );
+        auto isError = std::find_if( errorBanks.begin(), errorBanks.end(), [sensor]( const LHCb::RawBank* aBank ) {
+          return aBank->sourceID() == static_cast<int>( sensor );
+        } );
         if ( isError != errorBanks.end() ) {
 
           m_partialData2Decode[( aBank->sourceID() )] = {aBank->size(), aBank->data()};
@@ -197,7 +165,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks() {
 
   if ( odinBank.empty() ) {
 
-    if ( m_runWithODIN ) { return Error( " ==> ODIN bank missing!", StatusCode::FAILURE ); }
+    if ( m_runWithODIN.value() ) { return Error( " ==> ODIN bank missing!", StatusCode::FAILURE ); }
   }
 
   //
@@ -265,14 +233,13 @@ StatusCode PrepareVeloFullRawBuffer::writeVeloFull() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << " ==> writeVeloFull() " << endmsg;
   //
 
-  if ( adcBankFlag() || m_roundRobin ) {
+  if ( adcBankFlag() || m_roundRobin.value() ) {
 
     if ( msgLevel( MSG::DEBUG ) )
-      debug() << "Registered container with bank data of size: " << m_veloADCData->size() << ", at" << m_veloADCDataLoc
-              << endmsg;
-
-    put( m_veloADCData, m_veloADCDataLoc );
-    put( m_veloADCPartialData, m_veloADCPartialDataLoc );
+      debug() << "Registered container with bank data of size: " << m_veloADCData->size() << ", at"
+              << m_veloADCDataLoc.objKey() << endmsg;
+    m_veloADCDataLoc.put( m_veloADCData );
+    m_veloADCPartialDataLoc.put( m_veloADCPartialData );
   }
   //
 
@@ -280,9 +247,8 @@ StatusCode PrepareVeloFullRawBuffer::writeVeloFull() {
 
     if ( msgLevel( MSG::DEBUG ) )
       debug() << "Registered container with bank data of size: " << m_veloPedestals->size() << ", at"
-              << m_veloPedestalsLoc << endmsg;
-
-    put( m_veloPedestals, m_veloPedestalsLoc );
+              << m_veloPedestalsLoc.objKey() << endmsg;
+    m_veloPedestalsLoc.put( m_veloPedestals );
   }
   //
   return ( StatusCode::SUCCESS );
