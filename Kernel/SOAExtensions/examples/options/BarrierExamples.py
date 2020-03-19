@@ -8,6 +8,46 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+# A barrier consists of 4 steps:
+#
+# 1+2: A gatherer and a merger. The gatherer reading data from a list of
+# location and stores un-merged in an intermediate location. The merger merges
+# the data properly. With ZipSelections, the gatherer stores a vector of
+# ExportedSelection*s* in the intermediate location, the merger stores *one*
+# ExportedSelection.
+#
+# 3: A transformer, that does actual work. I.e. for all selected tracks,
+# compute "the isolation", compute RichPID, ... , in general, perform any
+# operation that is computationally so expensive that we do not want to perform
+# it on all input objects, but that will also be a common task among multiple
+# trigger/prucing lines.
+#
+# 4: A scatterer, that distributes the output from the *one* output of the
+# transformer back to all lines, such that each line receives only the
+# transformed output of what they requested (the RichPIDs for the tracks it
+# selected, not of all other tracks some other line selected). In the case of
+# the ExportedSelection, such a scatterer is not needed.
+#
+# See also:
+# https://indico.cern.ch/event/797774/contributions/3316748/attachments/1803283/2941932/LHCC_19_final.pdf
+
+#  * In this example, a bunch of integers is Produced by
+#    ZipBarrierExampleProducer.
+#  * A bunch of ZipBarrierExampleSelector*s* select the integers they are
+#   interested in (in this simple example, numbers that are divisible by some
+#   Divisor are selected).
+# * The "expensive" task is squaring the numbers, as done by
+#   ZipBarrierExampleWorker
+# * PrintInts, PrintSquaredInts, PrintIntsAndSquaredInts print the data of various
+#   selections.
+#
+# What a reader should ideally understand:
+# * How to configure a ZipBarrierGatherer and ZipBarrierMerger
+# * How to use the output of a transformer together with the pre-existing
+#   ExportedSelection to process only selected output from the transformer
+#   (i.e. use a single ExportedSelection throughout a sprucing/trigger line
+#   with changing data columns)
+
 from Configurables import Examples__ZipBarrierExampleSelector as ZipBarrierExampleSelector
 from Configurables import Examples__PrintInts as PrintInts
 from Configurables import Examples__PrintSquaredInts as PrintSquaredInts
