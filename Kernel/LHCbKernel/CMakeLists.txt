@@ -21,18 +21,14 @@ find_package(Boost COMPONENTS system)
 find_package(ROOT)
 find_package(VDT)
 find_package(VectorClass)
+find_package(cppgsl)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${VectorClass_INCLUDE_DIR})
-
-find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
-if(NOT CPP_GSL_INCLUDE_DIR)
-       message(FATAL "required headers from C++ GSL missing")
-endif()
 
 gaudi_add_library(LHCbKernel
                   src/*.cpp
 		  PUBLIC_HEADERS Kernel
-                  INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR} ${CPPGSL_INCLUDE_DIR}
+                  INCLUDE_DIRS ROOT Boost VDT ${VectorClass_INCLUDE_DIR} cppgsl
                   LINK_LIBRARIES ROOT Boost VDT GaudiKernel LHCbMathLib GaudiAlgLib)
 set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 

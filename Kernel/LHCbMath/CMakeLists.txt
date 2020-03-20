@@ -23,6 +23,7 @@ find_package(Eigen)
 find_package(pyanalysis)
 find_package(Vc)
 find_package(VectorClass)
+find_package(cppgsl)
 
 # Runtime requirement since LCG_96 (no longer bundled with ROOT)
 find_package(BLAS)
@@ -40,17 +41,12 @@ include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS}
                            ${Vc_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR})
 
-find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
-if(NOT CPP_GSL_INCLUDE_DIR)
-   message(FATAL "required headers from C++ GSL missing")
-endif()
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR} ${VectorClass_INCLUDE_DIR}
+                  INCLUDE_DIRS Vc VDT Boost GSL ROOT cppgsl ${VectorClass_INCLUDE_DIR}
                   LINK_LIBRARIES VDT Boost GSL ROOT VectorClass GaudiGSLLib GaudiKernel)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
