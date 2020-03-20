@@ -34,6 +34,7 @@
 
 // Boost
 #include <boost/container/small_vector.hpp>
+#include <boost/version.hpp>
 
 // DetDesc
 class DeRichRadiator;
@@ -56,8 +57,15 @@ namespace Rich {
   class RadIntersection {
 
   public:
+    // Explicitly specify boost::container::small_vector default template arguments
+    // to sidestep cling error, see lhcb/LHCb#75
+#if BOOST_VERSION < 107100
     /// Definition of a vector of intersections
     using Vector = boost::container::small_vector<Rich::RadIntersection, 1, void>;
+#else
+    /// Definition of a vector of intersections
+    using Vector = boost::container::small_vector<Rich::RadIntersection, 1, void, void>;
+#endif
 
   public:
     /// Default constructor
