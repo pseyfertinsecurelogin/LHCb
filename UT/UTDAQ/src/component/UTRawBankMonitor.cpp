@@ -39,8 +39,8 @@ public:
   UTRawBankMonitor( const std::string& name, ISvcLocator* pSvcLocator )
       : Consumer{name,
                  pSvcLocator,
-                 {"RawEventLocations", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Default,
-                                                                               LHCb::RawEventLocation::Other )}} {};
+                 {"RawEventLocations", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Other,
+                                                                               LHCb::RawEventLocation::Default )}} {};
 
   /// initialize
   StatusCode initialize() override;
