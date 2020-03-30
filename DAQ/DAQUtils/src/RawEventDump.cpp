@@ -8,11 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-#include <algorithm>
-// local
+#include "DAQKernel/DecoderAlgBase.h"
 #include "Event/RawEvent.h"
-#include "RawEventDump.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include <algorithm>
 
 using namespace LHCb;
 
@@ -21,6 +20,26 @@ using namespace LHCb;
 //
 // 2005-10-13 : Markus Frank
 //-----------------------------------------------------------------------------
+
+/** @class RawEventDump RawEventDump.h tests/RawEventDump.h
+ *  Dump a RawEvent
+ *
+ *  @author Markus Frank
+ *  @date   2005-10-13
+ */
+class RawEventDump : public Decoder::AlgBase {
+public:
+  /// Standard constructor
+  RawEventDump( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode execute() override; ///< Algorithm execution
+
+private:
+  bool                                      acceptBank( LHCb::RawBank::BankType i );
+  Gaudi::Property<bool>                     m_dump{this, "DumpData",
+                               false}; ///< Property "DumpData". If true, full bank contents are dumped
+  Gaudi::Property<std::vector<std::string>> m_banks{this, "RawBanks"}; // RawBanks to be dumped  (default ALL banks)
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( RawEventDump )

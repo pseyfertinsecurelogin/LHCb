@@ -8,88 +8,96 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-#include <iostream>
-
-// local
-#include "ByteStreamTests.h"
 #include "Event/BankWriter.h"
 #include "Event/ByteStream.h"
 #include "Event/SmartBank.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include <iostream>
 
 using namespace LHCb;
-using namespace DAQEventTests;
 //-----------------------------------------------------------------------------
 // Implementation file for class : ByteStreamTests
 //
 // 2005-10-13 : Matt Needham
 //-----------------------------------------------------------------------------
 
-// Declaration of the Algorithm Factory
-DECLARE_COMPONENT( DAQEventTests::ByteStreamTests )
+namespace DAQEventTests {
+  /** @class ByteStreamTests ByteStreamTests.h tests/ByteStreamTests.h
+   *
+   *
+   *  @author Matt Needham
+   *  @date   2005-10-13
+   */
+  struct ByteStreamTests : GaudiAlgorithm {
+    /// Standard constructor
+    ByteStreamTests( const std::string& name, ISvcLocator* pSvcLocator );
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ByteStreamTests::ByteStreamTests( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {}
-//=============================================================================
-// Destructor
-//=============================================================================
-ByteStreamTests::~ByteStreamTests() {}
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+  };
 
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode ByteStreamTests::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
+  // Declaration of the Algorithm Factory
+  DECLARE_COMPONENT( DAQEventTests::ByteStreamTests )
 
-  debug() << "==> Initialize" << endmsg;
+  //=============================================================================
+  // Standard constructor, initializes variables
+  //=============================================================================
+  ByteStreamTests::ByteStreamTests( const std::string& name, ISvcLocator* pSvcLocator )
+      : GaudiAlgorithm( name, pSvcLocator ) {}
 
-  BankWriter bw( 6u );
+  //=============================================================================
+  // Initialization
+  //=============================================================================
+  StatusCode ByteStreamTests::initialize() {
+    StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
+    if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-  unsigned char  t1 = 6;
-  unsigned short t2 = 0;
-  unsigned int   t3 = 12;
+    debug() << "==> Initialize" << endmsg;
 
-  // each type must be written out enough times to fill a complete multiple
-  // of 32 bits to avoid 'store to misaligned address' sanitizer errors
-  bw << t1 << t1 << t1 << t1;
-  bw << t2 << t2;
-  bw << t3 << t3 << t3;
-  bw << t2 << t2;
-  bw << t1 << t1 << t1 << t1;
+    BankWriter bw( 6u );
 
-  info() << bw.dataBank().size() << endmsg;
+    unsigned char  t1 = 6;
+    unsigned short t2 = 0;
+    unsigned int   t3 = 12;
 
-  unsigned int a[3] = {0, 0, 0};
-  a[0]              = 1 + ( 2 << 8 ) + ( 3 << 16 ) + ( 4 << 24 );
-  a[1]              = 0;
-  a[2]              = 256;
+    // each type must be written out enough times to fill a complete multiple
+    // of 32 bits to avoid 'store to misaligned address' sanitizer errors
+    bw << t1 << t1 << t1 << t1;
+    bw << t2 << t2;
+    bw << t3 << t3 << t3;
+    bw << t2 << t2;
+    bw << t1 << t1 << t1 << t1;
 
-  info() << a[0] << endmsg;
+    info() << bw.dataBank().size() << endmsg;
 
-  unsigned int* c = &a[0];
+    unsigned int a[3] = {0, 0, 0};
+    a[0]              = 1 + ( 2 << 8 ) + ( 3 << 16 ) + ( 4 << 24 );
+    a[1]              = 0;
+    a[2]              = 256;
 
-  SmartBank<char> cont( c, 3 * 4 );
+    info() << a[0] << endmsg;
 
-  for ( auto c : cont ) { info() << int( c ) << endmsg; }
+    unsigned int* c = &a[0];
 
-  ByteStream     smart( c, 3 * 4 );
-  unsigned int   e{0};
-  unsigned short f[2]{0, 0};
-  unsigned char  d[4]{0, 0, 0, 0};
-  smart >> e >> f[0] >> f[1] >> d[0] >> d[1] >> d[2] >> d[3];
-  info() << e << " " << f[0] << " " << f[1] << " " << (int)d[0] << " " << (int)d[1] << " " << (int)d[2] << " "
-         << (int)d[3] << endmsg;
+    SmartBank<char> cont( c, 3 * 4 );
 
-  return StatusCode::SUCCESS;
-}
+    for ( auto c : cont ) { info() << int( c ) << endmsg; }
 
-//=============================================================================
-// Execution
-//=============================================================================
-StatusCode ByteStreamTests::execute() { return StatusCode::SUCCESS; }
+    ByteStream     smart( c, 3 * 4 );
+    unsigned int   e{0};
+    unsigned short f[2]{0, 0};
+    unsigned char  d[4]{0, 0, 0, 0};
+    smart >> e >> f[0] >> f[1] >> d[0] >> d[1] >> d[2] >> d[3];
+    info() << e << " " << f[0] << " " << f[1] << " " << (int)d[0] << " " << (int)d[1] << " " << (int)d[2] << " "
+           << (int)d[3] << endmsg;
 
-//=============================================================================
+    return StatusCode::SUCCESS;
+  }
+
+  //=============================================================================
+  // Execution
+  //=============================================================================
+  StatusCode ByteStreamTests::execute() { return StatusCode::SUCCESS; }
+
+  //=============================================================================
+} // namespace DAQEventTests

@@ -8,17 +8,45 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-#include <algorithm>
-// local
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-#include "RawEventSelectiveCopy.h"
+#include "GaudiAlg/Transformer.h"
+#include <algorithm>
+#include <string>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawEventSelectiveCopy
 //
 // 2009-06-22 : Tomasz Skwarnicki
 //-----------------------------------------------------------------------------
+
+/** @class RawEventSelectiveCopy RawEventSelectiveCopy.h
+ *  Copies selected RawBanks to RawEvent at a new TES location.
+ *
+ *  @author Tomasz Skwarnicki
+ *  @date   2009-06-22
+ */
+class RawEventSelectiveCopy : public Gaudi::Functional::Transformer<LHCb::RawEvent( const LHCb::RawEvent& )> {
+public:
+  /// Standard constructor
+  RawEventSelectiveCopy( const std::string& name, ISvcLocator* pSvcLocator )
+      : Transformer{name,
+                    pSvcLocator,
+                    {"InputRawEventLocation", LHCb::RawEventLocation::Default},
+                    {"OutputRawEventLocation", LHCb::RawEventLocation::Copied}} {}
+
+  StatusCode     initialize() override;                              ///< Algorithm initialization
+  LHCb::RawEvent operator()( const LHCb::RawEvent& ) const override; ///< Algorithm execution
+
+private:
+  Gaudi::Property<std::vector<std::string>> m_banksToCopy{
+      this, "RawBanksToCopy", {}, "Create a new RawEvent copying only these banks"};
+  Gaudi::Property<std::vector<std::string>> m_banksToRemove{
+      this, "RawBanksToRemove", {}, "Create a RawEvent copy, with these banks removed"};
+
+  std::vector<LHCb::RawBank::BankType> m_bankTypes;
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( RawEventSelectiveCopy )
@@ -28,8 +56,6 @@ using namespace LHCb;
 StatusCode RawEventSelectiveCopy::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
 
   const std::vector<std::string>& copyVector   = m_banksToCopy.value();
   const std::vector<std::string>& removeVector = m_banksToRemove.value();
@@ -51,8 +77,7 @@ StatusCode RawEventSelectiveCopy::initialize() {
       }
     }
     // convert bankNames to bankTypes
-    for ( std::vector<std::string>::const_iterator bankName = copyVector.begin(); bankName != copyVector.end();
-          ++bankName ) {
+    for ( auto bankName = copyVector.begin(); bankName != copyVector.end(); ++bankName ) {
       bool found = false;
       for ( int i = 0; i != (int)RawBank::LastType; i++ ) {
         const std::string name = RawBank::typeName( (RawBank::BankType)i );
@@ -118,46 +143,24 @@ StatusCode RawEventSelectiveCopy::initialize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode RawEventSelectiveCopy::execute() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  // do nothing of output location already exists (e.g. reprocessing from (S)DST)
-  if ( exist<RawEvent>( m_outputLocation.value() ) ) {
-    return Warning( " Output location " + m_outputLocation.value() + " already exists, do nothing", StatusCode::SUCCESS,
-                    20 );
-  }
-
-  // get input RawEvent
-  RawEvent* rawEvent = getIfExists<RawEvent>( m_inputLocation.value() );
-  if ( !rawEvent ) { return Error( " No RawEvent at " + m_inputLocation.value(), StatusCode::SUCCESS, 20 ); }
-
+LHCb::RawEvent RawEventSelectiveCopy::operator()( const LHCb::RawEvent& rawEvent ) const {
   // create empty output RawEvent
-  auto rawEventCopy = std::make_unique<RawEvent>();
-
+  RawEvent rawEventCopy;
   // copy selected banks
-  for ( auto ib = m_bankTypes.begin(); ib != m_bankTypes.end(); ++ib ) {
-
-    const auto& banks = rawEvent->banks( *ib );
-    if ( !banks.empty() ) {
-      for ( const RawBank* b : banks ) {
-        rawEventCopy->adoptBank( rawEventCopy->createBank( b->sourceID(), *ib, b->version(), b->size(), b->data() ),
-                                 true );
-        if ( msgLevel( MSG::VERBOSE ) ) {
-          verbose() << " Copied RawBank type= " << RawBank::typeName( *ib ) << " version= " << b->version()
-                    << " sourceID= " << b->sourceID() << " size (bytes) = " << b->size() << endmsg;
-        }
+  for ( const auto& ib : m_bankTypes ) {
+    const auto& banks = rawEvent.banks( ib );
+    for ( const RawBank* b : banks ) {
+      rawEventCopy.adoptBank( rawEventCopy.createBank( b->sourceID(), ib, b->version(), b->size(), b->data() ), true );
+      if ( msgLevel( MSG::VERBOSE ) ) {
+        verbose() << " Copied RawBank type= " << RawBank::typeName( ib ) << " version= " << b->version()
+                  << " sourceID= " << b->sourceID() << " size (bytes) = " << b->size() << endmsg;
       }
-    } else if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << " No banks found of type= " << RawBank::typeName( *ib ) << endmsg;
+    }
+    if ( banks.empty() && msgLevel( MSG::VERBOSE ) ) {
+      verbose() << " No banks found of type= " << RawBank::typeName( ib ) << endmsg;
     }
   }
-
-  // put output RawEvent into its location
-  if ( msgLevel( MSG::DEBUG ) ) { debug() << " Saving Copied RawEvent into new locations " << endmsg; }
-  put( rawEventCopy.release(), m_outputLocation.value() );
-
-  return StatusCode::SUCCESS;
+  return rawEventCopy;
 }
 
 //=============================================================================
