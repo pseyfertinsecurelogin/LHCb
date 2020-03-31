@@ -45,8 +45,6 @@ public:
   /// Standard constructor
   ChargedProtoCombineDLLsAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ChargedProtoCombineDLLsAlg(); ///< Destructor
-
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override;    ///< Algorithm execution
 
@@ -89,19 +87,30 @@ private: // utility classes
 
 private: // methods
   /// Add the Rich DLL information to the combined DLL
-  bool addRich( LHCb::ProtoParticle* proto, CombinedLL& combDLL );
+  bool addRich( LHCb::ProtoParticle* proto, CombinedLL& combDLL ) const;
 
   /// Add the Muon DLL information to the combined DLL
-  bool addMuon( LHCb::ProtoParticle* proto, CombinedLL& combDLL );
+  bool addMuon( LHCb::ProtoParticle* proto, CombinedLL& combDLL ) const;
 
   /// Add the Calo DLL information to the combined DLL
-  bool addCalo( LHCb::ProtoParticle* proto, CombinedLL& combDLL );
+  bool addCalo( LHCb::ProtoParticle* proto, CombinedLL& combDLL ) const;
 
 private: // data
+  Gaudi::Property<std::vector<std::string>> m_elDisable{this, "ElectronDllDisable", {}};
+  Gaudi::Property<std::vector<std::string>> m_muDisable{this, "MuonDllDisable", {}};
+  Gaudi::Property<std::vector<std::string>> m_kaDisable{this, "KaonDllDisable", {}};
+  Gaudi::Property<std::vector<std::string>> m_piDisable{this, "ProtonDllDisable", {}};
+  Gaudi::Property<std::vector<std::string>> m_prDisable{this, "PionllDisable", {}};
+  Gaudi::Property<std::vector<std::string>> m_deDisable{this, "DeuteronDllDisable", {}};
+
   DataObjectReadHandle<LHCb::ProtoParticles> m_protoPath{
       this, "ProtoParticleLocation", LHCb::ProtoParticleLocation::Charged}; ///< Location in TES of ProtoParticles
-  std::vector<std::string>   m_elDisable, m_muDisable, m_kaDisable, m_prDisable, m_piDisable, m_deDisable;
-  int                        m_elCombDll, m_muCombDll, m_prCombDll, m_piCombDll, m_kaCombDll, m_deCombDll;
+  int                        m_elCombDll{0xFFFF};
+  int                        m_muCombDll{0xFFFF};
+  int                        m_prCombDll{0xFFFF};
+  int                        m_piCombDll{0xFFFF};
+  int                        m_kaCombDll{0xFFFF};
+  int                        m_deCombDll{0xFFFF};
   std::map<std::string, int> m_maskTechnique;
 };
 

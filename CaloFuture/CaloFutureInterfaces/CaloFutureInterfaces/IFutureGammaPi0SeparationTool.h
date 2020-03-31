@@ -31,12 +31,23 @@
 namespace LHCb::Calo::Interfaces {
   struct IGammaPi0Separation : extend_interfaces<IAlgTool> {
 
+    struct Observables {
+      double fr2{0};
+      double fasym{0};
+      double fkappa{0};
+      double fr2r4{0};
+      double Eseed{0};
+      double E2{0};
+      double Ecl{0};
+      int    area{0};
+    };
     // Return the interface ID
-    DeclareInterfaceID( IGammaPi0Separation, 1, 0 );
+    DeclareInterfaceID( IGammaPi0Separation, 2, 0 );
 
-    virtual std::optional<double>                   isPhoton( const CaloHypo& hypo ) = 0;
-    virtual std::optional<double>                   isPhoton( span<const double> )   = 0;
-    virtual const std::map<Enum::DataType, double>& inputDataMap()                   = 0;
+    virtual std::optional<double>      isPhoton( const CaloHypo& hypo ) const           = 0;
+    virtual std::optional<double>      isPhoton( span<const double> ) const             = 0;
+    virtual std::optional<double>      isPhoton( Observables const& observables ) const = 0;
+    virtual std::optional<Observables> observables( const CaloHypo& hypo ) const        = 0;
   };
 } // namespace LHCb::Calo::Interfaces
 #endif // IFUTUREGAMMAPI0SEPARATIONTOOL_H

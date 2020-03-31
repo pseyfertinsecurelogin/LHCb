@@ -34,35 +34,20 @@ DECLARE_COMPONENT( ChargedProtoParticleAddRichInfo )
 // Standard constructor, initializes variables
 //=============================================================================
 ChargedProtoParticleAddRichInfo::ChargedProtoParticleAddRichInfo( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-
-  // context specific locations
-  if ( context() == "HLT" || context() == "Hlt" ) {
-    m_richPath.setKey( LHCb::RichPIDLocation::HLT );
-    m_protoPath.setKey( LHCb::ProtoParticleLocation::HltCharged );
-  }
-
-  // setProperty( "OutputLevel", MSG::DEBUG );
-}
+    : GaudiAlgorithm( name, pSvcLocator ) {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
 StatusCode ChargedProtoParticleAddRichInfo::execute() {
   // ProtoParticle container
-  LHCb::ProtoParticles* protos = m_protoPath.getIfExists();
-  if ( !protos ) {
-    return Warning( "No existing ProtoParticle container at " + m_protoPath.objKey() + " thus do nothing.",
-                    StatusCode::SUCCESS );
-  }
+  LHCb::ProtoParticles* protos = m_protos.get();
 
   // Load the RichPIDs
-  const bool richSc = getRichData();
-  if ( !richSc ) { return StatusCode::SUCCESS; }
+  auto rich_data = getRichData();
 
   // Loop over proto particles and add RICH info
-  for ( auto* proto : *protos ) { updateRICH( proto ); }
-  counter( m_richPath.objKey() + " ==> " + m_protoPath.objKey() ) += protos->size();
+  for ( auto* proto : *protos ) { updateRICH( proto, rich_data ); }
 
   // return
   return StatusCode::SUCCESS;
@@ -71,15 +56,15 @@ StatusCode ChargedProtoParticleAddRichInfo::execute() {
 //=============================================================================
 // Add RICH info to the protoparticle
 //=============================================================================
-void ChargedProtoParticleAddRichInfo::updateRICH( ProtoParticle* proto ) const {
+void ChargedProtoParticleAddRichInfo::updateRICH( ProtoParticle* proto, TrackToRichPID const& richMap ) const {
   if ( msgLevel( MSG::VERBOSE ) ) verbose() << "Trying ProtoParticle " << proto->key() << endmsg;
 
   // Erase current RichPID information
   proto->removeRichInfo();
 
   // Does this track have a RICH PID result ?
-  TrackToRichPID::const_iterator iR = m_richMap.find( proto->track() );
-  if ( m_richMap.end() == iR ) {
+  TrackToRichPID::const_iterator iR = richMap.find( proto->track() );
+  if ( richMap.end() == iR ) {
     if ( msgLevel( MSG::VERBOSE ) ) verbose() << " -> NO associated RichPID object found" << endmsg;
     return;
   }
@@ -110,26 +95,20 @@ void ChargedProtoParticleAddRichInfo::updateRICH( ProtoParticle* proto ) const {
 //=============================================================================
 // Loads the RICH data
 //=============================================================================
-bool ChargedProtoParticleAddRichInfo::getRichData() {
+ChargedProtoParticleAddRichInfo::TrackToRichPID ChargedProtoParticleAddRichInfo::getRichData() const {
   // empty the map
-  m_richMap.clear();
+  TrackToRichPID richMap;
 
   // Do we have any RichPID results
-  const RichPIDs* richpids = m_richPath.getIfExists();
-  if ( !richpids ) {
-    Warning( "No RichPIDs at '" + m_richPath.objKey() + "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS,
-             1 )
-        .ignore();
-    return false;
-  }
+  auto const* richpids = m_richpids.get();
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Successfully loaded " << richpids->size() << " RichPIDs from " << m_richPath.objKey() << " Version "
+    debug() << "Successfully loaded " << richpids->size() << " RichPIDs from " << m_richpids.objKey() << " Version "
             << (unsigned int)richpids->version() << endmsg;
 
   // refresh the reverse mapping
   for ( const LHCb::RichPID* pid : *richpids ) {
     if ( pid->track() ) {
-      m_richMap[pid->track()] = pid;
+      richMap[pid->track()] = pid;
       if ( msgLevel( MSG::VERBOSE ) )
         verbose() << "RichPID key=" << pid->key() << " has Track key=" << pid->track()->key() << " " << pid->track()
                   << endmsg;
@@ -140,5 +119,5 @@ bool ChargedProtoParticleAddRichInfo::getRichData() {
     }
   }
 
-  return true;
+  return richMap;
 }

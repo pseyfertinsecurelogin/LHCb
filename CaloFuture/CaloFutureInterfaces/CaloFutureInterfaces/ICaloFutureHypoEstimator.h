@@ -33,14 +33,13 @@ namespace LHCb::Calo::Interfaces {
   struct IHypoEstimator : extend_interfaces<IAlgTool> {
 
     // Return the interface ID
-    DeclareInterfaceID( IHypoEstimator, 1, 0 );
+    DeclareInterfaceID( IHypoEstimator, 2, 0 );
 
-    virtual std::optional<double> data( const CaloCluster& cluster, Enum::DataType type ) const = 0;
-    virtual std::optional<double> data( const CaloHypo& hypo, Enum::DataType type ) const       = 0;
-    virtual StatusCode            _setProperty( const std::string&, const std::string& )        = 0;
-    virtual IHypo2Calo*           hypo2Calo()                                                   = 0;
-    virtual bool                  status() const                                                = 0;
-    virtual const Track*          toTrack( Enum::MatchType match ) const                        = 0;
+    virtual std::optional<double>            data( const CaloHypo& hypo, Enum::DataType type ) const      = 0;
+    virtual std::map<Enum::DataType, double> get_data( const CaloHypo& hypo ) const                       = 0;
+    virtual StatusCode                       _setProperty( const std::string&, const std::string& )       = 0;
+    virtual IHypo2Calo*                      hypo2Calo()                                                  = 0;
+    virtual const Track*                     toTrack( const CaloHypo& hypo, Enum::MatchType match ) const = 0;
   };
 } // namespace LHCb::Calo::Interfaces
 #endif // ICALOFUTUREHYPOESTIMATOR_H
