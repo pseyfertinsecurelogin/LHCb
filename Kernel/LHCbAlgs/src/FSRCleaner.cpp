@@ -8,16 +8,30 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "FSRCleaner.h"
+#include "EmptyEventNodeCleaner.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FSRCleaner
 //
 // 2012-08-01 : Rob Lambert
 //-----------------------------------------------------------------------------
+
+/** @class FSRCleaner FSRCleaner.h
+ *
+ *  Searches for and removes empty data nodes in the FSR tree
+ *
+ *  @author Rob Lambert
+ *  @date   2012-08-01
+ */
+class FSRCleaner final : public EmptyEventNodeCleaner {
+
+public:
+  /// Standard constructor
+  FSRCleaner( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode execute() override { return StatusCode::SUCCESS; } ///< Algorithm execution, do nothing
+  StatusCode finalize() override;                               ///< Real algorithm execution in finalize
+};
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -34,10 +48,10 @@ FSRCleaner::FSRCleaner( const std::string& name, ISvcLocator* pSvcLocator )
 //=============================================================================
 StatusCode FSRCleaner::finalize() {
   // Clean performed in execute of EmptyEventNodeCleaner... so let's call it!
-  const StatusCode sc = EmptyEventNodeCleaner::execute();
+  StatusCode sc = EmptyEventNodeCleaner::execute();
 
   // return, try to avoid shortcutting the usual finalize
-  return StatusCode{EmptyEventNodeCleaner::finalize() && sc};
+  return EmptyEventNodeCleaner::finalize().andThen( [sc = std::move( sc )] { return sc; } );
 }
 
 //=============================================================================

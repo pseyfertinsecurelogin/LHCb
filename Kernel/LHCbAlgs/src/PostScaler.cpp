@@ -9,18 +9,49 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-
-// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/RndmGenerators.h"
-
-// local
-#include "PostScaler.h"
+#include "Kernel/IEventCounter.h"
+#include <string>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PostScaler
 //
 // 2003-03-16 : Gloria Corti
 //-----------------------------------------------------------------------------
+
+/** @class PostScaler PostScaler.h
+ *  Allows to prescale events at a given rate suing a random number (as Prescaler.cpp)
+ *  or to force the fraction of accepted events to be as given by options (or both).
+ *
+ *  @author P. Koppenburg
+ *  @date   2004-06-15
+ */
+
+class PostScaler final : public GaudiAlgorithm {
+
+public:
+  /// Standard constructor
+  PostScaler( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+
+private:
+  unsigned long long m_nEvents{0};    ///< Counter of events accepted
+  unsigned long long m_nEventsAll{0}; ///< Counter of events entering
+#ifdef GAUDI_PROPERTY_v2
+  Gaudi::CheckedProperty<double>
+#else
+  DoubleProperty
+#endif
+                 m_percentPass;     ///< Minimal reduction rate to achieve (statistics mode)
+  double         m_forcedReduction; ///< Percentage of events that should be passed (random number mode)
+  double         m_margin;          ///< Safety margin (accept if acc events < m_event/m_forcedReduction + m_margin)
+  IEventCounter* m_eventCounter = nullptr;
+};
 
 // Declaration of the Algorithm Factory
 

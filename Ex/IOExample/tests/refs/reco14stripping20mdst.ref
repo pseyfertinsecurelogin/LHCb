@@ -42,6 +42,7 @@ TESFingerPrint      DEBUG could not locate CounterSummarySvc, no counter summary
 TESFingerPrint      DEBUG List of ALL properties of TESFingerPrint/TESFingerPrint  #properties = 39
 TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputFileName':tes_finger_print.dat
 TESFingerPrint      DEBUG Property ['Name': Value] =  'HeuristicsLevel':Medium
+TESFingerPrint      DEBUG Property ['Name': Value] =  'DataStoreLeavesTool':DataSvcFileEntriesTool/DataSvcFileEntriesTool
 TESFingerPrint      DEBUG Property ['Name': Value] =  'RequireObjects':[  ]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'VetoObjects':[  ]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'StatEntityList':[  ]
@@ -79,11 +80,10 @@ TESFingerPrint      DEBUG Property ['Name': Value] =  'Enable':True
 TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputLevel':1
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraOutputs':[]
 TESFingerPrint      DEBUG Property ['Name': Value] =  'ExtraInputs':[]
-TESFingerPrint      DEBUG ==> Initialize
-TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service ToolSvc
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc
 TESFingerPrint      DEBUG input handles: 0
 TESFingerPrint      DEBUG output handles: 0
+TESFingerPrint      DEBUG Adding public ToolHandle tool ToolSvc.DataSvcFileEntriesTool (DataSvcFileEntriesTool)
 TESFingerPrint      DEBUG Data Deps for TESFingerPrint
 EventPersistenc...   INFO Added successfully Conversion service:RootCnvSvc
 InputCopyStream      INFO Data source: EventDataSvc output: DATAFILE='PFN:Reco14-Stripping20.mdst' SVC='RootCnvSvc' OPT='REC'
@@ -94,7 +94,6 @@ HistogramPersis...WARNING Histograms saving not required.
 ApplicationMgr       INFO Application Manager Initialized successfully
 ApplicationMgr       INFO Application Manager Started successfully
 EventSelector     SUCCESS Reading Event record 1. Record number within stream 1: 1
-PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
 StoreExplorerAlg     INFO ========= /Event[0x4e4d200@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
@@ -133,7 +132,6 @@ StoreExplorerAlg     INFO       +--> /Relations [Address: CLID=0x618 Type=0x2]  
 TESFingerPrint      DEBUG ==> Execute
 IODataManager        INFO Referring to dataset Reco14-Stripping20.mdst by its file ID:F2967EE5-8277-E911-8404-02163E01B1D5
 EventSelector     SUCCESS Reading Event record 2. Record number within stream 1: 2
-PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
 StoreExplorerAlg     INFO ========= /Event[0x120a20b0@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
@@ -170,7 +168,6 @@ StoreExplorerAlg     INFO     | +--> /RecVertices [Address: CLID=0x611 Type=0x2]
 StoreExplorerAlg     INFO       +--> /Relations [Address: CLID=0x618 Type=0x2]  LHCb::PackedRelations
 TESFingerPrint      DEBUG ==> Execute
 EventSelector     SUCCESS Reading Event record 3. Record number within stream 1: 3
-PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
 StoreExplorerAlg     INFO ========= /Event[0x11fbddc0@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
@@ -207,7 +204,6 @@ StoreExplorerAlg     INFO     | +--> /RecVertices [Address: CLID=0x611 Type=0x2]
 StoreExplorerAlg     INFO       +--> /Relations [Address: CLID=0x618 Type=0x2]  LHCb::PackedRelations
 TESFingerPrint      DEBUG ==> Execute
 EventSelector     SUCCESS Reading Event record 4. Record number within stream 1: 4
-PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
 StoreExplorerAlg     INFO ========= /Event[0x122bb900@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
@@ -244,7 +240,6 @@ StoreExplorerAlg     INFO     | +--> /RecVertices [Address: CLID=0x611 Type=0x2]
 StoreExplorerAlg     INFO       +--> /Relations [Address: CLID=0x618 Type=0x2]  LHCb::PackedRelations
 TESFingerPrint      DEBUG ==> Execute
 EventSelector     SUCCESS Reading Event record 5. Record number within stream 1: 5
-PrintHeader       WARNING PrintHeader:: No ODIN Header StatusCode=FAILURE
 StoreExplorerAlg     INFO ========= /Event[0x121c36c0@EventDataSvc]:
 StoreExplorerAlg     INFO +--> /Event [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO | +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
@@ -281,9 +276,6 @@ StoreExplorerAlg     INFO     | +--> /RecVertices [Address: CLID=0x611 Type=0x2]
 StoreExplorerAlg     INFO       +--> /Relations [Address: CLID=0x618 Type=0x2]  LHCb::PackedRelations
 TESFingerPrint      DEBUG ==> Execute
 ApplicationMgr       INFO Application Manager Stopped successfully
-PrintHeader          INFO Filtered 5 events
-PrintHeader       SUCCESS Exceptions/Errors/Warnings/Infos Statistics : 0/0/1/0
-PrintHeader       SUCCESS  #WARNINGS   = 5        Message = 'No ODIN Header'
 TESFingerPrint      DEBUG ==> Finalize
 TESFingerPrint    VERBOSE ==> TES DataObject statistics: {/Event: 5, /Event/Bhadron: 5, /Event/Bhadron/pPhys: 5, /Event/Bhadron/pPhys/Particles: 5, /Event/Bhadron/pPhys/RecVertices: 5, /Event/Bhadron/pPhys/Relations: 5, /Event/Bhadron/pPhys/Vertices: 5, /Event/Bhadron/pRec: 5, /Event/Bhadron/pRec/Calo: 5, /Event/Bhadron/pRec/Calo/EcalClusters: 5, /Event/Bhadron/pRec/Calo/Electrons: 5, /Event/Bhadron/pRec/Calo/Photons: 5, /Event/Bhadron/pRec/Muon: 5, /Event/Bhadron/pRec/Muon/MuonPID: 5, /Event/Bhadron/pRec/ProtoP: 5, /Event/Bhadron/pRec/ProtoP/Charged: 5, /Event/Bhadron/pRec/ProtoP/Neutrals: 4, /Event/Bhadron/pRec/Rich: 5, /Event/Bhadron/pRec/Rich/PIDs: 5, /Event/Bhadron/pRec/Track: 5, /Event/Bhadron/pRec/Track/Best: 5, /Event/Bhadron/pRec/Track/Clusters: 5, /Event/Bhadron/pRec/Track/Muon: 2, /Event/Bhadron/pRec/Vertex: 5, /Event/Bhadron/pRec/Vertex/Primary: 5, /Event/Rec: 5, /Event/Rec/Header: 5, /Event/Rec/Status: 5, /Event/Rec/Summary: 5, /Event/Strip: 5, /Event/Strip/pPhys: 5, /Event/Strip/pPhys/DecReports: 5, /Event/Trigger: 5, /Event/Trigger/RawEvent: 5}
 TESFingerPrint    VERBOSE ==> TES Container sizes: {}

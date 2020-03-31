@@ -8,29 +8,40 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// From Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/Time.h"
-
-// local
-#include "PrintEventTime.h"
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: PrintEventTime
 //
 // 03/10/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_COMPONENT( LHCbAlgsTest::PrintEventTime )
 
 namespace LHCbAlgsTest {
 
-  // ============================================================================
-  // Standard constructor, initializes variables
-  // ============================================================================
-  PrintEventTime::PrintEventTime( const std::string& name, ISvcLocator* pSvcLocator )
-      : GaudiAlgorithm( name, pSvcLocator ) {}
+  /** @class PrintEventTime PrintEventTime.h src/PrintEventTime.h
+   *
+   * Simple algorithm that prints the current event time.
+   *
+   * @author Marco Clemencic
+   * @date 03/10/2011
+   */
+  class PrintEventTime : public GaudiAlgorithm {
+
+  public:
+    /// Standard constructor
+    using GaudiAlgorithm::GaudiAlgorithm;
+
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
+
+  private:
+    SmartIF<IDetDataSvc> m_detDataSvc;
+  };
+
+  DECLARE_COMPONENT( PrintEventTime )
 
   // ============================================================================
   // Initialization

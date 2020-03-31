@@ -8,18 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
+#include "DetDesc/Condition.h"
+#include "Event/HltDecReports.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiAlg/GaudiSequencer.h"
 #include "GaudiAlg/ISequencerTimerTool.h"
 #include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
-#include "Kernel/IANNSvc.h"
-// local
-#include "TurboPrescaler.h"
-
 #include "GaudiKernel/ThreadLocalContext.h"
+#include "Kernel/IANNSvc.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/TCK.h"
 
 using namespace LHCb;
 //-----------------------------------------------------------------------------
@@ -31,98 +31,139 @@ using namespace LHCb;
 // 2016-06-13 : Sean Benson
 //-----------------------------------------------------------------------------
 
+/** @class TurboPrescaler TurboPrescaler.h
+ *
+ *
+ *  @author Sean Benson
+ *  @date   2016-06-13
+ */
+class TurboPrescaler final : public GaudiAlgorithm {
+
+public:
+  TurboPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override;
+  StatusCode execute() override;
+
+private:
+  using StringMap = std::map<std::string, double>;
+
+private:
+  void getPrescalesFromTCK( unsigned int, StringMap&, StringMap&, StringMap& );
+
+  bool endedWith( const std::string& lineName, const std::string& ending );
+
+  void setupPrescalers();
+  void updatePrescalers();
+
+private:
+  std::string m_scalerName;
+  std::string m_postScalerName;
+  std::string m_preScalerName;
+
+  StringMap m_prescalesInput;
+  StringMap m_postscalesInput;
+  StringMap m_scaleProductsInput;
+
+  std::map<std::string, Algorithm*> prescalers;
+
+  IPropertyConfigSvc*                  m_propertyConfigSvc = nullptr;
+  bool                                 m_filter            = false;
+  std::string                          m_propertyConfigSvcName;
+  DataObjectReadHandle<HltDecReports>  m_hltDecReportsLocation{this, "HltDecReportsLocation",
+                                                              HltDecReportsLocation::Default};
+  unsigned int                         m_lastTCK   = 0;
+  unsigned int                         m_outputTCK = 0;
+  std::map<std::string, double>        m_outputPS;
+  DataObjectWriteHandle<HltDecReports> m_outRepLoc{this, "ReportsOutputLoc", "Turbo/DecReports"};
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( TurboPrescaler )
 
 TurboPrescaler::TurboPrescaler( const std::string& name, ISvcLocator* pSvcLocator )
     : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "ChosenOutputPrescales", m_outputPS = std::map<std::string, double>() );
+  declareProperty( "ChosenOutputPrescales", m_outputPS );
   declareProperty( "PrescaleVersion", m_outputTCK );
   declareProperty( "FilterOutput", m_filter = true );
-  declareProperty( "ReportsOutputLoc", m_outRepLoc = "Turbo/DecReports" );
   declareProperty( "ConfigQualifier", m_scalerName = "DeterministicPrescaler" );
   declareProperty( "PreScalerQualifier", m_preScalerName = "PreScaler" );
   declareProperty( "PostScalerQualifier", m_postScalerName = "PostScaler" );
-  declareProperty( "HltDecReportsLocation", m_hltDecReportsLocation = HltDecReportsLocation::Default );
   declareProperty( "IPropertyConfigSvcInstance", m_propertyConfigSvcName = "PropertyConfigSvc" );
 }
 
 StatusCode TurboPrescaler::initialize() {
-  const StatusCode sc = GaudiAlgorithm::initialize();
-  if ( !sc ) return sc;
-
-  // Get property config service
-  if ( service( m_propertyConfigSvcName, m_propertyConfigSvc ).isFailure() ) {
-    fatal() << "Failed to get the IConfigAccessSvc." << endmsg;
-    return StatusCode::FAILURE;
-  }
-  setupPrescalers();
-
-  return sc;
+  return GaudiAlgorithm::initialize()
+      .andThen( [&] {
+        // Get property config service
+        return service( m_propertyConfigSvcName, m_propertyConfigSvc ).orElse( [&] {
+          fatal() << "Failed to get the IConfigAccessSvc." << endmsg;
+        } );
+      } )
+      .andThen( [&] { setupPrescalers(); } );
 }
 
 StatusCode TurboPrescaler::execute() {
   StatusCode sc = StatusCode::SUCCESS;
 
   // Get the input reports and if the TCK changes, refresh list of prescales
-  auto decreports = getIfExists<HltDecReports>( m_hltDecReportsLocation );
-  if ( decreports ) {
+  auto decreports = m_hltDecReportsLocation.getIfExists();
+  if ( !decreports ) return sc;
 
-    auto tck = decreports->configuredTCK();
-    if ( 0 == m_lastTCK ) { getPrescalesFromTCK( tck, m_prescalesInput, m_postscalesInput, m_scaleProductsInput ); }
+  auto tck = decreports->configuredTCK();
+  if ( 0 == m_lastTCK ) { getPrescalesFromTCK( tck, m_prescalesInput, m_postscalesInput, m_scaleProductsInput ); }
 
-    if ( tck != m_lastTCK || 0 == m_lastTCK ) {
-      m_lastTCK = tck;
-      updatePrescalers();
-    }
+  if ( tck != m_lastTCK || 0 == m_lastTCK ) {
+    m_lastTCK = tck;
+    updatePrescalers();
+  }
 
-    bool globalPass = false;
+  bool globalPass = false;
 
-    HltDecReports* reports = new HltDecReports();
-    put( reports, m_outRepLoc );
+  auto reports = std::make_unique<HltDecReports>();
 
-    reports->setConfiguredTCK( m_outputTCK );
-    reports->setTaskID( decreports->taskID() );
-    HltDecReport report;
+  reports->setConfiguredTCK( m_outputTCK );
+  reports->setTaskID( decreports->taskID() );
 
-    std::string lineName;
-    std::string totName;
-    std::string strip = "Decision";
+  std::string lineName;
+  std::string totName;
+  std::string strip = "Decision";
 
-    // loop over the Decreports
-    for ( const auto& dec : *decreports ) {
+  // loop over the Decreports
+  for ( const auto& dec : *decreports ) {
 
-      // Get the name of line, if it ends with "Decision" remove it:
-      lineName = dec.first;
-      totName  = lineName;
-      if ( endedWith( lineName, strip ) ) { lineName.erase( lineName.end() - strip.length(), lineName.end() ); }
+    // Get the name of line, if it ends with "Decision" remove it:
+    lineName = dec.first;
+    totName  = lineName;
+    if ( endedWith( lineName, strip ) ) { lineName.erase( lineName.end() - strip.length(), lineName.end() ); }
 
-      // Get the report
-      report = dec.second;
+    // Get the report
+    HltDecReport report = dec.second;
 
-      // We only care about lines that fired:
-      if ( report.decision() ) {
+    // We only care about lines that fired:
+    if ( report.decision() ) {
 
-        // Pull the DeterministicPrescaler for this line from out map of DPs:
-        auto* prescaler = prescalers[lineName];
+      // Pull the DeterministicPrescaler for this line from out map of DPs:
+      auto* prescaler = prescalers[lineName];
 
-        // Execute prescaler
-        if ( prescaler && prescaler->isEnabled() ) {
-          const auto result = prescaler->sysExecute( Gaudi::Hive::currentContext() );
-          if ( !result.isSuccess() ) return StatusCode::FAILURE;
-          // If the DP wants the line killed:
-          if ( !prescaler->filterPassed() ) {
-            report.setDecision( false );
-          } else {
-            globalPass = true;
-          }
+      // Execute prescaler
+      if ( prescaler && prescaler->isEnabled() ) {
+        const auto result = prescaler->sysExecute( Gaudi::Hive::currentContext() );
+        if ( !result.isSuccess() ) return StatusCode::FAILURE;
+        // If the DP wants the line killed:
+        if ( !prescaler->filterPassed() ) {
+          report.setDecision( false );
+        } else {
+          globalPass = true;
         }
       }
-      reports->insert( totName, report ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
     }
-
-    setFilterPassed( m_filter ? globalPass : true );
+    reports->insert( totName, report ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   }
+  m_outRepLoc.put( std::move( reports ) );
+
+  setFilterPassed( m_filter ? globalPass : true );
+
   return sc;
 }
 

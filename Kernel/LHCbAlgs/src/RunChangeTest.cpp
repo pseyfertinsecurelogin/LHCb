@@ -8,134 +8,157 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// from Gaudi
-#include "GaudiKernel/IEventTimeDecoder.h"
-#include "GaudiKernel/IIncidentSvc.h"
-
 #include "Event/ODIN.h"
-
-// local
-#include "RunChangeTest.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RunChangeTest
 //
 // 2008-07-24 : Marco CLEMENCIC
 //-----------------------------------------------------------------------------
-
-// Declaration of the Algorithm Factory
-DECLARE_COMPONENT( LHCbAlgsTests::RunChangeTest )
-
 using namespace LHCb;
-using namespace LHCbAlgsTests;
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-RunChangeTest::RunChangeTest( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {}
+namespace LHCbAlgsTests {
 
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode RunChangeTest::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
+  /** @class RunChangeTest RunChangeTest.h component/RunChangeTest.h
+   *
+   *  Simple algorithm to test the RunChange incident.
+   *  During the execute, it generates an ODIN object with incremented run number
+   *  and calls the standard OdinTimeDecoder, which detects the change of run
+   *  number and fires the incident.
+   *  The incident is received by this algorithm and a message is printed.
+   *
+   *  Used in the test "lhcbalgs.runchange".
+   *
+   *  @author Marco CLEMENCIC
+   *  @date   2008-07-24
+   */
+  class RunChangeTest final : public extends<GaudiAlgorithm, IIncidentListener> {
 
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-  m_eventTimeDecoder = tool<IEventTimeDecoder>( "OdinTimeDecoder", this, true );
+  public:
+    /// Standard constructor
+    using extends::extends;
 
-  m_incSvc = svc<IIncidentSvc>( "IncidentSvc", true );
-  m_incSvc->addListener( this, "RunChange" );
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
-  return sc;
-}
+    /// Handle the ChangeRun incident
+    void handle( const Incident& incident ) override;
 
-//=============================================================================
-// Main execution
-//=============================================================================
-StatusCode RunChangeTest::execute() {
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-
-  std::vector<std::string> test_cases{
-      "Define initial condition.",
-      "Test: same run, flagging -> filtering",              // 1->2
-      "Test: new run,  always filtering",                   // 2->3
-      "Test: new run,  filtering -> flagging",              // 3->4
-      "Test: new run,  always flagging",                    // 4->5
-      "Test: new run,  flagging -> filtering",              // 5->6
-      "Test: same run, filtering -> flagging (no trigger)", // 6->7 FIXME: correct?
-      "Test: same run, filtering (stable, no trigger)",     // 7->
+  private:
+    /// used to count the number of calls to decide which case to test
+    size_t             m_counter{0};
+    IEventTimeDecoder* m_eventTimeDecoder = nullptr;
+    IIncidentSvc*      m_incSvc           = nullptr;
   };
 
-  ODIN* odin = new ODIN();
-  info() << test_cases[std::min( m_counter, test_cases.size() - 1 )] << endmsg;
-  switch ( ++m_counter ) {
-  case 1: // run 1, flagging
-    odin->setRunNumber( 1 );
-    odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
-    break;
-  case 2: // run 1, filtering
-    odin->setRunNumber( 1 );
-    odin->setEventType( 0x0000 );
-    break;
-  case 3: // run 2, filtering
-    odin->setRunNumber( 2 );
-    odin->setEventType( 0x0000 );
-    break;
-  case 4: // run 3, flagging
-    odin->setRunNumber( 3 );
-    odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
-    break;
-  case 5: // run 4, flagging
-    odin->setRunNumber( 4 );
-    odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
-    break;
-  case 6: // run 5, filtering
-    odin->setRunNumber( 5 );
-    odin->setEventType( 0x0000 );
-    break;
-  case 7: // run 5, flagging
-    odin->setRunNumber( 5 );
-    odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
-    break;
-  default: // run 5, filtering
-    odin->setRunNumber( 5 );
-    odin->setEventType( 0x0000 ); // FIXME
-    break;
+  // Declaration of the Algorithm Factory
+  DECLARE_COMPONENT( RunChangeTest )
+
+  //=============================================================================
+  // Initialization
+  //=============================================================================
+  StatusCode RunChangeTest::initialize() {
+    StatusCode sc = extends::initialize(); // must be executed first
+    if ( sc.isFailure() ) return sc;       // error printed already by GaudiAlgorithm
+
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
+    m_eventTimeDecoder = tool<IEventTimeDecoder>( "OdinTimeDecoder", this, true );
+
+    m_incSvc = svc<IIncidentSvc>( "IncidentSvc", true );
+    m_incSvc->addListener( this, "RunChange" );
+
+    return sc;
   }
 
-  put( evtSvc(), odin, ODINLocation::Default );
+  //=============================================================================
+  // Main execution
+  //=============================================================================
+  StatusCode RunChangeTest::execute() {
 
-  // will not try to decode the ODIN bank, but issue a ChangeRun
-  m_eventTimeDecoder->getTime();
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
-  return StatusCode::SUCCESS;
-}
+    std::vector<std::string> test_cases{
+        "Define initial condition.",
+        "Test: same run, flagging -> filtering",              // 1->2
+        "Test: new run,  always filtering",                   // 2->3
+        "Test: new run,  filtering -> flagging",              // 3->4
+        "Test: new run,  always flagging",                    // 4->5
+        "Test: new run,  flagging -> filtering",              // 5->6
+        "Test: same run, filtering -> flagging (no trigger)", // 6->7 FIXME: correct?
+        "Test: same run, filtering (stable, no trigger)",     // 7->
+    };
 
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode RunChangeTest::finalize() {
+    ODIN* odin = new ODIN();
+    info() << test_cases[std::min( m_counter, test_cases.size() - 1 )] << endmsg;
+    switch ( ++m_counter ) {
+    case 1: // run 1, flagging
+      odin->setRunNumber( 1 );
+      odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
+      break;
+    case 2: // run 1, filtering
+      odin->setRunNumber( 1 );
+      odin->setEventType( 0x0000 );
+      break;
+    case 3: // run 2, filtering
+      odin->setRunNumber( 2 );
+      odin->setEventType( 0x0000 );
+      break;
+    case 4: // run 3, flagging
+      odin->setRunNumber( 3 );
+      odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
+      break;
+    case 5: // run 4, flagging
+      odin->setRunNumber( 4 );
+      odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
+      break;
+    case 6: // run 5, filtering
+      odin->setRunNumber( 5 );
+      odin->setEventType( 0x0000 );
+      break;
+    case 7: // run 5, flagging
+      odin->setRunNumber( 5 );
+      odin->setEventType( ODIN::EventTypeMasks::FlaggingModeMask );
+      break;
+    default: // run 5, filtering
+      odin->setRunNumber( 5 );
+      odin->setEventType( 0x0000 ); // FIXME
+      break;
+    }
 
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
+    put( evtSvc(), odin, ODINLocation::Default );
 
-  m_eventTimeDecoder = nullptr; // released in the base class
-  if ( m_incSvc ) { m_incSvc->removeListener( this, "RunChange" ); }
+    // will not try to decode the ODIN bank, but issue a ChangeRun
+    m_eventTimeDecoder->getTime();
 
-  return GaudiAlgorithm::finalize(); // must be called after all other actions
-}
+    return StatusCode::SUCCESS;
+  }
 
-//=============================================================================
-//  Incident handling
-//=============================================================================
-void RunChangeTest::handle( const Incident& incident ) {
-  info() << incident.type() << " incident received from " << incident.source() << endmsg;
-  ODIN* odin = get<ODIN>( ODINLocation::Default );
-  info() << "Run " << odin->runNumber() << ", " << ( odin->isFlagging() ? "flagging" : "filtering" ) << endmsg;
-}
+  //=============================================================================
+  //  Finalize
+  //=============================================================================
+  StatusCode RunChangeTest::finalize() {
 
-//=============================================================================
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
+
+    m_eventTimeDecoder = nullptr; // released in the base class
+    if ( m_incSvc ) { m_incSvc->removeListener( this, "RunChange" ); }
+
+    return extends::finalize(); // must be called after all other actions
+  }
+
+  //=============================================================================
+  //  Incident handling
+  //=============================================================================
+  void RunChangeTest::handle( const Incident& incident ) {
+    info() << incident.type() << " incident received from " << incident.source() << endmsg;
+    ODIN* odin = get<ODIN>( ODINLocation::Default );
+    info() << "Run " << odin->runNumber() << ", " << ( odin->isFlagging() ? "flagging" : "filtering" ) << endmsg;
+  }
+
+  //=============================================================================
+} // namespace LHCbAlgsTests

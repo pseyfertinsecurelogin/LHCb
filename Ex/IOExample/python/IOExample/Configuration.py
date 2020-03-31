@@ -16,7 +16,7 @@ __author__ = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 from os import environ
 from Gaudi.Configuration import *
 from LHCbKernel.Configuration import LHCbConfigurableUser
-from Configurables import SimConf, DigiConf, DstConf
+from Configurables import SimConf, DigiConf, DstConf, PrintHeader
 
 
 class IOTest(LHCbConfigurableUser):
@@ -51,7 +51,7 @@ class IOTest(LHCbConfigurableUser):
             daqKiller = EventNodeKiller("DAQKiller")
             daqKiller.Nodes += ["DAQ"]
             ApplicationMgr().TopAlg += [daqKiller]
-        ApplicationMgr().TopAlg += ["PrintHeader"]
+        ApplicationMgr().TopAlg += [PrintHeader(RequireObjects=["DAQ/ODIN"])]
         ApplicationMgr().ExtSvc += ["ToolSvc", "DataOnDemandSvc"]
 
         if self.getProp("LoadAll"):

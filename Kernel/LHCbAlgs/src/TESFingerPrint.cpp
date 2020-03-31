@@ -8,13 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/IDataStoreLeaves.h"
 #include "GaudiKernel/ObjectContainerBase.h"
-// local
-#include "TESFingerPrint.h"
 #include <fstream>
+#include <map>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TESFingerPrint
@@ -22,35 +21,40 @@
 // 2011-05-11 : Illya Shapoval
 //-----------------------------------------------------------------------------
 
+/** @class TESFingerPrint TESFingerPrint.h
+ *
+ *
+ *  @author Illya Shapoval
+ *  @date   2011-05-11
+ */
+class TESFingerPrint final : public GaudiAlgorithm {
+
+public:
+  /// Standard constructor
+  using GaudiAlgorithm::GaudiAlgorithm;
+
+  StatusCode execute() override;  ///< Algorithm execution
+  StatusCode finalize() override; ///< Algorithm finalization
+
+private:
+  /// Pointer to the (public) tool used to retrieve the objects in a file.
+  PublicToolHandle<IDataStoreLeaves> m_leavesTool{this, "DataStoreLeavesTool", "DataSvcFileEntriesTool"};
+  /// Counter map of nodes occurrences
+  std::map<std::string, long> m_stat_map;
+  /// Counter map of containers and their contents occurrences
+  std::map<std::string, std::map<int, long>> m_cont_stat_map;
+
+  /// Level of the heuristic analysis
+  Gaudi::Property<std::string> m_heur_level{this, "HeuristicsLevel", "Low",
+                                            "The level of TES heuristic analysis to be performed to obtain"
+                                            " its finger print."};
+  /// File name for the TES finger print output
+  Gaudi::Property<std::string> m_output_file_name{this, "OutputFileName", "tes_finger_print.dat",
+                                                  "The name of the output file to store the TES finger print."};
+};
+
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( TESFingerPrint )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-TESFingerPrint::TESFingerPrint( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  declareProperty( "HeuristicsLevel", m_heur_level = "Low",
-                   "The level of TES heuristic analysis to be performed to obtain"
-                   " its finger print." );
-  declareProperty( "OutputFileName", m_output_file_name = "tes_finger_print.dat",
-                   "The name of the output file to store the TES finger print." );
-}
-
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode TESFingerPrint::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;
-
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
-
-  sc = toolSvc()->retrieveTool( "DataSvcFileEntriesTool", m_leavesTool );
-  if ( sc.isFailure() ) return sc;
-
-  return sc;
-}
 
 //=============================================================================
 // Main execution
@@ -60,39 +64,27 @@ StatusCode TESFingerPrint::execute() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   // Get the objects in the same file as the root node
+  /// Collection of objects being selected
+  IDataSelector objects;
   try {
     const auto& leaves = m_leavesTool->leaves();
-    m_objects.assign( leaves.begin(), leaves.end() );
+    objects.assign( leaves.begin(), leaves.end() );
   } catch ( GaudiException& e ) {
     error() << e.message() << endmsg;
     return StatusCode::FAILURE;
   }
   // Collect TES statistics
-  std::string entry;
-  for ( const auto* o : m_objects ) {
-    entry = o->registry()->identifier();
-
-    auto& m = m_stat_map[entry];
-    if ( m ) {
-      ++m;
-    } else {
-      m = 1;
-    }
-
+  for ( const auto* o : objects ) {
+    const auto& entry = o->registry()->identifier();
+    if ( auto [iter, inserted] = m_stat_map.try_emplace( entry, 1 ); !inserted ) ++iter->second;
     if ( m_heur_level == "Medium" ) {
       const auto* pCont = dynamic_cast<const ObjectContainerBase*>( o );
       if ( pCont ) {
         const auto cont_size = pCont->numberOfObjects();
-        auto&      mm        = m_cont_stat_map[entry][cont_size];
-        if ( mm ) {
-          ++mm;
-        } else {
-          mm = 1;
-        }
+        if ( auto [iter, inserted] = m_cont_stat_map[entry].try_emplace( cont_size, 1 ); !inserted ) ++iter->second;
       }
     }
   }
-
   return StatusCode::SUCCESS;
 }
 
@@ -102,11 +94,7 @@ StatusCode TESFingerPrint::execute() {
 StatusCode TESFingerPrint::finalize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
-  toolSvc()->releaseTool( m_leavesTool ).ignore();
-  m_leavesTool = nullptr;
-
-  std::ofstream tes_finger_print;
-  tes_finger_print.open( m_output_file_name.c_str() );
+  std::ofstream tes_finger_print{m_output_file_name.value()};
 
   using namespace GaudiUtils;
   // Write low level TES statistics

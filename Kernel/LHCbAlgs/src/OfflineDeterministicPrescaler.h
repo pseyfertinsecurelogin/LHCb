@@ -8,56 +8,41 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "boost/cstdint.hpp"
+#include "Event/RecHeader.h"
+#include "GaudiAlg/FilterPredicate.h"
+#include <cstdint>
 #include <string>
 
-// from Boost
-#include "boost/integer/integer_mask.hpp"
-#include "boost/integer_traits.hpp"
-using boost::uint32_t;
-using boost::uint64_t;
-
-namespace LHCb {
-  class RecHeader;
-}
-class StatEntity;
-
-class OfflineDeterministicPrescaler : public GaudiAlgorithm {
+class OfflineDeterministicPrescaler : public Gaudi::Functional::FilterPredicate<bool( const LHCb::RecHeader& )> {
 
 public:
   OfflineDeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
-  ~OfflineDeterministicPrescaler() = default;
 
   StatusCode initialize() override;
-  StatusCode execute() override;
+  bool       operator()( const LHCb::RecHeader& ) const override;
 
-public:
-  inline void update( double newAccFrac ) {
+  void update( double newAccFrac ) {
     m_accFrac = newAccFrac;
     update();
   }
 
 protected:
-  bool        accept() const;
-  bool        accept( const LHCb::RecHeader& header ) const;
-  inline void update() {
-    m_acc =
-        ( m_accFrac <= 0 ? 0
-                         : m_accFrac >= 1 ? boost::integer_traits<uint32_t>::const_max
-                                          : boost::uint32_t( m_accFrac * boost::integer_traits<uint32_t>::const_max ) );
+  void update() {
+    constexpr auto mx = boost::integer_traits<uint32_t>::const_max;
+    m_acc             = ( m_accFrac <= 0 ? 0 : m_accFrac >= 1 ? mx : boost::uint32_t( m_accFrac * mx ) );
     if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
-      debug() << "frac: " << m_accFrac << " acc: 0x" << std::hex << m_acc << endmsg;
+      debug() << "frac: " << m_accFrac.value() << " acc: 0x" << std::hex << m_acc << endmsg;
   }
 
-protected:
-  double          m_accFrac;                                         // fraction of input events to accept...
-  boost::uint32_t m_acc{boost::integer_traits<uint32_t>::const_max}; // integer representation of the accept rate
-
-  StatEntity* m_counter = nullptr;
-
+  Gaudi::Property<double> m_accFrac{this, "AcceptFraction", 1., [=]( Gaudi::Details::PropertyBase& ) {
+                                      update();
+                                      if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+                                        debug() << "frac: " << m_accFrac.value() << " acc: 0x" << std::hex << m_acc
+                                                << endmsg;
+                                    }}; // fraction of input events to accept...
 private:
-  boost::uint32_t m_initial{0}; // initial seed unique to this instance (computed from the name)
-
-  void update( Property& );
+  bool     accept( const LHCb::RecHeader& header ) const;
+  uint32_t m_initial{0}; // initial seed unique to this instance (computed from the name)
+  uint32_t m_acc{boost::integer_traits<uint32_t>::const_max}; // integer representation of the accept rate
+  mutable Gaudi::Accumulators::BinomialCounter<> m_counter{this, "#accept"};
 };

@@ -9,15 +9,52 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-
-// local
-#include "EventCountAlg.h"
-
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include <string>
 //-----------------------------------------------------------------------------
 // Implementation file for class : EventCountAlg
 //
 // 2007-01-08 : Robert Lambert
 //-----------------------------------------------------------------------------
+
+/** @class EventCountAlg EventCountAlg.h
+ *
+ *  This is a simple alg with an efficiency counter.
+ *  It will presumably replace EventCountHisto for
+ *  most users of the XML summary service.
+ *  The property CounterName can be used to set the
+ *  name of the counter at configuration time.
+ *
+ *  The number of events, and the number of times
+ *  this algorithm are called are used to calculate
+ *  the efficiency
+ *
+ *  @author Robert Lambert
+ *  @date   2007-01-08
+ */
+class EventCountAlg final : public GaudiAlgorithm, virtual public IIncidentListener {
+
+public:
+  /// Standard constructor
+  EventCountAlg( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+
+  /// IListener interface to be triggered at begin of event
+  void handle( const Incident& ) override { ++m_nHandled; }
+
+private:
+  /// two integers are used, and a StatEntity isn't defined
+  /// until the last moment.
+  unsigned long long    m_nHandled  = 0; ///< total events
+  unsigned long long    m_nExecuted = 0; ///< number of events reaching this point
+  std::string           m_counterName;   ///< name of counter, set by option CounterName
+  SmartIF<IIncidentSvc> m_incSvc;        ///< the incident service
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( EventCountAlg )
@@ -55,8 +92,6 @@ StatusCode EventCountAlg::initialize() {
 //=============================================================================
 StatusCode EventCountAlg::execute() {
   ++m_nExecuted;
-
-  setFilterPassed( true ); // Mandatory. Set to true if event is accepted.
   return StatusCode::SUCCESS;
 }
 

@@ -44,8 +44,6 @@ public:
   /// Standard constructor
   RateFromCondDB( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~RateFromCondDB() = default; ///< Destructor
-
   bool initializeCondDB();
 
   /// Get rate from Conditions Database

@@ -29,8 +29,6 @@ public:
   /// Standard constructor
   EmptyEventNodeCleaner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~EmptyEventNodeCleaner() = default; ///< Destructor
-
   virtual StatusCode initialize() override; ///< Initialize
   virtual StatusCode execute() override;    ///< Execution
 

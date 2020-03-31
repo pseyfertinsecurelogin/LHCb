@@ -8,16 +8,31 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files
-
-// local
-#include "EventCountHisto.h"
-
+#include "GaudiAlg/GaudiHistoAlg.h"
 //-----------------------------------------------------------------------------
 // Implementation file for class : EventCountHisto
 //
 // 2007-01-08 : Robert Lambert
 //-----------------------------------------------------------------------------
+
+/** @class EventCountHisto EventCountHisto.h
+ *
+ *
+ *  @author Robert Lambert
+ *  @date   2007-01-08
+ */
+class EventCountHisto final : public GaudiHistoAlg {
+
+public:
+  /// Standard constructor
+  EventCountHisto( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode execute() override;  ///< Algorithm execution
+  StatusCode finalize() override; ///< Algorithm finalization
+
+private:
+  unsigned long long m_nEvents{0}; // number of events processed
+};
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( EventCountHisto )
@@ -36,10 +51,8 @@ StatusCode EventCountHisto::execute() {
   if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
   // code goes here
-
   ++m_nEvents;
 
-  setFilterPassed( true ); // Mandatory. Set to true if event is accepted.
   return StatusCode::SUCCESS;
 }
 

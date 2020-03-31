@@ -70,7 +70,7 @@ ODIN LHCb::ODINCodec::decode( const RawBank& bank, const bool ignoreBankVersion 
   }
 
   // pointer to the data
-  const unsigned int* odinData = bank.data();
+  auto odinData = bank.range<const unsigned int>();
 
   // Fill the ODIN object
   odin.setVersion( version );

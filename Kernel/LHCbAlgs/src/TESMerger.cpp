@@ -67,7 +67,6 @@ namespace details {
     }
     Inserter& operator*() { return *this; }
     Inserter& operator++() { return *this; }
-    Inserter& operator++( int ) { return *this; }
   };
 } // namespace details
 
