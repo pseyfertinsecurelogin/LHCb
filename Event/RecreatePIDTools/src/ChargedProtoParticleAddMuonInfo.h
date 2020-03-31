@@ -43,29 +43,25 @@
 class ChargedProtoParticleAddMuonInfo : public GaudiAlgorithm {
 
 public:
-  /// Standard constructor
-  ChargedProtoParticleAddMuonInfo( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
+  /// mapping type from Track to MuonPID data objects
+  using TrackToMuonPID = std::map<const LHCb::Track*, const LHCb::MuonPID*>;
 
   StatusCode execute() override; ///< Algorithm execution
 
 private:
   /// Load the muon data
-  bool getMuonData();
+  TrackToMuonPID getMuonData() const;
 
   /// Add (or update) the Muon information for the given ProtoParticle
-  void updateMuon( LHCb::ProtoParticle* proto ) const;
+  void updateMuon( LHCb::ProtoParticle* proto, TrackToMuonPID const& muonMap ) const;
 
 private:
   DataObjectReadHandle<LHCb::MuonPIDs> m_muonPath{
       this, "InputMuonPIDLocation", LHCb::MuonPIDLocation::Offline}; ///< Location of MuonPID data objects in the TES
-  DataObjectReadHandle<LHCb::ProtoParticles> m_protoPath{
+  DataObjectReadHandle<LHCb::ProtoParticles> m_protos{
       this, "ProtoParticleLocation",
       LHCb::ProtoParticleLocation::Charged}; ///< Location of the ProtoParticles in the TES
-
-  /// mapping type from Track to MuonPID data objects
-  typedef std::map<const LHCb::Track*, const LHCb::MuonPID*> TrackToMuonPID;
-  /// mapping from Track to MuonPID data objects
-  TrackToMuonPID m_muonMap;
 };
 
 #endif // GLOBALRECO_ChargedProtoParticleAddMuonInfo_H
