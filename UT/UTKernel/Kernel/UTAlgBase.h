@@ -41,12 +41,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public UT::CommonBase<GaudiAlgorithm> {
-
-  public:
-    /// Standard constructor
-    AlgBase( const std::string& name, ISvcLocator* pSvcLocator )
-        : UT::CommonBase<GaudiAlgorithm>( name, pSvcLocator ) {}
+  struct AlgBase : UT::CommonBase<GaudiAlgorithm> {
+    using UT::CommonBase<GaudiAlgorithm>::CommonBase;
   };
 
 } // namespace UT

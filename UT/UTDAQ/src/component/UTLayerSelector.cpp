@@ -10,7 +10,7 @@
 \*****************************************************************************/
 // Include files
 // local
-#include "UTDAQ/UTLayerSelector.h"
+#include "UTLayerSelector.h"
 // kernel
 #include "Kernel/UTChannelID.h"
 

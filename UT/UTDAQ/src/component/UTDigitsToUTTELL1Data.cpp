@@ -8,21 +8,45 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include <algorithm>
-
-// local
-#include "UTDAQ/UTDigitsToUTTELL1Data.h"
-
-// Event
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "Event/UTDigit.h"
 #include "Event/UTTELL1Data.h"
-
+#include "GaudiAlg/Transformer.h"
 #include "Kernel/IUTReadoutTool.h"
 #include "Kernel/LHCbConstants.h"
+#include "Kernel/UTAlgBase.h"
 #include "Kernel/UTDAQDefinitions.h"
 #include "Kernel/UTTell1Board.h"
-
 #include "UTDet/DeUTDetector.h"
+#include <algorithm>
+#include <string>
+#include <vector>
+
+/** @class RawBankToUTProcFull RawBankToUTProcFull.h
+ *
+ *  Algorithm to create UTTELL1Data (type ProcFull) from RawEvent object
+ *
+ *  @author A. Beiter (based on code by M. Needham)
+ *  @date   2018-09-04
+ */
+
+class UTDigitsToUTTELL1Data
+    : public Gaudi::Functional::Transformer<LHCb::UTTELL1Datas( const LHCb::UTDigits& ),
+                                            Gaudi::Functional::Traits::BaseClass_t<UT::AlgBase>> {
+
+public:
+  /// Standard constructor
+  UTDigitsToUTTELL1Data( const std::string& name, ISvcLocator* pSvcLocator );
+
+  LHCb::UTTELL1Datas operator()( const LHCb::UTDigits& ) const override; ///< Algorithm execution
+
+private:
+  StatusCode createTell1Data( const LHCb::UTDigits* digits, LHCb::UTTELL1Datas* outCont ) const;
+
+  std::string m_inputLocation;
+  std::string m_outputLocation;
+};
 
 using namespace LHCb;
 
@@ -35,27 +59,19 @@ using namespace LHCb;
 DECLARE_COMPONENT( UTDigitsToUTTELL1Data )
 
 UTDigitsToUTTELL1Data::UTDigitsToUTTELL1Data( const std::string& name, ISvcLocator* pSvcLocator )
-    : UT::AlgBase( name, pSvcLocator ) {
+    : Transformer{name,
+                  pSvcLocator,
 
-  // Standard constructor, initializes variables
-  declareUTConfigProperty( "outputLocation", m_outputLocation, UTTELL1DataLocation::UTSubPeds );
-  declareUTConfigProperty( "inputLocation", m_inputLocation, UTDigitLocation::UTDigits );
-}
+                  {"inputLocation", UTDigitLocation::UTDigits},
 
-StatusCode UTDigitsToUTTELL1Data::execute() {
+                  {"outputLocation", UTTELL1DataLocation::UTSubPeds}} {}
 
-  // Retrieve the digits
-  const UTDigits* digitCont = get<UTDigits>( m_inputLocation );
+LHCb::UTTELL1Datas UTDigitsToUTTELL1Data::operator()( const LHCb::UTDigits& digitCont ) const {
 
   // make a new digits container
-  auto outCont = std::make_unique<UTTELL1Datas>();
-
-  StatusCode sc = createTell1Data( digitCont, outCont.get() );
-
-  if ( sc.isFailure() ) { return Warning( "Problems creating Tell1 data", StatusCode::FAILURE, 1 ); }
-
-  put( outCont.release(), m_outputLocation );
-  return StatusCode::SUCCESS;
+  UTTELL1Datas outCont;
+  createTell1Data( &digitCont, &outCont ).orThrow( "Problems creating Tell1 data", "UTDigitsToUTTELL1Data" ).ignore();
+  return outCont;
 }
 
 StatusCode UTDigitsToUTTELL1Data::createTell1Data( const UTDigits* digits, UTTELL1Datas* outCont ) const {

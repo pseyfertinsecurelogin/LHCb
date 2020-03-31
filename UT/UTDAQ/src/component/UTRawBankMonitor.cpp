@@ -8,21 +8,51 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-//
 // C++ code for 'LHCb Tracking package(s)'
 //
 //   Author: A. Beiter (based on code by M. Needham)
 //   Created: 2018-09-04
 
-#include "UTDAQ/UTRawBankMonitor.h"
-
-// Event
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-
+#include "GaudiAlg/Consumer.h"
 #include "Kernel/IUTReadoutTool.h"
+#include "Kernel/UTHistoAlgBase.h"
 #include "Kernel/UTRawBankMap.h"
 #include "Kernel/UTTell1ID.h"
+#include <string>
+
+/** @class UTRawBankMonitor UTRawBankMonitor.h
+ *  UTCheckers/UTRawBankMonitor.h
+ *
+ *  Class for checking UT RAW buffer
+ *
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
+ */
+
+class UTRawBankMonitor : public Gaudi::Functional::Consumer<void( LHCb::RawEvent const& ),
+                                                            Gaudi::Functional::Traits::BaseClass_t<UT::HistoAlgBase>> {
+
+public:
+  /// constructor
+  UTRawBankMonitor( const std::string& name, ISvcLocator* pSvcLocator )
+      : Consumer{name,
+                 pSvcLocator,
+                 {"RawEventLocations", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Other,
+                                                                               LHCb::RawEventLocation::Default )}} {};
+
+  /// initialize
+  StatusCode initialize() override;
+
+  /// execute
+  void operator()( const LHCb::RawEvent& ) const override;
+
+private:
+  StatusCode configureBankType();
+
+  LHCb::RawBank::BankType m_bankType = LHCb::RawBank::LastType;
+};
 
 DECLARE_COMPONENT( UTRawBankMonitor )
 
@@ -34,31 +64,12 @@ using namespace LHCb;
 
 StatusCode UTRawBankMonitor::initialize() {
 
-  if ( "" == histoTopDir() ) setHistoTopDir( detType() + "/" );
-  StatusCode sc = UT::HistoAlgBase::initialize();
-  if ( sc.isFailure() ) { return Error( "Failed to initialize", sc ); }
+  if ( histoTopDir().empty() ) setHistoTopDir( detType() + "/" );
 
-  // configure banktype
-  sc = configureBankType();
-  if ( sc.isFailure() ) { return Error( "unknown bank type", sc ); }
-
-  // Initialise the RawEvent locations
-  bool usingDefaultLocation = m_rawEventLocations.empty();
-  if ( std::find( m_rawEventLocations.begin(), m_rawEventLocations.end(), LHCb::RawEventLocation::Default ) ==
-       m_rawEventLocations.end() ) {
-    // append the defaults to the search path
-    m_rawEventLocations.value().push_back( LHCb::RawEventLocation::Other );
-    m_rawEventLocations.value().push_back( LHCb::RawEventLocation::Default );
-  }
-
-  if ( !usingDefaultLocation ) {
-    info() << "Using '" << m_rawEventLocations.value() << "' as search path for the RawEvent object" << endmsg;
-  }
-
-  return StatusCode::SUCCESS;
+  return UT::HistoAlgBase::initialize().andThen( &UTRawBankMonitor::configureBankType, this ); // configure banktype
 }
 
-StatusCode UTRawBankMonitor::execute() {
+void UTRawBankMonitor::operator()( const LHCb::RawEvent& rawEvt ) const {
 
   // execute once per event
 
@@ -67,25 +78,12 @@ StatusCode UTRawBankMonitor::execute() {
   UTTell1ID    hotBoard( 0, detType() == "UT" );
   unsigned int eventDataSize = 0;
 
-  // get banks and loop
-
-  // Retrieve the RawEvent:
-  LHCb::RawEvent* rawEvt = NULL;
-  for ( std::vector<std::string>::const_iterator p = m_rawEventLocations.begin(); p != m_rawEventLocations.end();
-        ++p ) {
-    if ( exist<LHCb::RawEvent>( *p ) ) {
-      rawEvt = get<LHCb::RawEvent>( *p );
-      break;
-    }
-  }
-  if ( rawEvt == NULL ) return Error( "Failed to find raw data" );
-
-  const auto& tBanks = rawEvt->banks( m_bankType );
-  for ( auto iterBank = tBanks.begin(); iterBank != tBanks.end(); ++iterBank ) {
+  const auto& tBanks = rawEvt.banks( m_bankType );
+  for ( const auto* iterBank : tBanks ) {
 
     // board info....
-    size_t    bankSize = ( *iterBank )->size() / sizeof( char );
-    UTTell1ID aBoard( ( *iterBank )->sourceID(), detType() == "UT" );
+    size_t    bankSize = iterBank->size() / sizeof( char );
+    UTTell1ID aBoard( iterBank->sourceID(), detType() == "UT" );
 
     // event counters
     if ( bankSize > maxBoardSize ) {
@@ -100,8 +98,8 @@ StatusCode UTRawBankMonitor::execute() {
     // data size per board
     // unsigned int id = (aBoard.region()*20) + aBoard.subID();
     // const std::map< unsigned int, unsigned int > & SourceIDToTELLmap = readoutTool()->SourceIDToTELLNumberMap();
-    // unsigned int tellNumber = SourceIDToTELLmap.find((*iterBank)->sourceID())->second;
-    unsigned int tellNumber = readoutTool()->SourceIDToTELLNumber( ( *iterBank )->sourceID() );
+    // unsigned int tellNumber = SourceIDToTELLmap.find(iterBank->sourceID())->second;
+    unsigned int tellNumber = readoutTool()->SourceIDToTELLNumber( iterBank->sourceID() );
 
     // These hard coded numbers come from here: https://lbtwiki.cern.ch/bin/view/Online/Tell1PortNum
     unsigned int doubleLinkedUTtell1s[] = {1, 2, 3, 4, 5, 6, 8, 9, 10, 13, 14, 15};
@@ -129,8 +127,6 @@ StatusCode UTRawBankMonitor::execute() {
   plot( (double)maxBoardSize, 3, "hot board size", 0., 200., 200 );
   unsigned int id = ( hotBoard.region() * 20 ) + hotBoard.subID();
   plot( (double)id, 4, "hot board ID", 0., 100., 100 );
-
-  return StatusCode::SUCCESS;
 }
 
 StatusCode UTRawBankMonitor::configureBankType() {

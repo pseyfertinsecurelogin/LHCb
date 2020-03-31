@@ -41,12 +41,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public UT::CommonBase<GaudiHistoAlg> {
-
-  public:
-    /// Standard constructor
-    HistoAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
-        : UT::CommonBase<GaudiHistoAlg>( name, pSvcLocator ) {}
+  struct HistoAlgBase : UT::CommonBase<GaudiHistoAlg> {
+    using UT::CommonBase<GaudiHistoAlg>::CommonBase;
   };
 
 } // namespace UT

@@ -41,12 +41,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public UT::CommonBase<GaudiTupleAlg> {
-
-  public:
-    /// Standard constructor
-    TupleAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
-        : UT::CommonBase<GaudiTupleAlg>( name, pSvcLocator ) {}
+  struct TupleAlgBase : UT::CommonBase<GaudiTupleAlg> {
+    using UT::CommonBase<GaudiTupleAlg>::CommonBase;
   };
 
 } // namespace UT

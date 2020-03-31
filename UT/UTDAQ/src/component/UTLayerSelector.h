@@ -33,9 +33,7 @@
 class UTLayerSelector : public extends<GaudiTool, IUTChannelIDSelector> {
 
 public:
-  using base_class::base_class;
-  UTLayerSelector( const UTLayerSelector& ) = delete;
-  UTLayerSelector& operator=( const UTLayerSelector& ) = delete;
+  using extends::extends;
 
   bool select( const LHCb::UTChannelID& id ) const override;
   bool operator()( const LHCb::UTChannelID& id ) const override;

@@ -41,12 +41,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class HistoToolBase : public UT::CommonBase<GaudiHistoTool> {
-
-  public:
-    /// Standard constructor
-    HistoToolBase( const std::string& type, const std::string& name, const IInterface* parent )
-        : UT::CommonBase<GaudiHistoTool>( type, name, parent ) {}
+  struct HistoToolBase : UT::CommonBase<GaudiHistoTool> {
+    using UT::CommonBase<GaudiHistoTool>::CommonBase;
   };
 
 } // namespace UT

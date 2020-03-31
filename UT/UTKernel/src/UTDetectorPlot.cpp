@@ -21,8 +21,6 @@ UTDetectorPlot::UTDetectorPlot( const std::string& name, const std::string& titl
   // constructor
 }
 
-UTDetectorPlot::~UTDetectorPlot() {}
-
 UTDetectorPlot::Bins UTDetectorPlot::toBins( const DeUTSector* theSector ) const {
 
   Bins theBins;

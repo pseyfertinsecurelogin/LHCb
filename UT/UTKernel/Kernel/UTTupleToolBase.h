@@ -42,12 +42,8 @@ namespace UT {
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public UT::CommonBase<GaudiTupleTool> {
-
-  public:
-    /// Standard constructor
-    TupleToolBase( const std::string& type, const std::string& name, const IInterface* parent )
-        : UT::CommonBase<GaudiTupleTool>( type, name, parent ) {}
+  struct TupleToolBase : UT::CommonBase<GaudiTupleTool> {
+    using UT::CommonBase<GaudiTupleTool>::CommonBase;
   };
 
 } // namespace UT

@@ -36,7 +36,6 @@ void UTTell1Board::addSector( UTChannelID aOfflineChan, unsigned int orientation
 bool UTTell1Board::isInside( const UTChannelID aOfflineChan, unsigned int& sectorIndex ) const {
   // look-up the board
   unsigned int iSector = 0u;
-
   while ( ( iSector < m_sectorsVector.size() ) &&
           ( aOfflineChan.uniqueSector() != m_sectorsVector[iSector].uniqueSector() ) ) {
     ++iSector;
